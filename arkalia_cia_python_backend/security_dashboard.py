@@ -241,24 +241,20 @@ class SecurityDashboard:
                             "scan_speed": total_files / max(1, len(vulnerabilities)),
                             "vulnerability_density": total_vulns / max(1, total_files),
                             "risk_distribution": {
-                                "critical_ratio": (
-                                    (xss_count + sql_count) / max(1, total_vulns)
-                                ),
-                                "medium_ratio": (
-                                    len(dangerous_functions) / max(1, total_vulns)
-                                ),
-                                "safe_ratio": (
-                                    (total_files - total_vulns) / max(1, total_files)
-                                ),
+                                "critical_ratio": (xss_count + sql_count)
+                                / max(1, total_vulns),
+                                "medium_ratio": len(dangerous_functions)
+                                / max(1, total_vulns),
+                                "safe_ratio": (total_files - total_vulns)
+                                / max(1, total_files),
                             },
                         }
 
                         # Métriques de qualité du code
                         security_data["code_quality_metrics"] = {
                             "security_awareness": max(0, 100 - (total_vulns * 0.1)),
-                            "code_complexity": (
-                                total_files / max(1, len(vulnerabilities))
-                            ),
+                            "code_complexity": total_files
+                            / max(1, len(vulnerabilities)),
                             "maintenance_index": max(
                                 0, 100 - (len(dangerous_functions) * 0.05)
                             ),
@@ -373,7 +369,8 @@ class SecurityDashboard:
             )
         elif security_score < 70:
             recommendations.append(
-                "⚠️ ATTENTION: Score de sécurité faible - Actions correctives nécessaires"
+                "⚠️ ATTENTION: Score de sécurité faible - Actions correctives"
+                " nécessaires"
             )
         elif security_score < 85:
             recommendations.append(
@@ -388,21 +385,25 @@ class SecurityDashboard:
         vulnerabilities = security_data.get("vulnerabilities", {})
         if vulnerabilities.get("high", 0) > 0:
             recommendations.append(
-                "🚨 CRITIQUE: Vulnérabilités critiques détectées - Correction immédiate requise"
+                "🚨 CRITIQUE: Vulnérabilités critiques détectées - Correction immédiate"
+                " requise"
             )
         if vulnerabilities.get("medium", 0) > 5:
             recommendations.append(
-                "⚠️ ATTENTION: Nombre élevé de vulnérabilités moyennes - Plan de correction nécessaire"
+                "⚠️ ATTENTION: Nombre élevé de vulnérabilités moyennes - Plan de"
+                " correction nécessaire"
             )
         if vulnerabilities.get("low", 0) > 10:
             recommendations.append(
-                "🔶 AMÉLIORATION: Nombre élevé de vulnérabilités mineures - Nettoyage recommandé"
+                "🔶 AMÉLIORATION: Nombre élevé de vulnérabilités mineures - Nettoyage"
+                " recommandé"
             )
 
         # Recommandations basées sur les composants
         if not security_data.get("athalia_available", False):
             recommendations.append(
-                "🔧 TECHNIQUE: Installer/mettre à jour les composants Athalia pour une sécurité optimale"
+                "🔧 TECHNIQUE: Installer/mettre à jour les composants Athalia pour une"
+                " sécurité optimale"
             )
 
         # Recommandations générales
@@ -410,7 +411,8 @@ class SecurityDashboard:
             recommendations.append("✅ SÉCURISÉ: Aucune action immédiate requise")
 
         recommendations.append(
-            "📚 DOCUMENTATION: Consulter le guide de sécurité Athalia pour plus d'informations"
+            "📚 DOCUMENTATION: Consulter le guide de sécurité Athalia pour plus"
+            " d'informations"
         )
 
         return recommendations
@@ -462,12 +464,16 @@ class SecurityDashboard:
         score_color = (
             "#28a745"
             if security_score >= 85
-            else "#ffc107" if security_score >= 70 else "#dc3545"
+            else "#ffc107"
+            if security_score >= 70
+            else "#dc3545"
         )
         score_status = (
             "Sécurisé"
             if security_score >= 85
-            else "Attention" if security_score >= 70 else "Critique"
+            else "Attention"
+            if security_score >= 70
+            else "Critique"
         )
 
         html_template = f"""<!DOCTYPE html>
@@ -1023,7 +1029,11 @@ class SecurityDashboard:
                 icon = "💡"
                 css_class = "recommendation-info"
 
-            html += f'<div class="recommendation-item {css_class}"><span class="rec-icon">{icon}</span><span class="rec-text">{recommendation}</span></div>'
+            html += (
+                f'<div class="recommendation-item {css_class}"><span'
+                f' class="rec-icon">{icon}</span><span'
+                f' class="rec-text">{recommendation}</span></div>'
+            )
 
         return html
 

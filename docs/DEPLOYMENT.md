@@ -159,7 +159,7 @@ GRANT ALL PRIVILEGES ON DATABASE arkalia_cia TO arkalia_user;
 class SyncService {
   static const String baseUrl = 'https://api.arkalia-cia.com';
   static const String apiKey = 'your_api_key';
-  
+
   static Future<void> syncData() async {
     // Logique de synchronisation
   }

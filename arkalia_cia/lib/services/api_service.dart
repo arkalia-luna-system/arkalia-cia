@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
@@ -60,7 +61,7 @@ class ApiService {
         return [];
       }
     } catch (e) {
-      print('Erreur récupération documents: $e');
+      debugPrint('Erreur récupération documents: $e');
       return [];
     }
   }
@@ -75,7 +76,7 @@ class ApiService {
 
       return response.statusCode == 200;
     } catch (e) {
-      print('Erreur suppression document: $e');
+      debugPrint('Erreur suppression document: $e');
       return false;
     }
   }
@@ -130,7 +131,7 @@ class ApiService {
         return [];
       }
     } catch (e) {
-      print('Erreur récupération rappels: $e');
+      debugPrint('Erreur récupération rappels: $e');
       return [];
     }
   }
@@ -187,7 +188,7 @@ class ApiService {
         return [];
       }
     } catch (e) {
-      print('Erreur récupération contacts: $e');
+      debugPrint('Erreur récupération contacts: $e');
       return [];
     }
   }
@@ -244,7 +245,7 @@ class ApiService {
         return [];
       }
     } catch (e) {
-      print('Erreur récupération portails: $e');
+      debugPrint('Erreur récupération portails: $e');
       return [];
     }
   }

@@ -16,22 +16,22 @@ Service principal pour le stockage local sécurisé.
 class LocalStorageService {
   // Initialisation
   static Future<void> init() async
-  
+
   // Documents
   static Future<void> saveDocument(Map<String, dynamic> document) async
   static Future<List<Map<String, dynamic>>> getDocuments() async
   static Future<void> deleteDocument(int id) async
-  
+
   // Rappels
   static Future<void> saveReminder(Map<String, dynamic> reminder) async
   static Future<List<Map<String, dynamic>>> getReminders() async
   static Future<void> deleteReminder(int id) async
-  
+
   // Contacts d'urgence
   static Future<void> saveEmergencyContact(Map<String, dynamic> contact) async
   static Future<List<Map<String, dynamic>>> getEmergencyContacts() async
   static Future<void> deleteEmergencyContact(int id) async
-  
+
   // Portails santé
   static Future<void> saveHealthPortal(Map<String, dynamic> portal) async
   static Future<List<Map<String, dynamic>>> getHealthPortals() async
@@ -99,17 +99,17 @@ Service d'intégration avec le calendrier natif.
 class CalendarService {
   // Initialisation
   static Future<void> init() async
-  
+
   // Gestion des événements
   static Future<void> addReminder({
     required String title,
     required String description,
     required DateTime reminderDate,
   }) async
-  
+
   static Future<List<Event>> getUpcomingEvents() async
   static Future<void> deleteEvent(String eventId) async
-  
+
   // Notifications
   static Future<void> scheduleNotification({
     required String title,
@@ -128,14 +128,14 @@ class ContactsService {
   // Récupération des contacts
   static Future<List<Contact>> getContacts() async
   static Future<List<Contact>> getEmergencyContacts() async
-  
+
   // Gestion des contacts
   static Future<void> addEmergencyContact({
     required String name,
     required String phone,
     required String relationship,
   }) async
-  
+
   // Appels
   static Future<void> makePhoneCall(String phoneNumber) async
   static Future<void> sendSMS(String phoneNumber, String message) async
@@ -150,14 +150,14 @@ Service de gestion des notifications locales.
 class NotificationService {
   // Initialisation
   static Future<void> init() async
-  
+
   // Notifications immédiates
   static Future<void> showNotification({
     required String title,
     required String body,
     String? payload,
   }) async
-  
+
   // Notifications programmées
   static Future<void> scheduleNotification({
     required int id,
@@ -165,7 +165,7 @@ class NotificationService {
     required String body,
     required DateTime date,
   }) async
-  
+
   // Gestion des canaux
   static Future<void> createNotificationChannel({
     required String id,
@@ -226,10 +226,12 @@ class DocumentResponse(BaseModel):
     file_size: int
     created_at: str
 
+
 class ReminderRequest(BaseModel):
     title: str
     description: str | None = None
     reminder_date: str
+
 
 class EmergencyContactRequest(BaseModel):
     name: str
@@ -297,7 +299,7 @@ void main() {
     test('should save document', () async {
       // Test de sauvegarde
     });
-    
+
     test('should retrieve documents', () async {
       // Test de récupération
     });
@@ -324,11 +326,11 @@ class Logger {
   static void info(String message) {
     // Log info
   }
-  
+
   static void error(String message, [dynamic error]) {
     // Log erreur
   }
-  
+
   static void debug(String message) {
     // Log debug
   }

@@ -548,7 +548,8 @@ SOFTWARE.
                         if len(doc["docstring"]) < 10:
                             if isinstance(validation["warnings"], list):
                                 validation["warnings"].append(
-                                    f"Docstring trop courte dans {py_file}: {doc['name']}"
+                                    f"Docstring trop courte dans {py_file}:"
+                                    f" {doc['name']}"
                                 )
 
         except Exception as e:

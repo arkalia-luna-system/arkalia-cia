@@ -239,7 +239,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-15, windows-2025]
+        os: [macos-latest, windows-latest]
         python: ["3.11"]
 
     timeout-minutes: 12

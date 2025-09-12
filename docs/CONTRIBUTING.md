@@ -93,16 +93,16 @@ class DocumentService {
   Future<void> saveDocument(Document document) async {
     // Implémentation
   }
-  
+
   // Variables privées avec underscore
   final _storage = LocalStorage();
 }
 
 // Documentation des méthodes publiques
 /// Sauvegarde un document de manière sécurisée
-/// 
+///
 /// [document] Le document à sauvegarder
-/// 
+///
 /// Throws [StorageException] si la sauvegarde échoue
 Future<void> saveDocument(Document document) async {
   // Implémentation
@@ -114,16 +114,16 @@ Future<void> saveDocument(Document document) async {
 # Utiliser des noms descriptifs
 class DocumentService:
     """Service de gestion des documents."""
-    
+
     def __init__(self):
         self._storage = LocalStorage()
-    
+
     def save_document(self, document: Document) -> None:
         """Sauvegarde un document de manière sécurisée.
-        
+
         Args:
             document: Le document à sauvegarder
-            
+
         Raises:
             StorageException: Si la sauvegarde échoue
         """
@@ -163,10 +163,10 @@ void main() {
     test('should save document', () async {
       // Arrange
       final document = Document(name: 'test.pdf');
-      
+
       // Act
       await LocalStorageService.saveDocument(document);
-      
+
       // Assert
       final documents = await LocalStorageService.getDocuments();
       expect(documents.length, 1);
@@ -187,10 +187,10 @@ void main() {
     testWidgets('should display home page', (tester) async {
       // Arrange
       await tester.pumpWidget(MyApp());
-      
+
       // Act
       await tester.pumpAndSettle();
-      
+
       // Assert
       expect(find.text('Arkalia CIA'), findsOneWidget);
     });
