@@ -263,6 +263,8 @@ jobs:
           pip install -r requirements.txt
           pip install -e .
           pip install pytest pytest-cov
+          # Skip Flutter dependencies in CI
+          echo "Skipping Flutter dependencies in CI environment"
 
       - name: "Tests de Compatibilité"
         shell: bash

@@ -88,15 +88,27 @@ ci: clean install-dev check build ## Pipeline CI complet
 # Commandes Flutter (si Flutter est installé)
 flutter-deps: ## Installer les dépendances Flutter
 	@echo "$(GREEN)Installation des dépendances Flutter...$(NC)"
-	cd arkalia_cia && flutter pub get
+	@if command -v flutter >/dev/null 2>&1; then \
+		cd arkalia_cia && flutter pub get; \
+	else \
+		echo "$(YELLOW)Flutter non installé, skip...$(NC)"; \
+	fi
 
 flutter-run: ## Lancer l'application Flutter
 	@echo "$(GREEN)Lancement de l'application Flutter...$(NC)"
-	cd arkalia_cia && flutter run
+	@if command -v flutter >/dev/null 2>&1; then \
+		cd arkalia_cia && flutter run; \
+	else \
+		echo "$(YELLOW)Flutter non installé, skip...$(NC)"; \
+	fi
 
 flutter-build: ## Construire l'application Flutter
 	@echo "$(GREEN)Construction de l'application Flutter...$(NC)"
-	cd arkalia_cia && flutter build apk
+	@if command -v flutter >/dev/null 2>&1; then \
+		cd arkalia_cia && flutter build apk; \
+	else \
+		echo "$(YELLOW)Flutter non installé, skip...$(NC)"; \
+	fi
 
 # Commandes de développement
 dev-setup: install-dev flutter-deps ## Configuration complète pour le développement

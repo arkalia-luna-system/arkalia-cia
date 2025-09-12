@@ -1,0 +1,101 @@
+# Flutter CI pour Arkalia CIA
+# Tests et build de l'application Flutter
+
+name: "Flutter CI"
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+    paths:
+      - 'arkalia_cia/**'
+      - '.github/workflows/flutter-ci.yml'
+  pull_request:
+    branches: [ "main", "develop" ]
+    paths:
+      - 'arkalia_cia/**'
+      - '.github/workflows/flutter-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  flutter-test:
+    name: "Flutter Tests"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+    - name: "Checkout Code"
+      uses: actions/checkout@v4
+
+    - name: "Setup Flutter"
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.24.0'
+        channel: 'stable'
+        cache: true
+
+    - name: "Install Flutter Dependencies"
+      run: |
+        cd arkalia_cia
+        flutter pub get
+
+    - name: "Flutter Analyze"
+      run: |
+        cd arkalia_cia
+        flutter analyze --no-fatal-infos
+
+    - name: "Flutter Test"
+      run: |
+        cd arkalia_cia
+        flutter test
+
+    - name: "Flutter Build Web"
+      run: |
+        cd arkalia_cia
+        flutter build web --release
+
+    - name: "Flutter Build APK"
+      run: |
+        cd arkalia_cia
+        flutter build apk --release
+
+    - name: "Upload Build Artifacts"
+      uses: actions/upload-artifact@v4
+      with:
+        name: flutter-builds
+        path: |
+          arkalia_cia/build/web/
+          arkalia_cia/build/app/outputs/flutter-apk/
+        retention-days: 7
+
+  flutter-lint:
+    name: "Flutter Lint"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+    - name: "Checkout Code"
+      uses: actions/checkout@v4
+
+    - name: "Setup Flutter"
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.24.0'
+        channel: 'stable'
+
+    - name: "Install Flutter Dependencies"
+      run: |
+        cd arkalia_cia
+        flutter pub get
+
+    - name: "Flutter Lint"
+      run: |
+        cd arkalia_cia
+        flutter analyze --fatal-infos
+
+    - name: "Dart Format Check"
+      run: |
+        cd arkalia_cia
+        dart format --output=none --set-exit-if-changed .
