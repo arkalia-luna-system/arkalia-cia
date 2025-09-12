@@ -5,10 +5,10 @@ Génération automatique de documentation
 """
 
 import ast
-from datetime import datetime
 import json
 import logging
 import os
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -18,7 +18,6 @@ from ..core.error_handling import AthaliaError
 from ..core.generation import generate_project
 from ..quality.code_linter import CodeLinter
 from ..utilities.logger_advanced import AthaliaLogger
-
 
 logger = logging.getLogger(__name__)
 

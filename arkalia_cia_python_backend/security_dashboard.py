@@ -4,14 +4,13 @@ Dashboard de sécurité web pour Athalia
 Interface moderne pour visualiser les rapports de sécurité en temps réel
 """
 
-from datetime import datetime
 import json
 import logging
 import os
+import webbrowser
+from datetime import datetime
 from pathlib import Path
 from typing import Any
-import webbrowser
-
 
 # Import des composants Athalia réels
 try:
