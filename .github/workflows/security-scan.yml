@@ -54,9 +54,10 @@ jobs:
     - name: "Safety Check"
       run: |
         echo "🔍 Safety Check"
-        safety check -r requirements.txt \
-          --json --output safety-report.json \
-          --text --output safety-report.txt || echo "WARNING: Safety check completed with issues"
+        safety scan -r requirements.txt \
+          --json --output safety-report.json || echo "WARNING: Safety scan completed with issues"
+        safety scan -r requirements.txt \
+          --output safety-report.txt || echo "WARNING: Safety scan completed with issues"
 
     - name: "Pip Audit"
       run: |

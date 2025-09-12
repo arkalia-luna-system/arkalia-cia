@@ -51,8 +51,8 @@ class CalendarService {
         calendar.id,
         title: '[Santé] $title',
         description: description,
-        start: TZDateTime.from(reminderDate, tz.local),
-        end: TZDateTime.from(reminderDate.add(const Duration(hours: 1)), tz.local),
+        start: TZDateTime.fromMillisecondsSinceEpoch(tz.local, reminderDate.millisecondsSinceEpoch),
+        end: TZDateTime.fromMillisecondsSinceEpoch(tz.local, reminderDate.add(const Duration(hours: 1)).millisecondsSinceEpoch),
         allDay: false,
       );
 
@@ -118,7 +118,7 @@ class CalendarService {
   static Future<bool> deleteEvent(String eventId) async {
     try {
       final result = await _deviceCalendarPlugin.deleteEvent(eventId, '');
-      return result?.isSuccess ?? false;
+      return result.isSuccess;
     } catch (e) {
       throw Exception('Erreur lors de la suppression de l\'événement: $e');
     }
@@ -135,7 +135,7 @@ class CalendarService {
         0,
         title,
         description,
-        tz.TZDateTime.from(date, tz.local),
+        TZDateTime.fromMillisecondsSinceEpoch(tz.local, date.millisecondsSinceEpoch),
         const NotificationDetails(
           android: AndroidNotificationDetails(
             'arkalia_cia_reminders',

@@ -329,15 +329,15 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
                           borderRadius: BorderRadius.circular(20),
                         ),
                       ),
-                      child: Column(
+                      child: const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.emergency,
                             size: 80,
                             color: Colors.white,
                           ),
-                          const SizedBox(height: 16),
+                          SizedBox(height: 16),
                           Text(
                             'URGENCE',
                             style: TextStyle(
@@ -346,12 +346,12 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
                               color: Colors.white,
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          SizedBox(height: 8),
                           Text(
                             'Appuyer pour appeler le contact principal',
                             style: TextStyle(
                               fontSize: 16,
-                              color: Colors.white.withValues(alpha: 0.9),
+                              color: Color.fromARGB(229, 255, 255, 255), // 0.9 opacity
                             ),
                             textAlign: TextAlign.center,
                           ),
