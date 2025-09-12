@@ -1,5 +1,5 @@
 """
-Tests d'intégration pour Arkalia CIA
+Tests d'intégration pour Arkalia CIA Backend
 Tests de l'intégration complète des services backend
 """
 
@@ -15,8 +15,8 @@ from arkalia_cia_python_backend.database import CIADatabase
 from arkalia_cia_python_backend.pdf_processor import PDFProcessor
 
 
-class TestIntegration:
-    """Tests d'intégration complets pour Arkalia CIA"""
+class TestBackendIntegration:
+    """Tests d'intégration complets pour le backend"""
 
     def setup_method(self):
         """Configuration avant chaque test"""
@@ -58,63 +58,14 @@ class TestIntegration:
         if Path(self.test_db_path).exists():
             Path(self.test_db_path).unlink()
 
-    def test_complete_workflow_document_reminder_contact(self):
-        """Test du workflow complet : document + rappel + contact"""
-        # Arrange
-        doc_data = self.test_data["document"]
-        reminder_data = self.test_data["reminder"]
-        contact_data = self.test_data["contact"]
-
-        # Act - Workflow complet
-        # 1. Vérifier la base de données
+    def test_database_initialization(self):
+        """Test d'initialisation de la base de données"""
         assert self.db is not None
         assert Path(self.test_db_path).exists()
 
-        # 2. Vérifier le processeur PDF
+    def test_pdf_processor_initialization(self):
+        """Test d'initialisation du processeur PDF"""
         assert self.processor is not None
-
-        # 3. Vérifier les données
-        assert doc_data["name"] == "ordonnance.pdf"
-        assert reminder_data["title"] == "Prise de médicament"
-        assert contact_data["name"] == "Dr. Cardiologue"
-
-        # Assert
-        # Vérifier que tous les services sont initialisés
-        assert self.db is not None
-        assert self.processor is not None
-
-    def test_data_consistency_across_services(self):
-        """Test de cohérence des données entre les services"""
-        # Act - Vérifier les données dans différents services
-        doc_data = self.test_data["document"]
-        reminder_data = self.test_data["reminder"]
-        contact_data = self.test_data["contact"]
-
-        # Assert
-        # Vérifier que les données sont cohérentes
-        assert doc_data["id"] == 1
-        assert reminder_data["id"] == 1
-        assert contact_data["id"] == 1
-
-        # Vérifier que les timestamps sont cohérents
-        doc_time = datetime.fromisoformat(doc_data["created_at"])
-        reminder_time = datetime.fromisoformat(reminder_data["created_at"])
-
-        # Les timestamps doivent être proches (dans la même minute)
-        time_diff = abs((doc_time - reminder_time).total_seconds())
-        assert time_diff < 60  # Moins d'une minute de différence
-
-    def test_error_recovery_across_services(self):
-        """Test de récupération d'erreur entre les services"""
-        # Act & Assert
-        # Premier service - OK
-        assert self.db is not None
-
-        # Deuxième service - OK
-        assert self.processor is not None
-
-        # Troisième service - OK (récupération)
-        assert self.test_data is not None
 
     def test_data_validation_across_services(self):
         """Test de validation des données entre les services"""
@@ -143,19 +94,21 @@ class TestIntegration:
         assert "relationship" in contact
         assert contact["is_ice"] is True
 
-    def test_concurrent_operations_simulation(self):
-        """Test de simulation d'opérations concurrentes"""
-        # Act - Simuler des opérations concurrentes
-        operations = []
-        for i in range(5):
-            doc = self.test_data["document"].copy()
-            doc["id"] = i + 1
-            doc["name"] = f"document_{i+1}.pdf"
-            operations.append(doc)
+    def test_data_consistency_across_services(self):
+        """Test de cohérence des données entre les services"""
+        # Vérifier que les données sont cohérentes
+        assert self.test_data["document"]["id"] == 1
+        assert self.test_data["reminder"]["id"] == 1
+        assert self.test_data["contact"]["id"] == 1
 
-        # Assert
-        # Vérifier que toutes les opérations ont été créées
-        assert len(operations) == 5
+        # Vérifier que les timestamps sont cohérents
+        doc_time = datetime.fromisoformat(self.test_data["document"]["created_at"])
+        reminder_time = datetime.fromisoformat(self.test_data["reminder"]["created_at"])
+        datetime.fromisoformat(self.test_data["contact"]["created_at"])
+
+        # Les timestamps doivent être proches (dans la même minute)
+        time_diff = abs((doc_time - reminder_time).total_seconds())
+        assert time_diff < 60  # Moins d'une minute de différence
 
     def test_data_encryption_consistency(self):
         """Test de cohérence du chiffrement des données"""
@@ -167,19 +120,6 @@ class TestIntegration:
 
         # Les contacts d'urgence doivent être protégés
         assert self.test_data["contact"]["is_ice"] is True
-
-    def test_data_persistence_across_sessions(self):
-        """Test de persistance des données entre les sessions"""
-        # Act - Sauvegarder des données
-        test_data = self.test_data["document"].copy()
-
-        # Simuler une nouvelle session
-        retrieved_data = test_data
-
-        # Récupérer les données
-        # Assert
-        assert len([retrieved_data]) == 1
-        assert retrieved_data["name"] == "ordonnance.pdf"
 
     def test_data_integrity_validation(self):
         """Test de validation de l'intégrité des données"""
@@ -197,49 +137,6 @@ class TestIntegration:
             timestamp = self.test_data[data_type]["created_at"]
             parsed_time = datetime.fromisoformat(timestamp)
             assert parsed_time <= datetime.now()  # Pas dans le futur
-
-    def test_performance_under_load(self):
-        """Test de performance sous charge"""
-        # Act - Simuler une charge importante
-        start_time = datetime.now()
-
-        for i in range(100):
-            doc = self.test_data["document"].copy()
-            doc["id"] = i + 1
-            doc["name"] = f"document_{i+1}.pdf"
-            # Note: Les opérations réelles seraient testées ici
-
-        end_time = datetime.now()
-        duration = (end_time - start_time).total_seconds()
-
-        # Assert
-        assert duration < 5.0  # Moins de 5 secondes pour 100 opérations
-
-    def test_data_security_requirements(self):
-        """Test des exigences de sécurité des données"""
-        # Les données sensibles ne doivent pas être en clair
-        sensitive_fields = ["name", "path", "phone"]
-
-        for data_type in ["document", "contact"]:
-            for field in sensitive_fields:
-                if field in self.test_data[data_type]:
-                    value = self.test_data[data_type][field]
-                    # Les valeurs sensibles ne doivent pas être vides
-                    assert value is not None
-                    assert len(str(value)) > 0
-
-                    # Les valeurs sensibles ne doivent pas contenir de patterns évidents
-                    assert "password" not in str(value).lower()
-                    assert "secret" not in str(value).lower()
-
-    def test_database_initialization(self):
-        """Test d'initialisation de la base de données"""
-        assert self.db is not None
-        assert Path(self.test_db_path).exists()
-
-    def test_pdf_processor_initialization(self):
-        """Test d'initialisation du processeur PDF"""
-        assert self.processor is not None
 
     def test_json_serialization_consistency(self):
         """Test de cohérence de la sérialisation JSON"""
@@ -290,3 +187,68 @@ class TestIntegration:
         # Vérifier que les données invalides sont détectées
         assert "id" not in invalid_data
         assert "name" not in invalid_data
+
+    def test_performance_under_load(self):
+        """Test de performance sous charge"""
+        # Simuler une charge importante
+        start_time = datetime.now()
+
+        # Simuler des opérations répétées
+        for i in range(100):
+            doc = self.test_data["document"].copy()
+            doc["id"] = i + 1
+            doc["name"] = f"document_{i+1}.pdf"
+            # Note: Les opérations réelles seraient testées ici
+
+        end_time = datetime.now()
+        duration = (end_time - start_time).total_seconds()
+
+        # Vérifier que les opérations sont rapides
+        assert duration < 5.0  # Moins de 5 secondes pour 100 opérations
+
+    def test_data_security_requirements(self):
+        """Test des exigences de sécurité des données"""
+        # Les données sensibles ne doivent pas être en clair
+        sensitive_fields = ["name", "path", "phone"]
+
+        for data_type in ["document", "contact"]:
+            for field in sensitive_fields:
+                if field in self.test_data[data_type]:
+                    value = self.test_data[data_type][field]
+                    # Les valeurs sensibles ne doivent pas être vides
+                    assert value is not None
+                    assert len(str(value)) > 0
+
+                    # Les valeurs sensibles ne doivent pas contenir de patterns évidents
+                    assert "password" not in str(value).lower()
+                    assert "secret" not in str(value).lower()
+
+    def test_concurrent_operations_simulation(self):
+        """Test de simulation d'opérations concurrentes"""
+        # Simuler des opérations concurrentes
+        operations = []
+        for i in range(5):
+            doc = self.test_data["document"].copy()
+            doc["id"] = i + 1
+            doc["name"] = f"document_{i+1}.pdf"
+            operations.append(doc)
+
+        # Vérifier que toutes les opérations ont été créées
+        assert len(operations) == 5
+
+        # Vérifier que les IDs sont uniques
+        ids = [op["id"] for op in operations]
+        assert len(set(ids)) == len(ids)
+
+    def test_data_persistence_across_sessions(self):
+        """Test de persistance des données entre les sessions"""
+        # Simuler la sauvegarde de données
+        test_data = self.test_data["document"].copy()
+
+        # Simuler la récupération des données
+        retrieved_data = test_data
+
+        # Vérifier que les données sont identiques
+        assert retrieved_data["name"] == "ordonnance.pdf"
+        assert retrieved_data["id"] == 1
+        assert retrieved_data["encrypted"] is True

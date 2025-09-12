@@ -190,8 +190,8 @@ async def delete_document(doc_id: int):
     # Supprimer le fichier physique
     try:
         os.unlink(document["file_path"])
-    except:
-        pass  # Ignorer si le fichier n'existe plus
+    except (FileNotFoundError, OSError) as e:
+        print(f"Warning: Impossible de supprimer le fichier: {e}")
 
     # Supprimer de la base de données
     success = db.delete_document(doc_id)
@@ -299,4 +299,4 @@ async def get_health_portals():
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="127.0.0.1", port=8000)
