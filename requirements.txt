@@ -25,7 +25,7 @@ rich==14.1.0
 
 # Tests
 pytest==8.4.2
-pytest-asyncio==0.21.1
+pytest-asyncio==1.2.0
 
 # Logging
 loguru==0.7.3
