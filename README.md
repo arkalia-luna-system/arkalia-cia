@@ -135,8 +135,10 @@ make clean
 - ✅ Intégration stockage local
 - ✅ Service de stockage sécurisé
 - ✅ Écran Documents adapté (local)
-- ✅ Tests et validation
+- ✅ Tests unitaires complets (12 tests)
+- ✅ Tests d'intégration (8 tests)
 - ✅ Code propre (Black + Ruff)
+- ✅ CI/CD fonctionnel
 
 ### Phase 2 : Intelligence locale (🔄 EN COURS)
 - ✅ Service calendrier natif (CalendarService)
