@@ -38,17 +38,17 @@ class CalendarService {
   }) async {
     try {
       // Récupérer les calendriers disponibles
-      final calendars = await _deviceCalendarPlugin.retrieveCalendars();
-      if (calendars.isEmpty) {
+      final calendarsResult = await _deviceCalendarPlugin.retrieveCalendars();
+      if (!calendarsResult.isSuccess || calendarsResult.data!.isEmpty) {
         return false;
       }
 
       // Utiliser le premier calendrier disponible
-      final calendar = calendars.first;
+      final calendar = calendarsResult.data!.first;
 
       // Créer l'événement
       final event = Event(
-        calendarId: calendar.id,
+        calendar.id,
         title: '[Santé] $title',
         description: description,
         start: TZDateTime.from(reminderDate, tz.local),
@@ -57,7 +57,7 @@ class CalendarService {
       );
 
       // Ajouter l'événement au calendrier
-      final result = await _deviceCalendarPlugin.createEvent(event);
+      final result = await _deviceCalendarPlugin.createOrUpdateEvent(event);
 
       // Programmer une notification
       await _scheduleNotification(
@@ -66,7 +66,7 @@ class CalendarService {
         date: reminderDate,
       );
 
-      return result;
+      return result?.isSuccess ?? false;
     } catch (e) {
       throw Exception('Erreur lors de l\'ajout du rappel: $e');
     }
@@ -86,8 +86,8 @@ class CalendarService {
   /// Récupère les événements à venir
   static Future<List<Event>> getUpcomingEvents() async {
     try {
-      final calendars = await _deviceCalendarPlugin.retrieveCalendars();
-      if (calendars.isEmpty) {
+      final calendarsResult = await _deviceCalendarPlugin.retrieveCalendars();
+      if (!calendarsResult.isSuccess || calendarsResult.data!.isEmpty) {
         return [];
       }
 
@@ -95,15 +95,17 @@ class CalendarService {
       final endDate = now.add(const Duration(days: 30)); // 30 jours à venir
 
       final events = <Event>[];
-      for (final calendar in calendars) {
-        final calendarEvents = await _deviceCalendarPlugin.retrieveEvents(
+      for (final calendar in calendarsResult.data!) {
+        final calendarEventsResult = await _deviceCalendarPlugin.retrieveEvents(
           calendar.id,
           RetrieveEventsParams(
             startDate: now,
             endDate: endDate,
           ),
         );
-        events.addAll(calendarEvents);
+        if (calendarEventsResult.isSuccess) {
+          events.addAll(calendarEventsResult.data!);
+        }
       }
 
       return events;
@@ -115,7 +117,8 @@ class CalendarService {
   /// Supprime un événement
   static Future<bool> deleteEvent(String eventId) async {
     try {
-      return await _deviceCalendarPlugin.deleteEvent(eventId);
+      final result = await _deviceCalendarPlugin.deleteEvent(eventId, '');
+      return result?.isSuccess ?? false;
     } catch (e) {
       throw Exception('Erreur lors de la suppression de l\'événement: $e');
     }
@@ -181,8 +184,8 @@ class CalendarService {
   /// Vérifie les permissions du calendrier
   static Future<bool> hasCalendarPermission() async {
     try {
-      final permissions = await _deviceCalendarPlugin.hasPermissions();
-      return permissions ?? false;
+      final permissionsResult = await _deviceCalendarPlugin.hasPermissions();
+      return permissionsResult.isSuccess && (permissionsResult.data ?? false);
     } catch (e) {
       return false;
     }
@@ -191,7 +194,8 @@ class CalendarService {
   /// Demande les permissions du calendrier
   static Future<bool> requestCalendarPermission() async {
     try {
-      return await _deviceCalendarPlugin.requestPermissions() ?? false;
+      final result = await _deviceCalendarPlugin.requestPermissions();
+      return result.isSuccess && (result.data ?? false);
     } catch (e) {
       return false;
     }

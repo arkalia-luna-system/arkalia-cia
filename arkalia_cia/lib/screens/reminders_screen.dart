@@ -31,10 +31,10 @@ class _RemindersScreenState extends State<RemindersScreen> {
 
       // Convertir les événements calendrier en format local
       final calendarReminders = calendarEvents.map((event) => {
-        'id': event.eventId,
-        'title': event.title?.replaceFirst('[Santé] ', '') ?? 'Rappel',
-        'description': event.description ?? '',
-        'reminder_date': event.start?.toIso8601String() ?? '',
+        'id': event['id'] ?? '',
+        'title': (event['title'] ?? '').replaceFirst('[Santé] ', ''),
+        'description': event['description'] ?? '',
+        'reminder_date': event['reminder_date'] ?? '',
         'is_completed': false,
         'source': 'calendar',
       }).toList();

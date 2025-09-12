@@ -36,7 +36,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
 
       setState(() {
         emergencyContacts = contactsList;
-        emergencyInfo = info;
+        emergencyInfo = info ?? {};
         isLoading = false;
       });
     } catch (e) {
