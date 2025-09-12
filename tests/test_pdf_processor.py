@@ -3,8 +3,8 @@ Tests pour le module pdf_processor d'Arkalia-CIA
 """
 
 import os
-import tempfile
 from pathlib import Path
+import tempfile
 
 import pytest
 
@@ -106,9 +106,7 @@ startxref
             uploads_dir.mkdir()
 
             # Sauvegarder le PDF
-            saved_path = pdf_processor.save_pdf_to_uploads(
-                temp_pdf, "test.pdf"
-            )
+            saved_path = pdf_processor.save_pdf_to_uploads(temp_pdf, "test.pdf")
 
             assert saved_path is not None
             assert os.path.exists(saved_path)

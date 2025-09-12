@@ -3,8 +3,8 @@ Tests pour le module database d'Arkalia-CIA
 """
 
 import os
-import tempfile
 from pathlib import Path
+import tempfile
 
 import pytest
 
@@ -75,8 +75,20 @@ class TestDatabaseManager:
         db_manager.init_db()
 
         # Ajouter plusieurs documents
-        db_manager.add_document(name="test1.pdf", original_name="test1.pdf", file_path="/tmp/test1.pdf", file_type="pdf", file_size=1024)
-        db_manager.add_document(name="test2.pdf", original_name="test2.pdf", file_path="/tmp/test2.pdf", file_type="pdf", file_size=2048)
+        db_manager.add_document(
+            name="test1.pdf",
+            original_name="test1.pdf",
+            file_path="/tmp/test1.pdf",
+            file_type="pdf",
+            file_size=1024,
+        )
+        db_manager.add_document(
+            name="test2.pdf",
+            original_name="test2.pdf",
+            file_path="/tmp/test2.pdf",
+            file_type="pdf",
+            file_size=2048,
+        )
 
         # Lister les documents
         documents = db_manager.list_documents()
@@ -88,11 +100,11 @@ class TestDatabaseManager:
 
         # Ajouter un document
         doc_id = db_manager.add_document(
-            name="test.pdf", 
-            original_name="test.pdf", 
-            file_path="/tmp/test.pdf", 
-            file_type="pdf", 
-            file_size=1024
+            name="test.pdf",
+            original_name="test.pdf",
+            file_path="/tmp/test.pdf",
+            file_type="pdf",
+            file_size=1024,
         )
 
         # Supprimer le document
