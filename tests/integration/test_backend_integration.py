@@ -3,10 +3,10 @@ Tests d'intégration pour Arkalia CIA Backend
 Tests de l'intégration complète des services backend
 """
 
-import json
-import tempfile
 from datetime import datetime, timedelta
+import json
 from pathlib import Path
+import tempfile
 from unittest.mock import MagicMock, patch
 
 import pytest

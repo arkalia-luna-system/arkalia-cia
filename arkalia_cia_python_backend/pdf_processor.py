@@ -3,10 +3,10 @@ PDF Processor pour Arkalia CIA
 Adapté du auto_documenter.py d'Athalia
 """
 
-import os
-import shutil
 from datetime import datetime
+import os
 from pathlib import Path
+import shutil
 from typing import Any
 
 from pypdf import PdfReader

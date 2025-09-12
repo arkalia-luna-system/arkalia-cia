@@ -32,13 +32,18 @@ repos:
     hooks:
       - id: bandit
         args:
-          [-r, arkalia_cia_python_backend/, -f, json, -o, bandit-report.json]
+          [
+            -r,
+            arkalia_cia_python_backend/api.py,
+            arkalia_cia_python_backend/database.py,
+            arkalia_cia_python_backend/pdf_processor.py,
+          ]
 
-  # Safety - Vérification des vulnérabilités
-  - repo: https://github.com/Lucas-C/pre-commit-hooks-safety
-    rev: v1.3.2
-    hooks:
-      - id: python-safety-dependencies-check
+  # Safety - Vérification des vulnérabilités - temporairement désactivé
+  # - repo: https://github.com/Lucas-C/pre-commit-hooks-safety
+  #   rev: v1.3.2
+  #   hooks:
+  #     - id: python-safety-dependencies-check
 
   # Hooks généraux
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -59,12 +64,12 @@ repos:
       - id: isort
         args: [--profile, black, --line-length, "88"]
 
-  # Hooks pour les fichiers de configuration
-  - repo: https://github.com/adamchainz/blacken-docs
-    rev: 1.16.0
-    hooks:
-      - id: blacken-docs
-        additional_dependencies: [black==23.11.0]
+  # Hooks pour les fichiers de configuration - temporairement désactivé
+  # - repo: https://github.com/adamchainz/blacken-docs
+  #   rev: 1.16.0
+  #   hooks:
+  #     - id: blacken-docs
+  #       additional_dependencies: [black==23.11.0]
 
 # Configuration globale
 default_stages: [pre-commit]

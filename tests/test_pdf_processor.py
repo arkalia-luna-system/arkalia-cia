@@ -3,8 +3,8 @@ Tests pour le module pdf_processor d'Arkalia-CIA
 """
 
 import os
-import tempfile
 from pathlib import Path
+import tempfile
 
 import pytest
 
