@@ -32,7 +32,7 @@ dependencies:
 
   # NOUVEAUX PLUGINS POUR PHASE 1 - STOCKAGE LOCAL
   shared_preferences: ^2.2.2
-  permission_handler: ^11.0.1
+  permission_handler: ">=11.0.1 <13.0.0"
   local_auth: ^2.1.7
   device_calendar: ^4.3.2
   contacts_service: ^0.6.3
