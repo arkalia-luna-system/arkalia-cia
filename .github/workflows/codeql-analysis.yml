@@ -58,7 +58,7 @@ jobs:
 
     - name: Setup Node.js (pour l'analyse JavaScript/TypeScript)
       if: matrix.language == 'javascript'
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v5
       with:
         node-version: '18'
 
