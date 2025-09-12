@@ -1,0 +1,77 @@
+# Configuration Dependabot pour Arkalia CIA
+# Détection automatique des vulnérabilités de dépendances
+
+version: 2
+updates:
+  # Python dependencies
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Europe/Paris"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "arkalia-luna-system"
+    assignees:
+      - "arkalia-luna-system"
+    commit-message:
+      prefix: "security"
+      include: "scope"
+    labels:
+      - "security"
+      - "dependencies"
+      - "python"
+    ignore:
+      # Ignorer les mises à jour mineures pour la stabilité
+      - dependency-name: "*"
+        update-types:
+          ["version-update:semver-minor", "version-update:semver-patch"]
+
+  # Flutter/Dart dependencies
+  - package-ecosystem: "pub"
+    directory: "/arkalia_cia"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Europe/Paris"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "arkalia-luna-system"
+    assignees:
+      - "arkalia-luna-system"
+    commit-message:
+      prefix: "security"
+      include: "scope"
+    labels:
+      - "security"
+      - "dependencies"
+      - "flutter"
+    ignore:
+      # Ignorer les mises à jour mineures pour la stabilité
+      - dependency-name: "*"
+        update-types:
+          ["version-update:semver-minor", "version-update:semver-patch"]
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Europe/Paris"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "arkalia-luna-system"
+    assignees:
+      - "arkalia-luna-system"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    labels:
+      - "ci"
+      - "dependencies"
+      - "github-actions"
