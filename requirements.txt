@@ -1,0 +1,31 @@
+# Arkalia CIA - Requirements Python
+# Backend pour l'application mobile Flutter
+
+# Base de données
+# Note: sqlite3 est inclus dans Python standard
+
+# Traitement de fichiers
+PyPDF2==3.0.1
+python-magic==0.4.27
+pathlib2==2.3.7
+
+# APIs et web
+fastapi==0.104.1
+uvicorn==0.24.0
+pydantic==2.5.2
+
+# Sécurité et validation
+cryptography==41.0.7
+python-multipart==0.0.6
+
+# Utilitaires
+python-dotenv==1.0.0
+click==8.1.7
+rich==13.7.0
+
+# Tests
+pytest==7.4.3
+pytest-asyncio==0.21.1
+
+# Logging
+loguru==0.7.2

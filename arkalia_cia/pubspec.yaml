@@ -1,0 +1,51 @@
+name: arkalia_cia
+description: "Arkalia CIA - Assistant personnel pour Patricia"
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Base de données
+  sqflite: ^2.3.0
+  path: ^1.8.3
+
+  # Fichiers et PDF
+  file_picker: ^6.1.1
+  path_provider: ^2.1.1
+
+  # UI
+  cupertino_icons: ^1.0.2
+  material_design_icons_flutter: ^7.0.7296
+
+  # Notifications
+  flutter_local_notifications: ^16.3.0
+
+  # HTTP
+  http: ^1.1.0
+
+  # URL Launcher
+  url_launcher: ^6.2.1
+
+  # NOUVEAUX PLUGINS POUR PHASE 1 - STOCKAGE LOCAL
+  shared_preferences: ^2.2.2
+  permission_handler: ^11.0.1
+  local_auth: ^2.1.7
+  device_calendar: ^4.3.2
+  contacts_service: ^0.6.3
+  crypto: ^3.0.3
+  encrypt: ^5.0.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/
