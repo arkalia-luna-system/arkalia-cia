@@ -3,13 +3,13 @@ PDF Processor pour Arkalia CIA
 Adapté du auto_documenter.py d'Athalia
 """
 
-import os
-import shutil
 from datetime import datetime
+import os
 from pathlib import Path
+import shutil
 from typing import Any
 
-import PyPDF2
+from pypdf import PdfReader
 
 
 class PDFProcessor:
@@ -29,7 +29,7 @@ class PDFProcessor:
         """Extrait le texte d'un PDF"""
         try:
             with open(file_path, "rb") as file:
-                reader = PyPDF2.PdfReader(file)
+                reader = PdfReader(file)
                 text = ""
                 for page in reader.pages:
                     text += page.extract_text()
@@ -55,7 +55,7 @@ class PDFProcessor:
 
             # Lire le PDF
             with open(file_path, "rb") as file:
-                pdf_reader = PyPDF2.PdfReader(file)
+                pdf_reader = PdfReader(file)
 
                 # Extraire les métadonnées
                 metadata = {

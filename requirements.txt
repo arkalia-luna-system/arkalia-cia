@@ -5,27 +5,27 @@
 # Note: sqlite3 est inclus dans Python standard
 
 # Traitement de fichiers
-PyPDF2==3.0.1
+pypdf==6.0.0
 python-magic==0.4.27
 pathlib2==2.3.7
 
 # APIs et web
-fastapi==0.104.1
-uvicorn==0.24.0
-pydantic==2.5.2
+fastapi==0.116.1
+uvicorn==0.35.0
+pydantic==2.11.7
 
 # Sécurité et validation
-cryptography==41.0.7
-python-multipart==0.0.6
+cryptography==45.0.7
+python-multipart==0.0.20
 
 # Utilitaires
-python-dotenv==1.0.0
-click==8.1.7
-rich==13.7.0
+python-dotenv==1.1.1
+click==8.2.1
+rich==14.1.0
 
 # Tests
-pytest==7.4.3
+pytest==8.4.2
 pytest-asyncio==0.21.1
 
 # Logging
-loguru==0.7.2
+loguru==0.7.3

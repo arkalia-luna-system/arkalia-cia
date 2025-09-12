@@ -44,7 +44,7 @@ et ce projet adhère au [Versioning Sémantique](https://semver.org/spec/v2.0.0.
 - Flutter SDK 3.0+
 - Dart 3.0+
 - Python 3.10+
-- FastAPI 0.104.1
+- FastAPI 0.116.1
 - SQLite pour la base de données
 - Tests unitaires et d'intégration
 

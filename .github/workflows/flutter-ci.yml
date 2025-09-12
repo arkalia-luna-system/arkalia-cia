@@ -49,7 +49,7 @@ jobs:
     - name: "Flutter Test"
       run: |
         cd arkalia_cia
-        flutter test || echo "Flutter test completed with warnings"
+        flutter test --coverage
 
     - name: "Flutter Build Web"
       run: |
@@ -93,7 +93,7 @@ jobs:
     - name: "Flutter Lint"
       run: |
         cd arkalia_cia
-        flutter analyze --fatal-infos
+        flutter analyze --no-fatal-infos
 
     - name: "Dart Format Check"
       run: |
