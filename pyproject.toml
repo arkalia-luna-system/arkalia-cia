@@ -7,7 +7,7 @@ name = "arkalia-cia"
 version = "1.0.0"
 description = "Arkalia-CIA - Application de gestion de documents pour Patricia"
 readme = "README.md"
-license = {text = "MIT"}
+license = "MIT"
 authors = [
     {name = "Arkalia Luna System", email = "contact@arkalia-luna.com"}
 ]
