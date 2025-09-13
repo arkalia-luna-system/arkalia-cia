@@ -1,6 +1,8 @@
-# Arkalia CIA
+# 📱❤️🔐 **Arkalia CIA** - Assistant Mobile Santé
 
-> **Personal Health Assistant** - Local-first mobile application for document management and health reminders
+> **🌍 English**: Health-focused mobile assistant (Flutter+Python) for secure document management and senior-friendly reminders - privacy-first, locally secured, complete CI/CD.
+
+> **🇫🇷 Français**: Assistant mobile santé (Flutter+Python) pour gestion docs sécurisée et rappels seniors - privacy-first, sécurisé local, CI/CD complète.
 
 [![Flutter](https://img.shields.io/badge/Flutter-3.35.3-blue.svg?logo=flutter)](https://flutter.dev)
 [![Python](https://img.shields.io/badge/Python-3.10.14-green.svg?logo=python)](https://python.org)
