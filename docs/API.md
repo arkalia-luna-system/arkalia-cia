@@ -1,344 +1,618 @@
-# 🔌 API Documentation - Arkalia CIA
+# API Reference
 
-## Vue d'ensemble
+> **Arkalia CIA** - Comprehensive service APIs and integration guide
 
-Arkalia CIA utilise une architecture local-first. Les APIs sont principalement des services locaux qui interagissent avec les systèmes natifs du téléphone.
+## Overview
 
-## Services locaux
+Arkalia CIA implements a **hybrid API architecture** combining local services for offline functionality with optional backend APIs for advanced features. All APIs prioritize data privacy and minimal network dependency.
 
-### LocalStorageService
+## Service Architecture
 
-Service principal pour le stockage local sécurisé.
+```mermaid
+graph TB
+    subgraph "Local Services (Phase 1-2)"
+        A[ApiService] --> B[HTTP Client]
+        C[LocalStorageService] --> D[SQLite DB]
+        E[CalendarService] --> F[System Calendar]
+        G[ContactsService] --> H[System Contacts]
+    end
 
-#### Méthodes principales
+    subgraph "Backend Services (Phase 3)"
+        I[FastAPI Backend]
+        J[Document Processor]
+        K[Sync Manager]
+    end
 
+    A --> I
+    D --> K
+    F --> K
+    H --> K
+```
+
+## Local Services
+
+### ApiService
+
+Central HTTP client for backend communication.
+
+**Configuration**:
 ```dart
-class LocalStorageService {
-  // Initialisation
-  static Future<void> init() async
+class ApiService {
+  static const String baseUrl = 'http://localhost:8000';
+  static const Duration timeout = Duration(seconds: 30);
 
-  // Documents
-  static Future<void> saveDocument(Map<String, dynamic> document) async
-  static Future<List<Map<String, dynamic>>> getDocuments() async
-  static Future<void> deleteDocument(int id) async
-
-  // Rappels
-  static Future<void> saveReminder(Map<String, dynamic> reminder) async
-  static Future<List<Map<String, dynamic>>> getReminders() async
-  static Future<void> deleteReminder(int id) async
-
-  // Contacts d'urgence
-  static Future<void> saveEmergencyContact(Map<String, dynamic> contact) async
-  static Future<List<Map<String, dynamic>>> getEmergencyContacts() async
-  static Future<void> deleteEmergencyContact(int id) async
-
-  // Portails santé
-  static Future<void> saveHealthPortal(Map<String, dynamic> portal) async
-  static Future<List<Map<String, dynamic>>> getHealthPortals() async
-  static Future<void> deleteHealthPortal(int id) async
+  static Map<String, String> get _headers => {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  };
 }
 ```
 
-#### Modèles de données
+#### Document Operations
 
-**Document**
+**Upload Document**
+```dart
+static Future<Map<String, dynamic>> uploadDocument(File pdfFile) async
+```
+
+**Example Usage**:
+```dart
+File document = File('/path/to/document.pdf');
+try {
+  Map<String, dynamic> result = await ApiService.uploadDocument(document);
+  print('Document uploaded: ${result['filename']}');
+} catch (e) {
+  debugPrint('Upload failed: $e');
+}
+```
+
+**Response Format**:
+```json
+{
+  "id": 123,
+  "filename": "document_20241213_143000.pdf",
+  "original_name": "medical_report.pdf",
+  "file_size": 2048576,
+  "file_type": "application/pdf",
+  "created_at": "2024-12-13T14:30:00Z"
+}
+```
+
+**Get Documents**
+```dart
+static Future<List<Map<String, dynamic>>> getDocuments() async
+```
+
+**Example Response**:
+```json
+[
+  {
+    "id": 1,
+    "name": "Medical Report 2024",
+    "original_name": "report.pdf",
+    "file_path": "/documents/report_20241213.pdf",
+    "file_size": 1024000,
+    "created_at": "2024-12-13T10:00:00Z",
+    "category": "medical"
+  }
+]
+```
+
+**Delete Document**
+```dart
+static Future<bool> deleteDocument(int documentId) async
+```
+
+#### Reminder Operations
+
+**Create Reminder**
+```dart
+static Future<Map<String, dynamic>> createReminder({
+  required String title,
+  required String description,
+  required String reminderDate,
+}) async
+```
+
+**Example Usage**:
+```dart
+await ApiService.createReminder(
+  title: 'Doctor Appointment',
+  description: 'Annual checkup with Dr. Smith',
+  reminderDate: '2024-12-20T09:00:00Z',
+);
+```
+
+**Get Reminders**
+```dart
+static Future<List<Map<String, dynamic>>> getReminders() async
+```
+
+#### Contact Operations
+
+**Create Emergency Contact**
+```dart
+static Future<Map<String, dynamic>> createEmergencyContact({
+  required String name,
+  required String phone,
+  required String relationship,
+}) async
+```
+
+**Get Emergency Contacts**
+```dart
+static Future<List<Map<String, dynamic>>> getEmergencyContacts() async
+```
+
+### LocalStorageService
+
+Secure local data persistence with encryption.
+
+#### Core Methods
+
+**Initialization**
+```dart
+static Future<void> init() async
+```
+
+**Document Management**
+```dart
+// Save document
+static Future<void> saveDocument(Map<String, dynamic> document) async
+
+// Retrieve documents
+static Future<List<Map<String, dynamic>>> getDocuments() async
+
+// Delete document
+static Future<void> deleteDocument(int id) async
+```
+
+**Example Usage**:
+```dart
+// Initialize service
+await LocalStorageService.init();
+
+// Save document
+Map<String, dynamic> document = {
+  'name': 'Medical Report',
+  'path': '/storage/documents/report.pdf',
+  'size': 1024000,
+  'category': 'medical',
+  'encrypted': true,
+};
+await LocalStorageService.saveDocument(document);
+
+// Retrieve documents
+List<Map<String, dynamic>> documents = await LocalStorageService.getDocuments();
+```
+
+#### Data Models
+
+**Document Schema**
 ```dart
 {
   'id': int,
   'name': String,
   'path': String,
   'size': int,
-  'created_at': String,
-  'category': String?,
-  'encrypted': bool
+  'created_at': String,          // ISO 8601 format
+  'category': String?,           // Optional category
+  'encrypted': bool,             // Encryption status
+  'hash': String?                // File integrity hash
 }
 ```
 
-**Rappel**
+**Reminder Schema**
 ```dart
 {
   'id': int,
   'title': String,
   'description': String?,
-  'reminder_date': String,
+  'reminder_date': String,       // ISO 8601 format
   'is_completed': bool,
   'created_at': String,
-  'recurring': bool
+  'recurring': bool,
+  'recurring_pattern': String?   // 'daily', 'weekly', 'monthly'
 }
 ```
 
-**Contact d'urgence**
+**Contact Schema**
 ```dart
 {
   'id': int,
   'name': String,
   'phone': String,
   'relationship': String,
-  'is_ice': bool,
-  'created_at': String
-}
-```
-
-**Portail santé**
-```dart
-{
-  'id': int,
-  'name': String,
-  'url': String,
-  'description': String?,
-  'icon': String?,
-  'created_at': String
+  'is_ice': bool,               // In Case of Emergency
+  'created_at': String,
+  'notes': String?
 }
 ```
 
 ### CalendarService
 
-Service d'intégration avec le calendrier natif.
+Native calendar integration for reminder management.
 
+#### Core Operations
+
+**Initialization**
 ```dart
-class CalendarService {
-  // Initialisation
-  static Future<void> init() async
+static Future<void> init() async
+```
 
-  // Gestion des événements
-  static Future<void> addReminder({
-    required String title,
-    required String description,
-    required DateTime reminderDate,
-  }) async
+**Add Reminder**
+```dart
+static Future<void> addReminder({
+  required String title,
+  required String description,
+  required DateTime reminderDate,
+}) async
+```
 
-  static Future<List<Event>> getUpcomingEvents() async
-  static Future<void> deleteEvent(String eventId) async
+**Example Usage**:
+```dart
+await CalendarService.addReminder(
+  title: 'Take Medication',
+  description: 'Morning blood pressure medication',
+  reminderDate: DateTime(2024, 12, 20, 8, 0),
+);
+```
 
-  // Notifications
-  static Future<void> scheduleNotification({
-    required String title,
-    required String description,
-    required DateTime date,
-  }) async
-}
+**Get Upcoming Events**
+```dart
+static Future<List<Event>> getUpcomingEvents() async
+```
+
+**Schedule Notification**
+```dart
+static Future<void> scheduleNotification({
+  required String title,
+  required String description,
+  required DateTime date,
+}) async
 ```
 
 ### ContactsService
 
-Service d'intégration avec les contacts natifs.
+System contacts integration for emergency features.
 
+#### Contact Management
+
+**Get Contacts**
 ```dart
-class ContactsService {
-  // Récupération des contacts
-  static Future<List<Contact>> getContacts() async
-  static Future<List<Contact>> getEmergencyContacts() async
+static Future<List<Contact>> getContacts() async
+```
 
-  // Gestion des contacts
-  static Future<void> addEmergencyContact({
-    required String name,
-    required String phone,
-    required String relationship,
-  }) async
+**Get Emergency Contacts**
+```dart
+static Future<List<Contact>> getEmergencyContacts() async
+```
 
-  // Appels
-  static Future<void> makePhoneCall(String phoneNumber) async
-  static Future<void> sendSMS(String phoneNumber, String message) async
+**Make Phone Call**
+```dart
+static Future<bool> makeCall(String phoneNumber) async
+```
+
+**Example Usage**:
+```dart
+// Get emergency contacts
+List<Contact> emergencyContacts = await ContactsService.getEmergencyContacts();
+
+// Make emergency call
+bool callSuccess = await ContactsService.makeCall('+1234567890');
+if (callSuccess) {
+  print('Emergency call initiated');
 }
 ```
 
-### NotificationService
+## Backend API (Phase 3)
 
-Service de gestion des notifications locales.
+### FastAPI Endpoints
 
-```dart
-class NotificationService {
-  // Initialisation
-  static Future<void> init() async
+Base URL: `http://localhost:8000`
 
-  // Notifications immédiates
-  static Future<void> showNotification({
-    required String title,
-    required String body,
-    String? payload,
-  }) async
+#### Health Check
 
-  // Notifications programmées
-  static Future<void> scheduleNotification({
-    required int id,
-    required String title,
-    required String body,
-    required DateTime date,
-  }) async
+**GET** `/health`
 
-  // Gestion des canaux
-  static Future<void> createNotificationChannel({
-    required String id,
-    required String name,
-    required String description,
-  }) async
+**Response**:
+```json
+{
+  "status": "healthy",
+  "timestamp": "2024-12-13T14:30:00Z",
+  "version": "1.0.0"
 }
 ```
 
-## Backend Python (Phase 3)
+#### Document Endpoints
 
-### API FastAPI
+**POST** `/api/documents/upload`
 
-Le backend Python sera utilisé en Phase 3 pour la synchronisation et le partage familial.
+**Request**: Multipart form with PDF file
 
-#### Endpoints principaux
-
-**Documents**
-```
-GET    /api/documents          # Liste des documents
-POST   /api/documents          # Upload document
-GET    /api/documents/{id}     # Détails document
-DELETE /api/documents/{id}     # Supprimer document
-```
-
-**Rappels**
-```
-GET    /api/reminders          # Liste des rappels
-POST   /api/reminders          # Créer rappel
-PUT    /api/reminders/{id}     # Modifier rappel
-DELETE /api/reminders/{id}     # Supprimer rappel
-```
-
-**Contacts**
-```
-GET    /api/contacts           # Liste des contacts
-POST   /api/contacts           # Ajouter contact
-PUT    /api/contacts/{id}      # Modifier contact
-DELETE /api/contacts/{id}      # Supprimer contact
-```
-
-**Synchronisation**
-```
-POST   /api/sync/upload        # Upload données locales
-POST   /api/sync/download      # Télécharger données
-GET    /api/sync/status        # Statut synchronisation
-```
-
-#### Modèles Pydantic
-
-```python
-class DocumentResponse(BaseModel):
-    id: int
-    name: str
-    original_name: str
-    file_path: str
-    file_type: str
-    file_size: int
-    created_at: str
-
-
-class ReminderRequest(BaseModel):
-    title: str
-    description: str | None = None
-    reminder_date: str
-
-
-class EmergencyContactRequest(BaseModel):
-    name: str
-    phone: str
-    relationship: str
-    is_ice: bool = False
-```
-
-## Sécurité
-
-### Chiffrement local
-- **Algorithme** : AES-256
-- **Clé** : Générée localement
-- **IV** : Aléatoire pour chaque document
-
-### Authentification (Phase 3)
-- **JWT** : Tokens d'accès
-- **2FA** : Authentification à deux facteurs
-- **OAuth** : Intégration avec les providers
-
-### Permissions
-- **Calendrier** : Lecture/écriture
-- **Contacts** : Lecture
-- **Stockage** : Accès aux fichiers
-- **Notifications** : Envoi
-
-## Gestion d'erreurs
-
-### Codes d'erreur locaux
-```dart
-enum LocalError {
-  storageError,
-  calendarError,
-  contactsError,
-  notificationError,
-  encryptionError,
-  permissionError
+**Response**:
+```json
+{
+  "id": 123,
+  "filename": "document_20241213_143000.pdf",
+  "original_name": "report.pdf",
+  "file_size": 2048576,
+  "file_type": "application/pdf",
+  "created_at": "2024-12-13T14:30:00Z"
 }
 ```
 
-### Gestion des erreurs
+**GET** `/api/documents`
+
+**Response**:
+```json
+[
+  {
+    "id": 1,
+    "name": "Medical Report",
+    "original_name": "report.pdf",
+    "file_path": "/uploads/report_20241213.pdf",
+    "file_type": "application/pdf",
+    "file_size": 1024000,
+    "created_at": "2024-12-13T10:00:00Z"
+  }
+]
+```
+
+**GET** `/api/documents/{doc_id}`
+
+**DELETE** `/api/documents/{doc_id}`
+
+#### Reminder Endpoints
+
+**POST** `/api/reminders`
+
+**Request Body**:
+```json
+{
+  "title": "Doctor Appointment",
+  "description": "Annual checkup",
+  "reminder_date": "2024-12-20T09:00:00Z"
+}
+```
+
+**GET** `/api/reminders`
+
+**PUT** `/api/reminders/{reminder_id}`
+
+**DELETE** `/api/reminders/{reminder_id}`
+
+#### Contact Endpoints
+
+**POST** `/api/contacts`
+
+**Request Body**:
+```json
+{
+  "name": "Dr. Smith",
+  "phone": "+1234567890",
+  "relationship": "primary_doctor",
+  "is_ice": true
+}
+```
+
+**GET** `/api/contacts`
+
+**PUT** `/api/contacts/{contact_id}`
+
+**DELETE** `/api/contacts/{contact_id}`
+
+## Error Handling
+
+### Error Response Format
+
+```json
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid input data",
+    "details": {
+      "field": "reminder_date",
+      "issue": "Invalid date format"
+    },
+    "timestamp": "2024-12-13T14:30:00Z"
+  }
+}
+```
+
+### Error Codes
+
+| Code | Description | HTTP Status |
+|------|-------------|-------------|
+| `VALIDATION_ERROR` | Input validation failed | 400 |
+| `NOT_FOUND` | Resource not found | 404 |
+| `PERMISSION_DENIED` | Access denied | 403 |
+| `RATE_LIMITED` | Too many requests | 429 |
+| `SERVER_ERROR` | Internal server error | 500 |
+
+### Exception Handling
+
 ```dart
 try {
-  await LocalStorageService.saveDocument(document);
-} on LocalError catch (e) {
-  // Gestion spécifique par type d'erreur
-  switch (e) {
-    case LocalError.storageError:
-      // Afficher message d'erreur stockage
-      break;
-    case LocalError.permissionError:
-      // Demander permissions
-      break;
-    // ...
+  List<Map<String, dynamic>> documents = await ApiService.getDocuments();
+} on HttpException catch (e) {
+  if (e.statusCode == 404) {
+    debugPrint('No documents found');
+  } else {
+    debugPrint('HTTP Error: ${e.message}');
   }
+} on SocketException catch (e) {
+  debugPrint('Network error: $e');
+} catch (e) {
+  debugPrint('Unexpected error: $e');
 }
 ```
 
-## Tests
+## Authentication (Phase 3)
 
-### Tests unitaires
+### JWT Token Flow
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant A as API
+    participant D as Database
+
+    C->>A: POST /auth/login
+    A->>D: Validate credentials
+    D-->>A: User data
+    A-->>C: JWT Token
+
+    C->>A: API Request + Bearer Token
+    A->>A: Validate JWT
+    A-->>C: API Response
+```
+
+### Token Usage
+
 ```dart
-void main() {
-  group('LocalStorageService', () {
-    test('should save document', () async {
-      // Test de sauvegarde
-    });
+// Store token securely
+await SecureStorage.store('auth_token', token);
 
-    test('should retrieve documents', () async {
-      // Test de récupération
-    });
+// Add to API headers
+static Map<String, String> get _authHeaders => {
+  'Authorization': 'Bearer ${SecureStorage.get("auth_token")}',
+  'Content-Type': 'application/json',
+};
+```
+
+## Security
+
+### Encryption
+
+**Local Data Encryption**:
+- Algorithm: AES-256-GCM
+- Key derivation: PBKDF2
+- Storage: Keychain (iOS) / Keystore (Android)
+
+**API Security**:
+- HTTPS/TLS 1.3 for all communications
+- JWT tokens with short expiration
+- Rate limiting per client
+- Input validation and sanitization
+
+### Permissions
+
+| Service | Required Permissions | Justification |
+|---------|---------------------|---------------|
+| Calendar | Read/Write events | Reminder functionality |
+| Contacts | Read contact info | Emergency contacts |
+| Storage | App-specific files | Document storage |
+| Network | Internet access | Backend sync (Phase 3) |
+
+## Testing
+
+### Unit Test Examples
+
+```dart
+group('ApiService', () {
+  test('should upload document successfully', () async {
+    // Mock HTTP client
+    final mockClient = MockClient();
+
+    // Test document upload
+    File testFile = File('test_document.pdf');
+    Map<String, dynamic> result = await ApiService.uploadDocument(testFile);
+
+    expect(result['filename'], isNotNull);
+    expect(result['file_size'], greaterThan(0));
   });
-}
-```
 
-### Tests d'intégration
-```dart
-void main() {
-  group('CalendarService', () {
-    test('should create calendar event', () async {
-      // Test d'intégration calendrier
-    });
+  test('should handle network errors gracefully', () async {
+    // Test network error handling
+    expect(
+      () => ApiService.getDocuments(),
+      throwsA(isA<SocketException>()),
+    );
   });
-}
+});
 ```
 
-## Monitoring
+### Integration Test Examples
 
-### Logs locaux
 ```dart
-class Logger {
-  static void info(String message) {
-    // Log info
+group('End-to-End Document Flow', () {
+  testWidgets('should upload and retrieve document', (tester) async {
+    // Test complete document workflow
+    await tester.pumpWidget(MyApp());
+
+    // Upload document
+    await tester.tap(find.byKey(Key('upload_button')));
+    await tester.pumpAndSettle();
+
+    // Verify document appears in list
+    expect(find.text('test_document.pdf'), findsOneWidget);
+  });
+});
+```
+
+## Performance
+
+### Response Time Targets
+
+| Operation | Target | Timeout |
+|-----------|--------|---------|
+| Document upload | < 5s | 30s |
+| Document list | < 500ms | 10s |
+| Reminder create | < 200ms | 5s |
+| Contact sync | < 1s | 15s |
+
+### Caching Strategy
+
+```dart
+class ApiCache {
+  static final Map<String, CacheEntry> _cache = {};
+  static const Duration defaultTTL = Duration(minutes: 5);
+
+  static Future<T?> get<T>(String key) async {
+    CacheEntry? entry = _cache[key];
+    if (entry?.isExpired ?? true) return null;
+    return entry!.data as T;
   }
 
-  static void error(String message, [dynamic error]) {
-    // Log erreur
-  }
-
-  static void debug(String message) {
-    // Log debug
+  static void set<T>(String key, T data, [Duration? ttl]) {
+    _cache[key] = CacheEntry(data, ttl ?? defaultTTL);
   }
 }
 ```
 
-### Métriques
-- Nombre de documents stockés
-- Fréquence d'utilisation des rappels
-- Erreurs de synchronisation
-- Performance des opérations
+## Migration Guide
+
+### API Version Changes
+
+When upgrading between API versions, follow these steps:
+
+1. **Check compatibility**: Review breaking changes
+2. **Update models**: Modify data models if needed
+3. **Test thoroughly**: Run all integration tests
+4. **Gradual rollout**: Deploy incrementally
+
+### Data Migration
+
+```dart
+class MigrationManager {
+  static Future<void> migrateTo(String version) async {
+    switch (version) {
+      case '2.0':
+        await _migrateToV2();
+        break;
+      case '3.0':
+        await _migrateToV3();
+        break;
+    }
+  }
+
+  static Future<void> _migrateToV2() async {
+    // Add new fields, update schemas
+  }
+}
+```
+
+---
+
+*This API documentation is automatically updated with each release. For questions or issues, please refer to our [GitHub Issues](https://github.com/arkalia-luna-system/arkalia-cia/issues).*

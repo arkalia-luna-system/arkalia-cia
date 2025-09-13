@@ -241,20 +241,24 @@ class SecurityDashboard:
                             "scan_speed": total_files / max(1, len(vulnerabilities)),
                             "vulnerability_density": total_vulns / max(1, total_files),
                             "risk_distribution": {
-                                "critical_ratio": (xss_count + sql_count)
-                                / max(1, total_vulns),
-                                "medium_ratio": len(dangerous_functions)
-                                / max(1, total_vulns),
-                                "safe_ratio": (total_files - total_vulns)
-                                / max(1, total_files),
+                                "critical_ratio": (
+                                    (xss_count + sql_count) / max(1, total_vulns)
+                                ),
+                                "medium_ratio": (
+                                    len(dangerous_functions) / max(1, total_vulns)
+                                ),
+                                "safe_ratio": (
+                                    (total_files - total_vulns) / max(1, total_files)
+                                ),
                             },
                         }
 
                         # Métriques de qualité du code
                         security_data["code_quality_metrics"] = {
                             "security_awareness": max(0, 100 - (total_vulns * 0.1)),
-                            "code_complexity": total_files
-                            / max(1, len(vulnerabilities)),
+                            "code_complexity": (
+                                total_files / max(1, len(vulnerabilities))
+                            ),
                             "maintenance_index": max(
                                 0, 100 - (len(dangerous_functions) * 0.05)
                             ),
@@ -464,16 +468,12 @@ class SecurityDashboard:
         score_color = (
             "#28a745"
             if security_score >= 85
-            else "#ffc107"
-            if security_score >= 70
-            else "#dc3545"
+            else "#ffc107" if security_score >= 70 else "#dc3545"
         )
         score_status = (
             "Sécurisé"
             if security_score >= 85
-            else "Attention"
-            if security_score >= 70
-            else "Critique"
+            else "Attention" if security_score >= 70 else "Critique"
         )
 
         html_template = f"""<!DOCTYPE html>

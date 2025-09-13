@@ -89,6 +89,7 @@ ci: clean install-dev check build ## Pipeline CI complet
 flutter-deps: ## Installer les dépendances Flutter
 	@echo "$(GREEN)Installation des dépendances Flutter...$(NC)"
 	@if command -v flutter >/dev/null 2>&1; then \
+		./clean_macos_files.sh; \
 		cd arkalia_cia && flutter pub get; \
 	else \
 		echo "$(YELLOW)Flutter non installé, skip...$(NC)"; \
@@ -106,6 +107,15 @@ flutter-build: ## Construire l'application Flutter
 	@echo "$(GREEN)Construction de l'application Flutter...$(NC)"
 	@if command -v flutter >/dev/null 2>&1; then \
 		cd arkalia_cia && flutter build apk; \
+	else \
+		echo "$(YELLOW)Flutter non installé, skip...$(NC)"; \
+	fi
+
+flutter-test: ## Lancer les tests Flutter
+	@echo "$(GREEN)Lancement des tests Flutter...$(NC)"
+	@if command -v flutter >/dev/null 2>&1; then \
+		./clean_macos_files.sh; \
+		cd arkalia_cia && flutter test --coverage; \
 	else \
 		echo "$(YELLOW)Flutter non installé, skip...$(NC)"; \
 	fi
