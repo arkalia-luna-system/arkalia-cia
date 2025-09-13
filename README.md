@@ -8,12 +8,14 @@
 [![CI/CD](https://img.shields.io/badge/CI%2FCD-Passing-brightgreen.svg)](https://github.com/arkalia-luna-system/arkalia-cia/actions)
 [![Coverage](https://img.shields.io/badge/Coverage-66%25-green.svg)](https://github.com/arkalia-luna-system/arkalia-cia/actions)
 [![Phase](https://img.shields.io/badge/Phase-2%20Enhanced%20Features-orange.svg)](https://github.com/arkalia-luna-system/arkalia-cia/tree/develop)
+[![Good First Issue](https://img.shields.io/badge/Good%20First-Issue-green.svg)](https://github.com/arkalia-luna-system/arkalia-cia/labels/good%20first%20issue)
+[![Help Wanted](https://img.shields.io/badge/Help-Wanted-orange.svg)](https://github.com/arkalia-luna-system/arkalia-cia/labels/help%20wanted)
 
 ## Overview
 
 > 🔄 **Project Status**: Phase 2 - Enhanced Features **IN PROGRESS** (develop branch)
 
-**Arkalia CIA** is a production-ready mobile application built with Flutter, designed to manage medical documents, health reminders, and emergency contacts. 
+**Arkalia CIA** is a production-ready mobile application built with Flutter, designed to manage medical documents, health reminders, and emergency contacts.
 
 **🎯 Key Benefits**: 100% offline operation, military-grade encryption, senior-friendly design, and zero cloud dependency for maximum privacy and reliability.
 
@@ -246,7 +248,7 @@ make deps-update        # Update dependencies
 ### 🏠 Local-First Architecture Benefits
 
 - **📱 Device-Only Storage**: All data remains on your phone
-- **🔒 Military-Grade Encryption**: AES-256 protects sensitive documents  
+- **🔒 Military-Grade Encryption**: AES-256 protects sensitive documents
 - **🌍 Zero Cloud Dependency**: Works completely offline
 - **👁️ Full Transparency**: Open source code, no hidden functions
 - **⚡ Instant Access**: No network delays or outages
@@ -285,18 +287,18 @@ make deps-update        # Update dependencies
 graph LR
     A[Phase 1<br/>Local MVP<br/>✅ Complete] --> B[Phase 2<br/>Enhanced Features<br/>🔄 In Progress]
     B --> C[Phase 3<br/>Connected Ecosystem<br/>📋 Q1 2025]
-    
+
     A1[Flutter App<br/>Local Storage<br/>Basic UI] --> A
     A2[Security<br/>AES-256<br/>Offline Mode] --> A
-    
+
     B1[Native Integration<br/>Calendar/Contacts] --> B
     B2[Senior UX<br/>Accessibility] --> B
     B3[Advanced Features<br/>Voice/Widgets] --> B
-    
+
     C1[Cloud Sync<br/>Optional] --> C
     C2[Family Sharing<br/>Secure] --> C
     C3[Robot Integration<br/>Reachy Mini] --> C
-    
+
     style A fill:#90EE90
     style B fill:#FFD700
     style C fill:#FFB6C1
@@ -306,30 +308,30 @@ graph LR
 
 ### For Users
 
-**Q: Do I need internet to use the app?**  
+**Q: Do I need internet to use the app?**
 A: No! Arkalia CIA works 100% offline. All your data stays on your phone.
 
-**Q: What happens if I change phones?**  
+**Q: What happens if I change phones?**
 A: Phase 3 will include optional cloud backup. Currently, use your phone's backup system.
 
-**Q: Who can see my medical documents?**  
+**Q: Who can see my medical documents?**
 A: Only you. Documents are encrypted on your device with AES-256. No cloud storage.
 
-**Q: Is it suitable for seniors?**  
+**Q: Is it suitable for seniors?**
 A: Yes! Large buttons, clear text, and simple navigation designed for all ages.
 
-**Q: How secure is my data?**  
+**Q: How secure is my data?**
 A: Military-grade encryption (AES-256), no data transmission, local-only storage.
 
 ### For Developers
 
-**Q: Can I contribute to the project?**  
+**Q: Can I contribute to the project?**
 A: Absolutely! See our [Contributing Guide](docs/CONTRIBUTING.md) for details.
 
-**Q: What's the tech stack?**  
+**Q: What's the tech stack?**
 A: Flutter 3.35.3 (frontend), Python 3.10.14 (backend), SQLite (database).
 
-**Q: How do I run the project locally?**  
+**Q: How do I run the project locally?**
 A: `git clone`, `flutter pub get`, `flutter run`. See Quick Start section above.
 
 ## What Users Say
@@ -346,7 +348,7 @@ A: `git clone`, `flutter pub get`, `flutter run`. See Quick Start section above.
 ### 📈 Beta Testing Results
 
 - **🎯 User Satisfaction**: 4.8/5 stars
-- **⚡ Task Completion**: 94% success rate  
+- **⚡ Task Completion**: 94% success rate
 - **🕒 Learning Time**: <5 minutes average
 - **🔄 Daily Usage**: 78% retention after 1 week
 
@@ -367,7 +369,7 @@ We conducted extensive testing with **24 senior users (ages 65-82)** to ensure t
 
 ### 🏥 **Healthcare Provider Feedback**
 
-> *"We tested Arkalia CIA with 15 of our elderly patients. The app significantly reduced confusion around medication reminders and document management."*  
+> *"We tested Arkalia CIA with 15 of our elderly patients. The app significantly reduced confusion around medication reminders and document management."*
 > **— Dr. Sarah Chen, Geriatric Medicine, Regional Medical Center**
 
 **Clinical Results**:
@@ -404,7 +406,27 @@ pytest tests/ -v --cov=arkalia_cia_python_backend
 # Unit tests: 31 test cases
 ```
 
+## 🌐 **Arkalia Luna Ecosystem**
+
+### **🔗 Related Projects**
+
+| Project | Usage in CIA | Integration |
+|---------|-------------|-------------|
+| **📊 [Metrics Collector](https://github.com/arkalia-luna-system/arkalia-metrics-collector)** | App usage analytics | Health monitoring |
+| **🔧 [Athalia DevOps](https://github.com/arkalia-luna-system/athalia-dev-setup)** | Automated deployment | CI/CD pipeline |
+| **⚙️ [Base Template](https://github.com/arkalia-luna-system/base-template)** | Backend structure | Python API foundation |
+| **🎮 [Arkalia Quest](https://github.com/arkalia-luna-system/arkalia-quest)** | Educational notifications | Learning reminders |
+
+### **💡 Cross-Platform Features**
+- **Document sync** with Arkalia ecosystem
+- **Health metrics** feeding into central analytics
+- **Educational content** from Quest integration
+
+---
+
 ## Contributing
+
+> **🌍 English**: We welcome contributions! Check [CONTRIBUTING.md](docs/CONTRIBUTING.md) for guidelines. Look for **🏷️ good first issue** and **🆘 help wanted** labels.
 
 See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for development guidelines, code standards, and contribution process.
 
