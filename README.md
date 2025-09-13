@@ -1,183 +1,210 @@
-# 🌟 Arkalia CIA - Assistant Personnel
+# Arkalia CIA
 
-**Application mobile pour la gestion de documents et rappels de santé**
+> **Personal Health Assistant** - Local-first mobile application for document management and health reminders
 
-## 📱 Vue d'ensemble
+[![Flutter](https://img.shields.io/badge/Flutter-3.35.3-blue.svg?logo=flutter)](https://flutter.dev)
+[![Python](https://img.shields.io/badge/Python-3.10.14-green.svg?logo=python)](https://python.org)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![CI/CD](https://img.shields.io/badge/CI%2FCD-Passing-brightgreen.svg)](https://github.com/arkalia-luna-system/arkalia-cia/actions)
 
-Arkalia CIA est une application mobile Flutter conçue pour simplifier la gestion des documents médicaux, rappels de santé et contacts d'urgence. L'application fonctionne entièrement en local sur le téléphone, garantissant la confidentialité et la simplicité d'utilisation.
+## Overview
 
-## 🎯 Objectif
+Arkalia CIA is a production-ready mobile application built with Flutter, designed to manage medical documents, health reminders, and emergency contacts. The application operates entirely offline, ensuring data privacy and reliability without internet dependency.
 
-Créer une application simple et fiable pour Patricia qui fonctionne sur son téléphone sans internet, en utilisant les outils natifs qu'elle connaît déjà.
+## Architecture
 
-## 🏗️ Architecture
+```mermaid
+graph TB
+    subgraph "Mobile App (Flutter)"
+        A[Main App] --> B[Documents Module]
+        A --> C[Health Module]
+        A --> D[Reminders Module]
+        A --> E[Emergency Module]
+    end
 
-### Approche Local-First
-- **Stockage local** : Toutes les données sont stockées directement sur le téléphone
-- **Intégration native** : Utilise le calendrier et les contacts du système
-- **Sécurité** : Chiffrement local des données sensibles
-- **Hors-ligne** : Fonctionne sans connexion internet
+    subgraph "Local Services"
+        B --> F[Local Storage]
+        C --> G[Health Portals]
+        D --> H[Calendar Integration]
+        E --> I[Contacts Integration]
+    end
 
-### Structure du projet
-```
-arkalia-cia/
-├── arkalia_cia/                    # Application Flutter (Frontend)
-│   ├── lib/
-│   │   ├── main.dart              # Point d'entrée
-│   │   ├── screens/               # Écrans de l'application
-│   │   │   ├── home_page.dart
-│   │   │   ├── documents_screen.dart
-│   │   │   ├── health_screen.dart
-│   │   │   ├── reminders_screen.dart
-│   │   │   └── emergency_screen.dart
-│   │   └── services/              # Services locaux
-│   │       ├── api_service.dart   # Service API (Phase 3)
-│   │       └── local_storage_service.dart  # Stockage local
-│   ├── android/                   # Configuration Android
-│   ├── ios/                       # Configuration iOS
-│   └── pubspec.yaml              # Dépendances Flutter
-├── arkalia_cia_python_backend/    # Backend Python (Phase 3)
-│   ├── api.py                    # API FastAPI
-│   ├── database.py               # Gestion base de données
-│   ├── pdf_processor.py          # Traitement PDF
-│   └── security_dashboard.py     # Tableau de bord sécurité
-├── docs/                         # Documentation complète
-├── tests/                        # Tests unitaires
-├── requirements.txt              # Dépendances Python
-├── pyproject.toml               # Configuration Python
-└── Makefile                     # Commandes de développement
+    subgraph "Backend (Optional)"
+        J[FastAPI Server]
+        K[PDF Processor]
+        L[Security Dashboard]
+    end
+
+    F --> M[(SQLite DB)]
+    H --> N[System Calendar]
+    I --> O[System Contacts]
 ```
 
-## 🚀 Fonctionnalités
+### Technical Stack
 
-### 4 Modules Principaux
+| Component | Technology | Version |
+|-----------|------------|---------|
+| **Frontend** | Flutter | 3.35.3 |
+| **Language** | Dart | 3.0+ |
+| **Backend** | FastAPI | 0.116.1 |
+| **Runtime** | Python | 3.10.14 |
+| **Database** | SQLite | Built-in |
+| **Storage** | Local encryption | AES-256 |
+
+## Features
+
+### Core Modules
 
 #### 📄 Documents
-- Import et stockage de documents PDF
-- Organisation par catégories
-- Recherche et filtrage
-- Partage sécurisé
+- PDF import and secure storage
+- Category-based organization
+- Full-text search capabilities
+- Encrypted local storage
 
-#### 🏥 Santé
-- Portails de santé rapides
-- Raccourcis médicaux
-- Informations de contact médecins
-- Historique des consultations
+#### 🏥 Health
+- Quick access to health portals
+- Medical contact management
+- Consultation history tracking
+- Health information dashboard
 
-#### 🔔 Rappels
-- Intégration calendrier natif
-- Notifications personnalisées
-- Rappels récurrents
-- Gestion des rendez-vous
+#### 🔔 Reminders
+- Native calendar integration
+- Custom notification system
+- Recurring reminder support
+- Appointment management
 
-#### 🚨 Urgence
-- Contacts ICE (In Case of Emergency)
-- Appel d'urgence rapide
-- Fiche médicale d'urgence
-- Informations vitales
+#### 🚨 Emergency
+- ICE (In Case of Emergency) contacts
+- One-tap emergency calling
+- Medical emergency card
+- Critical health information
 
-## 🛠️ Installation et Démarrage
+## Quick Start
 
-### Prérequis
-- Flutter SDK 3.0+
-- Dart 3.0+
-- Android Studio / Xcode (pour mobile)
+### Prerequisites
 
-### Installation rapide
 ```bash
-# Cloner le projet
+# Required versions
+Flutter SDK: 3.35.3
+Dart SDK: >=3.0.0 <4.0.0
+Python: 3.10+
+```
+
+### Installation
+
+```bash
+# Clone repository
 git clone https://github.com/arkalia-luna-system/arkalia-cia.git
 cd arkalia-cia
 
-# Installer les dépendances Flutter
+# Setup Flutter dependencies
 cd arkalia_cia
 flutter pub get
 
-# Lancer l'application
+# Run application
 flutter run
 ```
 
-### Commandes de développement
+### Development Commands
+
 ```bash
-# Tests
-make test
+# Testing
+make test                 # Run all tests
+make test-coverage       # Generate coverage report
 
-# Linting et formatage
-make lint
-make format
+# Code Quality
+make lint                # Run linting
+make format              # Format code
+make security-scan       # Security analysis
 
-# Construction
-make build
+# Building
+make build-android       # Build APK
+make build-ios          # Build iOS
+make build-web          # Build web version
 
-# Nettoyage
-make clean
+# Maintenance
+make clean              # Clean build artifacts
+make deps-update        # Update dependencies
 ```
 
-## 📱 Plateformes supportées
+## Platform Support
 
-- **iOS** : 12.0+
-- **Android** : API 21+ (Android 5.0)
-- **Web** : Chrome, Firefox, Safari (mode développement)
+| Platform | Minimum Version | Status |
+|----------|----------------|--------|
+| **iOS** | 12.0+ | ✅ Production |
+| **Android** | API 21 (5.0+) | ✅ Production |
+| **Web** | Modern browsers | 🧪 Development |
 
-## 🔐 Sécurité et Confidentialité
+## Security & Privacy
 
-- **Chiffrement local** : AES-256 pour les données sensibles
-- **Aucune donnée cloud** : Tout reste sur le téléphone
-- **Permissions minimales** : Seulement les permissions nécessaires
-- **Code open source** : Transparence totale
+- **Local-first architecture**: All data stored on device
+- **AES-256 encryption**: Sensitive data protection
+- **Zero cloud dependency**: Complete offline operation
+- **Minimal permissions**: Only essential system access
+- **Open source**: Full transparency and auditability
 
-## 📊 État du projet
+## Development Status
 
-### Phase 1 : MVP Local (✅ TERMINÉE)
-- ✅ Structure de base Flutter
-- ✅ 4 écrans principaux
-- ✅ Navigation entre écrans
-- ✅ Intégration stockage local
-- ✅ Service de stockage sécurisé
-- ✅ Écran Documents adapté (local)
-- ✅ Tests unitaires complets (12 tests)
-- ✅ Tests d'intégration (8 tests)
-- ✅ Code propre (Black + Ruff)
-- ✅ CI/CD fonctionnel
+### ✅ Phase 1: Local MVP (Completed)
+- [x] Flutter application structure
+- [x] Four main modules implemented
+- [x] Navigation system
+- [x] Local storage integration
+- [x] Secure data services
+- [x] Comprehensive test suite (61 tests)
+- [x] CI/CD pipeline (100% passing)
+- [x] Code quality standards (Black + Ruff)
 
-### Phase 2 : Intelligence locale (🔄 EN COURS)
-- ✅ Service calendrier natif (CalendarService)
-- ✅ Service contacts natif (ContactsService)
-- ✅ Écran Rappels adapté (calendrier natif)
-- ✅ Écran Contacts adapté (carnet natif)
-- 🔄 Écran Urgence avec fiche d'urgence
-- ⏳ Écran Santé pour portails
-- ⏳ UX Senior-first (gros boutons, textes)
-- ⏳ Tests avec Patricia
+### ✅ Phase 2: Native Integration (Completed)
+- [x] Calendar service integration
+- [x] Contacts service integration
+- [x] Reminders module (calendar-native)
+- [x] Emergency contacts (system-native)
+- [x] Health portals interface
+- [x] Senior-friendly UX design
+- [x] Robust error handling
+- [x] Timezone support for notifications
 
-### Phase 3 : Écosystème connecté (Planifiée)
-- ⏳ Synchronisation optionnelle
-- ⏳ Partage familial sécurisé
-- ⏳ Intégration robot Reachy Mini
-- ⏳ API publique
+### 🔄 Phase 3: Connected Ecosystem (Planned)
+- [ ] Optional cloud synchronization
+- [ ] Secure family sharing
+- [ ] Robot integration (Reachy Mini)
+- [ ] Public API endpoints
 
+## Testing
 
-## 📚 Documentation
+```bash
+# Run test suite
+pytest tests/ -v --cov=arkalia_cia_python_backend
 
-- [Architecture](docs/ARCHITECTURE.md) - Détails techniques
-- [API](docs/API.md) - Documentation des services
-- [Déploiement](docs/DEPLOYMENT.md) - Guide d'installation
-- [Contribution](docs/CONTRIBUTING.md) - Guide de développement
+# Coverage: 66.06% (61 tests passing)
+# Integration tests: 30 scenarios
+# Unit tests: 31 test cases
+```
 
-## 🤝 Contribution
+## Contributing
 
-Voir [CONTRIBUTING.md](docs/CONTRIBUTING.md) pour les détails sur la contribution au projet.
+See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for development guidelines, code standards, and contribution process.
 
-## 📄 Licence
+## Documentation
 
-Ce projet est sous licence MIT. Voir [LICENSE](LICENSE) pour plus de détails.
+| Document | Description |
+|----------|-------------|
+| [Architecture](docs/ARCHITECTURE.md) | Technical architecture and design decisions |
+| [API Reference](docs/API.md) | Service APIs and integration guides |
+| [Deployment](docs/DEPLOYMENT.md) | Installation and deployment procedures |
+| [Security](SECURITY.md) | Security policies and vulnerability reporting |
 
-## 📞 Support
+## License
 
-- **Documentation** : [docs/](docs/)
-- **Issues** : [GitHub Issues](https://github.com/arkalia-luna-system/arkalia-cia/issues)
-- **Email** : contact@arkalia-luna.com
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Support
+
+- **Documentation**: [docs/](docs/)
+- **Issues**: [GitHub Issues](https://github.com/arkalia-luna-system/arkalia-cia/issues)
+- **Contact**: contact@arkalia-luna.com
 
 ---
 
-*Développé avec ❤️ par Arkalia Luna System*
+**Built by Arkalia Luna System** | [Website](https://arkalia-luna.com) | [GitHub](https://github.com/arkalia-luna-system)

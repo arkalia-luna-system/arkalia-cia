@@ -1,169 +1,412 @@
-# 🏗️ Architecture - Arkalia CIA
+# Architecture Documentation
 
-## Vue d'ensemble
+> **Arkalia CIA** - Technical architecture and system design
 
-Arkalia CIA suit une architecture **local-first** qui privilégie la simplicité, la fiabilité et la confidentialité. L'application fonctionne entièrement sur le téléphone sans dépendance externe.
+## Overview
 
-## Principes architecturaux
+Arkalia CIA implements a **local-first architecture** prioritizing simplicity, reliability, and data privacy. The application operates entirely on-device without external dependencies for core functionality.
 
-### 1. Local-First
-- Toutes les données sont stockées localement
-- Aucune dépendance réseau pour le fonctionnement de base
-- Synchronisation optionnelle en Phase 3
+## Architectural Principles
 
-### 2. Intégration native
-- Utilise les APIs natives du système d'exploitation
-- Calendrier, contacts, notifications du téléphone
-- Expérience utilisateur familière
+### 1. Local-First Design
+- All data stored locally on device
+- Zero network dependency for core operations
+- Optional synchronization in Phase 3
+- Offline-by-default functionality
 
-### 3. Sécurité par défaut
-- Chiffrement local des données sensibles
-- Aucune donnée en clair
-- Permissions minimales
+### 2. Native Integration
+- Leverages platform-native APIs
+- System calendar and contacts integration
+- Familiar user experience patterns
+- Minimal custom infrastructure
 
-## Architecture technique
+### 3. Security by Design
+- AES-256 encryption for sensitive data
+- Minimal permission requirements
+- No plaintext data storage
+- Privacy-first data handling
 
-### Frontend Flutter
+## System Architecture
+
+```mermaid
+graph TB
+    subgraph "Presentation Layer"
+        A[Flutter UI] --> B[Home Screen]
+        A --> C[Documents Screen]
+        A --> D[Health Screen]
+        A --> E[Reminders Screen]
+        A --> F[Emergency Screen]
+    end
+
+    subgraph "Service Layer"
+        G[LocalStorageService] --> H[Encrypted Storage]
+        I[CalendarService] --> J[System Calendar]
+        K[ContactsService] --> L[System Contacts]
+        M[APIService] --> N[Backend API]
+    end
+
+    subgraph "Data Layer"
+        H --> O[(SQLite)]
+        J --> P[Calendar DB]
+        L --> Q[Contacts DB]
+        N --> R[(Backend DB)]
+    end
+
+    subgraph "Security Layer"
+        S[AES-256 Encryption]
+        T[Keychain/Keystore]
+        U[Permission Manager]
+    end
+
+    B --> G
+    C --> G
+    D --> G
+    E --> I
+    F --> K
+
+    G --> S
+    S --> T
+    A --> U
+```
+
+## Component Structure
+
+### Frontend (Flutter)
 
 ```
 lib/
-├── main.dart                 # Point d'entrée
-├── screens/                  # Écrans de l'application
-│   ├── home_page.dart       # Écran principal
-│   ├── documents_screen.dart # Gestion documents
-│   ├── health_screen.dart   # Portails santé
-│   ├── reminders_screen.dart # Rappels et calendrier
-│   └── emergency_screen.dart # Contacts d'urgence
-└── services/                 # Services locaux
-    ├── local_storage_service.dart # Stockage local
-    ├── calendar_service.dart      # Intégration calendrier
-    ├── contacts_service.dart      # Gestion contacts
-    └── notification_service.dart  # Notifications
+├── main.dart                     # Application entry point
+├── screens/                      # UI screens
+│   ├── home_page.dart            # Main dashboard
+│   ├── documents_screen.dart     # Document management
+│   ├── health_screen.dart        # Health portals
+│   ├── reminders_screen.dart     # Calendar integration
+│   └── emergency_screen.dart     # Emergency contacts
+└── services/                     # Business logic
+    ├── api_service.dart          # Backend communication
+    ├── calendar_service.dart     # Calendar integration
+    ├── contacts_service.dart     # Contacts management
+    └── local_storage_service.dart # Local data persistence
 ```
 
-### Backend Python (Phase 3)
+### Backend (Python)
 
 ```
 arkalia_cia_python_backend/
-├── api.py                   # API FastAPI
-├── database.py              # Gestion base de données
-├── pdf_processor.py         # Traitement PDF
-├── security_dashboard.py    # Tableau de bord sécurité
-└── storage.py               # Gestion stockage
+├── api.py                        # FastAPI endpoints
+├── auto_documenter.py            # Documentation generator
+├── database.py                   # Database operations
+├── pdf_processor.py              # PDF handling
+├── security_dashboard.py         # Security monitoring
+└── storage.py                    # File management
 ```
 
-## Flux de données
+## Data Flow Patterns
 
-### Phase 1 : Local uniquement
+### Phase 1: Local Operations
 
 ```mermaid
-graph TD
-    A[Utilisateur] --> B[Interface Flutter]
-    B --> C[Services locaux]
-    C --> D[Stockage local]
-    C --> E[APIs natives]
-    E --> F[Calendrier système]
-    E --> G[Contacts système]
-    E --> H[Notifications système]
+sequenceDiagram
+    participant U as User
+    participant UI as Flutter UI
+    participant S as Service Layer
+    participant D as Data Layer
+    participant N as Native APIs
+
+    U->>UI: User Action
+    UI->>S: Service Call
+    S->>D: Data Operation
+    D-->>S: Data Response
+    S->>N: Native Integration
+    N-->>S: Native Response
+    S-->>UI: Service Response
+    UI-->>U: UI Update
 ```
 
-### Phase 3 : Avec synchronisation
+### Phase 3: Hybrid Operations
 
 ```mermaid
-graph TD
-    A[Utilisateur] --> B[Interface Flutter]
-    B --> C[Services locaux]
-    C --> D[Stockage local]
-    C --> E[APIs natives]
-    B --> F[Service de sync]
-    F --> G[Backend Python]
-    G --> H[Base de données]
-    F --> I[Partage familial]
+sequenceDiagram
+    participant U as User
+    participant UI as Flutter UI
+    participant LS as Local Service
+    participant RS as Remote Service
+    participant BE as Backend
+
+    U->>UI: User Action
+    UI->>LS: Local Check
+    alt Data Available Locally
+        LS-->>UI: Local Data
+    else Sync Required
+        UI->>RS: Remote Request
+        RS->>BE: API Call
+        BE-->>RS: API Response
+        RS->>LS: Cache Update
+        RS-->>UI: Remote Data
+    end
+    UI-->>U: Response
 ```
 
-## Services principaux
+## Service Specifications
 
 ### LocalStorageService
-- Stockage sécurisé des données
-- Chiffrement AES-256
-- Gestion des documents, rappels, contacts
+
+**Purpose**: Secure local data persistence
+
+**Key Features**:
+- AES-256 encryption for sensitive data
+- SQLite database operations
+- Document metadata management
+- User preference storage
+
+**Methods**:
+```dart
+Future<void> saveDocument(Document doc);
+Future<List<Document>> getDocuments();
+Future<void> saveReminder(Reminder reminder);
+Future<List<Reminder>> getReminders();
+```
 
 ### CalendarService
-- Intégration calendrier natif
-- Création d'événements
-- Notifications de rappels
+
+**Purpose**: System calendar integration
+
+**Key Features**:
+- Native calendar API integration
+- Event creation and management
+- Notification scheduling
+- Timezone handling
+
+**Methods**:
+```dart
+Future<void> createEvent(CalendarEvent event);
+Future<List<CalendarEvent>> getEvents();
+Future<void> scheduleNotification(Reminder reminder);
+```
 
 ### ContactsService
-- Accès aux contacts du téléphone
-- Gestion des contacts ICE
-- Appels directs
 
-### NotificationService
-- Notifications locales
-- Rappels programmés
-- Alertes d'urgence
+**Purpose**: System contacts integration
 
-## Sécurité
+**Key Features**:
+- Native contacts API access
+- Emergency contact management
+- Direct calling functionality
+- Contact synchronization
 
-### Chiffrement
-- **Algorithme** : AES-256
-- **Clé** : Générée localement
-- **Stockage** : Keychain (iOS) / Keystore (Android)
+**Methods**:
+```dart
+Future<List<Contact>> getContacts();
+Future<void> addContact(Contact contact);
+Future<bool> makeCall(String phoneNumber);
+```
 
-### Permissions
-- **Calendrier** : Lecture/écriture des événements
-- **Contacts** : Lecture des contacts
-- **Stockage** : Accès aux fichiers de l'app
-- **Notifications** : Envoi de notifications
+### APIService
 
-### Données sensibles
-- Documents médicaux chiffrés
-- Informations de contact protégées
-- Aucune donnée transmise sans consentement
+**Purpose**: Backend communication (Phase 3)
 
-## Évolutivité
+**Key Features**:
+- FastAPI endpoint communication
+- Document upload/download
+- Synchronization management
+- Error handling and retry logic
 
-### Phase 1 : MVP Local
-- Fonctionnalités de base
-- Stockage local uniquement
-- Interface simple
+## Security Architecture
 
-### Phase 2 : Intelligence locale
-- Suggestions contextuelles
-- Reconnaissance vocale
-- Widgets système
+### Encryption Strategy
 
-### Phase 3 : Écosystème connecté
-- Synchronisation cloud
-- Partage familial
-- Intégration robot
+```mermaid
+graph LR
+    A[Raw Data] --> B[AES-256 Encryption]
+    B --> C[Encrypted Data]
+    C --> D[SQLite Storage]
 
-## Performance
+    E[Encryption Key] --> F[Keychain/Keystore]
+    E --> B
 
-### Optimisations
-- Chargement paresseux des données
-- Cache local intelligent
-- Compression des documents
-- Interface réactive
+    G[User Authentication] --> H[Biometric/PIN]
+    H --> I[Key Access]
+    I --> E
+```
 
-### Limites
-- Stockage limité par l'appareil
-- Pas de synchronisation temps réel
-- Dépendance aux APIs natives
+### Permission Model
 
-## Maintenance
+| Permission | Purpose | Justification |
+|------------|---------|---------------|
+| Calendar | Read/Write events | Reminder functionality |
+| Contacts | Read contact info | Emergency contacts |
+| Storage | App-specific files | Document storage |
+| Notifications | Alert delivery | Reminder notifications |
 
-### Tests
-- Tests unitaires pour chaque service
-- Tests d'intégration avec les APIs natives
-- Tests de performance
+### Data Classification
 
-### Monitoring
-- Logs locaux
-- Métriques d'utilisation
-- Rapports d'erreurs
+| Data Type | Sensitivity | Encryption | Storage |
+|-----------|-------------|------------|---------|
+| Documents | High | AES-256 | Local only |
+| Health Info | High | AES-256 | Local only |
+| Reminders | Medium | Metadata only | Calendar sync |
+| Contacts | Medium | Reference only | System contacts |
+| Preferences | Low | None | Local storage |
 
-### Mises à jour
-- Mises à jour via les stores
-- Migration des données locales
-- Rétrocompatibilité
+## Performance Considerations
+
+### Optimization Strategies
+
+1. **Lazy Loading**: Load data on-demand
+2. **Local Caching**: Cache frequently accessed data
+3. **Document Compression**: Compress large files
+4. **Background Processing**: Handle heavy operations asynchronously
+
+### Performance Metrics
+
+| Operation | Target Response Time | Max File Size |
+|-----------|---------------------|---------------|
+| Document Load | < 500ms | 10MB |
+| Search Query | < 200ms | N/A |
+| Calendar Sync | < 1s | N/A |
+| Contact Access | < 100ms | N/A |
+
+## Deployment Architecture
+
+### Mobile Deployment
+
+```mermaid
+graph TB
+    subgraph "Development"
+        A[Flutter Source]
+        B[Dart Analysis]
+        C[Unit Tests]
+    end
+
+    subgraph "CI/CD Pipeline"
+        D[GitHub Actions]
+        E[Security Scan]
+        F[Build Process]
+    end
+
+    subgraph "Distribution"
+        G[App Store]
+        H[Google Play]
+        I[Enterprise Deploy]
+    end
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    F --> H
+    F --> I
+```
+
+### Backend Deployment (Phase 3)
+
+```mermaid
+graph TB
+    subgraph "Infrastructure"
+        A[Load Balancer]
+        B[API Gateway]
+        C[Container Orchestration]
+    end
+
+    subgraph "Application"
+        D[FastAPI Instances]
+        E[Background Workers]
+        F[File Storage]
+    end
+
+    subgraph "Data"
+        G[(Primary DB)]
+        H[(Replica DB)]
+        I[Redis Cache]
+    end
+
+    A --> B
+    B --> C
+    C --> D
+    C --> E
+    D --> G
+    E --> H
+    D --> I
+    F --> G
+```
+
+## Testing Strategy
+
+### Test Pyramid
+
+```mermaid
+graph TB
+    A[Unit Tests<br/>Fast, Isolated] --> B[Integration Tests<br/>Service Interactions]
+    B --> C[Widget Tests<br/>UI Components]
+    C --> D[End-to-End Tests<br/>Complete Workflows]
+
+    style A fill:#90EE90
+    style B fill:#FFD700
+    style C fill:#FFA500
+    style D fill:#FF6347
+```
+
+### Coverage Targets
+
+| Test Type | Coverage Target | Current Status |
+|-----------|----------------|----------------|
+| Unit Tests | 80% | 66% |
+| Integration | 70% | 85% |
+| Widget Tests | 60% | 45% |
+| E2E Tests | 50% | 30% |
+
+## Future Roadmap
+
+### Phase 1: Local MVP ✅
+- Core Flutter application
+- Local storage implementation
+- Native service integration
+- Basic security measures
+
+### Phase 2: Enhanced Features ✅
+- Advanced calendar integration
+- Improved contact management
+- Enhanced UI/UX
+- Comprehensive testing
+
+### Phase 3: Connected Ecosystem 🔄
+- Backend API development
+- Cloud synchronization
+- Multi-device support
+- Advanced security features
+
+### Phase 4: Intelligence Layer 📋
+- AI-powered suggestions
+- Predictive reminders
+- Voice integration
+- Advanced analytics
+
+## Monitoring and Observability
+
+### Metrics Collection
+
+```mermaid
+graph LR
+    A[App Events] --> B[Local Analytics]
+    B --> C[Aggregated Metrics]
+    C --> D[Performance Dashboard]
+
+    E[Error Events] --> F[Crash Reporting]
+    F --> G[Error Dashboard]
+
+    H[User Actions] --> I[Usage Analytics]
+    I --> J[Behavior Insights]
+```
+
+### Key Performance Indicators
+
+- **Reliability**: 99.9% uptime target
+- **Performance**: <500ms average response time
+- **Security**: Zero data breaches
+- **User Experience**: <3 taps for core actions
+
+---
+
+*This architecture documentation is maintained alongside code changes and reviewed quarterly for accuracy and relevance.*

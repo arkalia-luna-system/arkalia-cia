@@ -1,344 +1,575 @@
-# 🚀 Déploiement - Arkalia CIA
+# Deployment Guide
 
-## Vue d'ensemble
+> **Arkalia CIA** - Production deployment procedures and best practices
 
-Arkalia CIA est déployée comme une application mobile native. Le déploiement suit une approche progressive avec 3 phases distinctes.
+## Overview
 
-## Phase 1 : MVP Local
+Arkalia CIA follows a **progressive deployment strategy** across three phases, prioritizing stability and user experience. This guide covers deployment for mobile applications and backend services.
 
-### Prérequis
+## Deployment Architecture
 
-#### Développement
-- Flutter SDK 3.0+
-- Dart 3.0+
-- Android Studio (Android)
-- Xcode (iOS)
-- Git
+```mermaid
+graph TB
+    subgraph "Development"
+        A[Local Development]
+        B[Feature Branches]
+        C[Pull Requests]
+    end
 
-#### Production
-- Compte développeur Apple (iOS)
-- Compte développeur Google (Android)
-- Certificats de signature
+    subgraph "CI/CD Pipeline"
+        D[GitHub Actions]
+        E[Automated Testing]
+        F[Security Scanning]
+        G[Build Process]
+    end
 
-### Configuration
+    subgraph "Staging"
+        H[TestFlight Beta]
+        I[Internal Testing]
+        J[Backend Staging]
+    end
 
-#### Variables d'environnement
-```bash
-# .env
-FLUTTER_SDK_PATH=/path/to/flutter
-ANDROID_SDK_PATH=/path/to/android/sdk
-IOS_SDK_PATH=/path/to/ios/sdk
+    subgraph "Production"
+        K[App Store]
+        L[Google Play]
+        M[Backend Production]
+    end
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    G --> H
+    G --> I
+    G --> J
+    H --> K
+    I --> L
+    J --> M
 ```
 
-#### Configuration Flutter
-```yaml
-# pubspec.yaml
-name: arkalia_cia
-description: "Arkalia CIA - Assistant personnel"
-version: 1.0.0+1
+## Prerequisites
 
-environment:
-  sdk: ">=3.0.0 <4.0.0"
+### Development Environment
+
+| Tool | Version | Purpose |
+|------|---------|---------|
+| Flutter | 3.35.3+ | Mobile app development |
+| Dart | 3.0+ | Language runtime |
+| Python | 3.10+ | Backend services |
+| Node.js | 18+ | Build tools |
+| Docker | 20+ | Containerization |
+
+### Production Accounts
+
+- **Apple Developer Account** (iOS deployment)
+- **Google Play Console** (Android deployment)
+- **Cloud Provider** (AWS/GCP/Azure for backend)
+- **Domain & SSL** (Custom domain setup)
+
+## Mobile App Deployment
+
+### Environment Configuration
+
+**Development**
+```bash
+# .env.development
+FLUTTER_MODE=debug
+API_BASE_URL=http://localhost:8000
+ANALYTICS_ENABLED=false
 ```
 
-### Build et déploiement
-
-#### Android
+**Production**
 ```bash
-# Build APK
-flutter build apk --release
-
-# Build App Bundle (recommandé)
-flutter build appbundle --release
-
-# Installer sur appareil
-flutter install
+# .env.production
+FLUTTER_MODE=release
+API_BASE_URL=https://api.arkalia-cia.com
+ANALYTICS_ENABLED=true
 ```
 
-#### iOS
-```bash
-# Build iOS
-flutter build ios --release
+### Build Configuration
 
-# Ouvrir dans Xcode
+**Android Production Build**
+```bash
+# Clean previous builds
+flutter clean && flutter pub get
+
+# Build signed APK
+flutter build apk --release \
+  --dart-define=FLAVOR=production \
+  --target-platform android-arm64
+
+# Build App Bundle (recommended)
+flutter build appbundle --release \
+  --dart-define=FLAVOR=production
+```
+
+**iOS Production Build**
+```bash
+# Clean previous builds
+flutter clean && flutter pub get
+
+# Build for iOS
+flutter build ios --release \
+  --dart-define=FLAVOR=production
+
+# Open in Xcode for final steps
 open ios/Runner.xcworkspace
-
-# Archiver et uploader via Xcode
 ```
 
-### Distribution
+### Code Signing
 
-#### TestFlight (iOS)
-1. Uploader l'archive via Xcode
-2. Configurer les métadonnées
-3. Soumettre pour review
-4. Inviter les testeurs
+**Android Signing**
+```bash
+# Generate keystore (one-time setup)
+keytool -genkey -v \
+  -keystore arkalia-cia-release.jks \
+  -keyalg RSA \
+  -keysize 2048 \
+  -validity 10000 \
+  -alias arkalia-cia
 
-#### Google Play (Android)
-1. Créer l'application dans Google Play Console
-2. Uploader l'AAB
-3. Configurer les métadonnées
-4. Soumettre pour review
+# Configure signing in android/key.properties
+storePassword=YOUR_STORE_PASSWORD
+keyPassword=YOUR_KEY_PASSWORD
+keyAlias=arkalia-cia
+storeFile=../arkalia-cia-release.jks
+```
 
-#### APK direct
-1. Générer l'APK
-2. Signer avec clé de production
-3. Distribuer via lien direct
+**iOS Signing**
+- Use Xcode's automatic signing for development
+- Configure distribution certificates for production
+- Enable App Store provisioning profiles
 
-## Phase 2 : Intelligence locale
+### Store Deployment
 
-### Nouvelles dépendances
+#### Google Play Store
+
+1. **Create App Listing**
+   ```bash
+   # Upload to Google Play Console
+   # Fill app information, screenshots, descriptions
+   ```
+
+2. **Upload Build**
+   ```bash
+   # Upload AAB file through console
+   # Configure release notes and rollout percentage
+   ```
+
+3. **Release Management**
+   - Start with 5% rollout
+   - Monitor crash reports and user feedback
+   - Gradually increase to 100%
+
+#### Apple App Store
+
+1. **App Store Connect Setup**
+   ```bash
+   # Create app record in App Store Connect
+   # Configure metadata, screenshots, descriptions
+   ```
+
+2. **TestFlight Beta**
+   ```bash
+   # Upload build via Xcode or Transporter
+   # Add beta testers for internal testing
+   ```
+
+3. **Production Release**
+   - Submit for App Store review
+   - Monitor review status
+   - Release after approval
+
+## Backend Deployment
+
+### Containerization
+
+**Dockerfile**
+```dockerfile
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# Install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application
+COPY arkalia_cia_python_backend/ .
+
+# Security: Non-root user
+RUN adduser --disabled-password --gecos '' appuser
+USER appuser
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:8000/health || exit 1
+
+EXPOSE 8000
+CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]
+```
+
+**Docker Compose (Development)**
 ```yaml
-# pubspec.yaml
-dependencies:
-  # Phase 2
-  speech_to_text: ^6.6.0
-  flutter_tts: ^3.8.5
-  home_widget: ^0.2.0
-  shared_preferences: ^2.2.2
+version: '3.8'
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:///./arkalia_cia.db
+      - DEBUG=true
+    volumes:
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=arkalia_cia
+      - POSTGRES_USER=arkalia_user
+      - POSTGRES_PASSWORD=secure_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
 ```
 
-### Configuration vocale
-```dart
-// Configuration reconnaissance vocale
-await SpeechToText.instance.initialize(
-  onError: (error) => print('Erreur: $error'),
-  onStatus: (status) => print('Statut: $status'),
-);
-```
+### Cloud Deployment
 
-### Widgets système
-```dart
-// Configuration widget Android
-await HomeWidget.setAppGroupId('group.arkalia.cia');
-await HomeWidget.saveWidgetData('next_appointment', nextAppointment);
-```
+#### AWS Deployment
 
-## Phase 3 : Écosystème connecté
-
-### Backend Python
-
-#### Déploiement local
+**ECS with Fargate**
 ```bash
-# Installation
-pip install -r requirements.txt
-
-# Configuration
-cp .env.example .env
-# Éditer .env avec les bonnes valeurs
-
-# Lancement
-uvicorn api:app --host 0.0.0.0 --port 8000
-```
-
-#### Déploiement cloud
-```bash
-# Docker
+# Build and push image
 docker build -t arkalia-cia-backend .
-docker run -p 8000:8000 arkalia-cia-backend
+docker tag arkalia-cia-backend:latest \
+  YOUR_ECR_REPO/arkalia-cia-backend:latest
+docker push YOUR_ECR_REPO/arkalia-cia-backend:latest
 
-# Heroku
-heroku create arkalia-cia-backend
-git push heroku main
-
-# AWS/GCP/Azure
-# Suivre les guides spécifiques des providers
+# Deploy with ECS
+aws ecs update-service \
+  --cluster arkalia-cia-cluster \
+  --service arkalia-cia-service \
+  --force-new-deployment
 ```
 
-### Base de données
-```sql
--- Configuration PostgreSQL
-CREATE DATABASE arkalia_cia;
-CREATE USER arkalia_user WITH PASSWORD 'secure_password';
-GRANT ALL PRIVILEGES ON DATABASE arkalia_cia TO arkalia_user;
+**RDS Configuration**
+```bash
+# Create RDS instance
+aws rds create-db-instance \
+  --db-instance-identifier arkalia-cia-db \
+  --db-instance-class db.t3.micro \
+  --engine postgres \
+  --master-username arkalia_user \
+  --master-user-password SECURE_PASSWORD \
+  --allocated-storage 20
 ```
 
-### Configuration synchronisation
+#### Google Cloud Platform
+
+**Cloud Run Deployment**
+```bash
+# Deploy to Cloud Run
+gcloud run deploy arkalia-cia-backend \
+  --image gcr.io/PROJECT_ID/arkalia-cia-backend \
+  --platform managed \
+  --region us-central1 \
+  --allow-unauthenticated
+```
+
+#### Kubernetes Deployment
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arkalia-cia-backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: arkalia-cia-backend
+  template:
+    metadata:
+      labels:
+        app: arkalia-cia-backend
+    spec:
+      containers:
+      - name: backend
+        image: arkalia-cia-backend:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: url
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+```
+
+## Database Management
+
+### Migration Strategy
+
+```python
+# migrations/001_initial_schema.py
+from alembic import op
+import sqlalchemy as sa
+
+def upgrade():
+    op.create_table('documents',
+        sa.Column('id', sa.Integer, primary_key=True),
+        sa.Column('name', sa.String(255), nullable=False),
+        sa.Column('file_path', sa.String(500), nullable=False),
+        sa.Column('created_at', sa.DateTime, default=sa.func.now()),
+    )
+
+def downgrade():
+    op.drop_table('documents')
+```
+
+### Backup Procedures
+
+```bash
+# PostgreSQL backup
+pg_dump -h localhost -U arkalia_user -d arkalia_cia \
+  --clean --if-exists --create \
+  --format=custom \
+  --file=backup_$(date +%Y%m%d_%H%M%S).dump
+
+# Restore from backup
+pg_restore -h localhost -U arkalia_user \
+  --clean --if-exists --create \
+  --dbname=arkalia_cia \
+  backup_20241213_143000.dump
+```
+
+## Monitoring & Observability
+
+### Application Monitoring
+
+**Health Checks**
+```python
+@app.get("/health")
+async def health_check():
+    return {
+        "status": "healthy",
+        "timestamp": datetime.utcnow().isoformat(),
+        "version": "1.0.0",
+        "database": await check_database_connection(),
+        "disk_space": get_disk_usage(),
+    }
+```
+
+**Metrics Collection**
+```python
+from prometheus_client import Counter, Histogram, generate_latest
+
+REQUEST_COUNT = Counter('requests_total', 'Total requests', ['method', 'endpoint'])
+REQUEST_DURATION = Histogram('request_duration_seconds', 'Request duration')
+
+@app.middleware("http")
+async def add_metrics(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    duration = time.time() - start_time
+
+    REQUEST_COUNT.labels(request.method, request.url.path).inc()
+    REQUEST_DURATION.observe(duration)
+
+    return response
+```
+
+### Logging Configuration
+
+```python
+import logging
+from pythonjsonlogger import jsonlogger
+
+# Structured logging
+logHandler = logging.StreamHandler()
+formatter = jsonlogger.JsonFormatter(
+    fmt='%(asctime)s %(name)s %(levelname)s %(message)s'
+)
+logHandler.setFormatter(formatter)
+logger = logging.getLogger()
+logger.addHandler(logHandler)
+logger.setLevel(logging.INFO)
+```
+
+## Security Hardening
+
+### SSL/TLS Configuration
+
+```nginx
+# nginx.conf
+server {
+    listen 443 ssl http2;
+    server_name api.arkalia-cia.com;
+
+    ssl_certificate /etc/ssl/certs/arkalia-cia.crt;
+    ssl_certificate_key /etc/ssl/private/arkalia-cia.key;
+
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-RSA-AES256-GCM-SHA512:DHE-RSA-AES256-GCM-SHA512;
+    ssl_prefer_server_ciphers off;
+
+    add_header Strict-Transport-Security "max-age=63072000" always;
+    add_header X-Content-Type-Options nosniff;
+    add_header X-Frame-Options DENY;
+
+    location / {
+        proxy_pass http://localhost:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+```
+
+### Environment Secrets
+
+```bash
+# Use secret management systems
+export DATABASE_URL=$(aws ssm get-parameter \
+  --name "/arkalia-cia/database-url" \
+  --with-decryption \
+  --query "Parameter.Value" \
+  --output text)
+```
+
+## Rollback Procedures
+
+### Application Rollback
+
+```bash
+# Mobile app rollback (emergency)
+# Use store console to unpublish problematic version
+
+# Backend rollback
+kubectl rollout undo deployment/arkalia-cia-backend
+
+# Or with specific revision
+kubectl rollout undo deployment/arkalia-cia-backend --to-revision=2
+```
+
+### Database Rollback
+
+```bash
+# Run down migration
+alembic downgrade -1
+
+# Or restore from backup
+pg_restore -h localhost -U arkalia_user \
+  --clean --if-exists \
+  --dbname=arkalia_cia \
+  backup_last_known_good.dump
+```
+
+## Performance Optimization
+
+### Mobile App Optimization
+
 ```dart
-// Configuration sync
-class SyncService {
-  static const String baseUrl = 'https://api.arkalia-cia.com';
-  static const String apiKey = 'your_api_key';
-
-  static Future<void> syncData() async {
-    // Logique de synchronisation
+// Lazy loading for better performance
+class DocumentList extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: documents.length,
+      itemBuilder: (context, index) {
+        return FutureBuilder(
+          future: loadDocumentThumbnail(documents[index]),
+          builder: (context, snapshot) {
+            return DocumentTile(document: documents[index]);
+          },
+        );
+      },
+    );
   }
 }
 ```
 
-## Monitoring et maintenance
+### Backend Optimization
 
-### Logs
-```dart
-// Configuration logging
-import 'package:logger/logger.dart';
+```python
+# Connection pooling
+from sqlalchemy.pool import QueuePool
 
-final logger = Logger(
-  printer: PrettyPrinter(),
-  level: Level.debug,
-);
-```
+engine = create_engine(
+    DATABASE_URL,
+    poolclass=QueuePool,
+    pool_size=20,
+    max_overflow=0,
+    pool_pre_ping=True,
+)
 
-### Métriques
-```dart
-// Configuration analytics
-import 'package:firebase_analytics/firebase_analytics.dart';
+# Caching
+from functools import lru_cache
 
-final analytics = FirebaseAnalytics.instance;
-
-// Événements personnalisés
-await analytics.logEvent(
-  name: 'document_uploaded',
-  parameters: {'file_type': 'pdf'},
-);
-```
-
-### Crash reporting
-```dart
-// Configuration crash reporting
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-
-FirebaseCrashlytics.instance.recordError(
-  error,
-  stackTrace,
-  reason: 'Erreur critique',
-);
-```
-
-## Sécurité
-
-### Chiffrement
-```dart
-// Configuration chiffrement
-import 'package:encrypt/encrypt.dart';
-
-final key = Key.fromBase64('your_32_character_base64_key');
-final iv = IV.fromLength(16);
-final encrypter = Encrypter(AES(key));
-```
-
-### Certificats
-```bash
-# Génération clé Android
-keytool -genkey -v -keystore arkalia-cia-key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias arkalia-cia
-
-# Configuration iOS
-# Utiliser Xcode pour gérer les certificats
-```
-
-### Permissions
-```xml
-<!-- Android permissions -->
-<uses-permission android:name="android.permission.READ_CALENDAR" />
-<uses-permission android:name="android.permission.WRITE_CALENDAR" />
-<uses-permission android:name="android.permission.READ_CONTACTS" />
-<uses-permission android:name="android.permission.CALL_PHONE" />
-```
-
-```xml
-<!-- iOS permissions -->
-<key>NSCalendarsUsageDescription</key>
-<string>Accès au calendrier pour les rappels</string>
-<key>NSContactsUsageDescription</key>
-<string>Accès aux contacts pour les urgences</string>
-```
-
-## Tests
-
-### Tests unitaires
-```bash
-# Lancer les tests
-flutter test
-
-# Tests avec couverture
-flutter test --coverage
-```
-
-### Tests d'intégration
-```bash
-# Tests d'intégration
-flutter test integration_test/
-```
-
-### Tests de performance
-```bash
-# Tests de performance
-flutter test --coverage --reporter=json
-```
-
-## Rollback
-
-### Version précédente
-```bash
-# Rollback Flutter
-git checkout previous-version
-flutter build apk --release
-
-# Rollback backend
-git checkout previous-version
-docker build -t arkalia-cia-backend:previous .
-```
-
-### Données
-```dart
-// Sauvegarde données locales
-await LocalStorageService.backupData();
-
-// Restauration
-await LocalStorageService.restoreData(backupData);
+@lru_cache(maxsize=1000)
+async def get_document_metadata(doc_id: int):
+    # Expensive operation cached
+    return await fetch_document_metadata(doc_id)
 ```
 
 ## Troubleshooting
 
-### Problèmes courants
+### Common Issues
 
-#### Build Android
+| Issue | Symptoms | Solution |
+|-------|----------|----------|
+| Build failures | Compilation errors | Clean build cache, update dependencies |
+| Memory leaks | App crashes, slow performance | Profile memory usage, fix leaks |
+| Network timeouts | API failures | Increase timeout, add retry logic |
+| Database locks | Slow queries | Optimize queries, add indexes |
+
+### Debug Commands
+
 ```bash
-# Nettoyer
-flutter clean
-flutter pub get
-
-# Rebuild
-flutter build apk --release
-```
-
-#### Build iOS
-```bash
-# Nettoyer
-flutter clean
-cd ios
-rm -rf Pods
-pod install
-cd ..
-flutter build ios --release
-```
-
-#### Synchronisation
-```dart
-// Vérifier connexion
-bool isConnected = await Connectivity().checkConnectivity() != ConnectivityResult.none;
-
-// Retry automatique
-await SyncService.syncWithRetry(maxRetries: 3);
-```
-
-### Logs de debug
-```bash
-# Android
+# Mobile app debugging
+flutter logs
 adb logcat | grep arkalia
 
-# iOS
-# Utiliser Xcode Console
+# Backend debugging
+docker logs arkalia-cia-backend --tail=100 --follow
+
+# Database debugging
+EXPLAIN ANALYZE SELECT * FROM documents WHERE user_id = 123;
 ```
 
-## Support
+## Maintenance Windows
 
-### Documentation
-- [Architecture](ARCHITECTURE.md)
-- [API](API.md)
-- [Contribution](CONTRIBUTING.md)
+### Scheduled Maintenance
 
-### Contact
-- **Email** : contact@arkalia-luna.com
-- **GitHub** : [Issues](https://github.com/arkalia-luna-system/arkalia-cia/issues)
-- **Discord** : [Serveur communautaire](https://discord.gg/arkalia)
+1. **Notification**: 48 hours advance notice
+2. **Timing**: Low-traffic periods (2-4 AM UTC)
+3. **Duration**: Maximum 2 hours
+4. **Rollback**: Ready within 15 minutes
+
+### Zero-Downtime Deployments
+
+```bash
+# Blue-green deployment
+kubectl apply -f deployment-green.yaml
+kubectl patch service arkalia-cia-service -p '{"spec":{"selector":{"version":"green"}}}'
+
+# Canary deployment
+kubectl apply -f canary-deployment.yaml
+# Monitor metrics, gradually shift traffic
+```
+
+---
+
+*This deployment guide is updated with each release. For support, contact [our team](mailto:devops@arkalia-luna.com).*

@@ -1,47 +1,92 @@
 # Configuration Pre-commit pour Arkalia-CIA
-# Version FINALE - ZÉRO CONFLIT garanti
+# Version optimisée pour éviter les conflits et problèmes récurrents
 
 repos:
   # ==============================================
-  # FORMATAGE PYTHON UNIFIÉ AVEC RUFF
+  # FORMATAGE PYTHON (ORDRE CRITIQUE)
   # ==============================================
 
-  # Ruff - Tout en un (linting + formatage + imports)
+  # 1. Ruff - Linting et auto-fix en premier
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.1.15
     hooks:
-      # 1. Linting avec auto-fix
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
         stages: [pre-commit]
 
-      # 2. Formatage (remplace Black + isort)
-      - id: ruff-format
+  # 2. Black - Formatage après ruff
+  - repo: https://github.com/psf/black
+    rev: 23.12.1
+    hooks:
+      - id: black
+        language_version: python3.10
+        args: [--line-length=88, --target-version=py310]
+        stages: [pre-commit]
+
+  # 3. isort - Imports après black pour éviter conflits
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        args:
+          [--profile, black, --line-length, "88", --force-sort-within-sections]
         stages: [pre-commit]
 
   # ==============================================
-  # HOOKS GÉNÉRAUX (STABLES)
+  # QUALITY & SECURITY (NON-BLOQUANTS)
+  # ==============================================
+
+  # MyPy - Type checking (warning seulement)
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.8.0
+    hooks:
+      - id: mypy
+        additional_dependencies: [types-PyYAML, types-requests]
+        args:
+          [--ignore-missing-imports, --no-strict-optional, --no-error-summary]
+        stages: [pre-commit]
+        # Continuer même en cas d'erreur mypy
+        verbose: true
+        fail_fast: false
+
+  # Bandit - Sécurité (fichiers spécifiques seulement)
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.7.6
+    hooks:
+      - id: bandit
+        args: [
+            -r,
+            arkalia_cia_python_backend/api.py,
+            arkalia_cia_python_backend/database.py,
+            arkalia_cia_python_backend/pdf_processor.py,
+            --skip,
+            B101,
+            B108,
+            B306, # Skip assert, temp dirs, mktemp in tests
+          ]
+        stages: [pre-commit]
+        # Exclure les tests pour éviter false positives
+        exclude: ^tests/
+
+  # ==============================================
+  # HOOKS GÉNÉRAUX (RAPIDES ET FIABLES)
   # ==============================================
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
-      # Nettoyage automatique
+      # Nettoyage fichiers
       - id: trailing-whitespace
         stages: [pre-commit]
       - id: end-of-file-fixer
         stages: [pre-commit]
 
-      # Vérifications rapides
+      # Vérifications basiques
       - id: check-yaml
         stages: [pre-commit]
-        # Exclure workflows GitHub qui peuvent avoir syntaxe spéciale
-        exclude: ^\.github/workflows/.*\.ya?ml$
-
       - id: check-added-large-files
-        args: [--maxkb=5000] # 5MB max
+        args: [--maxkb=5000] # Limite à 5MB
         stages: [pre-commit]
-
       - id: check-merge-conflict
         stages: [pre-commit]
 
@@ -55,11 +100,16 @@ repos:
 # CONFIGURATION GLOBALE OPTIMISÉE
 # ==============================================
 
+# Stratégie : ne pas faire échouer tout le pipeline
 default_stages: [pre-commit]
 fail_fast: false
 minimum_pre_commit_version: 3.0.0
 
-# Exclusions pour éviter problèmes
+# Amélioration performance
+default_language_version:
+  python: python3.10
+
+# Exclusions globales pour éviter problèmes
 exclude: |
   (?x)^(
     .*\.egg-info/.*|
@@ -70,24 +120,12 @@ exclude: |
     .*/venv/.*|
     .*/\.venv/.*|
     arkalia_cia_venv/.*|
-    arkalia_cia/(ios|android|windows|linux|macos|web)/.*|
-    .*\.(lock|log|cache)$|
-    htmlcov/.*|
-    \.coverage.*
+    arkalia_cia/ios/.*|
+    arkalia_cia/android/.*|
+    arkalia_cia/windows/.*|
+    arkalia_cia/linux/.*|
+    arkalia_cia/macos/.*|
+    arkalia_cia/web/.*|
+    .*\.lock$|
+    .*\.log$
   )$
-
-# ==============================================
-# AVANTAGES DE CETTE CONFIGURATION :
-# ==============================================
-#
-# ✅ ZÉRO CONFLIT - Ruff gère tout (linting + format + imports)
-# ✅ RAPIDE - Moins de hooks, moins d'installations
-# ✅ MODERNE - Ruff est l'outil de référence 2024
-# ✅ STABLE - Pas de conflits Black vs isort
-# ✅ SIMPLE - Configuration minimale et efficace
-#
-# MyPy et Bandit disponibles manuellement si besoin :
-# - ruff check arkalia_cia_python_backend/ --fix
-# - mypy arkalia_cia_python_backend/ --ignore-missing-imports
-# - bandit -r arkalia_cia_python_backend/ -ll
-# ==============================================
