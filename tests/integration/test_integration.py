@@ -3,10 +3,10 @@ Tests d'intégration pour Arkalia CIA
 Tests de l'intégration complète des services backend
 """
 
-import json
-import tempfile
 from datetime import datetime, timedelta
+import json
 from pathlib import Path
+import tempfile
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -150,7 +150,7 @@ class TestIntegration:
         for i in range(5):
             doc = self.test_data["document"].copy()
             doc["id"] = i + 1
-            doc["name"] = f"document_{i+1}.pdf"
+            doc["name"] = f"document_{i + 1}.pdf"
             operations.append(doc)
 
         # Assert
@@ -206,7 +206,7 @@ class TestIntegration:
         for i in range(100):
             doc = self.test_data["document"].copy()
             doc["id"] = i + 1
-            doc["name"] = f"document_{i+1}.pdf"
+            doc["name"] = f"document_{i + 1}.pdf"
             # Note: Les opérations réelles seraient testées ici
 
         end_time = datetime.now()

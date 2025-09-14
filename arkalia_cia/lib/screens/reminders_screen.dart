@@ -188,6 +188,19 @@ class _RemindersScreenState extends State<RemindersScreen> {
     }
   }
 
+  /// Marque un rappel comme terminé
+  Future<void> _markReminderComplete(String? reminderId) async {
+    if (reminderId == null) return;
+
+    try {
+      await LocalStorageService.markReminderComplete(reminderId);
+      await _loadReminders();
+      _showSuccess('Rappel marqué comme terminé');
+    } catch (e) {
+      _showError('Erreur lors de la mise à jour: $e');
+    }
+  }
+
   void _showSuccess(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -300,9 +313,8 @@ class _RemindersScreenState extends State<RemindersScreen> {
                             ? const Icon(Icons.check, color: Colors.green)
                             : IconButton(
                                 icon: const Icon(Icons.check_circle_outline),
-                                onPressed: () {
-                                  // TODO: Implémenter la marque comme terminé
-                                  _showSuccess('Fonctionnalité à implémenter');
+                                onPressed: () async {
+                                  await _markReminderComplete(reminder['id']);
                                 },
                               ),
                       ),

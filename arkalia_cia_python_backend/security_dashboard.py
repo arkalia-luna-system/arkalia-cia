@@ -4,13 +4,14 @@ Dashboard de sécurité web pour Athalia
 Interface moderne pour visualiser les rapports de sécurité en temps réel
 """
 
+from datetime import datetime
 import json
 import logging
 import os
-import webbrowser
-from datetime import datetime
 from pathlib import Path
 from typing import Any
+import webbrowser
+
 
 # Import des composants Athalia réels
 try:
@@ -136,34 +137,26 @@ class SecurityDashboard:
                             for v in vulnerabilities
                             if v.get("type") == "dangerous_function"
                         ]
-                        open_count = len(
-                            [
-                                v
-                                for v in dangerous_functions
-                                if "open" in str(v.get("function", ""))
-                            ]
-                        )
-                        import_count = len(
-                            [
-                                v
-                                for v in dangerous_functions
-                                if "__import__" in str(v.get("function", ""))
-                            ]
-                        )
-                        compile_count = len(
-                            [
-                                v
-                                for v in dangerous_functions
-                                if "compile" in str(v.get("function", ""))
-                            ]
-                        )
-                        input_count = len(
-                            [
-                                v
-                                for v in dangerous_functions
-                                if "input" in str(v.get("function", ""))
-                            ]
-                        )
+                        open_count = len([
+                            v
+                            for v in dangerous_functions
+                            if "open" in str(v.get("function", ""))
+                        ])
+                        import_count = len([
+                            v
+                            for v in dangerous_functions
+                            if "__import__" in str(v.get("function", ""))
+                        ])
+                        compile_count = len([
+                            v
+                            for v in dangerous_functions
+                            if "compile" in str(v.get("function", ""))
+                        ])
+                        input_count = len([
+                            v
+                            for v in dangerous_functions
+                            if "input" in str(v.get("function", ""))
+                        ])
 
                         # Score contextuel ultra-intelligent
                         base_score = 95  # Score de base excellent pour un projet de développement
@@ -182,29 +175,23 @@ class SecurityDashboard:
                         xss_count = len(
                             [v for v in vulnerabilities if v.get("type") == "xss"]
                         )
-                        sql_count = len(
-                            [
-                                v
-                                for v in vulnerabilities
-                                if v.get("type") == "sql_injection"
-                            ]
-                        )
+                        sql_count = len([
+                            v
+                            for v in vulnerabilities
+                            if v.get("type") == "sql_injection"
+                        ])
 
                         # Patterns uniques vs réplication (faux positifs probables)
-                        xss_patterns = len(
-                            {
-                                v.get("pattern", "")
-                                for v in vulnerabilities
-                                if v.get("type") == "xss"
-                            }
-                        )
-                        sql_patterns = len(
-                            {
-                                v.get("pattern", "")
-                                for v in vulnerabilities
-                                if v.get("type") == "sql_injection"
-                            }
-                        )
+                        xss_patterns = len({
+                            v.get("pattern", "")
+                            for v in vulnerabilities
+                            if v.get("type") == "xss"
+                        })
+                        sql_patterns = len({
+                            v.get("pattern", "")
+                            for v in vulnerabilities
+                            if v.get("type") == "sql_injection"
+                        })
 
                         # Pénalités critiques contextuelles
                         xss_penalty = (
@@ -241,14 +228,14 @@ class SecurityDashboard:
                             "scan_speed": total_files / max(1, len(vulnerabilities)),
                             "vulnerability_density": total_vulns / max(1, total_files),
                             "risk_distribution": {
-                                "critical_ratio": (
-                                    (xss_count + sql_count) / max(1, total_vulns)
+                                "critical_ratio": (xss_count + sql_count) / max(
+                                    1, total_vulns
                                 ),
-                                "medium_ratio": (
-                                    len(dangerous_functions) / max(1, total_vulns)
+                                "medium_ratio": len(dangerous_functions) / max(
+                                    1, total_vulns
                                 ),
-                                "safe_ratio": (
-                                    (total_files - total_vulns) / max(1, total_files)
+                                "safe_ratio": (total_files - total_vulns) / max(
+                                    1, total_files
                                 ),
                             },
                         }
@@ -256,8 +243,8 @@ class SecurityDashboard:
                         # Métriques de qualité du code
                         security_data["code_quality_metrics"] = {
                             "security_awareness": max(0, 100 - (total_vulns * 0.1)),
-                            "code_complexity": (
-                                total_files / max(1, len(vulnerabilities))
+                            "code_complexity": total_files / max(
+                                1, len(vulnerabilities)
                             ),
                             "maintenance_index": max(
                                 0, 100 - (len(dangerous_functions) * 0.05)
@@ -901,7 +888,7 @@ class SecurityDashboard:
         </div>
         <div class="metric-row">
             <span class="metric-label">📊 Ratio Vuln/Fichier</span>
-            <span class="metric-value">{(total_vulns/total_files*1000):.1f}‰</span>
+            <span class="metric-value">{(total_vulns / total_files * 1000):.1f}‰</span>
         </div>
         """
 
@@ -916,19 +903,19 @@ class SecurityDashboard:
         html = f"""
         <div class="metric-row">
             <span class="metric-label">🐍 Fichiers Python</span>
-            <span class="metric-value">{python_stats.get('total_files', 0):,}</span>
+            <span class="metric-value">{python_stats.get("total_files", 0):,}</span>
         </div>
         <div class="metric-row">
             <span class="metric-label">📝 Lignes de Code</span>
-            <span class="metric-value">{python_stats.get('total_lines', 0):,}</span>
+            <span class="metric-value">{python_stats.get("total_lines", 0):,}</span>
         </div>
         <div class="metric-row">
             <span class="metric-label">🧪 Tests Collectés</span>
-            <span class="metric-value">{test_coverage.get('total_tests', 0):,}</span>
+            <span class="metric-value">{test_coverage.get("total_tests", 0):,}</span>
         </div>
         <div class="metric-row">
             <span class="metric-label">📚 Documentation</span>
-            <span class="metric-value">{doc_quality.get('total_docs', 0):,} fichiers</span>
+            <span class="metric-value">{doc_quality.get("total_docs", 0):,} fichiers</span>
         </div>
         """
 
@@ -962,7 +949,7 @@ class SecurityDashboard:
         </div>
         <div class="metric-row">
             <span class="metric-label">⚡ Hit Rate</span>
-            <span class="metric-value">{hit_rate*100:.1f}%</span>
+            <span class="metric-value">{hit_rate * 100:.1f}%</span>
         </div>
         <div class="metric-row">
             <span class="metric-label">💾 Cache Size</span>
@@ -983,7 +970,7 @@ class SecurityDashboard:
         html = f"""
         <div class="metric-row">
             <span class="metric-label">🛡️ Score Global</span>
-            <span class="metric-value score-{security_data.get('security_score', 0)}">{security_data.get('security_score', 0)}/100</span>
+            <span class="metric-value score-{security_data.get("security_score", 0)}">{security_data.get("security_score", 0)}/100</span>
         </div>
         <div class="metric-row">
             <span class="metric-label">🚨 Vulnérabilités Critiques</span>
@@ -999,7 +986,7 @@ class SecurityDashboard:
         </div>
         <div class="metric-row">
             <span class="metric-label">⚡ Athalia Components</span>
-            <span class="metric-value">{'✅ Disponibles' if security_data.get('athalia_available') else '❌ Non disponibles'}</span>
+            <span class="metric-value">{"✅ Disponibles" if security_data.get("athalia_available") else "❌ Non disponibles"}</span>
         </div>
         """
 
