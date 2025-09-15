@@ -5,10 +5,10 @@ Génération automatique de documentation
 """
 
 import ast
+from datetime import datetime
 import json
 import logging
 import os
-from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -18,6 +18,7 @@ from ..core.error_handling import AthaliaError
 from ..core.generation import generate_project
 from ..quality.code_linter import CodeLinter
 from ..utilities.logger_advanced import AthaliaLogger
+
 
 logger = logging.getLogger(__name__)
 
@@ -170,14 +171,12 @@ class AutoDocumenter:
                 if isinstance(node, ast.FunctionDef | ast.ClassDef | ast.Module):
                     docstring = ast.get_docstring(node)
                     if docstring:
-                        docstrings.append(
-                            {
-                                "type": type(node).__name__,
-                                "name": getattr(node, "name", "module"),
-                                "docstring": docstring,
-                                "line_number": getattr(node, "lineno", 0),
-                            }
-                        )
+                        docstrings.append({
+                            "type": type(node).__name__,
+                            "name": getattr(node, "name", "module"),
+                            "docstring": docstring,
+                            "line_number": getattr(node, "lineno", 0),
+                        })
         except Exception as e:
             logger.error(f"Erreur extraction docstrings {file_path}: {e}")
 
@@ -243,21 +242,17 @@ MIT License
 
                     for doc in docstrings:
                         if doc["type"] == "FunctionDef":
-                            api_docs["functions"].append(
-                                {
-                                    "name": doc["name"],
-                                    "docstring": doc["docstring"],
-                                    "file": str(py_file.relative_to(self.project_path)),
-                                }
-                            )
+                            api_docs["functions"].append({
+                                "name": doc["name"],
+                                "docstring": doc["docstring"],
+                                "file": str(py_file.relative_to(self.project_path)),
+                            })
                         elif doc["type"] == "ClassDef":
-                            api_docs["classes"].append(
-                                {
-                                    "name": doc["name"],
-                                    "docstring": doc["docstring"],
-                                    "file": str(py_file.relative_to(self.project_path)),
-                                }
-                            )
+                            api_docs["classes"].append({
+                                "name": doc["name"],
+                                "docstring": doc["docstring"],
+                                "file": str(py_file.relative_to(self.project_path)),
+                            })
         except Exception as e:
             logger.error(f"Erreur génération API docs: {e}")
 
@@ -730,13 +725,11 @@ SOFTWARE.
         # Calculer le temps d'exécution
         result["documentation_time"] = (datetime.now() - start_time).total_seconds()
 
-        self.doc_history.append(
-            {
-                "timestamp": datetime.now().isoformat(),
-                "operation": "perform_full_documentation",
-                "result": result,
-            }
-        )
+        self.doc_history.append({
+            "timestamp": datetime.now().isoformat(),
+            "operation": "perform_full_documentation",
+            "result": result,
+        })
 
         return result
 

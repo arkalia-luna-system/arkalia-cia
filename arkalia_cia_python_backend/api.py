@@ -3,15 +3,16 @@ API FastAPI pour Arkalia CIA
 Backend pour l'application mobile Flutter
 """
 
+from datetime import datetime
 import os
 import tempfile
-from datetime import datetime
 
 from database import CIADatabase
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pdf_processor import PDFProcessor
 from pydantic import BaseModel
+
 
 # Instances globales
 db = CIADatabase()

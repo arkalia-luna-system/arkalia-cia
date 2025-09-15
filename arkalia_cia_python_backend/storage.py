@@ -3,15 +3,16 @@ Storage Abstraction Layer for Arkalia-LUNA Pro
 Provides unified storage interface for all modules
 """
 
-import json
-import logging
-import os
-import sqlite3
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from datetime import datetime
+import json
+import logging
+import os
 from pathlib import Path
+import sqlite3
 from typing import Any, Optional, Union
+
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +52,7 @@ class JSONFileBackend(StorageBackend):
     def __init__(self, base_path: str = "state"):
         self.base_path = Path(base_path)
         self.base_path.mkdir(exist_ok=True)
-        self._cache = {}
+        self._cache: dict[str, Any] = {}
 
     def _get_file_path(self, key: str) -> Path:
         """Get file path for key"""
@@ -126,16 +127,14 @@ class SQLiteBackend(StorageBackend):
     def _init_db(self):
         """Initialize SQLite database"""
         with self._get_connection() as conn:
-            conn.execute(
-                """
+            conn.execute("""
                 CREATE TABLE IF NOT EXISTS storage (
                     key TEXT PRIMARY KEY,
                     value TEXT,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
-            """
-            )
+            """)
             conn.commit()
 
     @contextmanager
@@ -220,7 +219,7 @@ class StorageManager:
     def __init__(self, backend: str = "json", **kwargs):
         self.backend_type = backend
         if backend == "sqlite":
-            self.backend = SQLiteBackend(**kwargs)
+            self.backend: StorageBackend = SQLiteBackend(**kwargs)
         else:
             self.backend = JSONFileBackend(**kwargs)
 
