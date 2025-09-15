@@ -1,30 +1,18 @@
 #!/bin/bash
+# Script pour nettoyer les fichiers macOS
 
-# Script de nettoyage des fichiers cachés macOS
-# Supprime tous les fichiers ._* qui causent des problèmes avec Flutter
+echo "🧹 Nettoyage des fichiers macOS..."
 
-echo "🧹 Nettoyage des fichiers cachés macOS..."
+# Supprimer tous les fichiers ._*
+find . -name "._*" -type f -delete 2>/dev/null
 
-# Compter les fichiers avant suppression
-count_before=$(find . -name "._*" -type f | wc -l)
+# Supprimer les dossiers de build
+rm -rf build/ dist/ *.egg-info/
 
-if [ $count_before -eq 0 ]; then
-    echo "✅ Aucun fichier caché trouvé - tout est propre !"
-    exit 0
-fi
+# Supprimer les fichiers .DS_Store
+find . -name ".DS_Store" -type f -delete 2>/dev/null
 
-echo "📁 Fichiers cachés trouvés : $count_before"
+# Supprimer les fichiers .AppleDouble
+find . -name ".AppleDouble" -type d -exec rm -rf {} + 2>/dev/null
 
-# Supprimer les fichiers cachés
-find . -name "._*" -type f -delete
-
-# Compter après suppression
-count_after=$(find . -name "._*" -type f | wc -l)
-
-if [ $count_after -eq 0 ]; then
-    echo "✅ Nettoyage terminé - $count_before fichiers supprimés"
-else
-    echo "⚠️  Attention : $count_after fichiers cachés restants"
-fi
-
-echo "🚀 Prêt pour Flutter !"
+echo "✅ Nettoyage terminé"
