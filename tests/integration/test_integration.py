@@ -97,8 +97,8 @@ class TestIntegration:
         assert contact_data["id"] == 1
 
         # Vérifier que les timestamps sont cohérents
-        doc_time = datetime.fromisoformat(doc_data["created_at"])
-        reminder_time = datetime.fromisoformat(reminder_data["created_at"])
+        doc_time = datetime.fromisoformat(str(doc_data["created_at"]))
+        reminder_time = datetime.fromisoformat(str(reminder_data["created_at"]))
 
         # Les timestamps doivent être proches (dans la même minute)
         time_diff = abs((doc_time - reminder_time).total_seconds())
@@ -195,7 +195,7 @@ class TestIntegration:
         # Vérifier que les timestamps sont valides
         for data_type in ["document", "reminder", "contact"]:
             timestamp = self.test_data[data_type]["created_at"]
-            parsed_time = datetime.fromisoformat(timestamp)
+            parsed_time = datetime.fromisoformat(str(timestamp))
             assert parsed_time <= datetime.now()  # Pas dans le futur
 
     def test_performance_under_load(self):
