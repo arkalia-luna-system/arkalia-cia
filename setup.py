@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Setup script for Arkalia CIA Python backend."""
 
-from setuptools import find_packages, setup
+from setuptools import find_packages, setup  # type: ignore
 
 setup(
     name="arkalia-cia",

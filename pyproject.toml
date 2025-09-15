@@ -109,6 +109,7 @@ exclude = [
     "dist/",
     "arkalia_cia_venv/",
     "tests/",
+    "setup.py",
 ]
 
 [[tool.mypy.overrides]]
