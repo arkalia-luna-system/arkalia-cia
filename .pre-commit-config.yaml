@@ -14,19 +14,19 @@ repos:
         args: [--fix]
         stages: [pre-commit]
 
-  # 2. Black - Formatage après ruff
+  # 2. isort - Imports avant black
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        stages: [pre-commit]
+
+  # 3. Black - Formatage en dernier pour éviter conflits
   - repo: https://github.com/psf/black
     rev: 23.12.1
     hooks:
       - id: black
         language_version: python3.10
-        stages: [pre-commit]
-
-  # 3. isort - Imports après black pour éviter conflits
-  - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
-    hooks:
-      - id: isort
         stages: [pre-commit]
 
   # ==============================================
