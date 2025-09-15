@@ -7,7 +7,7 @@ setup(
     name="arkalia-cia",
     version="1.0.0",
     description="Arkalia CIA - Assistant Mobile Santé",
-    long_description=open("README.md").read(),
+    long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
     author="Arkalia Luna System",
     author_email="contact@arkalia-luna.com",
