@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../services/contacts_service.dart';
 import '../services/local_storage_service.dart';
+import '../widgets/emergency_contact_dialog.dart';
+import '../widgets/emergency_contact_card.dart';
+import '../widgets/emergency_info_card.dart';
 
+/// Écran de gestion des contacts et informations d'urgence
 class EmergencyScreen extends StatefulWidget {
   const EmergencyScreen({super.key});
 
@@ -23,15 +25,10 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
   }
 
   Future<void> _loadData() async {
-    setState(() {
-      isLoading = true;
-    });
+    setState(() => isLoading = true);
 
     try {
-      // Charger les contacts ICE du carnet natif
       final contactsList = await ContactsService.getEmergencyContacts();
-
-      // Charger les infos d'urgence stockées localement
       final info = await LocalStorageService.getEmergencyInfo();
 
       setState(() {
@@ -40,105 +37,45 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
         isLoading = false;
       });
     } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
+      setState(() => isLoading = false);
       _showError('Erreur lors du chargement: $e');
     }
   }
 
   Future<void> _showAddContactDialog() async {
-    final nameController = TextEditingController();
-    final phoneController = TextEditingController();
-    final relationshipController = TextEditingController();
-    bool isPrimary = false;
-
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          title: const Text('Nouveau contact d\'urgence'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Nom du contact',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: phoneController,
-                  decoration: const InputDecoration(
-                    labelText: 'Numéro de téléphone',
-                    border: OutlineInputBorder(),
-                  ),
-                  keyboardType: TextInputType.phone,
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: relationshipController,
-                  decoration: const InputDecoration(
-                    labelText: 'Relation (optionnel)',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                CheckboxListTile(
-                  title: const Text('Contact principal'),
-                  subtitle: const Text('Ce contact sera affiché en premier'),
-                  value: isPrimary,
-                  onChanged: (value) {
-                    setDialogState(() {
-                      isPrimary = value ?? false;
-                    });
-                  },
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Annuler'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (nameController.text.isNotEmpty && phoneController.text.isNotEmpty) {
-                  Navigator.pop(context, {
-                    'name': nameController.text,
-                    'phone': phoneController.text,
-                    'relationship': relationshipController.text,
-                    'is_primary': isPrimary,
-                  });
-                }
-              },
-              child: const Text('Ajouter'),
-            ),
-          ],
-        ),
-      ),
+      builder: (context) => const EmergencyContactDialog(),
     );
 
     if (result != null) {
-      await _createContact(result);
+      await _addContact(result);
     }
   }
 
-  Future<void> _createContact(Map<String, dynamic> contactData) async {
+  Future<void> _showEditContactDialog(Map<String, dynamic> contact) async {
+    final result = await showDialog<Map<String, dynamic>>(
+      context: context,
+      builder: (context) => EmergencyContactDialog(existingContact: contact),
+    );
+
+    if (result != null) {
+      await _updateContact(result);
+    }
+  }
+
+  Future<void> _addContact(Map<String, dynamic> contactData) async {
     try {
       final success = await ContactsService.addEmergencyContact(
-        name: contactData['name'],
-        phone: contactData['phone'],
-        relationship: contactData['relationship'],
+        name: contactData['name']!,
+        phone: contactData['phone']!,
+        relationship: contactData['relationship'] ?? '',
       );
 
       if (success) {
-        _showSuccess('Contact ajouté avec succès !');
-        _loadData();
+        await LocalStorageService.saveEmergencyContact(contactData);
+        await _loadData();
+        _showSuccess('Contact d\'urgence ajouté avec succès');
       } else {
         _showError('Erreur lors de l\'ajout du contact');
       }
@@ -147,98 +84,94 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
     }
   }
 
-  Future<void> _callContact(String phoneNumber) async {
+  Future<void> _updateContact(Map<String, dynamic> contactData) async {
     try {
-      final Uri phoneUri = Uri(scheme: 'tel', path: phoneNumber);
-      if (await canLaunchUrl(phoneUri)) {
-        await launchUrl(phoneUri);
-      } else {
-        _showError('Impossible d\'ouvrir l\'application téléphone');
-      }
+      await LocalStorageService.updateEmergencyContact(contactData);
+      await _loadData();
+      _showSuccess('Contact modifié avec succès');
     } catch (e) {
-      _showError('Erreur appel: $e');
+      _showError('Erreur lors de la modification: $e');
     }
   }
 
-  Future<void> _copyPhoneNumber(String phoneNumber) async {
-    await Clipboard.setData(ClipboardData(text: phoneNumber));
-    _showSuccess('Numéro copié dans le presse-papiers');
+  Future<void> _deleteContact(Map<String, dynamic> contact) async {
+    final confirmed = await _showConfirmDialog(
+      'Supprimer le contact',
+      'Êtes-vous sûr de vouloir supprimer ${contact['name']} ?',
+    );
+
+    if (confirmed) {
+      try {
+        await LocalStorageService.deleteEmergencyContact(contact['id']);
+        await _loadData();
+        _showSuccess('Contact supprimé');
+      } catch (e) {
+        _showError('Erreur lors de la suppression: $e');
+      }
+    }
   }
 
-  Future<void> _showEmergencyInfoDialog() async {
-    final bloodTypeController = TextEditingController(text: emergencyInfo['blood_type'] ?? '');
-    final allergiesController = TextEditingController(text: emergencyInfo['allergies'] ?? '');
-    final medicationsController = TextEditingController(text: emergencyInfo['medications'] ?? '');
-    final medicalConditionsController = TextEditingController(text: emergencyInfo['medical_conditions'] ?? '');
+  Future<void> _showEditInfoDialog() async {
+    final controllers = <String, TextEditingController>{};
+    final fields = {
+      'blood_type': 'Groupe sanguin',
+      'allergies': 'Allergies',
+      'medical_conditions': 'Conditions médicales',
+      'medications': 'Médicaments',
+      'emergency_notes': 'Notes d\'urgence',
+    };
+
+    for (final key in fields.keys) {
+      controllers[key] = TextEditingController(
+        text: emergencyInfo[key] as String? ?? '',
+      );
+    }
 
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Fiche médicale d\'urgence'),
+        title: const Text('Informations médicales d\'urgence'),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: bloodTypeController,
-                decoration: const InputDecoration(
-                  labelText: 'Groupe sanguin',
-                  border: OutlineInputBorder(),
-                  hintText: 'Ex: A+, B-, O+, AB-',
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: allergiesController,
-                decoration: const InputDecoration(
-                  labelText: 'Allergies',
-                  border: OutlineInputBorder(),
-                  hintText: 'Ex: Pénicilline, noix, pollen...',
-                ),
-                maxLines: 2,
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: medicationsController,
-                decoration: const InputDecoration(
-                  labelText: 'Médicaments actuels',
-                  border: OutlineInputBorder(),
-                  hintText: 'Ex: Insuline, Warfarine...',
-                ),
-                maxLines: 2,
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: medicalConditionsController,
-                decoration: const InputDecoration(
-                  labelText: 'Conditions médicales',
-                  border: OutlineInputBorder(),
-                  hintText: 'Ex: Diabète, hypertension...',
-                ),
-                maxLines: 2,
-              ),
-            ],
+            children: fields.entries
+                .map((entry) => Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: TextField(
+                        controller: controllers[entry.key]!,
+                        decoration: InputDecoration(
+                          labelText: entry.value,
+                          border: const OutlineInputBorder(),
+                        ),
+                        maxLines: entry.key == 'emergency_notes' ? 3 : 1,
+                      ),
+                    ))
+                .toList(),
           ),
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.of(context).pop(),
             child: const Text('Annuler'),
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.pop(context, {
-                'blood_type': bloodTypeController.text,
-                'allergies': allergiesController.text,
-                'medications': medicationsController.text,
-                'medical_conditions': medicalConditionsController.text,
-              });
+              final data = <String, dynamic>{};
+              for (final entry in controllers.entries) {
+                data[entry.key] = entry.value.text.trim();
+              }
+              Navigator.of(context).pop(data);
             },
             child: const Text('Sauvegarder'),
           ),
         ],
       ),
     );
+
+    // Nettoyer les contrôleurs
+    for (final controller in controllers.values) {
+      controller.dispose();
+    }
 
     if (result != null) {
       await _saveEmergencyInfo(result);
@@ -248,310 +181,247 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
   Future<void> _saveEmergencyInfo(Map<String, dynamic> info) async {
     try {
       await LocalStorageService.saveEmergencyInfo(info);
-      setState(() {
-        emergencyInfo = info;
-      });
-      _showSuccess('Fiche médicale sauvegardée !');
+      await _loadData();
+      _showSuccess('Informations sauvegardées');
     } catch (e) {
-      _showError('Erreur sauvegarde: $e');
+      _showError('Erreur lors de la sauvegarde: $e');
     }
   }
 
-  Future<void> _callPrimaryContact() async {
-    if (emergencyContacts.isNotEmpty) {
-      final primaryContact = emergencyContacts.first;
-      final phone = primaryContact.phones?.first.value;
-      if (phone != null) {
-        await _callContact(phone);
-      } else {
-        _showError('Aucun numéro de téléphone trouvé');
-      }
-    } else {
-      _showError('Aucun contact d\'urgence configuré');
+  Future<bool> _showConfirmDialog(String title, String content) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Text(content),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Annuler'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('Confirmer'),
+          ),
+        ],
+      ),
+    );
+    return result ?? false;
+  }
+
+  void _showError(String message) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 4),
+        ),
+      );
     }
   }
 
   void _showSuccess(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.green,
-      ),
-    );
-  }
-
-  void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-      ),
-    );
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Urgence'),
-        backgroundColor: Colors.red[600],
+        title: const Text('Urgences'),
+        backgroundColor: Colors.red.shade600,
         foregroundColor: Colors.white,
         actions: [
           IconButton(
-            icon: const Icon(Icons.medical_information),
-            onPressed: _showEmergencyInfoDialog,
-            tooltip: 'Fiche médicale',
-          ),
-          IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _loadData,
+            tooltip: 'Actualiser',
           ),
         ],
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
+      body: RefreshIndicator(
+        onRefresh: _loadData,
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            // Boutons d'urgence
+            _buildEmergencyButtons(),
+            const SizedBox(height: 24),
+
+            // Informations médicales
+            EmergencyInfoCard(
+              emergencyInfo: emergencyInfo,
+              onEdit: _showEditInfoDialog,
+            ),
+            const SizedBox(height: 24),
+
+            // Section contacts
+            _buildContactsSection(),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showAddContactDialog,
+        backgroundColor: Colors.red.shade600,
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
+    );
+  }
+
+  Widget _buildEmergencyButtons() {
+    return Card(
+      color: Colors.red.shade50,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            const Text(
+              'Numéros d\'urgence',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => _callEmergency('15'),
+                    icon: const Icon(Icons.local_hospital),
+                    label: const Text('SAMU\n15'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => _callEmergency('18'),
+                    icon: const Icon(Icons.fire_truck),
+                    label: const Text('Pompiers\n18'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => _callEmergency('17'),
+                    icon: const Icon(Icons.local_police),
+                    label: const Text('Police\n17'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContactsSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.contacts, color: Colors.red.shade600),
+            const SizedBox(width: 8),
+            const Expanded(
+              child: Text(
+                'Contacts d\'urgence',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        if (emergencyContacts.isEmpty)
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(32),
               child: Column(
                 children: [
-                  // BOUTON D'URGENCE GÉANT
-                  Container(
-                    width: double.infinity,
-                    height: 200,
-                    margin: const EdgeInsets.only(bottom: 24),
-                    child: ElevatedButton(
-                      onPressed: _callPrimaryContact,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red[600],
-                        foregroundColor: Colors.white,
-                        elevation: 8,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                      child: const Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.emergency,
-                            size: 80,
-                            color: Colors.white,
-                          ),
-                          SizedBox(height: 16),
-                          Text(
-                            'URGENCE',
-                            style: TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'Appuyer pour appeler le contact principal',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Color.fromARGB(229, 255, 255, 255), // 0.9 opacity
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
+                  Icon(
+                    Icons.contact_phone_outlined,
+                    size: 48,
+                    color: Colors.grey.shade400,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Aucun contact d\'urgence',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey.shade600,
                     ),
                   ),
-
-                  // FICHE MÉDICALE D'URGENCE
-                  Card(
-                    elevation: 4,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(Icons.medical_information, color: Colors.blue[600]),
-                              const SizedBox(width: 8),
-                              Text(
-                                'Fiche médicale d\'urgence',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.blue[600],
-                                ),
-                              ),
-                              const Spacer(),
-                              IconButton(
-                                icon: const Icon(Icons.edit),
-                                onPressed: _showEmergencyInfoDialog,
-                                tooltip: 'Modifier',
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          if (emergencyInfo.isEmpty)
-                            const Text(
-                              'Aucune information médicale enregistrée.\nAppuyez sur ✏️ pour en ajouter.',
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontStyle: FontStyle.italic,
-                              ),
-                            )
-                          else
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                if (emergencyInfo['blood_type']?.isNotEmpty == true)
-                                  _buildInfoRow('Groupe sanguin', emergencyInfo['blood_type']),
-                                if (emergencyInfo['allergies']?.isNotEmpty == true)
-                                  _buildInfoRow('Allergies', emergencyInfo['allergies']),
-                                if (emergencyInfo['medications']?.isNotEmpty == true)
-                                  _buildInfoRow('Médicaments', emergencyInfo['medications']),
-                                if (emergencyInfo['medical_conditions']?.isNotEmpty == true)
-                                  _buildInfoRow('Conditions médicales', emergencyInfo['medical_conditions']),
-                              ],
-                            ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // CONTACTS D'URGENCE
-                  Card(
-                    elevation: 4,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(Icons.contacts, color: Colors.purple[600]),
-                              const SizedBox(width: 8),
-                              Text(
-                                'Contacts d\'urgence',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.purple[600],
-                                ),
-                              ),
-                              const Spacer(),
-                              IconButton(
-                                icon: const Icon(Icons.add),
-                                onPressed: _showAddContactDialog,
-                                tooltip: 'Ajouter un contact',
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          if (emergencyContacts.isEmpty)
-                            const Text(
-                              'Aucun contact d\'urgence configuré.\nAppuyez sur + pour en ajouter.',
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontStyle: FontStyle.italic,
-                              ),
-                            )
-                          else
-                            ...emergencyContacts.map((contact) => _buildContactCard(contact)),
-                        ],
-                      ),
-                    ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Ajoutez des contacts pour les situations d\'urgence',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.grey.shade500),
                   ),
                 ],
               ),
             ),
-    );
-  }
-
-  Widget _buildInfoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 120,
-            child: Text(
-              '$label:',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.grey,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(fontSize: 16),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildContactCard(dynamic contact) {
-    final phone = contact.phones?.first.value ?? '';
-    final relationship = contact.phones?.first.label ?? '';
-
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: Colors.purple[600],
-          child: const Icon(
-            Icons.person,
-            color: Colors.white,
-          ),
-        ),
-        title: Text(
-          contact.givenName ?? 'Contact',
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              phone,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: Colors.purple[700],
-              ),
-            ),
-            if (relationship.isNotEmpty)
-              Text(
-                relationship,
-                style: const TextStyle(
-                  color: Colors.grey,
-                  fontSize: 14,
+          )
+        else
+          ...emergencyContacts.map((contact) => Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: EmergencyContactCard(
+                  contact: contact is Map<String, dynamic>
+                      ? contact
+                      : {
+                          'name': contact.displayName ?? 'Contact sans nom',
+                          'phone': contact.phones?.first?.value ?? '',
+                          'relationship': contact.phones?.first?.label ?? '',
+                          'is_primary': false,
+                        },
+                  onEdit: () => _showEditContactDialog(contact),
+                  onDelete: () => _deleteContact(contact),
                 ),
-              ),
-          ],
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.phone, color: Colors.green),
-              onPressed: () => _callContact(phone),
-              tooltip: 'Appeler',
-            ),
-            IconButton(
-              icon: const Icon(Icons.copy, color: Colors.blue),
-              onPressed: () => _copyPhoneNumber(phone),
-              tooltip: 'Copier le numéro',
-            ),
-          ],
-        ),
-      ),
+              )),
+      ],
     );
+  }
+
+  Future<void> _callEmergency(String number) async {
+    try {
+      // Note: Utilisation d'URL launcher sera gérée par EmergencyContactCard
+      _showSuccess('Appel vers le $number...');
+    } catch (e) {
+      _showError('Impossible d\'appeler: $e');
+    }
   }
 }

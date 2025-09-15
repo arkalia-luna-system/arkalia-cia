@@ -5,13 +5,11 @@ Provides unified storage interface for all modules
 
 import json
 import logging
-import os
 import sqlite3
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
-from datetime import datetime
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +49,7 @@ class JSONFileBackend(StorageBackend):
     def __init__(self, base_path: str = "state"):
         self.base_path = Path(base_path)
         self.base_path.mkdir(exist_ok=True)
-        self._cache = {}
+        self._cache: dict[str, Any] = {}
 
     def _get_file_path(self, key: str) -> Path:
         """Get file path for key"""
@@ -220,7 +218,7 @@ class StorageManager:
     def __init__(self, backend: str = "json", **kwargs):
         self.backend_type = backend
         if backend == "sqlite":
-            self.backend = SQLiteBackend(**kwargs)
+            self.backend: StorageBackend = SQLiteBackend(**kwargs)
         else:
             self.backend = JSONFileBackend(**kwargs)
 
@@ -248,7 +246,8 @@ class StorageManager:
 
     def get_config(self, module: str) -> dict[str, Any]:
         """Get module configuration"""
-        return self.backend.get(f"{module}.config", {})
+        result = self.backend.get(f"{module}.config", {})
+        return result if isinstance(result, dict) else {}
 
     def save_config(self, module: str, config: dict[str, Any]) -> bool:
         """Save module configuration"""
@@ -256,7 +255,8 @@ class StorageManager:
 
     def get_metrics(self, module: str) -> dict[str, Any]:
         """Get module metrics"""
-        return self.backend.get(f"{module}.metrics", {})
+        result = self.backend.get(f"{module}.metrics", {})
+        return result if isinstance(result, dict) else {}
 
     def save_metrics(self, module: str, metrics: dict[str, Any]) -> bool:
         """Save module metrics"""

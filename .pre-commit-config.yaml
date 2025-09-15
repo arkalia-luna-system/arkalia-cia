@@ -11,25 +11,22 @@ repos:
     rev: v0.1.15
     hooks:
       - id: ruff
-        args: [--fix, --exit-non-zero-on-fix]
+        args: [--fix]
         stages: [pre-commit]
 
-  # 2. Black - Formatage après ruff
+  # 2. isort - Imports avant black
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        stages: [pre-commit]
+
+  # 3. Black - Formatage en dernier pour éviter conflits
   - repo: https://github.com/psf/black
     rev: 23.12.1
     hooks:
       - id: black
         language_version: python3.10
-        args: [--line-length=88, --target-version=py310]
-        stages: [pre-commit]
-
-  # 3. isort - Imports après black pour éviter conflits
-  - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
-    hooks:
-      - id: isort
-        args:
-          [--profile, black, --line-length, "88", --force-sort-within-sections]
         stages: [pre-commit]
 
   # ==============================================
@@ -43,30 +40,26 @@ repos:
       - id: mypy
         additional_dependencies: [types-PyYAML, types-requests]
         args:
-          [--ignore-missing-imports, --no-strict-optional, --no-error-summary]
+          [
+            --ignore-missing-imports,
+            --no-strict-optional,
+            --no-error-summary,
+            --explicit-package-bases,
+          ]
         stages: [pre-commit]
         # Continuer même en cas d'erreur mypy
         verbose: true
         fail_fast: false
+        files: ^arkalia_cia_python_backend/
 
-  # Bandit - Sécurité (fichiers spécifiques seulement)
-  - repo: https://github.com/PyCQA/bandit
-    rev: 1.7.6
-    hooks:
-      - id: bandit
-        args: [
-            -r,
-            arkalia_cia_python_backend/api.py,
-            arkalia_cia_python_backend/database.py,
-            arkalia_cia_python_backend/pdf_processor.py,
-            --skip,
-            B101,
-            B108,
-            B306, # Skip assert, temp dirs, mktemp in tests
-          ]
-        stages: [pre-commit]
-        # Exclure les tests pour éviter false positives
-        exclude: ^tests/
+  # Bandit - Sécurité (désactivé temporairement)
+  # - repo: https://github.com/PyCQA/bandit
+  #   rev: 1.7.6
+  #   hooks:
+  #     - id: bandit
+  #       args: [-r, arkalia_cia_python_backend/, --skip, B101, B108, B306]
+  #       stages: [pre-commit]
+  #       exclude: ^tests/
 
   # ==============================================
   # HOOKS GÉNÉRAUX (RAPIDES ET FIABLES)

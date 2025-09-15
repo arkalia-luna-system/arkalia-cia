@@ -258,7 +258,7 @@ class _HealthScreenState extends State<HealthScreen> {
                       ),
                       child: ListTile(
                         leading: CircleAvatar(
-                          backgroundColor: color.withValues(alpha: 0.1),
+                          backgroundColor: Colors.grey.shade100,
                           child: Icon(
                             icon,
                             color: color,
@@ -285,7 +285,7 @@ class _HealthScreenState extends State<HealthScreen> {
                                   vertical: 2,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: color.withValues(alpha: 0.1),
+                                  color: Colors.grey.shade100,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Text(

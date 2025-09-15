@@ -103,7 +103,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
 
     if (confirmed == true) {
       try {
-        await LocalStorageService.deleteDocument(documentId);
+        await LocalStorageService.deleteDocument(documentId.toString());
         _showSuccess('Document supprimé avec succès !');
         _loadDocuments(); // Recharger la liste
       } catch (e) {

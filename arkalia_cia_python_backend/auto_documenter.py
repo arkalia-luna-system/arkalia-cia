@@ -7,17 +7,11 @@ Génération automatique de documentation
 import ast
 import json
 import logging
-import os
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
 import yaml
-
-from ..core.error_handling import AthaliaError
-from ..core.generation import generate_project
-from ..quality.code_linter import CodeLinter
-from ..utilities.logger_advanced import AthaliaLogger
 
 logger = logging.getLogger(__name__)
 
@@ -142,10 +136,7 @@ class AutoDocumenter:
                                     analysis["documented_classes"] += 1
                                 # Compter les méthodes
                                 for child in ast.walk(node):
-                                    if (
-                                        isinstance(child, ast.FunctionDef)
-                                        and child is not node
-                                    ):
+                                    if isinstance(child, ast.FunctionDef):
                                         analysis["total_methods"] += 1
                                         if ast.get_docstring(child):
                                             analysis["documented_methods"] += 1

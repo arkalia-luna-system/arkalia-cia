@@ -18,6 +18,8 @@ on:
 
 permissions:
   contents: read
+  issues: write
+  pull-requests: write
 
 jobs:
   flutter-test:
@@ -53,8 +55,8 @@ jobs:
 
     - name: "Flutter Build Web"
       run: |
-        cd arkalia_cia
-        flutter build web --release
+        cd ..
+        ./ensure_web_build.sh
 
     - name: "Flutter Build APK"
       run: |

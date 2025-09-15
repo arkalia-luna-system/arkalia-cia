@@ -7,9 +7,6 @@ import json
 import tempfile
 from datetime import datetime, timedelta
 from pathlib import Path
-from unittest.mock import MagicMock, patch
-
-import pytest
 
 from arkalia_cia_python_backend.database import CIADatabase
 from arkalia_cia_python_backend.pdf_processor import PDFProcessor
@@ -102,9 +99,11 @@ class TestBackendIntegration:
         assert self.test_data["contact"]["id"] == 1
 
         # Vérifier que les timestamps sont cohérents
-        doc_time = datetime.fromisoformat(self.test_data["document"]["created_at"])
-        reminder_time = datetime.fromisoformat(self.test_data["reminder"]["created_at"])
-        datetime.fromisoformat(self.test_data["contact"]["created_at"])
+        doc_time = datetime.fromisoformat(str(self.test_data["document"]["created_at"]))
+        reminder_time = datetime.fromisoformat(
+            str(self.test_data["reminder"]["created_at"])
+        )
+        datetime.fromisoformat(str(self.test_data["contact"]["created_at"]))
 
         # Les timestamps doivent être proches (dans la même minute)
         time_diff = abs((doc_time - reminder_time).total_seconds())
@@ -135,7 +134,7 @@ class TestBackendIntegration:
         # Vérifier que les timestamps sont valides
         for data_type in ["document", "reminder", "contact"]:
             timestamp = self.test_data[data_type]["created_at"]
-            parsed_time = datetime.fromisoformat(timestamp)
+            parsed_time = datetime.fromisoformat(str(timestamp))
             assert parsed_time <= datetime.now()  # Pas dans le futur
 
     def test_json_serialization_consistency(self):
@@ -197,7 +196,7 @@ class TestBackendIntegration:
         for i in range(100):
             doc = self.test_data["document"].copy()
             doc["id"] = i + 1
-            doc["name"] = f"document_{i+1}.pdf"
+            doc["name"] = f"document_{i + 1}.pdf"
             # Note: Les opérations réelles seraient testées ici
 
         end_time = datetime.now()
@@ -230,7 +229,7 @@ class TestBackendIntegration:
         for i in range(5):
             doc = self.test_data["document"].copy()
             doc["id"] = i + 1
-            doc["name"] = f"document_{i+1}.pdf"
+            doc["name"] = f"document_{i + 1}.pdf"
             operations.append(doc)
 
         # Vérifier que toutes les opérations ont été créées
