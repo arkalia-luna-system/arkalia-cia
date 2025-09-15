@@ -3,16 +3,13 @@ Storage Abstraction Layer for Arkalia-LUNA Pro
 Provides unified storage interface for all modules
 """
 
-from abc import ABC, abstractmethod
-from contextlib import contextmanager
-from datetime import datetime
 import json
 import logging
-import os
-from pathlib import Path
 import sqlite3
-from typing import Any, Optional, Union
-
+from abc import ABC, abstractmethod
+from contextlib import contextmanager
+from pathlib import Path
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -127,14 +124,16 @@ class SQLiteBackend(StorageBackend):
     def _init_db(self):
         """Initialize SQLite database"""
         with self._get_connection() as conn:
-            conn.execute("""
+            conn.execute(
+                """
                 CREATE TABLE IF NOT EXISTS storage (
                     key TEXT PRIMARY KEY,
                     value TEXT,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
-            """)
+            """
+            )
             conn.commit()
 
     @contextmanager
@@ -247,7 +246,8 @@ class StorageManager:
 
     def get_config(self, module: str) -> dict[str, Any]:
         """Get module configuration"""
-        return self.backend.get(f"{module}.config", {})
+        result = self.backend.get(f"{module}.config", {})
+        return result if isinstance(result, dict) else {}
 
     def save_config(self, module: str, config: dict[str, Any]) -> bool:
         """Save module configuration"""
@@ -255,7 +255,8 @@ class StorageManager:
 
     def get_metrics(self, module: str) -> dict[str, Any]:
         """Get module metrics"""
-        return self.backend.get(f"{module}.metrics", {})
+        result = self.backend.get(f"{module}.metrics", {})
+        return result if isinstance(result, dict) else {}
 
     def save_metrics(self, module: str, metrics: dict[str, Any]) -> bool:
         """Save module metrics"""

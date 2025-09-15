@@ -3,13 +3,10 @@ Tests d'intégration pour Arkalia CIA Backend
 Tests de l'intégration complète des services backend
 """
 
-from datetime import datetime, timedelta
 import json
-from pathlib import Path
 import tempfile
-from unittest.mock import MagicMock, patch
-
-import pytest
+from datetime import datetime, timedelta
+from pathlib import Path
 
 from arkalia_cia_python_backend.database import CIADatabase
 from arkalia_cia_python_backend.pdf_processor import PDFProcessor

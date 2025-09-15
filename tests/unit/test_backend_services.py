@@ -4,9 +4,8 @@ Tests critiques pour la sécurité et la fiabilité du backend
 """
 
 import json
-from pathlib import Path
 import tempfile
-from unittest.mock import MagicMock, patch
+from pathlib import Path
 
 import pytest
 

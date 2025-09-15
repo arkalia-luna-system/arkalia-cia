@@ -3,7 +3,6 @@ Tests pour le module database d'Arkalia-CIA
 """
 
 import os
-from pathlib import Path
 import tempfile
 
 import pytest
