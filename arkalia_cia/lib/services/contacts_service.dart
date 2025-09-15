@@ -1,4 +1,4 @@
-import 'package:contacts_service/contacts_service.dart' as contacts_api;
+import 'package:flutter_contacts/flutter_contacts.dart' as contacts_api;
 import 'package:url_launcher/url_launcher.dart';
 
 /// Service de gestion des contacts natifs pour Arkalia CIA
@@ -7,7 +7,11 @@ class ContactsService {
   /// Récupère tous les contacts
   static Future<List<contacts_api.Contact>> getContacts() async {
     try {
-      return await contacts_api.ContactsService.getContacts();
+      if (await contacts_api.FlutterContacts.requestPermission()) {
+        return await contacts_api.FlutterContacts.getContacts();
+      } else {
+        throw Exception('Permission refusée pour accéder aux contacts');
+      }
     } catch (e) {
       throw Exception('Erreur lors de la récupération des contacts: $e');
     }
@@ -19,10 +23,10 @@ class ContactsService {
       final contacts = await getContacts();
       return contacts.where((contact) {
         // Filtrer les contacts marqués comme ICE
-        return contact.phones?.any((phone) =>
-          phone.label?.toLowerCase().contains('ice') == true ||
-          phone.label?.toLowerCase().contains('urgence') == true
-        ) ?? false;
+        return contact.phones.any((phone) {
+          final label = phone.label.toString().toLowerCase();
+          return label.contains('ice') || label.contains('urgence');
+        });
       }).toList();
     } catch (e) {
       throw Exception('Erreur lors de la récupération des contacts d\'urgence: $e');
@@ -37,16 +41,17 @@ class ContactsService {
   }) async {
     try {
       final contact = contacts_api.Contact(
-        givenName: name,
+        name: contacts_api.Name(first: name),
         phones: [
-          contacts_api.Item(
-            value: phone,
-            label: 'ICE - $relationship',
+          contacts_api.Phone(
+            phone,
+            label: contacts_api.PhoneLabel.other,
           ),
         ],
       );
 
-      return await contacts_api.ContactsService.addContact(contact);
+      await contact.insert();
+      return true;
     } catch (e) {
       throw Exception('Erreur lors de l\'ajout du contact d\'urgence: $e');
     }
@@ -91,8 +96,8 @@ class ContactsService {
     try {
       final contacts = await getContacts();
       return contacts.where((contact) {
-        final name = contact.givenName?.toLowerCase() ?? '';
-        final familyName = contact.familyName?.toLowerCase() ?? '';
+        final name = contact.name.first.toLowerCase();
+        final familyName = contact.name.last.toLowerCase();
         final searchQuery = query.toLowerCase();
 
         return name.contains(searchQuery) ||
@@ -110,8 +115,8 @@ class ContactsService {
       final contacts = await getContacts();
       return contacts.where((contact) {
         // Filtrer les contacts avec des labels médicaux
-        return contact.phones?.any((phone) {
-          final label = phone.label?.toLowerCase() ?? '';
+        return contact.phones.any((phone) {
+          final label = phone.label.toString().toLowerCase();
           return label.contains('médecin') ||
                  label.contains('docteur') ||
                  label.contains('hôpital') ||
@@ -119,7 +124,7 @@ class ContactsService {
                  label.contains('urgences') ||
                  label.contains('cardio') ||
                  label.contains('neuro');
-        }) ?? false;
+        });
       }).toList();
     } catch (e) {
       throw Exception('Erreur lors de la récupération des contacts médicaux: $e');
@@ -129,10 +134,7 @@ class ContactsService {
   /// Vérifie les permissions des contacts
   static Future<bool> hasContactsPermission() async {
     try {
-      // Note: Cette méthode dépend de l'implémentation de contacts_service
-      // En général, on vérifie via une tentative de récupération
-      await getContacts();
-      return true;
+      return await contacts_api.FlutterContacts.requestPermission();
     } catch (e) {
       return false;
     }
@@ -141,10 +143,7 @@ class ContactsService {
   /// Demande les permissions des contacts
   static Future<bool> requestContactsPermission() async {
     try {
-      // Note: Cette méthode dépend de l'implémentation de contacts_service
-      // En général, on fait une tentative d'accès qui déclenche la demande
-      await getContacts();
-      return true;
+      return await contacts_api.FlutterContacts.requestPermission();
     } catch (e) {
       return false;
     }
@@ -153,7 +152,8 @@ class ContactsService {
   /// Supprime un contact
   static Future<bool> deleteContact(contacts_api.Contact contact) async {
     try {
-      return await contacts_api.ContactsService.deleteContact(contact);
+      await contact.delete();
+      return true;
     } catch (e) {
       throw Exception('Erreur lors de la suppression du contact: $e');
     }
@@ -162,7 +162,8 @@ class ContactsService {
   /// Met à jour un contact
   static Future<bool> updateContact(contacts_api.Contact contact) async {
     try {
-      return await contacts_api.ContactsService.updateContact(contact);
+      await contact.update();
+      return true;
     } catch (e) {
       throw Exception('Erreur lors de la mise à jour du contact: $e');
     }
@@ -174,10 +175,10 @@ class ContactsService {
       final contacts = await getContacts();
       return contacts.where((contact) {
         // Filtrer les contacts marqués comme favoris
-        return contact.phones?.any((phone) =>
-          phone.label?.toLowerCase().contains('favori') == true ||
-          phone.label?.toLowerCase().contains('favorite') == true
-        ) ?? false;
+        return contact.phones.any((phone) {
+          final label = phone.label.toString().toLowerCase();
+          return label.contains('favori') || label.contains('favorite');
+        });
       }).toList();
     } catch (e) {
       throw Exception('Erreur lors de la récupération des contacts favoris: $e');
