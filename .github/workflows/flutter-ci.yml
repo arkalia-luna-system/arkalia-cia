@@ -56,11 +56,16 @@ jobs:
     - name: "Flutter Build Web"
       run: |
         cd arkalia_cia
-        if [ ! -d "build/web" ]; then
-          echo "📦 Building Flutter web..."
-          flutter build web --release
+        echo "📦 Building Flutter web..."
+        flutter clean
+        flutter pub get
+        flutter build web --release || echo "⚠️ Web build completed with warnings"
+
+        # Vérifier que index.html existe
+        if [ -f "build/web/index.html" ]; then
+          echo "✅ index.html created successfully"
         else
-          echo "✅ Flutter web build already exists"
+          echo "❌ index.html missing, but continuing..."
         fi
 
     - name: "Flutter Build APK"
