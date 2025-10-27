@@ -86,7 +86,7 @@ jobs:
         flutter analyze --no-fatal-infos > ../flutter-analyze.txt || echo "WARNING: Flutter analyze completed with issues"
 
     - name: "Upload Security Reports"
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: security-reports-${{ github.run_number }}
         path: |
