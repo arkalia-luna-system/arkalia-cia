@@ -305,7 +305,7 @@ We thank the following security researchers for responsible disclosure:
 
 ---
 
-**Last Updated**: January 2025
-**Next Review**: April 2025
+**Last Updated**: November 2025
+**Next Review**: February 2026
 
 *This security policy is reviewed quarterly and updated as needed. For questions, contact security@arkalia-luna.com.*
