@@ -439,11 +439,11 @@ See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for development guidelines, code sta
 
 | Update | User Benefit | Release |
 |--------|-------------|---------|
-| **🔐 Enhanced Security** | Your documents now use military-grade encryption (AES-256) | v1.2.0 |
-| **📱 Senior-Friendly UI** | Larger buttons, clearer text, simplified navigation | v1.1.0 |
-| **⚡ Faster Startup** | App now opens in under 2 seconds (was 4s) | v1.1.0 |
-| **🔔 Smart Reminders** | Better calendar sync, never miss appointments | v1.0.5 |
-| **📄 Drag & Drop** | Upload documents by simply dragging files | v1.0.3 |
+| **🔐 Enhanced Security** | Your documents now use military-grade encryption (AES-256) | v1.0.0 |
+| **📱 Senior-Friendly UI** | Larger buttons, clearer text, simplified navigation | v1.0.0 |
+| **⚡ Faster Startup** | App now opens in under 2 seconds (was 4s) | v1.0.0 |
+| **🔔 Smart Reminders** | Better calendar sync, never miss appointments | v1.0.0 |
+| **📄 Drag & Drop** | Upload documents by simply dragging files | v1.0.0 |
 | **🚨 Emergency Mode** | One-tap calling to emergency contacts | v1.0.0 |
 
 ### 👥 **Real User Feedback Integration**

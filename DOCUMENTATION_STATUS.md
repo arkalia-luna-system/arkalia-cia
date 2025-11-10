@@ -2,7 +2,7 @@
 
 ## ✅ Validation Complète
 
-**Date de validation** : $(date '+%Y-%m-%d %H:%M:%S')
+**Date de validation** : 2025-01-15
 
 ### 🎯 Résumé
 - **Cohérence code/documentation** : ✅ 100%
@@ -94,4 +94,4 @@ La documentation Arkalia CIA est maintenant :
 **Status** : ✅ **VALIDATION RÉUSSIE**
 
 ---
-*Validation effectuée automatiquement le $(date '+%Y-%m-%d à %H:%M:%S')*
+*Validation effectuée automatiquement le 2025-01-15*
