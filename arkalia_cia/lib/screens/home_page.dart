@@ -4,6 +4,7 @@ import 'documents_screen.dart';
 import 'reminders_screen.dart';
 import 'emergency_screen.dart';
 import 'health_screen.dart';
+import 'aria_screen.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -32,7 +33,7 @@ class HomePage extends StatelessWidget {
             ),
             const SizedBox(height: 40),
 
-            // 4 boutons principaux
+            // 6 boutons principaux
             Expanded(
               child: GridView.count(
                 crossAxisCount: 2,
@@ -77,6 +78,26 @@ class HomePage extends StatelessWidget {
                     subtitle: 'ICE - Contacts',
                     color: Colors.purple,
                     onTap: () => _showEmergency(context),
+                  ),
+
+                  // Bouton 5: ARIA - Laboratoire Santé
+                  _buildActionButton(
+                    context,
+                    icon: MdiIcons.heartPulse,
+                    title: 'ARIA',
+                    subtitle: 'Laboratoire Santé',
+                    color: Colors.red,
+                    onTap: () => _showARIA(context),
+                  ),
+
+                  // Bouton 6: CIA Sync
+                  _buildActionButton(
+                    context,
+                    icon: MdiIcons.syncIcon,
+                    title: 'Sync',
+                    subtitle: 'CIA ↔ ARIA',
+                    color: Colors.orange,
+                    onTap: () => _showSync(context),
                   ),
                 ],
               ),
@@ -160,6 +181,23 @@ class HomePage extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const EmergencyScreen()),
+    );
+  }
+
+  void _showARIA(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const ARIAScreen()),
+    );
+  }
+
+  void _showSync(BuildContext context) {
+    // Pour l'instant, on affiche juste un message
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Synchronisation CIA ↔ ARIA en cours de développement'),
+        backgroundColor: Colors.orange,
+      ),
     );
   }
 }

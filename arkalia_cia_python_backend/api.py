@@ -7,6 +7,7 @@ import os
 import tempfile
 from datetime import datetime
 
+from aria_integration.api import router as aria_router
 from database import CIADatabase
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
@@ -99,6 +100,9 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
+
+# Montage du router ARIA
+app.include_router(aria_router, prefix="/api/aria", tags=["ARIA Integration"])
 
 
 @app.get("/")

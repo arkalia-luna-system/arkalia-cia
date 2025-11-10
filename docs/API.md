@@ -311,6 +311,55 @@ if (callSuccess) {
 
 Base URL: `http://localhost:8000`
 
+### ARIA Integration
+
+Arkalia CIA intègre maintenant **ARKALIA ARIA** (Research Intelligence Assistant) pour des fonctionnalités avancées de suivi de santé et d'analyse de données.
+
+#### Configuration ARIA
+
+**Base URL ARIA**: `http://localhost:8001`
+
+**Endpoints d'intégration**:
+- `/api/aria/status` - Statut de l'intégration ARIA
+- `/api/aria/quick-pain-entry` - Saisie rapide de douleur
+- `/api/aria/pain-entry` - Saisie détaillée de douleur
+- `/api/aria/pain-entries` - Historique des entrées
+- `/api/aria/export/csv` - Export CSV pour professionnels
+- `/api/aria/patterns/recent` - Patterns récents
+- `/api/aria/predictions/current` - Prédictions actuelles
+
+#### Exemple d'utilisation ARIA
+
+**Saisie rapide de douleur**:
+```dart
+Map<String, dynamic> painData = {
+  'intensity': 7,
+  'trigger': 'stress',
+  'action': 'respiration'
+};
+
+Map<String, dynamic> result = await ApiService.post(
+  '/api/aria/quick-pain-entry',
+  data: painData
+);
+```
+
+**Récupération de l'historique**:
+```dart
+List<Map<String, dynamic>> history = await ApiService.get(
+  '/api/aria/pain-entries/recent?limit=10'
+);
+```
+
+**Export pour professionnel de santé**:
+```dart
+Map<String, dynamic> export = await ApiService.get(
+  '/api/aria/export/csv'
+);
+String csvContent = export['content'];
+String filename = export['filename'];
+```
+
 #### Health Check
 
 **GET** `/health`
