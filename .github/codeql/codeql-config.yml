@@ -1,0 +1,18 @@
+# CodeQL Configuration for Arkalia CIA
+# Projet Python/Flutter - Analyse uniquement Python (pas de JavaScript/TypeScript)
+
+# Requêtes de sécurité et qualité pour Python
+queries:
+  - uses: security-and-quality
+
+# Exclure les dossiers non pertinents pour l'analyse
+paths-ignore:
+  - "**/node_modules/**"
+  - "**/.dart_tool/**"
+  - "**/build/**"
+  - "**/dist/**"
+  - "**/arkalia_cia_venv/**"
+  - "**/.flutter/**"
+  - "**/coverage/**"
+  - "**/htmlcov/**"
+  - "**/arkalia_cia/**" # Code Flutter/Dart - non analysé par CodeQL
