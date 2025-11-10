@@ -470,6 +470,12 @@ See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for development guidelines, code sta
 | [API Reference](docs/API.md) | Service APIs and integration guides |
 | [Deployment](docs/DEPLOYMENT.md) | Installation and deployment procedures |
 | [Security](SECURITY.md) | Security policies and vulnerability reporting |
+| [Changelog](docs/CHANGELOG.md) | Version history and release notes |
+| [Contributing](docs/CONTRIBUTING.md) | Development guidelines and contribution process |
+| [Migration](docs/MIGRATION.md) | Migration guides and upgrade instructions |
+| [Phase 1 Report](docs/PHASE1_COMPLETED.md) | Phase 1 completion report and achievements |
+| [CI/CD Corrections](docs/CORRECTIONS_CI.md) | CI/CD fixes and improvements documentation |
+| [Documentation Status](docs/DOCUMENTATION_STATUS.md) | Documentation validation and status |
 
 ## License
 
