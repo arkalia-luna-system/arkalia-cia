@@ -203,6 +203,29 @@ We publish security advisories for all significant vulnerabilities:
 
 ## Security Testing
 
+### CodeQL Analysis
+
+**Status**: ✅ Active - Python Only (17/11/2025)
+
+We use GitHub's CodeQL for automated security analysis of our Python codebase:
+
+- **Language**: Python only (JavaScript/TypeScript explicitly excluded)
+- **Frequency**: On every push, pull request, and daily scheduled runs
+- **Configuration**: `.github/workflows/codeql-analysis.yml`
+- **Results**: Available in [Security > Code scanning](https://github.com/arkalia-luna-system/arkalia-cia/security/code-scanning)
+
+**Why Python Only?**
+
+- This project uses Flutter/Dart for mobile (not JavaScript)
+- CodeQL Python analysis covers our backend security needs
+- JavaScript analysis was disabled to prevent false positives and configuration errors
+
+**Configuration Details**:
+
+- Excluded paths: `**/*.js`, `**/*.jsx`, `**/*.ts`, `**/*.tsx`, `**/node_modules/**`
+- Queries: `security-and-quality` (comprehensive security rules)
+- Matrix strategy: Single language (`python`) to prevent auto-detection issues
+
 ### Automated Testing
 
 ```bash
@@ -220,6 +243,8 @@ jobs:
         run: safety scan -r requirements.txt
       - name: Run Semgrep
         run: semgrep --config=auto .
+      - name: CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
 ```
 
 ### Manual Testing

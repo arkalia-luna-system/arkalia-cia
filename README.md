@@ -9,6 +9,7 @@
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI/CD](https://img.shields.io/badge/CI%2FCD-Passing-brightgreen.svg)](https://github.com/arkalia-luna-system/arkalia-cia/actions)
 [![Coverage](https://img.shields.io/badge/Coverage-66%25-green.svg)](https://codecov.io/gh/arkalia-luna-system/arkalia-cia)
+[![CodeQL](https://img.shields.io/badge/CodeQL-Python%20Only-brightgreen.svg?logo=github)](https://github.com/arkalia-luna-system/arkalia-cia/security/code-scanning)
 [![Phase](https://img.shields.io/badge/Phase-2%20Enhanced%20Features-orange.svg)](https://github.com/arkalia-luna-system/arkalia-cia/tree/develop)
 [![Good First Issue](https://img.shields.io/badge/Good%20First-Issue-green.svg)](https://github.com/arkalia-luna-system/arkalia-cia/labels/good%20first%20issue)
 [![Help Wanted](https://img.shields.io/badge/Help-Wanted-orange.svg)](https://github.com/arkalia-luna-system/arkalia-cia/labels/help%20wanted)
