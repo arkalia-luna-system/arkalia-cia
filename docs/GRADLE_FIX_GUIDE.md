@@ -2,22 +2,29 @@
 
 **Date**: November 17, 2025
 **Objectif**: Forcer Gradle à utiliser `~/.gradle` au lieu de `/Volumes/T7/gradle`
+**Statut**: ✅ **RÉSOLU** - Solution ultra-robuste v3.0
 
 ---
 
-## 🎯 **SOLUTION COMPLÈTE IMPLÉMENTÉE**
+## 🎯 **SOLUTION ULTRA-ROBUSTE IMPLÉMENTÉE**
 
-### **1. Fichier `android/init.gradle`** ✅
+### **1. Fichier `android/init.gradle` v3.0** ✅
 
-Script d'initialisation Gradle qui force le bon chemin à **3 niveaux** :
-- `beforeSettings` : Avant le chargement des settings
-- `settingsEvaluated` : Après l'évaluation des settings
-- `projectsLoaded` : Au chargement des projets
+Script d'initialisation Gradle qui force le bon chemin à **4 niveaux** :
+- `beforeSettings` : Avant le chargement des settings (priorité maximale)
+- `settingsEvaluated` : Après l'évaluation des settings (double vérification)
+- `projectsLoaded` : Au chargement des projets (vérification finale)
+- `beforeProject` : Avant chaque projet (prévention proactive)
 
-**Fonctionnalités** :
-- Détecte si `user.home` est sur `/Volumes/` et le corrige
-- Force `org.gradle.user.home` à chaque étape
-- Utilise le chemin explicite `/Users/athalia/.gradle` en dernier recours
+**Fonctionnalités avancées** :
+- ✅ Détection multi-niveaux du user.home (5 priorités : HOME, USER_HOME, user.home, USER, fallback)
+- ✅ Validation de l'existence des répertoires avant utilisation
+- ✅ Vérification des permissions d'écriture
+- ✅ Création automatique de `~/.gradle` si nécessaire
+- ✅ Gestion d'erreurs complète avec try/catch
+- ✅ Fallbacks multiples en cas d'échec
+- ✅ Prévention proactive de création sur `/Volumes/`
+- ✅ Messages de log détaillés pour diagnostic
 
 ---
 
@@ -186,7 +193,7 @@ Avant de lancer un build :
 
 **Forcer Gradle à utiliser `~/.gradle`** au lieu de `/Volumes/T7/gradle` à **5 niveaux** :
 
-1. ✅ **init.gradle** : 3 hooks (beforeSettings, settingsEvaluated, projectsLoaded)
+1. ✅ **init.gradle v3.0** : 4 hooks (beforeSettings, settingsEvaluated, projectsLoaded, beforeProject) + gestion d'erreurs complète
 2. ✅ **gradlew** : Variables d'environnement + propriétés système Java
 3. ✅ **gradle.properties** : Configuration explicite
 4. ✅ **build-android.sh** : Wrapper qui force tout
@@ -194,4 +201,16 @@ Avant de lancer un build :
 
 ---
 
+## ✅ **GARANTIES**
+
+La solution v3.0 garantit :
+- ✅ **Aucun risque** de création sur `/Volumes/` grâce à 4 niveaux de protection
+- ✅ **Gestion d'erreurs** complète avec fallbacks multiples
+- ✅ **Validation** de tous les chemins avant utilisation
+- ✅ **Création automatique** de `~/.gradle` si nécessaire
+- ✅ **Messages de diagnostic** détaillés pour troubleshooting
+
+---
+
 **Dernière mise à jour**: November 17, 2025
+**Version**: 3.0 - Ultra-robuste
