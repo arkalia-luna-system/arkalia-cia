@@ -219,6 +219,7 @@ Note médicale importante : Arkalia CIA est un outil d'organisation et ne rempla
    - 10-inch Tablet: 1600 x 2560 pixels
    - Feature Graphic: 1024 x 500 pixels
    - Minimum 2 screenshots required
+   - **Guide détaillé**: Voir `docs/SCREENSHOTS_GUIDE.md` pour savoir exactement quels écrans capturer
 
 4. **Privacy Policy & Terms**
    - Privacy Policy URL: (à héberger et ajouter)
@@ -315,6 +316,7 @@ santé,médical,documents,rappels,urgence,senior,privacy,chiffrement,local,offli
    - iPhone 5.5" (iPhone 8 Plus): 1242 x 2208 pixels
    - iPad Pro 12.9": 2048 x 2732 pixels
    - Minimum 3 screenshots required per device size
+   - **Guide détaillé**: Voir `docs/SCREENSHOTS_GUIDE.md` pour savoir exactement quels écrans capturer
 
 4. **Privacy Policy & Terms**
    - Privacy Policy URL: (à héberger et ajouter)
