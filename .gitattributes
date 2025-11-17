@@ -1,0 +1,10 @@
+# Empêcher Git de traiter les fichiers macOS cachés
+._* filter=gitignore
+._* -text
+._* -diff
+.DS_Store filter=gitignore
+.DS_Store -text
+.DS_Store -diff
+.AppleDouble filter=gitignore
+.Spotlight-V100 filter=gitignore
+.Trashes filter=gitignore

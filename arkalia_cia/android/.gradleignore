@@ -1,0 +1,13 @@
+# Ignore macOS hidden files (AppleDouble and metadata)
+# Ces fichiers sont créés automatiquement par macOS sur les volumes externes
+# et doivent être complètement ignorés par Gradle
+**/._*
+**/._*/**
+**/.DS_Store
+**/.DS_Store?
+**/.AppleDouble
+**/.AppleDouble/**
+**/.Spotlight-V100
+**/.Trashes
+**/._.DS_Store
+

@@ -12,10 +12,18 @@ from typing import Any
 
 # Import des composants Athalia réels
 try:
-    from athalia_core.core.cache_manager import CacheManager
-    from athalia_core.metrics.collector import MetricsCollector
-    from athalia_core.quality.code_linter import CodeLinter
-    from athalia_core.validation.security_validator import CommandSecurityValidator
+    from athalia_core.core.cache_manager import (  # type: ignore[import-not-found]
+        CacheManager,
+    )
+    from athalia_core.metrics.collector import (  # type: ignore[import-not-found]
+        MetricsCollector,
+    )
+    from athalia_core.quality.code_linter import (  # type: ignore[import-not-found]
+        CodeLinter,
+    )
+    from athalia_core.validation.security_validator import (  # type: ignore[import-not-found]
+        CommandSecurityValidator,
+    )
 
     ATHALIA_AVAILABLE = True
 except ImportError as e:
@@ -462,16 +470,12 @@ class SecurityDashboard:
         score_color = (
             "#28a745"
             if security_score >= 85
-            else "#ffc107"
-            if security_score >= 70
-            else "#dc3545"
+            else "#ffc107" if security_score >= 70 else "#dc3545"
         )
         score_status = (
             "Sécurisé"
             if security_score >= 85
-            else "Attention"
-            if security_score >= 70
-            else "Critique"
+            else "Attention" if security_score >= 70 else "Critique"
         )
 
         html_template = f"""<!DOCTYPE html>

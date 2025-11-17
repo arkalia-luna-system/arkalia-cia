@@ -208,6 +208,115 @@ projectsLoaded {
     }
 }
 
+// ============================================================================
+// PREVENTION ULTIME : Ignorer les fichiers macOS au niveau init.gradle
+// ============================================================================
+
+// Fonction ULTRA-AGGRESSIVE pour nettoyer TOUS les fichiers macOS
+// Nettoie dans TOUS les répertoires possibles, y compris les répertoires intermédiaires
+def cleanMacOSFiles(dir) {
+    if (dir == null || !dir.exists()) {
+        return 0
+    }
+    
+    int count = 0
+    try {
+        dir.eachFileRecurse { file ->
+            if (file.isFile() && (file.name.startsWith("._") || file.name == ".DS_Store")) {
+                try {
+                    file.delete()
+                    count++
+                } catch (Exception e) {
+                    // Ignorer les erreurs de suppression
+                }
+            }
+        }
+    } catch (Exception e) {
+        // Ignorer les erreurs de parcours
+    }
+    return count
+}
+
+// Fonction pour nettoyer TOUS les fichiers macOS dans TOUT le projet
+def cleanAllMacOSFiles(project) {
+    int totalCleaned = 0
+    
+    // Liste de TOUS les répertoires à nettoyer
+    def dirsToClean = []
+    
+    // Répertoires de build
+    if (project.buildDir != null) {
+        dirsToClean.add(project.buildDir)
+    }
+    if (project.rootProject.buildDir != null) {
+        dirsToClean.add(project.rootProject.buildDir)
+    }
+    
+    // Répertoires sources
+    dirsToClean.add(project.file("src"))
+    dirsToClean.add(project.file("lib"))
+    dirsToClean.add(project.file("assets"))
+    dirsToClean.add(project.file("res"))
+    
+    // Répertoires Gradle et Flutter (plus agressif)
+    dirsToClean.add(project.file(".gradle"))
+    dirsToClean.add(project.file("../.dart_tool"))
+    dirsToClean.add(project.file("../.flutter-plugins"))
+    
+    // Nettoyer aussi dans le répertoire android/.gradle
+    def androidGradleDir = project.file(".gradle")
+    if (androidGradleDir != null && androidGradleDir.exists()) {
+        dirsToClean.add(androidGradleDir)
+    }
+    
+    // Nettoyer dans le répertoire parent (arkalia_cia)
+    def parentDir = project.file("..")
+    if (parentDir != null && parentDir.exists()) {
+        // Nettoyer dans .dart_tool du projet Flutter
+        def dartToolDir = new File(parentDir, ".dart_tool")
+        if (dartToolDir.exists()) {
+            dirsToClean.add(dartToolDir)
+        }
+        // Nettoyer dans build du projet Flutter
+        def flutterBuildDir = new File(parentDir, "build")
+        if (flutterBuildDir.exists()) {
+            dirsToClean.add(flutterBuildDir)
+        }
+    }
+    
+    // Répertoire racine du projet Flutter
+    def flutterRoot = project.file("../..")
+    if (flutterRoot != null && flutterRoot.exists()) {
+        dirsToClean.add(flutterRoot)
+    }
+    
+    // Répertoires intermédiaires Android
+    def buildDir = project.buildDir
+    if (buildDir != null && buildDir.exists()) {
+        // Nettoyer dans tous les sous-répertoires de build
+        buildDir.eachDir { subDir ->
+            dirsToClean.add(subDir)
+        }
+    }
+    
+    // Nettoyer aussi dans le répertoire build global
+    def rootBuildDir = project.rootProject.buildDir
+    if (rootBuildDir != null && rootBuildDir.exists()) {
+        rootBuildDir.eachDir { subDir ->
+            dirsToClean.add(subDir)
+        }
+    }
+    
+    // Nettoyer tous les répertoires
+    dirsToClean.each { dir ->
+        if (dir != null && dir.exists()) {
+            totalCleaned += cleanMacOSFiles(dir)
+        }
+    }
+    
+    return totalCleaned
+}
+
 // Prevent any volume-based cache creation (proactive prevention)
 gradle.beforeProject { project ->
     def currentUserHome = System.getProperty("org.gradle.user.home")
@@ -216,4 +325,58 @@ gradle.beforeProject { project ->
         setGradleUserHome(correctHome)
         println "✅ Init.gradle (beforeProject): Corrected volume-based path to: ${correctHome.absolutePath}"
     }
+    
+    // ========================================================================
+    // NETTOYAGE ULTRA-AGGRESSIF AVANT ET APRÈS CHAQUE TÂCHE
+    // ========================================================================
+    project.tasks.configureEach { task ->
+        // Nettoyer AVANT l'exécution de la tâche (nettoyage complet)
+        task.doFirst {
+            int totalCleaned = cleanAllMacOSFiles(project)
+            if (totalCleaned > 0) {
+                println "🧹 Init.gradle: Nettoyé $totalCleaned fichiers macOS avant ${task.name}"
+            }
+        }
+        
+        // Nettoyer APRÈS l'exécution de la tâche (pour les fichiers recréés)
+        task.doLast {
+            int cleaned = cleanAllMacOSFiles(project)
+            if (cleaned > 0) {
+                println "🧹 Init.gradle: Nettoyé $cleaned fichiers macOS après ${task.name}"
+            }
+        }
+    }
+    
+    // ========================================================================
+    // NETTOYAGE SPÉCIAL POUR LES TÂCHES ANDROID CRITIQUES
+    // ========================================================================
+    // Nettoyer AVANT les tâches qui traitent les ressources (où les fichiers sont créés)
+    project.tasks.matching { 
+        it.name.contains("process") || 
+        it.name.contains("merge") || 
+        it.name.contains("link") ||
+        it.name.contains("compile") ||
+        it.name.contains("assemble")
+    }.configureEach { task ->
+        task.doFirst {
+            // Nettoyage ultra-agressif juste avant ces tâches critiques
+            int cleaned = cleanAllMacOSFiles(project)
+            if (cleaned > 0) {
+                println "🧹 Init.gradle: Nettoyage critique - $cleaned fichiers macOS supprimés avant ${task.name}"
+            }
+        }
+    }
+    
+    // ========================================================================
+    // CONFIGURATION GLOBALE : Exclure les fichiers macOS de TOUS les FileTree
+    // ========================================================================
+    // Cette configuration s'applique à tous les FileTree créés dans le projet
+    project.extensions.extraProperties.set("macosExcludePatterns", [
+        "**/._*",
+        "**/._*/**",
+        "**/.DS_Store",
+        "**/.DS_Store?",
+        "**/.AppleDouble",
+        "**/.AppleDouble/**"
+    ])
 }

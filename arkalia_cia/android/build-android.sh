@@ -36,22 +36,61 @@ echo "   GRADLE_USER_HOME=$GRADLE_USER_HOME"
 echo "   GRADLE_OPTS=$GRADLE_OPTS"
 echo "   HOME=$HOME"
 
-# Retourner au répertoire du projet Flutter (depuis android/)
+# Obtenir le répertoire du script (android/)
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+# Retourner au répertoire du projet Flutter (arkalia_cia/)
 # Le script est dans arkalia_cia/android/, donc on remonte d'un niveau
-SCRIPT_DIR="$(cd "$(dirname "$0")" 2>/dev/null && pwd || echo "$(dirname "$0")")"
-if [ ! -d "$SCRIPT_DIR" ]; then
-    # Si le chemin relatif ne fonctionne pas, chercher depuis le répertoire courant
-    SCRIPT_DIR="$(pwd)/arkalia_cia/android"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# Vérifier que nous sommes dans le bon répertoire (doit contenir pubspec.yaml)
+if [ ! -f "$PROJECT_DIR/pubspec.yaml" ]; then
+    echo -e "${RED}❌ Erreur: Impossible de trouver le répertoire du projet Flutter${NC}"
+    echo "   SCRIPT_DIR: $SCRIPT_DIR"
+    echo "   PROJECT_DIR: $PROJECT_DIR"
+    exit 1
 fi
-PROJECT_DIR="$(cd "$SCRIPT_DIR/.." 2>/dev/null && pwd || echo "$(dirname "$SCRIPT_DIR")")"
-cd "$PROJECT_DIR" || cd /Volumes/T7/arkalia-cia/arkalia_cia
+
+# Aller dans le répertoire du projet Flutter
+cd "$PROJECT_DIR"
+
+# Nettoyer les fichiers macOS cachés juste avant le build
+echo -e "${YELLOW}🧹 Nettoyage des fichiers macOS avant build...${NC}"
+
+# Utiliser le script de prévention si disponible
+PREVENT_SCRIPT="$SCRIPT_DIR/prevent-macos-files.sh"
+if [ -f "$PREVENT_SCRIPT" ]; then
+    chmod +x "$PREVENT_SCRIPT"
+    "$PREVENT_SCRIPT" || true
+else
+    # Fallback : nettoyage manuel
+    find . -name "._*" -type f ! -path "./.git/*" -delete 2>/dev/null || true
+    find . -name ".DS_Store" -type f ! -path "./.git/*" -delete 2>/dev/null || true
+    find . -name ".AppleDouble" -type d ! -path "./.git/*" -exec rm -rf {} + 2>/dev/null || true
+fi
+
+# Lancer un script de surveillance en arrière-plan pour supprimer les fichiers pendant le build
+WATCH_SCRIPT="$SCRIPT_DIR/watch-macos-files.sh"
+if [ -f "$WATCH_SCRIPT" ]; then
+    chmod +x "$WATCH_SCRIPT"
+    "$WATCH_SCRIPT" &
+    WATCH_PID=$!
+    echo -e "${GREEN}✅ Surveillance des fichiers macOS activée (PID: $WATCH_PID)${NC}"
+    # Tuer le processus de surveillance à la fin
+    trap "kill $WATCH_PID 2>/dev/null" EXIT
+fi
 
 # Exécuter la commande Flutter passée en argument
 echo -e "${GREEN}🚀 Lancement du build Flutter...${NC}"
 echo ""
 
-# Exécuter la commande avec les variables d'environnement forcées
-exec env GRADLE_USER_HOME="$HOME/.gradle" \
-         GRADLE_OPTS="-Dorg.gradle.user.home=$HOME/.gradle -Duser.home=$HOME" \
-         "$@"
+# Exécuter la commande Flutter avec les variables d'environnement forcées
+# S'assurer que nous sommes dans le bon répertoire
+cd "$PROJECT_DIR"
+
+# Exécuter la commande passée en argument (ex: "flutter build apk --debug")
+# avec les variables d'environnement forcées
+env GRADLE_USER_HOME="$HOME/.gradle" \
+    GRADLE_OPTS="-Dorg.gradle.user.home=$HOME/.gradle -Duser.home=$HOME" \
+    "$@"
 

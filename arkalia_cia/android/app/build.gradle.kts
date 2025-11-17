@@ -39,6 +39,40 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+    
+    // ========================================================================
+    // CONFIGURATION ULTRA-COMPLÈTE : Ignorer les fichiers macOS cachés
+    // ========================================================================
+    // Cette configuration s'ajoute à celle du build.gradle.kts racine
+    // pour garantir une exclusion totale dans l'app Android
+    
+    sourceSets {
+        getByName("main") {
+            resources {
+                // Exclure tous les patterns macOS
+                // Note: Les exclusions sont gérées par le build.gradle.kts racine
+                // Ici on configure seulement le packaging Android
+            }
+        }
+    }
+    
+    // Configuration du packaging Android pour exclure ces fichiers
+    // Cette configuration empêche les fichiers macOS d'être inclus dans l'APK/AAB
+    packaging {
+        resources {
+            excludes += setOf(
+                "**/._*",
+                "**/._*/**",
+                "**/.DS_Store",
+                "**/.DS_Store?",
+                "**/.AppleDouble/**",
+                "**/.Spotlight-V100/**",
+                "**/.Trashes/**",
+                "META-INF/._*",
+                "META-INF/._*/**"
+            )
+        }
+    }
 }
 
 flutter {
