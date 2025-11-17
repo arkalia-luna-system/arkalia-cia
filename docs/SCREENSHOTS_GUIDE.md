@@ -260,4 +260,20 @@
 
 ---
 
+## 📊 **CAPTURES D'ÉCRAN SUPPLÉMENTAIRES (Optionnel)**
+
+### **Codecov Dashboard** (Si besoin pour documentation)
+
+Si vous voulez documenter la couverture de code :
+
+**Ce qu'on doit voir :**
+- ✅ Dashboard Codecov avec graphique de couverture
+- ✅ Pourcentage de couverture (actuellement 10,69%)
+- ✅ Graphique historique
+- ✅ Liste des fichiers avec couverture
+
+**Note**: Cette capture est optionnelle et n'est pas nécessaire pour App Store/Play Store. Elle peut être utile pour la documentation technique interne.
+
+---
+
 **Dernière mise à jour**: November 17, 2025

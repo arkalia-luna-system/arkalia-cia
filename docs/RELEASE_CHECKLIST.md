@@ -14,7 +14,7 @@
 - ✅ **MyPy**: 0 erreur
 - ✅ **Bandit**: 0 vulnérabilité
 - ✅ **Tests Python**: 61/61 passants (100%)
-- ✅ **Couverture**: 66% (objectif 70%+ optionnel)
+- ✅ **Couverture**: 10,69% globale / 66% fichiers testés (Codecov configuré et fonctionnel)
 
 **Action requise**: Aucune - Tout est OK ✅
 

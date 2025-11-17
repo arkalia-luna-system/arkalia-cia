@@ -28,7 +28,7 @@
 | **⚡ Startup Time** | <2.1s | Lightning-fast app launch |
 | **🔒 Security Level** | AES-256 | Military-grade encryption |
 | **📱 Offline Mode** | 100% | Works without internet |
-| **🧪 Test Coverage** | 66% | 61 tests passing |
+| **🧪 Test Coverage** | 11% global / 66% fichiers testés | 61 tests passing |
 | **🌍 Platforms** | iOS + Android | Universal compatibility |
 | **👥 Target Users** | Seniors + Families | Accessible design |
 | **📊 CI/CD Success** | 100% | All workflows green |
@@ -69,7 +69,7 @@ graph TB
 |-----------|------------|---------|--------|---------|
 | **Frontend** | Flutter | 3.35.3 | ✅ Production | 100% Tests Pass |
 | **Language** | Dart | 3.0+ | ✅ Production | 0 Linting Issues |
-| **Backend** | FastAPI | 0.116.1 | ✅ Production | 66% Coverage |
+| **Backend** | FastAPI | 0.116.1 | ✅ Production | 11% global (66% fichiers testés) |
 | **Runtime** | Python | 3.10.14 | ✅ Production | Black+Ruff Clean |
 | **Database** | SQLite | Built-in | ✅ Production | Encrypted AES-256 |
 | **Storage** | Local encryption | AES-256 | ✅ Production | Security Verified |
