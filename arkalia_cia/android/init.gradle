@@ -1,0 +1,63 @@
+// Force Gradle to use the correct user home directory
+// This init script runs before any Gradle build and ensures the user.home is set correctly
+// Version: 2.0 - Enhanced to prevent /Volumes/T7/gradle usage
+
+import org.gradle.api.initialization.Settings
+
+// Get user home - prioritize environment variables, then system properties
+def getUserHome() {
+    def home = System.getenv("HOME")
+    if (home == null || home.isEmpty() || home.startsWith("/Volumes/")) {
+        home = System.getenv("USER_HOME")
+    }
+    if (home == null || home.isEmpty() || home.startsWith("/Volumes/")) {
+        home = System.getProperty("user.home")
+    }
+    // Final check: if still on volume, use explicit path
+    if (home == null || home.isEmpty() || home.startsWith("/Volumes/")) {
+        home = "/Users/${System.getenv("USER") ?: "athalia"}"
+    }
+    return home
+}
+
+def userHome = getUserHome()
+def gradleUserHome = new File(userHome, ".gradle")
+
+// Force system properties BEFORE anything else
+if (userHome != null && !userHome.isEmpty() && !userHome.startsWith("/Volumes/")) {
+    System.setProperty("user.home", userHome)
+    System.setProperty("org.gradle.user.home", gradleUserHome.absolutePath)
+    println "✅ Init.gradle: System properties set - user.home=${userHome}, gradle.user.home=${gradleUserHome.absolutePath}"
+} else {
+    println "⚠️  Init.gradle: Warning - user.home might be on volume: ${userHome}"
+}
+
+// Force at settings level (runs first)
+beforeSettings { Settings settings ->
+    def gh = new File(getUserHome(), ".gradle")
+    if (gh.parentFile != null && !gh.parentFile.absolutePath.startsWith("/Volumes/")) {
+        settings.gradle.gradleUserHomeDir = gh
+        System.setProperty("org.gradle.user.home", gh.absolutePath)
+        println "✅ Init.gradle (beforeSettings): Gradle user home forced to: ${gh.absolutePath}"
+    }
+}
+
+// Force at settings evaluated (runs after settings are loaded)
+settingsEvaluated { Settings settings ->
+    def gh = new File(getUserHome(), ".gradle")
+    if (gh.parentFile != null && !gh.parentFile.absolutePath.startsWith("/Volumes/")) {
+        settings.gradle.gradleUserHomeDir = gh
+        System.setProperty("org.gradle.user.home", gh.absolutePath)
+        println "✅ Init.gradle (settingsEvaluated): Gradle user home forced to: ${gh.absolutePath}"
+    }
+}
+
+// Force at project level
+projectsLoaded {
+    def gh = new File(getUserHome(), ".gradle")
+    if (gh.parentFile != null && !gh.parentFile.absolutePath.startsWith("/Volumes/")) {
+        rootProject.ext.gradleUserHome = gh
+        System.setProperty("org.gradle.user.home", gh.absolutePath)
+        println "✅ Init.gradle (projectsLoaded): Project-level Gradle user home set to: ${gh.absolutePath}"
+    }
+}

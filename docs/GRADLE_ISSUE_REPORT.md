@@ -1,7 +1,7 @@
 # 🔴 Rapport Problème Build Android - Gradle
 
 **Date**: November 17, 2025
-**Statut**: ❌ **NON RÉSOLU** - Nécessite audit externe
+**Statut**: 🔄 **SOLUTIONS IMPLÉMENTÉES** - À tester
 
 ---
 
@@ -173,4 +173,34 @@ ln -s $HOME/.gradle /Volumes/T7/gradle
 ---
 
 **Dernière mise à jour**: November 17, 2025
-**Prochaine étape**: Audit externe avec regard neuf
+**Prochaine étape**: Tester les nouvelles solutions implémentées
+
+---
+
+## ✅ **NOUVELLES SOLUTIONS IMPLÉMENTÉES** (2025-11-17)
+
+### **Solution 7 : Configuration renforcée dans gradle.properties**
+✅ Ajout de `org.gradle.user.home=/Users/athalia/.gradle` avec chemin absolu
+
+### **Solution 8 : Script init.gradle dans le projet**
+✅ Création de `android/init.gradle` qui force le user.home avant chaque build
+
+### **Solution 9 : Amélioration du script gradlew**
+✅ Modification pour :
+- Exporter les variables AVANT l'exécution de Java
+- Ajouter les propriétés système Java `-Duser.home` et `-Dorg.gradle.user.home`
+- Forcer ces propriétés directement dans la JVM
+
+### **Solution 10 : Script wrapper build-android.sh**
+✅ Script à utiliser pour tous les builds Android qui :
+- Force les variables d'environnement
+- Arrête les daemons Gradle
+- Lance Flutter avec les bonnes configurations
+
+### **Solution 11 : Script de nettoyage clean-gradle.sh**
+✅ Script pour nettoyer complètement :
+- Arrête tous les daemons
+- Supprime `/Volumes/T7/gradle`
+- Nettoie le build local
+
+**📖 Voir le guide complet**: `docs/GRADLE_FIX_GUIDE.md`
