@@ -1,10 +1,15 @@
 // Force Gradle to use the correct user home directory
-// This init script runs before any Gradle build and ensures the user.home is set correctly
-// Version: 3.0 - Ultra-robust with comprehensive error handling and prevention
+// Version: 3.1 - Ultra-robust with comprehensive error handling and code optimization
+// This script prevents Gradle from using /Volumes/T7/gradle
 
-import org.gradle.api.initialization.Settings
+// ============================================================================
+// HELPER FUNCTIONS
+// ============================================================================
 
-// Comprehensive function to get user home - handles all edge cases
+/**
+ * Comprehensive function to get user home - handles all edge cases
+ * Priority order: HOME env -> USER_HOME env -> user.home property -> /Users/USER -> /Users/athalia
+ */
 def getUserHome() {
     def home = null
     
@@ -35,7 +40,7 @@ def getUserHome() {
         }
     }
     
-    // Priority 5: Fallback to explicit username (athalia)
+    // Priority 5: Fallback to explicit username
     home = "/Users/athalia"
     if (new File(home).exists()) {
         return home
@@ -45,123 +50,157 @@ def getUserHome() {
     return System.getProperty("user.home") ?: System.getenv("HOME") ?: "/Users/athalia"
 }
 
-// Get and validate user home
-def userHome = getUserHome()
-def gradleUserHome = new File(userHome, ".gradle")
+/**
+ * Get fallback home directory based on USER environment variable
+ */
+def getFallbackHome() {
+    def user = System.getenv("USER")
+    return "/Users/${user ?: "athalia"}"
+}
 
-// Ensure .gradle directory exists and is writable
-def ensureGradleHome() {
-    if (!gradleUserHome.exists()) {
+/**
+ * Ensure .gradle directory exists and is writable
+ */
+def ensureGradleHome(gradleHome) {
+    if (gradleHome == null) {
+        return false
+    }
+    
+    if (!gradleHome.exists()) {
         try {
-            gradleUserHome.mkdirs()
-            println "✅ Init.gradle: Created directory: ${gradleUserHome.absolutePath}"
+            gradleHome.mkdirs()
+            println "✅ Init.gradle: Created directory: ${gradleHome.absolutePath}"
         } catch (Exception e) {
-            println "⚠️  Init.gradle: Could not create ${gradleUserHome.absolutePath}: ${e.message}"
+            println "⚠️  Init.gradle: Could not create ${gradleHome.absolutePath}: ${e.message}"
+            return false
         }
     }
     
     // Verify it's writable
-    if (!gradleUserHome.canWrite()) {
-        println "⚠️  Init.gradle: Warning - ${gradleUserHome.absolutePath} is not writable"
+    if (!gradleHome.canWrite()) {
+        println "⚠️  Init.gradle: Warning - ${gradleHome.absolutePath} is not writable"
+        return false
+    }
+    
+    return true
+}
+
+/**
+ * Set Gradle user home properties and ensure directory exists
+ */
+def setGradleUserHome(gradleHome) {
+    if (gradleHome == null) {
+        return false
+    }
+    
+    try {
+        System.setProperty("org.gradle.user.home", gradleHome.absolutePath)
+        System.setProperty("gradle.user.home", gradleHome.absolutePath)
+        ensureGradleHome(gradleHome)
+        return true
+    } catch (Exception e) {
+        println "⚠️  Init.gradle: Error setting gradle home: ${e.message}"
+        return false
     }
 }
+
+/**
+ * Validate that a path is safe (not on volume, parent exists)
+ */
+def isPathSafe(file) {
+    if (file == null) {
+        return false
+    }
+    def parent = file.parentFile
+    return parent != null && parent.exists() && !parent.absolutePath.startsWith("/Volumes/")
+}
+
+/**
+ * Force Gradle user home with fallback mechanism
+ */
+def forceGradleUserHome(settings, gradleHome, context) {
+    if (isPathSafe(gradleHome)) {
+        try {
+            if (settings != null) {
+                settings.gradle.gradleUserHomeDir = gradleHome
+            }
+            setGradleUserHome(gradleHome)
+            println "✅ Init.gradle (${context}): Gradle user home forced to: ${gradleHome.absolutePath}"
+            return true
+        } catch (Exception e) {
+            println "⚠️  Init.gradle (${context}): Error setting gradle home: ${e.message}"
+        }
+    }
+    
+    // Use fallback
+    def fallback = new File(getFallbackHome(), ".gradle")
+    try {
+        if (settings != null) {
+            settings.gradle.gradleUserHomeDir = fallback
+        }
+        setGradleUserHome(fallback)
+        println "✅ Init.gradle (${context}): Using fallback: ${fallback.absolutePath}"
+        return true
+    } catch (Exception e) {
+        println "⚠️  Init.gradle (${context}): Fallback failed: ${e.message}"
+        return false
+    }
+}
+
+// ============================================================================
+// INITIALIZATION
+// ============================================================================
+
+// Get and validate user home
+def userHome = getUserHome()
+def gradleUserHome = new File(userHome, ".gradle")
 
 // Force system properties BEFORE anything else (critical for early initialization)
 if (userHome != null && !userHome.isEmpty() && !userHome.startsWith("/Volumes/")) {
     System.setProperty("user.home", userHome)
-    System.setProperty("org.gradle.user.home", gradleUserHome.absolutePath)
-    System.setProperty("gradle.user.home", gradleUserHome.absolutePath)
-    ensureGradleHome()
+    setGradleUserHome(gradleUserHome)
     println "✅ Init.gradle: System properties set - user.home=${userHome}, gradle.user.home=${gradleUserHome.absolutePath}"
 } else {
     // Even if on volume, try to set a fallback
-    def fallbackHome = "/Users/${System.getenv("USER") ?: "athalia"}"
+    def fallbackHome = getFallbackHome()
     def fallbackGradleHome = new File(fallbackHome, ".gradle")
     System.setProperty("user.home", fallbackHome)
-    System.setProperty("org.gradle.user.home", fallbackGradleHome.absolutePath)
-    System.setProperty("gradle.user.home", fallbackGradleHome.absolutePath)
-    ensureGradleHome()
+    setGradleUserHome(fallbackGradleHome)
     println "⚠️  Init.gradle: Using fallback - user.home=${fallbackHome}, gradle.user.home=${fallbackGradleHome.absolutePath}"
 }
 
+// ============================================================================
+// GRADLE HOOKS - Multiple levels of protection
+// ============================================================================
+
 // Force at settings level (runs first - most critical)
-beforeSettings { Settings settings ->
+beforeSettings { settings ->
     def gh = new File(getUserHome(), ".gradle")
-    def parent = gh.parentFile
-    
-    // Validate path is not on volume and parent exists
-    if (parent != null && parent.exists() && !parent.absolutePath.startsWith("/Volumes/")) {
-        try {
-            settings.gradle.gradleUserHomeDir = gh
-            System.setProperty("org.gradle.user.home", gh.absolutePath)
-            System.setProperty("gradle.user.home", gh.absolutePath)
-            ensureGradleHome()
-            println "✅ Init.gradle (beforeSettings): Gradle user home forced to: ${gh.absolutePath}"
-        } catch (Exception e) {
-            println "⚠️  Init.gradle (beforeSettings): Error setting gradle home: ${e.message}"
-        }
-    } else {
-        // Use fallback
-        def fallback = new File("/Users/${System.getenv("USER") ?: "athalia"}", ".gradle")
-        try {
-            settings.gradle.gradleUserHomeDir = fallback
-            System.setProperty("org.gradle.user.home", fallback.absolutePath)
-            System.setProperty("gradle.user.home", fallback.absolutePath)
-            println "✅ Init.gradle (beforeSettings): Using fallback: ${fallback.absolutePath}"
-        } catch (Exception e) {
-            println "⚠️  Init.gradle (beforeSettings): Fallback failed: ${e.message}"
-        }
-    }
+    forceGradleUserHome(settings, gh, "beforeSettings")
 }
 
 // Force at settings evaluated (runs after settings are loaded - double check)
-settingsEvaluated { Settings settings ->
+settingsEvaluated { settings ->
     def gh = new File(getUserHome(), ".gradle")
-    def parent = gh.parentFile
-    
-    if (parent != null && parent.exists() && !parent.absolutePath.startsWith("/Volumes/")) {
-        try {
-            // Force again even if already set
-            settings.gradle.gradleUserHomeDir = gh
-            System.setProperty("org.gradle.user.home", gh.absolutePath)
-            System.setProperty("gradle.user.home", gh.absolutePath)
-            println "✅ Init.gradle (settingsEvaluated): Gradle user home forced to: ${gh.absolutePath}"
-        } catch (Exception e) {
-            println "⚠️  Init.gradle (settingsEvaluated): Error: ${e.message}"
-        }
-    } else {
-        def fallback = new File("/Users/${System.getenv("USER") ?: "athalia"}", ".gradle")
-        try {
-            settings.gradle.gradleUserHomeDir = fallback
-            System.setProperty("org.gradle.user.home", fallback.absolutePath)
-            System.setProperty("gradle.user.home", fallback.absolutePath)
-            println "✅ Init.gradle (settingsEvaluated): Using fallback: ${fallback.absolutePath}"
-        } catch (Exception e) {
-            println "⚠️  Init.gradle (settingsEvaluated): Fallback failed: ${e.message}"
-        }
-    }
+    forceGradleUserHome(settings, gh, "settingsEvaluated")
 }
 
 // Force at project level (final check)
 projectsLoaded {
     def gh = new File(getUserHome(), ".gradle")
-    def parent = gh.parentFile
-    
-    if (parent != null && parent.exists() && !parent.absolutePath.startsWith("/Volumes/")) {
+    if (isPathSafe(gh)) {
         try {
             rootProject.ext.gradleUserHome = gh
-            System.setProperty("org.gradle.user.home", gh.absolutePath)
-            System.setProperty("gradle.user.home", gh.absolutePath)
+            setGradleUserHome(gh)
             println "✅ Init.gradle (projectsLoaded): Project-level Gradle user home set to: ${gh.absolutePath}"
         } catch (Exception e) {
             println "⚠️  Init.gradle (projectsLoaded): Error: ${e.message}"
         }
     } else {
-        def fallback = new File("/Users/${System.getenv("USER") ?: "athalia"}", ".gradle")
+        def fallback = new File(getFallbackHome(), ".gradle")
         try {
             rootProject.ext.gradleUserHome = fallback
-            System.setProperty("org.gradle.user.home", fallback.absolutePath)
-            System.setProperty("gradle.user.home", fallback.absolutePath)
+            setGradleUserHome(fallback)
             println "✅ Init.gradle (projectsLoaded): Using fallback: ${fallback.absolutePath}"
         } catch (Exception e) {
             println "⚠️  Init.gradle (projectsLoaded): Fallback failed: ${e.message}"
@@ -169,13 +208,12 @@ projectsLoaded {
     }
 }
 
-// Prevent any volume-based cache creation
+// Prevent any volume-based cache creation (proactive prevention)
 gradle.beforeProject { project ->
     def currentUserHome = System.getProperty("org.gradle.user.home")
     if (currentUserHome != null && currentUserHome.startsWith("/Volumes/")) {
-        def correctHome = new File("/Users/${System.getenv("USER") ?: "athalia"}", ".gradle")
-        System.setProperty("org.gradle.user.home", correctHome.absolutePath)
-        System.setProperty("gradle.user.home", correctHome.absolutePath)
+        def correctHome = new File(getFallbackHome(), ".gradle")
+        setGradleUserHome(correctHome)
         println "✅ Init.gradle (beforeProject): Corrected volume-based path to: ${correctHome.absolutePath}"
     }
 }
