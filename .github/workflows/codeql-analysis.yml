@@ -31,6 +31,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # IMPORTANT: Ne garder QUE Python - JavaScript/TypeScript désactivé
+        # GitHub peut essayer d'auto-détecter JS, cette config l'empêche
         language: ["python"]
 
     steps:
@@ -40,6 +42,7 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
         with:
+          # Forcer uniquement Python - pas d'auto-détection JavaScript
           languages: ${{ matrix.language }}
           queries: security-and-quality
           config-file: .github/codeql/codeql-config.yml

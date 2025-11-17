@@ -5,7 +5,8 @@
 queries:
   - uses: security-and-quality
 
-# Exclure les dossiers non pertinents pour l'analyse
+# Exclure explicitement JavaScript/TypeScript
+# CodeQL ne doit analyser QUE Python
 paths-ignore:
   - "**/node_modules/**"
   - "**/.dart_tool/**"
@@ -16,3 +17,10 @@ paths-ignore:
   - "**/coverage/**"
   - "**/htmlcov/**"
   - "**/arkalia_cia/**" # Code Flutter/Dart - non analysé par CodeQL
+  - "**/*.js"
+  - "**/*.jsx"
+  - "**/*.ts"
+  - "**/*.tsx"
+  - "**/package.json"
+  - "**/package-lock.json"
+  - "**/yarn.lock"

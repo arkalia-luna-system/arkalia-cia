@@ -36,8 +36,15 @@ echo "   GRADLE_USER_HOME=$GRADLE_USER_HOME"
 echo "   GRADLE_OPTS=$GRADLE_OPTS"
 echo "   HOME=$HOME"
 
-# Retourner au répertoire du projet Flutter
-cd "$(dirname "$0")/../.."
+# Retourner au répertoire du projet Flutter (depuis android/)
+# Le script est dans arkalia_cia/android/, donc on remonte d'un niveau
+SCRIPT_DIR="$(cd "$(dirname "$0")" 2>/dev/null && pwd || echo "$(dirname "$0")")"
+if [ ! -d "$SCRIPT_DIR" ]; then
+    # Si le chemin relatif ne fonctionne pas, chercher depuis le répertoire courant
+    SCRIPT_DIR="$(pwd)/arkalia_cia/android"
+fi
+PROJECT_DIR="$(cd "$SCRIPT_DIR/.." 2>/dev/null && pwd || echo "$(dirname "$SCRIPT_DIR")")"
+cd "$PROJECT_DIR" || cd /Volumes/T7/arkalia-cia/arkalia_cia
 
 # Exécuter la commande Flutter passée en argument
 echo -e "${GREEN}🚀 Lancement du build Flutter...${NC}"
