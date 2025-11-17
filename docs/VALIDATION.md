@@ -107,3 +107,17 @@ La documentation est maintenant :
 - **Maintenable** : Structure claire et modulaire
 
 La documentation reflète fidèlement l'état actuel du projet et fournit une base solide pour le développement futur.
+
+---
+
+## ✅ Validation Android - November 17, 2025
+
+**Application testée et validée sur Samsung S25 Ultra (Android 16)**
+
+- ✅ Build Android réussi
+- ✅ APK installé et fonctionnel
+- ✅ 8 screenshots capturés
+- ✅ Tous les écrans testés
+- ✅ Problèmes de fichiers macOS résolus
+
+**Screenshots disponibles** : `docs/screenshots/android/`

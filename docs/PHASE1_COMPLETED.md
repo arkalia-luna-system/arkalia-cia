@@ -152,3 +152,21 @@ The foundation is now solid for Phase 2 enhancements and eventual Phase 3 cloud 
 **Project Status**: ✅ **Phase 1 Complete - Ready for Production**
 **Next Milestone**: Phase 2 Enhanced Features
 **Estimated Completion**: November 2025
+
+---
+
+## 📸 Screenshots Android - November 17, 2025
+
+✅ **8 screenshots capturés** sur Samsung S25 Ultra (Android 16)
+- ✅ Écran d'accueil (Home Screen)
+- ✅ Écran Documents
+- ✅ Écran ARIA
+- ✅ Écran Santé
+- ✅ Écran Rappels
+- ✅ Écran Urgence
+- ✅ Écran Sync
+- ✅ Écran de détail
+
+**Localisation** : `docs/screenshots/android/`
+
+**Statut** : ✅ Application testée et validée sur appareil réel
