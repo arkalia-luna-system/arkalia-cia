@@ -187,6 +187,7 @@ sudo xcodebuild -license accept
 
 ## 🎯 **POUR PRENDRE LES SCREENSHOTS**
 
+### **Sur iPhone :**
 Une fois l'app installée sur iPhone :
 
 1. **Lancer l'app**
@@ -199,9 +200,27 @@ Une fois l'app installée sur iPhone :
    - iPhone : **Volume Up + Power** (ou **Volume Up + Side Button**)
    - Les screenshots sont dans **Photos** > **Screenshots**
 
-4. **Transférer** les screenshots :
-   - AirDrop vers Mac
-   - Ou connecter iPhone et copier depuis Photos
+### **Sur iPad Pro (Recommandé aussi !)** ✅
+
+**iPad Pro est une excellente option** car :
+- ✅ **App Store requiert** des screenshots iPad Pro 12.9" (2048 x 2732 px)
+- ✅ **Meilleure qualité** : Plus d'espace pour voir les détails
+- ✅ **Design adaptatif** : L'app Flutter s'adapte automatiquement
+- ✅ **Même app** : Fonctionne exactement pareil
+
+**Comment capturer sur iPad Pro :**
+1. **Installer l'app** sur iPad Pro (même méthode que iPhone)
+2. **Lancer l'app** et naviguer vers chaque écran
+3. **Capturer** : **Volume Up + Power** (ou **Volume Up + Top Button**)
+4. **Les screenshots** sont dans **Photos** > **Screenshots**
+
+**Tailles iPad Pro :**
+- **iPad Pro 12.9"** : 2048 x 2732 pixels (requis pour App Store)
+- Minimum 3 screenshots par taille
+
+**Transférer les screenshots :**
+- AirDrop vers Mac
+- Ou connecter iPad et copier depuis Photos
 
 ---
 
