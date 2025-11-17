@@ -416,6 +416,8 @@ Le projet utilise **Codecov** pour le suivi automatique de la couverture :
 - **Flutter Mobile**: Suivi via flag `flutter` dans `.github/workflows/flutter-ci.yml`
 - **Dashboard**: [codecov.io/gh/arkalia-luna-system/arkalia-cia](https://codecov.io/gh/arkalia-luna-system/arkalia-cia)
 - **Configuration**: Voir `.codecov.yml` pour les détails de configuration
+- **Couverture actuelle**: 10,69% globale (130/1215 lignes), 66% sur les fichiers testés
+- **Status**: ✅ Configuré et fonctionnel - Upload automatique via CI/CD
 
 ## 🌐 **Arkalia Luna Ecosystem**
 
