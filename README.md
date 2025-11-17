@@ -8,7 +8,7 @@
 [![Python](https://img.shields.io/badge/Python-3.10.14-green.svg?logo=python)](https://python.org)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI/CD](https://img.shields.io/badge/CI%2FCD-Passing-brightgreen.svg)](https://github.com/arkalia-luna-system/arkalia-cia/actions)
-[![Coverage](https://img.shields.io/badge/Coverage-66%25-green.svg)](https://github.com/arkalia-luna-system/arkalia-cia/actions)
+[![Coverage](https://img.shields.io/badge/Coverage-66%25-green.svg)](https://codecov.io/gh/arkalia-luna-system/arkalia-cia)
 [![Phase](https://img.shields.io/badge/Phase-2%20Enhanced%20Features-orange.svg)](https://github.com/arkalia-luna-system/arkalia-cia/tree/develop)
 [![Good First Issue](https://img.shields.io/badge/Good%20First-Issue-green.svg)](https://github.com/arkalia-luna-system/arkalia-cia/labels/good%20first%20issue)
 [![Help Wanted](https://img.shields.io/badge/Help-Wanted-orange.svg)](https://github.com/arkalia-luna-system/arkalia-cia/labels/help%20wanted)
@@ -408,6 +408,14 @@ pytest tests/ -v --cov=arkalia_cia_python_backend
 # Integration tests: 30 scenarios
 # Unit tests: 31 test cases
 ```
+
+### Code Coverage Tracking
+
+Le projet utilise **Codecov** pour le suivi automatique de la couverture :
+- **Python Backend**: Suivi via flag `python` dans `.github/workflows/ci-matrix.yml`
+- **Flutter Mobile**: Suivi via flag `flutter` dans `.github/workflows/flutter-ci.yml`
+- **Dashboard**: [codecov.io/gh/arkalia-luna-system/arkalia-cia](https://codecov.io/gh/arkalia-luna-system/arkalia-cia)
+- **Configuration**: Voir `.codecov.yml` pour les détails de configuration
 
 ## 🌐 **Arkalia Luna Ecosystem**
 

@@ -5,15 +5,15 @@ name: "Flutter CI"
 
 on:
   push:
-    branches: [ "main", "develop" ]
+    branches: ["main", "develop"]
     paths:
-      - 'arkalia_cia/**'
-      - '.github/workflows/flutter-ci.yml'
+      - "arkalia_cia/**"
+      - ".github/workflows/flutter-ci.yml"
   pull_request:
-    branches: [ "main", "develop" ]
+    branches: ["main", "develop"]
     paths:
-      - 'arkalia_cia/**'
-      - '.github/workflows/flutter-ci.yml'
+      - "arkalia_cia/**"
+      - ".github/workflows/flutter-ci.yml"
   workflow_dispatch:
 
 permissions:
@@ -28,59 +28,87 @@ jobs:
     timeout-minutes: 15
 
     steps:
-    - name: "Checkout Code"
-      uses: actions/checkout@v4
+      - name: "Checkout Code"
+        uses: actions/checkout@v4
 
-    - name: "Setup Flutter"
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.24.0'
-        channel: 'stable'
-        cache: true
+      - name: "Setup Flutter"
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.0"
+          channel: "stable"
+          cache: true
 
-    - name: "Install Flutter Dependencies"
-      run: |
-        cd arkalia_cia
-        flutter pub get
+      - name: "Install Flutter Dependencies"
+        run: |
+          cd arkalia_cia
+          flutter pub get
 
-    - name: "Flutter Analyze"
-      run: |
-        cd arkalia_cia
-        flutter analyze --no-fatal-infos || echo "Flutter analyze completed with warnings"
+      - name: "Flutter Analyze"
+        run: |
+          cd arkalia_cia
+          flutter analyze --no-fatal-infos || echo "Flutter analyze completed with warnings"
 
-    - name: "Flutter Test"
-      run: |
-        cd arkalia_cia
-        flutter test || echo "Flutter tests completed with warnings"
+      - name: "Flutter Test with Coverage"
+        run: |
+          cd arkalia_cia
+          echo "🧪 Running Flutter tests with coverage..."
+          flutter test --coverage || echo "Flutter tests completed with warnings"
 
-    - name: "Flutter Build Web"
-      run: |
-        cd arkalia_cia
-        echo "📦 Building Flutter web..."
-        flutter clean
-        flutter pub get
-        flutter build web --release || echo "⚠️ Web build completed with warnings"
+          # Vérifier que le fichier de couverture a été généré
+          if [ -f "coverage/lcov.info" ]; then
+            echo "✅ Coverage report generated: coverage/lcov.info"
+            echo "Lines in coverage file: $(wc -l < coverage/lcov.info)"
+          else
+            echo "⚠️ Coverage file not found, but continuing..."
+          fi
 
-        # Vérifier que index.html existe
-        if [ -f "build/web/index.html" ]; then
-          echo "✅ index.html created successfully"
-        else
-          echo "❌ index.html missing, but continuing..."
-        fi
+      - name: "Flutter Build Web"
+        run: |
+          cd arkalia_cia
+          echo "📦 Building Flutter web..."
+          flutter clean
+          flutter pub get
+          flutter build web --release || echo "⚠️ Web build completed with warnings"
 
-    - name: "Flutter Build APK"
-      run: |
-        cd arkalia_cia
-        flutter build apk --release
+          # Vérifier que index.html existe
+          if [ -f "build/web/index.html" ]; then
+            echo "✅ index.html created successfully"
+          else
+            echo "❌ index.html missing, but continuing..."
+          fi
 
-    - name: "Upload Build Artifacts"
-      uses: actions/upload-artifact@v4
-      with:
-        name: flutter-builds
-        path: |
-          arkalia_cia/build/web/
-          arkalia_cia/build/app/outputs/flutter-apk/
-        retention-days: 7
+      - name: "Flutter Build APK"
+        run: |
+          cd arkalia_cia
+          flutter build apk --release
+
+      - name: "Upload Coverage to Codecov"
+        uses: codecov/codecov-action@v5
+        with:
+          files: arkalia_cia/coverage/lcov.info
+          flags: flutter
+          fail_ci_if_error: false
+          verbose: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: arkalia_cia
+        if: hashFiles('arkalia_cia/coverage/lcov.info') != ''
+
+      - name: "Upload Build Artifacts"
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-builds
+          path: |
+            arkalia_cia/build/web/
+            arkalia_cia/build/app/outputs/flutter-apk/
+          retention-days: 7
+
+      - name: "Upload Coverage Artifact"
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-coverage
+          path: arkalia_cia/coverage/lcov.info
+          retention-days: 30
+        if: hashFiles('arkalia_cia/coverage/lcov.info') != ''
 
   flutter-lint:
     name: "Flutter Lint"
@@ -88,26 +116,26 @@ jobs:
     timeout-minutes: 10
 
     steps:
-    - name: "Checkout Code"
-      uses: actions/checkout@v4
+      - name: "Checkout Code"
+        uses: actions/checkout@v4
 
-    - name: "Setup Flutter"
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.24.0'
-        channel: 'stable'
+      - name: "Setup Flutter"
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.0"
+          channel: "stable"
 
-    - name: "Install Flutter Dependencies"
-      run: |
-        cd arkalia_cia
-        flutter pub get
+      - name: "Install Flutter Dependencies"
+        run: |
+          cd arkalia_cia
+          flutter pub get
 
-    - name: "Flutter Lint"
-      run: |
-        cd arkalia_cia
-        flutter analyze --no-fatal-infos
+      - name: "Flutter Lint"
+        run: |
+          cd arkalia_cia
+          flutter analyze --no-fatal-infos
 
-    - name: "Dart Format Check"
-      run: |
-        cd arkalia_cia
-        dart format --output=none --set-exit-if-changed . || echo "Format check completed with warnings"
+      - name: "Dart Format Check"
+        run: |
+          cd arkalia_cia
+          dart format --output=none --set-exit-if-changed . || echo "Format check completed with warnings"

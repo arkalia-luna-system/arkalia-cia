@@ -1,0 +1,52 @@
+# Configuration Codecov pour Arkalia CIA
+# Supporte Python (backend) et Flutter (mobile)
+
+codecov:
+  notify:
+    wait_for_ci: true
+  require_ci_to_pass: false
+
+coverage:
+  precision: 2
+  round: down
+  range: "70...100"
+  status:
+    project:
+      default:
+        target: 70%
+        threshold: 1%
+        base: auto
+    patch:
+      default:
+        target: 60%
+        threshold: 1%
+        base: auto
+
+flags:
+  python:
+    paths:
+      - arkalia_cia_python_backend/
+    carryforward: true
+  flutter:
+    paths:
+      - arkalia_cia/lib/
+    carryforward: true
+
+comment:
+  layout: "reach,diff,flags,tree,reach"
+  behavior: default
+  require_changes: false
+
+ignore:
+  - "**/test/"
+  - "**/tests/"
+  - "**/__pycache__/"
+  - "**/build/"
+  - "**/dist/"
+  - "**/coverage/"
+  - "**/htmlcov/"
+  - "**/*.g.dart"
+  - "**/*.freezed.dart"
+  - "**/generated/"
+  - "**/venv/"
+  - "**/node_modules/"

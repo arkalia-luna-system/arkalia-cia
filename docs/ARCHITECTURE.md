@@ -350,12 +350,20 @@ graph TB
 
 ### Coverage Targets
 
-| Test Type | Coverage Target | Current Status |
-|-----------|----------------|----------------|
-| Unit Tests | 80% | 66% |
-| Integration | 70% | 85% |
-| Widget Tests | 60% | 45% |
-| E2E Tests | 50% | 30% |
+| Test Type | Coverage Target | Current Status | Codecov Flag |
+|-----------|----------------|----------------|--------------|
+| Unit Tests | 80% | 66% | `python` |
+| Integration | 70% | 85% | `python` |
+| Widget Tests | 60% | 45% | `flutter` |
+| E2E Tests | 50% | 30% | `flutter` |
+
+#### Codecov Integration
+
+Le projet utilise **Codecov** pour le suivi continu de la couverture :
+- **Configuration**: `.codecov.yml` avec flags séparés pour Python et Flutter
+- **CI/CD**: Upload automatique des rapports de couverture
+- **Dashboard**: Suivi en temps réel sur [codecov.io](https://codecov.io)
+- **Seuils**: 70% pour le projet global, 60% pour les patches
 
 ## Future Roadmap
 

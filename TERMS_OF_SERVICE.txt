@@ -1,0 +1,72 @@
+TERMS OF SERVICE - Arkalia CIA
+Last Updated: November 17, 2025
+
+1. ACCEPTANCE OF TERMS
+
+By downloading, installing, or using Arkalia CIA ("the App"), you agree to be bound by these Terms of Service.
+
+2. DESCRIPTION OF SERVICE
+
+Arkalia CIA is a mobile health assistant application that helps you:
+- Manage medical documents securely
+- Track health reminders and appointments
+- Store emergency contact information
+- Access health portals and resources
+
+3. USE OF THE APP
+
+You agree to:
+- Use the App only for lawful purposes
+- Not attempt to reverse engineer or modify the App
+- Not use the App to store illegal content
+- Maintain the security of your device
+
+4. MEDICAL DISCLAIMER
+
+IMPORTANT: Arkalia CIA is NOT a medical device or diagnostic tool.
+
+- The App does not provide medical advice, diagnosis, or treatment
+- Always consult qualified healthcare professionals for medical decisions
+- The App is a tool for organizing information, not a substitute for professional medical care
+- We are not responsible for any medical decisions made based on information stored in the App
+
+5. DATA AND PRIVACY
+
+- All data is stored locally on your device
+- We do not collect, transmit, or access your data
+- You are solely responsible for backing up your data
+- We are not responsible for data loss due to device failure or uninstallation
+
+6. LIMITATION OF LIABILITY
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW:
+
+- The App is provided "AS IS" without warranties
+- We are not liable for any damages arising from use of the App
+- We are not responsible for loss of data, profits, or business opportunities
+- We are not liable for any medical outcomes or decisions
+
+7. INTELLECTUAL PROPERTY
+
+- The App and its code are protected by copyright
+- Source code is available under MIT License (see LICENSE file)
+- You may use, modify, and distribute the code according to the license terms
+
+8. TERMINATION
+
+You may stop using the App at any time by uninstalling it. We reserve the right to discontinue the App with reasonable notice.
+
+9. CHANGES TO TERMS
+
+We may update these Terms. Continued use after changes constitutes acceptance.
+
+10. GOVERNING LAW
+
+These Terms are governed by applicable local laws. For disputes, contact us first at arkalia.luna.system@gmail.com
+
+11. CONTACT
+
+Questions about these Terms: arkalia.luna.system@gmail.com
+GitHub: https://github.com/arkalia-luna-system/arkalia-cia
+
+By using Arkalia CIA, you acknowledge that you have read, understood, and agree to these Terms of Service.

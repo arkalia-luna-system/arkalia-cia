@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.1.0] - 2025-11-15
+### Added
+- **Codecov Integration**: Configuration complète pour le suivi automatique de la couverture
+  - Fichier `.codecov.yml` avec flags séparés pour Python et Flutter
+  - Upload automatique des rapports de couverture depuis les workflows CI/CD
+  - Dashboard Codecov pour visualiser l'évolution de la couverture
+
+## [1.1.0] - 2025-11-17
 
 ### Added
 - **ARIA Integration**: Complete integration with ARIA pain tracking system

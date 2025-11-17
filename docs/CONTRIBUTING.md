@@ -506,6 +506,8 @@ repos:
 
 ### Code Coverage
 
+#### Génération locale
+
 ```bash
 # Flutter coverage
 flutter test --coverage
@@ -519,6 +521,21 @@ Minimum: 70%
 Target: 85%
 Ideal: 95%
 ```
+
+#### Codecov Integration
+
+Le projet utilise **Codecov** pour le suivi automatique de la couverture de code :
+
+- **Configuration**: Fichier `.codecov.yml` à la racine
+- **Flags séparés**:
+  - `python`: Couverture du backend Python
+  - `flutter`: Couverture de l'application Flutter
+- **Upload automatique**: Les workflows CI/CD envoient automatiquement les rapports
+- **Dashboard**: [codecov.io](https://codecov.io) pour visualiser l'évolution de la couverture
+
+Les rapports sont automatiquement uploadés lors de chaque push/PR via :
+- `.github/workflows/ci-matrix.yml` (Python)
+- `.github/workflows/flutter-ci.yml` (Flutter)
 
 ## Pull Request Process
 

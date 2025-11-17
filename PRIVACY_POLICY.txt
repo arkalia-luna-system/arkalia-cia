@@ -1,0 +1,67 @@
+PRIVACY POLICY - Arkalia CIA
+Last Updated: November 17, 2025
+
+1. INTRODUCTION
+
+Arkalia CIA ("we", "our", "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use our mobile application.
+
+2. DATA COLLECTION
+
+Arkalia CIA is designed with privacy as a core principle:
+
+- NO DATA COLLECTED: We do not collect, transmit, or store any personal data on external servers.
+- LOCAL STORAGE ONLY: All your data (documents, reminders, contacts) is stored exclusively on your device.
+- NO ANALYTICS: We do not use analytics tools or tracking services.
+- NO CLOUD SYNC: Your data never leaves your device unless you explicitly choose to export it.
+
+3. DATA STORAGE
+
+All data is stored locally on your device using:
+- Encrypted SQLite database (AES-256 encryption)
+- Secure file storage with device-level encryption
+- No cloud backup or synchronization
+
+4. PERMISSIONS
+
+Arkalia CIA requests the following permissions:
+
+- Calendar Access: To create and manage reminders
+- Contacts Access: To manage emergency contacts (ICE)
+- Storage Access: To save and manage documents
+- Notifications: To deliver reminder notifications
+
+All permissions are optional and the app can function with limited features if permissions are denied.
+
+5. DATA SECURITY
+
+- AES-256 encryption for all stored data
+- Device-level security (Keychain/Keystore)
+- No network transmission of personal data
+- Local-only data processing
+
+6. THIRD-PARTY SERVICES
+
+Arkalia CIA does not integrate with third-party analytics, advertising, or data collection services.
+
+7. CHILDREN'S PRIVACY
+
+Our app is not intended for children under 13. We do not knowingly collect information from children.
+
+8. YOUR RIGHTS
+
+Since all data is stored locally:
+- You have full control over your data
+- You can delete all data by uninstalling the app
+- You can export your data at any time
+- No account required, no data sharing
+
+9. CHANGES TO THIS POLICY
+
+We may update this Privacy Policy. Changes will be posted in the app and on our GitHub repository.
+
+10. CONTACT
+
+For privacy questions: arkalia.luna.system@gmail.com
+GitHub: https://github.com/arkalia-luna-system/arkalia-cia
+
+This Privacy Policy complies with GDPR, CCPA, and other privacy regulations.

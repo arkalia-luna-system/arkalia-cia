@@ -146,10 +146,65 @@ storeFile=../arkalia-cia-release.jks
 
 #### Google Play Store
 
+**App Descriptions (Ready to Use)**
+
+**Short Description (80 chars max):**
+```
+Assistant santé mobile sécurisé pour gérer documents médicaux et rappels
+```
+
+**Full Description:**
+```
+Arkalia CIA - Votre Assistant Santé Personnel
+
+Arkalia CIA est une application mobile conçue pour vous aider à gérer vos documents médicaux, vos rappels de santé et vos contacts d'urgence de manière sécurisée et simple.
+
+🔒 SÉCURITÉ MAXIMALE
+• Chiffrement AES-256 pour tous vos documents
+• Stockage 100% local sur votre appareil
+• Aucune transmission de données
+• Aucune collecte d'informations personnelles
+
+📄 GESTION DE DOCUMENTS
+• Importez et organisez vos PDF médicaux
+• Recherche rapide dans vos documents
+• Organisation par catégories
+• Stockage sécurisé avec chiffrement
+
+🔔 RAPPELS INTELLIGENTS
+• Intégration avec votre calendrier
+• Notifications personnalisées
+• Rappels de médicaments
+• Gestion des rendez-vous médicaux
+
+🚨 CONTACTS D'URGENCE
+• Contacts ICE (In Case of Emergency)
+• Appel d'urgence en un clic
+• Carte d'urgence médicale
+• Informations de santé critiques
+
+👵 ACCESSIBLE À TOUS
+• Interface senior-friendly
+• Boutons larges et texte clair
+• Navigation intuitive
+• Design adapté aux besoins des seniors
+
+🌍 100% HORS-LIGNE
+• Fonctionne sans connexion internet
+• Vos données restent sur votre appareil
+• Aucune dépendance cloud
+• Respect total de votre vie privée
+
+Arkalia CIA est développé par Arkalia Luna System avec un focus sur la sécurité, la simplicité et le respect de la vie privée.
+
+Note médicale importante : Arkalia CIA est un outil d'organisation et ne remplace pas les conseils médicaux professionnels.
+```
+
 1. **Create App Listing**
    ```bash
    # Upload to Google Play Console
-   # Fill app information, screenshots, descriptions
+   # Use descriptions above
+   # Add screenshots (see requirements below)
    ```
 
 2. **Upload Build**
@@ -158,17 +213,94 @@ storeFile=../arkalia-cia-release.jks
    # Configure release notes and rollout percentage
    ```
 
-3. **Release Management**
+3. **Screenshots Requirements**
+   - Phone: 1080 x 1920 pixels minimum
+   - 7-inch Tablet: 1200 x 1920 pixels
+   - 10-inch Tablet: 1600 x 2560 pixels
+   - Feature Graphic: 1024 x 500 pixels
+   - Minimum 2 screenshots required
+
+4. **Privacy Policy & Terms**
+   - Privacy Policy URL: (à héberger et ajouter)
+   - Terms of Service URL: (à héberger et ajouter)
+   - Files available: `PRIVACY_POLICY.txt` and `TERMS_OF_SERVICE.txt`
+
+5. **Release Management**
    - Start with 5% rollout
    - Monitor crash reports and user feedback
    - Gradually increase to 100%
 
 #### Apple App Store
 
+**App Descriptions (Ready to Use)**
+
+**Subtitle (30 chars max):**
+```
+Assistant santé sécurisé
+```
+
+**Promotional Text (170 chars max):**
+```
+Gérez vos documents médicaux et rappels de santé en toute sécurité. 100% hors-ligne, chiffrement AES-256, interface senior-friendly.
+```
+
+**Description:**
+```
+Arkalia CIA - Votre Assistant Santé Personnel
+
+Arkalia CIA est une application mobile conçue pour vous aider à gérer vos documents médicaux, vos rappels de santé et vos contacts d'urgence de manière sécurisée et simple.
+
+🔒 SÉCURITÉ MAXIMALE
+• Chiffrement AES-256 pour tous vos documents
+• Stockage 100% local sur votre appareil
+• Aucune transmission de données
+• Aucune collecte d'informations personnelles
+
+📄 GESTION DE DOCUMENTS
+• Importez et organisez vos PDF médicaux
+• Recherche rapide dans vos documents
+• Organisation par catégories
+• Stockage sécurisé avec chiffrement
+
+🔔 RAPPELS INTELLIGENTS
+• Intégration avec votre calendrier
+• Notifications personnalisées
+• Rappels de médicaments
+• Gestion des rendez-vous médicaux
+
+🚨 CONTACTS D'URGENCE
+• Contacts ICE (In Case of Emergency)
+• Appel d'urgence en un clic
+• Carte d'urgence médicale
+• Informations de santé critiques
+
+👵 ACCESSIBLE À TOUS
+• Interface senior-friendly
+• Boutons larges et texte clair
+• Navigation intuitive
+• Design adapté aux besoins des seniors
+
+🌍 100% HORS-LIGNE
+• Fonctionne sans connexion internet
+• Vos données restent sur votre appareil
+• Aucune dépendance cloud
+• Respect total de votre vie privée
+
+Arkalia CIA est développé par Arkalia Luna System avec un focus sur la sécurité, la simplicité et le respect de la vie privée.
+
+Note médicale importante : Arkalia CIA est un outil d'organisation et ne remplace pas les conseils médicaux professionnels.
+```
+
+**Keywords (100 chars max):**
+```
+santé,médical,documents,rappels,urgence,senior,privacy,chiffrement,local,offline
+```
+
 1. **App Store Connect Setup**
    ```bash
    # Create app record in App Store Connect
-   # Configure metadata, screenshots, descriptions
+   # Use descriptions above
+   # Add screenshots (see requirements below)
    ```
 
 2. **TestFlight Beta**
@@ -177,7 +309,19 @@ storeFile=../arkalia-cia-release.jks
    # Add beta testers for internal testing
    ```
 
-3. **Production Release**
+3. **Screenshots Requirements**
+   - iPhone 6.7" (iPhone 14 Pro Max): 1290 x 2796 pixels
+   - iPhone 6.5" (iPhone 11 Pro Max): 1242 x 2688 pixels
+   - iPhone 5.5" (iPhone 8 Plus): 1242 x 2208 pixels
+   - iPad Pro 12.9": 2048 x 2732 pixels
+   - Minimum 3 screenshots required per device size
+
+4. **Privacy Policy & Terms**
+   - Privacy Policy URL: (à héberger et ajouter)
+   - Terms of Service URL: (à héberger et ajouter)
+   - Files available: `PRIVACY_POLICY.txt` and `TERMS_OF_SERVICE.txt`
+
+5. **Production Release**
    - Submit for App Store review
    - Monitor review status
    - Release after approval

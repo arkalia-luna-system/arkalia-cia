@@ -1,6 +1,6 @@
 # 📋 Checklist Release v1.0 Stable - Arkalia CIA
 
-**Date**: November 2025
+**Date**: November 17, 2025
 **Version cible**: v1.0.0 (Release stable mobile)
 **Statut global**: 🟡 **En cours** (Techniquement prêt, validations manuelles restantes)
 
@@ -187,72 +187,79 @@
 ## ❌ **6. CHECKLIST RELEASE** - **À FAIRE** ❌
 
 ### App Store metadata (iOS)
-- ❌ **Pas de metadata créée**: Besoin de créer
-- ❌ **Pas de screenshots**: Besoin de prendre des screenshots
-- ❌ **Pas de description**: Besoin d'écrire la description
-- ❌ **Pas de keywords**: Besoin de définir les mots-clés
+- ✅ **Descriptions créées**: Dans `docs/DEPLOYMENT.md` (November 17, 2025)
+- ✅ **Subtitle**: "Assistant santé sécurisé" (30 chars)
+- ✅ **Promotional Text**: Prêt (170 chars)
+- ✅ **Full Description**: Complète et prête
+- ✅ **Keywords**: Définis (100 chars max)
+- ❌ **Screenshots**: Besoin de prendre des screenshots
 
 **Action requise**:
 - [ ] Créer compte App Store Connect (si pas fait)
-- [ ] Prendre screenshots pour toutes les tailles d'écran
-- [ ] Écrire description App Store
-- [ ] Définir keywords
+- [ ] Prendre screenshots pour toutes les tailles d'écran (voir DEPLOYMENT.md)
 - [ ] Préparer preview video (optionnel)
 
 ### Google Play metadata (Android)
-- ❌ **Pas de metadata créée**: Besoin de créer
-- ❌ **Pas de screenshots**: Besoin de prendre des screenshots
-- ❌ **Pas de description**: Besoin d'écrire la description
-- ❌ **Pas de feature graphic**: Besoin de créer
+- ✅ **Descriptions créées**: Dans `docs/DEPLOYMENT.md` (November 17, 2025)
+- ✅ **Short Description**: Prête (80 chars)
+- ✅ **Full Description**: Complète et prête
+- ❌ **Screenshots**: Besoin de prendre des screenshots
+- ❌ **Feature Graphic**: Besoin de créer (1024x500)
 
 **Action requise**:
 - [ ] Créer compte Google Play Console (si pas fait)
-- [ ] Prendre screenshots pour toutes les tailles d'écran
-- [ ] Écrire description Google Play
+- [ ] Prendre screenshots pour toutes les tailles d'écran (voir DEPLOYMENT.md)
 - [ ] Créer feature graphic (1024x500)
 - [ ] Préparer promo video (optionnel)
 
 ### Screenshots et descriptions
-- ❌ **Pas de screenshots**: Besoin de prendre
-- ❌ **Pas de descriptions finales**: Besoin d'écrire
+- ✅ **Descriptions**: Prêtes dans DEPLOYMENT.md
+- ❌ **Screenshots**: Besoin de prendre
 
 **Action requise**:
 - [ ] Prendre screenshots de tous les écrans principaux
-- [ ] Prendre screenshots sur iPhone (toutes tailles)
-- [ ] Prendre screenshots sur Android (toutes tailles)
-- [ ] Écrire descriptions pour App Store
-- [ ] Écrire descriptions pour Google Play
+- [ ] Prendre screenshots sur iPhone (toutes tailles - voir DEPLOYMENT.md)
+- [ ] Prendre screenshots sur Android (toutes tailles - voir DEPLOYMENT.md)
 
 ### Politique de confidentialité
-- ❌ **Pas de Privacy Policy**: Besoin de créer
-- ✅ **Security.md existe**: Mais pas de Privacy Policy séparée
+- ✅ **Privacy Policy créée**: `PRIVACY_POLICY.txt` (November 17, 2025)
+- ✅ **RGPD compliant**: Conforme aux réglementations européennes
+- ✅ **Données expliquées**: Aucune collecte, stockage local uniquement
+- ✅ **Permissions expliquées**: Toutes les permissions documentées
+- ⚠️ **Hébergement web**: À mettre en ligne pour App Store/Play Store
 
 **Action requise**:
-- [ ] Créer Privacy Policy complète
-- [ ] Expliquer quelles données sont collectées (aucune pour l'instant)
-- [ ] Expliquer le stockage local
-- [ ] Expliquer les permissions demandées
-- [ ] Mettre en ligne (hébergement web)
+- [ ] Mettre en ligne Privacy Policy (hébergement web)
+- [ ] Ajouter lien dans l'app (écran Settings/About)
 
 ### Terms of Service
-- ❌ **Pas de Terms of Service**: Besoin de créer
+- ✅ **Terms of Service créés**: `TERMS_OF_SERVICE.txt` (November 17, 2025)
+- ✅ **Conditions définies**: Utilisation, limitations, responsabilités
+- ✅ **Disclaimer médical**: Important - App n'est pas un dispositif médical
+- ⚠️ **Hébergement web**: À mettre en ligne pour App Store/Play Store
 
 **Action requise**:
-- [ ] Créer Terms of Service
-- [ ] Définir les conditions d'utilisation
-- [ ] Définir les limitations de responsabilité
-- [ ] Mettre en ligne (hébergement web)
+- [ ] Mettre en ligne Terms of Service (hébergement web)
+- [ ] Ajouter lien dans l'app (écran Settings/About)
 
 ---
 
-## 🟡 **7. CODE COVERAGE** - **OPTIONNEL** 🟡
+## ✅ **7. CODE COVERAGE** - **FAIT** ✅
 
 ### Couverture actuelle
 - ✅ **66%**: Bon niveau
+- ✅ **Codecov configuré**: Suivi automatique de la couverture Python et Flutter
+- ✅ **Flags séparés**: `python` et `flutter` pour suivi indépendant
 - ⚠️ **Objectif 70%+**: Optionnel mais recommandé
 
+### Configuration Codecov
+- ✅ **Fichier `.codecov.yml`**: Configuration complète avec flags Python et Flutter
+- ✅ **Workflow Python**: Upload automatique vers Codecov avec flag `python`
+- ✅ **Workflow Flutter**: Upload automatique vers Codecov avec flag `flutter`
+- ✅ **Token configuré**: `CODECOV_TOKEN` dans les secrets GitHub
+
 **Action requise** (optionnel):
-- [ ] Identifier les zones non couvertes
+- [ ] Identifier les zones non couvertes via Codecov dashboard
 - [ ] Ajouter des tests pour atteindre 70%+
 - [ ] Documenter les zones difficiles à tester
 
@@ -272,29 +279,29 @@
 2. UX/UI (70% - écrans existent mais pas testés récemment)
 3. Stabilité Flutter (60% - build corrigé mais pas testé release)
 
-### ❌ **À FAIRE (Blocant pour release)**
+### 🟡 **PARTIELLEMENT FAIT / À FAIRE (Blocant pour release)**
 1. Tests manuels récents sur appareils réels
 2. Validation UX/UI complète
 3. Tests builds release
-4. App Store/Play Store metadata
-5. Privacy Policy et Terms of Service
+4. ✅ App Store/Play Store metadata (Descriptions créées dans DEPLOYMENT.md)
+5. ✅ Privacy Policy et Terms of Service (Créés le 17 novembre 2025)
 
 ---
 
 ## 🎯 **PRIORITÉS AVANT RELEASE**
 
 ### **Priorité 1 (Blocant)**
-1. ✅ Tests manuels complets iOS + Android
-2. ✅ Validation UX/UI (tous écrans)
-3. ✅ Tests builds release
-4. ✅ Privacy Policy
-5. ✅ Terms of Service
+1. [ ] Tests manuels complets iOS + Android
+2. [ ] Validation UX/UI (tous écrans)
+3. [ ] Tests builds release
+4. ✅ Privacy Policy (Créée - PRIVACY_POLICY.txt)
+5. ✅ Terms of Service (Créés - TERMS_OF_SERVICE.txt)
 
 ### **Priorité 2 (Important)**
-1. Screenshots App Store/Play Store
-2. Descriptions App Store/Play Store
-3. Tests accessibilité (lecteurs d'écran)
-4. Tests stabilité (crash, mémoire)
+1. [ ] Screenshots App Store/Play Store
+2. ✅ Descriptions App Store/Play Store (Créées dans DEPLOYMENT.md)
+3. [ ] Tests accessibilité (lecteurs d'écran)
+4. [ ] Tests stabilité (crash, mémoire)
 
 ### **Priorité 3 (Optionnel)**
 1. Augmenter coverage à 70%+
@@ -306,8 +313,12 @@
 ## 📝 **NOTES**
 
 - Le code est **techniquement prêt** pour la release
-- Les tests automatisés passent à **100%**
-- La sécurité est **validée**
-- Il reste principalement des **validations manuelles** et de la **préparation App Store/Play Store**
+- Les tests automatisés passent à **100%** (61/61)
+- La sécurité est **validée** (0 vulnérabilité)
+- **Privacy Policy et Terms of Service créés** (17 novembre 2025)
+- **Descriptions App Store/Play Store créées** (dans DEPLOYMENT.md)
+- Il reste principalement des **validations manuelles** et des **screenshots**
 
-**Estimation temps restant**: 1-2 semaines pour compléter les validations manuelles et la préparation stores.
+**Estimation temps restant**: 1 semaine pour compléter les validations manuelles et prendre les screenshots.
+
+**Dernière mise à jour**: 17 novembre 2025
