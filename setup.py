@@ -10,7 +10,7 @@ setup(
     long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
     author="Arkalia Luna System",
-    author_email="contact@arkalia-luna.com",
+    author_email="arkalia.luna.system@gmail.com",
     url="https://github.com/arkalia-luna-system/arkalia-cia",
     packages=find_packages(include=["arkalia_cia_python_backend*"]),
     exclude_package_data={

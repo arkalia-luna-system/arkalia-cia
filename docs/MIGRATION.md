@@ -158,7 +158,7 @@ For migration questions or assistance:
 
 - **GitHub Issues**: [Report issues](https://github.com/arkalia-luna-system/arkalia-cia/issues)
 - **GitHub Discussions**: [Ask questions](https://github.com/arkalia-luna-system/arkalia-cia/discussions)
-- **Email**: contact@arkalia-luna.com
+- **Email**: arkalia.luna.system@gmail.com
 
 ---
 

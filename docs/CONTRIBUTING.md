@@ -603,7 +603,7 @@ All API endpoints must include:
 |---------|---------|------|
 | **GitHub Issues** | Bug reports, feature requests | [Issues](https://github.com/arkalia-luna-system/arkalia-cia/issues) |
 | **GitHub Discussions** | Questions, ideas, help | [Discussions](https://github.com/arkalia-luna-system/arkalia-cia/discussions) |
-| **Email** | Private/security concerns | contact@arkalia-luna.com |
+| **Email** | Private/security concerns | arkalia.luna.system@gmail.com |
 
 ### Getting Help
 

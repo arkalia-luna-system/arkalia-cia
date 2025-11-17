@@ -186,7 +186,7 @@ Ce projet est sous licence MIT - voir le fichier [LICENSE](../LICENSE) pour plus
 
 - **Documentation** : [docs/](../docs/)
 - **Issues** : [GitHub Issues](https://github.com/arkalia-luna-system/arkalia-cia/issues)
-- **Contact** : contact@arkalia-luna.com
+- **Contact** : arkalia.luna.system@gmail.com
 
 ---
 

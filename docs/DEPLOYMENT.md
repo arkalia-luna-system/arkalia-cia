@@ -572,4 +572,4 @@ kubectl apply -f canary-deployment.yaml
 
 ---
 
-*This deployment guide is updated with each release. For support, contact [our team](mailto:devops@arkalia-luna.com).*
+*This deployment guide is updated with each release. For support, contact [our team](mailto:arkalia.luna.system@gmail.com).*

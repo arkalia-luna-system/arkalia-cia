@@ -19,7 +19,7 @@ We take security seriously and appreciate responsible disclosure of potential vu
 
 For **critical security issues** that could impact user data or system integrity:
 
-- **Email**: security@arkalia-luna.com
+- **Email**: arkalia.luna.system@gmail.com
 - **Subject**: `[CRITICAL] Arkalia CIA - Brief Description`
 - **Response Time**: Within 24 hours
 - **PGP Key**: Available upon request
@@ -280,9 +280,9 @@ sequenceDiagram
 
 ### Primary Contacts
 
-- **Security Team**: security@arkalia-luna.com
-- **Emergency**: security-emergency@arkalia-luna.com (24/7)
-- **GPG Key**: [Request via security@arkalia-luna.com]
+- **Security Team**: arkalia.luna.system@gmail.com
+- **Emergency**: arkalia.luna.system@gmail.com (24/7)
+- **GPG Key**: [Request via arkalia.luna.system@gmail.com]
 
 ### Security Champions
 
@@ -308,4 +308,4 @@ We thank the following security researchers for responsible disclosure:
 **Last Updated**: November 2025
 **Next Review**: February 2026
 
-*This security policy is reviewed quarterly and updated as needed. For questions, contact security@arkalia-luna.com.*
+*This security policy is reviewed quarterly and updated as needed. For questions, contact arkalia.luna.system@gmail.com.*
