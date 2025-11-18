@@ -4,6 +4,8 @@
 **Version**: 1.2.0  
 **Statut**: 🟢 **100% COMPLET - PRODUCTION READY**
 
+**Voir aussi**: [RESUME_PROJET.md](RESUME_PROJET.md) pour le résumé court.
+
 ---
 
 ## 📊 Vue d'Ensemble Exécutive

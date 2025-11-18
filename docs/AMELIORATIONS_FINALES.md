@@ -4,6 +4,8 @@
 **Version**: 1.2.0  
 **Statut**: ✅ **100% COMPLET ET OPTIMISÉ**
 
+**Voir aussi**: [RESUME_PROJET.md](RESUME_PROJET.md) pour le résumé général.
+
 ---
 
 ## 📊 Résumé des Améliorations Finales

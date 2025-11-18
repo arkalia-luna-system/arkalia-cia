@@ -3,6 +3,8 @@
 **Date**: 18 Novembre 2025  
 **Statut**: ✅ **OPTIMISÉ**
 
+**Voir aussi**: [OPTIMISATIONS_COMPLETE.md](OPTIMISATIONS_COMPLETE.md) pour toutes les optimisations.
+
 ---
 
 ## 🎯 Problème Identifié

@@ -1,12 +1,11 @@
 {
   "timestamp": "/Volumes/T7/arkalia-cia",
   "project": "/Volumes/T7/arkalia-cia",
-  "score": 80,
+  "score": 82,
   "errors": [
     "MyPy: arkalia_cia_python_backend/aria_integration/api.py: error: Source file found twice under different module names: \"aria_integration.api\" and \"arkalia_cia_python_backend.aria_integration.api\""
   ],
   "warnings": [
-    "Formatage Black à corriger",
     "Bandit non exécuté: Command '['bandit', '-r', '/Volumes/T7/arkalia-cia', '-f', 'txt']' timed out after 45 seconds",
     "Analyse de complexité non exécutée: [Errno 2] No such file or directory: 'radon'",
     "Couverture documentation faible: 6.3%",

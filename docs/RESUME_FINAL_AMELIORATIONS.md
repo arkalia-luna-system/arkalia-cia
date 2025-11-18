@@ -1,9 +1,11 @@
 # 📊 Résumé Final des Améliorations - Arkalia CIA
 
 **Date**: 18 Novembre 2025  
-**Version**: 1.1.0+1  
+**Version**: 1.2.0  
 **Branche**: develop  
 **Statut**: ✅ **100% COMPLET**
+
+**Voir aussi**: [RESUME_PROJET.md](RESUME_PROJET.md) pour le résumé général.
 
 ---
 

@@ -4,11 +4,13 @@
 **Version**: 1.2.0  
 **Statut**: ✅ **OPTIMISÉ**
 
+**Voir aussi**: [OPTIMISATIONS_COMPLETE.md](OPTIMISATIONS_COMPLETE.md) pour toutes les optimisations.
+
 ---
 
 ## 🎯 Vue d'Ensemble
 
-Ce document décrit toutes les optimisations de performance implémentées dans Arkalia CIA pour garantir une expérience utilisateur fluide et réactive.
+Ce document décrit les optimisations de performance Flutter implémentées dans Arkalia CIA.
 
 ---
 
