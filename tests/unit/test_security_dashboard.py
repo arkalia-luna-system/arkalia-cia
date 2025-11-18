@@ -35,8 +35,7 @@ class TestSecurityDashboard:
             if hasattr(self.dashboard, "athalia_components"):
                 self.dashboard.athalia_components.clear()
             del self.dashboard
-        gc.collect()
-        gc.collect()  # Double collect pour forcer le nettoyage
+        gc.collect()  # Un seul collect suffit
 
         if Path(self.temp_dir).exists():
             shutil.rmtree(self.temp_dir)
@@ -113,9 +112,6 @@ class TestSecurityDashboard:
         assert isinstance(html, str)
         assert "<html" in html.lower()
         assert "security_score" in html or "85" in html
-        # Nettoyer la mémoire après génération HTML
-        del html
-        gc.collect()
 
     def test_generate_command_validation_html(self):
         """Test de génération HTML pour validation de commandes"""
@@ -202,7 +198,6 @@ class TestSecurityDashboard:
             # Nettoyer immédiatement
             dashboard.athalia_components.clear()
             del dashboard
-            gc.collect()
 
     def test_generate_recommendations_empty(self):
         """Test de génération de recommandations avec données vides"""
@@ -212,39 +207,20 @@ class TestSecurityDashboard:
         )
         assert isinstance(recommendations, list)
 
-    def test_generate_command_validation_html_empty(self):
-        """Test de génération HTML avec données vides"""
-        security_data: dict[str, Any] = {}
-        html = self.dashboard._generate_command_validation_html(security_data)
-        assert html is not None
-        assert isinstance(html, str)
+    def test_generate_html_with_empty_data(self):
+        """Test de génération HTML avec données vides (consolidé)"""
+        empty_data: dict[str, Any] = {}
 
-    def test_generate_code_analysis_html_empty(self):
-        """Test de génération HTML avec données vides"""
-        security_data: dict[str, Any] = {}
-        html = self.dashboard._generate_code_analysis_html(security_data)
-        assert html is not None
-        assert isinstance(html, str)
-
-    def test_generate_cache_security_html_empty(self):
-        """Test de génération HTML avec données vides"""
-        security_data: dict[str, Any] = {}
-        html = self.dashboard._generate_cache_security_html(security_data)
-        assert html is not None
-        assert isinstance(html, str)
-
-    def test_generate_security_metrics_html_empty(self):
-        """Test de génération HTML avec données vides"""
-        security_data: dict[str, Any] = {}
-        html = self.dashboard._generate_security_metrics_html(security_data)
-        assert html is not None
-        assert isinstance(html, str)
-
-    def test_generate_recommendations_html_empty(self):
-        """Test de génération HTML avec recommandations vides"""
-        html = self.dashboard._generate_recommendations_html([])
-        assert html is not None
-        assert isinstance(html, str)
+        # Tester toutes les méthodes avec données vides en une seule fois
+        assert isinstance(
+            self.dashboard._generate_command_validation_html(empty_data), str
+        )
+        assert isinstance(self.dashboard._generate_code_analysis_html(empty_data), str)
+        assert isinstance(self.dashboard._generate_cache_security_html(empty_data), str)
+        assert isinstance(
+            self.dashboard._generate_security_metrics_html(empty_data), str
+        )
+        assert isinstance(self.dashboard._generate_recommendations_html([]), str)
 
     def test_collect_security_data_with_vulnerabilities(self):
         """Test de collecte avec vulnérabilités simulées"""
@@ -291,9 +267,6 @@ class TestSecurityDashboard:
         html = self.dashboard._generate_dashboard_html(security_data)
         assert "<html" in html.lower()
         assert "85" in html
-        # Nettoyer immédiatement
-        del html, security_data
-        gc.collect()
 
     def test_main_function_generate_only(self):
         """Test de la fonction main avec --generate-only"""
@@ -329,30 +302,16 @@ class TestSecurityDashboard:
                 pass
 
     def test_generate_recommendations_various_scores(self):
-        """Test de génération recommandations avec différents scores"""
-        # Score très faible
-        data_low = {
-            "security_score": 30,
-            "vulnerabilities": {"high": 0, "medium": 0, "low": 0},
-        }
-        recs = self.dashboard._generate_security_recommendations(data_low)
-        assert len(recs) > 0
-
-        # Score moyen
-        data_medium = {
-            "security_score": 60,
-            "vulnerabilities": {"high": 0, "medium": 0, "low": 0},
-        }
-        recs = self.dashboard._generate_security_recommendations(data_medium)
-        assert len(recs) > 0
-
-        # Score élevé
-        data_high = {
-            "security_score": 90,
-            "vulnerabilities": {"high": 0, "medium": 0, "low": 0},
-        }
-        recs = self.dashboard._generate_security_recommendations(data_high)
-        assert len(recs) > 0
+        """Test de génération recommandations avec différents scores (consolidé)"""
+        # Tester plusieurs scores en une seule fois
+        test_scores = [30, 60, 90]
+        for score in test_scores:
+            data = {
+                "security_score": score,
+                "vulnerabilities": {"high": 0, "medium": 0, "low": 0},
+            }
+            recs = self.dashboard._generate_security_recommendations(data)
+            assert len(recs) > 0
 
     def test_generate_recommendations_with_vulnerabilities(self):
         """Test de génération recommandations avec vulnérabilités"""

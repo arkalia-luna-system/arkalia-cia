@@ -8,13 +8,15 @@ import gc
 import logging
 import platform
 import subprocess  # nosec B404
+import time
 import urllib.parse
 import webbrowser
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-# Import des composants Athalia réels
+# Import des composants Athalia réels (optionnels)
+# Ces imports sont dans un try/except car les modules peuvent ne pas être disponibles
 try:
     from athalia_core.core.cache_manager import (  # noqa: F401
         CacheManager,
@@ -33,8 +35,19 @@ try:
 except ImportError as e:
     logging.warning(f"Composants Athalia non disponibles: {e}")
     ATHALIA_AVAILABLE = False
+    # Définir des types vides pour éviter les erreurs de type
+    CacheManager = None
+    MetricsCollector = None
+    CodeLinter = None
+    CommandSecurityValidator = None
 
 logger = logging.getLogger(__name__)
+
+
+def force_memory_cleanup():
+    """Force un nettoyage complet de la mémoire"""
+    gc.collect()
+    gc.collect()  # Double collect pour forcer le nettoyage complet
 
 
 class SecurityDashboard:
@@ -72,6 +85,9 @@ class SecurityDashboard:
 
         # Initialisation des composants Athalia
         self.athalia_components = self._initialize_athalia_components()
+
+        # Suivi de la dernière ouverture pour éviter les ouvertures multiples
+        self._last_open_time = 0.0
 
     def _initialize_athalia_components(self) -> dict[str, Any]:
         """Initialise les composants Athalia pour le dashboard de sécurité"""
@@ -169,50 +185,45 @@ class SecurityDashboard:
                             vulnerabilities = vulnerabilities_raw[:max_vulns]
                         else:
                             vulnerabilities = vulnerabilities_raw
-                        # Libérer la référence pour libérer la mémoire
+                        # Libérer la référence pour libérer la mémoire immédiatement
                         del vulnerabilities_raw
+                        force_memory_cleanup()
 
-                        # Analyse intelligente des fonctions dangereuses
-                        dangerous_functions = [
-                            v
-                            for v in vulnerabilities
-                            if v.get("type") == "dangerous_function"
-                        ]
+                        # Analyse intelligente des fonctions dangereuses (optimisé pour mémoire)
+                        # Parcourir une seule fois au lieu de plusieurs list comprehensions
+                        dangerous_functions_count = 0
+                        xss_count = 0
+                        sql_count = 0
+                        xss_patterns_set: set[str] = set()
+                        sql_patterns_set: set[str] = set()
+
+                        for v in vulnerabilities:
+                            vuln_type = v.get("type", "")
+                            if vuln_type == "dangerous_function":
+                                dangerous_functions_count += 1
+                            elif vuln_type == "xss":
+                                xss_count += 1
+                                pattern = v.get("pattern", "")
+                                if pattern:
+                                    xss_patterns_set.add(pattern)
+                            elif vuln_type == "sql_injection":
+                                sql_count += 1
+                                pattern = v.get("pattern", "")
+                                if pattern:
+                                    sql_patterns_set.add(pattern)
+
+                        xss_patterns = len(xss_patterns_set)
+                        sql_patterns = len(sql_patterns_set)
+
+                        # Libérer les sets immédiatement après utilisation
+                        del xss_patterns_set, sql_patterns_set
 
                         # Score contextuel intelligent et réaliste
                         base_score = 100  # Score de base parfait
 
-                        # Vulnérabilités critiques avec analyse de contexte
-                        xss_count = len(
-                            [v for v in vulnerabilities if v.get("type") == "xss"]
-                        )
-                        sql_count = len(
-                            [
-                                v
-                                for v in vulnerabilities
-                                if v.get("type") == "sql_injection"
-                            ]
-                        )
-
-                        # Patterns uniques vs réplication (faux positifs probables)
-                        xss_patterns = len(
-                            {
-                                v.get("pattern", "")
-                                for v in vulnerabilities
-                                if v.get("type") == "xss"
-                            }
-                        )
-                        sql_patterns = len(
-                            {
-                                v.get("pattern", "")
-                                for v in vulnerabilities
-                                if v.get("type") == "sql_injection"
-                            }
-                        )
-
                         # Classification intelligente des vulnérabilités
                         high_vulns = xss_count + sql_count
-                        medium_vulns = len(dangerous_functions)
+                        medium_vulns = dangerous_functions_count
                         low_vulns = total_vulns - high_vulns - medium_vulns
 
                         # Pénalités critiques (XSS et SQL injection sont très graves)
@@ -257,7 +268,7 @@ class SecurityDashboard:
                             "risk_distribution": {
                                 "critical_ratio": (xss_count + sql_count)
                                 / max(1, total_vulns),
-                                "medium_ratio": len(dangerous_functions)
+                                "medium_ratio": dangerous_functions_count
                                 / max(1, total_vulns),
                                 "safe_ratio": (total_files - total_vulns)
                                 / max(1, total_files),
@@ -269,15 +280,17 @@ class SecurityDashboard:
                             "security_awareness": max(0, 100 - (total_vulns * 0.1)),
                             "code_complexity": total_files / max(1, vulns_count),
                             "maintenance_index": max(
-                                0, 100 - (len(dangerous_functions) * 0.05)
+                                0, 100 - (dangerous_functions_count * 0.05)
                             ),
                         }
 
                         # Libérer la mémoire des vulnérabilités après traitement
                         del vulnerabilities
-                        del dangerous_functions
+                        # Libérer aussi les données intermédiaires
+                        if "vulnerabilities" in scan_results:
+                            del scan_results["vulnerabilities"]
                         # Forcer le garbage collector pour libérer la mémoire immédiatement
-                        gc.collect()
+                        force_memory_cleanup()
                     else:
                         security_data["security_score"] = 100
                         security_data["vulnerabilities"] = {
@@ -381,18 +394,31 @@ class SecurityDashboard:
                     except Exception as e:
                         logger.warning(f"Erreur lors de la collecte des métriques: {e}")
                         security_data["project_metrics"] = {"error": str(e)}
+                        # Libérer la mémoire en cas d'erreur
+                        force_memory_cleanup()
 
             # Génération des recommandations
             security_data["recommendations"] = self._generate_security_recommendations(
                 security_data
             )
 
+            # Libérer les données volumineuses après traitement
+            if "project_metrics" in security_data:
+                # Garder seulement les métriques essentielles
+                project_metrics = security_data.get("project_metrics", {})
+                if isinstance(project_metrics, dict) and "error" not in project_metrics:
+                    # Nettoyer les données volumineuses non utilisées
+                    for key in list(project_metrics.keys()):
+                        if key not in ["python_files", "tests", "documentation"]:
+                            del project_metrics[key]
+                    force_memory_cleanup()
+
         except Exception as e:
             logger.error(f"Erreur lors de la collecte des données de sécurité: {e}")
             security_data["error"] = str(e)
         finally:
             # Forcer le garbage collector pour libérer la mémoire après collecte
-            gc.collect()
+            force_memory_cleanup()
 
         return security_data
 
@@ -460,27 +486,33 @@ class SecurityDashboard:
 
     def generate_security_dashboard(self) -> str:
         """Génère le dashboard de sécurité HTML avec vraies données"""
-        # Collecter les vraies données de sécurité
-        security_data = self.collect_security_data()
+        try:
+            # Collecter les vraies données de sécurité
+            security_data = self.collect_security_data()
 
-        # Générer le HTML avec les vraies données
-        dashboard_html = self._generate_dashboard_html(security_data)
+            # Générer le HTML avec les vraies données
+            dashboard_html = self._generate_dashboard_html(security_data)
 
-        # Libérer la mémoire des données de sécurité après génération HTML
-        del security_data
+            # Libérer la mémoire des données de sécurité après génération HTML
+            del security_data
+            force_memory_cleanup()
 
-        # Créer le fichier dashboard
-        dashboard_file = self.dashboard_dir / "security_dashboard.html"
-        with open(dashboard_file, "w", encoding="utf-8") as f:
-            f.write(dashboard_html)
+            # Créer le fichier dashboard
+            dashboard_file = self.dashboard_dir / "security_dashboard.html"
+            with open(dashboard_file, "w", encoding="utf-8") as f:
+                f.write(dashboard_html)
 
-        # Libérer la mémoire du HTML après écriture
-        del dashboard_html
+            # Libérer la mémoire du HTML après écriture
+            del dashboard_html
+            force_memory_cleanup()
 
-        logger.info(
-            f"Dashboard de sécurité généré avec vraies données: {dashboard_file}"
-        )
-        return str(dashboard_file)
+            logger.info(
+                f"Dashboard de sécurité généré avec vraies données: {dashboard_file}"
+            )
+            return str(dashboard_file)
+        finally:
+            # Nettoyage final de la mémoire
+            force_memory_cleanup()
 
     def _generate_dashboard_html(self, security_data: dict[str, Any]) -> str:
         """Génère le HTML du dashboard avec les vraies données de sécurité"""
@@ -604,6 +636,8 @@ class SecurityDashboard:
             padding: 20px;
             text-align: center;
             border-left: 4px solid;
+            position: relative;
+            overflow: hidden;
         }}
 
         .vuln-high {{
@@ -777,18 +811,183 @@ class SecurityDashboard:
         .metric-row {{
             display: flex;
             justify-content: space-between;
+            align-items: center;
             margin: 10px 0;
-            padding: 10px;
+            padding: 12px 15px;
             background: #f8f9fa;
-            border-radius: 5px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }}
+
+        .metric-row:hover {{
+            background: #e9ecef;
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }}
 
         .metric-label {{
             font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }}
 
         .metric-value {{
             color: #666;
+            font-weight: 600;
+            font-size: 1.05em;
+        }}
+
+        /* Barres de progression pour les métriques */
+        .progress-bar-container {{
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 8px;
+        }}
+
+        .progress-bar {{
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 10px;
+            transition: width 1s ease-in-out;
+            animation: progressAnimation 1.5s ease-out;
+        }}
+
+        @keyframes progressAnimation {{
+            from {{
+                width: 0%;
+            }}
+        }}
+
+        /* Animations pour les cartes */
+        .vuln-card, .security-card {{
+            animation: fadeInUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }}
+
+        .vuln-card:nth-child(1) {{ animation-delay: 0.1s; }}
+        .vuln-card:nth-child(2) {{ animation-delay: 0.2s; }}
+        .vuln-card:nth-child(3) {{ animation-delay: 0.3s; }}
+        .vuln-card:nth-child(4) {{ animation-delay: 0.4s; }}
+
+        .security-card:nth-child(1) {{ animation-delay: 0.2s; }}
+        .security-card:nth-child(2) {{ animation-delay: 0.3s; }}
+        .security-card:nth-child(3) {{ animation-delay: 0.4s; }}
+        .security-card:nth-child(4) {{ animation-delay: 0.5s; }}
+
+        @keyframes fadeInUp {{
+            from {{
+                opacity: 0;
+                transform: translateY(30px);
+            }}
+            to {{
+                opacity: 1;
+                transform: translateY(0);
+            }}
+        }}
+
+        /* Animation pour le score de sécurité */
+        .security-score {{
+            animation: scorePulse 2s ease-in-out infinite;
+            text-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+        }}
+
+        @keyframes scorePulse {{
+            0%, 100% {{
+                transform: scale(1);
+            }}
+            50% {{
+                transform: scale(1.05);
+            }}
+        }}
+
+        /* Effet de brillance sur les cartes */
+        .vuln-card::before {{
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s;
+            opacity: 0;
+        }}
+
+        .vuln-card:hover::before {{
+            animation: shine 0.5s ease-in-out;
+        }}
+
+        @keyframes shine {{
+            0% {{
+                opacity: 0;
+                left: -50%;
+            }}
+            50% {{
+                opacity: 1;
+            }}
+            100% {{
+                opacity: 0;
+                left: 150%;
+            }}
+        }}
+
+        /* Indicateur de chargement */
+        .loading-indicator {{
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }}
+
+        @keyframes spin {{
+            0% {{ transform: rotate(0deg); }}
+            100% {{ transform: rotate(360deg); }}
+        }}
+
+        /* Badge pour les scores */
+        .score-badge {{
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-left: 10px;
+        }}
+
+        .score-badge.excellent {{
+            background: #d4edda;
+            color: #155724;
+        }}
+
+        .score-badge.good {{
+            background: #fff3cd;
+            color: #856404;
+        }}
+
+        .score-badge.poor {{
+            background: #f8d7da;
+            color: #721c24;
+        }}
+
+        /* Amélioration du bouton refresh */
+        .refresh-btn:active {{
+            transform: translateY(0);
+        }}
+
+        .refresh-btn.loading {{
+            opacity: 0.7;
+            cursor: not-allowed;
         }}
     </style>
 </head>
@@ -874,42 +1073,176 @@ class SecurityDashboard:
     </div>
 
     <script>
-        // Graphique des vulnérabilités
+        // Animation au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {{
+            // Animation des nombres
+            animateNumbers();
+
+            // Ajouter des barres de progression aux métriques
+            addProgressBars();
+        }});
+
+        // Fonction pour animer les nombres
+        function animateNumbers() {{
+            const numberElements = document.querySelectorAll('.vuln-number, .security-score');
+            numberElements.forEach(element => {{
+                const finalValue = parseInt(element.textContent.replace(/[^0-9]/g, ''));
+                if (finalValue > 0) {{
+                    let currentValue = 0;
+                    const increment = finalValue / 30;
+                    const timer = setInterval(() => {{
+                        currentValue += increment;
+                        if (currentValue >= finalValue) {{
+                            element.textContent = element.textContent.replace(/[0-9]+/, finalValue);
+                            clearInterval(timer);
+                        }} else {{
+                            const displayValue = Math.floor(currentValue);
+                            element.textContent = element.textContent.replace(/[0-9]+/, displayValue);
+                        }}
+                    }}, 30);
+                }}
+            }});
+        }}
+
+        // Fonction pour ajouter des barres de progression
+        function addProgressBars() {{
+            const metricRows = document.querySelectorAll('.metric-row');
+            metricRows.forEach(row => {{
+                const valueElement = row.querySelector('.metric-value');
+                if (valueElement) {{
+                    const text = valueElement.textContent.trim();
+                    // Extraire les nombres (pourcentage, score, etc.)
+                    const match = text.match(/([0-9]+)/);
+                    if (match) {{
+                        let percentage = parseInt(match[1]);
+                        // Si c'est un score sur 100, utiliser directement
+                        if (text.includes('/100')) {{
+                            // Déjà en pourcentage
+                        }} else if (text.includes('%')) {{
+                            // Déjà en pourcentage
+                        }} else if (percentage > 100) {{
+                            // Normaliser si > 100
+                            percentage = Math.min(100, percentage / 10);
+                        }}
+
+                        // Créer la barre de progression
+                        const progressContainer = document.createElement('div');
+                        progressContainer.className = 'progress-bar-container';
+                        const progressBar = document.createElement('div');
+                        progressBar.className = 'progress-bar';
+                        progressBar.style.width = percentage + '%';
+                        progressContainer.appendChild(progressBar);
+                        row.appendChild(progressContainer);
+                    }}
+                }}
+            }});
+        }}
+
+        // Graphique des vulnérabilités avec animation
         const ctx = document.getElementById('securityChart').getContext('2d');
-        new Chart(ctx, {{
+        const chartData = {{
+            labels: ['Critiques', 'Moyennes', 'Mineures', 'Sécurisé'],
+            datasets: [{{
+                data: [{high_vulns}, {medium_vulns}, {low_vulns}, {max(0, 1000 - total_vulnerabilities)}],
+                backgroundColor: [
+                    '#dc3545',
+                    '#ffc107',
+                    '#28a745',
+                    '#6c757d'
+                ],
+                borderWidth: 3,
+                borderColor: '#fff',
+                hoverOffset: 10
+            }}]
+        }};
+
+        const chart = new Chart(ctx, {{
             type: 'doughnut',
-            data: {{
-                labels: ['Critiques', 'Moyennes', 'Mineures', 'Sécurisé'],
-                datasets: [{{
-                    data: [{high_vulns}, {medium_vulns}, {low_vulns}, {max(0, 1000 - total_vulnerabilities)}],
-                    backgroundColor: [
-                        '#dc3545',
-                        '#ffc107',
-                        '#28a745',
-                        '#6c757d'
-                    ],
-                    borderWidth: 2,
-                    borderColor: '#fff'
-                }}]
-            }},
+            data: chartData,
             options: {{
                 responsive: true,
+                animation: {{
+                    animateRotate: true,
+                    animateScale: true,
+                    duration: 2000
+                }},
                 plugins: {{
                     title: {{
                         display: true,
-                        text: 'Répartition des Vulnérabilités'
+                        text: 'Répartition des Vulnérabilités',
+                        font: {{
+                            size: 18,
+                            weight: 'bold'
+                        }}
                     }},
                     legend: {{
-                        position: 'bottom'
+                        position: 'bottom',
+                        labels: {{
+                            padding: 15,
+                            font: {{
+                                size: 12
+                            }}
+                        }}
+                    }},
+                    tooltip: {{
+                        callbacks: {{
+                            label: function(context) {{
+                                const label = context.label || '';
+                                const value = context.parsed || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                return label + ': ' + value + ' (' + percentage + '%)';
+                            }}
+                        }}
                     }}
                 }}
             }}
         }});
 
-        // Actualisation automatique toutes les 5 minutes
-        setInterval(() => {{
-            location.reload();
-        }}, 300000);
+        // Amélioration du bouton de rafraîchissement
+        const refreshBtn = document.querySelector('.refresh-btn');
+        if (refreshBtn) {{
+            refreshBtn.addEventListener('click', function() {{
+                this.classList.add('loading');
+                this.innerHTML = '🔄 Actualisation...';
+                setTimeout(() => {{
+                    location.reload();
+                }}, 500);
+            }});
+        }}
+
+        // Actualisation automatique intelligente (vérifie les changements avant de recharger)
+        let lastUpdateTime = '{timestamp}';
+        setInterval(function() {{
+            // Vérifier si le timestamp a changé en comparant avec le footer
+            const footerElement = document.querySelector('.footer p');
+            if (footerElement) {{
+                const footerTimeMatch = footerElement.textContent.match(/(\\d{{4}}-\\d{{2}}-\\d{{2}}T[\\d:]+)/);
+                if (footerTimeMatch && footerTimeMatch[1] !== lastUpdateTime) {{
+                    lastUpdateTime = footerTimeMatch[1];
+                    location.reload();
+                }}
+            }}
+        }}, 60000); // Vérifier toutes les minutes
+
+        // Ajouter des badges de score dynamiques
+        const scoreElement = document.querySelector('.security-score');
+        if (scoreElement) {{
+            const score = parseInt(scoreElement.textContent.replace(/[^0-9]/g, ''));
+            const badge = document.createElement('span');
+            badge.className = 'score-badge';
+            if (score >= 85) {{
+                badge.className += ' excellent';
+                badge.textContent = 'Excellent';
+            }} else if (score >= 70) {{
+                badge.className += ' good';
+                badge.textContent = 'Bon';
+            }} else {{
+                badge.className += ' poor';
+                badge.textContent = 'À améliorer';
+            }}
+            scoreElement.parentElement.appendChild(badge);
+        }}
     </script>
 </body>
 </html>"""
@@ -1107,8 +1440,16 @@ class SecurityDashboard:
         return html
 
     def open_dashboard(self, dashboard_file: str | None = None):
-        """Ouvre le dashboard de sécurité dans le navigateur"""
+        """Ouvre le dashboard de sécurité dans le navigateur ou actualise s'il est déjà ouvert"""
         try:
+            # Éviter les ouvertures multiples trop rapides (moins de 1 seconde entre deux ouvertures)
+            current_time = time.time()
+            if current_time - self._last_open_time < 1.0:
+                logger.debug(
+                    "Ouverture du dashboard ignorée (trop récente, réutilisation de l'onglet existant)"
+                )
+                return
+
             # Générer le dashboard si non fourni
             if dashboard_file is None:
                 dashboard_file = self.generate_security_dashboard()
@@ -1121,40 +1462,56 @@ class SecurityDashboard:
             # Obtenir le chemin absolu
             absolute_path = dashboard_path.resolve()
 
-            # Sur macOS, utiliser la méthode native pour ouvrir le fichier
-            # Cela évite les problèmes d'encodage d'URL
-            system = platform.system()
+            # Encoder correctement pour file:// URL
+            path_str = str(absolute_path)
+            encoded_path = urllib.parse.quote(path_str, safe="/")
+            file_url = f"file://{encoded_path}"
 
-            if system == "Darwin":  # macOS
-                # Utiliser 'open' qui gère automatiquement les chemins avec espaces
-                subprocess.run(
-                    ["open", str(absolute_path)], check=False
-                )  # nosec B607, B603
+            # Utiliser webbrowser.open avec new=0 pour réutiliser l'onglet existant si possible
+            # new=0 : réutilise l'onglet existant si disponible
+            # new=1 : ouvre un nouvel onglet
+            # new=2 : ouvre une nouvelle fenêtre
+            try:
+                # Essayer d'abord de réutiliser l'onglet existant
+                webbrowser.open(file_url, new=0, autoraise=True)
+                self._last_open_time = current_time
                 logger.info(
-                    f"🌐 Dashboard de sécurité ouvert dans le navigateur: {absolute_path}"
+                    f"🔄 Dashboard de sécurité ouvert/actualisé dans le navigateur: {absolute_path}"
                 )
-            elif system == "Windows":
-                # Windows utilise start (sans shell=True pour sécurité)
-                subprocess.run(  # nosec B607, B603
-                    ["cmd", "/c", "start", "", str(absolute_path)],
-                    check=False,
-                )
-                logger.info(
-                    f"🌐 Dashboard de sécurité ouvert dans le navigateur: {absolute_path}"
-                )
-            else:
-                # Linux et autres: utiliser webbrowser avec URL correctement formatée
-                path_str = str(absolute_path)
-                # Encoder correctement pour file:// URL
-                encoded_path = urllib.parse.quote(path_str, safe="/")
-                file_url = f"file://{encoded_path}"
-                webbrowser.open(file_url)
-                logger.info(
-                    f"🌐 Dashboard de sécurité ouvert dans le navigateur: {file_url}"
-                )
+            except Exception as webbrowser_error:
+                logger.warning(f"Erreur avec webbrowser.open: {webbrowser_error}")
+                # Fallback: utiliser la méthode native du système
+                system = platform.system()
+                if system == "Darwin":  # macOS
+                    # Utiliser 'open' avec -g pour ne pas amener la fenêtre au premier plan
+                    # et -a pour spécifier le navigateur par défaut
+                    subprocess.run(
+                        ["open", "-g", str(absolute_path)], check=False
+                    )  # nosec B607, B603
+                    self._last_open_time = current_time
+                    logger.info(
+                        f"🌐 Dashboard de sécurité ouvert via 'open': {absolute_path}"
+                    )
+                elif system == "Windows":
+                    # Windows utilise start (sans shell=True pour sécurité)
+                    subprocess.run(  # nosec B607, B603
+                        ["cmd", "/c", "start", "", str(absolute_path)],
+                        check=False,
+                    )
+                    self._last_open_time = current_time
+                    logger.info(
+                        f"🌐 Dashboard de sécurité ouvert via 'start': {absolute_path}"
+                    )
+                else:
+                    # Linux et autres: réessayer avec webbrowser
+                    webbrowser.open(file_url, new=0)
+                    self._last_open_time = current_time
+                    logger.info(
+                        f"🌐 Dashboard de sécurité ouvert dans le navigateur: {file_url}"
+                    )
         except Exception as e:
             logger.error(f"Erreur lors de l'ouverture du dashboard: {e}")
-            # Fallback: essayer avec webbrowser.open directement
+            # Fallback final: essayer avec webbrowser.open directement
             try:
                 dashboard_path = (
                     Path(dashboard_file)
@@ -1166,10 +1523,14 @@ class SecurityDashboard:
                     file_url = (
                         f"file://{urllib.parse.quote(str(absolute_path), safe='/')}"
                     )
-                    webbrowser.open(file_url)
+                    webbrowser.open(file_url, new=0)
+                    self._last_open_time = time.time()
                     logger.info(f"🌐 Ouverture via fallback: {file_url}")
             except Exception as fallback_error:
                 logger.error(f"Erreur lors de l'ouverture fallback: {fallback_error}")
+        finally:
+            # Nettoyage mémoire après ouverture du dashboard
+            force_memory_cleanup()
 
 
 # Fonction principale pour exécution directe

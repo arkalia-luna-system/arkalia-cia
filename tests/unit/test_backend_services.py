@@ -36,24 +36,7 @@ class TestCIADatabase:
         # Les tables doivent être créées à l'initialisation
         assert True  # CIADatabase crée les tables automatiquement
 
-    def test_document_operations(self):
-        """Test des opérations sur les documents"""
-        # Test d'ajout de document
-
-        # Note: Ces méthodes doivent être implémentées dans CIADatabase
-        # assert self.db.add_document(doc_data) is not None
-
-    def test_reminder_operations(self):
-        """Test des opérations sur les rappels"""
-
-        # Note: Ces méthodes doivent être implémentées dans CIADatabase
-        # assert self.db.add_reminder(reminder_data) is not None
-
-    def test_contact_operations(self):
-        """Test des opérations sur les contacts"""
-
-        # Note: Ces méthodes doivent être implémentées dans CIADatabase
-        # assert self.db.add_contact(contact_data) is not None
+    # Tests d'opérations supprimés - redondants avec test_database.py
 
 
 class TestPDFProcessor:
@@ -67,57 +50,7 @@ class TestPDFProcessor:
         """Test d'initialisation du processeur PDF"""
         assert self.processor is not None
 
-    def test_extract_text_from_pdf(self):
-        """Test d'extraction de texte depuis un PDF"""
-        # Test avec un PDF fictif
-        test_pdf_path = tempfile.mktemp(suffix=".pdf")
-
-        # Créer un PDF de test simple
-        with open(test_pdf_path, "wb") as f:
-            f.write(
-                b"%PDF-1.4\n1 0 obj\n<<\n/Type /Catalog\n/Pages 2 0 R\n>>\nendobj\n"
-            )
-
-        try:
-            # Note: Cette méthode doit être implémentée dans PDFProcessor
-            # text = self.processor.extract_text(test_pdf_path)
-            # assert text is not None
-            pass
-        finally:
-            if Path(test_pdf_path).exists():
-                Path(test_pdf_path).unlink()
-
-    def test_validate_pdf_file(self):
-        """Test de validation d'un fichier PDF"""
-        # Test avec un fichier PDF valide
-        test_pdf_path = tempfile.mktemp(suffix=".pdf")
-
-        with open(test_pdf_path, "wb") as f:
-            f.write(b"%PDF-1.4\n")
-
-        try:
-            # Note: Cette méthode doit être implémentée dans PDFProcessor
-            # assert self.processor.validate_pdf(test_pdf_path) is True
-            pass
-        finally:
-            if Path(test_pdf_path).exists():
-                Path(test_pdf_path).unlink()
-
-    def test_invalid_pdf_handling(self):
-        """Test de gestion des PDF invalides"""
-        # Test avec un fichier non-PDF
-        test_file_path = tempfile.mktemp(suffix=".txt")
-
-        with open(test_file_path, "w") as f:
-            f.write("Ceci n'est pas un PDF")
-
-        try:
-            # Note: Cette méthode doit être implémentée dans PDFProcessor
-            # assert self.processor.validate_pdf(test_file_path) is False
-            pass
-        finally:
-            if Path(test_file_path).exists():
-                Path(test_file_path).unlink()
+    # Tests PDF supprimés - redondants avec test_pdf_processor.py
 
 
 class TestDataValidation:
@@ -184,23 +117,25 @@ class TestDataValidation:
         """Test de validation des numéros de téléphone"""
         valid_phones = ["+33123456789", "0123456789", "+1-555-123-4567"]
 
-        invalid_phones = ["", "abc", "123", None]
+        invalid_phones: list[str | None] = ["", "abc", "123", None]
 
         for phone in valid_phones:
             assert phone is not None
             assert len(phone) > 0
             assert any(c.isdigit() for c in phone)
 
-        for phone in invalid_phones:
-            if phone is None:
-                assert phone is None
-            else:
-                # Pour les numéros invalides, vérifier qu'ils sont vides OU qu'ils ne contiennent que des chiffres
-                assert (
-                    len(phone) == 0
-                    or not any(c.isdigit() for c in phone)
-                    or len(phone) < 5
-                )
+        for phone_item in invalid_phones:
+            # None est invalide - skip
+            if phone_item is None:
+                continue
+            # À ce point, phone_item ne peut plus être None
+            invalid_phone: str = phone_item
+            # Pour les numéros invalides, vérifier qu'ils sont vides OU qu'ils ne contiennent pas assez de chiffres
+            assert (
+                len(invalid_phone) == 0
+                or not any(c.isdigit() for c in invalid_phone)
+                or len(invalid_phone) < 5
+            )
 
     def test_json_serialization(self):
         """Test de sérialisation JSON"""
@@ -235,22 +170,7 @@ class TestDataValidation:
 class TestErrorHandling:
     """Tests de gestion d'erreurs"""
 
-    def test_database_connection_error(self):
-        """Test de gestion d'erreur de connexion base de données"""
-        # Test avec un chemin invalide
-
-        # Note: Cette méthode doit gérer les erreurs de connexion
-        # with pytest.raises(Exception):
-        #     CIADatabase(invalid_path)
-        pass
-
-    def test_file_not_found_error(self):
-        """Test de gestion d'erreur fichier non trouvé"""
-
-        # Note: Cette méthode doit gérer les fichiers non trouvés
-        # with pytest.raises(FileNotFoundError):
-        #     self.processor.extract_text(non_existent_file)
-        pass
+    # Tests d'erreurs supprimés - redondants avec test_database.py et test_pdf_processor.py
 
     def test_invalid_json_error(self):
         """Test de gestion d'erreur JSON invalide"""
@@ -259,24 +179,4 @@ class TestErrorHandling:
         with pytest.raises(json.JSONDecodeError):
             json.loads(invalid_json)
 
-    def test_permission_error_handling(self):
-        """Test de gestion d'erreur de permissions"""
-        # Test avec un fichier en lecture seule
-        read_only_file = tempfile.mktemp()
-
-        try:
-            with open(read_only_file, "w") as f:
-                f.write("test")
-
-            # Rendre le fichier en lecture seule
-            Path(read_only_file).chmod(0o444)
-
-            # Note: Cette méthode doit gérer les erreurs de permissions
-            # with pytest.raises(PermissionError):
-            #     with open(read_only_file, 'w') as f:
-            #         f.write('test')
-            pass
-        finally:
-            if Path(read_only_file).exists():
-                Path(read_only_file).chmod(0o644)
-                Path(read_only_file).unlink()
+    # Test de permissions supprimé - redondant et non essentiel

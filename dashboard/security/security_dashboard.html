@@ -83,6 +83,8 @@
             padding: 20px;
             text-align: center;
             border-left: 4px solid;
+            position: relative;
+            overflow: hidden;
         }
 
         .vuln-high {
@@ -256,18 +258,183 @@
         .metric-row {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             margin: 10px 0;
-            padding: 10px;
+            padding: 12px 15px;
             background: #f8f9fa;
-            border-radius: 5px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-row:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         .metric-label {
             font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .metric-value {
             color: #666;
+            font-weight: 600;
+            font-size: 1.05em;
+        }
+
+        /* Barres de progression pour les métriques */
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 10px;
+            transition: width 1s ease-in-out;
+            animation: progressAnimation 1.5s ease-out;
+        }
+
+        @keyframes progressAnimation {
+            from {
+                width: 0%;
+            }
+        }
+
+        /* Animations pour les cartes */
+        .vuln-card, .security-card {
+            animation: fadeInUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .vuln-card:nth-child(1) { animation-delay: 0.1s; }
+        .vuln-card:nth-child(2) { animation-delay: 0.2s; }
+        .vuln-card:nth-child(3) { animation-delay: 0.3s; }
+        .vuln-card:nth-child(4) { animation-delay: 0.4s; }
+
+        .security-card:nth-child(1) { animation-delay: 0.2s; }
+        .security-card:nth-child(2) { animation-delay: 0.3s; }
+        .security-card:nth-child(3) { animation-delay: 0.4s; }
+        .security-card:nth-child(4) { animation-delay: 0.5s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Animation pour le score de sécurité */
+        .security-score {
+            animation: scorePulse 2s ease-in-out infinite;
+            text-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+        }
+
+        @keyframes scorePulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        /* Effet de brillance sur les cartes */
+        .vuln-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s;
+            opacity: 0;
+        }
+
+        .vuln-card:hover::before {
+            animation: shine 0.5s ease-in-out;
+        }
+
+        @keyframes shine {
+            0% {
+                opacity: 0;
+                left: -50%;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                left: 150%;
+            }
+        }
+
+        /* Indicateur de chargement */
+        .loading-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Badge pour les scores */
+        .score-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .score-badge.excellent {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .score-badge.good {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .score-badge.poor {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Amélioration du bouton refresh */
+        .refresh-btn:active {
+            transform: translateY(0);
+        }
+
+        .refresh-btn.loading {
+            opacity: 0.7;
+            cursor: not-allowed;
         }
     </style>
 </head>
@@ -283,7 +450,7 @@
             <div class="security-score">0/100</div>
             <div class="security-status">Critique</div>
             <p>Projet: /Volumes/T7/arkalia-cia</p>
-            <p>Dernière mise à jour: 2025-11-18T10:16:35.729084</p>
+            <p>Dernière mise à jour: 2025-11-18T10:25:20.935440</p>
             <button class="refresh-btn" onclick="location.reload()">🔄 Actualiser</button>
         </div>
 
@@ -385,48 +552,182 @@
         </div>
 
         <div class="footer">
-            <p>🕒 Dernière mise à jour: 2025-11-18T10:16:35.729084</p>
+            <p>🕒 Dernière mise à jour: 2025-11-18T10:25:20.935440</p>
             <p>🛡️ Dashboard de sécurité généré automatiquement par Athalia v12.0.0</p>
         </div>
     </div>
 
     <script>
-        // Graphique des vulnérabilités
+        // Animation au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animation des nombres
+            animateNumbers();
+
+            // Ajouter des barres de progression aux métriques
+            addProgressBars();
+        });
+
+        // Fonction pour animer les nombres
+        function animateNumbers() {
+            const numberElements = document.querySelectorAll('.vuln-number, .security-score');
+            numberElements.forEach(element => {
+                const finalValue = parseInt(element.textContent.replace(/[^0-9]/g, ''));
+                if (finalValue > 0) {
+                    let currentValue = 0;
+                    const increment = finalValue / 30;
+                    const timer = setInterval(() => {
+                        currentValue += increment;
+                        if (currentValue >= finalValue) {
+                            element.textContent = element.textContent.replace(/[0-9]+/, finalValue);
+                            clearInterval(timer);
+                        } else {
+                            const displayValue = Math.floor(currentValue);
+                            element.textContent = element.textContent.replace(/[0-9]+/, displayValue);
+                        }
+                    }, 30);
+                }
+            });
+        }
+
+        // Fonction pour ajouter des barres de progression
+        function addProgressBars() {
+            const metricRows = document.querySelectorAll('.metric-row');
+            metricRows.forEach(row => {
+                const valueElement = row.querySelector('.metric-value');
+                if (valueElement) {
+                    const text = valueElement.textContent.trim();
+                    // Extraire les nombres (pourcentage, score, etc.)
+                    const match = text.match(/([0-9]+)/);
+                    if (match) {
+                        let percentage = parseInt(match[1]);
+                        // Si c'est un score sur 100, utiliser directement
+                        if (text.includes('/100')) {
+                            // Déjà en pourcentage
+                        } else if (text.includes('%')) {
+                            // Déjà en pourcentage
+                        } else if (percentage > 100) {
+                            // Normaliser si > 100
+                            percentage = Math.min(100, percentage / 10);
+                        }
+
+                        // Créer la barre de progression
+                        const progressContainer = document.createElement('div');
+                        progressContainer.className = 'progress-bar-container';
+                        const progressBar = document.createElement('div');
+                        progressBar.className = 'progress-bar';
+                        progressBar.style.width = percentage + '%';
+                        progressContainer.appendChild(progressBar);
+                        row.appendChild(progressContainer);
+                    }
+                }
+            });
+        }
+
+        // Graphique des vulnérabilités avec animation
         const ctx = document.getElementById('securityChart').getContext('2d');
-        new Chart(ctx, {
+        const chartData = {
+            labels: ['Critiques', 'Moyennes', 'Mineures', 'Sécurisé'],
+            datasets: [{
+                data: [0, 0, 0, 1000],
+                backgroundColor: [
+                    '#dc3545',
+                    '#ffc107',
+                    '#28a745',
+                    '#6c757d'
+                ],
+                borderWidth: 3,
+                borderColor: '#fff',
+                hoverOffset: 10
+            }]
+        };
+
+        const chart = new Chart(ctx, {
             type: 'doughnut',
-            data: {
-                labels: ['Critiques', 'Moyennes', 'Mineures', 'Sécurisé'],
-                datasets: [{
-                    data: [0, 0, 0, 1000],
-                    backgroundColor: [
-                        '#dc3545',
-                        '#ffc107',
-                        '#28a745',
-                        '#6c757d'
-                    ],
-                    borderWidth: 2,
-                    borderColor: '#fff'
-                }]
-            },
+            data: chartData,
             options: {
                 responsive: true,
+                animation: {
+                    animateRotate: true,
+                    animateScale: true,
+                    duration: 2000
+                },
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Répartition des Vulnérabilités'
+                        text: 'Répartition des Vulnérabilités',
+                        font: {
+                            size: 18,
+                            weight: 'bold'
+                        }
                     },
                     legend: {
-                        position: 'bottom'
+                        position: 'bottom',
+                        labels: {
+                            padding: 15,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                return label + ': ' + value + ' (' + percentage + '%)';
+                            }
+                        }
                     }
                 }
             }
         });
 
-        // Actualisation automatique toutes les 5 minutes
-        setInterval(() => {
-            location.reload();
-        }, 300000);
+        // Amélioration du bouton de rafraîchissement
+        const refreshBtn = document.querySelector('.refresh-btn');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', function() {
+                this.classList.add('loading');
+                this.innerHTML = '🔄 Actualisation...';
+                setTimeout(() => {
+                    location.reload();
+                }, 500);
+            });
+        }
+
+        // Actualisation automatique intelligente (vérifie les changements avant de recharger)
+        let lastUpdateTime = '2025-11-18T10:25:20.935440';
+        setInterval(function() {
+            // Vérifier si le timestamp a changé en comparant avec le footer
+            const footerElement = document.querySelector('.footer p');
+            if (footerElement) {
+                const footerTimeMatch = footerElement.textContent.match(/(\d{4}-\d{2}-\d{2}T[\d:]+)/);
+                if (footerTimeMatch && footerTimeMatch[1] !== lastUpdateTime) {
+                    lastUpdateTime = footerTimeMatch[1];
+                    location.reload();
+                }
+            }
+        }, 60000); // Vérifier toutes les minutes
+
+        // Ajouter des badges de score dynamiques
+        const scoreElement = document.querySelector('.security-score');
+        if (scoreElement) {
+            const score = parseInt(scoreElement.textContent.replace(/[^0-9]/g, ''));
+            const badge = document.createElement('span');
+            badge.className = 'score-badge';
+            if (score >= 85) {
+                badge.className += ' excellent';
+                badge.textContent = 'Excellent';
+            } else if (score >= 70) {
+                badge.className += ' good';
+                badge.textContent = 'Bon';
+            } else {
+                badge.className += ' poor';
+                badge.textContent = 'À améliorer';
+            }
+            scoreElement.parentElement.appendChild(badge);
+        }
     </script>
 </body>
 </html>

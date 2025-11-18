@@ -13,7 +13,7 @@ from arkalia_cia_python_backend.database import CIADatabase
 class TestDatabaseManager:
     """Tests pour la classe DatabaseManager"""
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def temp_db(self):
         """Créer une base de données temporaire pour les tests"""
         with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as tmp:
@@ -23,21 +23,21 @@ class TestDatabaseManager:
         if os.path.exists(db_path):
             os.unlink(db_path)
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def db_manager(self, temp_db):
         """Créer un gestionnaire de base de données pour les tests"""
-        return CIADatabase(db_path=temp_db)
+        db = CIADatabase(db_path=temp_db)
+        db.init_db()  # Initialiser une seule fois pour toute la classe
+        return db
 
     def test_init_db(self, db_manager):
         """Test de l'initialisation de la base de données"""
-        db_manager.init_db()
-        # Vérifier que les tables existent
-        # Vérifier que la base de données est initialisée
+        # La DB est déjà initialisée par la fixture
         assert db_manager.db_path is not None
 
     def test_add_document(self, db_manager):
         """Test d'ajout d'un document"""
-        db_manager.init_db()
+        # La DB est déjà initialisée par la fixture
 
         doc_id = db_manager.add_document(
             name="test.pdf",
@@ -52,7 +52,7 @@ class TestDatabaseManager:
 
     def test_get_document(self, db_manager):
         """Test de récupération d'un document"""
-        db_manager.init_db()
+        # La DB est déjà initialisée par la fixture
 
         # Ajouter un document
         doc_id = db_manager.add_document(
@@ -71,7 +71,7 @@ class TestDatabaseManager:
 
     def test_list_documents(self, db_manager):
         """Test de liste des documents"""
-        db_manager.init_db()
+        # La DB est déjà initialisée par la fixture
 
         # Ajouter plusieurs documents
         db_manager.add_document(
@@ -95,7 +95,7 @@ class TestDatabaseManager:
 
     def test_delete_document(self, db_manager):
         """Test de suppression d'un document"""
-        db_manager.init_db()
+        # La DB est déjà initialisée par la fixture
 
         # Ajouter un document
         doc_id = db_manager.add_document(
@@ -116,7 +116,7 @@ class TestDatabaseManager:
 
     def test_add_reminder(self, db_manager):
         """Test d'ajout d'un rappel"""
-        db_manager.init_db()
+        # La DB est déjà initialisée par la fixture
 
         reminder_id = db_manager.add_reminder(
             title="Test Reminder",
@@ -129,7 +129,7 @@ class TestDatabaseManager:
 
     def test_add_contact(self, db_manager):
         """Test d'ajout d'un contact"""
-        db_manager.init_db()
+        # La DB est déjà initialisée par la fixture
 
         contact_id = db_manager.add_emergency_contact(
             name="Test Contact",
@@ -143,7 +143,7 @@ class TestDatabaseManager:
 
     def test_add_portal(self, db_manager):
         """Test d'ajout d'un portail"""
-        db_manager.init_db()
+        # La DB est déjà initialisée par la fixture
 
         portal_id = db_manager.add_health_portal(
             name="Test Portal",
@@ -157,7 +157,7 @@ class TestDatabaseManager:
 
     def test_get_reminder(self, db_manager):
         """Test de récupération d'un rappel"""
-        db_manager.init_db()
+        # La DB est déjà initialisée par la fixture
 
         reminder_id = db_manager.add_reminder(
             title="Test Reminder",
@@ -171,7 +171,7 @@ class TestDatabaseManager:
 
     def test_get_contact(self, db_manager):
         """Test de récupération d'un contact"""
-        db_manager.init_db()
+        # La DB est déjà initialisée par la fixture
 
         contact_id = db_manager.add_emergency_contact(
             name="Test Contact",
@@ -186,7 +186,7 @@ class TestDatabaseManager:
 
     def test_get_portal(self, db_manager):
         """Test de récupération d'un portail"""
-        db_manager.init_db()
+        # La DB est déjà initialisée par la fixture
 
         portal_id = db_manager.add_health_portal(
             name="Test Portal",
@@ -201,7 +201,7 @@ class TestDatabaseManager:
 
     def test_delete_reminder(self, db_manager):
         """Test de suppression d'un rappel"""
-        db_manager.init_db()
+        # La DB est déjà initialisée par la fixture
 
         reminder_id = db_manager.add_reminder(
             title="Test Reminder",
@@ -217,7 +217,7 @@ class TestDatabaseManager:
 
     def test_delete_contact(self, db_manager):
         """Test de suppression d'un contact"""
-        db_manager.init_db()
+        # La DB est déjà initialisée par la fixture
 
         contact_id = db_manager.add_emergency_contact(
             name="Test Contact",
@@ -234,7 +234,7 @@ class TestDatabaseManager:
 
     def test_delete_portal(self, db_manager):
         """Test de suppression d'un portail"""
-        db_manager.init_db()
+        # La DB est déjà initialisée par la fixture
 
         portal_id = db_manager.add_health_portal(
             name="Test Portal",
@@ -251,7 +251,7 @@ class TestDatabaseManager:
 
     def test_list_reminders(self, db_manager):
         """Test de liste des rappels"""
-        db_manager.init_db()
+        # La DB est déjà initialisée par la fixture
 
         db_manager.add_reminder(
             title="Reminder 1",
@@ -269,7 +269,7 @@ class TestDatabaseManager:
 
     def test_list_contacts(self, db_manager):
         """Test de liste des contacts"""
-        db_manager.init_db()
+        # La DB est déjà initialisée par la fixture
 
         db_manager.add_emergency_contact(
             name="Contact 1",
@@ -289,7 +289,7 @@ class TestDatabaseManager:
 
     def test_list_portals(self, db_manager):
         """Test de liste des portails"""
-        db_manager.init_db()
+        # La DB est déjà initialisée par la fixture
 
         db_manager.add_health_portal(
             name="Portal 1",
@@ -309,7 +309,7 @@ class TestDatabaseManager:
 
     def test_save_document(self, db_manager):
         """Test de sauvegarde d'un document"""
-        db_manager.init_db()
+        # La DB est déjà initialisée par la fixture
 
         doc_id = db_manager.save_document(
             filename="test.pdf",
@@ -321,7 +321,7 @@ class TestDatabaseManager:
 
     def test_save_reminder(self, db_manager):
         """Test de sauvegarde d'un rappel"""
-        db_manager.init_db()
+        # La DB est déjà initialisée par la fixture
 
         reminder_id = db_manager.save_reminder(
             title="Test Reminder",
@@ -333,7 +333,7 @@ class TestDatabaseManager:
 
     def test_save_contact(self, db_manager):
         """Test de sauvegarde d'un contact"""
-        db_manager.init_db()
+        # La DB est déjà initialisée par la fixture
 
         contact_id = db_manager.save_contact(
             name="Test Contact",
@@ -346,7 +346,7 @@ class TestDatabaseManager:
 
     def test_save_portal(self, db_manager):
         """Test de sauvegarde d'un portail"""
-        db_manager.init_db()
+        # La DB est déjà initialisée par la fixture
 
         portal_id = db_manager.save_portal(
             name="Test Portal",

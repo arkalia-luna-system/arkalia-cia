@@ -59,7 +59,7 @@ class AutoDocumenter:
         return default_config
 
     def scan_project_structure(self) -> dict[str, Any]:
-        """Scanne la structure du projet"""
+        """Scanne la structure du projet (optimisé pour réduire consommation mémoire)"""
         structure: dict[str, list[str]] = {
             "python_files": [],
             "test_files": [],
@@ -68,27 +68,68 @@ class AutoDocumenter:
             "other_files": [],
         }
 
+        # Limiter le nombre de fichiers scannés pour éviter la surcharge mémoire
+        max_files_per_category = 500
+        files_scanned = 0
+        max_total_files = 2000  # Limite globale pour éviter la surcharge
+
         try:
+            # Exclure les répertoires volumineux qui consomment beaucoup de mémoire
+            excluded_dirs = {
+                "__pycache__",
+                ".git",
+                "node_modules",
+                ".pytest_cache",
+                ".venv",
+                "venv",
+                "env",
+                ".eggs",
+                "dist",
+                "build",
+                "htmlcov",
+                "coverage",
+                ".tox",
+                ".mypy_cache",
+                ".ruff_cache",
+            }
+
             for file_path in self.project_path.rglob("*"):
+                # Limite globale pour éviter la surcharge mémoire
+                if files_scanned >= max_total_files:
+                    logger.warning(
+                        f"Limite de {max_total_files} fichiers atteinte, arrêt du scan"
+                    )
+                    break
+
+                # Vérifier si le fichier est dans un répertoire exclu
+                if any(
+                    excluded_dir in str(file_path) for excluded_dir in excluded_dirs
+                ):
+                    continue
+
                 if file_path.is_file() and not self._is_excluded(file_path):
+                    files_scanned += 1
                     relative_path = str(file_path.relative_to(self.project_path))
 
                     if file_path.suffix == ".py":
                         if "test" in relative_path.lower():
-                            structure["test_files"].append(relative_path)
+                            if len(structure["test_files"]) < max_files_per_category:
+                                structure["test_files"].append(relative_path)
                         else:
-                            structure["python_files"].append(relative_path)
+                            if len(structure["python_files"]) < max_files_per_category:
+                                structure["python_files"].append(relative_path)
                     elif file_path.suffix in [".md", ".rst", ".txt"]:
-                        structure["documentation_files"].append(relative_path)
-                    elif file_path.suffix in [
-                        ".yaml",
-                        ".yml",
-                        ".json",
-                        ".toml",
-                    ]:
-                        structure["config_files"].append(relative_path)
+                        if (
+                            len(structure["documentation_files"])
+                            < max_files_per_category
+                        ):
+                            structure["documentation_files"].append(relative_path)
+                    elif file_path.suffix in [".yaml", ".yml", ".json", ".toml"]:
+                        if len(structure["config_files"]) < max_files_per_category:
+                            structure["config_files"].append(relative_path)
                     else:
-                        structure["other_files"].append(relative_path)
+                        if len(structure["other_files"]) < max_files_per_category:
+                            structure["other_files"].append(relative_path)
         except Exception as e:
             logger.error(f"Erreur scan structure: {e}")
 
@@ -103,7 +144,7 @@ class AutoDocumenter:
         return False
 
     def analyze_python_files(self) -> dict[str, Any]:
-        """Analyse les fichiers Python"""
+        """Analyse les fichiers Python (optimisé pour réduire consommation mémoire)"""
         analysis = {
             "total_files": 0,
             "total_functions": 0,
@@ -114,9 +155,39 @@ class AutoDocumenter:
             "documented_methods": 0,
         }
 
+        # Limiter le nombre de fichiers analysés pour éviter la surcharge mémoire
+        max_files_to_analyze = 200
+        files_analyzed = 0
+
+        # Exclure les répertoires volumineux
+        excluded_dirs = {
+            "__pycache__",
+            ".git",
+            "node_modules",
+            ".pytest_cache",
+            ".venv",
+            "venv",
+            "env",
+            ".eggs",
+            "dist",
+            "build",
+        }
+
         try:
             for py_file in self.project_path.rglob("*.py"):
+                # Limite pour éviter la surcharge mémoire
+                if files_analyzed >= max_files_to_analyze:
+                    logger.warning(
+                        f"Limite de {max_files_to_analyze} fichiers analysés atteinte"
+                    )
+                    break
+
+                # Vérifier si le fichier est dans un répertoire exclu
+                if any(excluded_dir in str(py_file) for excluded_dir in excluded_dirs):
+                    continue
+
                 if py_file.is_file() and not self._is_excluded(py_file):
+                    files_analyzed += 1
                     analysis["total_files"] += 1
 
                     try:
@@ -125,21 +196,31 @@ class AutoDocumenter:
 
                         tree = ast.parse(content)
 
+                        # Éviter le double ast.walk() - parcourir une seule fois
                         for node in ast.walk(tree):
                             if isinstance(node, ast.FunctionDef):
                                 analysis["total_functions"] += 1
                                 if ast.get_docstring(node):
                                     analysis["documented_functions"] += 1
+                                # Si c'est une méthode (dans une classe), compter comme méthode
+                                parent = getattr(node, "parent", None)
+                                if parent and isinstance(parent, ast.ClassDef):
+                                    analysis["total_methods"] += 1
+                                    if ast.get_docstring(node):
+                                        analysis["documented_methods"] += 1
                             elif isinstance(node, ast.ClassDef):
                                 analysis["total_classes"] += 1
                                 if ast.get_docstring(node):
                                     analysis["documented_classes"] += 1
-                                # Compter les méthodes
-                                for child in ast.walk(node):
+                                # Compter les méthodes directement dans la classe (sans double walk)
+                                for child in node.body:
                                     if isinstance(child, ast.FunctionDef):
                                         analysis["total_methods"] += 1
                                         if ast.get_docstring(child):
                                             analysis["documented_methods"] += 1
+
+                        # Libérer la mémoire immédiatement après analyse
+                        del tree, content
                     except Exception as e:
                         logger.warning(f"Erreur analyse {py_file}: {e}")
         except Exception as e:
@@ -227,9 +308,37 @@ MIT License
             "modules": [],
         }
 
+        # Limiter le nombre de fichiers pour éviter la surcharge mémoire
+        max_files = 200
+        files_processed = 0
+        excluded_dirs = {
+            "__pycache__",
+            ".git",
+            "node_modules",
+            ".pytest_cache",
+            ".venv",
+            "venv",
+            "env",
+            ".eggs",
+            "dist",
+            "build",
+        }
+
         try:
             for py_file in self.project_path.rglob("*.py"):
+                # Limite pour éviter la surcharge mémoire
+                if files_processed >= max_files:
+                    logger.warning(
+                        f"Limite de {max_files} fichiers atteinte pour API docs"
+                    )
+                    break
+
+                # Vérifier si le fichier est dans un répertoire exclu
+                if any(excluded_dir in str(py_file) for excluded_dir in excluded_dirs):
+                    continue
+
                 if py_file.is_file() and not self._is_excluded(py_file):
+                    files_processed += 1
                     docstrings = self.extract_docstrings(str(py_file))
 
                     for doc in docstrings:
@@ -249,6 +358,8 @@ MIT License
                                     "file": str(py_file.relative_to(self.project_path)),
                                 }
                             )
+                    # Libérer la mémoire après chaque fichier
+                    del docstrings
         except Exception as e:
             logger.error(f"Erreur génération API docs: {e}")
 
@@ -531,9 +642,33 @@ SOFTWARE.
                         f"{coverage['coverage_percentage']}%"
                     )
 
-            # Vérifier la qualité des docstrings
+            # Vérifier la qualité des docstrings (limité pour mémoire)
+            max_files_validation = 100
+            files_validated = 0
+            excluded_dirs = {
+                "__pycache__",
+                ".git",
+                "node_modules",
+                ".pytest_cache",
+                ".venv",
+                "venv",
+                "env",
+                ".eggs",
+                "dist",
+                "build",
+            }
+
             for py_file in self.project_path.rglob("*.py"):
+                # Limite pour éviter la surcharge mémoire
+                if files_validated >= max_files_validation:
+                    break
+
+                # Vérifier si le fichier est dans un répertoire exclu
+                if any(excluded_dir in str(py_file) for excluded_dir in excluded_dirs):
+                    continue
+
                 if py_file.is_file() and not self._is_excluded(py_file):
+                    files_validated += 1
                     docstrings = self.extract_docstrings(str(py_file))
                     for doc in docstrings:
                         if len(doc["docstring"]) < 10:
@@ -542,6 +677,8 @@ SOFTWARE.
                                     f"Docstring trop courte dans {py_file}:"
                                     f" {doc['name']}"
                                 )
+                    # Libérer la mémoire après chaque fichier
+                    del docstrings
 
         except Exception as e:
             logger.error(f"Erreur validation documentation: {e}")

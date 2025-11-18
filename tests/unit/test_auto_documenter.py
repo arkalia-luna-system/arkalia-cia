@@ -29,8 +29,7 @@ class TestAutoDocumenter:
             if hasattr(self.documenter, "project_info"):
                 self.documenter.project_info.clear()
             del self.documenter
-        gc.collect()
-        gc.collect()  # Double collect pour forcer le nettoyage
+        gc.collect()  # Un seul collect suffit
 
         if Path(self.temp_dir).exists():
             shutil.rmtree(self.temp_dir)
@@ -268,8 +267,7 @@ def undocumented_function():
         assert "files_generated" in result
         # Nettoyer immédiatement après test
         del result
-        gc.collect()
-        gc.collect()  # Double collect pour forcer nettoyage
+        gc.collect()  # Un seul collect suffit
 
     def test_generate_function_documentation(self):
         """Test de génération de documentation de fonction"""

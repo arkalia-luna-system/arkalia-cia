@@ -204,24 +204,31 @@ class TestIntegration:
 
     def test_performance_under_load(self):
         """Test de performance sous charge"""
-        # Act - Simuler une charge importante (réduite pour économiser la mémoire)
+        # Act - Simuler une charge avec un nombre réduit d'opérations réelles
         start_time = datetime.now()
 
-        # Réduire à 20 itérations au lieu de 100 pour économiser la mémoire
-        for i in range(20):
-            doc = self.test_data["document"].copy()
-            doc["id"] = i + 1
-            doc["name"] = f"document_{i + 1}.pdf"
-            # Note: Les opérations réelles seraient testées ici
-            # Libérer la référence immédiatement
-            del doc
+        # Initialiser la DB une seule fois avant la boucle
+        self.db.init_db()
+
+        # Utiliser directement la base de données pour des tests réels au lieu de boucles vides
+        # Test réel : ajouter quelques documents à la base de données
+        for i in range(
+            5
+        ):  # Réduit à 5 opérations réelles au lieu de 20 copies inutiles
+            doc_id = self.db.add_document(
+                name=f"document_{i + 1}.pdf",
+                original_name=f"document_{i + 1}.pdf",
+                file_path=f"/tmp/document_{i + 1}.pdf",
+                file_type="pdf",
+                file_size=1024 * (i + 1),
+            )
+            assert doc_id is not None
 
         end_time = datetime.now()
         duration = (end_time - start_time).total_seconds()
 
-        # Assert
-        assert duration < 2.0  # Moins de 2 secondes pour 20 opérations
-        # Libérer la mémoire après le test
+        # Assert - Les opérations réelles devraient être rapides
+        assert duration < 5.0  # Moins de 5 secondes pour 5 opérations réelles
         gc.collect()
 
     def test_data_security_requirements(self):
