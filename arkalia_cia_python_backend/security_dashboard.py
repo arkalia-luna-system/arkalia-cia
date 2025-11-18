@@ -55,9 +55,8 @@ logger = logging.getLogger(__name__)
 
 
 def force_memory_cleanup():
-    """Force un nettoyage complet de la mémoire"""
+    """Force un nettoyage complet de la mémoire (optimisé - un seul collect)"""
     gc.collect()
-    gc.collect()  # Double collect pour forcer le nettoyage complet
 
 
 class SecurityDashboard:
@@ -108,29 +107,34 @@ class SecurityDashboard:
             components: dict[str, Any] = {}
 
             # Initialisation sécurisée de chaque composant
-            try:
-                components["security_validator"] = CommandSecurityValidator()
-            except Exception as e:
-                logger.warning(
-                    f"Impossible d'initialiser CommandSecurityValidator: {e}"
-                )
+            # Vérifier que les classes ne sont pas None avant instanciation
+            if CommandSecurityValidator is not None:
+                try:
+                    components["security_validator"] = CommandSecurityValidator()
+                except Exception as e:
+                    logger.warning(
+                        f"Impossible d'initialiser CommandSecurityValidator: {e}"
+                    )
 
-            try:
-                components["code_linter"] = CodeLinter(str(self.project_path))
-            except Exception as e:
-                logger.warning(f"Impossible d'initialiser CodeLinter: {e}")
+            if CodeLinter is not None:
+                try:
+                    components["code_linter"] = CodeLinter(str(self.project_path))
+                except Exception as e:
+                    logger.warning(f"Impossible d'initialiser CodeLinter: {e}")
 
-            try:
-                components["cache_manager"] = CacheManager(".athalia_cache")
-            except Exception as e:
-                logger.warning(f"Impossible d'initialiser CacheManager: {e}")
+            if CacheManager is not None:
+                try:
+                    components["cache_manager"] = CacheManager(".athalia_cache")
+                except Exception as e:
+                    logger.warning(f"Impossible d'initialiser CacheManager: {e}")
 
-            try:
-                components["metrics_collector"] = MetricsCollector(
-                    str(self.project_path)
-                )
-            except Exception as e:
-                logger.warning(f"Impossible d'initialiser MetricsCollector: {e}")
+            if MetricsCollector is not None:
+                try:
+                    components["metrics_collector"] = MetricsCollector(
+                        str(self.project_path)
+                    )
+                except Exception as e:
+                    logger.warning(f"Impossible d'initialiser MetricsCollector: {e}")
 
             return components
         except Exception as e:
@@ -167,35 +171,44 @@ class SecurityDashboard:
             security_data["athalia_available"] = False
             return security_data
 
-        # Nettoyage mémoire avant collecte
-        force_memory_cleanup()
+        # Variable pour suivre si des données ont été collectées
+        data_collected = False
+        # Nettoyage mémoire seulement si nécessaire (optimisation performance)
 
         try:
             # Collecte des données de sécurité
             if "security_validator" in self.athalia_components:
                 security_validator = self.athalia_components["security_validator"]
 
-                # Scan de sécurité complet avec la vraie méthode
-                if hasattr(security_validator, "run_comprehensive_scan"):
+                # Vérifier que le composant n'est pas None avant utilisation
+                if security_validator is not None and hasattr(
+                    security_validator, "run_comprehensive_scan"
+                ):
                     try:
                         scan_results = security_validator.run_comprehensive_scan(
                             str(self.project_path)
                         )
                         if scan_results:
-                            security_data["security_checks"][
-                                "comprehensive_scan"
-                            ] = scan_results
-
-                            # Calcul du score de sécurité intelligent et contextuel
+                            # Extraire immédiatement les données essentielles pour économiser la mémoire
                             total_vulns = scan_results.get("vulnerabilities_found", 0)
+                            total_files_scanned = scan_results.get(
+                                "total_files_scanned", 0
+                            )
+
+                            # Stocker seulement les métadonnées essentielles, pas les données complètes
+                            security_data["security_checks"]["comprehensive_scan"] = {
+                                "total_files_scanned": total_files_scanned,
+                                "vulnerabilities_found": total_vulns,
+                            }
+                            data_collected = True
 
                             if total_vulns > 0:
                                 # Limiter la taille des vulnérabilités en mémoire pour éviter la surcharge
                                 vulnerabilities_raw = scan_results.get(
                                     "vulnerabilities", []
                                 )
-                                # Limiter à 500 vulnérabilités max pour optimiser la mémoire (réduit de 1000 à 500)
-                                max_vulns = 500
+                                # Limiter à 100 vulnérabilités max pour optimiser la mémoire (réduit pour performance)
+                                max_vulns = 100
                                 if len(vulnerabilities_raw) > max_vulns:
                                     logger.warning(
                                         f"Trop de vulnérabilités ({len(vulnerabilities_raw)}), "
@@ -206,7 +219,6 @@ class SecurityDashboard:
                                     vulnerabilities = vulnerabilities_raw
                                 # Libérer la référence pour libérer la mémoire immédiatement
                                 del vulnerabilities_raw
-                                force_memory_cleanup()
 
                                 # Analyse intelligente des fonctions dangereuses (optimisé pour mémoire)
                                 # Parcourir une seule fois au lieu de plusieurs list comprehensions
@@ -236,7 +248,6 @@ class SecurityDashboard:
 
                                 # Libérer les sets immédiatement après utilisation
                                 del xss_patterns_set, sql_patterns_set
-                                force_memory_cleanup()
 
                                 # Score contextuel intelligent et réaliste
                                 base_score = 100  # Score de base parfait
@@ -313,19 +324,22 @@ class SecurityDashboard:
                                 )
 
                                 # Métriques de performance et qualité du code
-                                total_files = scan_results.get("total_files_scanned", 0)
+                                # Utiliser total_files_scanned extrait précédemment
                                 vulns_count = len(vulnerabilities)
                                 security_data["performance_metrics"] = {
-                                    "scan_speed": total_files / max(1, vulns_count),
+                                    "scan_speed": total_files_scanned
+                                    / max(1, vulns_count),
                                     "vulnerability_density": total_vulns
-                                    / max(1, total_files),
+                                    / max(1, total_files_scanned),
                                     "risk_distribution": {
                                         "critical_ratio": (xss_count + sql_count)
                                         / max(1, total_vulns),
                                         "medium_ratio": dangerous_functions_count
                                         / max(1, total_vulns),
-                                        "safe_ratio": (total_files - total_vulns)
-                                        / max(1, total_files),
+                                        "safe_ratio": (
+                                            total_files_scanned - total_vulns
+                                        )
+                                        / max(1, total_files_scanned),
                                     },
                                 }
 
@@ -334,7 +348,7 @@ class SecurityDashboard:
                                     "security_awareness": max(
                                         0, 100 - (total_vulns * 0.1)
                                     ),
-                                    "code_complexity": total_files
+                                    "code_complexity": total_files_scanned
                                     / max(1, vulns_count),
                                     "maintenance_index": max(
                                         0, 100 - (dangerous_functions_count * 0.05)
@@ -346,8 +360,6 @@ class SecurityDashboard:
                                 # Libérer aussi les données intermédiaires
                                 if "vulnerabilities" in scan_results:
                                     del scan_results["vulnerabilities"]
-                                # Forcer le garbage collector pour libérer la mémoire immédiatement
-                                force_memory_cleanup()
                             else:
                                 # Aucune vulnérabilité trouvée - score parfait
                                 security_data["security_score"] = 100
@@ -356,6 +368,7 @@ class SecurityDashboard:
                                     "medium": 0,
                                     "low": 0,
                                 }
+                                data_collected = True
                         else:
                             logger.warning("Scan de sécurité retourné vide")
                     except Exception as scan_error:
@@ -370,7 +383,8 @@ class SecurityDashboard:
             if "code_linter" in self.athalia_components:
                 code_linter = self.athalia_components["code_linter"]
 
-                if hasattr(code_linter, "run"):
+                # Vérifier que le composant n'est pas None avant utilisation
+                if code_linter is not None and hasattr(code_linter, "run"):
                     try:
                         # Limiter le temps de linting pour éviter les blocages
                         linting_results = code_linter.run()
@@ -385,21 +399,21 @@ class SecurityDashboard:
                             }
                         security_data["linting_results"] = linting_results
                         del linting_results
-                        force_memory_cleanup()
                     except Exception as e:
                         logger.warning(f"Erreur lors du linting: {e}")
                         security_data["linting_results"] = {"error": str(e)}
-                        force_memory_cleanup()
 
             # Collecte des métriques de cache
             if "cache_manager" in self.athalia_components:
                 cache_manager = self.athalia_components["cache_manager"]
 
-                if hasattr(cache_manager, "get_stats"):
+                # Vérifier que le composant n'est pas None avant utilisation
+                if cache_manager is not None and hasattr(cache_manager, "get_stats"):
                     try:
                         cache_stats = cache_manager.get_stats()
                         if cache_stats:
                             security_data["cache_security"] = cache_stats
+                            data_collected = True
                         else:
                             # Valeurs par défaut si pas de stats
                             security_data["cache_security"] = {
@@ -448,7 +462,10 @@ class SecurityDashboard:
             if "metrics_collector" in self.athalia_components:
                 metrics_collector = self.athalia_components["metrics_collector"]
 
-                if hasattr(metrics_collector, "collect_all_metrics"):
+                # Vérifier que le composant n'est pas None avant utilisation
+                if metrics_collector is not None and hasattr(
+                    metrics_collector, "collect_all_metrics"
+                ):
                     try:
                         project_metrics = metrics_collector.collect_all_metrics()
                         # Extraire les données essentielles AVANT nettoyage (optimisation mémoire)
@@ -506,14 +523,12 @@ class SecurityDashboard:
                             del essential_metrics
 
                         security_data["project_metrics"] = project_metrics
+                        data_collected = True
                         del project_metrics
-                        force_memory_cleanup()
 
                     except Exception as e:
                         logger.warning(f"Erreur lors de la collecte des métriques: {e}")
                         security_data["project_metrics"] = {"error": str(e)}
-                        # Libérer la mémoire en cas d'erreur
-                        force_memory_cleanup()
 
             # Génération des recommandations
             security_data["recommendations"] = self._generate_security_recommendations(
@@ -533,21 +548,9 @@ class SecurityDashboard:
                     for key in keys_to_remove:
                         del project_metrics[key]
                     del keys_to_remove, keys_to_keep
-                    force_memory_cleanup()
 
             # Nettoyer aussi les données de scan volumineuses (optimisation critique)
-            if "security_checks" in security_data:
-                scan_data = security_data.get("security_checks", {}).get(
-                    "comprehensive_scan", {}
-                )
-                if isinstance(scan_data, dict) and "vulnerabilities" in scan_data:
-                    # Garder seulement le nombre, pas la liste complète (économie mémoire massive)
-                    vuln_list = scan_data.get("vulnerabilities", [])
-                    if isinstance(vuln_list, list):
-                        scan_data["vulnerabilities_count"] = len(vuln_list)
-                        del scan_data["vulnerabilities"]
-                        del vuln_list
-                        force_memory_cleanup()
+            # Note: Les données sont déjà nettoyées lors de l'extraction initiale
 
         except Exception as e:
             logger.error(f"Erreur lors de la collecte des données de sécurité: {e}")
@@ -555,6 +558,18 @@ class SecurityDashboard:
         finally:
             # Forcer le garbage collector pour libérer la mémoire après collecte
             force_memory_cleanup()
+
+        # Si aucune donnée n'a été collectée mais les composants sont disponibles, ajouter un avertissement
+        if not data_collected and self.athalia_components:
+            security_data["recommendations"].insert(
+                0,
+                "⚠️ ATTENTION: Les composants Athalia sont disponibles mais aucune donnée n'a été collectée. "
+                "Vérifiez les logs pour plus d'informations.",
+            )
+            logger.warning(
+                "Composants Athalia disponibles mais aucune donnée collectée. "
+                f"Composants initialisés: {list(self.athalia_components.keys())}"
+            )
 
         return security_data
 
