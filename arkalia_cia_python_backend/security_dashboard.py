@@ -13,45 +13,34 @@ import urllib.parse
 import webbrowser
 from datetime import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 # Import des composants Athalia réels (optionnels)
 # Ces imports sont dans un try/except car les modules peuvent ne pas être disponibles
-if TYPE_CHECKING:
-    # Ces imports sont uniquement pour le type checking, pas pour l'exécution
-    try:
-        from athalia_core.core.cache_manager import CacheManager  # noqa: F401
-        from athalia_core.metrics.collector import MetricsCollector  # noqa: F401
-        from athalia_core.quality.code_linter import CodeLinter  # noqa: F401
-        from athalia_core.validation.security_validator import (
-            CommandSecurityValidator,
-        )  # noqa: F401
-    except ImportError:
-        pass
-
-# Import réel au runtime (dans try/except)
+# pyright: reportMissingImports=false
 try:
-    from athalia_core.core.cache_manager import CacheManager  # noqa: F401
-    from athalia_core.metrics.collector import MetricsCollector  # noqa: F401
-    from athalia_core.quality.code_linter import CodeLinter  # noqa: F401
-    from athalia_core.validation.security_validator import (
-        CommandSecurityValidator,
-    )  # noqa: F401
+    from athalia_core.core.cache_manager import (  # pyright: ignore[reportMissingImports]
+        CacheManager,  # noqa: F401
+    )
+    from athalia_core.metrics.collector import (  # pyright: ignore[reportMissingImports]
+        MetricsCollector,  # noqa: F401
+    )
+    from athalia_core.quality.code_linter import (  # pyright: ignore[reportMissingImports]
+        CodeLinter,  # noqa: F401
+    )
+    from athalia_core.validation.security_validator import (  # pyright: ignore[reportMissingImports]
+        CommandSecurityValidator,  # noqa: F401
+    )
 
     ATHALIA_AVAILABLE = True
 except ImportError as e:
     logging.warning(f"Composants Athalia non disponibles: {e}")
     ATHALIA_AVAILABLE = False
     # Définir des types stub pour éviter les erreurs de type
-    CacheManager = None  # type: ignore
-    MetricsCollector = None  # type: ignore
-    CodeLinter = None  # type: ignore
-    CommandSecurityValidator = None  # type: ignore
-    # Définir des types vides pour éviter les erreurs de type
-    CacheManager = None
-    MetricsCollector = None
-    CodeLinter = None
-    CommandSecurityValidator = None
+    CacheManager = None  # type: ignore[assignment]
+    MetricsCollector = None  # type: ignore[assignment]
+    CodeLinter = None  # type: ignore[assignment]
+    CommandSecurityValidator = None  # type: ignore[assignment]
 
 logger = logging.getLogger(__name__)
 
