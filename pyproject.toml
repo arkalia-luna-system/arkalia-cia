@@ -111,6 +111,9 @@ exclude = [
     "arkalia_cia_venv/",
     "tests/",
     "setup.py",
+    # Exclure aria_integration en tant que module racine pour éviter conflit
+    # avec arkalia_cia_python_backend.aria_integration
+    "^aria_integration\\.api$",
 ]
 
 [[tool.mypy.overrides]]
