@@ -1,25 +1,61 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'encryption_helper.dart';
 
-/// Utilitaire pour gérer le stockage local sans duplication de code
+/// Utilitaire pour gérer le stockage local avec chiffrement AES-256
 class StorageHelper {
-  /// Pattern générique pour sauvegarder une liste d'éléments
+  static const bool _useEncryption = true; // Activer le chiffrement
+
+  /// Pattern générique pour sauvegarder une liste d'éléments (chiffrée)
   static Future<void> saveList(String key, List<Map<String, dynamic>> items) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(key, json.encode(items));
+      
+      if (_useEncryption) {
+        // Chiffrer les données avant stockage
+        final jsonString = json.encode(items);
+        final encrypted = await EncryptionHelper.encryptString(jsonString);
+        final hash = EncryptionHelper.generateHash(jsonString);
+        
+        await prefs.setString(key, encrypted);
+        await prefs.setString('${key}_hash', hash); // Hash pour vérification intégrité
+      } else {
+        await prefs.setString(key, json.encode(items));
+      }
     } catch (e) {
       throw Exception('Erreur lors de la sauvegarde ($key): $e');
     }
   }
 
-  /// Pattern générique pour récupérer une liste d'éléments
+  /// Pattern générique pour récupérer une liste d'éléments (déchiffrée)
   static Future<List<Map<String, dynamic>>> getList(String key) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final jsonString = prefs.getString(key) ?? '[]';
-      final List<dynamic> items = json.decode(jsonString);
-      return items.cast<Map<String, dynamic>>();
+      final encryptedData = prefs.getString(key);
+      
+      if (encryptedData == null || encryptedData.isEmpty) {
+        return [];
+      }
+
+      if (_useEncryption) {
+        // Déchiffrer les données
+        final jsonString = await EncryptionHelper.decryptString(encryptedData);
+        
+        // Vérifier l'intégrité
+        final storedHash = prefs.getString('${key}_hash');
+        if (storedHash != null) {
+          final computedHash = EncryptionHelper.generateHash(jsonString);
+          if (storedHash != computedHash) {
+            throw Exception('Intégrité des données compromise pour $key');
+          }
+        }
+        
+        final List<dynamic> items = json.decode(jsonString);
+        return items.cast<Map<String, dynamic>>();
+      } else {
+        final List<dynamic> items = json.decode(encryptedData);
+        return items.cast<Map<String, dynamic>>();
+      }
     } catch (e) {
       throw Exception('Erreur lors de la récupération ($key): $e');
     }
@@ -75,27 +111,53 @@ class StorageHelper {
     }
   }
 
-  /// Pattern générique pour sauvegarder un objet simple
+  /// Pattern générique pour sauvegarder un objet simple (chiffré)
   static Future<void> saveObject(String key, Map<String, dynamic> object) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(key, json.encode(object));
+      
+      if (_useEncryption) {
+        final encrypted = await EncryptionHelper.encryptMap(object);
+        final jsonString = json.encode(object);
+        final hash = EncryptionHelper.generateHash(jsonString);
+        
+        await prefs.setString(key, encrypted);
+        await prefs.setString('${key}_hash', hash);
+      } else {
+        await prefs.setString(key, json.encode(object));
+      }
     } catch (e) {
       throw Exception('Erreur lors de la sauvegarde de l\'objet ($key): $e');
     }
   }
 
-  /// Pattern générique pour récupérer un objet simple
+  /// Pattern générique pour récupérer un objet simple (déchiffré)
   static Future<Map<String, dynamic>?> getObject(String key) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final jsonString = prefs.getString(key);
+      final encryptedData = prefs.getString(key);
 
-      if (jsonString == null || jsonString.isEmpty) {
+      if (encryptedData == null || encryptedData.isEmpty) {
         return null;
       }
 
-      return Map<String, dynamic>.from(json.decode(jsonString));
+      if (_useEncryption) {
+        final decrypted = await EncryptionHelper.decryptMap(encryptedData);
+        
+        // Vérifier l'intégrité
+        final storedHash = prefs.getString('${key}_hash');
+        if (storedHash != null) {
+          final jsonString = json.encode(decrypted);
+          final computedHash = EncryptionHelper.generateHash(jsonString);
+          if (storedHash != computedHash) {
+            throw Exception('Intégrité des données compromise pour $key');
+          }
+        }
+        
+        return decrypted;
+      } else {
+        return Map<String, dynamic>.from(json.decode(encryptedData));
+      }
     } catch (e) {
       throw Exception('Erreur lors de la récupération de l\'objet ($key): $e');
     }

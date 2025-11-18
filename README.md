@@ -97,7 +97,9 @@ graph TB
 | **🏥 Health** | Medical portals | Quick access to health services | 2 | ✅ Complete |
 | **🔔 Reminders** | Calendar integration | Native calendar, notifications | 2 | ✅ Complete |
 | **🚨 Emergency** | ICE contacts | One-tap calling, medical info | 2 | ✅ Complete |
-| **⚙️ Backend API** | Cloud sync (optional) | Document sync, family sharing | 3 | 📋 Planned |
+| **🔐 Authentication** | Biometric security | Fingerprint/Face ID protection | 2 | ✅ Complete |
+| **📊 ARIA** | Health lab integration | Pain tracking, pattern analysis | 2 | ✅ Complete |
+| **⚙️ Backend API** | Cloud sync (optional) | Document sync, family sharing | 2 | ✅ Connected |
 
 ### Core Modules
 
@@ -242,8 +244,9 @@ make deps-update        # Update dependencies
 | Security Layer | Implementation | Status | Verification |
 |----------------|----------------|--------|--------------|
 | **🔐 Data Encryption** | AES-256-GCM | ✅ Active | Bandit verified |
+| **🔒 Biometric Auth** | Fingerprint/Face ID | ✅ Active | local_auth integrated |
 | **🗝️ Key Management** | Device keychain/keystore | ✅ Active | Hardware-backed |
-| **🌐 Network Security** | No cloud transmission | ✅ Active | Air-gapped design |
+| **🌐 Network Security** | Optional backend sync | ✅ Active | Configurable |
 | **🔍 Code Analysis** | Static security scanning | ✅ Active | CI/CD automated |
 | **📱 App Permissions** | Minimal required only | ✅ Active | Calendar + Contacts |
 | **🛡️ Memory Protection** | Secure data erasure | ✅ Active | Crypto shredding |
@@ -278,9 +281,22 @@ make deps-update        # Update dependencies
 - [x] Robust error handling
 - [x] Timezone support for notifications
 - [x] Widget components for emergency features
+- [x] **Biometric authentication** (local_auth integration)
+- [x] **Backend API connection** (FastAPI fully connected)
+- [x] **ARIA integration** (functional with server detection)
+- [x] **Emergency numbers** (Belgian numbers: 112, 100, 101)
+
+### ✅ Phase 2.5: Final Features (Completed - Décembre 2024)
+- [x] **Module Sync** - Synchronisation CIA ↔ ARIA complète
+- [x] **Recherche avancée** - Filtres et recherche dans documents
+- [x] **Thèmes** - Mode clair/sombre/système
+- [x] **Paramètres** - Écran de configuration complet
+- [x] **Sync Calendrier** - Synchronisation bidirectionnelle
+- [x] **Health Portals** - Portails belges pré-configurés
+- [x] **Export/Import** - Interface UI complète
 
 ### 🔄 Phase 3: Connected Ecosystem (Planned)
-- [ ] Optional cloud synchronization
+- [ ] Optional cloud synchronization (infrastructure prête)
 - [ ] Secure family sharing
 - [ ] Robot integration (Reachy Mini)
 - [ ] Public API endpoints

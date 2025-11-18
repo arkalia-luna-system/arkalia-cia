@@ -5,6 +5,8 @@ import 'reminders_screen.dart';
 import 'emergency_screen.dart';
 import 'health_screen.dart';
 import 'aria_screen.dart';
+import 'sync_screen.dart';
+import 'settings_screen.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -16,6 +18,13 @@ class HomePage extends StatelessWidget {
         title: const Text('Arkalia CIA'),
         backgroundColor: Colors.blue[600],
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () => _showSettings(context),
+            tooltip: 'Paramètres',
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -192,12 +201,16 @@ class HomePage extends StatelessWidget {
   }
 
   void _showSync(BuildContext context) {
-    // Pour l'instant, on affiche juste un message
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Synchronisation CIA ↔ ARIA en cours de développement'),
-        backgroundColor: Colors.orange,
-      ),
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const SyncScreen()),
+    );
+  }
+
+  void _showSettings(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const SettingsScreen()),
     );
   }
 }

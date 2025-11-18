@@ -5,6 +5,44 @@ allprojects {
     }
 }
 
+// Configuration Java/Kotlin pour tous les sous-projets
+subprojects {
+    afterEvaluate {
+        // Forcer Java 17 pour tous les projets Android
+        plugins.withId("com.android.library") {
+            extensions.findByType<com.android.build.gradle.BaseExtension>()?.apply {
+                compileOptions {
+                    sourceCompatibility = JavaVersion.VERSION_17
+                    targetCompatibility = JavaVersion.VERSION_17
+                }
+            }
+        }
+        
+        plugins.withId("com.android.application") {
+            extensions.findByType<com.android.build.gradle.BaseExtension>()?.apply {
+                compileOptions {
+                    sourceCompatibility = JavaVersion.VERSION_17
+                    targetCompatibility = JavaVersion.VERSION_17
+                }
+            }
+        }
+        
+        // Configuration Java pour les projets Java/Kotlin standards
+        tasks.withType<JavaCompile>().configureEach {
+            sourceCompatibility = "17"
+            targetCompatibility = "17"
+            options.compilerArgs.add("-Xlint:-options")
+        }
+        
+        // Configuration Kotlin pour TOUS les projets (force la compatibilité)
+        tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+            kotlinOptions {
+                jvmTarget = "17"
+            }
+        }
+    }
+}
+
 val newBuildDir: Directory =
     rootProject.layout.buildDirectory
         .dir("../../build")

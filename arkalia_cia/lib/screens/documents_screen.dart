@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import '../services/local_storage_service.dart';
+import '../services/file_storage_service.dart';
 
 class DocumentsScreen extends StatefulWidget {
   const DocumentsScreen({super.key});
@@ -12,13 +13,36 @@ class DocumentsScreen extends StatefulWidget {
 
 class _DocumentsScreenState extends State<DocumentsScreen> {
   List<Map<String, dynamic>> documents = [];
+  List<Map<String, dynamic>> filteredDocuments = [];
   bool isLoading = false;
   bool isUploading = false;
+  final TextEditingController _searchController = TextEditingController();
+  String _selectedCategory = 'Tous';
 
   @override
   void initState() {
     super.initState();
     _loadDocuments();
+    _searchController.addListener(_filterDocuments);
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _filterDocuments() {
+    final query = _searchController.text.toLowerCase();
+    setState(() {
+      filteredDocuments = documents.where((doc) {
+        final name = (doc['original_name'] ?? '').toLowerCase();
+        final matchesSearch = name.contains(query);
+        final matchesCategory = _selectedCategory == 'Tous' ||
+            (doc['category'] ?? 'Non catégorisé') == _selectedCategory;
+        return matchesSearch && matchesCategory;
+      }).toList();
+    });
   }
 
   Future<void> _loadDocuments() async {
@@ -30,6 +54,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       final docs = await LocalStorageService.getDocuments();
       setState(() {
         documents = docs;
+        filteredDocuments = docs;
         isLoading = false;
       });
     } catch (e) {
@@ -52,16 +77,24 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           isUploading = true;
         });
 
-        File file = File(result.files.single.path!);
+        File sourceFile = File(result.files.single.path!);
         final fileName = result.files.single.name;
+        final timestamp = DateTime.now().millisecondsSinceEpoch;
+        final uniqueFileName = '${timestamp}_$fileName';
 
-        // Sauvegarder localement
+        // Copier le fichier vers le répertoire documents dédié
+        final savedFile = await FileStorageService.copyToDocumentsDirectory(
+          sourceFile,
+          uniqueFileName,
+        );
+
+        // Sauvegarder les métadonnées localement
         final document = {
-          'id': DateTime.now().millisecondsSinceEpoch,
-          'name': fileName,
+          'id': timestamp,
+          'name': uniqueFileName,
           'original_name': fileName,
-          'path': file.path,
-          'file_size': await file.length(),
+          'path': savedFile.path,
+          'file_size': await savedFile.length(),
           'created_at': DateTime.now().toIso8601String(),
         };
 
@@ -103,6 +136,16 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
 
     if (confirmed == true) {
       try {
+        // Trouver le document pour obtenir le nom du fichier
+        final doc = documents.firstWhere((d) => d['id'] == documentId);
+        final fileName = doc['name'] as String?;
+        
+        // Supprimer le fichier physique
+        if (fileName != null) {
+          await FileStorageService.deleteDocumentFile(fileName);
+        }
+        
+        // Supprimer les métadonnées
         await LocalStorageService.deleteDocument(documentId.toString());
         _showSuccess('Document supprimé avec succès !');
         _loadDocuments(); // Recharger la liste
@@ -152,9 +195,56 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       ),
       body: Column(
         children: [
-          // Bouton d'upload
+          // Recherche et filtres
           Padding(
             padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Rechercher un document...',
+                    prefixIcon: const Icon(Icons.search),
+                    suffixIcon: _searchController.text.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: () {
+                              _searchController.clear();
+                            },
+                          )
+                        : null,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: ['Tous', 'Médical', 'Administratif', 'Autre']
+                        .map((category) => Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: FilterChip(
+                                label: Text(category),
+                                selected: _selectedCategory == category,
+                                onSelected: (selected) {
+                                  setState(() {
+                                    _selectedCategory = category;
+                                  });
+                                  _filterDocuments();
+                                },
+                              ),
+                            ))
+                        .toList(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Bouton d'upload
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
@@ -205,10 +295,31 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                           ],
                         ),
                       )
-                    : ListView.builder(
-                        itemCount: documents.length,
-                        itemBuilder: (context, index) {
-                          final doc = documents[index];
+                    : filteredDocuments.isEmpty
+                        ? const Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.search_off,
+                                  size: 64,
+                                  color: Colors.grey,
+                                ),
+                                SizedBox(height: 16),
+                                Text(
+                                  'Aucun document trouvé',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : ListView.builder(
+                            itemCount: filteredDocuments.length,
+                            itemBuilder: (context, index) {
+                              final doc = filteredDocuments[index];
                           return Card(
                             margin: const EdgeInsets.symmetric(
                               horizontal: 16,

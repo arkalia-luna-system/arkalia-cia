@@ -72,12 +72,23 @@ class CalendarService {
     }
   }
 
-  /// Récupère les rappels à venir
+  /// Récupère les rappels à venir depuis le calendrier
   static Future<List<Map<String, dynamic>>> getUpcomingReminders() async {
     try {
-      // Pour l'instant, retourner une liste vide
-      // L'implémentation complète nécessiterait l'intégration avec le calendrier
-      return [];
+      final events = await getUpcomingEvents();
+      final now = DateTime.now();
+      
+      return events
+          .where((event) => event.start != null && event.start!.isAfter(now))
+          .map((event) => {
+                'id': event.eventId,
+                'title': event.title?.replaceAll('[Santé] ', '') ?? 'Rappel',
+                'description': event.description ?? '',
+                'reminder_date': event.start?.toIso8601String() ?? '',
+                'is_completed': false,
+                'created_at': event.start?.toIso8601String() ?? '',
+              })
+          .toList();
     } catch (e) {
       throw Exception('Erreur lors de la récupération des rappels: $e');
     }

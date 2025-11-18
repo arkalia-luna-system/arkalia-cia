@@ -17,6 +17,61 @@ class _HealthScreenState extends State<HealthScreen> {
   void initState() {
     super.initState();
     _loadPortals();
+    _addBelgianPortals();
+  }
+
+  Future<void> _addBelgianPortals() async {
+    // Ajouter les portails santé belges pré-configurés si pas déjà présents
+    const belgianPortals = [
+      {
+        'name': 'eHealth',
+        'url': 'https://www.ehealth.fgov.be',
+        'description': 'Plateforme eHealth belge - Accès sécurisé aux données de santé',
+        'category': 'Administration',
+      },
+      {
+        'name': 'Inami',
+        'url': 'https://www.inami.fgov.be',
+        'description': 'Institut national d\'assurance maladie-invalidité',
+        'category': 'Administration',
+      },
+      {
+        'name': 'Sciensano',
+        'url': 'https://www.sciensano.be',
+        'description': 'Institut scientifique de santé publique',
+        'category': 'Information',
+      },
+      {
+        'name': 'SPF Santé Publique',
+        'url': 'https://www.health.belgium.be',
+        'description': 'Service public fédéral Santé publique',
+        'category': 'Administration',
+      },
+    ];
+    
+    // Vérifier et ajouter les portails s'ils n'existent pas déjà
+    try {
+      final existingPortals = await ApiService.getHealthPortals();
+      final existingUrls = existingPortals.map((p) => p['url'] as String).toSet();
+      
+      for (final portal in belgianPortals) {
+        if (!existingUrls.contains(portal['url'] as String)) {
+          try {
+            await ApiService.createHealthPortal(
+              name: portal['name'] as String,
+              url: portal['url'] as String,
+              description: portal['description'] as String,
+              category: portal['category'] as String,
+            );
+          } catch (e) {
+            // Ignorer les erreurs si le portail existe déjà ou si le backend n'est pas disponible
+          }
+        }
+      }
+    } catch (e) {
+      // Si le backend n'est pas disponible, ignorer silencieusement
+      // Les portails seront ajoutés lors de la prochaine connexion
+    }
   }
 
   Future<void> _loadPortals() async {

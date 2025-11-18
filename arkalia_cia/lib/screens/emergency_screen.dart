@@ -28,6 +28,26 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
     setState(() => isLoading = true);
 
     try {
+      // Vérifier d'abord la permission avant de charger les contacts
+      final hasPermission = await ContactsService.hasContactsPermission();
+      
+      if (!hasPermission) {
+        // Demander la permission avec un dialogue explicatif
+        final granted = await _requestContactsPermissionWithDialog();
+        if (!granted) {
+          setState(() {
+            emergencyContacts = [];
+            isLoading = false;
+          });
+          // Charger quand même les infos médicales et les contacts locaux
+          final info = await LocalStorageService.getEmergencyInfo();
+          setState(() {
+            emergencyInfo = info ?? {};
+          });
+          return;
+        }
+      }
+
       final contactsList = await ContactsService.getEmergencyContacts();
       final info = await LocalStorageService.getEmergencyInfo();
 
@@ -38,8 +58,40 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
       });
     } catch (e) {
       setState(() => isLoading = false);
-      _showError('Erreur lors du chargement: $e');
+      // Ne pas afficher d'erreur si c'est juste une permission refusée
+      if (!e.toString().contains('Permission')) {
+        _showError('Erreur lors du chargement: $e');
+      }
     }
+  }
+
+  Future<bool> _requestContactsPermissionWithDialog() async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Permission Contacts'),
+        content: const Text(
+          'Arkalia CIA a besoin d\'accéder à vos contacts pour afficher '
+          'vos contacts d\'urgence (ICE).\n\n'
+          'Vos données restent privées et ne quittent jamais votre appareil.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Annuler'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Autoriser'),
+          ),
+        ],
+      ),
+    );
+
+    if (result == true) {
+      return await ContactsService.requestContactsPermission();
+    }
+    return false;
   }
 
   Future<void> _showAddContactDialog() async {
@@ -303,9 +355,9 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
               children: [
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: () => _callEmergency('15'),
+                    onPressed: () => _callEmergency('112'),
                     icon: const Icon(Icons.local_hospital),
-                    label: const Text('SAMU\n15'),
+                    label: const Text('Ambulance\n112'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
                       foregroundColor: Colors.white,
@@ -316,9 +368,9 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: () => _callEmergency('18'),
+                    onPressed: () => _callEmergency('100'),
                     icon: const Icon(Icons.fire_truck),
-                    label: const Text('Pompiers\n18'),
+                    label: const Text('Pompiers\n100'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
                       foregroundColor: Colors.white,
@@ -329,9 +381,9 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: () => _callEmergency('17'),
+                    onPressed: () => _callEmergency('101'),
                     icon: const Icon(Icons.local_police),
-                    label: const Text('Police\n17'),
+                    label: const Text('Police\n101'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
                       foregroundColor: Colors.white,

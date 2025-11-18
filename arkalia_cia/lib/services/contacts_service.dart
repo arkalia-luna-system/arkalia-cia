@@ -7,13 +7,17 @@ class ContactsService {
   /// Récupère tous les contacts
   static Future<List<contacts_api.Contact>> getContacts() async {
     try {
-      if (await contacts_api.FlutterContacts.requestPermission()) {
+      // Vérifier d'abord le statut de la permission
+      final permissionStatus = await contacts_api.FlutterContacts.requestPermission();
+      if (permissionStatus) {
         return await contacts_api.FlutterContacts.getContacts();
       } else {
-        throw Exception('Permission refusée pour accéder aux contacts');
+        // Retourner une liste vide au lieu de lancer une exception
+        return [];
       }
     } catch (e) {
-      throw Exception('Erreur lors de la récupération des contacts: $e');
+      // En cas d'erreur, retourner une liste vide plutôt que de lancer une exception
+      return [];
     }
   }
 
@@ -29,7 +33,8 @@ class ContactsService {
         });
       }).toList();
     } catch (e) {
-      throw Exception('Erreur lors de la récupération des contacts d\'urgence: $e');
+      // Retourner une liste vide en cas d'erreur plutôt que de lancer une exception
+      return [];
     }
   }
 

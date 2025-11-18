@@ -269,3 +269,7 @@ temp/
 # Archive
 archive/
 backups/
+.wifi_adb_ip
+# Scripts de connexion WiFi ADB
+connect_wifi_adb.sh
+connect_wifi_adb.sh

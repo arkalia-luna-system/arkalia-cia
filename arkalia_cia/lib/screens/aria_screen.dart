@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../services/aria_service.dart';
 
 class ARIAScreen extends StatefulWidget {
   const ARIAScreen({super.key});
@@ -11,18 +12,36 @@ class ARIAScreen extends StatefulWidget {
 
 class _ARIAScreenState extends State<ARIAScreen> {
   bool _isARIAConnected = false;
+  bool _isChecking = false;
+  String? _ariaIP;
+  String? _ariaPort;
 
   @override
   void initState() {
     super.initState();
+    _loadARIAConfig();
     _checkARIAConnection();
   }
 
-  Future<void> _checkARIAConnection() async {
-    // Simulation de vérification de connexion ARIA
-    await Future.delayed(const Duration(seconds: 1));
+  Future<void> _loadARIAConfig() async {
+    final ip = await ARIAService.getARIAIP();
+    final port = await ARIAService.getARIAPort();
     setState(() {
-      _isARIAConnected = true;
+      _ariaIP = ip;
+      _ariaPort = port;
+    });
+  }
+
+  Future<void> _checkARIAConnection() async {
+    setState(() {
+      _isChecking = true;
+    });
+
+    final isConnected = await ARIAService.checkConnection();
+    
+    setState(() {
+      _isARIAConnected = isConnected;
+      _isChecking = false;
     });
   }
 
@@ -37,6 +56,27 @@ class _ARIAScreenState extends State<ARIAScreen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: _showConfigDialog,
+            tooltip: 'Configuration',
+          ),
+          IconButton(
+            icon: _isChecking
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                : const Icon(Icons.refresh),
+            onPressed: _isChecking ? null : _checkARIAConnection,
+            tooltip: 'Vérifier la connexion',
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -142,6 +182,16 @@ class _ARIAScreenState extends State<ARIAScreen> {
                           color: _isARIAConnected ? Colors.green[600] : Colors.red[600],
                         ),
                       ),
+                      if (_ariaIP != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          'Serveur: $_ariaIP:$_ariaPort',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: _isARIAConnected ? Colors.green[600] : Colors.red[600],
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -257,7 +307,9 @@ class _ARIAScreenState extends State<ARIAScreen> {
         ),
         icon: Icon(MdiIcons.openInApp),
         label: Text(
-          _isARIAConnected ? 'Ouvrir ARIA dans le navigateur' : 'ARIA non disponible',
+          _isARIAConnected 
+            ? 'Accéder à ARIA' 
+            : 'ARIA non disponible',
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
       ),
@@ -266,46 +318,115 @@ class _ARIAScreenState extends State<ARIAScreen> {
 
   Future<void> _launchARIA(String page) async {
     if (!_isARIAConnected) {
-      _showError('ARIA n\'est pas connecté');
+      _showError('ARIA n\'est pas connecté. Vérifiez la configuration du serveur.');
       return;
     }
 
-    String url;
-    switch (page) {
-      case 'quick-entry':
-        url = 'http://localhost:8080/#/quick-entry';
-        break;
-      case 'history':
-        url = 'http://localhost:8080/#/history';
-        break;
-      case 'patterns':
-        url = 'http://localhost:8080/#/patterns';
-        break;
-      case 'export':
-        url = 'http://localhost:8080/#/export';
-        break;
-      default:
-        url = 'http://localhost:8080';
-    }
-
     try {
+      final url = await ARIAService.getPageURL(page);
+      if (url == null) {
+        _showError('Configuration ARIA incomplète. Définissez l\'IP du serveur.');
+        return;
+      }
+
       final Uri uri = Uri.parse(url);
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       } else {
-        _showError('Impossible d\'ouvrir ARIA');
+        _showError('Impossible d\'ouvrir ARIA. Vérifiez que le serveur est accessible.');
       }
     } catch (e) {
       _showError('Erreur: $e');
     }
   }
 
-  void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
+  Future<void> _showConfigDialog() async {
+    final ipController = TextEditingController(text: _ariaIP ?? '');
+    final portController = TextEditingController(text: _ariaPort ?? '8080');
+
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Configuration ARIA'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: ipController,
+              decoration: const InputDecoration(
+                labelText: 'Adresse IP du serveur',
+                hintText: '192.168.1.100',
+              ),
+              keyboardType: TextInputType.number,
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: portController,
+              decoration: const InputDecoration(
+                labelText: 'Port',
+                hintText: '8080',
+              ),
+              keyboardType: TextInputType.number,
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: () async {
+                final detectedIP = await ARIAService.detectARIA();
+                if (detectedIP != null) {
+                  ipController.text = detectedIP;
+                  _showSuccess('Serveur ARIA détecté: $detectedIP');
+                } else {
+                  _showError('Aucun serveur ARIA détecté automatiquement.');
+                }
+              },
+              icon: const Icon(Icons.search),
+              label: const Text('Détecter automatiquement'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Annuler'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Sauvegarder'),
+          ),
+        ],
       ),
     );
+
+    if (result == true) {
+      await ARIAService.setARIAIP(ipController.text.trim());
+      await ARIAService.setARIAPort(portController.text.trim());
+      await _loadARIAConfig();
+      await _checkARIAConnection();
+      _showSuccess('Configuration sauvegardée');
+    }
+  }
+
+  void _showError(String message) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 4),
+        ),
+      );
+    }
+  }
+
+  void _showSuccess(String message) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
   }
 }

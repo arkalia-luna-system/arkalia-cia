@@ -2,9 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'backend_config_service.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://localhost:8000';
+  static Future<String> get baseUrl async => await BackendConfigService.getBackendURL();
 
   // Headers communs
   static Map<String, String> get _headers => {
@@ -16,9 +17,10 @@ class ApiService {
   /// Upload un document PDF
   static Future<Map<String, dynamic>> uploadDocument(File pdfFile) async {
     try {
+      final url = await baseUrl;
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('$baseUrl/api/documents/upload'),
+        Uri.parse('$url/api/documents/upload'),
       );
 
       request.files.add(await http.MultipartFile.fromPath(
@@ -49,8 +51,9 @@ class ApiService {
   /// Récupère tous les documents
   static Future<List<Map<String, dynamic>>> getDocuments() async {
     try {
+      final url = await baseUrl;
       final response = await http.get(
-        Uri.parse('$baseUrl/api/documents'),
+        Uri.parse('$url/api/documents'),
         headers: _headers,
       );
 
@@ -69,8 +72,9 @@ class ApiService {
   /// Supprime un document
   static Future<bool> deleteDocument(int documentId) async {
     try {
+      final url = await baseUrl;
       final response = await http.delete(
-        Uri.parse('$baseUrl/api/documents/$documentId'),
+        Uri.parse('$url/api/documents/$documentId'),
         headers: _headers,
       );
 
@@ -90,8 +94,9 @@ class ApiService {
     required String reminderDate,
   }) async {
     try {
+      final url = await baseUrl;
       final response = await http.post(
-        Uri.parse('$baseUrl/api/reminders'),
+        Uri.parse('$url/api/reminders'),
         headers: _headers,
         body: json.encode({
           'title': title,
@@ -119,8 +124,9 @@ class ApiService {
   /// Récupère tous les rappels
   static Future<List<Map<String, dynamic>>> getReminders() async {
     try {
+      final url = await baseUrl;
       final response = await http.get(
-        Uri.parse('$baseUrl/api/reminders'),
+        Uri.parse('$url/api/reminders'),
         headers: _headers,
       );
 
@@ -146,8 +152,9 @@ class ApiService {
     bool isPrimary = false,
   }) async {
     try {
+      final url = await baseUrl;
       final response = await http.post(
-        Uri.parse('$baseUrl/api/emergency-contacts'),
+        Uri.parse('$url/api/emergency-contacts'),
         headers: _headers,
         body: json.encode({
           'name': name,
@@ -176,8 +183,9 @@ class ApiService {
   /// Récupère tous les contacts d'urgence
   static Future<List<Map<String, dynamic>>> getEmergencyContacts() async {
     try {
+      final url = await baseUrl;
       final response = await http.get(
-        Uri.parse('$baseUrl/api/emergency-contacts'),
+        Uri.parse('$url/api/emergency-contacts'),
         headers: _headers,
       );
 
@@ -203,8 +211,9 @@ class ApiService {
     String? category,
   }) async {
     try {
+      final baseUrlValue = await baseUrl;
       final response = await http.post(
-        Uri.parse('$baseUrl/api/health-portals'),
+        Uri.parse('$baseUrlValue/api/health-portals'),
         headers: _headers,
         body: json.encode({
           'name': name,
@@ -233,8 +242,9 @@ class ApiService {
   /// Récupère tous les portails santé
   static Future<List<Map<String, dynamic>>> getHealthPortals() async {
     try {
+      final url = await baseUrl;
       final response = await http.get(
-        Uri.parse('$baseUrl/api/health-portals'),
+        Uri.parse('$url/api/health-portals'),
         headers: _headers,
       );
 
@@ -255,8 +265,9 @@ class ApiService {
   /// Teste la connexion à l'API
   static Future<bool> testConnection() async {
     try {
+      final url = await baseUrl;
       final response = await http.get(
-        Uri.parse('$baseUrl/health'),
+        Uri.parse('$url/health'),
         headers: _headers,
       );
       return response.statusCode == 200;
