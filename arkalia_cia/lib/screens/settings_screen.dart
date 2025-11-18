@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/theme_service.dart';
 import '../services/auth_service.dart';
+import '../services/auto_sync_service.dart';
 
 /// Écran de paramètres de l'application
 class SettingsScreen extends StatefulWidget {
@@ -14,6 +15,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String _currentTheme = 'system';
   bool _biometricEnabled = true;
   bool _authOnStartup = true;
+  bool _autoSyncEnabled = true;
+  bool _syncOnStartup = true;
+  bool _syncOnlyOnWifi = false;
+  DateTime? _lastSyncTime;
+  Map<String, dynamic>? _lastSyncStats;
 
   @override
   void initState() {
@@ -21,15 +27,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _loadSettings();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Rafraîchir les statistiques quand on revient sur l'écran
+    _loadSettings();
+  }
+
   Future<void> _loadSettings() async {
     final theme = await ThemeService.getTheme();
     final biometricEnabled = await AuthService.isAuthEnabled();
     final authOnStartup = await AuthService.shouldAuthenticateOnStartup();
+    final autoSyncEnabled = await AutoSyncService.isAutoSyncEnabled();
+    final syncOnStartup = await AutoSyncService.isSyncOnStartupEnabled();
+    final syncOnlyOnWifi = await AutoSyncService.isSyncOnlyOnWifi();
+    final lastSyncTime = await AutoSyncService.getLastSyncTime();
+    final lastSyncStats = await AutoSyncService.getLastSyncStats();
 
     setState(() {
       _currentTheme = theme;
       _biometricEnabled = biometricEnabled;
       _authOnStartup = authOnStartup;
+      _autoSyncEnabled = autoSyncEnabled;
+      _syncOnStartup = syncOnStartup;
+      _syncOnlyOnWifi = syncOnlyOnWifi;
+      _lastSyncTime = lastSyncTime;
+      _lastSyncStats = lastSyncStats;
     });
   }
 
@@ -94,6 +117,72 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     });
                   },
                 ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Section Synchronisation
+          _buildSectionTitle('Synchronisation'),
+          Card(
+            child: Column(
+              children: [
+                SwitchListTile(
+                  secondary: const Icon(Icons.sync),
+                  title: const Text('Synchronisation automatique'),
+                  subtitle: const Text('Synchroniser automatiquement quand l\'app est active'),
+                  value: _autoSyncEnabled,
+                  onChanged: (value) async {
+                    await AutoSyncService.setAutoSyncEnabled(value);
+                    setState(() {
+                      _autoSyncEnabled = value;
+                    });
+                  },
+                ),
+                SwitchListTile(
+                  secondary: const Icon(Icons.refresh),
+                  title: const Text('Synchroniser au démarrage'),
+                  subtitle: const Text('Synchroniser automatiquement à l\'ouverture de l\'app'),
+                  value: _syncOnStartup,
+                  onChanged: (value) async {
+                    await AutoSyncService.setSyncOnStartup(value);
+                    setState(() {
+                      _syncOnStartup = value;
+                    });
+                  },
+                ),
+                SwitchListTile(
+                  secondary: const Icon(Icons.wifi),
+                  title: const Text('Synchroniser uniquement sur WiFi'),
+                  subtitle: const Text('Économiser les données mobiles'),
+                  value: _syncOnlyOnWifi,
+                  onChanged: (value) async {
+                    await AutoSyncService.setSyncOnlyOnWifi(value);
+                    setState(() {
+                      _syncOnlyOnWifi = value;
+                    });
+                  },
+                ),
+                if (_lastSyncTime != null) ...[
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.sync, color: Colors.orange),
+                    title: const Text('Dernière synchronisation'),
+                    subtitle: Text(
+                      AutoSyncService.formatLastSyncTime(_lastSyncTime),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    trailing: _lastSyncStats != null
+                        ? Chip(
+                            label: Text(
+                              '${_lastSyncStats!['docs'] ?? 0} docs, ${_lastSyncStats!['reminders'] ?? 0} rappels, ${_lastSyncStats!['contacts'] ?? 0} contacts',
+                              style: const TextStyle(fontSize: 11),
+                            ),
+                            backgroundColor: Colors.green[100],
+                          )
+                        : null,
+                  ),
+                ],
               ],
             ),
           ),

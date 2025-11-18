@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import '../utils/retry_helper.dart';
 import 'backend_config_service.dart';
 
 class ApiService {
@@ -48,25 +49,29 @@ class ApiService {
     }
   }
 
-  /// Récupère tous les documents
+  /// Récupère tous les documents avec retry automatique
   static Future<List<Map<String, dynamic>>> getDocuments() async {
-    try {
-      final url = await baseUrl;
-      final response = await http.get(
-        Uri.parse('$url/api/documents'),
-        headers: _headers,
-      );
+    return RetryHelper.retryOnNetworkError(
+      fn: () async {
+        final url = await baseUrl;
+        final response = await http
+            .get(
+              Uri.parse('$url/api/documents'),
+              headers: _headers,
+            )
+            .timeout(const Duration(seconds: 10));
 
-      if (response.statusCode == 200) {
-        List<dynamic> data = json.decode(response.body);
-        return data.cast<Map<String, dynamic>>();
-      } else {
-        return [];
-      }
-    } catch (e) {
-      debugPrint('Erreur récupération documents: $e');
-      return [];
-    }
+        if (response.statusCode == 200) {
+          List<dynamic> data = json.decode(response.body);
+          return data.cast<Map<String, dynamic>>();
+        } else {
+          throw Exception('Erreur HTTP ${response.statusCode}');
+        }
+      },
+    ).catchError((e) {
+      debugPrint('Erreur récupération documents après retry: $e');
+      return <Map<String, dynamic>>[];
+    });
   }
 
   /// Supprime un document
@@ -121,25 +126,29 @@ class ApiService {
     }
   }
 
-  /// Récupère tous les rappels
+  /// Récupère tous les rappels avec retry automatique
   static Future<List<Map<String, dynamic>>> getReminders() async {
-    try {
-      final url = await baseUrl;
-      final response = await http.get(
-        Uri.parse('$url/api/reminders'),
-        headers: _headers,
-      );
+    return RetryHelper.retryOnNetworkError(
+      fn: () async {
+        final url = await baseUrl;
+        final response = await http
+            .get(
+              Uri.parse('$url/api/reminders'),
+              headers: _headers,
+            )
+            .timeout(const Duration(seconds: 10));
 
-      if (response.statusCode == 200) {
-        List<dynamic> data = json.decode(response.body);
-        return data.cast<Map<String, dynamic>>();
-      } else {
-        return [];
-      }
-    } catch (e) {
-      debugPrint('Erreur récupération rappels: $e');
-      return [];
-    }
+        if (response.statusCode == 200) {
+          List<dynamic> data = json.decode(response.body);
+          return data.cast<Map<String, dynamic>>();
+        } else {
+          throw Exception('Erreur HTTP ${response.statusCode}');
+        }
+      },
+    ).catchError((e) {
+      debugPrint('Erreur récupération rappels après retry: $e');
+      return <Map<String, dynamic>>[];
+    });
   }
 
   // === CONTACTS D'URGENCE ===
@@ -180,25 +189,29 @@ class ApiService {
     }
   }
 
-  /// Récupère tous les contacts d'urgence
+  /// Récupère tous les contacts d'urgence avec retry automatique
   static Future<List<Map<String, dynamic>>> getEmergencyContacts() async {
-    try {
-      final url = await baseUrl;
-      final response = await http.get(
-        Uri.parse('$url/api/emergency-contacts'),
-        headers: _headers,
-      );
+    return RetryHelper.retryOnNetworkError(
+      fn: () async {
+        final url = await baseUrl;
+        final response = await http
+            .get(
+              Uri.parse('$url/api/emergency-contacts'),
+              headers: _headers,
+            )
+            .timeout(const Duration(seconds: 10));
 
-      if (response.statusCode == 200) {
-        List<dynamic> data = json.decode(response.body);
-        return data.cast<Map<String, dynamic>>();
-      } else {
-        return [];
-      }
-    } catch (e) {
-      debugPrint('Erreur récupération contacts: $e');
-      return [];
-    }
+        if (response.statusCode == 200) {
+          List<dynamic> data = json.decode(response.body);
+          return data.cast<Map<String, dynamic>>();
+        } else {
+          throw Exception('Erreur HTTP ${response.statusCode}');
+        }
+      },
+    ).catchError((e) {
+      debugPrint('Erreur récupération contacts après retry: $e');
+      return <Map<String, dynamic>>[];
+    });
   }
 
   // === PORTAILS SANTÉ ===
@@ -239,25 +252,29 @@ class ApiService {
     }
   }
 
-  /// Récupère tous les portails santé
+  /// Récupère tous les portails santé avec retry automatique
   static Future<List<Map<String, dynamic>>> getHealthPortals() async {
-    try {
-      final url = await baseUrl;
-      final response = await http.get(
-        Uri.parse('$url/api/health-portals'),
-        headers: _headers,
-      );
+    return RetryHelper.retryOnNetworkError(
+      fn: () async {
+        final url = await baseUrl;
+        final response = await http
+            .get(
+              Uri.parse('$url/api/health-portals'),
+              headers: _headers,
+            )
+            .timeout(const Duration(seconds: 10));
 
-      if (response.statusCode == 200) {
-        List<dynamic> data = json.decode(response.body);
-        return data.cast<Map<String, dynamic>>();
-      } else {
-        return [];
-      }
-    } catch (e) {
-      debugPrint('Erreur récupération portails: $e');
-      return [];
-    }
+        if (response.statusCode == 200) {
+          List<dynamic> data = json.decode(response.body);
+          return data.cast<Map<String, dynamic>>();
+        } else {
+          throw Exception('Erreur HTTP ${response.statusCode}');
+        }
+      },
+    ).catchError((e) {
+      debugPrint('Erreur récupération portails après retry: $e');
+      return <Map<String, dynamic>>[];
+    });
   }
 
   // === UTILITAIRES ===

@@ -1,6 +1,10 @@
 import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import '../services/local_storage_service.dart';
 import '../services/api_service.dart';
 import '../services/aria_service.dart';
@@ -469,17 +473,130 @@ class _SyncScreenState extends State<SyncScreen> {
 
   Future<void> _exportData() async {
     try {
+      setState(() {
+        _syncStatus = 'Export des données...';
+      });
+
       final data = await LocalStorageService.exportAllData();
-      _showSuccess('Données exportées (${data.length} éléments)');
-      // En production, permettre de sauvegarder dans un fichier
+      final jsonString = const JsonEncoder.withIndent('  ').convert(data);
+      
+      // Obtenir le répertoire de téléchargement
+      final directory = await getApplicationDocumentsDirectory();
+      final timestamp = DateTime.now().toIso8601String().replaceAll(':', '-').split('.')[0];
+      final fileName = 'arkalia_cia_backup_$timestamp.json';
+      final file = File('${directory.path}/$fileName');
+      
+      // Sauvegarder le fichier
+      await file.writeAsString(jsonString);
+      
+      // Partager le fichier
+      await Share.shareXFiles(
+        [XFile(file.path, mimeType: 'application/json')],
+        text: 'Sauvegarde Arkalia CIA - $timestamp',
+        subject: 'Export de données Arkalia CIA',
+      );
+      
+      setState(() {
+        _syncStatus = 'Export réussi';
+      });
+      
+      _showSuccess('Données exportées dans $fileName');
     } catch (e) {
+      setState(() {
+        _syncStatus = 'Erreur lors de l\'export';
+      });
       _showError('Erreur lors de l\'export: $e');
     }
   }
 
   Future<void> _importData() async {
-    // En production, permettre de sélectionner un fichier JSON
-    _showError('Fonctionnalité d\'import à venir');
+    try {
+      // Sélectionner un fichier JSON
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['json'],
+      );
+
+      if (result == null) {
+        return; // Utilisateur a annulé
+      }
+
+      final filePath = result.files.single.path;
+      if (filePath == null) {
+        _showError('Impossible de lire le fichier sélectionné');
+        return;
+      }
+
+      setState(() {
+        _syncStatus = 'Import des données...';
+      });
+
+      // Lire et parser le fichier JSON
+      final file = File(filePath);
+      final jsonString = await file.readAsString();
+      final data = jsonDecode(jsonString) as Map<String, dynamic>;
+
+      // Valider le format
+      if (!data.containsKey('documents') && 
+          !data.containsKey('reminders') && 
+          !data.containsKey('emergency_contacts')) {
+        _showError('Format de fichier invalide');
+        setState(() {
+          _syncStatus = 'Prêt à synchroniser';
+        });
+        return;
+      }
+
+      // Demander confirmation
+      if (!mounted) return;
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Confirmer l\'import'),
+          content: const Text(
+            'Cette action va remplacer vos données actuelles par celles du fichier. '
+            'Voulez-vous continuer ?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Annuler'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Importer'),
+            ),
+          ],
+        ),
+      );
+
+      if (confirmed != true) {
+        setState(() {
+          _syncStatus = 'Prêt à synchroniser';
+        });
+        return;
+      }
+
+      // Importer les données
+      await LocalStorageService.importAllData(data);
+
+      setState(() {
+        _syncStatus = 'Import réussi';
+      });
+
+      _showSuccess('Données importées avec succès');
+      
+      // Attendre un peu avant de réinitialiser le statut
+      await Future.delayed(const Duration(seconds: 2));
+      setState(() {
+        _syncStatus = 'Prêt à synchroniser';
+      });
+    } catch (e) {
+      setState(() {
+        _syncStatus = 'Erreur lors de l\'import';
+      });
+      _showError('Erreur lors de l\'import: $e');
+    }
   }
 
   void _showError(String message) {
