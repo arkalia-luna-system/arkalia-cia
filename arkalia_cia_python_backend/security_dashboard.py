@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# pyright: reportMissingImports=false, reportMissingModuleSource=false
 """
 Dashboard de sécurité web pour Athalia
 Interface moderne pour visualiser les rapports de sécurité en temps réel
@@ -37,10 +38,10 @@ except ImportError as e:
     logging.warning(f"Composants Athalia non disponibles: {e}")
     ATHALIA_AVAILABLE = False
     # Définir des types stub pour éviter les erreurs de type
-    CacheManager = None  # type: ignore[assignment]
-    MetricsCollector = None  # type: ignore[assignment]
-    CodeLinter = None  # type: ignore[assignment]
-    CommandSecurityValidator = None  # type: ignore[assignment]
+    CacheManager = None  # noqa: F401
+    MetricsCollector = None  # noqa: F401
+    CodeLinter = None  # noqa: F401
+    CommandSecurityValidator = None  # noqa: F401
 
 logger = logging.getLogger(__name__)
 
@@ -236,11 +237,19 @@ class SecurityDashboard:
                         )  # 10 points par pattern SQL unique
 
                         # Pénalités pour fonctions dangereuses (moins graves mais nombreuses)
-                        # Réduire la pénalité si beaucoup de vulnérabilités (probablement des faux positifs)
-                        if medium_vulns > 50:
-                            # Si plus de 50 vulnérabilités moyennes, probablement des faux positifs
-                            medium_penalty = min(15.0, medium_vulns * 0.1)
+                        # Calcul plus réaliste : chaque vulnérabilité moyenne compte
+                        # mais avec une pénalité décroissante pour éviter les scores trop bas
+                        if medium_vulns > 100:
+                            # Si plus de 100 vulnérabilités moyennes, probablement des faux positifs
+                            # Limiter la pénalité mais quand même pénaliser significativement
+                            medium_penalty = min(
+                                30.0, 15.0 + (medium_vulns - 100) * 0.05
+                            )
+                        elif medium_vulns > 50:
+                            # Entre 50 et 100, pénalité progressive
+                            medium_penalty = 15.0 + (medium_vulns - 50) * 0.2
                         else:
+                            # Moins de 50, pénalité normale
                             medium_penalty = medium_vulns * 0.3
 
                         # Pénalités pour vulnérabilités mineures
@@ -256,6 +265,20 @@ class SecurityDashboard:
                         security_data["security_score"] = int(
                             max(0, min(100, calculated_score))
                         )
+
+                        # Calculer le niveau de risque réel basé sur les vulnérabilités
+                        # pour assurer la cohérence avec le score
+                        if high_vulns > 0:
+                            risk_level = "CRITICAL"
+                        elif medium_vulns > 20 or total_vulns > 50:
+                            risk_level = "HIGH"
+                        elif medium_vulns > 5 or total_vulns > 10:
+                            risk_level = "MEDIUM"
+                        else:
+                            risk_level = "LOW"
+
+                        # Stocker le niveau de risque pour utilisation dans le dashboard
+                        security_data["risk_level"] = risk_level
 
                         # Classification intelligente des vulnérabilités (s'assurer que ce sont des entiers)
                         security_data["vulnerabilities"]["high"] = int(high_vulns)
@@ -544,17 +567,40 @@ class SecurityDashboard:
         low_vulns = int(vulnerabilities.get("low", 0) or 0)
         total_vulnerabilities = high_vulns + medium_vulns + low_vulns
 
-        # Couleurs et statuts
-        score_color = (
-            "#28a745"
-            if security_score >= 85
-            else "#ffc107" if security_score >= 70 else "#dc3545"
-        )
-        score_status = (
-            "Sécurisé"
-            if security_score >= 85
-            else "Attention" if security_score >= 70 else "Critique"
-        )
+        # Déterminer le niveau de risque réel basé sur les vulnérabilités
+        # pour assurer la cohérence avec l'affichage
+        risk_level = security_data.get("risk_level", "UNKNOWN")
+        if risk_level == "UNKNOWN":
+            # Calculer le niveau de risque si non défini
+            if high_vulns > 0:
+                risk_level = "CRITICAL"
+            elif medium_vulns > 20 or total_vulnerabilities > 50:
+                risk_level = "HIGH"
+            elif medium_vulns > 5 or total_vulnerabilities > 10:
+                risk_level = "MEDIUM"
+            else:
+                risk_level = "LOW"
+
+        # Couleurs et statuts basés sur le niveau de risque ET le score
+        # Priorité au niveau de risque pour éviter les incohérences
+        if risk_level == "CRITICAL" or high_vulns > 0:
+            score_color = "#dc3545"
+            score_status = "Critique"
+        elif risk_level == "HIGH" or medium_vulns > 20:
+            score_color = "#ff6b35"
+            score_status = "Attention"
+        elif risk_level == "MEDIUM" or medium_vulns > 5:
+            score_color = "#ffc107"
+            score_status = "À améliorer"
+        elif security_score >= 85:
+            score_color = "#28a745"
+            score_status = "Sécurisé"
+        elif security_score >= 70:
+            score_color = "#ffc107"
+            score_status = "Acceptable"
+        else:
+            score_color = "#dc3545"
+            score_status = "Critique"
 
         html_template = f"""<!DOCTYPE html>
 <html lang="fr">
@@ -1087,22 +1133,33 @@ class SecurityDashboard:
             addProgressBars();
         }});
 
-        // Fonction pour animer les nombres
+        // Fonction pour formater les nombres avec séparateurs de milliers
+        function formatNumber(num) {{
+            return num.toString().replace(/\\B(?=(\\d{{3}})+(?!\\d))/g, ',');
+        }}
+
+        // Fonction pour animer les nombres (améliorée)
         function animateNumbers() {{
             const numberElements = document.querySelectorAll('.vuln-number, .security-score');
             numberElements.forEach(element => {{
-                const finalValue = parseInt(element.textContent.replace(/[^0-9]/g, ''));
-                if (finalValue > 0) {{
+                // Sauvegarder le format original (avec /100, etc.)
+                const originalText = element.textContent;
+                const match = originalText.match(/([0-9]+)/);
+                if (!match) return;
+                
+                const finalValue = parseInt(match[1]);
+                if (finalValue > 0 && finalValue <= 10000) {{ // Limiter pour éviter les animations trop longues
                     let currentValue = 0;
-                    const increment = finalValue / 30;
+                    const increment = Math.max(1, Math.ceil(finalValue / 30));
                     const timer = setInterval(() => {{
                         currentValue += increment;
                         if (currentValue >= finalValue) {{
-                            element.textContent = element.textContent.replace(/[0-9]+/, finalValue);
+                            // Restaurer le format original avec la valeur finale
+                            element.textContent = originalText.replace(/[0-9]+/, finalValue);
                             clearInterval(timer);
                         }} else {{
                             const displayValue = Math.floor(currentValue);
-                            element.textContent = element.textContent.replace(/[0-9]+/, displayValue);
+                            element.textContent = originalText.replace(/[0-9]+/, displayValue);
                         }}
                     }}, 30);
                 }}
@@ -1199,10 +1256,17 @@ class SecurityDashboard:
                                 const label = context.label || '';
                                 const value = context.parsed || 0;
                                 const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                if (total === 0) {{
+                                    return label + ': Aucune vulnérabilité';
+                                }}
                                 const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-                                return label + ': ' + value + ' (' + percentage + '%)';
+                                return label + ': ' + formatNumber(value) + ' (' + percentage + '%)';
                             }}
                         }}
+                    }},
+                    // Gérer le cas où toutes les valeurs sont à 0
+                    onHover: function(event, elements) {{
+                        event.native.target.style.cursor = elements.length > 0 ? 'pointer' : 'default';
                     }}
                 }}
             }}
@@ -1270,7 +1334,13 @@ class SecurityDashboard:
         # S'assurer que toutes les valeurs sont des entiers
         total_files = int(scan_results.get("total_files_scanned", 0) or 0)
         total_vulns = int(scan_results.get("vulnerabilities_found", 0) or 0)
-        risk_level = str(scan_results.get("risk_level", "unknown") or "unknown").lower()
+
+        # Utiliser le niveau de risque calculé depuis security_data pour cohérence
+        risk_level_raw = security_data.get("risk_level", "UNKNOWN")
+        if risk_level_raw == "UNKNOWN":
+            # Fallback sur le scan_results si non défini
+            risk_level_raw = str(scan_results.get("risk_level", "unknown") or "unknown")
+        risk_level = str(risk_level_raw).lower()
 
         # Calculer le ratio en toute sécurité
         ratio = (total_vulns / max(total_files, 1) * 1000) if total_files > 0 else 0.0
