@@ -20,6 +20,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
   }
 
   Future<void> _loadReminders() async {
+    if (!mounted) return;
     setState(() {
       isLoading = true;
     });
@@ -39,15 +40,19 @@ class _RemindersScreenState extends State<RemindersScreen> {
         'source': 'calendar',
       }).toList();
 
-      setState(() {
-        reminders = [...localReminders, ...calendarReminders];
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          reminders = [...localReminders, ...calendarReminders];
+          isLoading = false;
+        });
+      }
     } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      _showError('Erreur lors du chargement des rappels: $e');
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+        _showError('Erreur lors du chargement des rappels: $e');
+      }
     }
   }
 

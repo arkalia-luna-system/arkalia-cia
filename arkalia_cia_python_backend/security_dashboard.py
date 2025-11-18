@@ -15,16 +15,16 @@ from typing import Any
 
 # Import des composants Athalia réels
 try:
-    from athalia_core.core.cache_manager import (
+    from athalia_core.core.cache_manager import (  # type: ignore[import-untyped]
         CacheManager,
     )
-    from athalia_core.metrics.collector import (
+    from athalia_core.metrics.collector import (  # type: ignore[import-untyped]
         MetricsCollector,
     )
-    from athalia_core.quality.code_linter import (
+    from athalia_core.quality.code_linter import (  # type: ignore[import-untyped]
         CodeLinter,
     )
-    from athalia_core.validation.security_validator import (
+    from athalia_core.validation.security_validator import (  # type: ignore[import-untyped]
         CommandSecurityValidator,
     )
 
@@ -156,58 +156,15 @@ class SecurityDashboard:
                     if total_vulns > 0:
                         vulnerabilities = scan_results.get("vulnerabilities", [])
 
-                        # Classification intelligente des vulnérabilités (calculé plus tard)
-
-                        # Score ultra-intelligent et professionnel basé sur la vraie réalité
-                        vulnerabilities = scan_results.get("vulnerabilities", [])
-
                         # Analyse intelligente des fonctions dangereuses
                         dangerous_functions = [
                             v
                             for v in vulnerabilities
                             if v.get("type") == "dangerous_function"
                         ]
-                        open_count = len(
-                            [
-                                v
-                                for v in dangerous_functions
-                                if "open" in str(v.get("function", ""))
-                            ]
-                        )
-                        import_count = len(
-                            [
-                                v
-                                for v in dangerous_functions
-                                if "__import__" in str(v.get("function", ""))
-                            ]
-                        )
-                        compile_count = len(
-                            [
-                                v
-                                for v in dangerous_functions
-                                if "compile" in str(v.get("function", ""))
-                            ]
-                        )
-                        input_count = len(
-                            [
-                                v
-                                for v in dangerous_functions
-                                if "input" in str(v.get("function", ""))
-                            ]
-                        )
 
-                        # Score contextuel ultra-intelligent
-                        base_score = 95  # Score de base excellent pour un projet de développement
-
-                        # Pénalités contextuelles et réalistes
-                        open_penalty = open_count * 0.02  # open() = très normal en dev
-                        import_penalty = (
-                            import_count * 0.05
-                        )  # __import__ = normal pour imports dynamiques
-                        compile_penalty = (
-                            compile_count * 0.1
-                        )  # compile = normal pour build tools
-                        input_penalty = input_count * 0.2  # input = un peu plus risqué
+                        # Score contextuel intelligent et réaliste
+                        base_score = 100  # Score de base parfait
 
                         # Vulnérabilités critiques avec analyse de contexte
                         xss_count = len(
@@ -237,34 +194,43 @@ class SecurityDashboard:
                             }
                         )
 
-                        # Pénalités critiques contextuelles
-                        xss_penalty = (
-                            xss_patterns * 0.3
-                        )  # Seuls les patterns uniques comptent
-                        sql_penalty = (
-                            sql_patterns * 0.5
-                        )  # Seuls les patterns uniques comptent
+                        # Classification intelligente des vulnérabilités
+                        high_vulns = xss_count + sql_count
+                        medium_vulns = len(dangerous_functions)
+                        low_vulns = total_vulns - high_vulns - medium_vulns
 
-                        # Calcul du score final ultra-intelligent
+                        # Pénalités critiques (XSS et SQL injection sont très graves)
+                        xss_penalty = (
+                            xss_patterns * 5.0
+                        )  # 5 points par pattern XSS unique
+                        sql_penalty = (
+                            sql_patterns * 10.0
+                        )  # 10 points par pattern SQL unique
+
+                        # Pénalités pour fonctions dangereuses (moins graves mais nombreuses)
+                        # Réduire la pénalité si beaucoup de vulnérabilités (probablement des faux positifs)
+                        if medium_vulns > 50:
+                            # Si plus de 50 vulnérabilités moyennes, probablement des faux positifs
+                            medium_penalty = min(15.0, medium_vulns * 0.1)
+                        else:
+                            medium_penalty = medium_vulns * 0.3
+
+                        # Pénalités pour vulnérabilités mineures
+                        low_penalty = low_vulns * 0.05
+
+                        # Calcul du score final intelligent
                         total_penalty = (
-                            open_penalty
-                            + import_penalty
-                            + compile_penalty
-                            + input_penalty
-                            + xss_penalty
-                            + sql_penalty
+                            xss_penalty + sql_penalty + medium_penalty + low_penalty
                         )
 
                         security_data["security_score"] = max(
-                            75, base_score - total_penalty
+                            0, min(100, base_score - total_penalty)
                         )
 
                         # Classification intelligente des vulnérabilités
-                        security_data["vulnerabilities"]["high"] = xss_count + sql_count
-                        security_data["vulnerabilities"]["medium"] = len(
-                            dangerous_functions
-                        )
-                        security_data["vulnerabilities"]["low"] = 0
+                        security_data["vulnerabilities"]["high"] = high_vulns
+                        security_data["vulnerabilities"]["medium"] = medium_vulns
+                        security_data["vulnerabilities"]["low"] = max(0, low_vulns)
 
                         # Métriques de performance et qualité du code
                         total_files = scan_results.get("total_files_scanned", 0)
@@ -321,9 +287,28 @@ class SecurityDashboard:
 
                         # Calcul du score de performance du cache
                         hit_rate = cache_stats.get("hit_rate", 0)
-                        if isinstance(hit_rate, int | float):
-                            cache_performance = min(100, int(hit_rate * 100))
-                            security_data["cache_performance"] = cache_performance
+                        hits = cache_stats.get("hits", 0)
+                        misses = cache_stats.get("misses", 0)
+                        total_reqs = cache_stats.get("total_requests", 0)
+
+                        # Calculer le hit_rate correctement
+                        if isinstance(hit_rate, int | float) and hit_rate > 0:
+                            # Vérifier si hit_rate est déjà en pourcentage (> 1) ou décimal (<= 1)
+                            if hit_rate > 1:
+                                hit_rate_percent = min(100.0, hit_rate)
+                            else:
+                                hit_rate_percent = hit_rate * 100
+                        elif total_reqs > 0:
+                            hit_rate_percent = (hits / total_reqs) * 100
+                        elif hits + misses > 0:
+                            hit_rate_percent = (hits / (hits + misses)) * 100
+                        else:
+                            hit_rate_percent = 0.0
+
+                        cache_performance = min(100, max(0, int(hit_rate_percent)))
+                        security_data["cache_performance"] = cache_performance
+                        # Mettre à jour le hit_rate dans cache_stats pour l'affichage
+                        cache_stats["hit_rate"] = hit_rate_percent / 100.0
                     except Exception as e:
                         logger.warning(
                             f"Erreur lors de la collecte des stats cache: {e}"
@@ -971,8 +956,34 @@ class SecurityDashboard:
         hits = cache_security.get("hits", 0)
         misses = cache_security.get("misses", 0)
         total_requests = cache_security.get("total_requests", 0)
-        hit_rate = cache_security.get("hit_rate", 0.0)
+        hit_rate_raw = cache_security.get("hit_rate", 0.0)
         cache_size = cache_security.get("cache_size", 0)
+
+        # Calculer le hit_rate correctement
+        # Si total_requests est disponible, calculer depuis hits/misses
+        if total_requests > 0:
+            calculated_hit_rate = (hits / total_requests) * 100
+        elif hits + misses > 0:
+            calculated_hit_rate = (hits / (hits + misses)) * 100
+        else:
+            calculated_hit_rate = 0.0
+
+        # Si hit_rate_raw est fourni, vérifier s'il est déjà en pourcentage (> 1) ou décimal (<= 1)
+        if hit_rate_raw > 0:
+            if hit_rate_raw > 1:
+                # Déjà en pourcentage (ex: 93.3)
+                hit_rate_percent = min(100.0, hit_rate_raw)
+            else:
+                # En décimal (ex: 0.933)
+                hit_rate_percent = hit_rate_raw * 100
+            # Utiliser le calcul depuis hits/misses si disponible, sinon utiliser hit_rate_raw
+            if total_requests > 0 or (hits + misses > 0):
+                hit_rate_percent = calculated_hit_rate
+        else:
+            hit_rate_percent = calculated_hit_rate
+
+        # S'assurer que le hit_rate est entre 0 et 100%
+        hit_rate_percent = max(0.0, min(100.0, hit_rate_percent))
 
         html = f"""
         <div class="metric-row">
@@ -985,11 +996,11 @@ class SecurityDashboard:
         </div>
         <div class="metric-row">
             <span class="metric-label">📊 Total Requests</span>
-            <span class="metric-value">{total_requests:,}</span>
+            <span class="metric-value">{total_requests if total_requests > 0 else hits + misses:,}</span>
         </div>
         <div class="metric-row">
             <span class="metric-label">⚡ Hit Rate</span>
-            <span class="metric-value">{hit_rate * 100:.1f}%</span>
+            <span class="metric-value">{hit_rate_percent:.1f}%</span>
         </div>
         <div class="metric-row">
             <span class="metric-label">💾 Cache Size</span>

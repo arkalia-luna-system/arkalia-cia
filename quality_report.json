@@ -11,7 +11,7 @@
     "Bandit non exécuté: Command '['bandit', '-r', '/Volumes/T7/arkalia-cia', '-f', 'txt']' timed out after 45 seconds",
     "Analyse de complexité non exécutée: [Errno 2] No such file or directory: 'radon'",
     "Couverture documentation faible: 6.3%",
-    "Couverture de tests faible: 34.0%"
+    "Vérification couverture non exécutée: Command '['coverage', 'run', '-m', 'pytest', '/Volumes/T7/arkalia-cia']' timed out after 60 seconds"
   ],
   "fixes": [],
   "quality_level": "BON"
