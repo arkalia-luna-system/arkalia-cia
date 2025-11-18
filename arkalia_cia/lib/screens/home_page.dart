@@ -140,11 +140,20 @@ class _HomePageState extends State<HomePage> {
             else ...[
               // Titre principal
               const Text(
-                'Assistant Personnel',
+                'Assistant Santé Personnel',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Colors.blue,
+                ),
+              ),
+              const SizedBox(height: 4),
+              const Text(
+                'Votre santé au quotidien',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey,
+                  fontStyle: FontStyle.italic,
                 ),
               ),
               const SizedBox(height: 16),

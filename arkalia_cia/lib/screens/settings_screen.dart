@@ -178,7 +178,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ? Chip(
                             label: Text(
                               '${_lastSyncStats!['docs'] ?? 0} docs, ${_lastSyncStats!['reminders'] ?? 0} rappels, ${_lastSyncStats!['contacts'] ?? 0} contacts',
-                              style: const TextStyle(fontSize: 11),
+                              style: const TextStyle(fontSize: 14),
                             ),
                             backgroundColor: Colors.green[100],
                           )

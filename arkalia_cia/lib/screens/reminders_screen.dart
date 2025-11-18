@@ -321,7 +321,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
                       Icon(
                         Icons.notifications_none,
                         size: 64,
-                        color: Colors.grey,
+                        color: Colors.orange,
                       ),
                       SizedBox(height: 16),
                       Text(
@@ -333,7 +333,10 @@ class _RemindersScreenState extends State<RemindersScreen> {
                       ),
                       Text(
                         'Appuyez sur + pour créer un rappel',
-                        style: TextStyle(color: Colors.grey),
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 16,
+                        ),
                       ),
                     ],
                   ),

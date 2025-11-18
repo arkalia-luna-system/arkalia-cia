@@ -296,7 +296,7 @@ class _HealthScreenState extends State<HealthScreen> {
                       Icon(
                         Icons.medical_services,
                         size: 64,
-                        color: Colors.grey,
+                        color: Colors.red,
                       ),
                       SizedBox(height: 16),
                       Text(
@@ -308,7 +308,10 @@ class _HealthScreenState extends State<HealthScreen> {
                       ),
                       Text(
                         'Appuyez sur + pour ajouter un portail',
-                        style: TextStyle(color: Colors.grey),
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 16,
+                        ),
                       ),
                     ],
                   ),

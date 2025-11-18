@@ -227,7 +227,7 @@ class _ARIAScreenState extends State<ARIAScreen> {
             const Text(
               'ARKALIA ARIA est votre laboratoire de recherche santé personnel. '
               'Il vous permet de :',
-              style: TextStyle(fontSize: 14),
+              style: TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 8),
             const Text(
@@ -235,7 +235,7 @@ class _ARIAScreenState extends State<ARIAScreen> {
               '• Analyser vos patterns avec l\'IA\n'
               '• Prédire les épisodes difficiles\n'
               '• Exporter vos données pour votre psychologue',
-              style: TextStyle(fontSize: 14),
+              style: TextStyle(fontSize: 16),
             ),
           ],
         ),

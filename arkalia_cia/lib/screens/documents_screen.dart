@@ -421,7 +421,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                             Icon(
                               Icons.folder_open,
                               size: 64,
-                              color: Colors.grey,
+                              color: Colors.green,
                             ),
                             SizedBox(height: 16),
                             Text(
@@ -433,7 +433,10 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                             ),
                             Text(
                               'Utilisez le bouton ci-dessus pour uploader un PDF',
-                              style: TextStyle(color: Colors.grey),
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 16,
+                              ),
                             ),
                           ],
                         ),

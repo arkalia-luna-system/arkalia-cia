@@ -26,7 +26,7 @@ class EmergencyInfoCard extends StatelessWidget {
               Icon(
                 Icons.medical_information_outlined,
                 size: 48,
-                color: Colors.grey.shade400,
+                color: Colors.red.shade600,
               ),
               const SizedBox(height: 16),
               Text(
@@ -42,6 +42,7 @@ class EmergencyInfoCard extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.grey.shade500,
+                  fontSize: 16,
                 ),
               ),
               const SizedBox(height: 16),
