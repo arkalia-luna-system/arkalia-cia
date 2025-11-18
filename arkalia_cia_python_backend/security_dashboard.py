@@ -17,17 +17,18 @@ from typing import Any
 
 # Import des composants Athalia réels (optionnels)
 # Ces imports sont dans un try/except car les modules peuvent ne pas être disponibles
+# pyright: reportMissingImports=false
 try:
-    from athalia_core.core.cache_manager import (  # type: ignore[import-untyped]
+    from athalia_core.core.cache_manager import (  # pyright: ignore[reportMissingImports]
         CacheManager,  # noqa: F401
     )
-    from athalia_core.metrics.collector import (  # type: ignore[import-untyped]
+    from athalia_core.metrics.collector import (  # pyright: ignore[reportMissingImports]
         MetricsCollector,  # noqa: F401
     )
-    from athalia_core.quality.code_linter import (  # type: ignore[import-untyped]
+    from athalia_core.quality.code_linter import (  # pyright: ignore[reportMissingImports]
         CodeLinter,  # noqa: F401
     )
-    from athalia_core.validation.security_validator import (  # type: ignore[import-untyped]
+    from athalia_core.validation.security_validator import (  # pyright: ignore[reportMissingImports]
         CommandSecurityValidator,  # noqa: F401
     )
 
