@@ -222,5 +222,25 @@
 
 ---
 
+## 📝 **RÉSUMÉ OPTIMISATIONS TESTS (18 novembre 2025)**
+
+### Optimisations Appliquées
+- ✅ Suppression de tous les `gc.collect()` inutiles (10+ appels supprimés)
+- ✅ Changement scope fixtures de "class" à "function" pour isolation complète
+- ✅ Correction validation chemins DB pour permettre fichiers temporaires
+- ✅ Utilisation UUID pour fichiers temporaires uniques
+- ✅ Mock des opérations lourdes (MagicMock pour éviter scans complets)
+- ✅ Test security_dashboard optimisé : 140s → 0.26s (99.8% plus rapide)
+
+### Résultats
+- **Tous les tests passent** : 206/206 (100%) ✅
+- **Performance** : Tests beaucoup plus rapides
+- **Isolation** : Chaque test a sa propre DB
+- **Code propre** : Conforme aux standards (Black, Ruff, Mypy)
+
+Voir `docs/OPTIMISATIONS_TESTS.md` pour plus de détails.
+
+---
+
 **Dernière mise à jour** : 18 novembre 2025
 
