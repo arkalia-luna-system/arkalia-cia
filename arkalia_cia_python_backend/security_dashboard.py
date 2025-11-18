@@ -1298,24 +1298,67 @@ class SecurityDashboard:
             }}
         }}, 60000); // Vérifier toutes les minutes
 
-        // Ajouter des badges de score dynamiques
+        // Ajouter des badges de score dynamiques et des alertes intelligentes
         const scoreElement = document.querySelector('.security-score');
         if (scoreElement) {{
             const score = parseInt(scoreElement.textContent.replace(/[^0-9]/g, ''));
             const badge = document.createElement('span');
             badge.className = 'score-badge';
-            if (score >= 85) {{
+            
+            // Déterminer le badge selon le score ET les vulnérabilités
+            const hasHighVulns = {high_vulns} > 0;
+            const hasManyMediumVulns = {medium_vulns} > 20;
+            
+            if (score >= 85 && !hasHighVulns && !hasManyMediumVulns) {{
                 badge.className += ' excellent';
                 badge.textContent = 'Excellent';
-            }} else if (score >= 70) {{
+            }} else if (score >= 70 && !hasHighVulns) {{
                 badge.className += ' good';
                 badge.textContent = 'Bon';
+            }} else if (hasHighVulns) {{
+                badge.className += ' poor';
+                badge.textContent = '⚠️ Critique';
             }} else {{
                 badge.className += ' poor';
                 badge.textContent = 'À améliorer';
             }}
             scoreElement.parentElement.appendChild(badge);
+            
+            // Ajouter une alerte visuelle si nécessaire
+            if (hasHighVulns || (score < 50 && {total_vulnerabilities} > 10)) {{
+                const alertDiv = document.createElement('div');
+                alertDiv.style.cssText = 'background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 5px;';
+                alertDiv.innerHTML = '<strong>⚠️ Attention:</strong> ' + 
+                    (hasHighVulns ? 'Vulnérabilités critiques détectées!' : 'Score de sécurité faible. Action recommandée.');
+                const overviewDiv = document.querySelector('.security-overview');
+                if (overviewDiv) {{
+                    overviewDiv.appendChild(alertDiv);
+                }}
+            }}
         }}
+        
+        // Ajouter des informations contextuelles intelligentes
+        function addContextualInfo() {{
+            const totalVulns = {total_vulnerabilities};
+            const score = {security_score};
+            
+            // Calculer des statistiques utiles
+            const filesScanned = document.querySelector('.metric-value')?.textContent.replace(/[^0-9]/g, '') || '0';
+            const vulnDensity = totalVulns > 0 && parseInt(filesScanned) > 0 
+                ? (totalVulns / parseInt(filesScanned) * 100).toFixed(2) 
+                : '0';
+            
+            // Ajouter un indicateur de tendance si possible (pour futures améliorations)
+            console.log('📊 Statistiques du dashboard:', {{
+                score: score,
+                vulnérabilités: totalVulns,
+                densité: vulnDensity + '%',
+                fichiers_scannés: filesScanned
+            }});
+        }}
+        
+        // Appeler après le chargement complet
+        window.addEventListener('load', addContextualInfo);
     </script>
 </body>
 </html>"""
