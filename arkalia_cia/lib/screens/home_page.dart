@@ -72,15 +72,19 @@ class _HomePageState extends State<HomePage> {
     try {
       final documents = await LocalStorageService.getDocuments();
       final reminders = await CalendarService.getUpcomingReminders();
-      setState(() {
-        _documentCount = documents.length;
-        _upcomingRemindersCount = reminders.length;
-        _isLoadingStats = false;
-      });
+      if (mounted) {
+        setState(() {
+          _documentCount = documents.length;
+          _upcomingRemindersCount = reminders.length;
+          _isLoadingStats = false;
+        });
+      }
     } catch (e) {
-      setState(() {
-        _isLoadingStats = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoadingStats = false;
+        });
+      }
     }
   }
 

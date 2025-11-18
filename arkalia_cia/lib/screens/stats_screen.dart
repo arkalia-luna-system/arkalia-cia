@@ -44,30 +44,34 @@ class _StatsScreenState extends State<StatsScreen> {
         (sum, doc) => sum + (doc['file_size'] as int? ?? 0),
       );
 
-      setState(() {
-        _stats = {
-          'documents': {
-            'total': documents.length,
-            'by_category': docsByCategory,
-            'total_size_mb': (totalSize / (1024 * 1024)).toStringAsFixed(2),
-          },
-          'reminders': {
-            'total': reminders.length,
-            'completed': completedReminders,
-            'pending': pendingReminders,
-            'upcoming': upcomingReminders.length,
-          },
-          'contacts': {
-            'total': contacts.length,
-            'primary': contacts.where((c) => c['is_primary'] == true).length,
-          },
-        };
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _stats = {
+            'documents': {
+              'total': documents.length,
+              'by_category': docsByCategory,
+              'total_size_mb': (totalSize / (1024 * 1024)).toStringAsFixed(2),
+            },
+            'reminders': {
+              'total': reminders.length,
+              'completed': completedReminders,
+              'pending': pendingReminders,
+              'upcoming': upcomingReminders.length,
+            },
+            'contacts': {
+              'total': contacts.length,
+              'primary': contacts.where((c) => c['is_primary'] == true).length,
+            },
+          };
+          _isLoading = false;
+        });
+      }
     } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 

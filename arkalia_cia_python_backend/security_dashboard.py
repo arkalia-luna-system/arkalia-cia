@@ -1217,7 +1217,9 @@ def main():
         print(f"📊 Dashboard de sécurité généré: {dashboard_file}")
     elif args.open:
         # Ouvrir le dashboard existant ou en générer un nouveau
-        dashboard_file_path = security_dashboard.dashboard_dir / "security_dashboard.html"
+        dashboard_file_path = (
+            security_dashboard.dashboard_dir / "security_dashboard.html"
+        )
         if dashboard_file_path.exists():
             security_dashboard.open_dashboard(str(dashboard_file_path))
         else:
