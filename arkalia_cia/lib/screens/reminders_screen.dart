@@ -55,6 +55,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
     final titleController = TextEditingController();
     final descriptionController = TextEditingController();
     DateTime selectedDate = DateTime.now().add(const Duration(days: 1));
+    String? recurrenceType; // null = pas de récurrence
 
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
@@ -127,6 +128,25 @@ class _RemindersScreenState extends State<RemindersScreen> {
                     }
                   },
                 ),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<String>(
+                  value: recurrenceType,
+                  decoration: const InputDecoration(
+                    labelText: 'Récurrence (optionnel)',
+                    border: OutlineInputBorder(),
+                  ),
+                  items: const [
+                    DropdownMenuItem(value: null, child: Text('Aucune récurrence')),
+                    DropdownMenuItem(value: 'daily', child: Text('Quotidien')),
+                    DropdownMenuItem(value: 'weekly', child: Text('Hebdomadaire')),
+                    DropdownMenuItem(value: 'monthly', child: Text('Mensuel')),
+                  ],
+                  onChanged: (value) {
+                    setDialogState(() {
+                      recurrenceType = value;
+                    });
+                  },
+                ),
               ],
             ),
           ),
@@ -142,6 +162,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
                     'title': titleController.text,
                     'description': descriptionController.text,
                     'reminder_date': selectedDate.toIso8601String(),
+                    'recurrence': recurrenceType,
                   });
                 }
               },
@@ -164,6 +185,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
         title: reminderData['title'],
         description: reminderData['description'],
         reminderDate: DateTime.parse(reminderData['reminder_date']),
+        recurrence: reminderData['recurrence'] as String?,
       );
 
       if (success) {

@@ -7,9 +7,42 @@ import 'health_screen.dart';
 import 'aria_screen.dart';
 import 'sync_screen.dart';
 import 'settings_screen.dart';
+import '../services/local_storage_service.dart';
+import '../services/calendar_service.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _documentCount = 0;
+  int _upcomingRemindersCount = 0;
+  bool _isLoadingStats = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadStats();
+  }
+
+  Future<void> _loadStats() async {
+    try {
+      final documents = await LocalStorageService.getDocuments();
+      final reminders = await CalendarService.getUpcomingReminders();
+      setState(() {
+        _documentCount = documents.length;
+        _upcomingRemindersCount = reminders.length;
+        _isLoadingStats = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoadingStats = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +62,7 @@ class HomePage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             // Titre principal
             const Text(
@@ -40,7 +73,10 @@ class HomePage extends StatelessWidget {
                 color: Colors.blue,
               ),
             ),
-            const SizedBox(height: 40),
+            const SizedBox(height: 16),
+            // Widgets informatifs
+            if (!_isLoadingStats) _buildStatsWidgets(),
+            const SizedBox(height: 24),
 
             // 6 boutons principaux
             Expanded(
@@ -117,7 +153,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButton(
+  static Widget _buildActionButton(
     BuildContext context, {
     required IconData icon,
     required String title,
@@ -169,7 +205,7 @@ class HomePage extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const DocumentsScreen()),
-    );
+    ).then((_) => _loadStats());
   }
 
   void _showHealth(BuildContext context) {
@@ -183,7 +219,7 @@ class HomePage extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const RemindersScreen()),
-    );
+    ).then((_) => _loadStats());
   }
 
   void _showEmergency(BuildContext context) {
@@ -211,6 +247,66 @@ class HomePage extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const SettingsScreen()),
+    ).then((_) => _loadStats());
+  }
+
+  Widget _buildStatsWidgets() {
+    return Row(
+      children: [
+        Expanded(
+          child: Card(
+            color: Colors.green[50],
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                children: [
+                  const Icon(Icons.folder, color: Colors.green, size: 32),
+                  const SizedBox(height: 8),
+                  Text(
+                    '$_documentCount',
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
+                    ),
+                  ),
+                  const Text(
+                    'Documents',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Card(
+            color: Colors.orange[50],
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                children: [
+                  const Icon(Icons.notifications, color: Colors.orange, size: 32),
+                  const SizedBox(height: 8),
+                  Text(
+                    '$_upcomingRemindersCount',
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.orange,
+                    ),
+                  ),
+                  const Text(
+                    'Rappels',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

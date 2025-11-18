@@ -31,6 +31,9 @@ dependencies:
   # URL Launcher
   url_launcher: ^6.2.1
 
+  # Partage
+  share_plus: ^7.2.1
+
   # NOUVEAUX PLUGINS POUR PHASE 1 - STOCKAGE LOCAL
   shared_preferences: ^2.2.2
   local_auth: ^2.1.7

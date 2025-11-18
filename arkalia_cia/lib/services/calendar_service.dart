@@ -35,6 +35,7 @@ class CalendarService {
     required String title,
     required String description,
     required DateTime reminderDate,
+    String? recurrence, // 'daily', 'weekly', 'monthly', ou null
   }) async {
     try {
       // Récupérer les calendriers disponibles
@@ -46,7 +47,7 @@ class CalendarService {
       // Utiliser le premier calendrier disponible
       final calendar = calendarsResult.data!.first;
 
-      // Créer l'événement
+      // Créer le premier événement
       final event = Event(
         calendar.id,
         title: '[Santé] $title',
@@ -57,14 +58,54 @@ class CalendarService {
       );
 
       // Ajouter l'événement au calendrier
-      final result = await _deviceCalendarPlugin.createOrUpdateEvent(event);
+      var result = await _deviceCalendarPlugin.createOrUpdateEvent(event);
 
-      // Programmer une notification
+      // Programmer une notification pour le premier événement
       await _scheduleNotification(
         title: title,
         description: description,
         date: reminderDate,
       );
+
+      // Si récurrence demandée, créer plusieurs événements
+      if (recurrence != null && result?.isSuccess == true) {
+        DateTime nextDate = reminderDate;
+        final endDate = reminderDate.add(const Duration(days: 365)); // 1 an
+        
+        for (int i = 0; i < 52 && nextDate.isBefore(endDate); i++) {
+          switch (recurrence) {
+            case 'daily':
+              nextDate = nextDate.add(const Duration(days: 1));
+              break;
+            case 'weekly':
+              nextDate = nextDate.add(const Duration(days: 7));
+              break;
+            case 'monthly':
+              nextDate = DateTime(nextDate.year, nextDate.month + 1, nextDate.day);
+              break;
+          }
+          
+          if (nextDate.isBefore(endDate)) {
+            final recurringEvent = Event(
+              calendar.id,
+              title: '[Santé] $title',
+              description: description,
+              start: TZDateTime.fromMillisecondsSinceEpoch(tz.local, nextDate.millisecondsSinceEpoch),
+              end: TZDateTime.fromMillisecondsSinceEpoch(tz.local, nextDate.add(const Duration(hours: 1)).millisecondsSinceEpoch),
+              allDay: false,
+            );
+            
+            await _deviceCalendarPlugin.createOrUpdateEvent(recurringEvent);
+            
+            // Programmer une notification pour chaque occurrence
+            await _scheduleNotification(
+              title: title,
+              description: description,
+              date: nextDate,
+            );
+          }
+        }
+      }
 
       return result?.isSuccess ?? false;
     } catch (e) {
