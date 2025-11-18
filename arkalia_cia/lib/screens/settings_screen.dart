@@ -44,16 +44,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final lastSyncTime = await AutoSyncService.getLastSyncTime();
     final lastSyncStats = await AutoSyncService.getLastSyncStats();
 
-    setState(() {
-      _currentTheme = theme;
-      _biometricEnabled = biometricEnabled;
-      _authOnStartup = authOnStartup;
-      _autoSyncEnabled = autoSyncEnabled;
-      _syncOnStartup = syncOnStartup;
-      _syncOnlyOnWifi = syncOnlyOnWifi;
-      _lastSyncTime = lastSyncTime;
-      _lastSyncStats = lastSyncStats;
-    });
+    if (mounted) {
+      setState(() {
+        _currentTheme = theme;
+        _biometricEnabled = biometricEnabled;
+        _authOnStartup = authOnStartup;
+        _autoSyncEnabled = autoSyncEnabled;
+        _syncOnStartup = syncOnStartup;
+        _syncOnlyOnWifi = syncOnlyOnWifi;
+        _lastSyncTime = lastSyncTime;
+        _lastSyncStats = lastSyncStats;
+      });
+    }
   }
 
   @override
