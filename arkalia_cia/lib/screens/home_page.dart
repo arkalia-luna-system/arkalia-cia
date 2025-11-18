@@ -414,7 +414,7 @@ class _HomePageState extends State<HomePage> {
                   child: ListTile(
                     title: Text(item['title'] ?? item['name'] ?? item['original_name'] ?? 'Sans titre'),
                     subtitle: Text(item['description'] ?? item['phone'] ?? item['category'] ?? ''),
-                    trailing: Icon(Icons.chevron_right, color: Colors.grey),
+                    trailing: const Icon(Icons.chevron_right, color: Colors.grey),
                     onTap: () {
                       // Navigation vers le détail selon le type
                       if (title == 'Documents') {

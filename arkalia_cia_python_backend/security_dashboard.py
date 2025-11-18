@@ -40,7 +40,29 @@ class SecurityDashboard:
     """Dashboard de sécurité web moderne avec vraie intégration Athalia"""
 
     def __init__(self, project_path: str = "."):
-        self.project_path = Path(project_path)
+        # Résoudre le chemin et vérifier qu'il n'est pas temporaire
+        resolved_path = Path(project_path).resolve()
+        project_str = str(resolved_path)
+
+        # Détecter et éviter les répertoires temporaires
+        if (
+            "/tmp/" in project_str
+            or "/var/folders/" in project_str
+            or ("tmp" in project_str.lower() and "arkalia" not in project_str.lower())
+        ):
+            # Si c'est un répertoire temporaire, chercher le vrai projet
+            script_file = Path(__file__).resolve()
+            script_dir = script_file.parent.parent
+            if (script_dir / "pyproject.toml").exists() or (
+                script_dir / "README.md"
+            ).exists():
+                resolved_path = script_dir.resolve()
+                logger.warning(
+                    f"Chemin temporaire détecté ({project_path}), "
+                    f"utilisation du répertoire du script: {resolved_path}"
+                )
+
+        self.project_path = resolved_path
         self.dashboard_dir = self.project_path / "dashboard" / "security"
         self.dashboard_dir.mkdir(parents=True, exist_ok=True)
         self.reports_dir = self.project_path / ".github" / "workflows" / "artifacts"
@@ -1110,7 +1132,6 @@ class SecurityDashboard:
 def main():
     """Fonction principale pour exécution directe du dashboard de sécurité"""
     import argparse
-    import os
 
     parser = argparse.ArgumentParser(description="Dashboard de sécurité Athalia")
     parser.add_argument(
@@ -1130,7 +1151,9 @@ def main():
     # Résoudre automatiquement le chemin du projet si non spécifié
     if args.project_path is None:
         # Chercher le répertoire racine du projet en remontant depuis le script
-        script_dir = Path(__file__).parent.parent
+        script_file = Path(__file__).resolve()
+        script_dir = script_file.parent.parent
+
         # Vérifier si on est dans le projet (présence de pyproject.toml ou README.md)
         project_root = script_dir
         if (project_root / "pyproject.toml").exists() or (
@@ -1138,11 +1161,53 @@ def main():
         ).exists():
             args.project_path = str(project_root)
         else:
-            # Sinon, utiliser le répertoire courant
-            args.project_path = os.getcwd()
+            # Remonter jusqu'à trouver le répertoire racine du projet
+            # Chercher pyproject.toml ou README.md en remontant l'arborescence
+            current = script_dir
+            found = False
+            for _ in range(10):  # Limiter à 10 niveaux pour éviter les boucles infinies
+                if (current / "pyproject.toml").exists() or (
+                    current / "README.md"
+                ).exists():
+                    args.project_path = str(current)
+                    found = True
+                    break
+                parent = current.parent
+                if parent == current:  # On est à la racine du système
+                    break
+                current = parent
+
+            if not found:
+                # Dernier recours: utiliser le répertoire du script comme projet
+                # C'est mieux qu'un répertoire temporaire
+                args.project_path = str(script_dir)
+                logger.warning(
+                    f"Impossible de trouver le répertoire racine du projet, "
+                    f"utilisation de: {args.project_path}"
+                )
 
     # Convertir en Path absolu pour éviter les problèmes de chemins relatifs
+    if args.project_path is None:
+        raise ValueError("Le chemin du projet n'a pas pu être déterminé")
     project_path = Path(args.project_path).resolve()
+
+    # Vérifier que le chemin n'est pas un répertoire temporaire
+    project_str = str(project_path)
+    if (
+        "/tmp/" in project_str
+        or "/var/folders/" in project_str
+        or "tmp" in project_str.lower()
+    ):
+        # Si c'est un répertoire temporaire, chercher le vrai projet
+        script_file = Path(__file__).resolve()
+        script_dir = script_file.parent.parent
+        if (script_dir / "pyproject.toml").exists() or (
+            script_dir / "README.md"
+        ).exists():
+            project_path = script_dir.resolve()
+            logger.warning(
+                f"Chemin temporaire détecté, utilisation du répertoire du script: {project_path}"
+            )
 
     # Initialisation du dashboard
     security_dashboard = SecurityDashboard(str(project_path))
@@ -1151,7 +1216,12 @@ def main():
         dashboard_file = security_dashboard.generate_security_dashboard()
         print(f"📊 Dashboard de sécurité généré: {dashboard_file}")
     elif args.open:
-        security_dashboard.open_dashboard()
+        # Ouvrir le dashboard existant ou en générer un nouveau
+        dashboard_file_path = security_dashboard.dashboard_dir / "security_dashboard.html"
+        if dashboard_file_path.exists():
+            security_dashboard.open_dashboard(str(dashboard_file_path))
+        else:
+            security_dashboard.open_dashboard()
     else:
         # Par défaut, générer et ouvrir
         print("🚀 Génération du dashboard de sécurité...")

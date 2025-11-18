@@ -519,6 +519,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     if (!mounted) return 'Autre';
     
     final categories = await CategoryService.getCategories();
+    if (!mounted) return 'Autre';
     
     return showDialog<String>(
       context: context,
@@ -547,11 +548,14 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     if (!mounted) return;
     
     final categories = await CategoryService.getCategories();
+    if (!mounted) return;
+    
     final customCategories = categories.where((c) => 
       !['Médical', 'Administratif', 'Autre'].contains(c)
     ).toList();
     
     final controller = TextEditingController();
+    if (!mounted) return;
     
     await showDialog(
       context: context,

@@ -190,18 +190,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
           // Section À propos
           _buildSectionTitle('À propos'),
-          Card(
+          const Card(
             child: Column(
               children: [
-                const ListTile(
+                ListTile(
                   leading: Icon(Icons.info),
                   title: Text('Version'),
                   subtitle: Text('1.1.0+1'),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.description),
-                  title: const Text('Licence'),
-                  subtitle: const Text('MIT'),
+                  leading: Icon(Icons.description),
+                  title: Text('Licence'),
+                  subtitle: Text('MIT'),
                 ),
               ],
             ),
@@ -244,23 +244,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            RadioListTile<String>(
+            ListTile(
               title: const Text('Clair'),
-              value: 'light',
-              groupValue: _currentTheme,
-              onChanged: (value) => Navigator.pop(context, value),
+              leading: Icon(
+                _currentTheme == 'light' ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+                color: _currentTheme == 'light' ? Theme.of(context).primaryColor : null,
+              ),
+              onTap: () => Navigator.pop(context, 'light'),
             ),
-            RadioListTile<String>(
+            ListTile(
               title: const Text('Sombre'),
-              value: 'dark',
-              groupValue: _currentTheme,
-              onChanged: (value) => Navigator.pop(context, value),
+              leading: Icon(
+                _currentTheme == 'dark' ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+                color: _currentTheme == 'dark' ? Theme.of(context).primaryColor : null,
+              ),
+              onTap: () => Navigator.pop(context, 'dark'),
             ),
-            RadioListTile<String>(
+            ListTile(
               title: const Text('Système'),
-              value: 'system',
-              groupValue: _currentTheme,
-              onChanged: (value) => Navigator.pop(context, value),
+              leading: Icon(
+                _currentTheme == 'system' ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+                color: _currentTheme == 'system' ? Theme.of(context).primaryColor : null,
+              ),
+              onTap: () => Navigator.pop(context, 'system'),
             ),
           ],
         ),

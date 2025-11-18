@@ -97,7 +97,7 @@ class _LockScreenState extends State<LockScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // Logo/Icone
-                  Icon(
+                  const Icon(
                     Icons.lock,
                     size: 80,
                     color: Colors.white,

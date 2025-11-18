@@ -129,23 +129,65 @@ class _RemindersScreenState extends State<RemindersScreen> {
                   },
                 ),
                 const SizedBox(height: 16),
-                DropdownButtonFormField<String>(
-                  value: recurrenceType,
-                  decoration: const InputDecoration(
-                    labelText: 'Récurrence (optionnel)',
-                    border: OutlineInputBorder(),
-                  ),
-                  items: const [
-                    DropdownMenuItem(value: null, child: Text('Aucune récurrence')),
-                    DropdownMenuItem(value: 'daily', child: Text('Quotidien')),
-                    DropdownMenuItem(value: 'weekly', child: Text('Hebdomadaire')),
-                    DropdownMenuItem(value: 'monthly', child: Text('Mensuel')),
-                  ],
-                  onChanged: (value) {
-                    setDialogState(() {
-                      recurrenceType = value;
-                    });
+                // Utiliser un MenuButton au lieu de DropdownButtonFormField pour éviter le warning
+                // sur value deprecated
+                MenuAnchor(
+                  builder: (context, controller, child) {
+                    return ListTile(
+                      title: const Text('Récurrence (optionnel)'),
+                      subtitle: Text(
+                        recurrenceType == null
+                            ? 'Aucune récurrence'
+                            : recurrenceType == 'daily'
+                                ? 'Quotidien'
+                                : recurrenceType == 'weekly'
+                                    ? 'Hebdomadaire'
+                                    : 'Mensuel',
+                      ),
+                      trailing: const Icon(Icons.arrow_drop_down),
+                      onTap: () {
+                        if (controller.isOpen) {
+                          controller.close();
+                        } else {
+                          controller.open();
+                        }
+                      },
+                    );
                   },
+                  menuChildren: [
+                    MenuItemButton(
+                      child: const Text('Aucune récurrence'),
+                      onPressed: () {
+                        setDialogState(() {
+                          recurrenceType = null;
+                        });
+                      },
+                    ),
+                    MenuItemButton(
+                      child: const Text('Quotidien'),
+                      onPressed: () {
+                        setDialogState(() {
+                          recurrenceType = 'daily';
+                        });
+                      },
+                    ),
+                    MenuItemButton(
+                      child: const Text('Hebdomadaire'),
+                      onPressed: () {
+                        setDialogState(() {
+                          recurrenceType = 'weekly';
+                        });
+                      },
+                    ),
+                    MenuItemButton(
+                      child: const Text('Mensuel'),
+                      onPressed: () {
+                        setDialogState(() {
+                          recurrenceType = 'monthly';
+                        });
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),
