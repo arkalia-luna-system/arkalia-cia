@@ -16,16 +16,16 @@ from typing import Any
 
 # Import des composants Athalia réels
 try:
-    from athalia_core.core.cache_manager import (  # type: ignore # noqa: F401
+    from athalia_core.core.cache_manager import (  # noqa: F401
         CacheManager,
     )
-    from athalia_core.metrics.collector import (  # type: ignore # noqa: F401
+    from athalia_core.metrics.collector import (  # noqa: F401
         MetricsCollector,
     )
-    from athalia_core.quality.code_linter import (  # type: ignore # noqa: F401
+    from athalia_core.quality.code_linter import (  # noqa: F401
         CodeLinter,
     )
-    from athalia_core.validation.security_validator import (  # type: ignore # noqa: F401
+    from athalia_core.validation.security_validator import (  # noqa: F401
         CommandSecurityValidator,
     )
 
