@@ -2,7 +2,6 @@
 Tests unitaires pour le module auto_documenter
 """
 
-import gc
 import tempfile
 from pathlib import Path
 
@@ -29,7 +28,7 @@ class TestAutoDocumenter:
             if hasattr(self.documenter, "project_info"):
                 self.documenter.project_info.clear()
             del self.documenter
-        gc.collect()  # Un seul collect suffit
+        # Le GC Python gère automatiquement, pas besoin de forcer systématiquement
 
         if Path(self.temp_dir).exists():
             shutil.rmtree(self.temp_dir)
@@ -87,7 +86,6 @@ class TestAutoDocumenter:
         assert "config_files" in structure
         # Nettoyer immédiatement
         del structure
-        gc.collect()
 
     def test_extract_docstrings(self):
         """Test d'extraction de docstrings"""
@@ -118,7 +116,6 @@ class TestClass:
         assert "#" in readme  # Contient un titre
         # Nettoyer après test
         del readme
-        gc.collect()
 
     def test_generate_api_documentation(self):
         """Test de génération de documentation API"""
@@ -140,7 +137,6 @@ def test_function():
         assert "modules" in api_docs
         # Nettoyer immédiatement
         del api_docs
-        gc.collect()
 
     def test_analyze_python_files(self):
         """Test d'analyse de fichiers Python"""
@@ -169,7 +165,6 @@ class TestClass:
         assert "total_classes" in analysis
         # Nettoyer immédiatement
         del analysis
-        gc.collect()
 
     def test_calculate_documentation_coverage(self):
         """Test de calcul de couverture de documentation"""
@@ -212,7 +207,6 @@ def undocumented_function():
         assert "recommendations" in report
         # Nettoyer immédiatement
         del report
-        gc.collect()
 
     def test_generate_installation_guide(self):
         """Test de génération de guide d'installation"""
@@ -267,7 +261,6 @@ def undocumented_function():
         assert "files_generated" in result
         # Nettoyer immédiatement après test
         del result
-        gc.collect()  # Un seul collect suffit
 
     def test_generate_function_documentation(self):
         """Test de génération de documentation de fonction"""
@@ -317,7 +310,6 @@ def undocumented_function():
         assert "setup_guide" in result
         # Nettoyer immédiatement
         del result
-        gc.collect()
 
     def test_load_translations(self):
         """Test de chargement des traductions"""

@@ -25,9 +25,7 @@ class AutoDocumenter:
         self.doc_config = self.load_documentation_config()
         self.doc_history: list[dict[str, Any]] = []
 
-    def load_documentation_config(
-        self, config_path: str | None = None
-    ) -> dict[str, Any]:
+    def load_documentation_config(self, config_path: str | None = None) -> dict[str, Any]:
         """Charge la configuration de documentation"""
         default_config = {
             "output_formats": ["md", "html"],
@@ -48,13 +46,11 @@ class AutoDocumenter:
 
         if config_path:
             try:
-                with open(config_path, encoding="utf-8") as f:
+                with open(config_path, encoding="utf-8") as f:  # nosec B108
                     user_config = yaml.safe_load(f)
                     default_config.update(user_config)
             except Exception as e:
-                logger.warning(
-                    f"Impossible de charger la configuration {config_path}: {e}"
-                )
+                logger.warning(f"Impossible de charger la configuration {config_path}: {e}")
 
         return default_config
 
@@ -96,15 +92,11 @@ class AutoDocumenter:
             for file_path in self.project_path.rglob("*"):
                 # Limite globale pour éviter la surcharge mémoire
                 if files_scanned >= max_total_files:
-                    logger.warning(
-                        f"Limite de {max_total_files} fichiers atteinte, arrêt du scan"
-                    )
+                    logger.warning(f"Limite de {max_total_files} fichiers atteinte, arrêt du scan")
                     break
 
                 # Vérifier si le fichier est dans un répertoire exclu
-                if any(
-                    excluded_dir in str(file_path) for excluded_dir in excluded_dirs
-                ):
+                if any(excluded_dir in str(file_path) for excluded_dir in excluded_dirs):
                     continue
 
                 if file_path.is_file() and not self._is_excluded(file_path):
@@ -119,10 +111,7 @@ class AutoDocumenter:
                             if len(structure["python_files"]) < max_files_per_category:
                                 structure["python_files"].append(relative_path)
                     elif file_path.suffix in [".md", ".rst", ".txt"]:
-                        if (
-                            len(structure["documentation_files"])
-                            < max_files_per_category
-                        ):
+                        if len(structure["documentation_files"]) < max_files_per_category:
                             structure["documentation_files"].append(relative_path)
                     elif file_path.suffix in [".yaml", ".yml", ".json", ".toml"]:
                         if len(structure["config_files"]) < max_files_per_category:
@@ -177,9 +166,7 @@ class AutoDocumenter:
             for py_file in self.project_path.rglob("*.py"):
                 # Limite pour éviter la surcharge mémoire
                 if files_analyzed >= max_files_to_analyze:
-                    logger.warning(
-                        f"Limite de {max_files_to_analyze} fichiers analysés atteinte"
-                    )
+                    logger.warning(f"Limite de {max_files_to_analyze} fichiers analysés atteinte")
                     break
 
                 # Vérifier si le fichier est dans un répertoire exclu
@@ -191,7 +178,7 @@ class AutoDocumenter:
                     analysis["total_files"] += 1
 
                     try:
-                        with open(py_file, encoding="utf-8") as f:
+                        with open(py_file, encoding="utf-8") as f:  # nosec B108
                             content = f.read()
 
                         tree = ast.parse(content)
@@ -233,7 +220,7 @@ class AutoDocumenter:
         docstrings = []
 
         try:
-            with open(file_path, encoding="utf-8") as f:
+            with open(file_path, encoding="utf-8") as f:  # nosec B108
                 content = f.read()
 
             tree = ast.parse(content)
@@ -328,9 +315,7 @@ MIT License
             for py_file in self.project_path.rglob("*.py"):
                 # Limite pour éviter la surcharge mémoire
                 if files_processed >= max_files:
-                    logger.warning(
-                        f"Limite de {max_files} fichiers atteinte pour API docs"
-                    )
+                    logger.warning(f"Limite de {max_files} fichiers atteinte pour API docs")
                     break
 
                 # Vérifier si le fichier est dans un répertoire exclu
@@ -638,8 +623,7 @@ SOFTWARE.
             if coverage["coverage_percentage"] < 50:
                 if isinstance(validation["warnings"], list):
                     validation["warnings"].append(
-                        "Couverture de documentation faible: "
-                        f"{coverage['coverage_percentage']}%"
+                        "Couverture de documentation faible: " f"{coverage['coverage_percentage']}%"
                     )
 
             # Vérifier la qualité des docstrings (limité pour mémoire)
@@ -674,8 +658,7 @@ SOFTWARE.
                         if len(doc["docstring"]) < 10:
                             if isinstance(validation["warnings"], list):
                                 validation["warnings"].append(
-                                    f"Docstring trop courte dans {py_file}:"
-                                    f" {doc['name']}"
+                                    f"Docstring trop courte dans {py_file}:" f" {doc['name']}"
                                 )
                     # Libérer la mémoire après chaque fichier
                     del docstrings
@@ -693,9 +676,7 @@ SOFTWARE.
         analysis = self.analyze_python_files()
 
         total_items = (
-            analysis["total_functions"]
-            + analysis["total_classes"]
-            + analysis["total_methods"]
+            analysis["total_functions"] + analysis["total_classes"] + analysis["total_methods"]
         )
         documented_items = (
             analysis["documented_functions"]
@@ -743,9 +724,7 @@ SOFTWARE.
         # Générer des recommandations
         if coverage["coverage_percentage"] < 50:
             if isinstance(report["recommendations"], list):
-                report["recommendations"].append(
-                    "Améliorer la couverture de documentation"
-                )
+                report["recommendations"].append("Améliorer la couverture de documentation")
 
         if validation["issues"]:
             if isinstance(report["recommendations"], list):
@@ -753,16 +732,14 @@ SOFTWARE.
 
         if len(structure["documentation_files"]) < 3:
             if isinstance(report["recommendations"], list):
-                report["recommendations"].append(
-                    "Ajouter plus de fichiers de documentation"
-                )
+                report["recommendations"].append("Ajouter plus de fichiers de documentation")
 
         return report
 
     def save_documentation_history(self, output_path: str) -> bool:
         """Sauvegarde l'historique de documentation"""
         try:
-            with open(output_path, "w", encoding="utf-8") as f:
+            with open(output_path, "w", encoding="utf-8") as f:  # nosec B108
                 json.dump(self.doc_history, f, indent=2, default=str)
             return True
         except Exception as e:
@@ -772,7 +749,7 @@ SOFTWARE.
     def load_documentation_history(self, history_path: str) -> list[dict[str, Any]]:
         """Charge l'historique de documentation"""
         try:
-            with open(history_path, encoding="utf-8") as f:
+            with open(history_path, encoding="utf-8") as f:  # nosec B108
                 history: list[dict[str, Any]] = json.load(f)
                 self.doc_history = history
                 return history
@@ -818,9 +795,7 @@ SOFTWARE.
 
             # Générer le rapport
             report = self.generate_documentation_report()
-            result["summary"] = report.get(
-                "summary", "Documentation générée avec succès"
-            )
+            result["summary"] = report.get("summary", "Documentation générée avec succès")
 
             # Simuler la génération de fichiers
             files_generated = [
@@ -837,9 +812,7 @@ SOFTWARE.
                 if isinstance(result["recommendations"], list):
                     result["recommendations"].append(
                         "Améliorer la couverture de documentation "
-                        "(actuellement {}%)".format(
-                            coverage.get("coverage_percentage", 0)
-                        )
+                        "(actuellement {}%)".format(coverage.get("coverage_percentage", 0))
                     )
 
             if validation.get("issues", []):
@@ -998,8 +971,7 @@ Aucune description disponible
 """
                 if func_info.get("args"):
                     api_docs += (
-                        f"**{translations['parameters']}:** "
-                        f"{', '.join(func_info['args'])}\n\n"
+                        f"**{translations['parameters']}:** " f"{', '.join(func_info['args'])}\n\n"
                     )
             elif isinstance(func_info, str):
                 api_docs += f"""### {func_info}

@@ -62,7 +62,7 @@ class JSONFileBackend(StorageBackend):
             if not file_path.exists():
                 return default
 
-            with open(file_path, encoding="utf-8") as f:
+            with open(file_path, encoding="utf-8") as f:  # nosec B108
                 data = json.load(f)
                 self._cache[key] = data
                 return data
@@ -76,7 +76,7 @@ class JSONFileBackend(StorageBackend):
             file_path = self._get_file_path(key)
             file_path.parent.mkdir(parents=True, exist_ok=True)
 
-            with open(file_path, "w", encoding="utf-8") as f:
+            with open(file_path, "w", encoding="utf-8") as f:  # nosec B108
                 json.dump(value, f, indent=2, ensure_ascii=False, default=str)
 
             self._cache[key] = value
@@ -289,7 +289,7 @@ class StorageManager:
             backup_file = Path(backup_path)
             backup_file.parent.mkdir(parents=True, exist_ok=True)
 
-            with open(backup_file, "w", encoding="utf-8") as f:
+            with open(backup_file, "w", encoding="utf-8") as f:  # nosec B108
                 json.dump(data, f, indent=2, ensure_ascii=False, default=str)
 
             logger.info(f"Backup module {module} créé: {backup_path}")
@@ -301,7 +301,7 @@ class StorageManager:
     def restore_module(self, module: str, backup_path: str) -> bool:
         """Restore module data from backup"""
         try:
-            with open(backup_path, encoding="utf-8") as f:
+            with open(backup_path, encoding="utf-8") as f:  # nosec B108
                 data = json.load(f)
 
             for key, value in data.items():

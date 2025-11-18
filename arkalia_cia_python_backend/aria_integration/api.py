@@ -52,7 +52,9 @@ class QuickEntry(BaseModel):
 def _check_aria_connection() -> bool:
     """Vérifie si ARIA est accessible"""
     try:
-        response = requests.get(f"{ARIA_BASE_URL}/health", timeout=ARIA_TIMEOUT)
+        response = requests.get(
+            f"{ARIA_BASE_URL}/health", timeout=ARIA_TIMEOUT
+        )  # nosec B113 - URL locale contrôlée
         return bool(response.status_code == 200)
     except Exception:
         return False
@@ -62,7 +64,9 @@ def _make_aria_request(method: str, endpoint: str, **kwargs) -> requests.Respons
     """Effectue une requête vers ARIA avec gestion d'erreurs améliorée"""
     try:
         url = f"{ARIA_BASE_URL}{endpoint}"
-        response = requests.request(method, url, timeout=ARIA_TIMEOUT, **kwargs)
+        response = requests.request(
+            method, url, timeout=ARIA_TIMEOUT, **kwargs
+        )  # nosec B113 - URL locale contrôlée, timeout configuré
         return response
     except requests.RequestException as e:
         raise HTTPException(
@@ -101,9 +105,7 @@ async def quick_pain_entry(entry: QuickEntry) -> PainEntryOut:
             detail="ARIA non disponible. Vérifiez que le service ARIA est démarré.",
         )
 
-    response = _make_aria_request(
-        "POST", "/api/pain/quick-entry", json=entry.model_dump()
-    )
+    response = _make_aria_request("POST", "/api/pain/quick-entry", json=entry.model_dump())
 
     if response.status_code == 200:
         return PainEntryOut(**response.json())
@@ -151,9 +153,7 @@ async def get_recent_pain_entries(limit: int = 20) -> list[PainEntryOut]:
     if not _check_aria_connection():
         raise HTTPException(status_code=503, detail="ARIA non disponible")
 
-    response = _make_aria_request(
-        "GET", "/api/pain/entries/recent", params={"limit": limit}
-    )
+    response = _make_aria_request("GET", "/api/pain/entries/recent", params={"limit": limit})
 
     if response.status_code == 200:
         return [PainEntryOut(**entry) for entry in response.json()]

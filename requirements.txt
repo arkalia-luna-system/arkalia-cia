@@ -17,6 +17,7 @@ pydantic==2.9.2  # Downgraded for safety compatibility
 # Sécurité et validation
 cryptography==46.0.3
 python-multipart==0.0.20
+slowapi==0.1.9  # Rate limiting pour FastAPI
 
 # Utilitaires
 python-dotenv==1.1.1

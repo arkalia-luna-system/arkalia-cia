@@ -162,9 +162,7 @@ class TestStorageManager:
 
     def test_save_decision(self):
         """Test de sauvegarde de décision"""
-        result = self.manager.save_decision(
-            "test_module", "decision1", {"action": "test"}
-        )
+        result = self.manager.save_decision("test_module", "decision1", {"action": "test"})
         assert result is True
 
     def test_get_config(self):
