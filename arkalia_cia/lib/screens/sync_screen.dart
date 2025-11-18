@@ -472,13 +472,76 @@ class _SyncScreenState extends State<SyncScreen> {
   }
 
   Future<void> _exportData() async {
+    if (!mounted) return;
+    
+    // Demander quels modules exporter
+    final exportOptions = await showDialog<Map<String, bool>>(
+      context: context,
+      builder: (context) {
+        final selected = <String, bool>{
+          'Documents': true,
+          'Rappels': true,
+          'Contacts d\'urgence': true,
+          'Informations médicales': true,
+        };
+        
+        return StatefulBuilder(
+          builder: (context, setState) => AlertDialog(
+            title: const Text('Sélectionner les données à exporter'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: selected.keys.map((key) => CheckboxListTile(
+                title: Text(key),
+                value: selected[key],
+                onChanged: (value) {
+                  setState(() {
+                    selected[key] = value ?? false;
+                  });
+                },
+              )).toList(),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, null),
+                child: const Text('Annuler'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, selected),
+                child: const Text('Exporter'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    if (exportOptions == null) return;
+
     try {
       setState(() {
         _syncStatus = 'Export des données...';
       });
 
-      final data = await LocalStorageService.exportAllData();
-      final jsonString = const JsonEncoder.withIndent('  ').convert(data);
+      final allData = await LocalStorageService.exportAllData();
+      final filteredData = <String, dynamic>{
+        'export_date': DateTime.now().toIso8601String(),
+        'version': '1.1.0',
+      };
+
+      if (exportOptions['Documents'] == true) {
+        filteredData['documents'] = allData['documents'];
+      }
+      if (exportOptions['Rappels'] == true) {
+        filteredData['reminders'] = allData['reminders'];
+      }
+      if (exportOptions['Contacts d\'urgence'] == true) {
+        filteredData['emergency_contacts'] = allData['emergency_contacts'];
+      }
+      if (exportOptions['Informations médicales'] == true) {
+        filteredData['emergency_info'] = allData['emergency_info'];
+      }
+
+      final jsonString = const JsonEncoder.withIndent('  ').convert(filteredData);
       
       // Obtenir le répertoire de téléchargement
       final directory = await getApplicationDocumentsDirectory();
@@ -496,12 +559,14 @@ class _SyncScreenState extends State<SyncScreen> {
         subject: 'Export de données Arkalia CIA',
       );
       
+      if (!mounted) return;
       setState(() {
         _syncStatus = 'Export réussi';
       });
       
       _showSuccess('Données exportées dans $fileName');
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _syncStatus = 'Erreur lors de l\'export';
       });

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../utils/validation_helper.dart';
 
 /// Dialog pour ajouter/éditer un contact d'urgence
 class EmergencyContactDialog extends StatefulWidget {
@@ -43,8 +44,8 @@ class _EmergencyContactDialogState extends State<EmergencyContactDialog> {
   }
 
   bool get _isValid =>
-      nameController.text.trim().isNotEmpty &&
-      phoneController.text.trim().isNotEmpty;
+      ValidationHelper.isValidName(nameController.text.trim()) &&
+      ValidationHelper.isValidPhone(phoneController.text.trim());
 
   @override
   Widget build(BuildContext context) {
@@ -67,9 +68,14 @@ class _EmergencyContactDialogState extends State<EmergencyContactDialog> {
             const SizedBox(height: 16),
             TextField(
               controller: phoneController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Numéro de téléphone',
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
+                helperText: 'Format: 04XX XX XX XX ou +32 4XX XX XX XX',
+                errorText: phoneController.text.isNotEmpty && 
+                    !ValidationHelper.isValidPhone(phoneController.text.trim())
+                    ? 'Numéro invalide'
+                    : null,
               ),
               keyboardType: TextInputType.phone,
               onChanged: (_) => setState(() {}),

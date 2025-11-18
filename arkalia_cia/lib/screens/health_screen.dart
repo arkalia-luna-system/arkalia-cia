@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../services/api_service.dart';
+import '../utils/validation_helper.dart';
 
 class HealthScreen extends StatefulWidget {
   const HealthScreen({super.key});
@@ -101,29 +102,36 @@ class _HealthScreenState extends State<HealthScreen> {
 
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Nouveau portail santé'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Nom du portail',
-                  border: OutlineInputBorder(),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Text('Nouveau portail santé'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nom du portail',
+                    border: OutlineInputBorder(),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: urlController,
-                decoration: const InputDecoration(
-                  labelText: 'URL du portail',
-                  border: OutlineInputBorder(),
-                  hintText: 'https://exemple.com',
+                const SizedBox(height: 16),
+                TextField(
+                  controller: urlController,
+                  decoration: InputDecoration(
+                    labelText: 'URL du portail',
+                    border: const OutlineInputBorder(),
+                    hintText: 'https://exemple.com',
+                    helperText: 'Doit commencer par http:// ou https://',
+                    errorText: urlController.text.isNotEmpty && 
+                        !ValidationHelper.isValidUrl(urlController.text.trim())
+                        ? 'URL invalide'
+                        : null,
+                  ),
+                  keyboardType: TextInputType.url,
+                  onChanged: (_) => setDialogState(() {}),
                 ),
-                keyboardType: TextInputType.url,
-              ),
               const SizedBox(height: 16),
               TextField(
                 controller: descriptionController,
@@ -152,10 +160,11 @@ class _HealthScreenState extends State<HealthScreen> {
           ),
           ElevatedButton(
             onPressed: () {
-              if (nameController.text.isNotEmpty && urlController.text.isNotEmpty) {
+              if (nameController.text.isNotEmpty && 
+                  ValidationHelper.isValidUrl(urlController.text.trim())) {
                 Navigator.pop(context, {
                   'name': nameController.text,
-                  'url': urlController.text,
+                  'url': urlController.text.trim(),
                   'description': descriptionController.text,
                   'category': categoryController.text,
                 });
@@ -165,7 +174,8 @@ class _HealthScreenState extends State<HealthScreen> {
           ),
         ],
       ),
-    );
+        ),
+      );
 
     if (result != null) {
       await _createPortal(result);

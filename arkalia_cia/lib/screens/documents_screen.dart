@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import '../services/local_storage_service.dart';
 import '../services/file_storage_service.dart';
+import '../services/category_service.dart';
 
 class DocumentsScreen extends StatefulWidget {
   const DocumentsScreen({super.key});
@@ -108,6 +109,10 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           uniqueFileName,
         );
 
+        // Demander la catégorie avant de sauvegarder
+        if (!mounted) return;
+        final category = await _showCategoryDialog();
+        
         // Sauvegarder les métadonnées localement
         final document = {
           'id': timestamp.toString(), // ID en String pour cohérence
@@ -115,6 +120,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           'original_name': fileName,
           'path': savedFile.path,
           'file_size': await savedFile.length(),
+          'category': category ?? 'Autre',
           'created_at': DateTime.now().toIso8601String(),
         };
 
@@ -345,25 +351,36 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: ['Tous', 'Médical', 'Administratif', 'Autre']
-                        .map((category) => Padding(
-                              padding: const EdgeInsets.only(right: 8),
-                              child: FilterChip(
-                                label: Text(category),
-                                selected: _selectedCategory == category,
-                                onSelected: (selected) {
-                                  setState(() {
-                                    _selectedCategory = category;
-                                  });
-                                  _filterDocuments();
-                                },
-                              ),
-                            ))
-                        .toList(),
-                  ),
+                FutureBuilder<List<String>>(
+                  future: CategoryService.getCategories(),
+                  builder: (context, snapshot) {
+                    final categories = ['Tous', ...(snapshot.data ?? ['Médical', 'Administratif', 'Autre'])];
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          ...categories.map((category) => Padding(
+                                padding: const EdgeInsets.only(right: 8),
+                                child: FilterChip(
+                                  label: Text(category),
+                                  selected: _selectedCategory == category,
+                                  onSelected: (selected) {
+                                    setState(() {
+                                      _selectedCategory = category;
+                                    });
+                                    _filterDocuments();
+                                  },
+                                ),
+                              )),
+                          IconButton(
+                            icon: const Icon(Icons.add),
+                            onPressed: _showManageCategoriesDialog,
+                            tooltip: 'Gérer les catégories',
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
@@ -496,5 +513,106 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         ],
       ),
     );
+  }
+
+  Future<String?> _showCategoryDialog() async {
+    if (!mounted) return 'Autre';
+    
+    final categories = await CategoryService.getCategories();
+    
+    return showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Choisir une catégorie'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: categories.map((category) => ListTile(
+              title: Text(category),
+              onTap: () => Navigator.pop(context, category),
+            )).toList(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'Autre'),
+            child: const Text('Autre'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showManageCategoriesDialog() async {
+    if (!mounted) return;
+    
+    final categories = await CategoryService.getCategories();
+    final customCategories = categories.where((c) => 
+      !['Médical', 'Administratif', 'Autre'].contains(c)
+    ).toList();
+    
+    final controller = TextEditingController();
+    
+    await showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: const Text('Gérer les catégories'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: controller,
+                decoration: const InputDecoration(
+                  labelText: 'Nouvelle catégorie',
+                  hintText: 'Nom de la catégorie',
+                ),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () async {
+                  if (controller.text.trim().isNotEmpty) {
+                    await CategoryService.addCategory(controller.text.trim());
+                    controller.clear();
+                    setState(() {});
+                  }
+                },
+                child: const Text('Ajouter'),
+              ),
+              const SizedBox(height: 16),
+              const Text('Catégories personnalisées:', style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              if (customCategories.isEmpty)
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text('Aucune catégorie personnalisée', style: TextStyle(color: Colors.grey)),
+                )
+              else
+                ...customCategories.map((category) => ListTile(
+                  title: Text(category),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.red),
+                    onPressed: () async {
+                      await CategoryService.deleteCategory(category);
+                      setState(() {});
+                    },
+                  ),
+                )),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Fermer'),
+            ),
+          ],
+        ),
+      ),
+    );
+    
+    // Recharger les documents pour mettre à jour les filtres
+    if (mounted) {
+      _loadDocuments();
+    }
   }
 }
