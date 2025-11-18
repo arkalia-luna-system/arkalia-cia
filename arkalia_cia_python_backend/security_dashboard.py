@@ -19,17 +19,17 @@ from typing import Any
 # Ces imports sont dans un try/except car les modules peuvent ne pas être disponibles
 # pyright: reportMissingImports=false
 try:
-    from athalia_core.core.cache_manager import (  # noqa: F401
-        CacheManager,
+    from athalia_core.core.cache_manager import (
+        CacheManager,  # noqa: F401
     )
-    from athalia_core.metrics.collector import (  # noqa: F401
-        MetricsCollector,
+    from athalia_core.metrics.collector import (
+        MetricsCollector,  # noqa: F401
     )
-    from athalia_core.quality.code_linter import (  # noqa: F401
-        CodeLinter,
+    from athalia_core.quality.code_linter import (
+        CodeLinter,  # noqa: F401
     )
-    from athalia_core.validation.security_validator import (  # noqa: F401
-        CommandSecurityValidator,
+    from athalia_core.validation.security_validator import (
+        CommandSecurityValidator,  # noqa: F401
     )
 
     ATHALIA_AVAILABLE = True
