@@ -35,7 +35,8 @@ class TestSecurityDashboard:
             if hasattr(self.dashboard, "athalia_components"):
                 self.dashboard.athalia_components.clear()
             del self.dashboard
-        gc.collect()  # Un seul collect suffit
+        # Le GC Python gère automatiquement, pas besoin de forcer systématiquement
+        # gc.collect() seulement si vraiment nécessaire (tests très volumineux)
 
         if Path(self.temp_dir).exists():
             shutil.rmtree(self.temp_dir)
@@ -184,25 +185,43 @@ class TestSecurityDashboard:
         assert True  # Si pas d'exception, c'est bon
 
     def test_collect_security_data_with_athalia_components(self):
-        """Test de collecte avec composants Athalia simulés"""
-        # Simuler des composants Athalia disponibles mais vides pour éviter les scans
+        """Test de collecte avec composants Athalia simulés (optimisé performance)"""
+        # Simuler des composants Athalia disponibles mais mockés pour éviter les scans complets
+        from unittest.mock import MagicMock
+
         with patch(
             "arkalia_cia_python_backend.security_dashboard.ATHALIA_AVAILABLE", True
         ):
             dashboard = SecurityDashboard(project_path=self.temp_dir)
-            # Les composants doivent être initialisés pour que athalia_available soit True
-            # Le code vérifie si athalia_components est vide (ligne 167)
-            # Si vide, il met athalia_available à False même si ATHALIA_AVAILABLE est True
-            # Donc on doit s'assurer que les composants ne sont pas vides
-            if not dashboard.athalia_components:
-                # Simuler des composants non-vides (dict avec au moins une clé)
-                dashboard.athalia_components = {
-                    "cache_manager": None,  # None est OK, l'important c'est que le dict ne soit pas vide
-                }
+            
+            # Créer des mocks pour éviter les scans réels (optimisation performance)
+            mock_security_validator = MagicMock()
+            mock_security_validator.run_comprehensive_scan = MagicMock(return_value=None)
+            
+            mock_code_linter = MagicMock()
+            mock_code_linter.run_lint = MagicMock(return_value=None)
+            
+            mock_cache_manager = MagicMock()
+            mock_cache_manager.get_cache_stats = MagicMock(return_value=None)
+            
+            mock_metrics_collector = MagicMock()
+            mock_metrics_collector.collect_all_metrics = MagicMock(return_value={})
+            
+            # Simuler des composants non-vides avec des mocks pour éviter les scans
+            dashboard.athalia_components = {
+                "security_validator": mock_security_validator,
+                "code_linter": mock_code_linter,
+                "cache_manager": mock_cache_manager,
+                "metrics_collector": mock_metrics_collector,
+            }
+            
+            # Collecter les données (rapide car mocks ne font pas de scans réels)
             security_data = dashboard.collect_security_data()
+            
             assert "athalia_available" in security_data
             # athalia_available est True si ATHALIA_AVAILABLE est True ET que les composants sont initialisés (non vide)
             assert security_data["athalia_available"] is True
+            
             # Nettoyer immédiatement
             dashboard.athalia_components.clear()
             del dashboard
