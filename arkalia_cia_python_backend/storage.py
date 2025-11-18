@@ -46,10 +46,14 @@ class StorageBackend(ABC):
 class JSONFileBackend(StorageBackend):
     """JSON file-based storage backend"""
 
-    def __init__(self, base_path: str = "state"):
+    def __init__(self, base_path: str = "state", max_cache_size: int = 50):
         self.base_path = Path(base_path)
         self.base_path.mkdir(exist_ok=True)
+        # Cache LRU limité pour éviter consommation mémoire excessive
+        # Limite à 50 entrées max (environ 5-10 MB selon taille données)
         self._cache: dict[str, Any] = {}
+        self._max_cache_size = max_cache_size
+        self._cache_access_order: list[str] = []  # Pour implémenter LRU
 
     def _get_file_path(self, key: str) -> Path:
         """Get file path for key"""
@@ -58,17 +62,41 @@ class JSONFileBackend(StorageBackend):
     def get(self, key: str, default: Any = None) -> Any:
         """Get value from JSON file"""
         try:
+            # Vérifier le cache d'abord
+            if key in self._cache:
+                # Mettre à jour l'ordre d'accès (LRU)
+                if key in self._cache_access_order:
+                    self._cache_access_order.remove(key)
+                self._cache_access_order.append(key)
+                return self._cache[key]
+
             file_path = self._get_file_path(key)
             if not file_path.exists():
                 return default
 
             with open(file_path, encoding="utf-8") as f:  # nosec B108
                 data = json.load(f)
-                self._cache[key] = data
-                return data
+
+            # Ajouter au cache avec limite LRU
+            self._add_to_cache(key, data)
+            return data
         except Exception as e:
             logger.error(f"Erreur lecture {key}: {e}")
             return default
+
+    def _add_to_cache(self, key: str, value: Any) -> None:
+        """Ajoute une entrée au cache avec gestion LRU"""
+        # Si le cache est plein, supprimer l'entrée la moins récemment utilisée
+        if len(self._cache) >= self._max_cache_size and key not in self._cache:
+            if self._cache_access_order:
+                oldest_key = self._cache_access_order.pop(0)
+                self._cache.pop(oldest_key, None)
+
+        self._cache[key] = value
+        # Mettre à jour l'ordre d'accès
+        if key in self._cache_access_order:
+            self._cache_access_order.remove(key)
+        self._cache_access_order.append(key)
 
     def set(self, key: str, value: Any) -> bool:
         """Set value to JSON file"""
@@ -79,7 +107,8 @@ class JSONFileBackend(StorageBackend):
             with open(file_path, "w", encoding="utf-8") as f:  # nosec B108
                 json.dump(value, f, indent=2, ensure_ascii=False, default=str)
 
-            self._cache[key] = value
+            # Ajouter au cache avec gestion LRU
+            self._add_to_cache(key, value)
             return True
         except Exception as e:
             logger.error(f"Erreur écriture {key}: {e}")
@@ -91,9 +120,11 @@ class JSONFileBackend(StorageBackend):
             file_path = self._get_file_path(key)
             if file_path.exists():
                 file_path.unlink()
-                self._cache.pop(key, None)
-                return True
-            return False
+            # Nettoyer aussi le cache
+            self._cache.pop(key, None)
+            if key in self._cache_access_order:
+                self._cache_access_order.remove(key)
+            return True
         except Exception as e:
             logger.error(f"Erreur suppression {key}: {e}")
             return False

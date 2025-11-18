@@ -287,9 +287,7 @@ class HealthPortalRequest(BaseModel):
                 ]
                 hostname_lower = hostname.lower()
                 if any(hostname_lower.startswith(blocked) for blocked in blocked_hosts):
-                    raise ValueError(
-                        "Les URLs vers des adresses privées ne sont pas autorisées"
-                    )
+                    raise ValueError("Les URLs vers des adresses privées ne sont pas autorisées")
 
                 # Bloquer les IPs privées (format IP)
                 if re.match(r"^\d+\.\d+\.\d+\.\d+$", hostname):
@@ -419,9 +417,7 @@ async def add_security_headers(request: Request, call_next):
     )
     # HSTS seulement en HTTPS
     if request.url.scheme == "https":
-        response.headers["Strict-Transport-Security"] = (
-            "max-age=31536000; includeSubDomains"
-        )
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
     return response
 
 
@@ -480,22 +476,35 @@ async def upload_document(request: Request, file: UploadFile = File(...)):
 
         # Vérifier que c'est un PDF
         if not safe_filename.lower().endswith(".pdf"):
-            raise HTTPException(
-                status_code=400, detail="Seuls les fichiers PDF sont acceptés"
-            )
+            raise HTTPException(status_code=400, detail="Seuls les fichiers PDF sont acceptés")
 
         # Limiter la taille du fichier (50 MB max)
         MAX_FILE_SIZE = 50 * 1024 * 1024  # 50 MB
-        content = await file.read()
-        if len(content) > MAX_FILE_SIZE:
-            raise HTTPException(
-                status_code=400, detail="Le fichier est trop volumineux (max 50 MB)"
-            )
 
-        # Sauvegarder le fichier temporairement
+        # Écrire directement dans le fichier temporaire par chunks
+        # pour éviter de charger tout le fichier en mémoire
+        chunk_size = 1024 * 1024  # 1 MB par chunk
+        total_size = 0
+
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
-            tmp_file.write(content)
             tmp_file_path = tmp_file.name
+            while True:
+                chunk = await file.read(chunk_size)
+                if not chunk:
+                    break
+                total_size += len(chunk)
+                if total_size > MAX_FILE_SIZE:
+                    # Nettoyer le fichier temporaire avant de lever l'exception
+                    try:
+                        os.unlink(tmp_file_path)  # nosec B108
+                    except OSError:
+                        pass
+                    raise HTTPException(
+                        status_code=400, detail="Le fichier est trop volumineux (max 50 MB)"
+                    )
+                tmp_file.write(chunk)
+                # Libérer immédiatement le chunk de la mémoire
+                del chunk
 
         # Traiter le PDF
         result = pdf_processor.process_pdf(tmp_file_path, safe_filename)
@@ -584,10 +593,7 @@ async def delete_document(doc_id: int):
 
         try:
             # Vérifier que le fichier est dans le répertoire uploads
-            if (
-                uploads_dir in file_path_obj.parents
-                or file_path_obj.parent == uploads_dir
-            ):
+            if uploads_dir in file_path_obj.parents or file_path_obj.parent == uploads_dir:
                 if file_path_obj.exists():
                     os.unlink(file_path_obj)
             else:
@@ -600,9 +606,7 @@ async def delete_document(doc_id: int):
         except (FileNotFoundError, OSError, ValueError) as e:
             # Logger l'erreur sans exposer de détails sensibles
             logger.warning(
-                sanitize_log_message(
-                    f"Impossible de supprimer le fichier: {type(e).__name__}"
-                )
+                sanitize_log_message(f"Impossible de supprimer le fichier: {type(e).__name__}")
             )
 
     # Supprimer de la base de données
@@ -631,9 +635,7 @@ async def create_reminder(request: Request, reminder: ReminderRequest):
     created_reminder = next((r for r in reminders if r["id"] == reminder_id), None)
 
     if not created_reminder:
-        raise HTTPException(
-            status_code=500, detail="Erreur lors de la création du rappel"
-        )
+        raise HTTPException(status_code=500, detail="Erreur lors de la création du rappel")
 
     return ReminderResponse(**created_reminder)
 
@@ -665,9 +667,7 @@ async def create_emergency_contact(request: Request, contact: EmergencyContactRe
     created_contact = next((c for c in contacts if c["id"] == contact_id), None)
 
     if not created_contact:
-        raise HTTPException(
-            status_code=500, detail="Erreur lors de la création du contact"
-        )
+        raise HTTPException(status_code=500, detail="Erreur lors de la création du contact")
 
     return EmergencyContactResponse(**created_contact)
 
@@ -699,9 +699,7 @@ async def create_health_portal(request: Request, portal: HealthPortalRequest):
     created_portal = next((p for p in portals if p["id"] == portal_id), None)
 
     if not created_portal:
-        raise HTTPException(
-            status_code=500, detail="Erreur lors de la création du portail"
-        )
+        raise HTTPException(status_code=500, detail="Erreur lors de la création du portail")
 
     return HealthPortalResponse(**created_portal)
 

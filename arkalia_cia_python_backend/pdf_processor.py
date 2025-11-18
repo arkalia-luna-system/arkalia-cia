@@ -38,14 +38,26 @@ class PDFProcessor:
         return f"{name}_{timestamp}{ext}"
 
     def extract_text_from_pdf(self, file_path: str) -> str:
-        """Extrait le texte d'un PDF"""
+        """Extrait le texte d'un PDF (optimisé mémoire)"""
         try:
             with open(file_path, "rb") as file:  # nosec B108
                 reader = PdfReader(file)
-                text = ""
-                for page in reader.pages:
-                    text += page.extract_text()
-                return text
+                text_parts = []
+                # Traiter page par page pour éviter de charger tout en mémoire
+                for i, page in enumerate(reader.pages):
+                    page_text = page.extract_text()
+                    text_parts.append(page_text)
+                    # Libérer la référence de la page après extraction
+                    # (le GC Python gère automatiquement, mais on peut aider)
+                    if i % 10 == 0:  # Nettoyer périodiquement
+                        import gc
+
+                        gc.collect()
+
+                result = "".join(text_parts)
+                # Libérer les parties après concaténation
+                del text_parts
+                return result
         except Exception as e:
             return f"Erreur lors de l'extraction: {str(e)}"
 
@@ -109,27 +121,19 @@ class PDFProcessor:
                     # Limiter la longueur et supprimer les caractères dangereux
                     cleaned = str(value)[:200]  # Limiter à 200 caractères
                     # Supprimer les caractères de contrôle
-                    cleaned = "".join(
-                        c for c in cleaned if ord(c) >= 32 or c in "\n\r\t"
-                    )
+                    cleaned = "".join(c for c in cleaned if ord(c) >= 32 or c in "\n\r\t")
                     return cleaned
 
                 metadata = {
                     "num_pages": num_pages,
                     "title": sanitize_metadata(
-                        pdf_reader.metadata.get("/Title", "")
-                        if pdf_reader.metadata
-                        else None
+                        pdf_reader.metadata.get("/Title", "") if pdf_reader.metadata else None
                     ),
                     "author": sanitize_metadata(
-                        pdf_reader.metadata.get("/Author", "")
-                        if pdf_reader.metadata
-                        else None
+                        pdf_reader.metadata.get("/Author", "") if pdf_reader.metadata else None
                     ),
                     "subject": sanitize_metadata(
-                        pdf_reader.metadata.get("/Subject", "")
-                        if pdf_reader.metadata
-                        else None
+                        pdf_reader.metadata.get("/Subject", "") if pdf_reader.metadata else None
                     ),
                 }
 
@@ -137,9 +141,7 @@ class PDFProcessor:
                 first_page_text = ""
                 if pdf_reader.pages:
                     first_page = pdf_reader.pages[0]
-                    first_page_text = first_page.extract_text()[
-                        :500
-                    ]  # Limiter à 500 caractères
+                    first_page_text = first_page.extract_text()[:500]  # Limiter à 500 caractères
 
                 # Générer un nom de fichier unique et sécurisé
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")

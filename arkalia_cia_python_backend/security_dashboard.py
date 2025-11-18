@@ -80,9 +80,7 @@ class SecurityDashboard:
             # Si c'est un répertoire temporaire, chercher le vrai projet
             script_file = Path(__file__).resolve()
             script_dir = script_file.parent.parent
-            if (script_dir / "pyproject.toml").exists() or (
-                script_dir / "README.md"
-            ).exists():
+            if (script_dir / "pyproject.toml").exists() or (script_dir / "README.md").exists():
                 resolved_path = script_dir.resolve()
                 logger.warning(
                     f"Chemin temporaire détecté ({project_path}), "
@@ -114,9 +112,7 @@ class SecurityDashboard:
                 try:
                     components["security_validator"] = CommandSecurityValidator()
                 except Exception as e:
-                    logger.warning(
-                        f"Impossible d'initialiser CommandSecurityValidator: {e}"
-                    )
+                    logger.warning(f"Impossible d'initialiser CommandSecurityValidator: {e}")
 
             if CodeLinter is not None:
                 try:
@@ -132,17 +128,13 @@ class SecurityDashboard:
 
             if MetricsCollector is not None:
                 try:
-                    components["metrics_collector"] = MetricsCollector(
-                        str(self.project_path)
-                    )
+                    components["metrics_collector"] = MetricsCollector(str(self.project_path))
                 except Exception as e:
                     logger.warning(f"Impossible d'initialiser MetricsCollector: {e}")
 
             return components
         except Exception as e:
-            logger.error(
-                f"Erreur critique d'initialisation des composants Athalia: {e}"
-            )
+            logger.error(f"Erreur critique d'initialisation des composants Athalia: {e}")
             return {}
 
     def collect_security_data(self) -> dict[str, Any]:
@@ -198,9 +190,7 @@ class SecurityDashboard:
                         if scan_results:
                             # Extraire immédiatement les données essentielles pour économiser la mémoire
                             total_vulns = scan_results.get("vulnerabilities_found", 0)
-                            total_files_scanned = scan_results.get(
-                                "total_files_scanned", 0
-                            )
+                            total_files_scanned = scan_results.get("total_files_scanned", 0)
 
                             # Stocker seulement les métadonnées essentielles, pas les données complètes
                             security_data["security_checks"]["comprehensive_scan"] = {
@@ -211,9 +201,7 @@ class SecurityDashboard:
 
                             if total_vulns > 0:
                                 # Limiter la taille des vulnérabilités en mémoire pour éviter la surcharge
-                                vulnerabilities_raw = scan_results.get(
-                                    "vulnerabilities", []
-                                )
+                                vulnerabilities_raw = scan_results.get("vulnerabilities", [])
                                 # Limiter à 100 vulnérabilités max pour optimiser la mémoire (réduit pour performance)
                                 max_vulns = 100
                                 if len(vulnerabilities_raw) > max_vulns:
@@ -265,9 +253,7 @@ class SecurityDashboard:
                                 low_vulns = total_vulns - high_vulns - medium_vulns
 
                                 # Pénalités critiques (XSS et SQL injection sont très graves)
-                                xss_penalty = (
-                                    xss_patterns * 5.0
-                                )  # 5 points par pattern XSS unique
+                                xss_penalty = xss_patterns * 5.0  # 5 points par pattern XSS unique
                                 sql_penalty = (
                                     sql_patterns * 10.0
                                 )  # 10 points par pattern SQL unique
@@ -279,9 +265,7 @@ class SecurityDashboard:
                                 if medium_vulns > 100:
                                     # Si plus de 100 vulnérabilités moyennes, probablement des faux positifs
                                     # Limiter la pénalité mais quand même pénaliser significativement
-                                    medium_penalty = min(
-                                        20.0, 10.0 + (medium_vulns - 100) * 0.03
-                                    )
+                                    medium_penalty = min(20.0, 10.0 + (medium_vulns - 100) * 0.03)
                                 elif medium_vulns > 50:
                                     # Entre 50 et 100, pénalité progressive mais plus clémente
                                     medium_penalty = 10.0 + (medium_vulns - 50) * 0.15
@@ -297,10 +281,7 @@ class SecurityDashboard:
 
                                 # Calcul du score final intelligent
                                 total_penalty = (
-                                    xss_penalty
-                                    + sql_penalty
-                                    + medium_penalty
-                                    + low_penalty
+                                    xss_penalty + sql_penalty + medium_penalty + low_penalty
                                 )
 
                                 # S'assurer que le score est un entier entre 0 et 100
@@ -324,22 +305,15 @@ class SecurityDashboard:
                                 security_data["risk_level"] = risk_level
 
                                 # Classification intelligente des vulnérabilités (s'assurer que ce sont des entiers)
-                                security_data["vulnerabilities"]["high"] = int(
-                                    high_vulns
-                                )
-                                security_data["vulnerabilities"]["medium"] = int(
-                                    medium_vulns
-                                )
-                                security_data["vulnerabilities"]["low"] = int(
-                                    max(0, low_vulns)
-                                )
+                                security_data["vulnerabilities"]["high"] = int(high_vulns)
+                                security_data["vulnerabilities"]["medium"] = int(medium_vulns)
+                                security_data["vulnerabilities"]["low"] = int(max(0, low_vulns))
 
                                 # Métriques de performance et qualité du code
                                 # Utiliser total_files_scanned extrait précédemment
                                 vulns_count = len(vulnerabilities)
                                 security_data["performance_metrics"] = {
-                                    "scan_speed": total_files_scanned
-                                    / max(1, vulns_count),
+                                    "scan_speed": total_files_scanned / max(1, vulns_count),
                                     "vulnerability_density": total_vulns
                                     / max(1, total_files_scanned),
                                     "risk_distribution": {
@@ -347,20 +321,15 @@ class SecurityDashboard:
                                         / max(1, total_vulns),
                                         "medium_ratio": dangerous_functions_count
                                         / max(1, total_vulns),
-                                        "safe_ratio": (
-                                            total_files_scanned - total_vulns
-                                        )
+                                        "safe_ratio": (total_files_scanned - total_vulns)
                                         / max(1, total_files_scanned),
                                     },
                                 }
 
                                 # Métriques de qualité du code
                                 security_data["code_quality_metrics"] = {
-                                    "security_awareness": max(
-                                        0, 100 - (total_vulns * 0.1)
-                                    ),
-                                    "code_complexity": total_files_scanned
-                                    / max(1, vulns_count),
+                                    "security_awareness": max(0, 100 - (total_vulns * 0.1)),
+                                    "code_complexity": total_files_scanned / max(1, vulns_count),
                                     "maintenance_index": max(
                                         0, 100 - (dangerous_functions_count * 0.05)
                                     ),
@@ -404,31 +373,21 @@ class SecurityDashboard:
                             # Garder seulement les clés importantes
                             essential_keys = {"score", "errors", "warnings", "total"}
                             linting_results = {
-                                k: v
-                                for k, v in linting_results.items()
-                                if k in essential_keys
+                                k: v for k, v in linting_results.items() if k in essential_keys
                             }
                         security_data["linting_results"] = linting_results
                         del linting_results
                     except TimeoutError as timeout_err:
                         # Gérer spécifiquement les timeouts (bandit, etc.)
-                        logger.debug(
-                            f"Timeout lors du linting (outil trop lent): {timeout_err}"
-                        )
+                        logger.debug(f"Timeout lors du linting (outil trop lent): {timeout_err}")
                         security_data["linting_results"] = {
                             "error": "timeout",
                             "message": "Analyse de qualité interrompue (timeout)",
                         }
                     except FileNotFoundError as file_err:
                         # Gérer spécifiquement les outils manquants (radon, etc.)
-                        tool_name = (
-                            str(file_err).split("'")[1]
-                            if "'" in str(file_err)
-                            else "outil"
-                        )
-                        logger.debug(
-                            f"Outil de linting non disponible ({tool_name}): {file_err}"
-                        )
+                        tool_name = str(file_err).split("'")[1] if "'" in str(file_err) else "outil"
+                        logger.debug(f"Outil de linting non disponible ({tool_name}): {file_err}")
                         security_data["linting_results"] = {
                             "error": "tool_not_found",
                             "message": f"Outil d'analyse non disponible: {tool_name}",
@@ -497,14 +456,10 @@ class SecurityDashboard:
                         cache_performance = min(100, max(0, int(hit_rate_percent)))
                         security_data["cache_performance"] = cache_performance
                         # Mettre à jour le hit_rate dans cache_stats pour l'affichage
-                        security_data["cache_security"]["hit_rate"] = (
-                            hit_rate_percent / 100.0
-                        )
+                        security_data["cache_security"]["hit_rate"] = hit_rate_percent / 100.0
                         del cache_stats_to_use
                     except Exception as e:
-                        logger.warning(
-                            f"Erreur lors de la collecte des stats cache: {e}"
-                        )
+                        logger.warning(f"Erreur lors de la collecte des stats cache: {e}")
                         security_data["cache_security"] = {"error": str(e)}
 
             # Collecte des métriques complètes du projet (optimisé)
@@ -525,12 +480,8 @@ class SecurityDashboard:
                                 security_data["python_stats"] = {
                                     "total_files": python_files.get("count", 0),
                                     "total_lines": python_files.get("total_lines", 0),
-                                    "average_lines": python_files.get(
-                                        "average_lines_per_file", 0
-                                    ),
-                                    "complexity": python_files.get(
-                                        "average_complexity", 0
-                                    ),
+                                    "average_lines": python_files.get("average_lines_per_file", 0),
+                                    "complexity": python_files.get("average_complexity", 0),
                                 }
                             del python_files
 
@@ -538,13 +489,9 @@ class SecurityDashboard:
                             tests = project_metrics.get("tests", {})
                             if isinstance(tests, dict):
                                 security_data["test_coverage"] = {
-                                    "total_tests": tests.get(
-                                        "collected_tests_count", 0
-                                    ),
+                                    "total_tests": tests.get("collected_tests_count", 0),
                                     "test_files": tests.get("test_files_count", 0),
-                                    "coverage_percentage": tests.get(
-                                        "coverage_percentage", 0
-                                    ),
+                                    "coverage_percentage": tests.get("coverage_percentage", 0),
                                 }
                             del tests
 
@@ -565,9 +512,7 @@ class SecurityDashboard:
                                 "documentation",
                             }
                             project_metrics = {
-                                k: v
-                                for k, v in project_metrics.items()
-                                if k in essential_metrics
+                                k: v for k, v in project_metrics.items() if k in essential_metrics
                             }
                             del essential_metrics
 
@@ -591,9 +536,7 @@ class SecurityDashboard:
                 if isinstance(project_metrics, dict) and "error" not in project_metrics:
                     # Nettoyer les données volumineuses non utilisées (optimisé)
                     keys_to_keep = {"python_files", "tests", "documentation"}
-                    keys_to_remove = [
-                        k for k in project_metrics.keys() if k not in keys_to_keep
-                    ]
+                    keys_to_remove = [k for k in project_metrics.keys() if k not in keys_to_keep]
                     for key in keys_to_remove:
                         del project_metrics[key]
                     del keys_to_remove, keys_to_keep
@@ -625,9 +568,7 @@ class SecurityDashboard:
 
         return security_data
 
-    def _generate_security_recommendations(
-        self, security_data: dict[str, Any]
-    ) -> list[str]:
+    def _generate_security_recommendations(self, security_data: dict[str, Any]) -> list[str]:
         """Génère des recommandations de sécurité basées sur les vraies données"""
         recommendations = []
 
@@ -655,10 +596,7 @@ class SecurityDashboard:
         try:
             import importlib.util
 
-            if (
-                importlib.util.find_spec("arkalia_cia_python_backend.security_utils")
-                is not None
-            ):
+            if importlib.util.find_spec("arkalia_cia_python_backend.security_utils") is not None:
                 security_bonus += 2
                 bonus_reasons.append("Logging sécurisé implémenté")
         except Exception:
@@ -676,10 +614,7 @@ class SecurityDashboard:
         try:
             import importlib.util
 
-            if (
-                importlib.util.find_spec("tests.unit.test_security_vulnerabilities")
-                is not None
-            ):
+            if importlib.util.find_spec("tests.unit.test_security_vulnerabilities") is not None:
                 security_bonus += 2
                 bonus_reasons.append("Tests de sécurité implémentés")
         except Exception:
@@ -719,8 +654,7 @@ class SecurityDashboard:
             )
         elif final_score < 70:
             recommendations.append(
-                "⚠️ ATTENTION: Score de sécurité faible - Actions correctives"
-                " nécessaires"
+                "⚠️ ATTENTION: Score de sécurité faible - Actions correctives" " nécessaires"
             )
         elif final_score < 85:
             recommendations.append(
@@ -739,8 +673,7 @@ class SecurityDashboard:
         vulnerabilities = security_data.get("vulnerabilities", {})
         if vulnerabilities.get("high", 0) > 0:
             recommendations.append(
-                "🚨 CRITIQUE: Vulnérabilités critiques détectées - Correction immédiate"
-                " requise"
+                "🚨 CRITIQUE: Vulnérabilités critiques détectées - Correction immédiate" " requise"
             )
         if vulnerabilities.get("medium", 0) > 5:
             recommendations.append(
@@ -749,8 +682,7 @@ class SecurityDashboard:
             )
         if vulnerabilities.get("low", 0) > 10:
             recommendations.append(
-                "🔶 AMÉLIORATION: Nombre élevé de vulnérabilités mineures - Nettoyage"
-                " recommandé"
+                "🔶 AMÉLIORATION: Nombre élevé de vulnérabilités mineures - Nettoyage" " recommandé"
             )
 
         # Recommandations basées sur les composants
@@ -765,8 +697,7 @@ class SecurityDashboard:
             recommendations.append("✅ SÉCURISÉ: Aucune action immédiate requise")
 
         recommendations.append(
-            "📚 DOCUMENTATION: Consulter le guide de sécurité Athalia pour plus"
-            " d'informations"
+            "📚 DOCUMENTATION: Consulter le guide de sécurité Athalia pour plus" " d'informations"
         )
 
         return recommendations
@@ -795,9 +726,7 @@ class SecurityDashboard:
             # Libérer la mémoire du HTML après écriture (le GC Python gère automatiquement)
             del dashboard_html
 
-            logger.info(
-                f"Dashboard de sécurité généré avec vraies données: {dashboard_file}"
-            )
+            logger.info(f"Dashboard de sécurité généré avec vraies données: {dashboard_file}")
             return str(dashboard_file)
         finally:
             # Nettoyage final de la mémoire
@@ -821,14 +750,10 @@ class SecurityDashboard:
             security_score = 0
 
         # Extraire seulement ce qui est nécessaire (éviter les copies complètes)
-        vulnerabilities = security_data.get(
-            "vulnerabilities", {"high": 0, "medium": 0, "low": 0}
-        )
+        vulnerabilities = security_data.get("vulnerabilities", {"high": 0, "medium": 0, "low": 0})
         # Limiter les recommandations à 8 max pour éviter un HTML trop volumineux (optimisé)
         recommendations_raw = security_data.get("recommendations", [])
-        recommendations = (
-            recommendations_raw[:8] if isinstance(recommendations_raw, list) else []
-        )
+        recommendations = recommendations_raw[:8] if isinstance(recommendations_raw, list) else []
         del recommendations_raw  # Libérer immédiatement
 
         timestamp = security_data.get("timestamp", "")
@@ -1990,9 +1915,7 @@ class SecurityDashboard:
 
     def _generate_command_validation_html(self, security_data: dict[str, Any]) -> str:
         """Génère le HTML pour la validation des commandes avec vraies données"""
-        scan_results = security_data.get("security_checks", {}).get(
-            "comprehensive_scan", {}
-        )
+        scan_results = security_data.get("security_checks", {}).get("comprehensive_scan", {})
 
         if not scan_results:
             return "<p>Scan de sécurité en cours...</p>"
@@ -2255,9 +2178,7 @@ class SecurityDashboard:
                         ["open", "-g", str(absolute_path)], check=False
                     )  # nosec B607, B603
                     self._last_open_time = current_time
-                    logger.info(
-                        f"🌐 Dashboard de sécurité ouvert via 'open': {absolute_path}"
-                    )
+                    logger.info(f"🌐 Dashboard de sécurité ouvert via 'open': {absolute_path}")
                 elif system == "Windows":
                     # Windows utilise start (sans shell=True pour sécurité)
                     subprocess.run(  # nosec B607, B603
@@ -2265,16 +2186,12 @@ class SecurityDashboard:
                         check=False,
                     )
                     self._last_open_time = current_time
-                    logger.info(
-                        f"🌐 Dashboard de sécurité ouvert via 'start': {absolute_path}"
-                    )
+                    logger.info(f"🌐 Dashboard de sécurité ouvert via 'start': {absolute_path}")
                 else:
                     # Linux et autres: réessayer avec webbrowser
                     webbrowser.open(file_url, new=0)
                     self._last_open_time = current_time
-                    logger.info(
-                        f"🌐 Dashboard de sécurité ouvert dans le navigateur: {file_url}"
-                    )
+                    logger.info(f"🌐 Dashboard de sécurité ouvert dans le navigateur: {file_url}")
         except Exception as e:
             logger.error(f"Erreur lors de l'ouverture du dashboard: {e}")
             # Fallback final: essayer avec webbrowser.open directement
@@ -2286,9 +2203,7 @@ class SecurityDashboard:
                 )
                 if dashboard_path.exists():
                     absolute_path = dashboard_path.resolve()
-                    file_url = (
-                        f"file://{urllib.parse.quote(str(absolute_path), safe='/')}"
-                    )
+                    file_url = f"file://{urllib.parse.quote(str(absolute_path), safe='/')}"
                     webbrowser.open(file_url, new=0)
                     self._last_open_time = time.time()
                     logger.info(f"🌐 Ouverture via fallback: {file_url}")
@@ -2305,9 +2220,7 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(description="Dashboard de sécurité Athalia")
-    parser.add_argument(
-        "--project-path", default=None, help="Chemin du projet à analyser"
-    )
+    parser.add_argument("--project-path", default=None, help="Chemin du projet à analyser")
     parser.add_argument(
         "--open", action="store_true", help="Ouvrir le dashboard dans le navigateur"
     )
@@ -2327,9 +2240,7 @@ def main():
 
         # Vérifier si on est dans le projet (présence de pyproject.toml ou README.md)
         project_root = script_dir
-        if (project_root / "pyproject.toml").exists() or (
-            project_root / "README.md"
-        ).exists():
+        if (project_root / "pyproject.toml").exists() or (project_root / "README.md").exists():
             args.project_path = str(project_root)
         else:
             # Remonter jusqu'à trouver le répertoire racine du projet
@@ -2337,9 +2248,7 @@ def main():
             current = script_dir
             found = False
             for _ in range(10):  # Limiter à 10 niveaux pour éviter les boucles infinies
-                if (current / "pyproject.toml").exists() or (
-                    current / "README.md"
-                ).exists():
+                if (current / "pyproject.toml").exists() or (current / "README.md").exists():
                     args.project_path = str(current)
                     found = True
                     break
@@ -2374,9 +2283,7 @@ def main():
         # Si c'est un répertoire temporaire, chercher le vrai projet
         script_file = Path(__file__).resolve()
         script_dir = script_file.parent.parent
-        if (script_dir / "pyproject.toml").exists() or (
-            script_dir / "README.md"
-        ).exists():
+        if (script_dir / "pyproject.toml").exists() or (script_dir / "README.md").exists():
             project_path = script_dir.resolve()
             logger.warning(
                 f"Chemin temporaire détecté, utilisation du répertoire du script: {project_path}"
@@ -2390,9 +2297,7 @@ def main():
         print(f"📊 Dashboard de sécurité généré: {dashboard_file}")
     elif args.open:
         # Ouvrir le dashboard existant ou en générer un nouveau
-        dashboard_file_path = (
-            security_dashboard.dashboard_dir / "security_dashboard.html"
-        )
+        dashboard_file_path = security_dashboard.dashboard_dir / "security_dashboard.html"
         if dashboard_file_path.exists():
             security_dashboard.open_dashboard(str(dashboard_file_path))
         else:

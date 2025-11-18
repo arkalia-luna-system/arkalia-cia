@@ -115,16 +115,18 @@
 
 ---
 
-### 3. Build Release Android (1h) ⚠️
+### 3. Build Release Android ✅ **FAIT**
 
-**À faire** :
-- [ ] Vérifier configuration `build.gradle`
-- [ ] Créer build release Android (APK/AAB)
-  - Commande : `flutter build apk --release` ou `flutter build appbundle --release`
-- [ ] Tester le build release sur device réel
-- [ ] Vérifier signature APK/AAB
+**Résultat** : ✅ Build release Android réussi
+- **APK créé** : `build/app/outputs/flutter-apk/app-release.apk` (55MB)
+- **Configuration** : `build.gradle.kts` vérifiée et correcte
+- **Solution fichiers macOS** : Utilisation de `prevent-macos-files.sh` + `watch-macos-files.sh` pendant le build
+- **Temps réel** : 40 minutes (nettoyage + build)
 
-**Temps estimé** : 1 heure
+**À faire encore** :
+- [ ] Tester le build release sur device réel Android
+- [ ] Vérifier signature APK (actuellement utilise debug keys - OK pour tests)
+- [ ] Créer build AAB pour Play Store si nécessaire (`flutter build appbundle --release`)
 
 **Guide créé** : `docs/BUILD_RELEASE_ANDROID.md` avec toutes les commandes
 
@@ -184,12 +186,12 @@
 | Fix test security_dashboard | 15 min | 🔴 Blocant | ✅ **FAIT** |
 | Optimisation tests | 30 min | 🔴 Blocant | ✅ **FAIT** |
 | Correction 2 tests échoués | 10 min | 🔴 Blocant | ✅ **FAIT** |
+| Build release Android | 40 min | 🔴 Blocant | ✅ **FAIT** |
 | Tests manuels device réel | 2-3h | 🔴 Blocant | ⚠️ À faire |
-| Build release Android | 1h | 🔴 Blocant | ⚠️ À faire |
 | Screenshots propres | 1h | 🟡 Important | ⚠️ À faire |
 | Tests stabilité | 1h | 🟡 Recommandé | ⚠️ À faire |
 
-**Total estimé** : **4-5 heures** de travail réel restant
+**Total estimé** : **3-4 heures** de travail réel restant
 
 ---
 
@@ -213,10 +215,12 @@
 **Le projet est à 95% prêt pour release.**
 
 **Ce qui reste vraiment à faire** :
-- **2 tâches critiques** : Tests manuels (2-3h) + Build release (1h)
+- **1 tâche critique** : Tests manuels sur device réel (2-3h)
 - **2 tâches importantes** : Screenshots (1h) + Tests stabilité (1h)
 
-**Total** : **4-5 heures** de travail réel → **Ready to ship** 🚀
+**Total** : **3-4 heures** de travail réel → **Ready to ship** 🚀
+
+**Build release Android créé** : ✅ `app-release.apk` (55MB) disponible dans `arkalia_cia/build/app/outputs/flutter-apk/`
 
 **Tous les tests passent maintenant** : 206/206 (100%) ✅
 
