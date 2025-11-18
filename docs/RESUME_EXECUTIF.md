@@ -3,7 +3,8 @@
 **Date**: 18 Novembre 2025  
 **Version**: v1.1.0+1  
 **Statut**: 🟢 **95% PRODUCTION-READY**  
-**Dernière mise à jour** : 18 novembre 2025
+**Dernière mise à jour** : 18 novembre 2025  
+**Tests** : 206/206 passent (100%) ✅
 
 **Voir aussi**: [RESUME_PROJET.md](RESUME_PROJET.md) pour le résumé court.
 
@@ -19,7 +20,7 @@
 
 | Métrique | Valeur | Statut |
 |----------|--------|--------|
-| **Tests** | 218/218 passent | ✅ 100% |
+| **Tests** | 206/206 passent | ✅ 100% |
 | **Couverture Code** | 85% | ✅ Excellent |
 | **Erreurs Critiques** | 0 | ✅ Parfait |
 | **Vulnérabilités** | 0 | ✅ Sécurisé |

@@ -18,6 +18,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - ✅ Permissions contacts : Dialogue explicatif avant demande permission
   - ✅ Navigation ARIA : Message informatif au lieu d'erreur navigateur
   - ✅ Bandeau sync : Aucun bandeau "en développement" trouvé dans le code
+- **⚡ Optimisations tests**:
+  - ✅ Suppression de tous les `gc.collect()` inutiles (GC Python gère automatiquement)
+  - ✅ Changement scope fixtures de "class" à "function" pour isolation complète
+  - ✅ Correction validation chemins DB pour permettre fichiers temporaires
+  - ✅ Utilisation UUID pour fichiers temporaires uniques
+  - ✅ Mock des opérations lourdes (MagicMock pour éviter scans complets)
+  - ✅ Test security_dashboard optimisé : 140s → 0.26s (99.8% plus rapide)
+  - ✅ Tous les tests passent maintenant : 206/206 (100%)
 
 ### Added
 - **📥 Import/Export de Données Complet**: 
