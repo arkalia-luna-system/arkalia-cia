@@ -160,3 +160,56 @@ class TestSecurityDashboard:
         self.dashboard.open_dashboard()
         # Vérifier que generate_security_dashboard a été appelé
         assert True  # Si pas d'exception, c'est bon
+
+    def test_collect_security_data_with_athalia_components(self):
+        """Test de collecte avec composants Athalia simulés"""
+        # Simuler des composants Athalia disponibles
+        with patch(
+            "arkalia_cia_python_backend.security_dashboard.ATHALIA_AVAILABLE", True
+        ):
+            dashboard = SecurityDashboard(project_path=self.temp_dir)
+            security_data = dashboard.collect_security_data()
+            assert "athalia_available" in security_data
+            assert security_data["athalia_available"] is True
+
+    def test_generate_recommendations_empty(self):
+        """Test de génération de recommandations avec données vides"""
+        security_data = {}
+        recommendations = self.dashboard._generate_security_recommendations(
+            security_data
+        )
+        assert isinstance(recommendations, list)
+
+    def test_generate_command_validation_html_empty(self):
+        """Test de génération HTML avec données vides"""
+        security_data = {}
+        html = self.dashboard._generate_command_validation_html(security_data)
+        assert html is not None
+        assert isinstance(html, str)
+
+    def test_generate_code_analysis_html_empty(self):
+        """Test de génération HTML avec données vides"""
+        security_data = {}
+        html = self.dashboard._generate_code_analysis_html(security_data)
+        assert html is not None
+        assert isinstance(html, str)
+
+    def test_generate_cache_security_html_empty(self):
+        """Test de génération HTML avec données vides"""
+        security_data = {}
+        html = self.dashboard._generate_cache_security_html(security_data)
+        assert html is not None
+        assert isinstance(html, str)
+
+    def test_generate_security_metrics_html_empty(self):
+        """Test de génération HTML avec données vides"""
+        security_data = {}
+        html = self.dashboard._generate_security_metrics_html(security_data)
+        assert html is not None
+        assert isinstance(html, str)
+
+    def test_generate_recommendations_html_empty(self):
+        """Test de génération HTML avec recommandations vides"""
+        html = self.dashboard._generate_recommendations_html([])
+        assert html is not None
+        assert isinstance(html, str)

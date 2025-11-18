@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '../utils/retry_helper.dart';
+import '../utils/error_helper.dart';
 import 'backend_config_service.dart';
 
 class ApiService {
@@ -49,8 +50,14 @@ class ApiService {
     }
   }
 
-  /// Récupère tous les documents avec retry automatique
+  /// Récupère tous les documents avec retry automatique et cache offline
   static Future<List<Map<String, dynamic>>> getDocuments() async {
+    // Essayer d'abord le cache offline
+    final cached = await OfflineCacheService.getCachedData('documents');
+    if (cached != null) {
+      debugPrint('Utilisation du cache offline pour documents');
+    }
+
     return RetryHelper.retryOnNetworkError(
       fn: () async {
         final url = await baseUrl;
@@ -63,13 +70,25 @@ class ApiService {
 
         if (response.statusCode == 200) {
           List<dynamic> data = json.decode(response.body);
-          return data.cast<Map<String, dynamic>>();
+          final result = data.cast<Map<String, dynamic>>();
+          
+          // Mettre en cache pour usage offline
+          await OfflineCacheService.cacheData('documents', result);
+          
+          return result;
         } else {
           throw Exception('Erreur HTTP ${response.statusCode}');
         }
       },
     ).catchError((e) {
-      debugPrint('Erreur récupération documents après retry: $e');
+      ErrorHelper.logError(e, context: 'getDocuments');
+      
+      // En cas d'erreur réseau, retourner le cache si disponible
+      if (ErrorHelper.isNetworkError(e) && cached != null) {
+        debugPrint('Erreur réseau, utilisation du cache offline');
+        return List<Map<String, dynamic>>.from(cached);
+      }
+      
       return <Map<String, dynamic>>[];
     });
   }
@@ -113,15 +132,21 @@ class ApiService {
       if (response.statusCode == 200) {
         return json.decode(response.body);
       } else {
+        final errorMsg = ErrorHelper.getUserFriendlyMessage(
+          Exception('HTTP ${response.statusCode}'),
+        );
         return {
           'success': false,
-          'error': 'Erreur création rappel: ${response.statusCode}',
+          'error': errorMsg,
+          'status_code': response.statusCode,
         };
       }
     } catch (e) {
+      ErrorHelper.logError(e, context: 'createReminder');
       return {
         'success': false,
-        'error': 'Erreur: $e',
+        'error': ErrorHelper.getUserFriendlyMessage(e),
+        'technical_error': e.toString(),
       };
     }
   }
@@ -146,7 +171,7 @@ class ApiService {
         }
       },
     ).catchError((e) {
-      debugPrint('Erreur récupération rappels après retry: $e');
+      ErrorHelper.logError(e, context: 'getReminders');
       return <Map<String, dynamic>>[];
     });
   }
@@ -176,15 +201,21 @@ class ApiService {
       if (response.statusCode == 200) {
         return json.decode(response.body);
       } else {
+        final errorMsg = ErrorHelper.getUserFriendlyMessage(
+          Exception('HTTP ${response.statusCode}'),
+        );
         return {
           'success': false,
-          'error': 'Erreur création contact: ${response.statusCode}',
+          'error': errorMsg,
+          'status_code': response.statusCode,
         };
       }
     } catch (e) {
+      ErrorHelper.logError(e, context: 'createEmergencyContact');
       return {
         'success': false,
-        'error': 'Erreur: $e',
+        'error': ErrorHelper.getUserFriendlyMessage(e),
+        'technical_error': e.toString(),
       };
     }
   }
@@ -209,7 +240,7 @@ class ApiService {
         }
       },
     ).catchError((e) {
-      debugPrint('Erreur récupération contacts après retry: $e');
+      ErrorHelper.logError(e, context: 'getEmergencyContacts');
       return <Map<String, dynamic>>[];
     });
   }
@@ -239,15 +270,21 @@ class ApiService {
       if (response.statusCode == 200) {
         return json.decode(response.body);
       } else {
+        final errorMsg = ErrorHelper.getUserFriendlyMessage(
+          Exception('HTTP ${response.statusCode}'),
+        );
         return {
           'success': false,
-          'error': 'Erreur création portail: ${response.statusCode}',
+          'error': errorMsg,
+          'status_code': response.statusCode,
         };
       }
     } catch (e) {
+      ErrorHelper.logError(e, context: 'createHealthPortal');
       return {
         'success': false,
-        'error': 'Erreur: $e',
+        'error': ErrorHelper.getUserFriendlyMessage(e),
+        'technical_error': e.toString(),
       };
     }
   }
@@ -272,7 +309,7 @@ class ApiService {
         }
       },
     ).catchError((e) {
-      debugPrint('Erreur récupération portails après retry: $e');
+      ErrorHelper.logError(e, context: 'getHealthPortals');
       return <Map<String, dynamic>>[];
     });
   }

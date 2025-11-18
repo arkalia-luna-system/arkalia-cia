@@ -903,7 +903,7 @@ class SecurityDashboard:
         </div>
         <div class="metric-row">
             <span class="metric-label">📊 Ratio Vuln/Fichier</span>
-            <span class="metric-value">{(total_vulns / total_files * 1000):.1f}‰</span>
+            <span class="metric-value">{(total_vulns / max(total_files, 1) * 1000):.1f}‰</span>
         </div>
         """
 

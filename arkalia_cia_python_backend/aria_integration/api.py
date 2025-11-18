@@ -101,7 +101,9 @@ async def quick_pain_entry(entry: QuickEntry) -> PainEntryOut:
             detail="ARIA non disponible. Vérifiez que le service ARIA est démarré.",
         )
 
-    response = _make_aria_request("POST", "/api/pain/quick-entry", json=entry.dict())
+    response = _make_aria_request(
+        "POST", "/api/pain/quick-entry", json=entry.model_dump()
+    )
 
     if response.status_code == 200:
         return PainEntryOut(**response.json())
@@ -117,7 +119,7 @@ async def create_pain_entry(entry: PainEntryIn) -> PainEntryOut:
     if not _check_aria_connection():
         raise HTTPException(status_code=503, detail="ARIA non disponible")
 
-    response = _make_aria_request("POST", "/api/pain/entry", json=entry.dict())
+    response = _make_aria_request("POST", "/api/pain/entry", json=entry.model_dump())
 
     if response.status_code == 200:
         return PainEntryOut(**response.json())

@@ -258,3 +258,37 @@ class TestStorageFunctions:
 
         if Path(temp_dir).exists():
             shutil.rmtree(temp_dir)
+
+    def test_json_backend_error_handling(self):
+        """Test de gestion d'erreurs JSON backend"""
+        temp_dir = tempfile.mkdtemp()
+        backend = JSONFileBackend(base_path=temp_dir)
+        # Test avec une clé inexistante - devrait retourner la valeur par défaut
+        result = backend.get("nonexistent_key", default="default")
+        assert result == "default"
+        import shutil
+
+        if Path(temp_dir).exists():
+            shutil.rmtree(temp_dir)
+
+    def test_sqlite_backend_error_handling(self):
+        """Test de gestion d'erreurs SQLite backend"""
+        temp_db = tempfile.mktemp(suffix=".db")
+        backend = SQLiteBackend(db_path=temp_db)
+        # Test avec une clé inexistante
+        result = backend.get("nonexistent_key", default="default")
+        assert result == "default"
+        if Path(temp_db).exists():
+            Path(temp_db).unlink()
+
+    def test_storage_manager_error_handling(self):
+        """Test de gestion d'erreurs StorageManager"""
+        temp_dir = tempfile.mkdtemp()
+        manager = StorageManager(backend="json", base_path=temp_dir)
+        # Test avec des données invalides
+        result = manager.get_state("nonexistent_module", default={})
+        assert result == {}
+        import shutil
+
+        if Path(temp_dir).exists():
+            shutil.rmtree(temp_dir)

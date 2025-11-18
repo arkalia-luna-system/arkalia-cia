@@ -230,3 +230,57 @@ def undocumented_function():
         assert "summary" in result
         assert "coverage" in result
         assert "files_generated" in result
+
+    def test_generate_function_documentation(self):
+        """Test de génération de documentation de fonction"""
+        function_info = {
+            "name": "test_function",
+            "docstring": "Test function",
+            "parameters": ["param1", "param2"],
+            "return_type": "str",
+        }
+        doc = self.documenter.generate_function_documentation(function_info)
+        assert "test_function" in doc
+        assert "param1" in doc
+
+    def test_generate_class_documentation(self):
+        """Test de génération de documentation de classe"""
+        class_info = {
+            "name": "TestClass",
+            "docstring": "Test class",
+            "methods": [
+                {"name": "method1", "docstring": "Method 1"},
+                {"name": "method2", "docstring": "Method 2"},
+            ],
+        }
+        doc = self.documenter.generate_class_documentation(class_info)
+        assert "TestClass" in doc
+        assert "method1" in doc
+
+    def test_save_and_load_documentation_history(self):
+        """Test de sauvegarde et chargement de l'historique"""
+        history_path = Path(self.temp_dir) / "history.json"
+        result = self.documenter.save_documentation_history(str(history_path))
+        assert result is True
+        assert history_path.exists()
+
+        history = self.documenter.load_documentation_history(str(history_path))
+        assert isinstance(history, list)
+
+    def test_document_project(self):
+        """Test de documentation d'un projet complet"""
+        result = self.documenter.document_project(self.temp_dir)
+        assert "readme" in result
+        assert "api_docs" in result
+        assert "setup_guide" in result
+
+    def test_load_translations(self):
+        """Test de chargement des traductions"""
+        translations_fr = self.documenter._load_translations("fr")
+        assert "readme_title" in translations_fr
+
+        translations_en = self.documenter._load_translations("en")
+        assert "readme_title" in translations_en
+
+        translations_default = self.documenter._load_translations("unknown")
+        assert "readme_title" in translations_default
