@@ -190,10 +190,18 @@ class TestSecurityDashboard:
             "arkalia_cia_python_backend.security_dashboard.ATHALIA_AVAILABLE", True
         ):
             dashboard = SecurityDashboard(project_path=self.temp_dir)
-            # Vider les composants pour éviter les scans complets
-            dashboard.athalia_components = {}
+            # Les composants doivent être initialisés pour que athalia_available soit True
+            # Le code vérifie si athalia_components est vide (ligne 167)
+            # Si vide, il met athalia_available à False même si ATHALIA_AVAILABLE est True
+            # Donc on doit s'assurer que les composants ne sont pas vides
+            if not dashboard.athalia_components:
+                # Simuler des composants non-vides (dict avec au moins une clé)
+                dashboard.athalia_components = {
+                    "cache_manager": None,  # None est OK, l'important c'est que le dict ne soit pas vide
+                }
             security_data = dashboard.collect_security_data()
             assert "athalia_available" in security_data
+            # athalia_available est True si ATHALIA_AVAILABLE est True ET que les composants sont initialisés (non vide)
             assert security_data["athalia_available"] is True
             # Nettoyer immédiatement
             dashboard.athalia_components.clear()
