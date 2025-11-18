@@ -83,15 +83,19 @@ class _HealthScreenState extends State<HealthScreen> {
 
     try {
       final ports = await ApiService.getHealthPortals();
-      setState(() {
-        portals = ports;
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          portals = ports;
+          isLoading = false;
+        });
+      }
     } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      _showError('Erreur lors du chargement des portails: $e');
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+        _showError('Erreur lors du chargement des portails: $e');
+      }
     }
   }
 
