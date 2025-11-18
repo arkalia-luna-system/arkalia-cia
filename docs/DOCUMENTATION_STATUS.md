@@ -59,9 +59,17 @@
 
 | Métrique | Valeur | Statut |
 |----------|--------|--------|
-| **Tests Python** | 61 tests | ✅ Passant |
+| **Tests Python** | 189 tests | ✅ Tous passants (100%) |
 | **Tests Flutter** | 2 fichiers | ✅ Présents |
-| **Couverture Python** | 66% | ✅ Bonne |
+| **Couverture Python globale** | 81% | ✅ Excellente |
+| **Couverture par fichier** | | |
+| - `database.py` | 100% | ✅ Parfait |
+| - `api.py` | 83% | ✅ Très bonne |
+| - `aria_integration/api.py` | 81% | ✅ Très bonne |
+| - `pdf_processor.py` | 89% | ✅ Très bonne |
+| - `storage.py` | 80% | ✅ Bonne |
+| - `auto_documenter.py` | 67% | ✅ Acceptable |
+| - `security_dashboard.py` | 66% | ✅ Acceptable |
 | **Analyse Flutter** | 0 erreurs | ✅ Parfait |
 | **Services documentés** | 100% | ✅ Complet |
 | **APIs documentées** | 100% | ✅ Complet |

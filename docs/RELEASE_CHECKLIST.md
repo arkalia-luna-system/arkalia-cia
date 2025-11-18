@@ -13,8 +13,16 @@
 - ✅ **Ruff**: 0 erreur
 - ✅ **MyPy**: 0 erreur
 - ✅ **Bandit**: 0 vulnérabilité
-- ✅ **Tests Python**: 61/61 passants (100%)
-- ✅ **Couverture**: 10,69% globale / 66% fichiers testés (Codecov configuré et fonctionnel)
+- ✅ **Tests Python**: 189/189 passants (100%)
+- ✅ **Couverture**: 81% globale (230/1215 lignes non couvertes)
+  - `database.py`: 100% ✅
+  - `api.py`: 83% ✅
+  - `aria_integration/api.py`: 81% ✅
+  - `pdf_processor.py`: 89% ✅
+  - `storage.py`: 80% ✅
+  - `auto_documenter.py`: 67% ✅
+  - `security_dashboard.py`: 66% ✅
+- ✅ **Codecov**: Configuré et fonctionnel
 
 **Action requise**: Aucune - Tout est OK ✅
 
