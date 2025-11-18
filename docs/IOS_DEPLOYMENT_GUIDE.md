@@ -182,6 +182,8 @@ cd /Volumes/T7/arkalia-cia/arkalia_cia/ios
 open Runner.xcworkspace
 ```
 
+> Note: Assurez-vous que Xcode est installé avant d'exécuter cette commande.
+
 **⚠️ IMPORTANT** : Ouvrez `Runner.xcworkspace` (pas `.xcodeproj`) !
 
 ---
