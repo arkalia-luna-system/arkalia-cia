@@ -61,8 +61,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Validation téléphone belge, URL, email, nom, date
   - Tests Python compatibles avec suite existante
 - **🧪 Amélioration Massive de la Couverture de Tests**: 
-  - Création de 189 tests Python (vs 61 précédemment)
-  - Couverture globale portée à **81%** (vs 10.69% précédemment)
+  - Création de 218 tests Python (vs 61 précédemment)
+  - Couverture globale portée à **85%** (vs 10.69% précédemment)
   - Tests complets pour tous les modules critiques :
     - `test_api.py` - Tests complets de l'API FastAPI
     - `test_storage.py` - Tests pour StorageManager et backends
@@ -72,12 +72,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Amélioration des tests existants (`test_database.py`, `test_pdf_processor.py`)
   - Couverture par fichier :
     - `database.py`: 100% ✅
+    - `auto_documenter.py`: 92% ✅
+    - `pdf_processor.py`: 89% ✅
     - `api.py`: 83% ✅
     - `aria_integration/api.py`: 81% ✅
-    - `pdf_processor.py`: 89% ✅
     - `storage.py`: 80% ✅
-    - `auto_documenter.py`: 67% ✅
-    - `security_dashboard.py`: 66% ✅
+    - `security_dashboard.py`: 76% ✅
 - **🔄 Phase 3 - Fonctionnalités Complètes**: Implémentation complète de toutes les fonctionnalités Phase 3
   - **Widgets Home Screen**: Widgets informatifs avec statistiques (nombre documents/rappels) dans l'écran d'accueil
   - **Rappels récurrents**: Support des rappels quotidiens, hebdomadaires et mensuels avec création automatique d'événements dans le calendrier
@@ -113,8 +113,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Export**: Export amélioré avec sélection de modules et métadonnées (date, version)
 - **API Service**: Toutes les méthodes GET utilisent maintenant retry automatique et cache offline
 - **Tests et Couverture**: Amélioration massive de la qualité du code
-  - Couverture globale: 10.69% → **81%** (+70 points)
-  - Nombre de tests: 61 → **189** (+128 tests)
+  - Couverture globale: 10.69% → **85%** (+74 points)
+  - Nombre de tests: 61 → **218** (+157 tests)
   - Tous les tests passent: 100% ✅
   - Formatage: Black + Ruff parfait
 - **Sécurité**: Passage de 30% à 100% avec authentification biométrique active

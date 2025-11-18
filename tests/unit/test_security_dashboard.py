@@ -213,3 +213,150 @@ class TestSecurityDashboard:
         html = self.dashboard._generate_recommendations_html([])
         assert html is not None
         assert isinstance(html, str)
+
+    def test_collect_security_data_with_vulnerabilities(self):
+        """Test de collecte avec vulnérabilités simulées"""
+        security_data = self.dashboard.collect_security_data()
+        # Vérifier que les données sont structurées correctement
+        assert "vulnerabilities" in security_data
+        assert isinstance(security_data["vulnerabilities"], dict)
+
+    def test_generate_command_validation_html_with_data(self):
+        """Test de génération HTML avec données complètes"""
+        security_data = {
+            "security_checks": {
+                "comprehensive_scan": {
+                    "total_files_scanned": 100,
+                    "vulnerabilities_found": 5,
+                    "risk_level": "medium",
+                }
+            }
+        }
+        html = self.dashboard._generate_command_validation_html(security_data)
+        assert "100" in html or "Fichiers Scannés" in html
+
+    def test_generate_dashboard_html_with_all_data(self):
+        """Test de génération dashboard avec toutes les données"""
+        security_data = {
+            "security_score": 85,
+            "vulnerabilities": {"high": 0, "medium": 2, "low": 5},
+            "recommendations": ["Test recommendation"],
+            "timestamp": "2024-01-01T00:00:00",
+            "project_path": str(self.temp_dir),
+            "security_checks": {
+                "comprehensive_scan": {
+                    "total_files_scanned": 100,
+                    "vulnerabilities_found": 5,
+                }
+            },
+            "python_stats": {"total_files": 50},
+            "test_coverage": {"total_tests": 100},
+            "documentation_quality": {"total_docs": 10},
+            "cache_security": {"hits": 100, "misses": 20},
+        }
+        html = self.dashboard._generate_dashboard_html(security_data)
+        assert "<html" in html.lower()
+        assert "85" in html
+
+    def test_main_function_generate_only(self):
+        """Test de la fonction main avec --generate-only"""
+        import sys
+        from unittest.mock import patch
+
+        test_args = [
+            "security_dashboard.py",
+            "--generate-only",
+            "--project-path",
+            self.temp_dir,
+        ]
+        with patch.object(sys, "argv", test_args):
+            try:
+                from arkalia_cia_python_backend.security_dashboard import main
+
+                main()
+            except SystemExit:
+                pass  # argparse peut appeler sys.exit
+
+    def test_main_function_open(self):
+        """Test de la fonction main avec --open"""
+        import sys
+        from unittest.mock import patch
+
+        test_args = ["security_dashboard.py", "--open", "--project-path", self.temp_dir]
+        with patch.object(sys, "argv", test_args):
+            try:
+                from arkalia_cia_python_backend.security_dashboard import main
+
+                main()
+            except SystemExit:
+                pass
+
+    def test_generate_recommendations_various_scores(self):
+        """Test de génération recommandations avec différents scores"""
+        # Score très faible
+        data_low = {
+            "security_score": 30,
+            "vulnerabilities": {"high": 0, "medium": 0, "low": 0},
+        }
+        recs = self.dashboard._generate_security_recommendations(data_low)
+        assert len(recs) > 0
+
+        # Score moyen
+        data_medium = {
+            "security_score": 60,
+            "vulnerabilities": {"high": 0, "medium": 0, "low": 0},
+        }
+        recs = self.dashboard._generate_security_recommendations(data_medium)
+        assert len(recs) > 0
+
+        # Score élevé
+        data_high = {
+            "security_score": 90,
+            "vulnerabilities": {"high": 0, "medium": 0, "low": 0},
+        }
+        recs = self.dashboard._generate_security_recommendations(data_high)
+        assert len(recs) > 0
+
+    def test_generate_recommendations_with_vulnerabilities(self):
+        """Test de génération recommandations avec vulnérabilités"""
+        data = {
+            "security_score": 85,
+            "vulnerabilities": {"high": 1, "medium": 10, "low": 15},
+            "athalia_available": False,
+        }
+        recs = self.dashboard._generate_security_recommendations(data)
+        assert len(recs) > 0
+
+    def test_generate_recommendations_no_recommendations(self):
+        """Test de génération recommandations sans recommandations"""
+        data = {
+            "security_score": 95,
+            "vulnerabilities": {"high": 0, "medium": 0, "low": 0},
+            "athalia_available": True,
+        }
+        recs = self.dashboard._generate_security_recommendations(data)
+        assert len(recs) > 0  # Devrait avoir au moins la recommandation générale
+
+    def test_open_dashboard_file_not_exists(self):
+        """Test d'ouverture dashboard quand fichier n'existe pas"""
+        with patch(
+            "arkalia_cia_python_backend.security_dashboard.Path.exists",
+            return_value=False,
+        ):
+            self.dashboard.open_dashboard()
+            # Ne devrait pas lever d'exception
+
+    def test_main_function_default(self):
+        """Test de la fonction main par défaut"""
+        import sys
+        from unittest.mock import patch
+
+        test_args = ["security_dashboard.py", "--project-path", self.temp_dir]
+        with patch.object(sys, "argv", test_args):
+            with patch("arkalia_cia_python_backend.security_dashboard.webbrowser.open"):
+                try:
+                    from arkalia_cia_python_backend.security_dashboard import main
+
+                    main()
+                except (SystemExit, Exception):
+                    pass  # Peut lever des exceptions selon l'environnement

@@ -1,5 +1,4 @@
 import '../services/local_storage_service.dart';
-import '../services/calendar_service.dart';
 
 /// Service de recherche globale dans l'application
 class SearchService {

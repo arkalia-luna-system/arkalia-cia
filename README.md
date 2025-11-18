@@ -8,7 +8,7 @@
 [![Python](https://img.shields.io/badge/Python-3.10.14-green.svg?logo=python)](https://python.org)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI/CD](https://img.shields.io/badge/CI%2FCD-Passing-brightgreen.svg)](https://github.com/arkalia-luna-system/arkalia-cia/actions)
-[![Coverage](https://img.shields.io/badge/Coverage-81%25-green.svg)](https://codecov.io/gh/arkalia-luna-system/arkalia-cia)
+[![Coverage](https://img.shields.io/badge/Coverage-85%25-green.svg)](https://codecov.io/gh/arkalia-luna-system/arkalia-cia)
 [![CodeQL](https://img.shields.io/badge/CodeQL-Python%20Only-brightgreen.svg?logo=github)](https://github.com/arkalia-luna-system/arkalia-cia/security/code-scanning)
 [![Phase](https://img.shields.io/badge/Phase-2%20Enhanced%20Features-orange.svg)](https://github.com/arkalia-luna-system/arkalia-cia/tree/develop)
 [![Good First Issue](https://img.shields.io/badge/Good%20First-Issue-green.svg)](https://github.com/arkalia-luna-system/arkalia-cia/labels/good%20first%20issue)
@@ -29,7 +29,7 @@
 | **⚡ Startup Time** | <2.1s | Lightning-fast app launch |
 | **🔒 Security Level** | AES-256 | Military-grade encryption |
 | **📱 Offline Mode** | 100% | Works without internet |
-| **🧪 Test Coverage** | 81% globale | 189 tests passing (100%) |
+| **🧪 Test Coverage** | 85% globale | 218 tests passing (100%) |
 | **🌍 Platforms** | iOS + Android | Universal compatibility |
 | **👥 Target Users** | Seniors + Families | Accessible design |
 | **📊 CI/CD Success** | 100% | All workflows green |
@@ -70,7 +70,7 @@ graph TB
 |-----------|------------|---------|--------|---------|
 | **Frontend** | Flutter | 3.35.3 | ✅ Production | 100% Tests Pass |
 | **Language** | Dart | 3.0+ | ✅ Production | 0 Linting Issues |
-| **Backend** | FastAPI | 0.116.1 | ✅ Production | 81% globale (189 tests) |
+| **Backend** | FastAPI | 0.116.1 | ✅ Production | 85% globale (218 tests) |
 | **Runtime** | Python | 3.10.14 | ✅ Production | Black+Ruff Clean |
 | **Database** | SQLite | Built-in | ✅ Production | Encrypted AES-256 |
 | **Storage** | Local encryption | AES-256 | ✅ Production | Security Verified |
@@ -271,7 +271,7 @@ make deps-update        # Update dependencies
 - [x] Navigation system
 - [x] Local storage integration
 - [x] Secure data services
-- [x] Comprehensive test suite (189 tests, 81% coverage)
+- [x] Comprehensive test suite (218 tests, 85% coverage)
 - [x] CI/CD pipeline (100% passing)
 - [x] Code quality standards (Black + Ruff)
 
@@ -431,7 +431,7 @@ Based on senior user feedback, we implemented:
 # Run test suite
 pytest tests/ -v --cov=arkalia_cia_python_backend
 
-# Coverage: 81% (189 tests passing)
+# Coverage: 85% (218 tests passing)
 # Integration tests: Multiple scenarios
 # Unit tests: Comprehensive coverage for all modules
 ```
@@ -443,14 +443,14 @@ Le projet utilise **Codecov** pour le suivi automatique de la couverture :
 - **Flutter Mobile**: Suivi via flag `flutter` dans `.github/workflows/flutter-ci.yml`
 - **Dashboard**: [codecov.io/gh/arkalia-luna-system/arkalia-cia](https://codecov.io/gh/arkalia-luna-system/arkalia-cia)
 - **Configuration**: Voir `.codecov.yml` pour les détails de configuration
-- **Couverture actuelle**: 81% globale (230/1215 lignes non couvertes)
+- **Couverture actuelle**: 85% globale (180/1215 lignes non couvertes)
   - `database.py`: 100% ✅
+  - `auto_documenter.py`: 92% ✅
+  - `pdf_processor.py`: 89% ✅
   - `api.py`: 83% ✅
   - `aria_integration/api.py`: 81% ✅
-  - `pdf_processor.py`: 89% ✅
   - `storage.py`: 80% ✅
-  - `auto_documenter.py`: 67% ✅
-  - `security_dashboard.py`: 66% ✅
+  - `security_dashboard.py`: 76% ✅
 - **Status**: ✅ Configuré et fonctionnel - Upload automatique via CI/CD
 
 ## 🌐 **Arkalia Luna Ecosystem**

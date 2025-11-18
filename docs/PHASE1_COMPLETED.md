@@ -33,7 +33,7 @@ The application is now fully operational in local-first mode, providing a solid 
 
 | Metric | Target | Achieved | Status |
 |--------|--------|----------|--------|
-| **Code Coverage** | 60% | 10,69% global / 66% fichiers testés | ✅ Codecov configuré et fonctionnel |
+| **Code Coverage** | 60% | 85% globale | ✅ Codecov configuré et fonctionnel |
 | **Flutter Analysis** | 0 issues | 0 issues | ✅ Perfect |
 | **Python Linting** | 0 errors | 0 errors | ✅ Perfect |
 | **Security Scan** | 0 vulnerabilities | 0 vulnerabilities | ✅ Secure |
@@ -54,7 +54,7 @@ The application is now fully operational in local-first mode, providing a solid 
 - **Security**: Input validation and SQL injection protection
 
 ### Development Tools
-- **Testing**: Unit and integration tests (61 tests)
+- **Testing**: Unit and integration tests (218 tests)
 - **Linting**: Ruff for Python, Dart analyzer for Flutter
 - **Formatting**: Black for Python, Dart format for Flutter
 - **Security**: Bandit, Safety, and automated vulnerability scanning
@@ -78,7 +78,7 @@ The application is now fully operational in local-first mode, providing a solid 
 ### Automated Testing
 ```bash
 ✅ Flutter Tests: All widget and unit tests passing
-✅ Python Tests: 61 tests, 10,69% couverture globale / 66% fichiers testés (suivi via Codecov)
+✅ Python Tests: 218 tests, 85% couverture globale (suivi via Codecov)
 ✅ Integration Tests: API and service integration verified
 ✅ Security Tests: No vulnerabilities detected
 ```

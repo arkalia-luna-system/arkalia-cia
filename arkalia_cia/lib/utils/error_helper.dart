@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
 
 /// Helper pour la gestion centralisée des erreurs réseau
 class ErrorHelper {

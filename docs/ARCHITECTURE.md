@@ -352,7 +352,7 @@ graph TB
 
 | Test Type | Coverage Target | Current Status | Codecov Flag |
 |-----------|----------------|----------------|--------------|
-| Unit Tests | 80% | 66% | `python` |
+| Unit Tests | 80% | 85% | `python` |
 | Integration | 70% | 85% | `python` |
 | Widget Tests | 60% | 45% | `flutter` |
 | E2E Tests | 50% | 30% | `flutter` |

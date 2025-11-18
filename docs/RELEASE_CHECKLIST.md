@@ -13,15 +13,15 @@
 - ✅ **Ruff**: 0 erreur
 - ✅ **MyPy**: 0 erreur
 - ✅ **Bandit**: 0 vulnérabilité
-- ✅ **Tests Python**: 189/189 passants (100%)
-- ✅ **Couverture**: 81% globale (230/1215 lignes non couvertes)
+- ✅ **Tests Python**: 218/218 passants (100%)
+- ✅ **Couverture**: 85% globale (180/1215 lignes non couvertes)
   - `database.py`: 100% ✅
+  - `auto_documenter.py`: 92% ✅
+  - `pdf_processor.py`: 89% ✅
   - `api.py`: 83% ✅
   - `aria_integration/api.py`: 81% ✅
-  - `pdf_processor.py`: 89% ✅
+  - `security_dashboard.py`: 76% ✅
   - `storage.py`: 80% ✅
-  - `auto_documenter.py`: 67% ✅
-  - `security_dashboard.py`: 66% ✅
 - ✅ **Codecov**: Configuré et fonctionnel
 
 **Action requise**: Aucune - Tout est OK ✅

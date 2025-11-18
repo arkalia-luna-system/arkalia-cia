@@ -5,6 +5,9 @@ Interface moderne pour visualiser les rapports de sécurité en temps réel
 """
 
 import logging
+import platform
+import subprocess
+import urllib.parse
 import webbrowser
 from datetime import datetime
 from pathlib import Path
@@ -1039,27 +1042,79 @@ class SecurityDashboard:
 
         return html
 
-    def open_dashboard(self):
+    def open_dashboard(self, dashboard_file: str | None = None):
         """Ouvre le dashboard de sécurité dans le navigateur"""
         try:
-            dashboard_file = self.generate_security_dashboard()
-            if dashboard_file and Path(dashboard_file).exists():
-                webbrowser.open(f"file://{Path(dashboard_file).absolute()}")
-                logger.info("🌐 Dashboard de sécurité ouvert dans le navigateur")
+            # Générer le dashboard si non fourni
+            if dashboard_file is None:
+                dashboard_file = self.generate_security_dashboard()
+
+            dashboard_path = Path(dashboard_file)
+            if not dashboard_path.exists():
+                logger.error(f"❌ Le fichier dashboard n'existe pas: {dashboard_path}")
+                return
+
+            # Obtenir le chemin absolu
+            absolute_path = dashboard_path.resolve()
+
+            # Sur macOS, utiliser la méthode native pour ouvrir le fichier
+            # Cela évite les problèmes d'encodage d'URL
+            system = platform.system()
+
+            if system == "Darwin":  # macOS
+                # Utiliser 'open' qui gère automatiquement les chemins avec espaces
+                subprocess.run(["open", str(absolute_path)], check=False)
+                logger.info(
+                    f"🌐 Dashboard de sécurité ouvert dans le navigateur: {absolute_path}"
+                )
+            elif system == "Windows":
+                # Windows utilise start (sans shell=True pour sécurité)
+                subprocess.run(
+                    ["cmd", "/c", "start", "", str(absolute_path)],
+                    check=False,
+                )
+                logger.info(
+                    f"🌐 Dashboard de sécurité ouvert dans le navigateur: {absolute_path}"
+                )
             else:
-                logger.error("❌ Impossible de générer le dashboard de sécurité")
+                # Linux et autres: utiliser webbrowser avec URL correctement formatée
+                path_str = str(absolute_path)
+                # Encoder correctement pour file:// URL
+                encoded_path = urllib.parse.quote(path_str, safe="/")
+                file_url = f"file://{encoded_path}"
+                webbrowser.open(file_url)
+                logger.info(
+                    f"🌐 Dashboard de sécurité ouvert dans le navigateur: {file_url}"
+                )
         except Exception as e:
             logger.error(f"Erreur lors de l'ouverture du dashboard: {e}")
+            # Fallback: essayer avec webbrowser.open directement
+            try:
+                dashboard_path = (
+                    Path(dashboard_file)
+                    if dashboard_file
+                    else Path(self.dashboard_dir / "security_dashboard.html")
+                )
+                if dashboard_path.exists():
+                    absolute_path = dashboard_path.resolve()
+                    file_url = (
+                        f"file://{urllib.parse.quote(str(absolute_path), safe='/')}"
+                    )
+                    webbrowser.open(file_url)
+                    logger.info(f"🌐 Ouverture via fallback: {file_url}")
+            except Exception as fallback_error:
+                logger.error(f"Erreur lors de l'ouverture fallback: {fallback_error}")
 
 
 # Fonction principale pour exécution directe
 def main():
     """Fonction principale pour exécution directe du dashboard de sécurité"""
     import argparse
+    import os
 
     parser = argparse.ArgumentParser(description="Dashboard de sécurité Athalia")
     parser.add_argument(
-        "--project-path", default=".", help="Chemin du projet à analyser"
+        "--project-path", default=None, help="Chemin du projet à analyser"
     )
     parser.add_argument(
         "--open", action="store_true", help="Ouvrir le dashboard dans le navigateur"
@@ -1072,8 +1127,25 @@ def main():
 
     args = parser.parse_args()
 
+    # Résoudre automatiquement le chemin du projet si non spécifié
+    if args.project_path is None:
+        # Chercher le répertoire racine du projet en remontant depuis le script
+        script_dir = Path(__file__).parent.parent
+        # Vérifier si on est dans le projet (présence de pyproject.toml ou README.md)
+        project_root = script_dir
+        if (project_root / "pyproject.toml").exists() or (
+            project_root / "README.md"
+        ).exists():
+            args.project_path = str(project_root)
+        else:
+            # Sinon, utiliser le répertoire courant
+            args.project_path = os.getcwd()
+
+    # Convertir en Path absolu pour éviter les problèmes de chemins relatifs
+    project_path = Path(args.project_path).resolve()
+
     # Initialisation du dashboard
-    security_dashboard = SecurityDashboard(args.project_path)
+    security_dashboard = SecurityDashboard(str(project_path))
 
     if args.generate_only:
         dashboard_file = security_dashboard.generate_security_dashboard()
@@ -1087,7 +1159,8 @@ def main():
         print(f"📊 Dashboard généré: {dashboard_file}")
 
         print("🌐 Ouverture dans le navigateur...")
-        security_dashboard.open_dashboard()
+        # Passer le fichier déjà généré pour éviter de le régénérer
+        security_dashboard.open_dashboard(dashboard_file)
 
 
 if __name__ == "__main__":

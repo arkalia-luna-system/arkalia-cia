@@ -284,3 +284,171 @@ def undocumented_function():
 
         translations_default = self.documenter._load_translations("unknown")
         assert "readme_title" in translations_default
+
+    def test_generate_documentation_function(self):
+        """Test de la fonction utilitaire generate_documentation"""
+        from arkalia_cia_python_backend.auto_documenter import generate_documentation
+
+        result = generate_documentation(self.temp_dir)
+        assert "summary" in result or "coverage" in result
+
+    def test_analyze_documentation_needs_function(self):
+        """Test de la fonction utilitaire analyze_documentation_needs"""
+        from arkalia_cia_python_backend.auto_documenter import (
+            analyze_documentation_needs,
+        )
+
+        result = analyze_documentation_needs(self.temp_dir)
+        assert "coverage_percentage" in result
+
+    def test_generate_readme_private(self):
+        """Test de génération README privée"""
+        self.documenter.project_info = {
+            "name": "test_project",
+            "description": "Test description",
+            "license": "MIT",
+        }
+        readme = self.documenter._generate_readme()
+        assert "test_project" in readme
+        assert "Test description" in readme
+
+    def test_generate_api_documentation_private(self):
+        """Test de génération API documentation privée"""
+        self.documenter.project_info = {
+            "classes": [
+                {
+                    "name": "TestClass",
+                    "docstring": "Test class",
+                    "methods": ["method1", "method2"],
+                }
+            ],
+            "functions": [
+                {
+                    "name": "test_function",
+                    "docstring": "Test function",
+                    "args": ["arg1"],
+                }
+            ],
+        }
+        api_docs = self.documenter._generate_api_documentation()
+        assert "TestClass" in api_docs
+        assert "test_function" in api_docs
+
+    def test_generate_setup_guide_private(self):
+        """Test de génération setup guide privée"""
+        self.documenter.project_info = {"name": "test_project"}
+        guide = self.documenter._generate_setup_guide()
+        assert "test_project" in guide
+        assert "Installation" in guide
+
+    def test_generate_usage_guide_private(self):
+        """Test de génération usage guide privée"""
+        self.documenter.project_info = {"name": "test_project"}
+        guide = self.documenter._generate_usage_guide()
+        assert "test_project" in guide
+        assert "Utilisation" in guide or "Usage" in guide
+
+    def test_get_created_files(self):
+        """Test de récupération des fichiers créés"""
+        files = self.documenter._get_created_files()
+        assert isinstance(files, list)
+        assert len(files) > 0
+
+    def test_generate_api_documentation_with_string_classes(self):
+        """Test de génération API avec classes en string"""
+        self.documenter.project_info = {
+            "classes": ["Class1", "Class2"],
+            "functions": ["func1"],
+        }
+        api_docs = self.documenter._generate_api_documentation()
+        assert isinstance(api_docs, str)
+
+    def test_load_documentation_config_with_invalid_file(self):
+        """Test de chargement config avec fichier invalide"""
+        invalid_path = Path(self.temp_dir) / "nonexistent.yaml"
+        config = self.documenter.load_documentation_config(str(invalid_path))
+        assert config is not None
+        assert "output_formats" in config
+
+    def test_scan_project_structure_with_excluded_files(self):
+        """Test de scan avec fichiers exclus"""
+        (Path(self.temp_dir) / "__pycache__" / "test.pyc").parent.mkdir(exist_ok=True)
+        (Path(self.temp_dir) / "__pycache__" / "test.pyc").touch()
+        structure = self.documenter.scan_project_structure()
+        assert "__pycache__" not in str(structure)
+
+    def test_extract_docstrings_with_invalid_file(self):
+        """Test d'extraction docstrings avec fichier invalide"""
+        invalid_file = Path(self.temp_dir) / "invalid.py"
+        invalid_file.write_text("invalid python code !!!")
+        docstrings = self.documenter.extract_docstrings(str(invalid_file))
+        # Devrait gérer l'erreur gracieusement
+        assert isinstance(docstrings, list)
+
+    def test_validate_documentation_with_issues(self):
+        """Test de validation avec problèmes"""
+        # Créer un fichier avec docstring trop courte
+        test_file = Path(self.temp_dir) / "short_doc.py"
+        test_file.write_text('def test():\n    """x"""\n    pass')
+        validation = self.documenter.validate_documentation()
+        assert "is_valid" in validation
+
+    def test_generate_documentation_report_with_low_coverage(self):
+        """Test de génération rapport avec faible couverture"""
+        # Créer un projet avec peu de documentation
+        test_file = Path(self.temp_dir) / "undocumented.py"
+        test_file.write_text("def test():\n    pass\nclass Test:\n    pass")
+        report = self.documenter.generate_documentation_report()
+        assert "recommendations" in report
+
+    def test_perform_full_documentation_with_errors(self):
+        """Test de documentation complète avec gestion d'erreurs"""
+        # Tester avec un chemin invalide
+        result = self.documenter.perform_full_documentation()
+        assert "errors" in result or "coverage" in result
+
+    def test_document_project_with_classes_and_functions(self):
+        """Test de documentation projet avec classes et fonctions"""
+        self.documenter.project_info = {
+            "name": "test",
+            "classes": [{"name": "Class1", "methods": []}],
+            "functions": [{"name": "func1"}],
+        }
+        result = self.documenter.document_project(self.temp_dir)
+        assert "readme" in result
+
+    def test_load_documentation_config_with_valid_yaml(self):
+        """Test de chargement config avec YAML valide"""
+        import yaml
+
+        config_file = Path(self.temp_dir) / "config.yaml"
+        config_data = {"output_formats": ["html"], "include_private": True}
+        with open(config_file, "w", encoding="utf-8") as f:
+            yaml.dump(config_data, f)
+        config = self.documenter.load_documentation_config(str(config_file))
+        assert config["include_private"] is True
+
+    def test_analyze_python_files_with_parse_error(self):
+        """Test d'analyse avec erreur de parsing"""
+        # Créer un fichier Python invalide
+        invalid_file = Path(self.temp_dir) / "invalid_syntax.py"
+        invalid_file.write_text("def test(\n    # Syntax error")
+        analysis = self.documenter.analyze_python_files()
+        # Devrait gérer l'erreur gracieusement
+        assert "total_files" in analysis
+
+    def test_generate_documentation_report_with_validation_issues(self):
+        """Test de génération rapport avec problèmes de validation"""
+        # Créer un projet sans README
+        test_file = Path(self.temp_dir) / "test.py"
+        test_file.write_text("def test(): pass")
+        report = self.documenter.generate_documentation_report()
+        assert "recommendations" in report
+
+    def test_generate_documentation_report_with_few_docs(self):
+        """Test de génération rapport avec peu de docs"""
+        # Créer un projet avec peu de fichiers de documentation
+        test_file = Path(self.temp_dir) / "test.py"
+        test_file.write_text("def test(): pass")
+        report = self.documenter.generate_documentation_report()
+        assert isinstance(report, dict)

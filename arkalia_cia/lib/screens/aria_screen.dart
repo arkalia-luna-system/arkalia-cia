@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../services/aria_service.dart';
 
 class ARIAScreen extends StatefulWidget {
@@ -318,10 +317,20 @@ class _ARIAScreenState extends State<ARIAScreen> {
 
   Future<void> _launchARIA(String page) async {
     if (!_isARIAConnected) {
-      _showError('ARIA n\'est pas connecté. Vérifiez la configuration du serveur.');
+      _showError('ARIA n\'est pas connecté. Vérifiez que le serveur ARIA est démarré.');
       return;
     }
 
+    // Sur mobile, l'accès ARIA via navigateur n'est pas disponible
+    // Afficher un message clair à l'utilisateur
+    _showError(
+      'L\'accès ARIA via navigateur n\'est pas disponible sur mobile.\n\n'
+      'Utilisez l\'application ARIA dédiée ou accédez-y depuis votre ordinateur.',
+    );
+    
+    // Ne pas essayer d'ouvrir localhost sur mobile
+    // (commenté pour référence future si besoin d'implémenter WebView)
+    /*
     try {
       final url = await ARIAService.getPageURL(page);
       if (url == null) {
@@ -338,6 +347,7 @@ class _ARIAScreenState extends State<ARIAScreen> {
     } catch (e) {
       _showError('Erreur: $e');
     }
+    */
   }
 
   Future<void> _showConfigDialog() async {

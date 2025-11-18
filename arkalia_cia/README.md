@@ -146,7 +146,7 @@ flutter build web --release
 - **Tests unitaires** : Services et utilitaires
 - **Tests d'intégration** : Flux complets
 - **Tests widget** : Composants UI
-- **Couverture** : 66% (objectif 85%)
+- **Couverture** : 85% (218 tests Python)
 
 ### **Qualité du Code**
 - **Analyse statique** : Dart analyzer

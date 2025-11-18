@@ -72,7 +72,8 @@ class AutoSyncService {
   static Future<bool> _isWifiConnected() async {
     try {
       final connectivityResult = await Connectivity().checkConnectivity();
-      return connectivityResult == ConnectivityResult.wifi;
+      // checkConnectivity() retourne une List<ConnectivityResult>
+      return connectivityResult.contains(ConnectivityResult.wifi);
     } catch (e) {
       debugPrint('Erreur vérification WiFi: $e');
       // En cas d'erreur, autoriser la synchronisation par sécurité

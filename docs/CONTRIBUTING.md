@@ -532,7 +532,15 @@ Le projet utilise **Codecov** pour le suivi automatique de la couverture de code
   - `flutter`: Couverture de l'application Flutter
 - **Upload automatique**: Les workflows CI/CD envoient automatiquement les rapports
 - **Dashboard**: [codecov.io/gh/arkalia-luna-system/arkalia-cia](https://codecov.io/gh/arkalia-luna-system/arkalia-cia)
-- **Couverture actuelle**: 10,69% globale (130/1215 lignes), 66% sur fichiers testés
+- **Couverture actuelle**: 85% globale (180/1215 lignes non couvertes)
+  - `database.py`: 100% ✅
+  - `auto_documenter.py`: 92% ✅
+  - `pdf_processor.py`: 89% ✅
+  - `api.py`: 83% ✅
+  - `aria_integration/api.py`: 81% ✅
+  - `storage.py`: 80% ✅
+  - `security_dashboard.py`: 76% ✅
+- **Tests**: 218 tests Python, tous passants (100%)
 - **Status**: ✅ Configuré et fonctionnel - Upload automatique via CI/CD
 
 Les rapports sont automatiquement uploadés lors de chaque push/PR via :
