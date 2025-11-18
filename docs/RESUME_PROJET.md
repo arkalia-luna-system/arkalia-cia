@@ -15,7 +15,7 @@ Application mobile de santé pour la gestion de documents médicaux, rappels de 
 
 | Métrique | Valeur |
 |----------|--------|
-| **Tests** | 218/218 passent |
+| **Tests** | 206/206 passent (100%) ✅ |
 | **Couverture Code** | 85% |
 | **Erreurs Critiques** | 0 |
 | **Vulnérabilités** | 0 |
