@@ -7,7 +7,7 @@ Interface moderne pour visualiser les rapports de sécurité en temps réel
 import gc
 import logging
 import platform
-import subprocess
+import subprocess  # noqa: B404
 import urllib.parse
 import webbrowser
 from datetime import datetime
@@ -1127,13 +1127,13 @@ class SecurityDashboard:
 
             if system == "Darwin":  # macOS
                 # Utiliser 'open' qui gère automatiquement les chemins avec espaces
-                subprocess.run(["open", str(absolute_path)], check=False)
+                subprocess.run(["open", str(absolute_path)], check=False)  # noqa: B607, B603
                 logger.info(
                     f"🌐 Dashboard de sécurité ouvert dans le navigateur: {absolute_path}"
                 )
             elif system == "Windows":
                 # Windows utilise start (sans shell=True pour sécurité)
-                subprocess.run(
+                subprocess.run(  # noqa: B607, B603
                     ["cmd", "/c", "start", "", str(absolute_path)],
                     check=False,
                 )

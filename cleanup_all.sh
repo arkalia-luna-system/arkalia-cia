@@ -1,83 +1,68 @@
 #!/bin/bash
 # Script de nettoyage complet pour tous les processus problématiques
+# Version optimisée et unifiée
 
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
-echo "🧹 Nettoyage complet de tous les processus problématiques..."
-echo ""
-
-# Fonction pour arrêter proprement les processus
-cleanup_processes() {
-    local pattern="$1"
-    local name="$2"
-    local max_attempts=3
-    local attempt=1
-    
-    echo "📋 Nettoyage: $name"
-    
-    while [ $attempt -le $max_attempts ]; do
+# Charger les fonctions communes
+LIB_DIR="$SCRIPT_DIR/lib"
+if [ -f "$LIB_DIR/common_functions.sh" ]; then
+    source "$LIB_DIR/common_functions.sh"
+else
+    echo "⚠️  Fichier common_functions.sh non trouvé, utilisation des fonctions intégrées"
+    # Fonction de fallback
+    cleanup_processes() {
+        local pattern="$1"
+        local name="${2:-processus}"
         local pids=$(ps aux | grep -E "$pattern" | grep -v grep | awk '{print $2}' | tr '\n' ' ')
-        
         if [ -z "$pids" ]; then
             echo "   ✅ Aucun processus $name trouvé"
             return 0
         fi
-        
-        if [ $attempt -eq 1 ]; then
-            echo "   ⚠️  Arrêt propre de $name (PIDs: $pids)..."
-            echo "$pids" | xargs kill 2>/dev/null || true
-        else
-            echo "   ⚠️  Arrêt forcé de $name..."
-            echo "$pids" | xargs kill -9 2>/dev/null || true
-        fi
-        
+        echo "   ⚠️  Arrêt de $name (PIDs: $pids)..."
+        echo "$pids" | xargs kill -9 2>/dev/null || true
         sleep 1
-        attempt=$((attempt + 1))
-    done
-    
-    # Vérification finale
-    local remaining=$(ps aux | grep -E "$pattern" | grep -v grep | wc -l | tr -d ' ')
-    if [ "$remaining" -gt 0 ]; then
-        echo "   ❌ Il reste $remaining processus $name"
-        return 1
-    else
-        echo "   ✅ Tous les processus $name arrêtés"
-        return 0
-    fi
-}
+    }
+fi
 
-# 1. Nettoyer pytest et coverage
-cleanup_processes "pytest|coverage.*pytest" "pytest/coverage"
+echo "🧹 Nettoyage complet de tous les processus problématiques..."
 echo ""
 
-# 2. Nettoyer bandit
-cleanup_processes "bandit" "bandit"
+# Nettoyer tous les processus (optimisé - un seul appel ps aux par type)
+echo "📋 Nettoyage des processus..."
+
+# 1. pytest et coverage
+cleanup_processes "pytest|coverage.*pytest" "pytest/coverage" 3 false && echo "   ✅ pytest/coverage nettoyé" || echo "   ⚠️  pytest/coverage partiellement nettoyé"
 echo ""
 
-# 3. Nettoyer watch-macos-files.sh (boucle infinie)
-cleanup_processes "watch-macos-files" "watch-macos-files"
+# 2. bandit
+cleanup_processes "bandit" "bandit" 3 false && echo "   ✅ bandit nettoyé" || echo "   ⚠️  bandit partiellement nettoyé"
 echo ""
 
-# 4. Nettoyer les serveurs FastAPI/uvicorn
-cleanup_processes "uvicorn|fastapi|api\.py" "FastAPI/uvicorn"
+# 3. watch-macos-files.sh
+cleanup_processes "watch-macos-files" "watch-macos-files" 3 false && echo "   ✅ watch-macos-files nettoyé" || echo "   ⚠️  watch-macos-files partiellement nettoyé"
 echo ""
 
-# 5. Nettoyer les processus Flutter
-cleanup_processes "flutter.*run|dart.*flutter" "Flutter"
+# 4. FastAPI/uvicorn
+cleanup_processes "uvicorn|fastapi|api\.py" "FastAPI/uvicorn" 3 false && echo "   ✅ FastAPI/uvicorn nettoyé" || echo "   ⚠️  FastAPI/uvicorn partiellement nettoyé"
 echo ""
 
-# 6. Nettoyer les daemons Gradle (optionnel - peut être gardé pour performance)
-if [ "$1" == "--include-gradle" ]; then
-    echo "📋 Nettoyage Gradle daemons (peut ralentir les prochains builds)..."
-    cleanup_processes "GradleDaemon|gradle.*daemon" "Gradle daemon"
+# 5. Flutter
+cleanup_processes "flutter.*run|dart.*flutter" "Flutter" 3 false && echo "   ✅ Flutter nettoyé" || echo "   ⚠️  Flutter partiellement nettoyé"
+echo ""
+
+# 6. Gradle daemons (optionnel)
+if [ "$1" == "--include-gradle" ] || [ "$1" == "--all" ]; then
+    echo "📋 Nettoyage Gradle daemons..."
+    cleanup_processes "GradleDaemon|gradle.*daemon" "Gradle daemon" 3 false && echo "   ✅ Gradle daemon nettoyé" || echo "   ⚠️  Gradle daemon partiellement nettoyé"
     echo ""
 fi
 
-# 7. Nettoyer les processus Kotlin compiler daemon
-cleanup_processes "KotlinCompileDaemon|kotlin.*daemon" "Kotlin daemon"
+# 7. Kotlin compiler daemon
+cleanup_processes "KotlinCompileDaemon|kotlin.*daemon" "Kotlin daemon" 3 false && echo "   ✅ Kotlin daemon nettoyé" || echo "   ⚠️  Kotlin daemon partiellement nettoyé"
 echo ""
 
 # Nettoyer les fichiers de lock

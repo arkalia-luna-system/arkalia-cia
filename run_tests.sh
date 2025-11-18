@@ -1,5 +1,6 @@
 #!/bin/bash
 # Script wrapper pour lancer pytest proprement sans doublons
+# Version optimisée - utilise cleanup_all.sh pour le nettoyage
 
 set -e
 
@@ -8,45 +9,17 @@ cd "$SCRIPT_DIR"
 
 echo "🧹 Nettoyage des processus pytest existants..."
 
-# Fonction pour arrêter proprement les processus
-cleanup_processes() {
-    local pattern="$1"
-    local max_attempts=5
-    local attempt=1
-    
-    while [ $attempt -le $max_attempts ]; do
-        # Trouver les PIDs
-        local pids=$(ps aux | grep -E "$pattern" | grep -v grep | awk '{print $2}' | tr '\n' ' ')
-        
-        if [ -z "$pids" ]; then
-            return 0
-        fi
-        
-        if [ $attempt -eq 1 ]; then
-            # Essayer d'abord un arrêt propre
-            echo "$pids" | xargs kill 2>/dev/null || true
-        else
-            # Puis forcer l'arrêt
-            echo "$pids" | xargs kill -9 2>/dev/null || true
-        fi
-        
-        sleep 1
-        attempt=$((attempt + 1))
-    done
-    
-    # Dernière vérification
-    local remaining=$(ps aux | grep -E "$pattern" | grep -v grep | wc -l | tr -d ' ')
-    if [ "$remaining" -gt 0 ]; then
-        echo "⚠️  Il reste $remaining processus, arrêt forcé..."
-        ps aux | grep -E "$pattern" | grep -v grep | awk '{print $2}' | xargs kill -9 2>/dev/null || true
-        sleep 1
-    fi
-}
-
-# Arrêter tous les processus pytest et coverage
-cleanup_processes "pytest"
-cleanup_processes "coverage.*pytest"
-cleanup_processes "coverage run"
+# Utiliser cleanup_all.sh pour nettoyer pytest (plus efficace et unifié)
+# Mais seulement pytest/coverage, pas tout le reste
+if [ -f "$SCRIPT_DIR/lib/common_functions.sh" ]; then
+    source "$SCRIPT_DIR/lib/common_functions.sh"
+    cleanup_processes "pytest|coverage.*pytest" "pytest/coverage" 5 false
+else
+    # Fallback rapide
+    pkill -f "pytest" 2>/dev/null || true
+    pkill -f "coverage.*pytest" 2>/dev/null || true
+    sleep 1
+fi
 
 # Nettoyer les fichiers de lock pytest
 if [ -d ".pytest_cache" ]; then

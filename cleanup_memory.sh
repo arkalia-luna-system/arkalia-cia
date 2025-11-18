@@ -1,30 +1,20 @@
 #!/bin/bash
 # Script pour nettoyer les processus Python qui consomment trop de mémoire
+# Version optimisée - utilise cleanup_all.sh en interne
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
 
 echo "🧹 Nettoyage des processus Python gourmands..."
-
-# Tuer tous les processus bandit qui tournent
-pkill -9 -f "bandit" 2>/dev/null
-echo "✅ Processus bandit arrêtés"
-
-# Tuer tous les processus pytest qui tournent
-pkill -9 -f "pytest" 2>/dev/null
-pkill -9 -f "coverage.*pytest" 2>/dev/null
-echo "✅ Processus pytest arrêtés"
-
-# Attendre un peu pour que les processus se terminent
-sleep 2
-
-# Afficher les processus Python restants
 echo ""
-echo "📊 Processus Python restants:"
-remaining=$(ps aux | grep -E "python.*arkalia|python.*security|python.*test" | grep -v grep | wc -l | tr -d ' ')
-if [ "$remaining" -gt 0 ]; then
-    ps aux | grep -E "python.*arkalia|python.*security|python.*test" | grep -v grep | head -5
-    echo "⚠️  Il reste $remaining processus Python"
-else
-    echo "✅ Aucun processus Python problématique détecté"
-fi
+
+# Utiliser cleanup_all.sh pour pytest et bandit (plus efficace)
+"$SCRIPT_DIR/cleanup_all.sh" --keep-coverage 2>/dev/null || {
+    # Fallback si cleanup_all.sh n'existe pas
+    pkill -9 -f "bandit" 2>/dev/null
+    pkill -9 -f "pytest" 2>/dev/null
+    pkill -9 -f "coverage.*pytest" 2>/dev/null
+}
 
 # Libérer le cache système si possible (macOS)
 if command -v purge &> /dev/null; then
@@ -40,4 +30,6 @@ fi
 
 echo ""
 echo "✅ Nettoyage terminé"
+echo ""
+echo "💡 Pour un nettoyage complet, utilisez: ./cleanup_all.sh"
 
