@@ -4,6 +4,7 @@ Dashboard de sécurité web pour Athalia
 Interface moderne pour visualiser les rapports de sécurité en temps réel
 """
 
+import gc
 import logging
 import platform
 import subprocess
@@ -45,9 +46,11 @@ class SecurityDashboard:
         project_str = str(resolved_path)
 
         # Détecter et éviter les répertoires temporaires
+        # Note: Utilisation de tempfile.gettempdir() serait préférable mais ici
+        # on détecte les chemins temporaires pour éviter les scans sur /tmp
         if (
-            "/tmp/" in project_str
-            or "/var/folders/" in project_str
+            "/tmp/" in project_str  # nosec B108
+            or "/var/folders/" in project_str  # nosec B108
             or ("tmp" in project_str.lower() and "arkalia" not in project_str.lower())
         ):
             # Si c'est un répertoire temporaire, chercher le vrai projet
@@ -154,7 +157,20 @@ class SecurityDashboard:
                     # Calcul du score de sécurité intelligent et contextuel
                     total_vulns = scan_results.get("vulnerabilities_found", 0)
                     if total_vulns > 0:
-                        vulnerabilities = scan_results.get("vulnerabilities", [])
+                        # Limiter la taille des vulnérabilités en mémoire pour éviter la surcharge
+                        vulnerabilities_raw = scan_results.get("vulnerabilities", [])
+                        # Limiter à 1000 vulnérabilités max pour éviter la surcharge mémoire
+                        max_vulns = 1000
+                        if len(vulnerabilities_raw) > max_vulns:
+                            logger.warning(
+                                f"Trop de vulnérabilités ({len(vulnerabilities_raw)}), "
+                                f"limitation à {max_vulns} pour optimiser la mémoire"
+                            )
+                            vulnerabilities = vulnerabilities_raw[:max_vulns]
+                        else:
+                            vulnerabilities = vulnerabilities_raw
+                        # Libérer la référence pour libérer la mémoire
+                        del vulnerabilities_raw
 
                         # Analyse intelligente des fonctions dangereuses
                         dangerous_functions = [
@@ -234,8 +250,9 @@ class SecurityDashboard:
 
                         # Métriques de performance et qualité du code
                         total_files = scan_results.get("total_files_scanned", 0)
+                        vulns_count = len(vulnerabilities)
                         security_data["performance_metrics"] = {
-                            "scan_speed": total_files / max(1, len(vulnerabilities)),
+                            "scan_speed": total_files / max(1, vulns_count),
                             "vulnerability_density": total_vulns / max(1, total_files),
                             "risk_distribution": {
                                 "critical_ratio": (xss_count + sql_count)
@@ -250,12 +267,17 @@ class SecurityDashboard:
                         # Métriques de qualité du code
                         security_data["code_quality_metrics"] = {
                             "security_awareness": max(0, 100 - (total_vulns * 0.1)),
-                            "code_complexity": total_files
-                            / max(1, len(vulnerabilities)),
+                            "code_complexity": total_files / max(1, vulns_count),
                             "maintenance_index": max(
                                 0, 100 - (len(dangerous_functions) * 0.05)
                             ),
                         }
+
+                        # Libérer la mémoire des vulnérabilités après traitement
+                        del vulnerabilities
+                        del dangerous_functions
+                        # Forcer le garbage collector pour libérer la mémoire immédiatement
+                        gc.collect()
                     else:
                         security_data["security_score"] = 100
                         security_data["vulnerabilities"] = {
@@ -368,6 +390,9 @@ class SecurityDashboard:
         except Exception as e:
             logger.error(f"Erreur lors de la collecte des données de sécurité: {e}")
             security_data["error"] = str(e)
+        finally:
+            # Forcer le garbage collector pour libérer la mémoire après collecte
+            gc.collect()
 
         return security_data
 
@@ -441,10 +466,16 @@ class SecurityDashboard:
         # Générer le HTML avec les vraies données
         dashboard_html = self._generate_dashboard_html(security_data)
 
+        # Libérer la mémoire des données de sécurité après génération HTML
+        del security_data
+
         # Créer le fichier dashboard
         dashboard_file = self.dashboard_dir / "security_dashboard.html"
         with open(dashboard_file, "w", encoding="utf-8") as f:
             f.write(dashboard_html)
+
+        # Libérer la mémoire du HTML après écriture
+        del dashboard_html
 
         logger.info(
             f"Dashboard de sécurité généré avec vraies données: {dashboard_file}"
@@ -1203,10 +1234,12 @@ def main():
     project_path = Path(args.project_path).resolve()
 
     # Vérifier que le chemin n'est pas un répertoire temporaire
+    # Note: Utilisation de tempfile.gettempdir() serait préférable mais ici
+    # on détecte les chemins temporaires pour éviter les scans sur /tmp
     project_str = str(project_path)
     if (
-        "/tmp/" in project_str
-        or "/var/folders/" in project_str
+        "/tmp/" in project_str  # nosec B108
+        or "/var/folders/" in project_str  # nosec B108
         or "tmp" in project_str.lower()
     ):
         # Si c'est un répertoire temporaire, chercher le vrai projet

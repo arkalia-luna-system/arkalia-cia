@@ -195,8 +195,15 @@ flutter run
 
 ```bash
 # Testing
-make test                 # Run all tests
-make test-coverage       # Generate coverage report
+make test                 # Run all tests (nettoie automatiquement les processus pytest)
+make test-cov            # Generate coverage report
+./run_tests.sh           # Lancer pytest avec nettoyage automatique (recommandé)
+./run_tests.sh tests/unit/test_security_dashboard.py -v  # Lancer un test spécifique
+
+# Nettoyage
+./cleanup_all.sh         # Nettoyer tous les processus problématiques (pytest, bandit, Flutter, etc.)
+./cleanup_all.sh --include-gradle  # Inclure aussi les daemons Gradle
+./cleanup_memory.sh      # Nettoyer uniquement pytest et bandit
 
 # Code Quality
 make lint                # Run linting

@@ -35,11 +35,13 @@ install-dev: ## Installer les dépendances de développement
 
 test: ## Lancer les tests
 	@echo "$(GREEN)Lancement des tests...$(NC)"
-	$(PYTHON) -m pytest tests/ -v
+	@./cleanup_memory.sh > /dev/null 2>&1 || true
+	@./run_tests.sh tests/ -v
 
 test-cov: ## Lancer les tests avec couverture
 	@echo "$(GREEN)Lancement des tests avec couverture...$(NC)"
-	$(PYTHON) -m pytest tests/ --cov=arkalia_cia_python_backend --cov-report=html --cov-report=term-missing
+	@./cleanup_memory.sh > /dev/null 2>&1 || true
+	@./run_tests.sh tests/ --cov=arkalia_cia_python_backend --cov-report=html --cov-report=term-missing
 
 lint: ## Lancer le linting
 	@echo "$(GREEN)Lancement du linting...$(NC)"

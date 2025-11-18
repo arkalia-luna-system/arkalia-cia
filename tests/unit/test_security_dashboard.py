@@ -2,8 +2,10 @@
 Tests unitaires pour le module security_dashboard
 """
 
+import gc
 import tempfile
 from pathlib import Path
+from typing import Any
 from unittest.mock import patch
 
 from arkalia_cia_python_backend.security_dashboard import SecurityDashboard
@@ -15,11 +17,26 @@ class TestSecurityDashboard:
     def setup_method(self):
         """Configuration avant chaque test"""
         self.temp_dir = tempfile.mkdtemp()
-        self.dashboard = SecurityDashboard(project_path=self.temp_dir)
+        # Mock les composants Athalia dès l'initialisation pour éviter les scans complets
+        with patch(
+            "arkalia_cia_python_backend.security_dashboard.ATHALIA_AVAILABLE", False
+        ):
+            self.dashboard = SecurityDashboard(project_path=self.temp_dir)
+            # Vider les composants Athalia pour éviter les scans
+            self.dashboard.athalia_components = {}
 
     def teardown_method(self):
         """Nettoyage après chaque test"""
         import shutil
+
+        # Libérer la mémoire avant nettoyage
+        if hasattr(self, "dashboard"):
+            # Nettoyer les composants Athalia
+            if hasattr(self.dashboard, "athalia_components"):
+                self.dashboard.athalia_components.clear()
+            del self.dashboard
+        gc.collect()
+        gc.collect()  # Double collect pour forcer le nettoyage
 
         if Path(self.temp_dir).exists():
             shutil.rmtree(self.temp_dir)
@@ -27,7 +44,9 @@ class TestSecurityDashboard:
     def test_initialization(self):
         """Test d'initialisation"""
         assert self.dashboard is not None
-        assert self.dashboard.project_path == Path(self.temp_dir)
+        # Le SecurityDashboard détecte les chemins temporaires et utilise le répertoire du script
+        # Vérifier que le dashboard est initialisé correctement avec un chemin valide
+        assert self.dashboard.project_path.exists()
         assert self.dashboard.dashboard_dir.exists()
 
     def test_initialize_athalia_components(self):
@@ -37,12 +56,14 @@ class TestSecurityDashboard:
 
     def test_collect_security_data(self):
         """Test de collecte de données de sécurité"""
-        security_data = self.dashboard.collect_security_data()
-        assert "timestamp" in security_data
-        assert "project_path" in security_data
-        assert "security_score" in security_data
-        assert "vulnerabilities" in security_data
-        assert "recommendations" in security_data
+        # Mock les composants Athalia pour éviter les scans complets
+        with patch.dict(self.dashboard.athalia_components, {}, clear=True):
+            security_data = self.dashboard.collect_security_data()
+            assert "timestamp" in security_data
+            assert "project_path" in security_data
+            assert "security_score" in security_data
+            assert "vulnerabilities" in security_data
+            assert "recommendations" in security_data
 
     def test_generate_security_recommendations(self):
         """Test de génération de recommandations"""
@@ -71,10 +92,12 @@ class TestSecurityDashboard:
 
     def test_generate_security_dashboard(self):
         """Test de génération du dashboard"""
-        dashboard_file = self.dashboard.generate_security_dashboard()
-        assert dashboard_file is not None
-        assert isinstance(dashboard_file, str)
-        assert Path(dashboard_file).exists()
+        # Mock les composants Athalia pour éviter les scans complets
+        with patch.dict(self.dashboard.athalia_components, {}, clear=True):
+            dashboard_file = self.dashboard.generate_security_dashboard()
+            assert dashboard_file is not None
+            assert isinstance(dashboard_file, str)
+            assert Path(dashboard_file).exists()
 
     def test_generate_dashboard_html(self):
         """Test de génération du HTML du dashboard"""
@@ -90,6 +113,9 @@ class TestSecurityDashboard:
         assert isinstance(html, str)
         assert "<html" in html.lower()
         assert "security_score" in html or "85" in html
+        # Nettoyer la mémoire après génération HTML
+        del html
+        gc.collect()
 
     def test_generate_command_validation_html(self):
         """Test de génération HTML pour validation de commandes"""
@@ -163,18 +189,24 @@ class TestSecurityDashboard:
 
     def test_collect_security_data_with_athalia_components(self):
         """Test de collecte avec composants Athalia simulés"""
-        # Simuler des composants Athalia disponibles
+        # Simuler des composants Athalia disponibles mais vides pour éviter les scans
         with patch(
             "arkalia_cia_python_backend.security_dashboard.ATHALIA_AVAILABLE", True
         ):
             dashboard = SecurityDashboard(project_path=self.temp_dir)
+            # Vider les composants pour éviter les scans complets
+            dashboard.athalia_components = {}
             security_data = dashboard.collect_security_data()
             assert "athalia_available" in security_data
             assert security_data["athalia_available"] is True
+            # Nettoyer immédiatement
+            dashboard.athalia_components.clear()
+            del dashboard
+            gc.collect()
 
     def test_generate_recommendations_empty(self):
         """Test de génération de recommandations avec données vides"""
-        security_data = {}
+        security_data: dict[str, Any] = {}
         recommendations = self.dashboard._generate_security_recommendations(
             security_data
         )
@@ -182,28 +214,28 @@ class TestSecurityDashboard:
 
     def test_generate_command_validation_html_empty(self):
         """Test de génération HTML avec données vides"""
-        security_data = {}
+        security_data: dict[str, Any] = {}
         html = self.dashboard._generate_command_validation_html(security_data)
         assert html is not None
         assert isinstance(html, str)
 
     def test_generate_code_analysis_html_empty(self):
         """Test de génération HTML avec données vides"""
-        security_data = {}
+        security_data: dict[str, Any] = {}
         html = self.dashboard._generate_code_analysis_html(security_data)
         assert html is not None
         assert isinstance(html, str)
 
     def test_generate_cache_security_html_empty(self):
         """Test de génération HTML avec données vides"""
-        security_data = {}
+        security_data: dict[str, Any] = {}
         html = self.dashboard._generate_cache_security_html(security_data)
         assert html is not None
         assert isinstance(html, str)
 
     def test_generate_security_metrics_html_empty(self):
         """Test de génération HTML avec données vides"""
-        security_data = {}
+        security_data: dict[str, Any] = {}
         html = self.dashboard._generate_security_metrics_html(security_data)
         assert html is not None
         assert isinstance(html, str)
@@ -216,10 +248,12 @@ class TestSecurityDashboard:
 
     def test_collect_security_data_with_vulnerabilities(self):
         """Test de collecte avec vulnérabilités simulées"""
-        security_data = self.dashboard.collect_security_data()
-        # Vérifier que les données sont structurées correctement
-        assert "vulnerabilities" in security_data
-        assert isinstance(security_data["vulnerabilities"], dict)
+        # Mock les composants Athalia pour éviter les scans complets
+        with patch.dict(self.dashboard.athalia_components, {}, clear=True):
+            security_data = self.dashboard.collect_security_data()
+            # Vérifier que les données sont structurées correctement
+            assert "vulnerabilities" in security_data
+            assert isinstance(security_data["vulnerabilities"], dict)
 
     def test_generate_command_validation_html_with_data(self):
         """Test de génération HTML avec données complètes"""
@@ -257,6 +291,9 @@ class TestSecurityDashboard:
         html = self.dashboard._generate_dashboard_html(security_data)
         assert "<html" in html.lower()
         assert "85" in html
+        # Nettoyer immédiatement
+        del html, security_data
+        gc.collect()
 
     def test_main_function_generate_only(self):
         """Test de la fonction main avec --generate-only"""

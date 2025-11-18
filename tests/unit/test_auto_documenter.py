@@ -2,6 +2,7 @@
 Tests unitaires pour le module auto_documenter
 """
 
+import gc
 import tempfile
 from pathlib import Path
 
@@ -19,6 +20,17 @@ class TestAutoDocumenter:
     def teardown_method(self):
         """Nettoyage après chaque test"""
         import shutil
+
+        # Libérer la mémoire avant nettoyage
+        if hasattr(self, "documenter"):
+            # Nettoyer les données du documenter
+            if hasattr(self.documenter, "doc_history"):
+                self.documenter.doc_history.clear()
+            if hasattr(self.documenter, "project_info"):
+                self.documenter.project_info.clear()
+            del self.documenter
+        gc.collect()
+        gc.collect()  # Double collect pour forcer le nettoyage
 
         if Path(self.temp_dir).exists():
             shutil.rmtree(self.temp_dir)
@@ -63,7 +75,7 @@ class TestAutoDocumenter:
 
     def test_scan_project_structure(self):
         """Test de scan de structure de projet"""
-        # Créer quelques fichiers de test
+        # Créer quelques fichiers de test (limité pour éviter consommation mémoire)
         (Path(self.temp_dir) / "test.py").touch()
         (Path(self.temp_dir) / "test_test.py").touch()
         (Path(self.temp_dir) / "README.md").touch()
@@ -74,6 +86,9 @@ class TestAutoDocumenter:
         assert "test_files" in structure
         assert "documentation_files" in structure
         assert "config_files" in structure
+        # Nettoyer immédiatement
+        del structure
+        gc.collect()
 
     def test_extract_docstrings(self):
         """Test d'extraction de docstrings"""
@@ -102,6 +117,9 @@ class TestClass:
         assert readme is not None
         assert isinstance(readme, str)
         assert "#" in readme  # Contient un titre
+        # Nettoyer après test
+        del readme
+        gc.collect()
 
     def test_generate_api_documentation(self):
         """Test de génération de documentation API"""
@@ -121,9 +139,13 @@ def test_function():
         assert "functions" in api_docs
         assert "classes" in api_docs
         assert "modules" in api_docs
+        # Nettoyer immédiatement
+        del api_docs
+        gc.collect()
 
     def test_analyze_python_files(self):
         """Test d'analyse de fichiers Python"""
+        # Limiter à un seul fichier pour réduire consommation mémoire
         test_file = Path(self.temp_dir) / "test_module.py"
         test_file.write_text(
             '''"""
@@ -146,6 +168,9 @@ class TestClass:
         assert "total_files" in analysis
         assert "total_functions" in analysis
         assert "total_classes" in analysis
+        # Nettoyer immédiatement
+        del analysis
+        gc.collect()
 
     def test_calculate_documentation_coverage(self):
         """Test de calcul de couverture de documentation"""
@@ -178,10 +203,17 @@ def undocumented_function():
 
     def test_generate_documentation_report(self):
         """Test de génération de rapport de documentation"""
+        # Limiter à un fichier minimal
+        test_file = Path(self.temp_dir) / "test.py"
+        test_file.write_text("def test(): pass")
+
         report = self.documenter.generate_documentation_report()
         assert "summary" in report
         assert "detailed_results" in report
         assert "recommendations" in report
+        # Nettoyer immédiatement
+        del report
+        gc.collect()
 
     def test_generate_installation_guide(self):
         """Test de génération de guide d'installation"""
@@ -226,10 +258,18 @@ def undocumented_function():
 
     def test_perform_full_documentation(self):
         """Test de documentation complète"""
+        # Créer seulement un fichier minimal pour limiter la consommation mémoire
+        test_file = Path(self.temp_dir) / "test.py"
+        test_file.write_text("def test(): pass")
+
         result = self.documenter.perform_full_documentation()
         assert "summary" in result
         assert "coverage" in result
         assert "files_generated" in result
+        # Nettoyer immédiatement après test
+        del result
+        gc.collect()
+        gc.collect()  # Double collect pour forcer nettoyage
 
     def test_generate_function_documentation(self):
         """Test de génération de documentation de fonction"""
@@ -269,10 +309,17 @@ def undocumented_function():
 
     def test_document_project(self):
         """Test de documentation d'un projet complet"""
+        # Limiter à un seul fichier pour réduire consommation mémoire
+        test_file = Path(self.temp_dir) / "test.py"
+        test_file.write_text("def test(): pass")
+
         result = self.documenter.document_project(self.temp_dir)
         assert "readme" in result
         assert "api_docs" in result
         assert "setup_guide" in result
+        # Nettoyer immédiatement
+        del result
+        gc.collect()
 
     def test_load_translations(self):
         """Test de chargement des traductions"""

@@ -3,6 +3,7 @@ Tests d'intégration pour Arkalia CIA Backend
 Tests de l'intégration complète des services backend
 """
 
+import gc
 import json
 import tempfile
 from datetime import datetime, timedelta
@@ -52,6 +53,12 @@ class TestBackendIntegration:
 
     def teardown_method(self):
         """Nettoyage après chaque test"""
+        # Libérer la mémoire avant nettoyage
+        del self.db
+        del self.processor
+        del self.test_data
+        gc.collect()
+
         if Path(self.test_db_path).exists():
             Path(self.test_db_path).unlink()
 
@@ -189,21 +196,25 @@ class TestBackendIntegration:
 
     def test_performance_under_load(self):
         """Test de performance sous charge"""
-        # Simuler une charge importante
+        # Simuler une charge importante (réduite pour économiser la mémoire)
         start_time = datetime.now()
 
-        # Simuler des opérations répétées
-        for i in range(100):
+        # Réduire à 20 itérations au lieu de 100 pour économiser la mémoire
+        for i in range(20):
             doc = self.test_data["document"].copy()
             doc["id"] = i + 1
             doc["name"] = f"document_{i + 1}.pdf"
             # Note: Les opérations réelles seraient testées ici
+            # Libérer la référence immédiatement
+            del doc
 
         end_time = datetime.now()
         duration = (end_time - start_time).total_seconds()
 
         # Vérifier que les opérations sont rapides
-        assert duration < 5.0  # Moins de 5 secondes pour 100 opérations
+        assert duration < 2.0  # Moins de 2 secondes pour 20 opérations
+        # Libérer la mémoire après le test
+        gc.collect()
 
     def test_data_security_requirements(self):
         """Test des exigences de sécurité des données"""

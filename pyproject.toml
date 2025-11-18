@@ -30,7 +30,7 @@ Issues = "https://github.com/arkalia-luna-system/arkalia-cia/issues"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["arkalia_cia_python_backend"]
+include = ["arkalia_cia_python_backend*"]
 exclude = ["tests*", "arkalia_cia", "docs*", "arkalia_cia_venv*", "build*", "dist*"]
 
 [tool.black]
