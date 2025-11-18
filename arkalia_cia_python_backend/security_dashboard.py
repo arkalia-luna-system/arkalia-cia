@@ -13,29 +13,40 @@ import urllib.parse
 import webbrowser
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 # Import des composants Athalia réels (optionnels)
 # Ces imports sont dans un try/except car les modules peuvent ne pas être disponibles
-# pyright: reportMissingImports=false
+if TYPE_CHECKING:
+    # Ces imports sont uniquement pour le type checking, pas pour l'exécution
+    try:
+        from athalia_core.core.cache_manager import CacheManager  # noqa: F401
+        from athalia_core.metrics.collector import MetricsCollector  # noqa: F401
+        from athalia_core.quality.code_linter import CodeLinter  # noqa: F401
+        from athalia_core.validation.security_validator import (
+            CommandSecurityValidator,
+        )  # noqa: F401
+    except ImportError:
+        pass
+
+# Import réel au runtime (dans try/except)
 try:
-    from athalia_core.core.cache_manager import (  # pyright: ignore[reportMissingImports]
-        CacheManager,  # noqa: F401
-    )
-    from athalia_core.metrics.collector import (  # pyright: ignore[reportMissingImports]
-        MetricsCollector,  # noqa: F401
-    )
-    from athalia_core.quality.code_linter import (  # pyright: ignore[reportMissingImports]
-        CodeLinter,  # noqa: F401
-    )
-    from athalia_core.validation.security_validator import (  # pyright: ignore[reportMissingImports]
-        CommandSecurityValidator,  # noqa: F401
-    )
+    from athalia_core.core.cache_manager import CacheManager  # noqa: F401
+    from athalia_core.metrics.collector import MetricsCollector  # noqa: F401
+    from athalia_core.quality.code_linter import CodeLinter  # noqa: F401
+    from athalia_core.validation.security_validator import (
+        CommandSecurityValidator,
+    )  # noqa: F401
 
     ATHALIA_AVAILABLE = True
 except ImportError as e:
     logging.warning(f"Composants Athalia non disponibles: {e}")
     ATHALIA_AVAILABLE = False
+    # Définir des types stub pour éviter les erreurs de type
+    CacheManager = None  # type: ignore
+    MetricsCollector = None  # type: ignore
+    CodeLinter = None  # type: ignore
+    CommandSecurityValidator = None  # type: ignore
     # Définir des types vides pour éviter les erreurs de type
     CacheManager = None
     MetricsCollector = None
@@ -251,14 +262,16 @@ class SecurityDashboard:
                             xss_penalty + sql_penalty + medium_penalty + low_penalty
                         )
 
-                        security_data["security_score"] = max(
-                            0, min(100, base_score - total_penalty)
+                        # S'assurer que le score est un entier entre 0 et 100
+                        calculated_score = base_score - total_penalty
+                        security_data["security_score"] = int(
+                            max(0, min(100, calculated_score))
                         )
 
-                        # Classification intelligente des vulnérabilités
-                        security_data["vulnerabilities"]["high"] = high_vulns
-                        security_data["vulnerabilities"]["medium"] = medium_vulns
-                        security_data["vulnerabilities"]["low"] = max(0, low_vulns)
+                        # Classification intelligente des vulnérabilités (s'assurer que ce sont des entiers)
+                        security_data["vulnerabilities"]["high"] = int(high_vulns)
+                        security_data["vulnerabilities"]["medium"] = int(medium_vulns)
+                        security_data["vulnerabilities"]["low"] = int(max(0, low_vulns))
 
                         # Métriques de performance et qualité du code
                         total_files = scan_results.get("total_files_scanned", 0)
@@ -519,7 +532,13 @@ class SecurityDashboard:
         """Génère le HTML du dashboard avec les vraies données de sécurité"""
 
         # Extraction des données pour le template
-        security_score = security_data.get("security_score", 0)
+        security_score_raw = security_data.get("security_score", 0)
+        # S'assurer que le score est un nombre entre 0 et 100
+        try:
+            security_score = max(0, min(100, int(float(security_score_raw))))
+        except (ValueError, TypeError):
+            security_score = 0
+
         vulnerabilities = security_data.get(
             "vulnerabilities", {"high": 0, "medium": 0, "low": 0}
         )
@@ -530,15 +549,11 @@ class SecurityDashboard:
         # Types de vulnérabilités supportés
         # (pour affichage futur et extensibilité)
 
-        # Calculer les métriques de vulnérabilités
-        total_vulnerabilities = (
-            vulnerabilities.get("high", 0)
-            + vulnerabilities.get("medium", 0)
-            + vulnerabilities.get("low", 0)
-        )
-        high_vulns = vulnerabilities.get("high", 0)
-        medium_vulns = vulnerabilities.get("medium", 0)
-        low_vulns = vulnerabilities.get("low", 0)
+        # Calculer les métriques de vulnérabilités avec conversion en entiers
+        high_vulns = int(vulnerabilities.get("high", 0) or 0)
+        medium_vulns = int(vulnerabilities.get("medium", 0) or 0)
+        low_vulns = int(vulnerabilities.get("low", 0) or 0)
+        total_vulnerabilities = high_vulns + medium_vulns + low_vulns
 
         # Couleurs et statuts
         score_color = (
@@ -1141,15 +1156,19 @@ class SecurityDashboard:
 
         // Graphique des vulnérabilités avec animation
         const ctx = document.getElementById('securityChart').getContext('2d');
+        // Calculer les valeurs pour le graphique (s'assurer que ce sont des entiers)
+        const chartHigh = {high_vulns};
+        const chartMedium = {medium_vulns};
+        const chartLow = {low_vulns};
+        const chartTotal = {total_vulnerabilities};
         const chartData = {{
-            labels: ['Critiques', 'Moyennes', 'Mineures', 'Sécurisé'],
+            labels: ['Critiques', 'Moyennes', 'Mineures'],
             datasets: [{{
-                data: [{high_vulns}, {medium_vulns}, {low_vulns}, {max(0, 1000 - total_vulnerabilities)}],
+                data: [chartHigh, chartMedium, chartLow],
                 backgroundColor: [
                     '#dc3545',
                     '#ffc107',
-                    '#28a745',
-                    '#6c757d'
+                    '#28a745'
                 ],
                 borderWidth: 3,
                 borderColor: '#fff',
@@ -1259,9 +1278,13 @@ class SecurityDashboard:
         if not scan_results:
             return "<p>Scan de sécurité en cours...</p>"
 
-        total_files = scan_results.get("total_files_scanned", 0)
-        total_vulns = scan_results.get("vulnerabilities_found", 0)
-        risk_level = scan_results.get("risk_level", "unknown")
+        # S'assurer que toutes les valeurs sont des entiers
+        total_files = int(scan_results.get("total_files_scanned", 0) or 0)
+        total_vulns = int(scan_results.get("vulnerabilities_found", 0) or 0)
+        risk_level = str(scan_results.get("risk_level", "unknown") or "unknown").lower()
+
+        # Calculer le ratio en toute sécurité
+        ratio = (total_vulns / max(total_files, 1) * 1000) if total_files > 0 else 0.0
 
         html = f"""
         <div class="metric-row">
@@ -1278,7 +1301,7 @@ class SecurityDashboard:
         </div>
         <div class="metric-row">
             <span class="metric-label">📊 Ratio Vuln/Fichier</span>
-            <span class="metric-value">{(total_vulns / max(total_files, 1) * 1000):.1f}‰</span>
+            <span class="metric-value">{ratio:.1f}‰</span>
         </div>
         """
 
@@ -1290,22 +1313,28 @@ class SecurityDashboard:
         test_coverage = security_data.get("test_coverage", {})
         doc_quality = security_data.get("documentation_quality", {})
 
+        # S'assurer que toutes les valeurs sont des entiers
+        python_files = int(python_stats.get("total_files", 0) or 0)
+        python_lines = int(python_stats.get("total_lines", 0) or 0)
+        total_tests = int(test_coverage.get("total_tests", 0) or 0)
+        total_docs = int(doc_quality.get("total_docs", 0) or 0)
+
         html = f"""
         <div class="metric-row">
             <span class="metric-label">🐍 Fichiers Python</span>
-            <span class="metric-value">{python_stats.get("total_files", 0):,}</span>
+            <span class="metric-value">{python_files:,}</span>
         </div>
         <div class="metric-row">
             <span class="metric-label">📝 Lignes de Code</span>
-            <span class="metric-value">{python_stats.get("total_lines", 0):,}</span>
+            <span class="metric-value">{python_lines:,}</span>
         </div>
         <div class="metric-row">
             <span class="metric-label">🧪 Tests Collectés</span>
-            <span class="metric-value">{test_coverage.get("total_tests", 0):,}</span>
+            <span class="metric-value">{total_tests:,}</span>
         </div>
         <div class="metric-row">
             <span class="metric-label">📚 Documentation</span>
-            <span class="metric-value">{doc_quality.get("total_docs", 0):,} fichiers</span>
+            <span class="metric-value">{total_docs:,} fichiers</span>
         </div>
         """
 
@@ -1318,11 +1347,12 @@ class SecurityDashboard:
         if not cache_security:
             return "<p>Métriques de cache en cours de collecte...</p>"
 
-        hits = cache_security.get("hits", 0)
-        misses = cache_security.get("misses", 0)
-        total_requests = cache_security.get("total_requests", 0)
-        hit_rate_raw = cache_security.get("hit_rate", 0.0)
-        cache_size = cache_security.get("cache_size", 0)
+        # S'assurer que toutes les valeurs sont des entiers ou des nombres valides
+        hits = int(cache_security.get("hits", 0) or 0)
+        misses = int(cache_security.get("misses", 0) or 0)
+        total_requests = int(cache_security.get("total_requests", 0) or 0)
+        hit_rate_raw = float(cache_security.get("hit_rate", 0.0) or 0.0)
+        cache_size = int(cache_security.get("cache_size", 0) or 0)
 
         # Calculer le hit_rate correctement
         # Si total_requests est disponible, calculer depuis hits/misses
@@ -1383,22 +1413,29 @@ class SecurityDashboard:
         high_vulns = vulnerabilities.get("high", 0)
         medium_vulns = vulnerabilities.get("medium", 0)
 
+        # S'assurer que toutes les valeurs sont des entiers pour l'affichage
+        score_value = int(security_data.get("security_score", 0) or 0)
+        score_value = max(0, min(100, score_value))  # Forcer entre 0 et 100
+        high_vulns_display = int(high_vulns or 0)
+        medium_vulns_display = int(medium_vulns or 0)
+        total_vulns_display = int(total_vulns or 0)
+
         html = f"""
         <div class="metric-row">
             <span class="metric-label">🛡️ Score Global</span>
-            <span class="metric-value score-{security_data.get("security_score", 0)}">{security_data.get("security_score", 0)}/100</span>
+            <span class="metric-value score-{score_value}">{score_value}/100</span>
         </div>
         <div class="metric-row">
             <span class="metric-label">🚨 Vulnérabilités Critiques</span>
-            <span class="metric-value risk-high">{high_vulns:,}</span>
+            <span class="metric-value risk-high">{high_vulns_display:,}</span>
         </div>
         <div class="metric-row">
             <span class="metric-label">⚠️ Vulnérabilités Moyennes</span>
-            <span class="metric-value risk-medium">{medium_vulns:,}</span>
+            <span class="metric-value risk-medium">{medium_vulns_display:,}</span>
         </div>
         <div class="metric-row">
             <span class="metric-label">📊 Total Vulnérabilités</span>
-            <span class="metric-value">{total_vulns:,}</span>
+            <span class="metric-value">{total_vulns_display:,}</span>
         </div>
         <div class="metric-row">
             <span class="metric-label">⚡ Athalia Components</span>
