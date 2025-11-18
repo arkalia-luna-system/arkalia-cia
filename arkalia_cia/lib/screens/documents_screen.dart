@@ -35,6 +35,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   }
 
   void _filterDocuments() {
+    if (!mounted) return;
+    
     final query = _searchController.text.toLowerCase();
     setState(() {
       filteredDocuments = documents.where((doc) {
@@ -48,26 +50,40 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   }
 
   Future<void> _loadDocuments() async {
+    if (!mounted) return;
+    
     setState(() {
       isLoading = true;
     });
 
     try {
       final docs = await LocalStorageService.getDocuments();
+      if (!mounted) return;
+      
       setState(() {
         documents = docs;
         filteredDocuments = docs;
         isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
+      
       setState(() {
         isLoading = false;
+        documents = [];
+        filteredDocuments = [];
       });
-      _showError('Erreur lors du chargement des documents: $e');
+      
+      // Afficher l'erreur seulement si le widget est monté
+      if (mounted) {
+        _showError('Erreur lors du chargement des documents: $e');
+      }
     }
   }
 
   Future<void> _uploadDocument() async {
+    if (!mounted) return;
+    
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
@@ -75,6 +91,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       );
 
       if (result != null) {
+        if (!mounted) return;
+        
         setState(() {
           isUploading = true;
         });
@@ -92,7 +110,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
 
         // Sauvegarder les métadonnées localement
         final document = {
-          'id': timestamp,
+          'id': timestamp.toString(), // ID en String pour cohérence
           'name': uniqueFileName,
           'original_name': fileName,
           'path': savedFile.path,
@@ -102,6 +120,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
 
         await LocalStorageService.saveDocument(document);
 
+        if (!mounted) return;
+        
         setState(() {
           isUploading = false;
         });
@@ -110,6 +130,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         _loadDocuments(); // Recharger la liste
       }
     } catch (e) {
+      if (!mounted) return;
+      
       setState(() {
         isUploading = false;
       });
@@ -118,8 +140,13 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   }
 
 
-  Future<void> _deleteDocument(int documentId) async {
-    bool confirmed = await showDialog(
+  Future<void> _deleteDocument(dynamic documentId) async {
+    if (!mounted) return;
+    
+    // Convertir l'ID en String pour cohérence
+    final docIdString = documentId.toString();
+    
+    bool? confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Supprimer le document'),
@@ -137,10 +164,22 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       ),
     );
 
-    if (confirmed == true) {
+    if (confirmed == true && mounted) {
       try {
         // Trouver le document pour obtenir le nom du fichier
-        final doc = documents.firstWhere((d) => d['id'] == documentId);
+        // Comparer en convertissant les deux en String
+        final doc = documents.firstWhere(
+          (d) => d['id'].toString() == docIdString,
+          orElse: () => {},
+        );
+        
+        if (doc.isEmpty) {
+          if (mounted) {
+            _showError('Document introuvable');
+          }
+          return;
+        }
+        
         final fileName = doc['name'] as String?;
         
         // Supprimer le fichier physique
@@ -149,29 +188,38 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         }
         
         // Supprimer les métadonnées
-        await LocalStorageService.deleteDocument(documentId.toString());
-        _showSuccess('Document supprimé avec succès !');
-        _loadDocuments(); // Recharger la liste
+        await LocalStorageService.deleteDocument(docIdString);
+        
+        if (mounted) {
+          _showSuccess('Document supprimé avec succès !');
+          _loadDocuments(); // Recharger la liste
+        }
       } catch (e) {
-        _showError('Erreur lors de la suppression: $e');
+        if (mounted) {
+          _showError('Erreur lors de la suppression: $e');
+        }
       }
     }
   }
 
   void _showSuccess(String message) {
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
         backgroundColor: Colors.green,
+        duration: const Duration(seconds: 3),
       ),
     );
   }
 
   void _showError(String message) {
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
         backgroundColor: Colors.red,
+        duration: const Duration(seconds: 4),
       ),
     );
   }
@@ -183,6 +231,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   }
 
   Future<void> _previewDocument(Map<String, dynamic> doc) async {
+    if (!mounted) return;
+    
     try {
       final filePath = doc['path'] as String?;
       if (filePath == null || filePath.isEmpty) {
@@ -193,6 +243,14 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       final file = File(filePath);
       if (!await file.exists()) {
         _showError('Le fichier n\'existe plus');
+        // Retirer le document de la liste s'il n'existe plus
+        final docId = doc['id'];
+        if (docId != null) {
+          await LocalStorageService.deleteDocument(docId.toString());
+          if (mounted) {
+            _loadDocuments();
+          }
+        }
         return;
       }
 
@@ -204,11 +262,15 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         _showError('Impossible d\'ouvrir le PDF. Installez une application de visualisation PDF.');
       }
     } catch (e) {
-      _showError('Erreur lors de la prévisualisation: $e');
+      if (mounted) {
+        _showError('Erreur lors de la prévisualisation: $e');
+      }
     }
   }
 
   Future<void> _shareDocument(Map<String, dynamic> doc) async {
+    if (!mounted) return;
+    
     try {
       final filePath = doc['path'] as String?;
       if (filePath == null || filePath.isEmpty) {
@@ -219,6 +281,14 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       final file = File(filePath);
       if (!await file.exists()) {
         _showError('Le fichier n\'existe plus');
+        // Retirer le document de la liste s'il n'existe plus
+        final docId = doc['id'];
+        if (docId != null) {
+          await LocalStorageService.deleteDocument(docId.toString());
+          if (mounted) {
+            _loadDocuments();
+          }
+        }
         return;
       }
 
@@ -229,7 +299,9 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         subject: 'Partage de document Arkalia CIA',
       );
     } catch (e) {
-      _showError('Erreur lors du partage: $e');
+      if (mounted) {
+        _showError('Erreur lors du partage: $e');
+      }
     }
   }
 

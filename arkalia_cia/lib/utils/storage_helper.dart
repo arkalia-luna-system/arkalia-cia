@@ -38,26 +38,52 @@ class StorageHelper {
       }
 
       if (_useEncryption) {
-        // Déchiffrer les données
-        final jsonString = await EncryptionHelper.decryptString(encryptedData);
-        
-        // Vérifier l'intégrité
-        final storedHash = prefs.getString('${key}_hash');
-        if (storedHash != null) {
-          final computedHash = EncryptionHelper.generateHash(jsonString);
-          if (storedHash != computedHash) {
-            throw Exception('Intégrité des données compromise pour $key');
+        try {
+          // Déchiffrer les données
+          final jsonString = await EncryptionHelper.decryptString(encryptedData);
+          
+          // Vérifier l'intégrité
+          final storedHash = prefs.getString('${key}_hash');
+          if (storedHash != null) {
+            final computedHash = EncryptionHelper.generateHash(jsonString);
+            if (storedHash != computedHash) {
+              // Données corrompues, nettoyer et retourner liste vide
+              await prefs.remove(key);
+              await prefs.remove('${key}_hash');
+              return [];
+            }
           }
+          
+          final List<dynamic> items = json.decode(jsonString);
+          return items.cast<Map<String, dynamic>>();
+        } catch (decryptError) {
+          // Si le déchiffrement échoue, les données peuvent être corrompues
+          // Nettoyer et retourner une liste vide plutôt que de planter
+          try {
+            await prefs.remove(key);
+            await prefs.remove('${key}_hash');
+          } catch (_) {
+            // Ignorer les erreurs de nettoyage
+          }
+          return [];
         }
-        
-        final List<dynamic> items = json.decode(jsonString);
-        return items.cast<Map<String, dynamic>>();
       } else {
-        final List<dynamic> items = json.decode(encryptedData);
-        return items.cast<Map<String, dynamic>>();
+        try {
+          final List<dynamic> items = json.decode(encryptedData);
+          return items.cast<Map<String, dynamic>>();
+        } catch (jsonError) {
+          // Données JSON invalides, nettoyer et retourner liste vide
+          try {
+            await prefs.remove(key);
+          } catch (_) {
+            // Ignorer les erreurs de nettoyage
+          }
+          return [];
+        }
       }
     } catch (e) {
-      throw Exception('Erreur lors de la récupération ($key): $e');
+      // En cas d'erreur générale, retourner une liste vide plutôt que de planter
+      return [];
     }
   }
 
@@ -142,24 +168,50 @@ class StorageHelper {
       }
 
       if (_useEncryption) {
-        final decrypted = await EncryptionHelper.decryptMap(encryptedData);
-        
-        // Vérifier l'intégrité
-        final storedHash = prefs.getString('${key}_hash');
-        if (storedHash != null) {
-          final jsonString = json.encode(decrypted);
-          final computedHash = EncryptionHelper.generateHash(jsonString);
-          if (storedHash != computedHash) {
-            throw Exception('Intégrité des données compromise pour $key');
+        try {
+          final decrypted = await EncryptionHelper.decryptMap(encryptedData);
+          
+          // Vérifier l'intégrité
+          final storedHash = prefs.getString('${key}_hash');
+          if (storedHash != null) {
+            final jsonString = json.encode(decrypted);
+            final computedHash = EncryptionHelper.generateHash(jsonString);
+            if (storedHash != computedHash) {
+              // Données corrompues, nettoyer et retourner null
+              await prefs.remove(key);
+              await prefs.remove('${key}_hash');
+              return null;
+            }
           }
+          
+          return decrypted;
+        } catch (decryptError) {
+          // Si le déchiffrement échoue, les données peuvent être corrompues
+          // Nettoyer et retourner null plutôt que de planter
+          try {
+            await prefs.remove(key);
+            await prefs.remove('${key}_hash');
+          } catch (_) {
+            // Ignorer les erreurs de nettoyage
+          }
+          return null;
         }
-        
-        return decrypted;
       } else {
-        return Map<String, dynamic>.from(json.decode(encryptedData));
+        try {
+          return Map<String, dynamic>.from(json.decode(encryptedData));
+        } catch (jsonError) {
+          // Données JSON invalides, nettoyer et retourner null
+          try {
+            await prefs.remove(key);
+          } catch (_) {
+            // Ignorer les erreurs de nettoyage
+          }
+          return null;
+        }
       }
     } catch (e) {
-      throw Exception('Erreur lors de la récupération de l\'objet ($key): $e');
+      // En cas d'erreur générale, retourner null plutôt que de planter
+      return null;
     }
   }
 
