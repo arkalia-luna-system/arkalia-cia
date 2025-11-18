@@ -105,17 +105,22 @@ warn_no_return = true
 warn_unreachable = true
 strict_equality = true
 namespace_packages = true
+explicit_package_bases = true
+mypy_path = "."
 exclude = [
     "build/",
     "dist/",
     "arkalia_cia_venv/",
     "tests/",
     "setup.py",
-    # Exclure aria_integration en tant que module racine pour éviter conflit
-    # avec arkalia_cia_python_backend.aria_integration
-    "^aria_integration\\.api$",
 ]
 
 [[tool.mypy.overrides]]
 module = "arkalia_cia_python_backend.*"
 ignore_errors = false
+
+# Ignorer le module aria_integration en tant que module racine
+# pour éviter le conflit avec arkalia_cia_python_backend.aria_integration
+[[tool.mypy.overrides]]
+module = "aria_integration.*"
+follow_imports = "skip"
