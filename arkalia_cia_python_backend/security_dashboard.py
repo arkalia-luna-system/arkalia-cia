@@ -1146,7 +1146,7 @@ class SecurityDashboard:
                 const originalText = element.textContent;
                 const match = originalText.match(/([0-9]+)/);
                 if (!match) return;
-                
+
                 const finalValue = parseInt(match[1]);
                 if (finalValue > 0 && finalValue <= 10000) {{ // Limiter pour éviter les animations trop longues
                     let currentValue = 0;
@@ -1304,11 +1304,11 @@ class SecurityDashboard:
             const score = parseInt(scoreElement.textContent.replace(/[^0-9]/g, ''));
             const badge = document.createElement('span');
             badge.className = 'score-badge';
-            
+
             // Déterminer le badge selon le score ET les vulnérabilités
             const hasHighVulns = {high_vulns} > 0;
             const hasManyMediumVulns = {medium_vulns} > 20;
-            
+
             if (score >= 85 && !hasHighVulns && !hasManyMediumVulns) {{
                 badge.className += ' excellent';
                 badge.textContent = 'Excellent';
@@ -1323,12 +1323,12 @@ class SecurityDashboard:
                 badge.textContent = 'À améliorer';
             }}
             scoreElement.parentElement.appendChild(badge);
-            
+
             // Ajouter une alerte visuelle si nécessaire
             if (hasHighVulns || (score < 50 && {total_vulnerabilities} > 10)) {{
                 const alertDiv = document.createElement('div');
                 alertDiv.style.cssText = 'background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 5px;';
-                alertDiv.innerHTML = '<strong>⚠️ Attention:</strong> ' + 
+                alertDiv.innerHTML = '<strong>⚠️ Attention:</strong> ' +
                     (hasHighVulns ? 'Vulnérabilités critiques détectées!' : 'Score de sécurité faible. Action recommandée.');
                 const overviewDiv = document.querySelector('.security-overview');
                 if (overviewDiv) {{
