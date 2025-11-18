@@ -399,9 +399,43 @@ class SecurityDashboard:
                             }
                         security_data["linting_results"] = linting_results
                         del linting_results
+                    except TimeoutError as timeout_err:
+                        # Gérer spécifiquement les timeouts (bandit, etc.)
+                        logger.debug(
+                            f"Timeout lors du linting (outil trop lent): {timeout_err}"
+                        )
+                        security_data["linting_results"] = {
+                            "error": "timeout",
+                            "message": "Analyse de qualité interrompue (timeout)",
+                        }
+                    except FileNotFoundError as file_err:
+                        # Gérer spécifiquement les outils manquants (radon, etc.)
+                        tool_name = str(file_err).split("'")[1] if "'" in str(file_err) else "outil"
+                        logger.debug(
+                            f"Outil de linting non disponible ({tool_name}): {file_err}"
+                        )
+                        security_data["linting_results"] = {
+                            "error": "tool_not_found",
+                            "message": f"Outil d'analyse non disponible: {tool_name}",
+                        }
                     except Exception as e:
-                        logger.warning(f"Erreur lors du linting: {e}")
-                        security_data["linting_results"] = {"error": str(e)}
+                        # Gérer les autres erreurs génériques
+                        error_msg = str(e).lower()
+                        if "timeout" in error_msg:
+                            logger.debug(f"Timeout lors du linting: {e}")
+                            security_data["linting_results"] = {
+                                "error": "timeout",
+                                "message": "Analyse de qualité interrompue (timeout)",
+                            }
+                        elif "no such file" in error_msg or "not found" in error_msg:
+                            logger.debug(f"Outil de linting non disponible: {e}")
+                            security_data["linting_results"] = {
+                                "error": "tool_not_found",
+                                "message": "Outil d'analyse non disponible",
+                            }
+                        else:
+                            logger.warning(f"Erreur lors du linting: {e}")
+                            security_data["linting_results"] = {"error": str(e)}
 
             # Collecte des métriques de cache
             if "cache_manager" in self.athalia_components:
