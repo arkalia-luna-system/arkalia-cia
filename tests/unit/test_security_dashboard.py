@@ -2,11 +2,10 @@
 Tests unitaires pour le module security_dashboard
 """
 
-import gc
 import tempfile
 from pathlib import Path
 from typing import Any
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from arkalia_cia_python_backend.security_dashboard import SecurityDashboard
 
@@ -193,20 +192,22 @@ class TestSecurityDashboard:
             "arkalia_cia_python_backend.security_dashboard.ATHALIA_AVAILABLE", True
         ):
             dashboard = SecurityDashboard(project_path=self.temp_dir)
-            
+
             # Créer des mocks pour éviter les scans réels (optimisation performance)
             mock_security_validator = MagicMock()
-            mock_security_validator.run_comprehensive_scan = MagicMock(return_value=None)
-            
+            mock_security_validator.run_comprehensive_scan = MagicMock(
+                return_value=None
+            )
+
             mock_code_linter = MagicMock()
             mock_code_linter.run_lint = MagicMock(return_value=None)
-            
+
             mock_cache_manager = MagicMock()
             mock_cache_manager.get_cache_stats = MagicMock(return_value=None)
-            
+
             mock_metrics_collector = MagicMock()
             mock_metrics_collector.collect_all_metrics = MagicMock(return_value={})
-            
+
             # Simuler des composants non-vides avec des mocks pour éviter les scans
             dashboard.athalia_components = {
                 "security_validator": mock_security_validator,
@@ -214,14 +215,14 @@ class TestSecurityDashboard:
                 "cache_manager": mock_cache_manager,
                 "metrics_collector": mock_metrics_collector,
             }
-            
+
             # Collecter les données (rapide car mocks ne font pas de scans réels)
             security_data = dashboard.collect_security_data()
-            
+
             assert "athalia_available" in security_data
             # athalia_available est True si ATHALIA_AVAILABLE est True ET que les composants sont initialisés (non vide)
             assert security_data["athalia_available"] is True
-            
+
             # Nettoyer immédiatement
             dashboard.athalia_components.clear()
             del dashboard
