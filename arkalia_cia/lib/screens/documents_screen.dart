@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import '../services/local_storage_service.dart';
 import '../services/file_storage_service.dart';
@@ -116,56 +117,6 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     }
   }
 
-  Future<void> _previewDocument(Map<String, dynamic> doc) async {
-    try {
-      final filePath = doc['path'] as String?;
-      if (filePath == null || filePath.isEmpty) {
-        _showError('Chemin du fichier introuvable');
-        return;
-      }
-
-      final file = File(filePath);
-      if (!await file.exists()) {
-        _showError('Le fichier n\'existe plus');
-        return;
-      }
-
-      // Ouvrir le PDF avec une application externe
-      final uri = Uri.file(filePath);
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
-      } else {
-        _showError('Impossible d\'ouvrir le PDF. Installez une application de visualisation PDF.');
-      }
-    } catch (e) {
-      _showError('Erreur lors de la prévisualisation: $e');
-    }
-  }
-
-  Future<void> _shareDocument(Map<String, dynamic> doc) async {
-    try {
-      final filePath = doc['path'] as String?;
-      if (filePath == null || filePath.isEmpty) {
-        _showError('Chemin du fichier introuvable');
-        return;
-      }
-
-      final file = File(filePath);
-      if (!await file.exists()) {
-        _showError('Le fichier n\'existe plus');
-        return;
-      }
-
-      // Partager le fichier PDF
-      await Share.shareXFiles(
-        [XFile(filePath, mimeType: 'application/pdf')],
-        text: 'Document: ${doc['original_name'] ?? 'Document'}',
-        subject: 'Partage de document Arkalia CIA',
-      );
-    } catch (e) {
-      _showError('Erreur lors du partage: $e');
-    }
-  }
 
   Future<void> _deleteDocument(int documentId) async {
     bool confirmed = await showDialog(
@@ -234,14 +185,24 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   Future<void> _previewDocument(Map<String, dynamic> doc) async {
     try {
       final filePath = doc['path'] as String?;
-      if (filePath == null || !await File(filePath).exists()) {
-        _showError('Fichier introuvable');
+      if (filePath == null || filePath.isEmpty) {
+        _showError('Chemin du fichier introuvable');
         return;
       }
-      
-      // Pour l'instant, on affiche juste un message
-      // L'ouverture de PDF nécessiterait un plugin PDF viewer
-      _showSuccess('Prévisualisation: ${doc['original_name'] ?? 'Document'}');
+
+      final file = File(filePath);
+      if (!await file.exists()) {
+        _showError('Le fichier n\'existe plus');
+        return;
+      }
+
+      // Ouvrir le PDF avec une application externe
+      final uri = Uri.file(filePath);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        _showError('Impossible d\'ouvrir le PDF. Installez une application de visualisation PDF.');
+      }
     } catch (e) {
       _showError('Erreur lors de la prévisualisation: $e');
     }
@@ -250,14 +211,22 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   Future<void> _shareDocument(Map<String, dynamic> doc) async {
     try {
       final filePath = doc['path'] as String?;
-      if (filePath == null || !await File(filePath).exists()) {
-        _showError('Fichier introuvable');
+      if (filePath == null || filePath.isEmpty) {
+        _showError('Chemin du fichier introuvable');
         return;
       }
-      
+
+      final file = File(filePath);
+      if (!await file.exists()) {
+        _showError('Le fichier n\'existe plus');
+        return;
+      }
+
+      // Partager le fichier PDF
       await Share.shareXFiles(
-        [XFile(filePath)],
+        [XFile(filePath, mimeType: 'application/pdf')],
         text: 'Document: ${doc['original_name'] ?? 'Document'}',
+        subject: 'Partage de document Arkalia CIA',
       );
     } catch (e) {
       _showError('Erreur lors du partage: $e');
