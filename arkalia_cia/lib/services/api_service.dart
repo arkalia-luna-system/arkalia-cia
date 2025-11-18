@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import '../utils/retry_helper.dart';
 import '../utils/error_helper.dart';
 import 'backend_config_service.dart';
+import 'offline_cache_service.dart';
 
 class ApiService {
   static Future<String> get baseUrl async => await BackendConfigService.getBackendURL();
