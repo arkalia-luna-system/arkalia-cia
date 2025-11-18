@@ -98,7 +98,7 @@ startxref
             # Si l'extraction échoue, c'est acceptable pour un PDF de test minimal
             pytest.skip(f"Extraction de texte échouée: {e}")
 
-    def test_save_pdf_to_uploads(self, pdf_processor, temp_pdf):
+    def test_save_pdf_to_uploads_basic(self, pdf_processor, temp_pdf):
         """Test de sauvegarde d'un PDF"""
         # Créer un dossier temporaire pour les uploads
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -127,3 +127,45 @@ startxref
             assert "file_path" in result
             assert "file_size" in result
             assert result["filename"].endswith(".pdf")
+
+    def test_process_pdf_file_not_found(self, pdf_processor):
+        """Test de traitement d'un PDF inexistant"""
+        result = pdf_processor.process_pdf("/nonexistent/file.pdf", "test.pdf")
+        assert result["success"] is False
+        assert "error" in result
+
+    def test_get_file_info(self, pdf_processor, temp_pdf):
+        """Test de récupération des informations d'un fichier"""
+        info = pdf_processor.get_file_info(temp_pdf)
+        assert info["success"] is True
+        assert "file_size" in info
+        assert "created_at" in info
+        assert "modified_at" in info
+
+    def test_get_file_info_not_found(self, pdf_processor):
+        """Test de récupération des informations d'un fichier inexistant"""
+        info = pdf_processor.get_file_info("/nonexistent/file.pdf")
+        assert info["success"] is False
+        assert "error" in info
+
+    def test_sanitize_filename(self, pdf_processor):
+        """Test de nettoyage de nom de fichier"""
+        safe_name = pdf_processor._sanitize_filename("test file@#$%.pdf")
+        assert safe_name is not None
+        assert isinstance(safe_name, str)
+        assert len(safe_name) > 0
+
+    def test_sanitize_filename_long(self, pdf_processor):
+        """Test de nettoyage d'un nom de fichier très long"""
+        long_name = "a" * 100 + ".pdf"
+        safe_name = pdf_processor._sanitize_filename(long_name)
+        assert len(safe_name) <= 50
+
+    def test_save_pdf_to_uploads(self, pdf_processor, temp_pdf):
+        """Test de sauvegarde d'un PDF dans uploads"""
+        saved_path = pdf_processor.save_pdf_to_uploads(temp_pdf, "test.pdf")
+        assert saved_path is not None
+        assert Path(saved_path).exists()
+        # Nettoyer
+        if Path(saved_path).exists():
+            Path(saved_path).unlink()

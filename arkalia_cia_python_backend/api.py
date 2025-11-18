@@ -7,11 +7,11 @@ import os
 import tempfile
 from datetime import datetime
 
-from aria_integration.api import router as aria_router
-from database import CIADatabase
+from arkalia_cia_python_backend.aria_integration.api import router as aria_router
+from arkalia_cia_python_backend.database import CIADatabase
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from pdf_processor import PDFProcessor
+from arkalia_cia_python_backend.pdf_processor import PDFProcessor
 from pydantic import BaseModel
 
 # Instances globales
