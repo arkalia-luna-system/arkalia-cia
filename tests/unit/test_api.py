@@ -185,12 +185,12 @@ class TestAPIModels:
 
         contact = EmergencyContactRequest(
             name="Test Contact",
-            phone="1234567890",
+            phone="+32470123456",  # Format belge valide
             relationship="family",
             is_primary=False,
         )
         assert contact.name == "Test Contact"
-        assert contact.phone == "1234567890"
+        assert contact.phone == "+32470123456"
 
     def test_health_portal_request(self):
         """Test du modèle HealthPortalRequest"""
