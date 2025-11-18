@@ -13,7 +13,9 @@ from arkalia_cia_python_backend.database import CIADatabase
 class TestDatabaseManager:
     """Tests pour la classe DatabaseManager"""
 
-    @pytest.fixture(scope="function")  # Changé de "class" à "function" pour isoler chaque test
+    @pytest.fixture(
+        scope="function"
+    )  # Changé de "class" à "function" pour isoler chaque test
     def temp_db(self):
         """Créer une base de données temporaire pour les tests"""
         with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as tmp:
@@ -23,7 +25,9 @@ class TestDatabaseManager:
         if os.path.exists(db_path):
             os.unlink(db_path)
 
-    @pytest.fixture(scope="function")  # Changé de "class" à "function" pour isoler chaque test
+    @pytest.fixture(
+        scope="function"
+    )  # Changé de "class" à "function" pour isoler chaque test
     def db_manager(self, temp_db):
         """Créer un gestionnaire de base de données pour les tests"""
         db = CIADatabase(db_path=temp_db)

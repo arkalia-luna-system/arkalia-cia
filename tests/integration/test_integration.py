@@ -3,7 +3,6 @@ Tests d'intégration pour Arkalia CIA
 Tests de l'intégration complète des services backend
 """
 
-import gc
 import json
 import tempfile
 from datetime import datetime, timedelta
@@ -57,7 +56,7 @@ class TestIntegration:
         del self.db
         del self.processor
         del self.test_data
-        gc.collect()
+        # Le GC Python gère automatiquement
 
         if Path(self.test_db_path).exists():
             Path(self.test_db_path).unlink()
@@ -212,7 +211,9 @@ class TestIntegration:
 
         # Utiliser directement la base de données pour des tests réels au lieu de boucles vides
         # Test réel : ajouter quelques documents à la base de données
-        for i in range(5):  # Réduit à 5 opérations réelles au lieu de 20 copies inutiles
+        for i in range(
+            5
+        ):  # Réduit à 5 opérations réelles au lieu de 20 copies inutiles
             doc_id = self.db.add_document(
                 name=f"document_{i + 1}.pdf",
                 original_name=f"document_{i + 1}.pdf",
@@ -272,7 +273,9 @@ class TestIntegration:
         try:
             # Créer un PDF de test simple
             with open(test_pdf_path, "wb") as f:
-                f.write(b"%PDF-1.4\n1 0 obj\n<<\n/Type /Catalog\n/Pages 2 0 R\n>>\nendobj\n")
+                f.write(
+                    b"%PDF-1.4\n1 0 obj\n<<\n/Type /Catalog\n/Pages 2 0 R\n>>\nendobj\n"
+                )
 
             # Vérifier que le fichier existe
             assert Path(test_pdf_path).exists()

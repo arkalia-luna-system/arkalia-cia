@@ -38,8 +38,13 @@ echo "📋 Nettoyage des processus..."
 cleanup_processes "pytest|coverage.*pytest" "pytest/coverage" 3 false && echo "   ✅ pytest/coverage nettoyé" || echo "   ⚠️  pytest/coverage partiellement nettoyé"
 echo ""
 
-# 2. bandit
+# 2. bandit (scans de sécurité - très lourd en CPU)
 cleanup_processes "bandit" "bandit" 3 false && echo "   ✅ bandit nettoyé" || echo "   ⚠️  bandit partiellement nettoyé"
+echo ""
+
+# 2b. mypy (vérification de types - lourd en CPU, lancé par Cursor IDE)
+# Note: Ne pas tuer le serveur LSP de Cursor (mypy-type-checker), seulement les scans manuels
+cleanup_processes "python.*-m mypy.*arkalia|python.*mypy.*\.py" "mypy (scans)" 3 false && echo "   ✅ mypy nettoyé" || echo "   ⚠️  mypy partiellement nettoyé"
 echo ""
 
 # 3. watch-macos-files.sh
@@ -50,8 +55,12 @@ echo ""
 cleanup_processes "uvicorn|fastapi|api\.py" "FastAPI/uvicorn" 3 false && echo "   ✅ FastAPI/uvicorn nettoyé" || echo "   ⚠️  FastAPI/uvicorn partiellement nettoyé"
 echo ""
 
-# 5. Flutter
-cleanup_processes "flutter.*run|dart.*flutter" "Flutter" 3 false && echo "   ✅ Flutter nettoyé" || echo "   ⚠️  Flutter partiellement nettoyé"
+# 5. Flutter et boucles infinies de nettoyage
+cleanup_processes "flutter.*run|dart.*flutter|while true.*find build" "Flutter" 3 false && echo "   ✅ Flutter nettoyé" || echo "   ⚠️  Flutter partiellement nettoyé"
+echo ""
+
+# 5b. Boucles infinies de nettoyage macOS (très lourd)
+cleanup_processes "while true.*find.*build.*delete|CLEANUP_PID" "boucle nettoyage macOS" 3 false && echo "   ✅ Boucles de nettoyage nettoyées" || echo "   ⚠️  Boucles partiellement nettoyées"
 echo ""
 
 # 6. Gradle daemons (optionnel)

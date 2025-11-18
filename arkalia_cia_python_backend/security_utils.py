@@ -125,7 +125,10 @@ def is_safe_path(file_path: str, allowed_dir: str) -> bool:
         allowed_dir_obj = Path(allowed_dir).resolve()
 
         # Vérifier que le fichier est dans le répertoire autorisé
-        return allowed_dir_obj in file_path_obj.parents or file_path_obj.parent == allowed_dir_obj
+        return (
+            allowed_dir_obj in file_path_obj.parents
+            or file_path_obj.parent == allowed_dir_obj
+        )
     except (ValueError, OSError):
         return False
 
@@ -159,7 +162,11 @@ def mask_sensitive_data(
             masked[key] = mask_sensitive_data(value, sensitive_keys)
         elif isinstance(value, list):
             masked[key] = [
-                mask_sensitive_data(item, sensitive_keys) if isinstance(item, dict) else item
+                (
+                    mask_sensitive_data(item, sensitive_keys)
+                    if isinstance(item, dict)
+                    else item
+                )
                 for item in value
             ]
         else:

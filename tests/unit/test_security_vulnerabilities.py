@@ -158,7 +158,9 @@ class TestSSRFProtection:
                 json={"name": "Test", "url": url, "description": "Test"},
             )
             # Devrait accepter les URLs publiques (ou erreur DB, pas erreur de validation)
-            assert response.status_code not in [400, 422] or "privées" not in str(response.json())
+            assert response.status_code not in [400, 422] or "privées" not in str(
+                response.json()
+            )
 
 
 class TestInputValidation:

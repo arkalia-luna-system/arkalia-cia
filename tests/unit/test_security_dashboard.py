@@ -17,7 +17,9 @@ class TestSecurityDashboard:
         """Configuration avant chaque test"""
         self.temp_dir = tempfile.mkdtemp()
         # Mock les composants Athalia dès l'initialisation pour éviter les scans complets
-        with patch("arkalia_cia_python_backend.security_dashboard.ATHALIA_AVAILABLE", False):
+        with patch(
+            "arkalia_cia_python_backend.security_dashboard.ATHALIA_AVAILABLE", False
+        ):
             self.dashboard = SecurityDashboard(project_path=self.temp_dir)
             # Vider les composants Athalia pour éviter les scans
             self.dashboard.athalia_components = {}
@@ -69,7 +71,9 @@ class TestSecurityDashboard:
             "vulnerabilities": {"high": 1, "medium": 5, "low": 10},
             "athalia_available": False,
         }
-        recommendations = self.dashboard._generate_security_recommendations(security_data)
+        recommendations = self.dashboard._generate_security_recommendations(
+            security_data
+        )
         assert isinstance(recommendations, list)
         assert len(recommendations) > 0
 
@@ -80,7 +84,9 @@ class TestSecurityDashboard:
             "vulnerabilities": {"high": 0, "medium": 0, "low": 0},
             "athalia_available": True,
         }
-        recommendations = self.dashboard._generate_security_recommendations(security_data)
+        recommendations = self.dashboard._generate_security_recommendations(
+            security_data
+        )
         assert isinstance(recommendations, list)
 
     def test_generate_security_dashboard(self):
@@ -181,12 +187,16 @@ class TestSecurityDashboard:
         """Test de collecte avec composants Athalia simulés (optimisé performance)"""
         # Simuler des composants Athalia disponibles mais mockés pour éviter les scans complets
 
-        with patch("arkalia_cia_python_backend.security_dashboard.ATHALIA_AVAILABLE", True):
+        with patch(
+            "arkalia_cia_python_backend.security_dashboard.ATHALIA_AVAILABLE", True
+        ):
             dashboard = SecurityDashboard(project_path=self.temp_dir)
 
             # Créer des mocks pour éviter les scans réels (optimisation performance)
             mock_security_validator = MagicMock()
-            mock_security_validator.run_comprehensive_scan = MagicMock(return_value=None)
+            mock_security_validator.run_comprehensive_scan = MagicMock(
+                return_value=None
+            )
 
             mock_code_linter = MagicMock()
             mock_code_linter.run_lint = MagicMock(return_value=None)
@@ -219,7 +229,9 @@ class TestSecurityDashboard:
     def test_generate_recommendations_empty(self):
         """Test de génération de recommandations avec données vides"""
         security_data: dict[str, Any] = {}
-        recommendations = self.dashboard._generate_security_recommendations(security_data)
+        recommendations = self.dashboard._generate_security_recommendations(
+            security_data
+        )
         assert isinstance(recommendations, list)
 
     def test_generate_html_with_empty_data(self):
@@ -227,10 +239,14 @@ class TestSecurityDashboard:
         empty_data: dict[str, Any] = {}
 
         # Tester toutes les méthodes avec données vides en une seule fois
-        assert isinstance(self.dashboard._generate_command_validation_html(empty_data), str)
+        assert isinstance(
+            self.dashboard._generate_command_validation_html(empty_data), str
+        )
         assert isinstance(self.dashboard._generate_code_analysis_html(empty_data), str)
         assert isinstance(self.dashboard._generate_cache_security_html(empty_data), str)
-        assert isinstance(self.dashboard._generate_security_metrics_html(empty_data), str)
+        assert isinstance(
+            self.dashboard._generate_security_metrics_html(empty_data), str
+        )
         assert isinstance(self.dashboard._generate_recommendations_html([]), str)
 
     def test_collect_security_data_with_vulnerabilities(self):

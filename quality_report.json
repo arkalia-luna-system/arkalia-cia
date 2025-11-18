@@ -1,24 +1,12 @@
 {
   "timestamp": "/Volumes/T7/arkalia-cia",
   "project": "/Volumes/T7/arkalia-cia",
-  "score": 0,
+  "score": 68,
   "errors": [
-    "MyPy: arkalia_cia_python_backend/security_dashboard.py:23: error: Unused \"type: ignore\" comment  [unused-ignore]",
-    "MyPy: arkalia_cia_python_backend/security_dashboard.py:24: error: Unused \"type: ignore\" comment  [unused-ignore]",
-    "MyPy: arkalia_cia_python_backend/security_dashboard.py:25: error: Unused \"type: ignore\" comment  [unused-ignore]",
-    "MyPy: arkalia_cia_python_backend/security_dashboard.py:26: error: Unused \"type: ignore\" comment  [unused-ignore]",
-    "MyPy: arkalia_cia_python_backend/security_dashboard.py:23: error: Unused \"type: ignore\" comment  [unused-ignore]",
-    "MyPy: arkalia_cia_python_backend/security_dashboard.py:24: error: Unused \"type: ignore\" comment  [unused-ignore]",
-    "MyPy: arkalia_cia_python_backend/security_dashboard.py:25: error: Unused \"type: ignore\" comment  [unused-ignore]",
-    "MyPy: arkalia_cia_python_backend/security_dashboard.py:26: error: Unused \"type: ignore\" comment  [unused-ignore]"
+    "MyPy: arkalia_cia_python_backend/security_utils.py:157: error: Incompatible types in assignment (expression has type \"dict[str, Any]\", target has type \"str\")  [assignment]",
+    "MyPy: arkalia_cia_python_backend/security_utils.py:159: error: Incompatible types in assignment (expression has type \"list[dict[str, Any] | Any]\", target has type \"str\")  [assignment]"
   ],
   "warnings": [
-    "Formatage Black à corriger",
-    "Tri des imports isort à corriger",
-    "Bandit non exécuté: Command '['bandit', '-r', '/Volumes/T7/arkalia-cia', '-f', 'txt']' timed out after 45 seconds",
-    "Analyse de complexité non exécutée: [Errno 2] No such file or directory: 'radon'",
-    "Couverture documentation faible: 6.3%",
-    "Vérification couverture non exécutée: Command '['coverage', 'run', '-m', 'pytest', '/Volumes/T7/arkalia-cia']' timed out after 60 seconds",
     "Formatage Black à corriger",
     "Tri des imports isort à corriger",
     "Bandit non exécuté: Command '['bandit', '-r', '/Volumes/T7/arkalia-cia', '-f', 'txt']' timed out after 45 seconds",
@@ -27,5 +15,5 @@
     "Vérification couverture non exécutée: Command '['coverage', 'run', '-m', 'pytest', '/Volumes/T7/arkalia-cia']' timed out after 60 seconds"
   ],
   "fixes": [],
-  "quality_level": "CRITIQUE"
+  "quality_level": "MOYEN"
 }

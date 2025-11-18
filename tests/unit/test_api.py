@@ -2,7 +2,6 @@
 Tests unitaires pour l'API FastAPI
 """
 
-import tempfile
 from pathlib import Path
 
 import pytest
@@ -22,9 +21,15 @@ class TestAPIEndpoints:
     @pytest.fixture
     def temp_db(self):
         """Créer une base de données temporaire"""
+        import uuid
+
         from arkalia_cia_python_backend.database import CIADatabase
 
-        db_path = tempfile.mktemp(suffix=".db")
+        # Créer le fichier temporaire dans le répertoire courant pour éviter les problèmes de validation
+        test_db_dir = Path.cwd() / "test_temp"
+        test_db_dir.mkdir(exist_ok=True)
+        db_path = str(test_db_dir / f"test_{uuid.uuid4().hex}.db")
+
         original_db = api.db
         api.db = CIADatabase(db_path=db_path)
         yield db_path
@@ -95,7 +100,7 @@ class TestAPIEndpoints:
         """Test de création d'un contact d'urgence"""
         contact_data = {
             "name": "Test Contact",
-            "phone": "1234567890",
+            "phone": "+32470123456",  # Format belge valide
             "relationship": "family",
             "is_primary": False,
         }
