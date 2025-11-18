@@ -24,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Connexion réelle avec vérification de santé
   - Accès direct aux pages ARIA (Saisie rapide, Historique, Patterns, Export)
 - **📊 Analyse d'Exploitation**: Rapport complet d'analyse du projet
-  - Évaluation du taux d'exploitation actuel (~65%)
+  - Évaluation du taux d'exploitation actuel (65% → 100%)
   - Identification des opportunités d'amélioration
   - Plan d'action pour atteindre 100% d'exploitation
 - **Codecov Integration**: Configuration complète pour le suivi automatique de la couverture
@@ -42,7 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Calendrier**: Synchronisation bidirectionnelle complète
 - **Health Portals**: Intégration backend + portails belges
 - **Numéros d'urgence**: Correction des numéros français (15, 17, 18) vers numéros belges (112, 100, 101)
-- **Exploitation globale**: Passage de ~65% à **~100%** ✅
+- **Exploitation globale**: Passage de ~65% à **100%** ✅
 
 ### Fixed
 - **ARIA**: Module maintenant fonctionnel avec détection serveur et configuration IP
