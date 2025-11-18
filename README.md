@@ -108,6 +108,8 @@ graph TB
 - Category-based organization
 - Full-text search capabilities
 - Encrypted local storage
+- **PDF preview** (open with external app)
+- **Document sharing** (share PDF files)
 
 #### 🏥 Health
 - Quick access to health portals
@@ -121,6 +123,7 @@ graph TB
 - Bidirectional calendar sync
 - Appointment management
 - Backend synchronization
+- **Recurring reminders** (daily/weekly/monthly)
 
 #### 🚨 Emergency
 - ICE (In Case of Emergency) contacts
@@ -296,7 +299,13 @@ make deps-update        # Update dependencies
 - [x] **Health Portals** - Portails belges pré-configurés
 - [x] **Export/Import** - Interface UI complète
 
-### 🔄 Phase 3: Connected Ecosystem (Planned)
+### ✅ Phase 3: UX Enhancements (Completed - Décembre 2024)
+- [x] **Widgets Home Screen** - Widgets informatifs avec statistiques (documents/rappels)
+- [x] **Rappels récurrents** - Support quotidien/hebdomadaire/mensuel avec création automatique d'événements
+- [x] **Prévisualisation PDF** - Ouverture avec application externe
+- [x] **Partage documents** - Partage de fichiers PDF via share_plus
+
+### 🔄 Phase 4: Connected Ecosystem (Planned)
 - [ ] Optional cloud synchronization (infrastructure prête)
 - [ ] Secure family sharing
 - [ ] Robot integration (Reachy Mini)

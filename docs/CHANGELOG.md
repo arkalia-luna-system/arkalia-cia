@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **🔄 Phase 3 - Fonctionnalités Complètes**: Implémentation complète de toutes les fonctionnalités Phase 3
+  - **Widgets Home Screen**: Widgets informatifs avec statistiques (nombre documents/rappels) dans l'écran d'accueil
+  - **Rappels récurrents**: Support des rappels quotidiens, hebdomadaires et mensuels avec création automatique d'événements dans le calendrier
+  - **Prévisualisation PDF**: Ouverture des documents PDF avec une application externe via `url_launcher`
+  - **Partage documents**: Partage de fichiers PDF via `share_plus` avec texte personnalisé
 - **🔐 Authentification Biométrique**: Protection complète de l'application avec local_auth
   - Écran de verrouillage au démarrage
   - Authentification par empreinte digitale ou reconnaissance faciale
@@ -43,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Health Portals**: Intégration backend + portails belges
 - **Numéros d'urgence**: Correction des numéros français (15, 17, 18) vers numéros belges (112, 100, 101)
 - **Exploitation globale**: Passage de ~65% à **100%** ✅
+- **Phase 3**: Toutes les fonctionnalités optionnelles Phase 3 maintenant implémentées (widgets, rappels récurrents, prévisualisation PDF, partage)
 
 ### Fixed
 - **ARIA**: Module maintenant fonctionnel avec détection serveur et configuration IP
@@ -51,6 +57,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Calendrier**: Récupération des rappels depuis le calendrier système maintenant fonctionnelle
 - **Recherche**: Filtres par catégorie ajoutés dans l'écran Documents
 - **Thèmes**: Support complet des thèmes clair/sombre avec écran Paramètres
+- **Phase 3**: Correction des imports `url_launcher` pour prévisualisation PDF
 
 ## [1.1.0] - 2025-11-17
 
