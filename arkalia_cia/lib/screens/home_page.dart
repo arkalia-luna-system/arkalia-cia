@@ -31,6 +31,41 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _loadStats();
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  @override
+  void dispose() {
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _onSearchChanged() async {
+    final query = _searchController.text.trim();
+    if (query.isEmpty) {
+      if (mounted) {
+        setState(() {
+          _isSearching = false;
+          _searchResults = {};
+        });
+      }
+      return;
+    }
+
+    if (mounted) {
+      setState(() {
+        _isSearching = true;
+      });
+    }
+
+    final results = await SearchService.searchAll(query);
+    if (mounted) {
+      setState(() {
+        _searchResults = results;
+        _isSearching = false;
+      });
+    }
   }
 
   Future<void> _loadStats() async {
@@ -69,89 +104,130 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            // Titre principal
-            const Text(
-              'Assistant Personnel',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.blue,
+            // Barre de recherche globale
+            Semantics(
+              label: 'Barre de recherche globale',
+              hint: 'Rechercher dans tous les modules',
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: 'Rechercher dans documents, rappels, contacts...',
+                  prefixIcon: const Icon(Icons.search),
+                  suffixIcon: _searchController.text.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.clear),
+                          onPressed: () {
+                            _searchController.clear();
+                          },
+                        )
+                      : null,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 16),
-            // Widgets informatifs
-            if (!_isLoadingStats) _buildStatsWidgets(),
-            const SizedBox(height: 24),
-
-            // 6 boutons principaux
-            Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                children: [
-                  // Bouton 1: Import/voir doc
-                  _buildActionButton(
-                    context,
-                    icon: MdiIcons.fileDocumentOutline,
-                    title: 'Documents',
-                    subtitle: 'Import/voir docs',
-                    color: Colors.green,
-                    onTap: () => _showDocuments(context),
-                  ),
-
-                  // Bouton 2: Portails santé
-                  _buildActionButton(
-                    context,
-                    icon: MdiIcons.medicalBag,
-                    title: 'Santé',
-                    subtitle: 'Portails santé',
-                    color: Colors.red,
-                    onTap: () => _showHealth(context),
-                  ),
-
-                  // Bouton 3: Rappels simples
-                  _buildActionButton(
-                    context,
-                    icon: MdiIcons.bellOutline,
-                    title: 'Rappels',
-                    subtitle: 'Rappels simples',
-                    color: Colors.orange,
-                    onTap: () => _showReminders(context),
-                  ),
-
-                  // Bouton 4: Urgence ICE
-                  _buildActionButton(
-                    context,
-                    icon: MdiIcons.phoneAlert,
-                    title: 'Urgence',
-                    subtitle: 'ICE - Contacts',
-                    color: Colors.purple,
-                    onTap: () => _showEmergency(context),
-                  ),
-
-                  // Bouton 5: ARIA - Laboratoire Santé
-                  _buildActionButton(
-                    context,
-                    icon: MdiIcons.heartPulse,
-                    title: 'ARIA',
-                    subtitle: 'Laboratoire Santé',
-                    color: Colors.red,
-                    onTap: () => _showARIA(context),
-                  ),
-
-                  // Bouton 6: CIA Sync
-                  _buildActionButton(
-                    context,
-                    icon: MdiIcons.syncIcon,
-                    title: 'Sync',
-                    subtitle: 'CIA ↔ ARIA',
-                    color: Colors.orange,
-                    onTap: () => _showSync(context),
-                  ),
-                ],
+            // Résultats de recherche ou contenu normal
+            if (_searchController.text.trim().isNotEmpty)
+              Expanded(
+                child: _buildSearchResults(),
+              )
+            else ...[
+              // Titre principal
+              const Text(
+                'Assistant Personnel',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue,
+                ),
               ),
-            ),
+              const SizedBox(height: 16),
+              // Widgets informatifs
+              if (!_isLoadingStats) _buildStatsWidgets(),
+              const SizedBox(height: 24),
+
+              // 7 boutons principaux (ajout Stats)
+              Expanded(
+                child: GridView.count(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  children: [
+                    // Bouton 1: Import/voir doc
+                    _buildActionButton(
+                      context,
+                      icon: MdiIcons.fileDocumentOutline,
+                      title: 'Documents',
+                      subtitle: 'Import/voir docs',
+                      color: Colors.green,
+                      onTap: () => _showDocuments(context),
+                    ),
+
+                    // Bouton 2: Portails santé
+                    _buildActionButton(
+                      context,
+                      icon: MdiIcons.medicalBag,
+                      title: 'Santé',
+                      subtitle: 'Portails santé',
+                      color: Colors.red,
+                      onTap: () => _showHealth(context),
+                    ),
+
+                    // Bouton 3: Rappels simples
+                    _buildActionButton(
+                      context,
+                      icon: MdiIcons.bellOutline,
+                      title: 'Rappels',
+                      subtitle: 'Rappels simples',
+                      color: Colors.orange,
+                      onTap: () => _showReminders(context),
+                    ),
+
+                    // Bouton 4: Urgence ICE
+                    _buildActionButton(
+                      context,
+                      icon: MdiIcons.phoneAlert,
+                      title: 'Urgence',
+                      subtitle: 'ICE - Contacts',
+                      color: Colors.purple,
+                      onTap: () => _showEmergency(context),
+                    ),
+
+                    // Bouton 5: ARIA - Laboratoire Santé
+                    _buildActionButton(
+                      context,
+                      icon: MdiIcons.heartPulse,
+                      title: 'ARIA',
+                      subtitle: 'Laboratoire Santé',
+                      color: Colors.red,
+                      onTap: () => _showARIA(context),
+                    ),
+
+                    // Bouton 6: CIA Sync
+                    _buildActionButton(
+                      context,
+                      icon: MdiIcons.syncIcon,
+                      title: 'Sync',
+                      subtitle: 'CIA ↔ ARIA',
+                      color: Colors.orange,
+                      onTap: () => _showSync(context),
+                    ),
+
+                    // Bouton 7: Statistiques
+                    _buildActionButton(
+                      context,
+                      icon: MdiIcons.chartBox,
+                      title: 'Stats',
+                      subtitle: 'Statistiques',
+                      color: Colors.blue,
+                      onTap: () => _showStats(context),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ],
         ),
       ),
