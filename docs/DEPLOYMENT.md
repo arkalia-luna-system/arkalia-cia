@@ -91,8 +91,16 @@ ANALYTICS_ENABLED=true
 ### Build Configuration
 
 **Android Production Build**
+
+> ⚠️ **IMPORTANT** : Pour éviter les problèmes de fichiers macOS cachés, utilisez le disque local pour le build.
+
 ```bash
+# Copier sur disque local (une seule fois)
+cd /Volumes/T7/arkalia-cia
+rsync -av --exclude='build' --exclude='.dart_tool' --exclude='.git' --exclude='*.log' arkalia_cia/ ~/arkalia-cia-build/arkalia_cia/
+
 # Clean previous builds
+cd ~/arkalia-cia-build/arkalia_cia
 flutter clean && flutter pub get
 
 # Build signed APK

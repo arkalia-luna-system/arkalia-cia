@@ -16,24 +16,24 @@
 
 ## Overview
 
-> ✅ **Project Status**: Phase 2 - Enhanced Features **COMPLETED** (v1.1.0 - November 2025)
+**Project Status**: Phase 2 - Enhanced Features completed (v1.2.0 - November 2025)
 
-**Arkalia CIA** is a production-ready mobile application built with Flutter, designed to manage medical documents, health reminders, and emergency contacts.
+**Arkalia CIA** est une application mobile développée avec Flutter pour la gestion de documents médicaux, rappels de santé et contacts d'urgence.
 
-**🎯 Key Benefits**: 100% offline operation, military-grade encryption, senior-friendly design, and zero cloud dependency for maximum privacy and reliability.
+**Fonctionnalités principales**: Fonctionnement hors ligne, chiffrement AES-256, interface adaptée aux seniors, aucune dépendance cloud.
 
 ## Project Highlights
 
-| 🎯 Metric | Value | Impact |
-|-----------|-------|--------|
-| **⚡ Startup Time** | <2.1s | Lightning-fast app launch |
-| **🔒 Security Level** | AES-256 | Military-grade encryption |
-| **📱 Offline Mode** | 100% | Works without internet |
-| **🧪 Test Coverage** | 85% globale | 218 tests passing (100%) |
-| **🌍 Platforms** | iOS + Android | Universal compatibility |
-| **👥 Target Users** | Seniors + Families | Accessible design |
-| **📊 CI/CD Success** | 100% | All workflows green |
-| **🛡️ Vulnerabilities** | 0 | Security-first approach |
+| Métrique | Valeur |
+|---------|--------|
+| **Temps de démarrage** | <2.1s |
+| **Chiffrement** | AES-256 |
+| **Mode hors ligne** | Complet |
+| **Couverture tests** | 85% (218 tests) |
+| **Plateformes** | iOS + Android |
+| **Utilisateurs cibles** | Seniors et familles |
+| **CI/CD** | Workflows fonctionnels |
+| **Vulnérabilités** | 0 détectée |
 
 ## Architecture
 
@@ -66,40 +66,40 @@ graph TB
 
 ### Technical Stack
 
-| Component | Technology | Version | Status | Quality |
-|-----------|------------|---------|--------|---------|
-| **Frontend** | Flutter | 3.35.3 | ✅ Production | 100% Tests Pass |
-| **Language** | Dart | 3.0+ | ✅ Production | 0 Linting Issues |
-| **Backend** | FastAPI | 0.116.1 | ✅ Production | 85% globale (218 tests) |
-| **Runtime** | Python | 3.10.14 | ✅ Production | Black+Ruff Clean |
-| **Database** | SQLite | Built-in | ✅ Production | Encrypted AES-256 |
-| **Storage** | Local encryption | AES-256 | ✅ Production | Security Verified |
+| Composant | Technologie | Version | Statut |
+|-----------|------------|---------|--------|
+| **Frontend** | Flutter | 3.35.3 | Opérationnel |
+| **Langage** | Dart | 3.0+ | Opérationnel |
+| **Backend** | FastAPI | 0.116.1 | Opérationnel |
+| **Runtime** | Python | 3.10.14 | Opérationnel |
+| **Base de données** | SQLite | Intégré | Chiffré AES-256 |
+| **Stockage** | Chiffrement local | AES-256 | Opérationnel |
 
 ### Code Quality by Module
 
-| Module | Frontend Status | Backend Status | Test Coverage | Notes |
-|--------|----------------|----------------|---------------|-------|
-| **Documents** | ✅ Complete | ✅ Complete | 100% | Production ready |
-| **Health** | ✅ Complete | ✅ Complete | 100% | Production ready |
-| **Reminders** | ✅ Complete | ✅ Complete | 100% | Calendar integration stable |
-| **Emergency** | ✅ Complete | ✅ Complete | 100% | ICE features fully functional |
-| **API Services** | ✅ Complete | ✅ Complete | 100% | Communication layer stable |
-| **Storage** | ✅ Complete | ✅ Complete | 100% | Encryption verified |
+| Module | Frontend | Backend | Couverture Tests |
+|--------|---------|---------|------------------|
+| **Documents** | Opérationnel | Opérationnel | 100% |
+| **Santé** | Opérationnel | Opérationnel | 100% |
+| **Rappels** | Opérationnel | Opérationnel | 100% |
+| **Urgence** | Opérationnel | Opérationnel | 100% |
+| **API Services** | Opérationnel | Opérationnel | 100% |
+| **Stockage** | Opérationnel | Opérationnel | 100% |
 
 ## Features
 
 ### Application Modules
 
-| Module/Screen | Purpose | Key Features | Phase | Status |
-|---------------|---------|--------------|-------|--------|
-| **📱 Home Dashboard** | Navigation hub | Quick access, app overview | 1-2 | ✅ Complete |
-| **📄 Documents** | PDF management | Upload, encrypt, organize, search | 1-2 | ✅ Complete |
-| **🏥 Health** | Medical portals | Quick access to health services | 2 | ✅ Complete |
-| **🔔 Reminders** | Calendar integration | Native calendar, notifications | 2 | ✅ Complete |
-| **🚨 Emergency** | ICE contacts | One-tap calling, medical info | 2 | ✅ Complete |
-| **🔐 Authentication** | Biometric security | Fingerprint/Face ID protection | 2 | ✅ Complete |
-| **📊 ARIA** | Health lab integration | Pain tracking, pattern analysis | 2 | ✅ Complete |
-| **⚙️ Backend API** | Cloud sync (optional) | Document sync, family sharing | 2 | ✅ Connected |
+| Module/Écran | Fonction | Fonctionnalités | Phase | Statut |
+|---------------|---------|-----------------|-------|--------|
+| **Accueil** | Navigation | Accès rapide, aperçu | 1-2 | Opérationnel |
+| **Documents** | Gestion PDF | Upload, chiffrement, organisation, recherche | 1-2 | Opérationnel |
+| **Santé** | Portails médicaux | Accès rapide aux services | 2 | Opérationnel |
+| **Rappels** | Intégration calendrier | Calendrier natif, notifications | 2 | Opérationnel |
+| **Urgence** | Contacts ICE | Appel rapide, informations médicales | 2 | Opérationnel |
+| **Authentification** | Sécurité biométrique | Empreinte digitale/Face ID | 2 | Opérationnel |
+| **ARIA** | Intégration labo santé | Suivi douleur, analyse patterns | 2 | Opérationnel |
+| **API Backend** | Sync cloud (optionnel) | Sync documents, partage famille | 2 | Connecté |
 
 ### Core Modules
 
@@ -159,7 +159,9 @@ graph TB
 ```bash
 # 30-second local demo
 git clone https://github.com/arkalia-luna-system/arkalia-cia.git
-cd arkalia-cia/arkalia_cia && flutter run -d chrome
+cd arkalia-cia/arkalia_cia
+flutter pub get
+flutter run -d chrome
 # ↳ App opens at http://localhost:8080
 ```
 
@@ -187,8 +189,12 @@ cd arkalia-cia
 cd arkalia_cia
 flutter pub get
 
-# Run application
+# Run application (développement)
 flutter run
+
+# OU build release pour téléphone (recommandé : disque local)
+# cd ~/arkalia-cia-build/arkalia_cia
+# flutter run --release -d 192.168.129.46:5555
 ```
 
 ### Development Commands
@@ -230,93 +236,93 @@ make deps-update        # Update dependencies
 
 ## Performance Metrics
 
-### ⚡ Speed Benchmarks
+### Performances
 
-| Operation | Target | Achieved | Grade |
-|-----------|--------|----------|-------|
-| **🚀 App Launch** | <3s | 2.1s | 🟢 A+ |
-| **📄 Document Load** | <500ms | 340ms | 🟢 A+ |
-| **🔍 Search Query** | <200ms | 120ms | 🟢 A+ |
-| **📅 Calendar Sync** | <1s | 680ms | 🟢 A |
-| **💾 Data Save** | <300ms | 180ms | 🟢 A+ |
-| **🔐 Encryption** | <100ms | 45ms | 🟢 A+ |
+| Opération | Cible | Mesuré |
+|-----------|-------|--------|
+| **Démarrage** | <3s | 2.1s |
+| **Chargement document** | <500ms | 340ms |
+| **Recherche** | <200ms | 120ms |
+| **Sync calendrier** | <1s | 680ms |
+| **Sauvegarde** | <300ms | 180ms |
+| **Chiffrement** | <100ms | 45ms |
 
-### 📊 Resource Usage
+### Utilisation Ressources
 
-- **💾 Memory Usage**: <50MB average
-- **🔋 Battery Impact**: Minimal (background optimized)
-- **📱 Storage**: ~25MB app + user data
-- **🌐 Network**: 0 bytes (fully offline)
+- **Mémoire**: <50MB en moyenne
+- **Batterie**: Impact minimal (optimisé arrière-plan)
+- **Stockage**: ~25MB application + données utilisateur
+- **Réseau**: 0 bytes (fonctionnement hors ligne)
 
 ## Security & Privacy
 
 ### 🔒 Security Features
 
-| Security Layer | Implementation | Status | Verification |
-|----------------|----------------|--------|--------------|
-| **🔐 Data Encryption** | AES-256-GCM | ✅ Active | Bandit verified |
-| **🔒 Biometric Auth** | Fingerprint/Face ID | ✅ Active | local_auth integrated |
-| **🗝️ Key Management** | Device keychain/keystore | ✅ Active | Hardware-backed |
-| **🌐 Network Security** | Optional backend sync | ✅ Active | Configurable |
-| **🔍 Code Analysis** | Static security scanning | ✅ Active | CI/CD automated |
-| **📱 App Permissions** | Minimal required only | ✅ Active | Calendar + Contacts |
-| **🛡️ Memory Protection** | Secure data erasure | ✅ Active | Crypto shredding |
+| Couche Sécurité | Implémentation | Statut |
+|-----------------|-----------------|--------|
+| **Chiffrement données** | AES-256-GCM | Actif |
+| **Authentification biométrique** | Empreinte/Face ID | Actif |
+| **Gestion clés** | Keychain/Keystore | Actif |
+| **Sécurité réseau** | Sync backend optionnel | Actif |
+| **Analyse code** | Scan sécurité statique | Actif |
+| **Permissions app** | Minimales requises | Actif |
+| **Protection mémoire** | Effacement sécurisé | Actif |
 
-### 🏠 Local-First Architecture Benefits
+### Architecture Local-First
 
-- **📱 Device-Only Storage**: All data remains on your phone
-- **🔒 Military-Grade Encryption**: AES-256 protects sensitive documents
-- **🌍 Zero Cloud Dependency**: Works completely offline
-- **👁️ Full Transparency**: Open source code, no hidden functions
-- **⚡ Instant Access**: No network delays or outages
+- **Stockage sur appareil**: Toutes les données restent sur le téléphone
+- **Chiffrement AES-256**: Protection des documents sensibles
+- **Aucune dépendance cloud**: Fonctionnement hors ligne complet
+- **Code open source**: Transparence totale, pas de fonctions cachées
+- **Accès instantané**: Pas de délais réseau ni de pannes
 
 ## Development Status
 
-### ✅ Phase 1: Local MVP (Completed)
-- [x] Flutter application structure
-- [x] Four main modules implemented
-- [x] Navigation system
-- [x] Local storage integration
-- [x] Secure data services
-- [x] Comprehensive test suite (218 tests, 85% coverage)
-- [x] CI/CD pipeline (100% passing)
-- [x] Code quality standards (Black + Ruff)
+### Phase 1: MVP Local (Terminée)
+- Structure application Flutter
+- Quatre modules principaux implémentés
+- Système de navigation
+- Intégration stockage local
+- Services de données sécurisés
+- Suite de tests (218 tests, 85% couverture)
+- Pipeline CI/CD fonctionnel
+- Standards qualité code (Black + Ruff)
 
-### ✅ Phase 2: Enhanced Features (Completed)
-- [x] Calendar service integration
-- [x] Contacts service integration
-- [x] Reminders module (calendar-native)
-- [x] Emergency contacts (system-native)
-- [x] Health portals interface
-- [x] Senior-friendly UX design
-- [x] Robust error handling
-- [x] Timezone support for notifications
-- [x] Widget components for emergency features
-- [x] **Biometric authentication** (local_auth integration)
-- [x] **Backend API connection** (FastAPI fully connected)
-- [x] **ARIA integration** (functional with server detection)
-- [x] **Emergency numbers** (Belgian numbers: 112, 100, 101)
+### Phase 2: Fonctionnalités Avancées (Terminée)
+- Intégration service calendrier
+- Intégration service contacts
+- Module rappels (calendrier natif)
+- Contacts urgence (système natif)
+- Interface portails santé
+- Design adapté aux seniors
+- Gestion d'erreurs robuste
+- Support timezone pour notifications
+- Composants widgets pour fonctionnalités urgence
+- Authentification biométrique (local_auth)
+- Connexion API backend (FastAPI)
+- Intégration ARIA (détection serveur)
+- Numéros urgence belges (112, 100, 101)
 
-### ✅ Phase 2.5: Final Features (Completed - Décembre 2024)
-- [x] **Module Sync** - Synchronisation CIA ↔ ARIA complète
-- [x] **Recherche avancée** - Filtres et recherche dans documents
-- [x] **Thèmes** - Mode clair/sombre/système
-- [x] **Paramètres** - Écran de configuration complet
-- [x] **Sync Calendrier** - Synchronisation bidirectionnelle
-- [x] **Health Portals** - Portails belges pré-configurés
-- [x] **Export/Import** - Interface UI complète
+### Phase 2.5: Fonctionnalités Finales (Terminée)
+- Synchronisation CIA ↔ ARIA
+- Recherche avancée avec filtres
+- Thèmes (clair/sombre/système)
+- Écran paramètres complet
+- Synchronisation calendrier bidirectionnelle
+- Portails santé belges pré-configurés
+- Interface export/import
 
-### ✅ Phase 3: UX Enhancements (Completed - Décembre 2024)
-- [x] **Widgets Home Screen** - Widgets informatifs avec statistiques (documents/rappels)
-- [x] **Rappels récurrents** - Support quotidien/hebdomadaire/mensuel avec création automatique d'événements
-- [x] **Prévisualisation PDF** - Ouverture avec application externe
-- [x] **Partage documents** - Partage de fichiers PDF via share_plus
+### Phase 3: Améliorations UX (Terminée)
+- Widgets écran d'accueil avec statistiques
+- Rappels récurrents (quotidien/hebdomadaire/mensuel)
+- Prévisualisation PDF avec application externe
+- Partage documents PDF
 
-### 🔄 Phase 4: Connected Ecosystem (Planned)
-- [ ] Optional cloud synchronization (infrastructure prête)
-- [ ] Secure family sharing
-- [ ] Robot integration (Reachy Mini)
-- [ ] Public API endpoints
+### Phase 4: Écosystème Connecté (Planifiée)
+- Synchronisation cloud optionnelle (infrastructure prête)
+- Partage sécurisé famille
+- Intégration robot (Reachy Mini)
+- Endpoints API publique
 
 ## Development Roadmap
 
@@ -358,7 +364,7 @@ A: Only you. Documents are encrypted on your device with AES-256. No cloud stora
 A: Yes! Large buttons, clear text, and simple navigation designed for all ages.
 
 **Q: How secure is my data?**
-A: Military-grade encryption (AES-256), no data transmission, local-only storage.
+A: Chiffrement AES-256, aucune transmission de données, stockage local uniquement.
 
 ### For Developers
 
@@ -371,66 +377,40 @@ A: Flutter 3.35.3 (frontend), Python 3.10.14 (backend), SQLite (database).
 **Q: How do I run the project locally?**
 A: `git clone`, `flutter pub get`, `flutter run`. See Quick Start section above.
 
-## What Users Say
+## Tests Utilisateurs
 
-> 💬 **Real feedback from our beta testing community**
+Tests effectués avec 24 utilisateurs seniors (65-82 ans) pour valider l'accessibilité.
 
-| User Type | Feedback | Rating |
-|-----------|----------|--------|
-| **👵 Senior User** | *"Finally, an app that just works! No confusing cloud setup."* | ⭐⭐⭐⭐⭐ |
-| **👨‍⚕️ Healthcare Worker** | *"Perfect for patients who need simple document management."* | ⭐⭐⭐⭐⭐ |
-| **👨‍💻 Developer** | *"Clean code, great architecture. Easy to contribute to."* | ⭐⭐⭐⭐⭐ |
-| **👪 Family Caregiver** | *"Peace of mind knowing all medical info is secure and accessible."* | ⭐⭐⭐⭐⭐ |
+### Résultats Tests
 
-### 📈 Beta Testing Results
+- **Satisfaction utilisateur**: 4.8/5
+- **Taux de réussite tâches**: 94%
+- **Temps d'apprentissage**: <5 minutes en moyenne
+- **Rétention quotidienne**: 78% après 1 semaine
 
-- **🎯 User Satisfaction**: 4.8/5 stars
-- **⚡ Task Completion**: 94% success rate
-- **🕒 Learning Time**: <5 minutes average
-- **🔄 Daily Usage**: 78% retention after 1 week
+## Accessibilité Seniors
 
-## Senior Accessibility & Real-World Testing
+Tests effectués avec 24 utilisateurs seniors (65-82 ans) pour valider l'accessibilité.
 
-### 👵 **Senior User Testing Program**
+### Fonctionnalités Accessibilité
 
-We conducted extensive testing with **24 senior users (ages 65-82)** to ensure true accessibility:
+| Fonctionnalité | Implémentation | Efficacité |
+|----------------|----------------|------------|
+| **Texte et boutons grands** | Police 18pt minimum, cibles tactiles 48px+ | 96% |
+| **Contraste élevé** | Texte sombre sur fond clair | 92% |
+| **Navigation simple** | Maximum 2 appuis pour toute fonctionnalité | 89% |
+| **Notifications claires** | Grandes icônes, langage simple | 94% |
+| **Prévention erreurs** | Dialogues de confirmation, annulation | 91% |
+| **Système d'aide** | Bulles d'aide contextuelles | 87% |
 
-| Accessibility Feature | Implementation | Senior Feedback | Effectiveness |
-|----------------------|----------------|-----------------|---------------|
-| **🔍 Large Text & Buttons** | 18pt minimum font, 48px+ touch targets | *"Much easier to read and tap"* | 96% approval |
-| **🎨 High Contrast** | Dark text on light backgrounds | *"Clear even with reading glasses"* | 92% approval |
-| **⚡ Simple Navigation** | Maximum 2 taps to any feature | *"I don't get lost anymore"* | 89% approval |
-| **🔔 Clear Notifications** | Large icons, simple language | *"Alerts are easy to understand"* | 94% approval |
-| **📱 Error Prevention** | Confirmation dialogs, undo options | *"Forgiving when I make mistakes"* | 91% approval |
-| **🆘 Help System** | Context-sensitive help bubbles | *"Help appears when I need it"* | 87% approval |
+### Améliorations Implémentées
 
-### 🏥 **Healthcare Provider Feedback**
-
-> *"We tested Arkalia CIA with 15 of our elderly patients. The app significantly reduced confusion around medication reminders and document management."*
-> **— Dr. Sarah Chen, Geriatric Medicine, Regional Medical Center**
-
-**Clinical Results**:
-- **📊 85% reduction** in missed medication reminders
-- **📄 78% improvement** in organized document storage
-- **🚨 92% faster** emergency contact access
-
-### 🛠️ **Accessibility Improvements Made**
-
-Based on senior user feedback, we implemented:
-
-1. **📱 Touch Sensitivity**: Reduced required pressure for taps
-2. **⏱️ Longer Timeouts**: Extended interaction time limits
-3. **🔊 Audio Cues**: Optional sound feedback for actions
-4. **📝 Simple Language**: Eliminated technical jargon
-5. **🔄 Consistent Layout**: Same button positions across screens
-6. **🆘 Emergency Access**: Large, always-visible emergency button
-
-### 📋 **Ongoing Senior User Panel**
-
-- **👥 12 active senior testers** provide monthly feedback
-- **📞 Direct hotline** for accessibility concerns
-- **🔄 Monthly usability sessions** with local senior center
-- **📊 Continuous A/B testing** of UI improvements
+1. Sensibilité tactile réduite
+2. Timeouts plus longs
+3. Retours audio optionnels
+4. Langage simplifié
+5. Mise en page cohérente
+6. Accès urgence toujours visible
 
 ## Testing
 
@@ -486,32 +466,24 @@ See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for development guidelines, code sta
 
 ## What's New & User Impact
 
-### 🆕 **Latest User-Focused Updates**
+### Dernières Mises à Jour
 
-| Update | User Benefit | Release |
-|--------|-------------|---------|
-| **🔐 Enhanced Security** | Your documents now use military-grade encryption (AES-256) | v1.0.0 |
-| **📱 Senior-Friendly UI** | Larger buttons, clearer text, simplified navigation | v1.0.0 |
-| **⚡ Faster Startup** | App now opens in under 2 seconds (was 4s) | v1.0.0 |
-| **🔔 Smart Reminders** | Better calendar sync, never miss appointments | v1.0.0 |
-| **📄 Drag & Drop** | Upload documents by simply dragging files | v1.0.0 |
-| **🚨 Emergency Mode** | One-tap calling to emergency contacts | v1.0.0 |
+| Mise à jour | Bénéfice utilisateur | Version |
+|-------------|---------------------|---------|
+| **Sécurité renforcée** | Chiffrement AES-256 pour documents | v1.0.0 |
+| **Interface adaptée seniors** | Boutons plus grands, texte plus clair | v1.0.0 |
+| **Démarrage plus rapide** | Ouverture en moins de 2 secondes | v1.0.0 |
+| **Rappels intelligents** | Meilleure sync calendrier | v1.0.0 |
+| **Drag & Drop** | Upload par glisser-déposer | v1.0.0 |
+| **Mode urgence** | Appel rapide contacts urgence | v1.0.0 |
 
-### 👥 **Real User Feedback Integration**
+### Fonctionnalités Planifiées
 
-> *"The new large buttons make it so much easier for my 75-year-old mother to use"* - **Family Caregiver**
-
-- **📊 94% task completion** rate after UI improvements
-- **⚡ 60% faster** document upload with drag & drop
-- **🎯 4.8/5 star** satisfaction in senior user testing
-
-### 📋 **Coming Based on Your Requests**
-
-| Planned Feature | User Request | Target |
-|----------------|-------------|--------|
-| **🎤 Voice Commands** | "Easier for hands-free use" | Q1 2026 |
-| **👨‍👩‍👧‍👦 Family Sharing** | "Share with my children securely" | Q2 2026 |
-| **📱 Widgets** | "Quick access from home screen" | Q1 2026 |
+| Fonctionnalité | Demande utilisateur | Cible |
+|----------------|---------------------|-------|
+| **Commandes vocales** | Utilisation mains libres | Q1 2026 |
+| **Partage famille** | Partage sécurisé avec enfants | Q2 2026 |
+| **Widgets** | Accès rapide depuis écran d'accueil | Q1 2026 |
 
 ## Documentation
 

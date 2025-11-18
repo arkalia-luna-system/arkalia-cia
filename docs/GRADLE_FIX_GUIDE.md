@@ -84,26 +84,42 @@ cd arkalia_cia/android
 
 ## 🚀 **UTILISATION**
 
-### **Méthode 1 : Script wrapper (Recommandé)**
+### **Méthode 1 : Build sur disque local (RECOMMANDÉ)**
+
+> ⚠️ **IMPORTANT** : Pour éviter les problèmes de fichiers macOS cachés, utilisez le disque local pour le build.
+
+```bash
+# Copier sur disque local (une seule fois)
+cd /Volumes/T7/arkalia-cia
+rsync -av --exclude='build' --exclude='.dart_tool' --exclude='.git' --exclude='*.log' arkalia_cia/ ~/arkalia-cia-build/arkalia_cia/
+
+# Builder depuis disque local
+cd ~/arkalia-cia-build/arkalia_cia
+flutter run --release -d 192.168.129.46:5555
+```
+
+### **Méthode 2 : Script wrapper (si build sur disque externe)**
 
 ```bash
 cd /Volumes/T7/arkalia-cia/arkalia_cia/android
-./build-android.sh flutter run -d R3CY60BJ3ZM
+./build-android.sh flutter run -d 192.168.129.46:5555
 ```
 
-### **Méthode 2 : Variables d'environnement**
+### **Méthode 3 : Variables d'environnement**
 
 ```bash
 cd /Volumes/T7/arkalia-cia/arkalia_cia
 export GRADLE_USER_HOME=$HOME/.gradle
 export GRADLE_OPTS="-Dorg.gradle.user.home=$HOME/.gradle -Duser.home=$HOME"
-flutter run -d R3CY60BJ3ZM
+find build -name "._*" -type f -delete 2>/dev/null
+flutter run --release -d 192.168.129.46:5555
 ```
 
-### **Méthode 3 : Directement avec gradlew**
+### **Méthode 4 : Directement avec gradlew**
 
 ```bash
 cd /Volumes/T7/arkalia-cia/arkalia_cia/android
+find ../build -name "._*" -type f -delete 2>/dev/null
 GRADLE_USER_HOME=$HOME/.gradle ./gradlew assembleDebug
 ```
 

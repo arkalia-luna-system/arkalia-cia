@@ -45,10 +45,27 @@
 4. Activez **Débogage USB**
 
 #### **Étape 3 : Builder et Installer**
+
+> ⚠️ **IMPORTANT** : Pour éviter les problèmes de fichiers macOS cachés sur le disque externe, utilisez le disque local pour le build.
+
+**Option A : Build sur disque local (RECOMMANDÉ)**
+```bash
+# Copier le projet sur disque local (une seule fois)
+cd /Volumes/T7/arkalia-cia
+rsync -av --exclude='build' --exclude='.dart_tool' --exclude='.git' --exclude='*.log' arkalia_cia/ ~/arkalia-cia-build/arkalia_cia/
+
+# Builder depuis le disque local
+cd ~/arkalia-cia-build/arkalia_cia
+flutter clean
+flutter run --release -d 192.168.129.46:5555
+```
+
+**Option B : Build sur disque externe (si nécessaire)**
 ```bash
 cd /Volumes/T7/arkalia-cia/arkalia_cia
 
-# Nettoyer le build précédent (optionnel mais recommandé)
+# Nettoyer les fichiers macOS avant build
+find build -name "._*" -type f -delete 2>/dev/null
 flutter clean
 
 # Builder et installer directement sur le téléphone
@@ -121,9 +138,18 @@ Si vous préférez faire manuellement :
 #### **Déployer l'App via WiFi**
 
 Une fois connecté (avec script ou manuellement), vous pouvez débrancher le câble USB et utiliser :
+
+**Recommandé : Build sur disque local**
+```bash
+cd ~/arkalia-cia-build/arkalia_cia
+flutter run --release -d 192.168.129.46:5555
+```
+
+**Alternative : Build sur disque externe**
 ```bash
 cd /Volumes/T7/arkalia-cia/arkalia_cia
-flutter run --release
+find build -name "._*" -type f -delete 2>/dev/null
+flutter run --release -d 192.168.129.46:5555
 ```
 
 **Résultat** : Vous pouvez mettre à jour Arkalia CIA sans rebrancher le câble USB, mais vous devez TOUJOURS lancer la commande `flutter run` manuellement. Ça ne se fait PAS automatiquement.
@@ -156,9 +182,13 @@ flutter build apk --release
 
 **Si vous êtes sur le même réseau WiFi :**
 ```bash
+# Reconnecter via WiFi
 cd /Volumes/T7/arkalia-cia/arkalia_cia
 ./connect_wifi_adb.sh reconnect  # Reconnecte si nécessaire
-flutter run --release
+
+# Builder depuis disque local (recommandé)
+cd ~/arkalia-cia-build/arkalia_cia
+flutter run --release -d 192.168.129.46:5555
 ```
 **Pas besoin de rebrancher le téléphone !**
 
@@ -170,8 +200,9 @@ flutter run --release
 ### **Si vous utilisez WiFi Manuellement (Méthode 2 - Option B)**
 Une fois le WiFi configuré, vous pouvez simplement :
 ```bash
-cd /Volumes/T7/arkalia-cia/arkalia_cia
-flutter run --release
+# Builder depuis disque local (recommandé)
+cd ~/arkalia-cia-build/arkalia_cia
+flutter run --release -d 192.168.129.46:5555
 ```
 **Pas besoin de rebrancher le téléphone !** (tant que vous êtes sur le même réseau WiFi)
 
@@ -269,10 +300,10 @@ Une fois configuré, vous pouvez mettre à jour Arkalia CIA **sans jamais rebran
 ## 🎯 Commandes Rapides
 
 ```bash
-# Aller dans le dossier Flutter
+# === WiFi ADB (Recommandé) ===
+# Aller dans le dossier source
 cd /Volumes/T7/arkalia-cia/arkalia_cia
 
-# === WiFi ADB (Recommandé) ===
 # Première configuration (avec USB)
 ./connect_wifi_adb.sh setup
 
@@ -282,15 +313,20 @@ cd /Volumes/T7/arkalia-cia/arkalia_cia
 # Vérifier le statut
 ./connect_wifi_adb.sh status
 
-# === Déploiement ===
-# Builder et installer (via USB ou WiFi)
-flutter run --release
+# === Déploiement (Recommandé : disque local) ===
+# Copier sur disque local (une seule fois)
+cd /Volumes/T7/arkalia-cia
+rsync -av --exclude='build' --exclude='.dart_tool' --exclude='.git' --exclude='*.log' arkalia_cia/ ~/arkalia-cia-build/arkalia_cia/
+
+# Builder depuis disque local
+cd ~/arkalia-cia-build/arkalia_cia
+flutter run --release -d 192.168.129.46:5555
 
 # Créer un APK
 flutter build apk --release
 
 # Installer l'APK (si besoin)
-adb install -r build/app/outputs/flutter-apk/app-release.apk
+/Users/athalia/Library/Android/sdk/platform-tools/adb install -r build/app/outputs/flutter-apk/app-release.apk
 ```
 
 > 💡 **Astuce** : Une fois le WiFi ADB configuré avec le script, vous pouvez utiliser `./connect_wifi_adb.sh reconnect` puis `flutter run --release` sans jamais rebrancher le câble USB (tant que vous êtes sur le même réseau WiFi).

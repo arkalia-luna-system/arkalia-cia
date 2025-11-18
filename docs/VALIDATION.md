@@ -37,7 +37,7 @@
 - **Phase 3** : Écosystème connecté (backend Python)
 
 ### Technologies alignées
-- **Frontend** : Flutter 3.0+ / Dart 3.0+
+- **Frontend** : Flutter 3.35.3 / Dart 3.0+
 - **Backend** : Python 3.10+ / FastAPI (Phase 3)
 - **Base de données** : SQLite local + PostgreSQL (Phase 3)
 - **Sécurité** : AES-256, chiffrement local

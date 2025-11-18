@@ -79,13 +79,15 @@
 **Option 1 : USB (simple)**
 ```bash
 # Branchez le téléphone
+cd ~/arkalia-cia-build/arkalia_cia  # Ou /Volumes/T7/arkalia-cia/arkalia_cia
 flutter run --release
 ```
 
-**Option 2 : WiFi (une fois configuré)**
+**Option 2 : WiFi (une fois configuré) - RECOMMANDÉ**
 ```bash
 # Pas besoin de brancher
-flutter run --release
+cd ~/arkalia-cia-build/arkalia_cia  # Build sur disque local (recommandé)
+flutter run --release -d 192.168.129.46:5555
 ```
 
 **Dans les deux cas** : Vous devez lancer la commande manuellement. Ça ne se fait PAS automatiquement.
