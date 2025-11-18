@@ -8,6 +8,58 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **📥 Import/Export de Données Complet**: 
+  - Import de données depuis fichier JSON avec sélection de fichier
+  - Export avec sélection de modules (Documents, Rappels, Contacts, Infos médicales)
+  - Validation de format et confirmation utilisateur
+  - Partage automatique du fichier d'export
+- **📶 Détection WiFi Réelle**: 
+  - Intégration de `connectivity_plus` pour détection réelle du WiFi
+  - Option "Synchroniser uniquement sur WiFi" pour économiser les données mobiles
+  - Vérification automatique avant synchronisation
+- **🔄 Retry Automatique avec Backoff Exponentiel**: 
+  - Service `RetryHelper` pour retry automatique des requêtes réseau
+  - Backoff exponentiel (1s, 2s, 4s) avec maximum 3 tentatives
+  - Intégré dans toutes les méthodes GET de `ApiService`
+- **📁 Gestion CRUD des Catégories de Documents**: 
+  - Service `CategoryService` pour gestion complète des catégories
+  - Catégories par défaut (Médical, Administratif, Autre) + personnalisées
+  - Interface de gestion accessible depuis l'écran Documents
+  - Sélection de catégorie lors de l'upload de documents
+- **✅ Validation Stricte des Données**: 
+  - Service `ValidationHelper` avec validation téléphone, URL, email, nom, date
+  - Validation en temps réel dans les formulaires
+  - Messages d'erreur clairs et contextuels
+  - Formatage automatique des numéros de téléphone belges
+- **📊 Écran de Statistiques Détaillé**: 
+  - Nouvel écran `StatsScreen` avec statistiques complètes
+  - Statistiques documents (total, par catégorie, taille)
+  - Statistiques rappels (total, terminés, en attente, à venir)
+  - Statistiques contacts (total, principaux)
+  - Interface avec cartes colorées et pull-to-refresh
+- **🔍 Recherche Globale**: 
+  - Service `SearchService` pour recherche dans tous les modules
+  - Barre de recherche dans HomePage avec résultats groupés par type
+  - Recherche en temps réel dans Documents, Rappels, Contacts
+  - Navigation directe vers les résultats trouvés
+- **♿ Accessibilité Améliorée**: 
+  - Widgets `Semantics` pour support TalkBack/VoiceOver
+  - Labels et hints pour tous les éléments interactifs
+  - Support utilisateurs malvoyants avec descriptions complètes
+- **🛡️ Gestion d'Erreurs Réseau Améliorée**: 
+  - Service `ErrorHelper` pour messages utilisateur clairs et traduits
+  - Détection intelligente des types d'erreurs (réseau, timeout, HTTP)
+  - Messages spécifiques par code HTTP (404, 500, 503, etc.)
+  - Logging structuré des erreurs pour débogage
+- **💾 Cache Offline Intelligent**: 
+  - Service `OfflineCacheService` pour cache avec expiration automatique
+  - Cache des données pour usage offline (24h par défaut)
+  - Fallback automatique sur cache en cas d'erreur réseau
+  - Nettoyage automatique des caches expirés
+- **🧪 Tests Unitaires Validation**: 
+  - Tests complets pour `ValidationHelper` (5/5 passent)
+  - Validation téléphone belge, URL, email, nom, date
+  - Tests Python compatibles avec suite existante
 - **🧪 Amélioration Massive de la Couverture de Tests**: 
   - Création de 189 tests Python (vs 61 précédemment)
   - Couverture globale portée à **81%** (vs 10.69% précédemment)
@@ -56,6 +108,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Dashboard Codecov pour visualiser l'évolution de la couverture
 
 ### Changed
+- **Gestion d'Erreurs**: Messages d'erreur techniques remplacés par messages utilisateur compréhensibles
+- **Synchronisation**: Synchronisation bidirectionnelle complète avec détection WiFi réelle
+- **Export**: Export amélioré avec sélection de modules et métadonnées (date, version)
+- **API Service**: Toutes les méthodes GET utilisent maintenant retry automatique et cache offline
+- **Tests et Couverture**: Amélioration massive de la qualité du code
+  - Couverture globale: 10.69% → **81%** (+70 points)
+  - Nombre de tests: 61 → **189** (+128 tests)
+  - Tous les tests passent: 100% ✅
+  - Formatage: Black + Ruff parfait
 - **Sécurité**: Passage de 30% à 100% avec authentification biométrique active
 - **Backend**: De 0% à 100% d'exploitation avec connexion complète
 - **ARIA**: De 40% à 100% avec module fonctionnel et configurable
@@ -69,6 +130,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Phase 3**: Toutes les fonctionnalités optionnelles Phase 3 maintenant implémentées (widgets, rappels récurrents, prévisualisation PDF, partage)
 
 ### Fixed
+- **Import/Export**: Fonctionnalités d'import et export maintenant complètement implémentées
+- **WiFi Detection**: Détection WiFi réelle avec `connectivity_plus` au lieu de placeholder
+- **Erreurs Réseau**: Gestion d'erreurs améliorée avec messages utilisateur clairs
+- **Cache Offline**: Support offline avec cache intelligent pour meilleure expérience utilisateur
 - **ARIA**: Module maintenant fonctionnel avec détection serveur et configuration IP
 - **Backend**: API maintenant connectée et utilisable depuis l'application mobile
 - **Sécurité**: Authentification biométrique implémentée et active
