@@ -124,3 +124,8 @@ ignore_errors = false
 [[tool.mypy.overrides]]
 module = "aria_integration.*"
 follow_imports = "skip"
+
+# Ignorer les imports manquants pour les bibliothèques tierces sans stubs
+[[tool.mypy.overrides]]
+module = "pypdf.*"
+ignore_missing_imports = true

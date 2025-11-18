@@ -450,7 +450,7 @@
             <div class="security-score">0/100</div>
             <div class="security-status">Critique</div>
             <p>Projet: /Volumes/T7/arkalia-cia</p>
-            <p>Dernière mise à jour: 2025-11-18T10:36:57.804922</p>
+            <p>Dernière mise à jour: 2025-11-18T10:45:44.851202</p>
             <button class="refresh-btn" onclick="location.reload()">🔄 Actualiser</button>
         </div>
 
@@ -534,7 +534,7 @@
         </div>
         <div class="metric-row">
             <span class="metric-label">⚡ Athalia Components</span>
-            <span class="metric-value">✅ Disponibles</span>
+            <span class="metric-value">❌ Non disponibles</span>
         </div>
         
                 </div>
@@ -548,11 +548,11 @@
 
         <div class="recommendations">
             <h3>💡 Recommandations de Sécurité</h3>
-            <div class="recommendation-item recommendation-info"><span class="rec-icon">💡</span><span class="rec-text">Composants Athalia non disponibles</span></div>
+            <div class="recommendation-item recommendation-info"><span class="rec-icon">💡</span><span class="rec-text">Composants Athalia non disponibles - initialisation échouée</span></div>
         </div>
 
         <div class="footer">
-            <p>🕒 Dernière mise à jour: 2025-11-18T10:36:57.804922</p>
+            <p>🕒 Dernière mise à jour: 2025-11-18T10:45:44.851202</p>
             <p>🛡️ Dashboard de sécurité généré automatiquement par Athalia v12.0.0</p>
         </div>
     </div>
@@ -580,7 +580,7 @@
                 const originalText = element.textContent;
                 const match = originalText.match(/([0-9]+)/);
                 if (!match) return;
-                
+
                 const finalValue = parseInt(match[1]);
                 if (finalValue > 0 && finalValue <= 10000) { // Limiter pour éviter les animations trop longues
                     let currentValue = 0;
@@ -643,17 +643,17 @@
         const chartTotal = 0;
         const chartData = {
             labels: ['Critiques', 'Moyennes', 'Mineures'],
-            datasets: [{
+                datasets: [{
                 data: [chartHigh, chartMedium, chartLow],
-                backgroundColor: [
-                    '#dc3545',
-                    '#ffc107',
+                    backgroundColor: [
+                        '#dc3545',
+                        '#ffc107',
                     '#28a745'
-                ],
+                    ],
                 borderWidth: 3,
                 borderColor: '#fff',
                 hoverOffset: 10
-            }]
+                }]
         };
 
         const chart = new Chart(ctx, {
@@ -713,24 +713,10 @@
                 this.classList.add('loading');
                 this.innerHTML = '🔄 Actualisation...';
                 setTimeout(() => {
-                    location.reload();
+            location.reload();
                 }, 500);
             });
         }
-
-        // Actualisation automatique intelligente (vérifie les changements avant de recharger)
-        let lastUpdateTime = '2025-11-18T10:36:57.804922';
-        setInterval(function() {
-            // Vérifier si le timestamp a changé en comparant avec le footer
-            const footerElement = document.querySelector('.footer p');
-            if (footerElement) {
-                const footerTimeMatch = footerElement.textContent.match(/(\d{4}-\d{2}-\d{2}T[\d:]+)/);
-                if (footerTimeMatch && footerTimeMatch[1] !== lastUpdateTime) {
-                    lastUpdateTime = footerTimeMatch[1];
-                    location.reload();
-                }
-            }
-        }, 60000); // Vérifier toutes les minutes
 
         // Ajouter des badges de score dynamiques et des alertes intelligentes
         const scoreElement = document.querySelector('.security-score');
@@ -738,11 +724,11 @@
             const score = parseInt(scoreElement.textContent.replace(/[^0-9]/g, ''));
             const badge = document.createElement('span');
             badge.className = 'score-badge';
-            
+
             // Déterminer le badge selon le score ET les vulnérabilités
             const hasHighVulns = 0 > 0;
             const hasManyMediumVulns = 0 > 20;
-            
+
             if (score >= 85 && !hasHighVulns && !hasManyMediumVulns) {
                 badge.className += ' excellent';
                 badge.textContent = 'Excellent';
@@ -757,12 +743,12 @@
                 badge.textContent = 'À améliorer';
             }
             scoreElement.parentElement.appendChild(badge);
-            
+
             // Ajouter une alerte visuelle si nécessaire
             if (hasHighVulns || (score < 50 && 0 > 10)) {
                 const alertDiv = document.createElement('div');
                 alertDiv.style.cssText = 'background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 5px;';
-                alertDiv.innerHTML = '<strong>⚠️ Attention:</strong> ' + 
+                alertDiv.innerHTML = '<strong>⚠️ Attention:</strong> ' +
                     (hasHighVulns ? 'Vulnérabilités critiques détectées!' : 'Score de sécurité faible. Action recommandée.');
                 const overviewDiv = document.querySelector('.security-overview');
                 if (overviewDiv) {
@@ -770,18 +756,18 @@
                 }
             }
         }
-        
+
         // Ajouter des informations contextuelles intelligentes
         function addContextualInfo() {
             const totalVulns = 0;
             const score = 0;
-            
+
             // Calculer des statistiques utiles
             const filesScanned = document.querySelector('.metric-value')?.textContent.replace(/[^0-9]/g, '') || '0';
-            const vulnDensity = totalVulns > 0 && parseInt(filesScanned) > 0 
-                ? (totalVulns / parseInt(filesScanned) * 100).toFixed(2) 
+            const vulnDensity = totalVulns > 0 && parseInt(filesScanned) > 0
+                ? (totalVulns / parseInt(filesScanned) * 100).toFixed(2)
                 : '0';
-            
+
             // Ajouter un indicateur de tendance si possible (pour futures améliorations)
             console.log('📊 Statistiques du dashboard:', {
                 score: score,
@@ -790,7 +776,7 @@
                 fichiers_scannés: filesScanned
             });
         }
-        
+
         // Appeler après le chargement complet
         window.addEventListener('load', addContextualInfo);
     </script>

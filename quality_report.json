@@ -3,10 +3,10 @@
   "project": "/Volumes/T7/arkalia-cia",
   "score": 48,
   "errors": [
-    "MyPy: arkalia_cia_python_backend/security_dashboard.py:22: error: Unused \"type: ignore\" comment  [unused-ignore]",
+    "MyPy: arkalia_cia_python_backend/security_dashboard.py:23: error: Unused \"type: ignore\" comment  [unused-ignore]",
+    "MyPy: arkalia_cia_python_backend/security_dashboard.py:24: error: Unused \"type: ignore\" comment  [unused-ignore]",
     "MyPy: arkalia_cia_python_backend/security_dashboard.py:25: error: Unused \"type: ignore\" comment  [unused-ignore]",
-    "MyPy: arkalia_cia_python_backend/security_dashboard.py:28: error: Unused \"type: ignore\" comment  [unused-ignore]",
-    "MyPy: arkalia_cia_python_backend/security_dashboard.py:31: error: Unused \"type: ignore\" comment  [unused-ignore]"
+    "MyPy: arkalia_cia_python_backend/security_dashboard.py:26: error: Unused \"type: ignore\" comment  [unused-ignore]"
   ],
   "warnings": [
     "Formatage Black à corriger",

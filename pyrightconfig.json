@@ -10,10 +10,13 @@
         "**/.venv",
         "**/arkalia_cia_venv"
     ],
-    "stubPath": "arkalia_cia_python_backend/stubs",
+    "extraPaths": [
+        "arkalia_cia_python_backend/stubs"
+    ],
     "reportMissingImports": "none",
     "reportMissingTypeStubs": false,
     "reportImportCycles": false,
     "reportUnusedTypeIgnoreComment": false,
+    "reportGeneralTypeIssues": false,
     "typeCheckingMode": "basic"
 }

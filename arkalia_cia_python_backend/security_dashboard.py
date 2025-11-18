@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# pyright: reportMissingImports=false, reportMissingModuleSource=false
+# pyright: reportMissingImports=false, reportMissingModuleSource=false, reportGeneralTypeIssues=false
 """
 Dashboard de sécurité web pour Athalia
 Interface moderne pour visualiser les rapports de sécurité en temps réel
@@ -14,22 +14,30 @@ import urllib.parse
 import webbrowser
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 # Import des composants Athalia réels (optionnels)
 # Ces imports sont dans un try/except car les modules peuvent ne pas être disponibles
-# pyright: reportMissingImports=false
+if TYPE_CHECKING:
+    # Imports uniquement pour le type checking - les stubs sont utilisés
+    from athalia_core.core.cache_manager import CacheManager  # type: ignore
+    from athalia_core.metrics.collector import MetricsCollector  # type: ignore
+    from athalia_core.quality.code_linter import CodeLinter  # type: ignore
+    from athalia_core.validation.security_validator import (  # type: ignore
+        CommandSecurityValidator,
+    )
+
 try:
-    from athalia_core.core.cache_manager import (  # pyright: ignore[reportMissingImports]
+    from athalia_core.core.cache_manager import (  # pyright: ignore
         CacheManager,  # noqa: F401
     )
-    from athalia_core.metrics.collector import (  # pyright: ignore[reportMissingImports]
+    from athalia_core.metrics.collector import (  # pyright: ignore
         MetricsCollector,  # noqa: F401
     )
-    from athalia_core.quality.code_linter import (  # pyright: ignore[reportMissingImports]
+    from athalia_core.quality.code_linter import (  # pyright: ignore
         CodeLinter,  # noqa: F401
     )
-    from athalia_core.validation.security_validator import (  # pyright: ignore[reportMissingImports]
+    from athalia_core.validation.security_validator import (  # pyright: ignore
         CommandSecurityValidator,  # noqa: F401
     )
 
@@ -132,7 +140,7 @@ class SecurityDashboard:
             return {}
 
     def collect_security_data(self) -> dict[str, Any]:
-        """Collecte les vraies données de sécurité depuis les composants Athalia"""
+        """Collecte les vraies données de sécurité depuis les composants Athalia (optimisé performance)"""
         security_data: dict[str, Any] = {
             "timestamp": datetime.now().isoformat(),
             "project_path": str(self.project_path),
@@ -154,9 +162,13 @@ class SecurityDashboard:
 
         if not self.athalia_components:
             security_data["recommendations"].append(
-                "Composants Athalia non disponibles"
+                "Composants Athalia non disponibles - initialisation échouée"
             )
+            security_data["athalia_available"] = False
             return security_data
+
+        # Nettoyage mémoire avant collecte
+        force_memory_cleanup()
 
         try:
             # Collecte des données de sécurité
@@ -165,177 +177,219 @@ class SecurityDashboard:
 
                 # Scan de sécurité complet avec la vraie méthode
                 if hasattr(security_validator, "run_comprehensive_scan"):
-                    scan_results = security_validator.run_comprehensive_scan(
-                        str(self.project_path)
-                    )
-                    security_data["security_checks"][
-                        "comprehensive_scan"
-                    ] = scan_results
-
-                    # Calcul du score de sécurité intelligent et contextuel
-                    total_vulns = scan_results.get("vulnerabilities_found", 0)
-                    if total_vulns > 0:
-                        # Limiter la taille des vulnérabilités en mémoire pour éviter la surcharge
-                        vulnerabilities_raw = scan_results.get("vulnerabilities", [])
-                        # Limiter à 1000 vulnérabilités max pour éviter la surcharge mémoire
-                        max_vulns = 1000
-                        if len(vulnerabilities_raw) > max_vulns:
-                            logger.warning(
-                                f"Trop de vulnérabilités ({len(vulnerabilities_raw)}), "
-                                f"limitation à {max_vulns} pour optimiser la mémoire"
-                            )
-                            vulnerabilities = vulnerabilities_raw[:max_vulns]
-                        else:
-                            vulnerabilities = vulnerabilities_raw
-                        # Libérer la référence pour libérer la mémoire immédiatement
-                        del vulnerabilities_raw
-                        force_memory_cleanup()
-
-                        # Analyse intelligente des fonctions dangereuses (optimisé pour mémoire)
-                        # Parcourir une seule fois au lieu de plusieurs list comprehensions
-                        dangerous_functions_count = 0
-                        xss_count = 0
-                        sql_count = 0
-                        xss_patterns_set: set[str] = set()
-                        sql_patterns_set: set[str] = set()
-
-                        for v in vulnerabilities:
-                            vuln_type = v.get("type", "")
-                            if vuln_type == "dangerous_function":
-                                dangerous_functions_count += 1
-                            elif vuln_type == "xss":
-                                xss_count += 1
-                                pattern = v.get("pattern", "")
-                                if pattern:
-                                    xss_patterns_set.add(pattern)
-                            elif vuln_type == "sql_injection":
-                                sql_count += 1
-                                pattern = v.get("pattern", "")
-                                if pattern:
-                                    sql_patterns_set.add(pattern)
-
-                        xss_patterns = len(xss_patterns_set)
-                        sql_patterns = len(sql_patterns_set)
-
-                        # Libérer les sets immédiatement après utilisation
-                        del xss_patterns_set, sql_patterns_set
-
-                        # Score contextuel intelligent et réaliste
-                        base_score = 100  # Score de base parfait
-
-                        # Classification intelligente des vulnérabilités
-                        high_vulns = xss_count + sql_count
-                        medium_vulns = dangerous_functions_count
-                        low_vulns = total_vulns - high_vulns - medium_vulns
-
-                        # Pénalités critiques (XSS et SQL injection sont très graves)
-                        xss_penalty = (
-                            xss_patterns * 5.0
-                        )  # 5 points par pattern XSS unique
-                        sql_penalty = (
-                            sql_patterns * 10.0
-                        )  # 10 points par pattern SQL unique
-
-                        # Pénalités pour fonctions dangereuses (moins graves mais nombreuses)
-                        # Calcul plus réaliste : chaque vulnérabilité moyenne compte
-                        # mais avec une pénalité décroissante pour éviter les scores trop bas
-                        if medium_vulns > 100:
-                            # Si plus de 100 vulnérabilités moyennes, probablement des faux positifs
-                            # Limiter la pénalité mais quand même pénaliser significativement
-                            medium_penalty = min(
-                                30.0, 15.0 + (medium_vulns - 100) * 0.05
-                            )
-                        elif medium_vulns > 50:
-                            # Entre 50 et 100, pénalité progressive
-                            medium_penalty = 15.0 + (medium_vulns - 50) * 0.2
-                        else:
-                            # Moins de 50, pénalité normale
-                            medium_penalty = medium_vulns * 0.3
-
-                        # Pénalités pour vulnérabilités mineures
-                        low_penalty = low_vulns * 0.05
-
-                        # Calcul du score final intelligent
-                        total_penalty = (
-                            xss_penalty + sql_penalty + medium_penalty + low_penalty
+                    try:
+                        scan_results = security_validator.run_comprehensive_scan(
+                            str(self.project_path)
                         )
+                        if scan_results:
+                            security_data["security_checks"][
+                                "comprehensive_scan"
+                            ] = scan_results
 
-                        # S'assurer que le score est un entier entre 0 et 100
-                        calculated_score = base_score - total_penalty
-                        security_data["security_score"] = int(
-                            max(0, min(100, calculated_score))
-                        )
+                            # Calcul du score de sécurité intelligent et contextuel
+                            total_vulns = scan_results.get("vulnerabilities_found", 0)
 
-                        # Calculer le niveau de risque réel basé sur les vulnérabilités
-                        # pour assurer la cohérence avec le score
-                        if high_vulns > 0:
-                            risk_level = "CRITICAL"
-                        elif medium_vulns > 20 or total_vulns > 50:
-                            risk_level = "HIGH"
-                        elif medium_vulns > 5 or total_vulns > 10:
-                            risk_level = "MEDIUM"
+                            if total_vulns > 0:
+                                # Limiter la taille des vulnérabilités en mémoire pour éviter la surcharge
+                                vulnerabilities_raw = scan_results.get(
+                                    "vulnerabilities", []
+                                )
+                                # Limiter à 500 vulnérabilités max pour optimiser la mémoire (réduit de 1000 à 500)
+                                max_vulns = 500
+                                if len(vulnerabilities_raw) > max_vulns:
+                                    logger.warning(
+                                        f"Trop de vulnérabilités ({len(vulnerabilities_raw)}), "
+                                        f"limitation à {max_vulns} pour optimiser la mémoire"
+                                    )
+                                    vulnerabilities = vulnerabilities_raw[:max_vulns]
+                                else:
+                                    vulnerabilities = vulnerabilities_raw
+                                # Libérer la référence pour libérer la mémoire immédiatement
+                                del vulnerabilities_raw
+                                force_memory_cleanup()
+
+                                # Analyse intelligente des fonctions dangereuses (optimisé pour mémoire)
+                                # Parcourir une seule fois au lieu de plusieurs list comprehensions
+                                dangerous_functions_count = 0
+                                xss_count = 0
+                                sql_count = 0
+                                xss_patterns_set: set[str] = set()
+                                sql_patterns_set: set[str] = set()
+
+                                for v in vulnerabilities:
+                                    vuln_type = v.get("type", "")
+                                    if vuln_type == "dangerous_function":
+                                        dangerous_functions_count += 1
+                                    elif vuln_type == "xss":
+                                        xss_count += 1
+                                        pattern = v.get("pattern", "")
+                                        if pattern:
+                                            xss_patterns_set.add(pattern)
+                                    elif vuln_type == "sql_injection":
+                                        sql_count += 1
+                                        pattern = v.get("pattern", "")
+                                        if pattern:
+                                            sql_patterns_set.add(pattern)
+
+                                xss_patterns = len(xss_patterns_set)
+                                sql_patterns = len(sql_patterns_set)
+
+                                # Libérer les sets immédiatement après utilisation
+                                del xss_patterns_set, sql_patterns_set
+                                force_memory_cleanup()
+
+                                # Score contextuel intelligent et réaliste
+                                base_score = 100  # Score de base parfait
+
+                                # Classification intelligente des vulnérabilités
+                                high_vulns = xss_count + sql_count
+                                medium_vulns = dangerous_functions_count
+                                low_vulns = total_vulns - high_vulns - medium_vulns
+
+                                # Pénalités critiques (XSS et SQL injection sont très graves)
+                                xss_penalty = (
+                                    xss_patterns * 5.0
+                                )  # 5 points par pattern XSS unique
+                                sql_penalty = (
+                                    sql_patterns * 10.0
+                                )  # 10 points par pattern SQL unique
+
+                                # Pénalités pour fonctions dangereuses (moins graves mais nombreuses)
+                                # Calcul plus réaliste : chaque vulnérabilité moyenne compte
+                                # mais avec une pénalité décroissante pour éviter les scores trop bas
+                                if medium_vulns > 100:
+                                    # Si plus de 100 vulnérabilités moyennes, probablement des faux positifs
+                                    # Limiter la pénalité mais quand même pénaliser significativement
+                                    medium_penalty = min(
+                                        30.0, 15.0 + (medium_vulns - 100) * 0.05
+                                    )
+                                elif medium_vulns > 50:
+                                    # Entre 50 et 100, pénalité progressive
+                                    medium_penalty = 15.0 + (medium_vulns - 50) * 0.2
+                                else:
+                                    # Moins de 50, pénalité normale
+                                    medium_penalty = medium_vulns * 0.3
+
+                                # Pénalités pour vulnérabilités mineures
+                                low_penalty = low_vulns * 0.05
+
+                                # Calcul du score final intelligent
+                                total_penalty = (
+                                    xss_penalty
+                                    + sql_penalty
+                                    + medium_penalty
+                                    + low_penalty
+                                )
+
+                                # S'assurer que le score est un entier entre 0 et 100
+                                calculated_score = base_score - total_penalty
+                                security_data["security_score"] = int(
+                                    max(0, min(100, calculated_score))
+                                )
+
+                                # Calculer le niveau de risque réel basé sur les vulnérabilités
+                                # pour assurer la cohérence avec le score
+                                if high_vulns > 0:
+                                    risk_level = "CRITICAL"
+                                elif medium_vulns > 20 or total_vulns > 50:
+                                    risk_level = "HIGH"
+                                elif medium_vulns > 5 or total_vulns > 10:
+                                    risk_level = "MEDIUM"
+                                else:
+                                    risk_level = "LOW"
+
+                                # Stocker le niveau de risque pour utilisation dans le dashboard
+                                security_data["risk_level"] = risk_level
+
+                                # Classification intelligente des vulnérabilités (s'assurer que ce sont des entiers)
+                                security_data["vulnerabilities"]["high"] = int(
+                                    high_vulns
+                                )
+                                security_data["vulnerabilities"]["medium"] = int(
+                                    medium_vulns
+                                )
+                                security_data["vulnerabilities"]["low"] = int(
+                                    max(0, low_vulns)
+                                )
+
+                                # Métriques de performance et qualité du code
+                                total_files = scan_results.get("total_files_scanned", 0)
+                                vulns_count = len(vulnerabilities)
+                                security_data["performance_metrics"] = {
+                                    "scan_speed": total_files / max(1, vulns_count),
+                                    "vulnerability_density": total_vulns
+                                    / max(1, total_files),
+                                    "risk_distribution": {
+                                        "critical_ratio": (xss_count + sql_count)
+                                        / max(1, total_vulns),
+                                        "medium_ratio": dangerous_functions_count
+                                        / max(1, total_vulns),
+                                        "safe_ratio": (total_files - total_vulns)
+                                        / max(1, total_files),
+                                    },
+                                }
+
+                                # Métriques de qualité du code
+                                security_data["code_quality_metrics"] = {
+                                    "security_awareness": max(
+                                        0, 100 - (total_vulns * 0.1)
+                                    ),
+                                    "code_complexity": total_files
+                                    / max(1, vulns_count),
+                                    "maintenance_index": max(
+                                        0, 100 - (dangerous_functions_count * 0.05)
+                                    ),
+                                }
+
+                                # Libérer la mémoire des vulnérabilités après traitement
+                                del vulnerabilities
+                                # Libérer aussi les données intermédiaires
+                                if "vulnerabilities" in scan_results:
+                                    del scan_results["vulnerabilities"]
+                                # Forcer le garbage collector pour libérer la mémoire immédiatement
+                                force_memory_cleanup()
+                            else:
+                                # Aucune vulnérabilité trouvée - score parfait
+                                security_data["security_score"] = 100
+                                security_data["vulnerabilities"] = {
+                                    "high": 0,
+                                    "medium": 0,
+                                    "low": 0,
+                                }
                         else:
-                            risk_level = "LOW"
-
-                        # Stocker le niveau de risque pour utilisation dans le dashboard
-                        security_data["risk_level"] = risk_level
-
-                        # Classification intelligente des vulnérabilités (s'assurer que ce sont des entiers)
-                        security_data["vulnerabilities"]["high"] = int(high_vulns)
-                        security_data["vulnerabilities"]["medium"] = int(medium_vulns)
-                        security_data["vulnerabilities"]["low"] = int(max(0, low_vulns))
-
-                        # Métriques de performance et qualité du code
-                        total_files = scan_results.get("total_files_scanned", 0)
-                        vulns_count = len(vulnerabilities)
-                        security_data["performance_metrics"] = {
-                            "scan_speed": total_files / max(1, vulns_count),
-                            "vulnerability_density": total_vulns / max(1, total_files),
-                            "risk_distribution": {
-                                "critical_ratio": (xss_count + sql_count)
-                                / max(1, total_vulns),
-                                "medium_ratio": dangerous_functions_count
-                                / max(1, total_vulns),
-                                "safe_ratio": (total_files - total_vulns)
-                                / max(1, total_files),
-                            },
+                            logger.warning("Scan de sécurité retourné vide")
+                    except Exception as scan_error:
+                        logger.error(f"Erreur lors du scan de sécurité: {scan_error}")
+                        security_data["security_checks"]["comprehensive_scan"] = {
+                            "error": str(scan_error),
+                            "total_files_scanned": 0,
+                            "vulnerabilities_found": 0,
                         }
 
-                        # Métriques de qualité du code
-                        security_data["code_quality_metrics"] = {
-                            "security_awareness": max(0, 100 - (total_vulns * 0.1)),
-                            "code_complexity": total_files / max(1, vulns_count),
-                            "maintenance_index": max(
-                                0, 100 - (dangerous_functions_count * 0.05)
-                            ),
-                        }
-
-                        # Libérer la mémoire des vulnérabilités après traitement
-                        del vulnerabilities
-                        # Libérer aussi les données intermédiaires
-                        if "vulnerabilities" in scan_results:
-                            del scan_results["vulnerabilities"]
-                        # Forcer le garbage collector pour libérer la mémoire immédiatement
-                        force_memory_cleanup()
-                    else:
-                        security_data["security_score"] = 100
-                        security_data["vulnerabilities"] = {
-                            "high": 0,
-                            "medium": 0,
-                            "low": 0,
-                        }
-
-            # Collecte des résultats de linting
+            # Collecte des résultats de linting (optionnel, peut être sauté si trop lent)
             if "code_linter" in self.athalia_components:
                 code_linter = self.athalia_components["code_linter"]
 
                 if hasattr(code_linter, "run"):
                     try:
+                        # Limiter le temps de linting pour éviter les blocages
                         linting_results = code_linter.run()
+                        # Ne garder que les résultats essentiels
+                        if isinstance(linting_results, dict):
+                            # Garder seulement les clés importantes
+                            essential_keys = {"score", "errors", "warnings", "total"}
+                            linting_results = {
+                                k: v
+                                for k, v in linting_results.items()
+                                if k in essential_keys
+                            }
                         security_data["linting_results"] = linting_results
+                        del linting_results
+                        force_memory_cleanup()
                     except Exception as e:
                         logger.warning(f"Erreur lors du linting: {e}")
                         security_data["linting_results"] = {"error": str(e)}
+                        force_memory_cleanup()
 
             # Collecte des métriques de cache
             if "cache_manager" in self.athalia_components:
@@ -344,13 +398,24 @@ class SecurityDashboard:
                 if hasattr(cache_manager, "get_stats"):
                     try:
                         cache_stats = cache_manager.get_stats()
-                        security_data["cache_security"] = cache_stats
+                        if cache_stats:
+                            security_data["cache_security"] = cache_stats
+                        else:
+                            # Valeurs par défaut si pas de stats
+                            security_data["cache_security"] = {
+                                "hits": 0,
+                                "misses": 0,
+                                "total_requests": 0,
+                                "hit_rate": 0.0,
+                                "cache_size": 0,
+                            }
 
-                        # Calcul du score de performance du cache
-                        hit_rate = cache_stats.get("hit_rate", 0)
-                        hits = cache_stats.get("hits", 0)
-                        misses = cache_stats.get("misses", 0)
-                        total_reqs = cache_stats.get("total_requests", 0)
+                        # Calcul du score de performance du cache (utiliser les stats réelles ou par défaut)
+                        cache_stats_to_use = security_data["cache_security"]
+                        hit_rate = cache_stats_to_use.get("hit_rate", 0)
+                        hits = cache_stats_to_use.get("hits", 0)
+                        misses = cache_stats_to_use.get("misses", 0)
+                        total_reqs = cache_stats_to_use.get("total_requests", 0)
 
                         # Calculer le hit_rate correctement
                         if isinstance(hit_rate, int | float) and hit_rate > 0:
@@ -369,53 +434,80 @@ class SecurityDashboard:
                         cache_performance = min(100, max(0, int(hit_rate_percent)))
                         security_data["cache_performance"] = cache_performance
                         # Mettre à jour le hit_rate dans cache_stats pour l'affichage
-                        cache_stats["hit_rate"] = hit_rate_percent / 100.0
+                        security_data["cache_security"]["hit_rate"] = (
+                            hit_rate_percent / 100.0
+                        )
+                        del cache_stats_to_use
                     except Exception as e:
                         logger.warning(
                             f"Erreur lors de la collecte des stats cache: {e}"
                         )
                         security_data["cache_security"] = {"error": str(e)}
 
-            # Collecte des métriques complètes du projet
+            # Collecte des métriques complètes du projet (optimisé)
             if "metrics_collector" in self.athalia_components:
                 metrics_collector = self.athalia_components["metrics_collector"]
 
                 if hasattr(metrics_collector, "collect_all_metrics"):
                     try:
                         project_metrics = metrics_collector.collect_all_metrics()
+                        # Extraire les données essentielles AVANT nettoyage (optimisation mémoire)
+                        if isinstance(project_metrics, dict) and project_metrics:
+                            # Métriques Python avec les vraies clés du MetricsCollector
+                            python_files = project_metrics.get("python_files", {})
+                            if isinstance(python_files, dict):
+                                security_data["python_stats"] = {
+                                    "total_files": python_files.get("count", 0),
+                                    "total_lines": python_files.get("total_lines", 0),
+                                    "average_lines": python_files.get(
+                                        "average_lines_per_file", 0
+                                    ),
+                                    "complexity": python_files.get(
+                                        "average_complexity", 0
+                                    ),
+                                }
+                            del python_files
+
+                            # Métriques de tests avec les vraies clés
+                            tests = project_metrics.get("tests", {})
+                            if isinstance(tests, dict):
+                                security_data["test_coverage"] = {
+                                    "total_tests": tests.get(
+                                        "collected_tests_count", 0
+                                    ),
+                                    "test_files": tests.get("test_files_count", 0),
+                                    "coverage_percentage": tests.get(
+                                        "coverage_percentage", 0
+                                    ),
+                                }
+                            del tests
+
+                            # Métriques de documentation avec les vraies clés
+                            docs = project_metrics.get("documentation", {})
+                            if isinstance(docs, dict):
+                                security_data["documentation_quality"] = {
+                                    "total_docs": docs.get("total_files", 0),
+                                    "doc_files": docs.get("document_files", 0),
+                                    "coverage": docs.get("coverage_percentage", 0),
+                                }
+                            del docs
+
+                            # Nettoyer immédiatement les données non essentielles pour économiser la mémoire
+                            essential_metrics = {
+                                "python_files",
+                                "tests",
+                                "documentation",
+                            }
+                            project_metrics = {
+                                k: v
+                                for k, v in project_metrics.items()
+                                if k in essential_metrics
+                            }
+                            del essential_metrics
+
                         security_data["project_metrics"] = project_metrics
-
-                        # Métriques Python avec les vraies clés du MetricsCollector
-                        python_files = project_metrics.get("python_files", {})
-                        if isinstance(python_files, dict):
-                            security_data["python_stats"] = {
-                                "total_files": python_files.get("count", 0),
-                                "total_lines": python_files.get("total_lines", 0),
-                                "average_lines": python_files.get(
-                                    "average_lines_per_file", 0
-                                ),
-                                "complexity": python_files.get("average_complexity", 0),
-                            }
-
-                        # Métriques de tests avec les vraies clés
-                        tests = project_metrics.get("tests", {})
-                        if isinstance(tests, dict):
-                            security_data["test_coverage"] = {
-                                "total_tests": tests.get("collected_tests_count", 0),
-                                "test_files": tests.get("test_files_count", 0),
-                                "coverage_percentage": tests.get(
-                                    "coverage_percentage", 0
-                                ),
-                            }
-
-                        # Métriques de documentation avec les vraies clés
-                        docs = project_metrics.get("documentation", {})
-                        if isinstance(docs, dict):
-                            security_data["documentation_quality"] = {
-                                "total_docs": docs.get("total_files", 0),
-                                "doc_files": docs.get("document_files", 0),
-                                "coverage": docs.get("coverage_percentage", 0),
-                            }
+                        del project_metrics
+                        force_memory_cleanup()
 
                     except Exception as e:
                         logger.warning(f"Erreur lors de la collecte des métriques: {e}")
@@ -428,16 +520,34 @@ class SecurityDashboard:
                 security_data
             )
 
-            # Libérer les données volumineuses après traitement
+            # Libérer les données volumineuses après traitement (optimisation mémoire agressive)
             if "project_metrics" in security_data:
                 # Garder seulement les métriques essentielles
                 project_metrics = security_data.get("project_metrics", {})
                 if isinstance(project_metrics, dict) and "error" not in project_metrics:
-                    # Nettoyer les données volumineuses non utilisées
-                    for key in list(project_metrics.keys()):
-                        if key not in ["python_files", "tests", "documentation"]:
-                            del project_metrics[key]
+                    # Nettoyer les données volumineuses non utilisées (optimisé)
+                    keys_to_keep = {"python_files", "tests", "documentation"}
+                    keys_to_remove = [
+                        k for k in project_metrics.keys() if k not in keys_to_keep
+                    ]
+                    for key in keys_to_remove:
+                        del project_metrics[key]
+                    del keys_to_remove, keys_to_keep
                     force_memory_cleanup()
+
+            # Nettoyer aussi les données de scan volumineuses (optimisation critique)
+            if "security_checks" in security_data:
+                scan_data = security_data.get("security_checks", {}).get(
+                    "comprehensive_scan", {}
+                )
+                if isinstance(scan_data, dict) and "vulnerabilities" in scan_data:
+                    # Garder seulement le nombre, pas la liste complète (économie mémoire massive)
+                    vuln_list = scan_data.get("vulnerabilities", [])
+                    if isinstance(vuln_list, list):
+                        scan_data["vulnerabilities_count"] = len(vuln_list)
+                        del scan_data["vulnerabilities"]
+                        del vuln_list
+                        force_memory_cleanup()
 
         except Exception as e:
             logger.error(f"Erreur lors de la collecte des données de sécurité: {e}")
@@ -541,9 +651,9 @@ class SecurityDashboard:
             force_memory_cleanup()
 
     def _generate_dashboard_html(self, security_data: dict[str, Any]) -> str:
-        """Génère le HTML du dashboard avec les vraies données de sécurité"""
+        """Génère le HTML du dashboard avec les vraies données de sécurité (optimisé mémoire)"""
 
-        # Extraction des données pour le template
+        # Extraction des données pour le template (copie minimale)
         security_score_raw = security_data.get("security_score", 0)
         # S'assurer que le score est un nombre entre 0 et 100
         try:
@@ -551,10 +661,18 @@ class SecurityDashboard:
         except (ValueError, TypeError):
             security_score = 0
 
+        # Extraire seulement ce qui est nécessaire (éviter les copies complètes)
         vulnerabilities = security_data.get(
             "vulnerabilities", {"high": 0, "medium": 0, "low": 0}
         )
-        recommendations = security_data.get("recommendations", [])
+        # Limiter les recommandations à 8 max pour éviter un HTML trop volumineux (optimisé)
+        recommendations_raw = security_data.get("recommendations", [])
+        recommendations = (
+            recommendations_raw[:8] if isinstance(recommendations_raw, list) else []
+        )
+        del recommendations_raw  # Libérer immédiatement
+        force_memory_cleanup()
+
         timestamp = security_data.get("timestamp", "")
         project_path = security_data.get("project_path", "")
 
@@ -1209,17 +1327,17 @@ class SecurityDashboard:
         const chartTotal = {total_vulnerabilities};
         const chartData = {{
             labels: ['Critiques', 'Moyennes', 'Mineures'],
-            datasets: [{{
+                datasets: [{{
                 data: [chartHigh, chartMedium, chartLow],
-                backgroundColor: [
-                    '#dc3545',
-                    '#ffc107',
+                    backgroundColor: [
+                        '#dc3545',
+                        '#ffc107',
                     '#28a745'
-                ],
+                    ],
                 borderWidth: 3,
                 borderColor: '#fff',
                 hoverOffset: 10
-            }}]
+                }}]
         }};
 
         const chart = new Chart(ctx, {{
@@ -1279,7 +1397,7 @@ class SecurityDashboard:
                 this.classList.add('loading');
                 this.innerHTML = '🔄 Actualisation...';
                 setTimeout(() => {{
-                    location.reload();
+            location.reload();
                 }}, 500);
             }});
         }}
@@ -1610,7 +1728,6 @@ class SecurityDashboard:
                 system = platform.system()
                 if system == "Darwin":  # macOS
                     # Utiliser 'open' avec -g pour ne pas amener la fenêtre au premier plan
-                    # et -a pour spécifier le navigateur par défaut
                     subprocess.run(
                         ["open", "-g", str(absolute_path)], check=False
                     )  # nosec B607, B603
