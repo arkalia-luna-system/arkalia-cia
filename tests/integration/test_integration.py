@@ -17,7 +17,12 @@ class TestIntegration:
 
     def setup_method(self):
         """Configuration avant chaque test"""
-        self.test_db_path = tempfile.mktemp(suffix=".db")
+        # Créer le fichier temporaire dans le répertoire courant pour éviter les problèmes de validation
+        test_db_dir = Path.cwd() / "test_temp"
+        test_db_dir.mkdir(exist_ok=True)
+        import uuid
+
+        self.test_db_path = str(test_db_dir / f"test_{uuid.uuid4().hex}.db")
         self.db = CIADatabase(self.test_db_path)
         self.processor = PDFProcessor()
 
@@ -267,8 +272,12 @@ class TestIntegration:
 
     def test_file_operations_integration(self):
         """Test d'intégration des opérations de fichiers"""
-        # Test avec un fichier PDF fictif
-        test_pdf_path = tempfile.mktemp(suffix=".pdf")
+        # Test avec un fichier PDF fictif dans le répertoire courant
+        test_db_dir = Path.cwd() / "test_temp"
+        test_db_dir.mkdir(exist_ok=True)
+        import uuid
+
+        test_pdf_path = str(test_db_dir / f"test_{uuid.uuid4().hex}.pdf")
 
         try:
             # Créer un PDF de test simple

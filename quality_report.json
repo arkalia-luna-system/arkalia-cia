@@ -1,10 +1,9 @@
 {
   "timestamp": "/Volumes/T7/arkalia-cia",
   "project": "/Volumes/T7/arkalia-cia",
-  "score": 68,
+  "score": 78,
   "errors": [
-    "MyPy: arkalia_cia_python_backend/security_utils.py:157: error: Incompatible types in assignment (expression has type \"dict[str, Any]\", target has type \"str\")  [assignment]",
-    "MyPy: arkalia_cia_python_backend/security_utils.py:159: error: Incompatible types in assignment (expression has type \"list[dict[str, Any] | Any]\", target has type \"str\")  [assignment]"
+    "MyPy: arkalia_cia_python_backend/api.py:343: error: Unused \"type: ignore\" comment  [unused-ignore]"
   ],
   "warnings": [
     "Formatage Black à corriger",
@@ -15,5 +14,5 @@
     "Vérification couverture non exécutée: Command '['coverage', 'run', '-m', 'pytest', '/Volumes/T7/arkalia-cia']' timed out after 60 seconds"
   ],
   "fixes": [],
-  "quality_level": "MOYEN"
+  "quality_level": "BON"
 }

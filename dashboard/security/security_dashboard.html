@@ -146,7 +146,7 @@
         .security-score {
             font-size: 5rem;
             font-weight: 800;
-            color: #28a745;
+            color: #ff6b35;
             margin: 0;
             line-height: 1;
             letter-spacing: -0.03em;
@@ -161,7 +161,7 @@
             transform: translate(-50%, -50%);
             font-size: 8rem;
             font-weight: 800;
-            color: #28a745;
+            color: #ff6b35;
             opacity: 0.05;
             z-index: 0;
         }
@@ -169,11 +169,11 @@
         .security-status {
             font-size: 1.5rem;
             font-weight: 700;
-            color: #28a745;
+            color: #ff6b35;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             padding: 0.75rem 2rem;
-            background: #28a74515;
+            background: #ff6b3515;
             border-radius: 50px;
             display: inline-block;
         }
@@ -661,10 +661,10 @@
 
         @keyframes scoreGlow {
             0%, 100% {
-                filter: drop-shadow(0 0 10px #28a74540);
+                filter: drop-shadow(0 0 10px #ff6b3540);
             }
             50% {
-                filter: drop-shadow(0 0 20px #28a74560);
+                filter: drop-shadow(0 0 20px #ff6b3560);
             }
         }
 
@@ -793,14 +793,14 @@
                     <div class="security-score-bg">100</div>
                     <div class="security-score">100/100</div>
                 </div>
-                <div class="security-status">Sécurisé</div>
+                <div class="security-status">Attention</div>
             </div>
             <div class="project-info">
                 <div class="info-item">
                     <strong>Projet:</strong> <span>/Volumes/T7/arkalia-cia</span>
                 </div>
                 <div class="info-item">
-                    <strong>Dernière mise à jour:</strong> <span>2025-11-18T19:11:11.828546</span>
+                    <strong>Dernière mise à jour:</strong> <span>2025-11-18T19:20:01.840948</span>
                 </div>
             </div>
             <div style="text-align: center; margin-top: 1.5rem;">
@@ -819,7 +819,7 @@
             </div>
             <div class="vuln-card vuln-medium">
                 <div class="vuln-icon">⚠️</div>
-                <div class="vuln-number">0</div>
+                <div class="vuln-number">92</div>
                 <div class="vuln-label">Vulnérabilités Moyennes</div>
             </div>
             <div class="vuln-card vuln-low">
@@ -829,7 +829,7 @@
             </div>
             <div class="vuln-card">
                 <div class="vuln-icon">📊</div>
-                <div class="vuln-number">0</div>
+                <div class="vuln-number">92</div>
                 <div class="vuln-label">Total Vulnérabilités</div>
             </div>
         </div>
@@ -838,7 +838,24 @@
             <div class="security-card">
                 <h3>🔍 Validation des Commandes</h3>
                 <div id="commandValidationDetails">
-                    <p>Scan de sécurité en cours...</p>
+                    
+        <div class="metric-row">
+            <span class="metric-label">📁 Fichiers Scannés</span>
+            <span class="metric-value">3,575</span>
+        </div>
+        <div class="metric-row">
+            <span class="metric-label">🔍 Vulnérabilités Détectées</span>
+            <span class="metric-value">92</span>
+        </div>
+        <div class="metric-row">
+            <span class="metric-label">⚠️ Niveau de Risque</span>
+            <span class="metric-value risk-high">HIGH</span>
+        </div>
+        <div class="metric-row">
+            <span class="metric-label">📊 Ratio Vuln/Fichier</span>
+            <span class="metric-value">25.7‰</span>
+        </div>
+        
                 </div>
             </div>
 
@@ -848,19 +865,19 @@
                     
         <div class="metric-row">
             <span class="metric-label">🐍 Fichiers Python</span>
-            <span class="metric-value">0</span>
+            <span class="metric-value">27</span>
         </div>
         <div class="metric-row">
             <span class="metric-label">📝 Lignes de Code</span>
-            <span class="metric-value">0</span>
+            <span class="metric-value">8,759</span>
         </div>
         <div class="metric-row">
             <span class="metric-label">🧪 Tests Collectés</span>
-            <span class="metric-value">0</span>
+            <span class="metric-value">206</span>
         </div>
         <div class="metric-row">
             <span class="metric-label">📚 Documentation</span>
-            <span class="metric-value">0 fichiers</span>
+            <span class="metric-value">61 fichiers</span>
         </div>
         
                 </div>
@@ -869,7 +886,28 @@
             <div class="security-card">
                 <h3>💾 Cache et Performance</h3>
                 <div id="cacheSecurityDetails">
-                    <p>Métriques de cache en cours de collecte...</p>
+                    
+        <div class="metric-row">
+            <span class="metric-label">🎯 Hits</span>
+            <span class="metric-value">1,247</span>
+        </div>
+        <div class="metric-row">
+            <span class="metric-label">❌ Misses</span>
+            <span class="metric-value">89</span>
+        </div>
+        <div class="metric-row">
+            <span class="metric-label">📊 Total Requests</span>
+            <span class="metric-value">1,336</span>
+        </div>
+        <div class="metric-row">
+            <span class="metric-label">⚡ Hit Rate</span>
+            <span class="metric-value">93.3%</span>
+        </div>
+        <div class="metric-row">
+            <span class="metric-label">💾 Cache Size</span>
+            <span class="metric-value">2,048,576 bytes</span>
+        </div>
+        
                 </div>
             </div>
 
@@ -887,15 +925,15 @@
         </div>
         <div class="metric-row">
             <span class="metric-label">⚠️ Vulnérabilités Moyennes</span>
-            <span class="metric-value risk-medium">0</span>
+            <span class="metric-value risk-medium">92</span>
         </div>
         <div class="metric-row">
             <span class="metric-label">📊 Total Vulnérabilités</span>
-            <span class="metric-value">0</span>
+            <span class="metric-value">92</span>
         </div>
         <div class="metric-row">
             <span class="metric-label">⚡ Athalia Components</span>
-            <span class="metric-value">❌ Non disponibles</span>
+            <span class="metric-value">✅ Disponibles</span>
         </div>
         
                 </div>
@@ -909,11 +947,11 @@
 
         <div class="recommendations">
             <h3>💡 Recommandations de Sécurité</h3>
-            <div class="recommendation-item recommendation-excellent"><span class="rec-icon">✅</span><span class="rec-text">✅ EXCELLENT: Score de sécurité élevé - Maintenir les bonnes pratiques</span></div><div class="recommendation-item recommendation-excellent"><span class="rec-icon">✅</span><span class="rec-text">✅ BONNES PRATIQUES: Rate limiting activé, Headers de sécurité HTTP configurés, Logging sécurisé implémenté, Validation d'entrée avec Pydantic, Requêtes SQL paramétrées, Tests de sécurité implémentés, Content Security Policy configurée, Protection XSS dans les validations d'entrée, Protection SSRF (blocage IPs privées), Limite de taille de requête (protection DoS), OpenAPI désactivé en production</span></div><div class="recommendation-item recommendation-info"><span class="rec-icon">💡</span><span class="rec-text">🔧 TECHNIQUE: Installer/mettre à jour les composants Athalia pour une sécurité optimale</span></div><div class="recommendation-item recommendation-info"><span class="rec-icon">💡</span><span class="rec-text">📚 DOCUMENTATION: Consulter le guide de sécurité Athalia pour plus d'informations</span></div>
+            <div class="recommendation-item recommendation-excellent"><span class="rec-icon">✅</span><span class="rec-text">✅ EXCELLENT: Score de sécurité élevé - Maintenir les bonnes pratiques</span></div><div class="recommendation-item recommendation-excellent"><span class="rec-icon">✅</span><span class="rec-text">✅ BONNES PRATIQUES: Rate limiting activé, Headers de sécurité HTTP configurés, Logging sécurisé implémenté, Validation d'entrée avec Pydantic, Requêtes SQL paramétrées, Tests de sécurité implémentés, Content Security Policy configurée, Protection XSS dans les validations d'entrée, Protection SSRF (blocage IPs privées), Limite de taille de requête (protection DoS), OpenAPI désactivé en production</span></div><div class="recommendation-item recommendation-warning"><span class="rec-icon">⚠️</span><span class="rec-text">⚠️ ATTENTION: Nombre élevé de vulnérabilités moyennes - Plan de correction nécessaire</span></div><div class="recommendation-item recommendation-info"><span class="rec-icon">💡</span><span class="rec-text">📚 DOCUMENTATION: Consulter le guide de sécurité Athalia pour plus d'informations</span></div>
         </div>
 
         <div class="footer">
-            <p>🕒 Dernière mise à jour: 2025-11-18T19:11:11.828546</p>
+            <p>🕒 Dernière mise à jour: 2025-11-18T19:20:01.840948</p>
             <p>🛡️ Dashboard de sécurité généré automatiquement par Athalia v12.0.0</p>
         </div>
     </div>
@@ -999,9 +1037,9 @@
         const ctx = document.getElementById('securityChart').getContext('2d');
         // Calculer les valeurs pour le graphique (s'assurer que ce sont des entiers)
         const chartHigh = 0;
-        const chartMedium = 0;
+        const chartMedium = 92;
         const chartLow = 0;
-        const chartTotal = 0;
+        const chartTotal = 92;
         const chartData = {
             labels: ['Critiques', 'Moyennes', 'Mineures'],
                 datasets: [{
@@ -1088,7 +1126,7 @@
 
             // Déterminer le badge selon le score ET les vulnérabilités
             const hasHighVulns = 0 > 0;
-            const hasManyMediumVulns = 0 > 20;
+            const hasManyMediumVulns = 92 > 20;
 
             if (score >= 85 && !hasHighVulns && !hasManyMediumVulns) {
                 badge.className += ' excellent';
@@ -1106,7 +1144,7 @@
             scoreElement.parentElement.appendChild(badge);
 
             // Ajouter une alerte visuelle si nécessaire
-            if (hasHighVulns || (score < 50 && 0 > 10)) {
+            if (hasHighVulns || (score < 50 && 92 > 10)) {
                 const alertDiv = document.createElement('div');
                 alertDiv.style.cssText = 'background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 5px;';
                 alertDiv.innerHTML = '<strong>⚠️ Attention:</strong> ' +
@@ -1120,7 +1158,7 @@
 
         // Ajouter des informations contextuelles intelligentes
         function addContextualInfo() {
-            const totalVulns = 0;
+            const totalVulns = 92;
             const score = 100;
 
             // Calculer des statistiques utiles
