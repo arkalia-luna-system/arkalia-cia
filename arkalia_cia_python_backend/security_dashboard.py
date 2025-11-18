@@ -1284,20 +1284,6 @@ class SecurityDashboard:
             }});
         }}
 
-        // Actualisation automatique intelligente (vérifie les changements avant de recharger)
-        let lastUpdateTime = '{timestamp}';
-        setInterval(function() {{
-            // Vérifier si le timestamp a changé en comparant avec le footer
-            const footerElement = document.querySelector('.footer p');
-            if (footerElement) {{
-                const footerTimeMatch = footerElement.textContent.match(/(\\d{{4}}-\\d{{2}}-\\d{{2}}T[\\d:]+)/);
-                if (footerTimeMatch && footerTimeMatch[1] !== lastUpdateTime) {{
-                    lastUpdateTime = footerTimeMatch[1];
-                    location.reload();
-                }}
-            }}
-        }}, 60000); // Vérifier toutes les minutes
-
         // Ajouter des badges de score dynamiques et des alertes intelligentes
         const scoreElement = document.querySelector('.security-score');
         if (scoreElement) {{
@@ -1336,18 +1322,18 @@ class SecurityDashboard:
                 }}
             }}
         }}
-        
+
         // Ajouter des informations contextuelles intelligentes
         function addContextualInfo() {{
             const totalVulns = {total_vulnerabilities};
             const score = {security_score};
-            
+
             // Calculer des statistiques utiles
             const filesScanned = document.querySelector('.metric-value')?.textContent.replace(/[^0-9]/g, '') || '0';
-            const vulnDensity = totalVulns > 0 && parseInt(filesScanned) > 0 
-                ? (totalVulns / parseInt(filesScanned) * 100).toFixed(2) 
+            const vulnDensity = totalVulns > 0 && parseInt(filesScanned) > 0
+                ? (totalVulns / parseInt(filesScanned) * 100).toFixed(2)
                 : '0';
-            
+
             // Ajouter un indicateur de tendance si possible (pour futures améliorations)
             console.log('📊 Statistiques du dashboard:', {{
                 score: score,
@@ -1356,7 +1342,7 @@ class SecurityDashboard:
                 fichiers_scannés: filesScanned
             }});
         }}
-        
+
         // Appeler après le chargement complet
         window.addEventListener('load', addContextualInfo);
     </script>

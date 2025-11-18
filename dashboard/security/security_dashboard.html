@@ -450,7 +450,7 @@
             <div class="security-score">0/100</div>
             <div class="security-status">Critique</div>
             <p>Projet: /Volumes/T7/arkalia-cia</p>
-            <p>Dernière mise à jour: 2025-11-18T10:25:20.935440</p>
+            <p>Dernière mise à jour: 2025-11-18T10:36:57.804922</p>
             <button class="refresh-btn" onclick="location.reload()">🔄 Actualiser</button>
         </div>
 
@@ -552,7 +552,7 @@
         </div>
 
         <div class="footer">
-            <p>🕒 Dernière mise à jour: 2025-11-18T10:25:20.935440</p>
+            <p>🕒 Dernière mise à jour: 2025-11-18T10:36:57.804922</p>
             <p>🛡️ Dashboard de sécurité généré automatiquement par Athalia v12.0.0</p>
         </div>
     </div>
@@ -567,22 +567,33 @@
             addProgressBars();
         });
 
-        // Fonction pour animer les nombres
+        // Fonction pour formater les nombres avec séparateurs de milliers
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        // Fonction pour animer les nombres (améliorée)
         function animateNumbers() {
             const numberElements = document.querySelectorAll('.vuln-number, .security-score');
             numberElements.forEach(element => {
-                const finalValue = parseInt(element.textContent.replace(/[^0-9]/g, ''));
-                if (finalValue > 0) {
+                // Sauvegarder le format original (avec /100, etc.)
+                const originalText = element.textContent;
+                const match = originalText.match(/([0-9]+)/);
+                if (!match) return;
+                
+                const finalValue = parseInt(match[1]);
+                if (finalValue > 0 && finalValue <= 10000) { // Limiter pour éviter les animations trop longues
                     let currentValue = 0;
-                    const increment = finalValue / 30;
+                    const increment = Math.max(1, Math.ceil(finalValue / 30));
                     const timer = setInterval(() => {
                         currentValue += increment;
                         if (currentValue >= finalValue) {
-                            element.textContent = element.textContent.replace(/[0-9]+/, finalValue);
+                            // Restaurer le format original avec la valeur finale
+                            element.textContent = originalText.replace(/[0-9]+/, finalValue);
                             clearInterval(timer);
                         } else {
                             const displayValue = Math.floor(currentValue);
-                            element.textContent = element.textContent.replace(/[0-9]+/, displayValue);
+                            element.textContent = originalText.replace(/[0-9]+/, displayValue);
                         }
                     }, 30);
                 }
@@ -625,15 +636,19 @@
 
         // Graphique des vulnérabilités avec animation
         const ctx = document.getElementById('securityChart').getContext('2d');
+        // Calculer les valeurs pour le graphique (s'assurer que ce sont des entiers)
+        const chartHigh = 0;
+        const chartMedium = 0;
+        const chartLow = 0;
+        const chartTotal = 0;
         const chartData = {
-            labels: ['Critiques', 'Moyennes', 'Mineures', 'Sécurisé'],
+            labels: ['Critiques', 'Moyennes', 'Mineures'],
             datasets: [{
-                data: [0, 0, 0, 1000],
+                data: [chartHigh, chartMedium, chartLow],
                 backgroundColor: [
                     '#dc3545',
                     '#ffc107',
-                    '#28a745',
-                    '#6c757d'
+                    '#28a745'
                 ],
                 borderWidth: 3,
                 borderColor: '#fff',
@@ -675,10 +690,17 @@
                                 const label = context.label || '';
                                 const value = context.parsed || 0;
                                 const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                if (total === 0) {
+                                    return label + ': Aucune vulnérabilité';
+                                }
                                 const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-                                return label + ': ' + value + ' (' + percentage + '%)';
+                                return label + ': ' + formatNumber(value) + ' (' + percentage + '%)';
                             }
                         }
+                    },
+                    // Gérer le cas où toutes les valeurs sont à 0
+                    onHover: function(event, elements) {
+                        event.native.target.style.cursor = elements.length > 0 ? 'pointer' : 'default';
                     }
                 }
             }
@@ -697,7 +719,7 @@
         }
 
         // Actualisation automatique intelligente (vérifie les changements avant de recharger)
-        let lastUpdateTime = '2025-11-18T10:25:20.935440';
+        let lastUpdateTime = '2025-11-18T10:36:57.804922';
         setInterval(function() {
             // Vérifier si le timestamp a changé en comparant avec le footer
             const footerElement = document.querySelector('.footer p');
@@ -710,24 +732,67 @@
             }
         }, 60000); // Vérifier toutes les minutes
 
-        // Ajouter des badges de score dynamiques
+        // Ajouter des badges de score dynamiques et des alertes intelligentes
         const scoreElement = document.querySelector('.security-score');
         if (scoreElement) {
             const score = parseInt(scoreElement.textContent.replace(/[^0-9]/g, ''));
             const badge = document.createElement('span');
             badge.className = 'score-badge';
-            if (score >= 85) {
+            
+            // Déterminer le badge selon le score ET les vulnérabilités
+            const hasHighVulns = 0 > 0;
+            const hasManyMediumVulns = 0 > 20;
+            
+            if (score >= 85 && !hasHighVulns && !hasManyMediumVulns) {
                 badge.className += ' excellent';
                 badge.textContent = 'Excellent';
-            } else if (score >= 70) {
+            } else if (score >= 70 && !hasHighVulns) {
                 badge.className += ' good';
                 badge.textContent = 'Bon';
+            } else if (hasHighVulns) {
+                badge.className += ' poor';
+                badge.textContent = '⚠️ Critique';
             } else {
                 badge.className += ' poor';
                 badge.textContent = 'À améliorer';
             }
             scoreElement.parentElement.appendChild(badge);
+            
+            // Ajouter une alerte visuelle si nécessaire
+            if (hasHighVulns || (score < 50 && 0 > 10)) {
+                const alertDiv = document.createElement('div');
+                alertDiv.style.cssText = 'background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 5px;';
+                alertDiv.innerHTML = '<strong>⚠️ Attention:</strong> ' + 
+                    (hasHighVulns ? 'Vulnérabilités critiques détectées!' : 'Score de sécurité faible. Action recommandée.');
+                const overviewDiv = document.querySelector('.security-overview');
+                if (overviewDiv) {
+                    overviewDiv.appendChild(alertDiv);
+                }
+            }
         }
+        
+        // Ajouter des informations contextuelles intelligentes
+        function addContextualInfo() {
+            const totalVulns = 0;
+            const score = 0;
+            
+            // Calculer des statistiques utiles
+            const filesScanned = document.querySelector('.metric-value')?.textContent.replace(/[^0-9]/g, '') || '0';
+            const vulnDensity = totalVulns > 0 && parseInt(filesScanned) > 0 
+                ? (totalVulns / parseInt(filesScanned) * 100).toFixed(2) 
+                : '0';
+            
+            // Ajouter un indicateur de tendance si possible (pour futures améliorations)
+            console.log('📊 Statistiques du dashboard:', {
+                score: score,
+                vulnérabilités: totalVulns,
+                densité: vulnDensity + '%',
+                fichiers_scannés: filesScanned
+            });
+        }
+        
+        // Appeler après le chargement complet
+        window.addEventListener('load', addContextualInfo);
     </script>
 </body>
 </html>

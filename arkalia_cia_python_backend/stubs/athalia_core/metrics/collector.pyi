@@ -1,0 +1,7 @@
+# Stub file for optional athalia_core.metrics.collector module
+from typing import Any
+
+class MetricsCollector:
+    def __init__(self, *args: Any, **kwargs: Any) -> None: ...
+    def collect(self) -> dict[str, Any]: ...
+

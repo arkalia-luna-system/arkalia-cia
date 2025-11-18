@@ -1,18 +1,19 @@
 {
-  "include": [
-    "arkalia_cia_python_backend"
-  ],
-  "exclude": [
-    "**/__pycache__",
-    "**/node_modules",
-    "**/build",
-    "**/dist",
-    "**/.venv",
-    "**/arkalia_cia_venv"
-  ],
-  "reportMissingImports": "none",
-  "reportMissingTypeStubs": false,
-  "reportImportCycles": false,
-  "reportUnusedTypeIgnoreComment": false,
-  "typeCheckingMode": "basic"
+    "include": [
+        "arkalia_cia_python_backend"
+    ],
+    "exclude": [
+        "**/__pycache__",
+        "**/node_modules",
+        "**/build",
+        "**/dist",
+        "**/.venv",
+        "**/arkalia_cia_venv"
+    ],
+    "stubPath": "arkalia_cia_python_backend/stubs",
+    "reportMissingImports": "none",
+    "reportMissingTypeStubs": false,
+    "reportImportCycles": false,
+    "reportUnusedTypeIgnoreComment": false,
+    "typeCheckingMode": "basic"
 }

@@ -1,8 +1,13 @@
 {
   "timestamp": "/Volumes/T7/arkalia-cia",
   "project": "/Volumes/T7/arkalia-cia",
-  "score": 88,
-  "errors": [],
+  "score": 48,
+  "errors": [
+    "MyPy: arkalia_cia_python_backend/security_dashboard.py:22: error: Unused \"type: ignore\" comment  [unused-ignore]",
+    "MyPy: arkalia_cia_python_backend/security_dashboard.py:25: error: Unused \"type: ignore\" comment  [unused-ignore]",
+    "MyPy: arkalia_cia_python_backend/security_dashboard.py:28: error: Unused \"type: ignore\" comment  [unused-ignore]",
+    "MyPy: arkalia_cia_python_backend/security_dashboard.py:31: error: Unused \"type: ignore\" comment  [unused-ignore]"
+  ],
   "warnings": [
     "Formatage Black à corriger",
     "Tri des imports isort à corriger",
@@ -12,5 +17,5 @@
     "Vérification couverture non exécutée: Command '['coverage', 'run', '-m', 'pytest', '/Volumes/T7/arkalia-cia']' timed out after 60 seconds"
   ],
   "fixes": [],
-  "quality_level": "BON"
+  "quality_level": "CRITIQUE"
 }
