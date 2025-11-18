@@ -73,6 +73,11 @@ class TestDatabaseManager:
         """Test de liste des documents"""
         # La DB est déjà initialisée par la fixture
 
+        # Nettoyer les documents existants pour isoler ce test
+        existing_docs = db_manager.list_documents()
+        for doc in existing_docs:
+            db_manager.delete_document(doc["id"])
+
         # Ajouter plusieurs documents
         db_manager.add_document(
             name="test1.pdf",
@@ -253,6 +258,11 @@ class TestDatabaseManager:
         """Test de liste des rappels"""
         # La DB est déjà initialisée par la fixture
 
+        # Nettoyer les rappels existants pour isoler ce test
+        existing_reminders = db_manager.list_reminders()
+        for reminder in existing_reminders:
+            db_manager.delete_reminder(reminder["id"])
+
         db_manager.add_reminder(
             title="Reminder 1",
             description="Description 1",
@@ -270,6 +280,11 @@ class TestDatabaseManager:
     def test_list_contacts(self, db_manager):
         """Test de liste des contacts"""
         # La DB est déjà initialisée par la fixture
+
+        # Nettoyer les contacts existants pour isoler ce test
+        existing_contacts = db_manager.list_contacts()
+        for contact in existing_contacts:
+            db_manager.delete_contact(contact["id"])
 
         db_manager.add_emergency_contact(
             name="Contact 1",
@@ -290,6 +305,11 @@ class TestDatabaseManager:
     def test_list_portals(self, db_manager):
         """Test de liste des portails"""
         # La DB est déjà initialisée par la fixture
+
+        # Nettoyer les portails existants pour isoler ce test
+        existing_portals = db_manager.list_portals()
+        for portal in existing_portals:
+            db_manager.delete_portal(portal["id"])
 
         db_manager.add_health_portal(
             name="Portal 1",
