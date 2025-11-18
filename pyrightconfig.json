@@ -1,0 +1,20 @@
+{
+    "include": [
+        "arkalia_cia_python_backend"
+    ],
+    "exclude": [
+        "**/__pycache__",
+        "**/node_modules",
+        "**/build",
+        "**/dist",
+        "**/.venv",
+        "**/arkalia_cia_venv"
+    ],
+    "reportMissingImports": "warning",
+    "reportMissingTypeStubs": false,
+    "reportImportCycles": false,
+    "typeCheckingMode": "basic",
+    "ignore": [
+        "athalia_core.*"
+    ]
+}
