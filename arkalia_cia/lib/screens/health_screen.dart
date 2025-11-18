@@ -76,6 +76,7 @@ class _HealthScreenState extends State<HealthScreen> {
   }
 
   Future<void> _loadPortals() async {
+    if (!mounted) return;
     setState(() {
       isLoading = true;
     });

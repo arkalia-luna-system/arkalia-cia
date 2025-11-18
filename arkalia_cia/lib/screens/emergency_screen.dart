@@ -25,6 +25,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
   }
 
   Future<void> _loadData() async {
+    if (!mounted) return;
     setState(() => isLoading = true);
 
     try {
@@ -35,15 +36,19 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
         // Demander la permission avec un dialogue explicatif
         final granted = await _requestContactsPermissionWithDialog();
         if (!granted) {
-          setState(() {
-            emergencyContacts = [];
-            isLoading = false;
-          });
-          // Charger quand même les infos médicales et les contacts locaux
-          final info = await LocalStorageService.getEmergencyInfo();
-          setState(() {
-            emergencyInfo = info ?? {};
-          });
+          if (mounted) {
+            setState(() {
+              emergencyContacts = [];
+              isLoading = false;
+            });
+            // Charger quand même les infos médicales et les contacts locaux
+            final info = await LocalStorageService.getEmergencyInfo();
+            if (mounted) {
+              setState(() {
+                emergencyInfo = info ?? {};
+              });
+            }
+          }
           return;
         }
       }
@@ -51,13 +56,17 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
       final contactsList = await ContactsService.getEmergencyContacts();
       final info = await LocalStorageService.getEmergencyInfo();
 
-      setState(() {
-        emergencyContacts = contactsList;
-        emergencyInfo = info ?? {};
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          emergencyContacts = contactsList;
+          emergencyInfo = info ?? {};
+          isLoading = false;
+        });
+      }
     } catch (e) {
-      setState(() => isLoading = false);
+      if (mounted) {
+        setState(() => isLoading = false);
+      }
       // Ne pas afficher d'erreur si c'est juste une permission refusée
       if (!e.toString().contains('Permission')) {
         _showError('Erreur lors du chargement: $e');
