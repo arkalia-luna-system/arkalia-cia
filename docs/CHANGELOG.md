@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed - 18 Novembre 2025
+- **🎨 Améliorations UX**:
+  - Titre modifié : "Assistant Personnel" → "Assistant Santé Personnel" avec sous-titre "Votre santé au quotidien"
+  - Icônes empty states colorisées (Documents=vert, Santé=rouge, Rappels=orange, Infos médicales=rouge)
+  - Tailles textes descriptifs augmentées à 16sp minimum (empty states) et 14sp (subtitles)
+  - Descriptions ARIA augmentées de 14sp à 16sp
+  - Texte aide settings augmenté de 11sp à 14sp
+- **🐛 Bugs critiques corrigés**:
+  - ✅ Permissions contacts : Dialogue explicatif avant demande permission
+  - ✅ Navigation ARIA : Message informatif au lieu d'erreur navigateur
+  - ✅ Bandeau sync : Aucun bandeau "en développement" trouvé dans le code
+
 ### Added
 - **📥 Import/Export de Données Complet**: 
   - Import de données depuis fichier JSON avec sélection de fichier

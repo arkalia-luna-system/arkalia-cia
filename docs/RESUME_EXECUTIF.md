@@ -1,8 +1,9 @@
-# 📊 Résumé Exécutif - Arkalia CIA v1.2.0
+# 📊 Résumé Exécutif - Arkalia CIA v1.1.0+1
 
 **Date**: 18 Novembre 2025  
-**Version**: 1.2.0  
-**Statut**: 🟢 **PRODUCTION READY**
+**Version**: v1.1.0+1  
+**Statut**: 🟢 **95% PRODUCTION-READY**  
+**Dernière mise à jour** : 18 novembre 2025
 
 **Voir aussi**: [RESUME_PROJET.md](RESUME_PROJET.md) pour le résumé court.
 

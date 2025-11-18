@@ -286,7 +286,7 @@ class _HomePageState extends State<HomePage> {
                 Text(
                   subtitle,
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 14,
                     color: Colors.grey[600],
                   ),
                   textAlign: TextAlign.center,
