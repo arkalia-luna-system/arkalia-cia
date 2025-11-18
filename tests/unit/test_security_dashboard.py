@@ -186,7 +186,6 @@ class TestSecurityDashboard:
     def test_collect_security_data_with_athalia_components(self):
         """Test de collecte avec composants Athalia simulés (optimisé performance)"""
         # Simuler des composants Athalia disponibles mais mockés pour éviter les scans complets
-        from unittest.mock import MagicMock
 
         with patch(
             "arkalia_cia_python_backend.security_dashboard.ATHALIA_AVAILABLE", True
