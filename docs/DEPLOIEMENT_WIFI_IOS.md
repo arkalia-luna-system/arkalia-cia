@@ -80,13 +80,15 @@ flutter run
 Flutter will automatically detect iPad via WiFi if configured.
 
 **If multiple devices are available**, Flutter will ask you to choose:
-```
+
+```text
 [1]: macOS (macos)
 [2]: iPad de Athalia (wireless) (00008112-000631060A8B401E)
 Please choose one (or "q" to quit):
 ```
 
 **Or specify the device directly**:
+
 ```bash
 flutter run -d "iPad de Athalia"
 # Or using UUID:
@@ -94,6 +96,7 @@ flutter run -d 00008112-000631060A8B401E
 ```
 
 **Advantages of Flutter CLI**:
+
 - ✅ **Simpler** - One command
 - ✅ **Faster** - No need to open Xcode
 - ✅ **Works via WiFi** - If configured
@@ -152,12 +155,14 @@ iPad de Athalia (wireless) (mobile) • 00008112-000631060A8B401E • ios • iO
 The "Connect via network" option appears in different places depending on Xcode version:
 
 #### Method 1: Checkbox Next to iPad Name
+
 1. **In the left sidebar**, look next to your iPad name
 2. You should see a **checkbox** labeled "Connect via network" or "Connect via WiFi"
 3. **Check this box**
 4. Wait a few seconds - a WiFi icon 🌐 will appear
 
 #### Method 2: In Device Details Panel
+
 1. **Select your iPad** from the left sidebar
 2. **In the right panel** (where you see iPad information)
 3. Look for a section or checkbox labeled **"Connect via network"**
@@ -167,23 +172,28 @@ The "Connect via network" option appears in different places depending on Xcode 
    - As a checkbox with text "Connect via network"
 
 #### Method 3: Context Menu
+
 1. **Right-click** on your iPad in the list
 2. Look for "Connect via network" in the menu
 
 ### Why You Might Not See It
 
 #### Reason 1: iPad Not Connected via USB
+
 The "Connect via network" option **only appears if iPad is currently connected via USB**.
 
 **Solution**:
+
 1. **Connect iPad** to Mac via USB
 2. **Wait** for Xcode to detect the iPad
 3. The option should now appear
 
 #### Reason 2: Option Already Enabled
+
 If iPad appears with a **WiFi icon 🌐** next to it, it's already configured!
 
 **Verification**:
+
 - Look next to your iPad name in the list
 - If you see a WiFi icon, it's already activated
 - You can disconnect iPad and it should remain connected
@@ -308,6 +318,7 @@ If nothing works:
 ## 📝 Note on Merged Documentation
 
 The following files have been merged into this guide:
+
 - ~~WIFI_DEJA_CONFIGURE.md~~ → Content integrated above
 - ~~POURQUOI_CONNECT_VIA_NETWORK_N_APPARAIT_PAS.md~~ → Content integrated in "Finding Connect via Network" section
 - ~~SOLUTION_ALTERNATIVE_WIFI_IOS.md~~ → Content integrated in "Method 2: From Flutter CLI" section
@@ -323,4 +334,3 @@ Once configured, you can update your app on iPad **without ever reconnecting the
 ---
 
 **For questions or issues, refer to the troubleshooting section or see [IOS_DEPLOYMENT_GUIDE.md](IOS_DEPLOYMENT_GUIDE.md).**
-
