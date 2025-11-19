@@ -11,6 +11,7 @@ import 'settings_screen.dart';
 import 'stats_screen.dart';
 import 'doctors_list_screen.dart';
 import 'advanced_search_screen.dart';
+import 'family_sharing_screen.dart';
 import '../services/local_storage_service.dart';
 import '../services/calendar_service.dart';
 import '../services/search_service.dart';
@@ -272,7 +273,17 @@ class _HomePageState extends State<HomePage> {
                       onTap: () => _showDoctors(context),
                     ),
 
-                    // Bouton 8: Statistiques
+                    // Bouton 8: Partage Familial
+                    _buildActionButton(
+                      context,
+                      icon: MdiIcons.accountGroup,
+                      title: 'Partage',
+                      subtitle: 'Partage familial',
+                      color: Colors.purple,
+                      onTap: () => _showFamilySharing(context),
+                    ),
+
+                    // Bouton 9: Statistiques
                     _buildActionButton(
                       context,
                       icon: MdiIcons.chartBox,
@@ -395,6 +406,13 @@ class _HomePageState extends State<HomePage> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const DoctorsListScreen()),
+    );
+  }
+
+  void _showFamilySharing(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const FamilySharingScreen()),
     );
   }
 

@@ -1,0 +1,209 @@
+import 'package:flutter/material.dart';
+import '../services/family_sharing_service.dart';
+import '../services/local_storage_service.dart';
+import 'manage_family_members_screen.dart';
+
+class FamilySharingScreen extends StatefulWidget {
+  const FamilySharingScreen({super.key});
+
+  @override
+  State<FamilySharingScreen> createState() => _FamilySharingScreenState();
+}
+
+class _FamilySharingScreenState extends State<FamilySharingScreen> {
+  final FamilySharingService _sharingService = FamilySharingService();
+  List<FamilyMember> _members = [];
+  List<Map<String, dynamic>> _documents = [];
+  Map<String, bool> _selectedDocuments = {};
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    setState(() => _isLoading = true);
+    try {
+      final members = await _sharingService.getFamilyMembers();
+      final documents = await LocalStorageService.getDocuments();
+      setState(() {
+        _members = members;
+        _documents = documents;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() => _isLoading = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erreur: $e')),
+        );
+      }
+    }
+  }
+
+  Future<void> _shareSelectedDocuments() async {
+    final selectedIds = _selectedDocuments.entries
+        .where((e) => e.value)
+        .map((e) => e.key)
+        .toList();
+
+    if (selectedIds.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Sélectionnez au moins un document')),
+        );
+      }
+      return;
+    }
+
+    if (_members.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Ajoutez d\'abord des membres famille')),
+        );
+      }
+      return;
+    }
+
+    // Partager avec tous les membres actifs
+    final memberIds = List.generate(_members.length, (i) => i);
+    for (final docId in selectedIds) {
+      await _sharingService.shareDocumentWithMembers(docId, memberIds);
+    }
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Documents partagés avec succès')),
+      );
+      setState(() {
+        _selectedDocuments.clear();
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Partage Familial'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.people),
+            onPressed: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ManageFamilyMembersScreen(),
+                ),
+              );
+              _loadData();
+            },
+          ),
+        ],
+      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Column(
+              children: [
+                // Liste membres
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Membres famille (${_members.length})',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
+                      TextButton.icon(
+                        onPressed: () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const ManageFamilyMembersScreen(),
+                            ),
+                          );
+                          _loadData();
+                        },
+                        icon: const Icon(Icons.add),
+                        label: const Text('Ajouter'),
+                      ),
+                    ],
+                  ),
+                ),
+                
+                // Documents à partager
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    'Sélectionnez les documents à partager',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                ),
+                
+                Expanded(
+                  child: _documents.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.folder_open, size: 64, color: Colors.grey[400]),
+                              const SizedBox(height: 16),
+                              Text(
+                                'Aucun document disponible',
+                                style: TextStyle(color: Colors.grey[600]),
+                              ),
+                            ],
+                          ),
+                        )
+                      : ListView.builder(
+                          itemCount: _documents.length,
+                          itemBuilder: (context, index) {
+                            final doc = _documents[index];
+                            final docId = doc['id']?.toString() ?? '';
+                            final isSelected = _selectedDocuments[docId] ?? false;
+                            
+                            return CheckboxListTile(
+                              title: Text(doc['original_name'] ?? doc['name'] ?? 'Sans titre'),
+                              subtitle: Text(doc['category'] ?? 'Non catégorisé'),
+                              value: isSelected,
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedDocuments[docId] = value ?? false;
+                                });
+                              },
+                            );
+                          },
+                        ),
+                ),
+                
+                // Bouton partager
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: ElevatedButton.icon(
+                    onPressed: _shareSelectedDocuments,
+                    icon: const Icon(Icons.share),
+                    label: Text(
+                      'Partager ${_selectedDocuments.values.where((v) => v).length} document(s)',
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 50),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+    );
+  }
+}
+
