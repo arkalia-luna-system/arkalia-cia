@@ -127,7 +127,9 @@ class CIADatabase:
             )
             return cursor.lastrowid
 
-    def get_documents(self, skip: int = 0, limit: int | None = None) -> list[dict[str, Any]]:
+    def get_documents(
+        self, skip: int = 0, limit: int | None = None
+    ) -> list[dict[str, Any]]:
         """Récupère les documents avec pagination"""
         with sqlite3.connect(self.db_path) as conn:
             conn.row_factory = sqlite3.Row
@@ -135,7 +137,7 @@ class CIADatabase:
             if limit is not None:
                 cursor.execute(
                     "SELECT * FROM documents ORDER BY created_at DESC LIMIT ? OFFSET ?",
-                    (limit, skip)
+                    (limit, skip),
                 )
             else:
                 cursor.execute("SELECT * FROM documents ORDER BY created_at DESC")
@@ -206,7 +208,9 @@ class CIADatabase:
             cursor.execute("DELETE FROM reminders WHERE id = ?", (reminder_id,))
             return cursor.rowcount > 0
 
-    def get_reminders(self, skip: int = 0, limit: int | None = None) -> list[dict[str, Any]]:
+    def get_reminders(
+        self, skip: int = 0, limit: int | None = None
+    ) -> list[dict[str, Any]]:
         """Récupère les rappels avec pagination"""
         with sqlite3.connect(self.db_path) as conn:
             conn.row_factory = sqlite3.Row
@@ -214,7 +218,7 @@ class CIADatabase:
             if limit is not None:
                 cursor.execute(
                     "SELECT * FROM reminders ORDER BY reminder_date ASC LIMIT ? OFFSET ?",
-                    (limit, skip)
+                    (limit, skip),
                 )
             else:
                 cursor.execute("SELECT * FROM reminders ORDER BY reminder_date ASC")
@@ -263,7 +267,9 @@ class CIADatabase:
             cursor.execute("DELETE FROM emergency_contacts WHERE id = ?", (contact_id,))
             return cursor.rowcount > 0
 
-    def get_emergency_contacts(self, skip: int = 0, limit: int | None = None) -> list[dict[str, Any]]:
+    def get_emergency_contacts(
+        self, skip: int = 0, limit: int | None = None
+    ) -> list[dict[str, Any]]:
         """Récupère les contacts d'urgence avec pagination"""
         with sqlite3.connect(self.db_path) as conn:
             conn.row_factory = sqlite3.Row
@@ -271,7 +277,7 @@ class CIADatabase:
             if limit is not None:
                 cursor.execute(
                     "SELECT * FROM emergency_contacts ORDER BY is_primary DESC, name ASC LIMIT ? OFFSET ?",
-                    (limit, skip)
+                    (limit, skip),
                 )
             else:
                 cursor.execute(
@@ -320,7 +326,9 @@ class CIADatabase:
             cursor.execute("DELETE FROM health_portals WHERE id = ?", (portal_id,))
             return cursor.rowcount > 0
 
-    def get_health_portals(self, skip: int = 0, limit: int | None = None) -> list[dict[str, Any]]:
+    def get_health_portals(
+        self, skip: int = 0, limit: int | None = None
+    ) -> list[dict[str, Any]]:
         """Récupère les portails santé avec pagination"""
         with sqlite3.connect(self.db_path) as conn:
             conn.row_factory = sqlite3.Row
@@ -328,10 +336,12 @@ class CIADatabase:
             if limit is not None:
                 cursor.execute(
                     "SELECT * FROM health_portals ORDER BY category, name ASC LIMIT ? OFFSET ?",
-                    (limit, skip)
+                    (limit, skip),
                 )
             else:
-                cursor.execute("SELECT * FROM health_portals ORDER BY category, name ASC")
+                cursor.execute(
+                    "SELECT * FROM health_portals ORDER BY category, name ASC"
+                )
             return [dict(row) for row in cursor.fetchall()]
 
 

@@ -12,6 +12,10 @@ from typing import Any
 
 from pypdf import PdfReader
 
+from arkalia_cia_python_backend.pdf_parser.ocr_integration import (
+    OCR_AVAILABLE,
+    OCRIntegration,
+)
 from arkalia_cia_python_backend.security_utils import (
     sanitize_error_detail,
     sanitize_log_message,
@@ -60,28 +64,34 @@ class PDFProcessor:
                     # Libérer la référence de la page après extraction
                     if i % 10 == 0:  # Nettoyer périodiquement
                         import gc
+
                         gc.collect()
 
                 result = "".join(text_parts)
                 del text_parts
-            
+
             # Si peu de texte et OCR disponible, utiliser OCR
-            if len(result.strip()) < 100 and (use_ocr or (hasattr(self, 'ocr') and self.ocr and self.ocr.is_available())):
-                if hasattr(self, 'ocr') and self.ocr and self.ocr.is_available():
+            if len(result.strip()) < 100 and (
+                use_ocr
+                or (hasattr(self, "ocr") and self.ocr and self.ocr.is_available())
+            ):
+                if hasattr(self, "ocr") and self.ocr and self.ocr.is_available():
                     logger.info("Utilisation OCR pour PDF scanné")
                     ocr_result = self.ocr.process_scanned_pdf(file_path)
-                    if ocr_result.get('text'):
-                        return ocr_result['text']
-            
+                    if ocr_result.get("text"):
+                        return ocr_result["text"]
+
             return result
         except Exception as e:
             logger.error(f"Erreur extraction PDF: {e}")
             # Essayer OCR en dernier recours
-            if hasattr(self, 'ocr') and self.ocr and self.ocr.is_available():
+            if hasattr(self, "ocr") and self.ocr and self.ocr.is_available():
                 try:
                     ocr_result = self.ocr.process_scanned_pdf(file_path)
-                    return ocr_result.get('text', f"Erreur lors de l'extraction: {str(e)}")
-                except:
+                    return ocr_result.get(
+                        "text", f"Erreur lors de l'extraction: {str(e)}"
+                    )
+                except Exception:
                     pass
             return f"Erreur lors de l'extraction: {str(e)}"
 

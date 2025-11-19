@@ -19,10 +19,10 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 
+from arkalia_cia_python_backend.ai.conversational_ai import ConversationalAI
 from arkalia_cia_python_backend.aria_integration.api import router as aria_router
 from arkalia_cia_python_backend.database import CIADatabase
 from arkalia_cia_python_backend.pdf_processor import PDFProcessor
-from arkalia_cia_python_backend.ai.conversational_ai import ConversationalAI
 from arkalia_cia_python_backend.security_utils import (
     sanitize_error_detail,
     sanitize_log_message,
@@ -539,7 +539,7 @@ async def upload_document(request: Request, file: UploadFile = File(...)):
             file_type="pdf",
             file_size=result["file_size"],
         )
-        
+
         # Sauvegarder métadonnées extraites (si table métadonnées existe)
         # TODO: Créer table document_metadata si nécessaire
 
@@ -779,29 +779,27 @@ async def chat_with_ai(request: Request, chat_request: ChatRequest):
         # Limiter les données utilisateur pour économiser la mémoire
         # Ne garder que les données essentielles (max 10 documents récents, 5 médecins)
         limited_user_data = {
-            'documents': chat_request.user_data.get('documents', [])[:10],
-            'doctors': chat_request.user_data.get('doctors', [])[:5],
-            'consultations': chat_request.user_data.get('consultations', [])[:5],
-            'pain_records': chat_request.user_data.get('pain_records', [])[:10],
+            "documents": chat_request.user_data.get("documents", [])[:10],
+            "doctors": chat_request.user_data.get("doctors", [])[:5],
+            "consultations": chat_request.user_data.get("consultations", [])[:5],
+            "pain_records": chat_request.user_data.get("pain_records", [])[:10],
         }
-        
+
         result = conversational_ai.analyze_question(
-            chat_request.question,
-            limited_user_data
+            chat_request.question, limited_user_data
         )
-        
+
         return ChatResponse(
-            answer=result.get('answer', ''),
-            related_documents=result.get('related_documents', []),
-            suggestions=result.get('suggestions', []),
-            patterns_detected=result.get('patterns_detected', {}),
-            question_type=result.get('question_type', 'general')
+            answer=result.get("answer", ""),
+            related_documents=result.get("related_documents", []),
+            suggestions=result.get("suggestions", []),
+            patterns_detected=result.get("patterns_detected", {}),
+            question_type=result.get("question_type", "general"),
         )
     except Exception as e:
         logger.error(f"Erreur IA conversationnelle: {sanitize_log_message(str(e))}")
         raise HTTPException(
-            status_code=500,
-            detail="Erreur lors du traitement de votre question"
+            status_code=500, detail="Erreur lors du traitement de votre question"
         )
 
 
@@ -813,22 +811,19 @@ class PrepareAppointmentRequest(BaseModel):
 @app.post("/api/ai/prepare-appointment")
 @limiter.limit("20/minute")
 async def prepare_appointment_questions(
-    request: Request,
-    appointment_request: PrepareAppointmentRequest
+    request: Request, appointment_request: PrepareAppointmentRequest
 ):
     """Prépare questions pour un rendez-vous"""
     try:
         questions = conversational_ai.prepare_appointment_questions(
-            appointment_request.doctor_id,
-            appointment_request.user_data
+            appointment_request.doctor_id, appointment_request.user_data
         )
-        
+
         return {"questions": questions}
     except Exception as e:
         logger.error(f"Erreur préparation RDV: {sanitize_log_message(str(e))}")
         raise HTTPException(
-            status_code=500,
-            detail="Erreur lors de la préparation des questions"
+            status_code=500, detail="Erreur lors de la préparation des questions"
         )
 
 
