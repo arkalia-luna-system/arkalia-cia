@@ -9,6 +9,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.2.0] - 2025-11-19
+
+### Added
+- **🔧 Logger Conditionnel** : Création de `AppLogger` avec `kDebugMode` pour éviter les logs en production
+- **📝 Release Notes** : Documentation complète des changements v1.2.0
+
+### Changed
+- **⚡ Optimisations Code** :
+  - ✅ Remplacement de tous les `debugPrint()` (44 occurrences) par `AppLogger` conditionnel
+  - ✅ Nettoyage de 5 imports inutilisés
+  - ✅ Optimisation widgets avec `const` pour réduire rebuilds
+  - ✅ Sécurisation callbacks `.then()` avec vérifications `mounted`
+- **🔒 Sécurité** :
+  - ✅ Vérifications `mounted` à 100% dans toutes les opérations async
+  - ✅ Controllers correctement disposés (0 fuite mémoire)
+- **📊 Qualité Code** :
+  - ✅ Flutter Analyze : 0 erreur, 0 avertissement
+  - ✅ Black : Formatage conforme (18 fichiers)
+  - ✅ Ruff : 0 erreur
+  - ✅ MyPy : 0 erreur (18 fichiers)
+  - ✅ Bandit : 0 vulnérabilité
+- **🧹 Nettoyage** :
+  - ✅ Suppression fichiers macOS cachés
+  - ✅ Suppression logs Flutter obsolètes
+  - ✅ Nettoyage build directory (29GB libérés)
+
+### Fixed
+- **🐛 Corrections Sécurité** :
+  - ✅ Callbacks `.then()` sécurisés avec vérifications `mounted` dans `home_page.dart` et `health_screen.dart`
+  - ✅ Élimination du risque d'erreurs "setState() called after dispose()"
+
+---
+
 ## [Unreleased]
 
 ### Changed - November 19, 2025

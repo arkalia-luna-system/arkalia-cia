@@ -1,15 +1,14 @@
 {
   "timestamp": "/Volumes/T7/arkalia-cia",
   "project": "/Volumes/T7/arkalia-cia",
-  "score": 78,
+  "score": 80,
   "errors": [
-    "MyPy: arkalia_cia_python_backend/api.py:343: error: Unused \"type: ignore\" comment  [unused-ignore]"
+    "MyPy: arkalia_cia_python_backend/api.py:344: error: Unused \"type: ignore\" comment  [unused-ignore]"
   ],
   "warnings": [
-    "Formatage Black à corriger",
     "Tri des imports isort à corriger",
     "Bandit non exécuté: Command '['bandit', '-r', '/Volumes/T7/arkalia-cia', '-f', 'txt']' timed out after 45 seconds",
-    "Analyse de complexité non exécutée: [Errno 2] No such file or directory: 'radon'",
+    "Analyse de complexité non exécutée: [Errno 13] Permission denied: 'radon'",
     "Couverture documentation faible: 6.3%",
     "Vérification couverture non exécutée: Command '['coverage', 'run', '-m', 'pytest', '/Volumes/T7/arkalia-cia']' timed out after 60 seconds"
   ],
