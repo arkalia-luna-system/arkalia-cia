@@ -1,6 +1,6 @@
 # 🔧 Guide de Correction Gradle - Arkalia CIA
 
-**Date**: November 17, 2025
+**Date**: November 19, 2025
 **Objectif**: Forcer Gradle à utiliser `~/.gradle` au lieu de `/Volumes/T7/gradle`
 **Statut**: ✅ **RÉSOLU** - Solution ultra-robuste v3.0
 
@@ -228,5 +228,33 @@ La solution v3.0 garantit :
 
 ---
 
-**Dernière mise à jour**: November 17, 2025
+## 📋 **HISTORIQUE DU PROBLÈME**
+
+### **Problème initial**
+Gradle utilisait systématiquement `/Volumes/T7/gradle` au lieu de `~/.gradle`, causant des erreurs :
+```
+Failed to create directory /Volumes/T7/gradle/caches/8.12/kotlin-dsl/scripts/...
+> Failed to create class directory /Volumes/T7/gradle/.tmp/classes*.tmp.
+```
+
+### **Tentatives de correction (toutes échouées)**
+- ❌ Configuration `gradle.properties` : Ignoré par Gradle
+- ❌ Variables d'environnement : Ignoré par Gradle
+- ❌ Script `init.gradle` basique : Ignoré par Gradle
+- ❌ Modification `gradlew` : Ignoré par Gradle
+- ❌ Suppression du dossier : Gradle le recréait automatiquement
+- ❌ Lien symbolique : Erreur "Too many levels"
+
+### **Solution finale**
+Script `init.gradle` v3.0 avec **4 niveaux de protection** :
+- `beforeSettings` : Avant le chargement des settings (priorité maximale)
+- `settingsEvaluated` : Après l'évaluation des settings (double vérification)
+- `projectsLoaded` : Au chargement des projets (vérification finale)
+- `beforeProject` : Avant chaque projet (prévention proactive)
+
+**Résultat** : ✅ Problème définitivement résolu
+
+---
+
+**Dernière mise à jour**: November 19, 2025
 **Version**: 3.0 - Ultra-robuste

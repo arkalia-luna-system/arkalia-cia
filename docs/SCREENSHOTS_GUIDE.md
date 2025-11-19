@@ -1,6 +1,6 @@
 # 📸 Guide des Screenshots - Arkalia CIA
 
-**Date**: November 17, 2025
+**Date**: November 19, 2025
 **Objectif**: Capturer les meilleurs écrans pour App Store et Google Play Store
 
 ---
@@ -276,4 +276,4 @@ Si vous voulez documenter la couverture de code :
 
 ---
 
-**Dernière mise à jour**: November 17, 2025
+**Dernière mise à jour**: November 19, 2025

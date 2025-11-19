@@ -1,6 +1,6 @@
 # 🚀 Optimisations Tests - Arkalia CIA
 
-**Date** : 18 novembre 2025
+**Date** : November 19, 2025
 
 ---
 
@@ -106,5 +106,5 @@ pytest tests/integration/test_integration.py -v
 
 ---
 
-**Dernière mise à jour** : 18 novembre 2025
+**Dernière mise à jour** : November 19, 2025
 

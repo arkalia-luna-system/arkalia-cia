@@ -1,6 +1,6 @@
 # 📱 Guide Complet : Déploiement iOS sur iPad/iPhone (GRATUIT)
 
-**Date** : Décembre 2025  
+**Date** : November 19, 2025  
 **Version** : 1.0
 
 ---
@@ -203,14 +203,32 @@ Dans Xcode, avec le projet ouvert :
 
 ---
 
-### **ÉTAPE 9 : Lancer l'app**
+### **ÉTAPE 9 : Configurer le déploiement WiFi (Optionnel mais recommandé)**
+
+**Pour mettre à jour l'app sans rebrancher le câble USB :**
+
+1. **Dans Xcode**, allez dans **Window** > **Devices and Simulators** (ou **Cmd+Shift+2**)
+2. **Sélectionnez votre iPad** dans la liste de gauche
+3. **Cochez la case** "Connect via network" (ou "Connect via WiFi")
+4. **Attendez quelques secondes** - une icône WiFi 🌐 apparaîtra à côté de l'iPad
+5. **Débranchez l'iPad** - il devrait toujours apparaître avec l'icône WiFi
+
+**Maintenant vous pouvez mettre à jour l'app via WiFi !** (Voir ÉTAPE 10)
+
+---
+
+### **ÉTAPE 10 : Lancer l'app**
 
 #### **Option A : Via Xcode (Recommandé)**
 
 1. **En haut de Xcode**, sélectionner votre appareil dans la liste déroulante
+   - Si configuré en WiFi, vous verrez une icône WiFi 🌐
+   - Sinon, branchez l'iPad via USB
 2. **Cliquer sur le bouton ▶️ Play** (ou **Cmd+R**)
 3. **Attendre la compilation** (première fois : 5-10 minutes)
 4. L'app va s'installer et se lancer automatiquement ! 🎉
+
+**Avec WiFi configuré** : Vous pouvez débrancher l'iPad et mettre à jour via WiFi !
 
 #### **Option B : Via Flutter CLI**
 
@@ -219,7 +237,9 @@ cd /Volumes/T7/arkalia-cia/arkalia_cia
 flutter run
 ```
 
-Flutter va automatiquement détecter l'appareil, compiler et installer l'app.
+Flutter va automatiquement détecter l'appareil (USB ou WiFi), compiler et installer l'app.
+
+**Note** : Pour le déploiement WiFi, assurez-vous que Mac et iPad sont sur le même réseau WiFi.
 
 ---
 
@@ -273,6 +293,39 @@ sudo xcodebuild -license accept
 
 ### **"iOS 26.1 is downloading" dans Xcode**
 **Normal !** Xcode télécharge le SDK iOS nécessaire. Attendez la fin du téléchargement avant de compiler.
+
+**Détails** :
+- **Taille** : ~10-15 GB pour le SDK iOS
+- **Temps** : 5-15 minutes (connexion normale) à plusieurs heures (connexion lente)
+- **Vérification** : Une fois terminé, vous verrez "iPad de Nathalie (2) (iOS 26.1)" **sans** "(is downloading.)"
+- **Vérifier l'installation** : `xcodebuild -showsdks | grep ios`
+
+---
+
+### **"To use 'iPad' for development, enable Developer Mode"**
+**Solution** : Activer le Developer Mode sur votre iPad/iPhone.
+
+**Étapes** :
+1. Sur l'iPad : **Réglages** > **Confidentialité et sécurité** > **Mode développeur**
+2. **Activer le switch** → L'iPad va redémarrer
+3. Après redémarrage : **Appuyer sur "Activer"** dans la popup
+4. **Entrer le code** si demandé → L'iPad redémarre encore une fois
+5. Vérifier : **Réglages** > **Confidentialité et sécurité** > **Mode développeur** doit être **activé** (switch vert)
+
+**Note** : Le Developer Mode est **obligatoire** pour iOS 16+ et est **100% gratuit**.
+
+---
+
+### **"Copying shared cache symbols" dans Xcode**
+**C'est normal !** Xcode copie les symboles de débogage nécessaires.
+
+**Ce qui se passe** :
+- Xcode affiche : `Copying shared cache symbols from iPad de Nathalie (2) (3% completed)`
+- **Temps** : 2-5 minutes (première fois uniquement)
+- **Progression** : 3% → 10% → 25% → 50% → 75% → 100%
+- Une fois à **100%**, Xcode va compiler et installer l'app automatiquement
+
+**Ne fermez pas Xcode !** Laissez-le terminer.
 
 ---
 
@@ -390,5 +443,5 @@ Pour votre cas d'usage (tester sur votre iPad Pro), le compte gratuit est parfai
 
 ---
 
-**Dernière mise à jour** : Décembre 2025
+**Dernière mise à jour** : November 19, 2025
 

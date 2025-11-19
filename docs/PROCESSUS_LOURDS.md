@@ -1,6 +1,6 @@
 # 🔥 Guide - Processus Lourds en Arrière-Plan
 
-**Date**: 18 Novembre 2025  
+**Date**: November 19, 2025  
 **Problème**: Processus qui consomment beaucoup de CPU/RAM en arrière-plan
 
 ---
@@ -210,5 +210,5 @@ ps aux | sort -rk 3,3 | head -10
 
 ---
 
-**Dernière mise à jour**: 18 Novembre 2025
+**Dernière mise à jour**: November 19, 2025
 

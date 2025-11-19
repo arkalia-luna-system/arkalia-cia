@@ -1,105 +1,210 @@
-# 📱 Ce que vous devriez voir sur votre téléphone Samsung S25 Ultra
+# 📱 What You Should See - Samsung S25 Ultra
 
-## ✅ Après l'installation de l'APK
+> **Visual verification guide for Android app installation**
 
-### 1. **Icône de l'application**
-- Cherchez l'icône **"Arkalia CIA"** dans le menu des applications
-- L'icône devrait être visible dans le tiroir d'applications
+**Last Updated**: November 19, 2025  
+**Version**: 1.2.0  
+**Platform**: Android
 
-### 2. **Au lancement de l'application**
+---
 
-Vous devriez voir :
+## 📋 Table of Contents
 
-#### **Barre supérieure (AppBar)**
-- **Titre** : "Arkalia CIA" en blanc
-- **Couleur de fond** : Bleu foncé (Colors.blue[600])
+1. [After APK Installation](#after-apk-installation)
+2. [App Launch Screen](#app-launch-screen)
+3. [Visual Design](#visual-design)
+4. [Troubleshooting](#troubleshooting)
+5. [Available Features](#available-features)
 
-#### **Corps de l'application**
+---
 
-**Titre principal** (en haut, centré) :
-- Texte : **"Assistant Personnel"**
-- Style : Grand, gras, couleur bleue
-- Taille : 24px
+## ✅ After APK Installation
 
-#### **Grille de 6 boutons** (2 colonnes, 3 lignes)
+### 1. Application Icon
 
-Chaque bouton est une carte cliquable avec :
+- Look for **"Arkalia CIA"** icon in app drawer
+- Icon should be visible in applications menu
+- Icon design: Blue medical cross with "CIA" text
 
-1. **📄 Documents** (Vert)
-   - Icône : Document
-   - Titre : "Documents"
-   - Sous-titre : "Import/voir docs"
-   - **Action** : Ouvre l'écran DocumentsScreen
+---
 
-2. **🏥 Santé** (Rouge)
-   - Icône : Sac médical
-   - Titre : "Santé"
-   - Sous-titre : "Portails santé"
-   - **Action** : Ouvre l'écran HealthScreen
+## 🚀 App Launch Screen
 
-3. **🔔 Rappels** (Orange)
-   - Icône : Cloche
-   - Titre : "Rappels"
-   - Sous-titre : "Rappels simples"
-   - **Action** : Ouvre l'écran RemindersScreen
+### AppBar (Top Bar)
 
-4. **📞 Urgence** (Violet)
-   - Icône : Téléphone d'alerte
-   - Titre : "Urgence"
-   - Sous-titre : "ICE - Contacts"
-   - **Action** : Ouvre l'écran EmergencyScreen
+| Element | Value |
+|---------|-------|
+| **Title** | "Arkalia CIA" (white text) |
+| **Background** | Dark blue (Colors.blue[600]) |
+| **Height** | Standard AppBar height |
 
-5. **❤️ ARIA** (Rouge)
-   - Icône : Pouls/cœur
-   - Titre : "ARIA"
-   - Sous-titre : "Laboratoire Santé"
-   - **Action** : Ouvre l'écran ARIAScreen
+### Main Content
 
-6. **🔄 Sync** (Orange)
-   - Icône : Synchronisation
-   - Titre : "Sync"
-   - Sous-titre : "CIA ↔ ARIA"
-   - **Action** : Affiche un message "Synchronisation CIA ↔ ARIA en cours de développement"
+**Main Title** (top, centered):
+- Text: **"Assistant Personnel"**
+- Style: Large, bold, blue color
+- Size: 24sp (accessibility compliant)
 
-## 🎨 Design visuel
+---
 
-- **Style** : Material Design 3
-- **Couleurs** : Bleu principal, boutons colorés (vert, rouge, orange, violet)
-- **Layout** : Grille responsive 2x3
-- **Interactions** : Les boutons sont cliquables avec effet de tap (InkWell)
+## 📱 Button Grid (2 columns, 3 rows)
 
-## 🔍 Si vous ne voyez pas l'application
+Each button is a clickable card with icon, title, and subtitle:
 
-1. Vérifiez que l'installation a réussi :
-   ```bash
-   adb shell pm list packages | grep arkalia
-   ```
+### Button 1: Documents 📄
 
-2. Lancez l'application manuellement :
-   ```bash
-   adb shell am start -n com.example.arkalia_cia/com.example.arkalia_cia.MainActivity
-   ```
+| Property | Value |
+|----------|-------|
+| **Color** | Green |
+| **Icon** | Document icon |
+| **Title** | "Documents" |
+| **Subtitle** | "Import/voir docs" |
+| **Action** | Opens DocumentsScreen |
 
-3. Vérifiez les logs pour les erreurs :
-   ```bash
-   flutter logs
-   ```
+### Button 2: Health 🏥
 
-## 📋 Fonctionnalités disponibles
+| Property | Value |
+|----------|-------|
+| **Color** | Red |
+| **Icon** | Medical bag |
+| **Title** | "Santé" |
+| **Subtitle** | "Portails santé" |
+| **Action** | Opens HealthScreen |
 
-- ✅ **Documents** : Import et visualisation de documents PDF
-- ✅ **Santé** : Accès aux portails santé
-- ✅ **Rappels** : Gestion des rappels simples
-- ✅ **Urgence** : Contacts ICE (In Case of Emergency)
-- ✅ **ARIA** : Interface avec le laboratoire de santé ARIA
-- 🚧 **Sync** : Synchronisation CIA ↔ ARIA (en développement)
+### Button 3: Reminders 🔔
 
-## 🎯 Prochaines étapes
+| Property | Value |
+|----------|-------|
+| **Color** | Orange |
+| **Icon** | Bell |
+| **Title** | "Rappels" |
+| **Subtitle** | "Rappels simples" |
+| **Action** | Opens RemindersScreen |
 
-Une fois l'application lancée, vous pouvez :
-1. Tester chaque bouton pour voir les écrans correspondants
-2. Importer des documents PDF
-3. Configurer vos rappels
-4. Ajouter vos contacts d'urgence
-5. Explorer l'interface ARIA
+### Button 4: Emergency 📞
+
+| Property | Value |
+|----------|-------|
+| **Color** | Purple |
+| **Icon** | Emergency phone |
+| **Title** | "Urgence" |
+| **Subtitle** | "ICE - Contacts" |
+| **Action** | Opens EmergencyScreen |
+
+### Button 5: ARIA ❤️
+
+| Property | Value |
+|----------|-------|
+| **Color** | Red |
+| **Icon** | Heart/pulse |
+| **Title** | "ARIA" |
+| **Subtitle** | "Laboratoire Santé" |
+| **Action** | Opens ARIAScreen |
+
+### Button 6: Sync 🔄
+
+| Property | Value |
+|----------|-------|
+| **Color** | Orange |
+| **Icon** | Synchronization |
+| **Title** | "Sync" |
+| **Subtitle** | "CIA ↔ ARIA" |
+| **Action** | Shows message: "Synchronisation disponible prochainement" |
+
+---
+
+## 🎨 Visual Design
+
+### Design System
+
+| Aspect | Specification |
+|--------|---------------|
+| **Style** | Material Design 3 |
+| **Primary Color** | Blue (Colors.blue[600]) |
+| **Button Colors** | Green, Red, Orange, Purple |
+| **Layout** | Responsive 2x3 grid |
+| **Interactions** | InkWell tap effects |
+| **Text Size** | Minimum 16sp (accessibility) |
+
+### Color Scheme
+
+- **Primary**: Blue (#1976D2)
+- **Documents**: Green
+- **Health**: Red
+- **Reminders**: Orange
+- **Emergency**: Purple
+- **ARIA**: Red
+- **Sync**: Orange
+
+---
+
+## 🔍 Troubleshooting
+
+### App Not Visible
+
+**Check 1: Verify Installation**
+```bash
+adb shell pm list packages | grep arkalia
+```
+
+Expected output:
+```
+package:com.example.arkaliaCia
+```
+
+**Check 2: Launch Manually**
+```bash
+adb shell am start -n com.example.arkaliaCia/com.example.arkaliaCia.MainActivity
+```
+
+**Check 3: View Logs**
+```bash
+flutter logs
+```
+
+### Visual Issues
+
+| Issue | Solution |
+|-------|----------|
+| **Buttons not visible** | Check screen size, ensure responsive layout |
+| **Text too small** | Verify text size ≥ 16sp |
+| **Colors incorrect** | Check Material Design theme |
+| **Icons missing** | Verify icon assets are included |
+
+---
+
+## 📋 Available Features
+
+| Feature | Status | Description |
+|---------|--------|-------------|
+| **Documents** | ✅ Available | Import and view PDF documents |
+| **Health** | ✅ Available | Access health portals |
+| **Reminders** | ✅ Available | Simple reminder management |
+| **Emergency** | ✅ Available | ICE (In Case of Emergency) contacts |
+| **ARIA** | ✅ Available | ARIA health lab interface |
+| **Sync** | 🚧 In Development | CIA ↔ ARIA synchronization |
+
+---
+
+## 🎯 Next Steps
+
+Once the app is launched, you can:
+
+1. ✅ **Test each button** - Navigate to corresponding screens
+2. ✅ **Import PDF documents** - Test document functionality
+3. ✅ **Configure reminders** - Set up health reminders
+4. ✅ **Add emergency contacts** - Set up ICE contacts
+5. ✅ **Explore ARIA interface** - Test ARIA integration
+
+---
+
+## 📚 Related Documentation
+
+- **[BUILD_RELEASE_ANDROID.md](BUILD_RELEASE_ANDROID.md)** - Android build guide
+- **[TESTER_ET_METTRE_A_JOUR.md](TESTER_ET_METTRE_A_JOUR.md)** - Testing and update guide
+- **[INDEX_DOCUMENTATION.md](INDEX_DOCUMENTATION.md)** - Full documentation index
+
+---
+
+**Last Updated**: November 19, 2025
 

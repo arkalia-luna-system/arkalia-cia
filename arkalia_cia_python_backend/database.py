@@ -18,14 +18,18 @@ class CIADatabase:
 
         # Vérifier les path traversal attacks
         if ".." in str(db_path_obj):
-            raise ValueError("Chemin de base de données invalide: path traversal détecté")
+            raise ValueError(
+                "Chemin de base de données invalide: path traversal détecté"
+            )
 
         # Permettre les chemins absolus pour les fichiers temporaires de tests
         # et les chemins relatifs dans le répertoire courant
         if db_path_obj.is_absolute():
             # Pour les tests : permettre les fichiers temporaires (commencent par /tmp ou /var)
             if not (
-                str(db_path_obj).startswith("/tmp")  # nosec B108 - Validation de sécurité
+                str(db_path_obj).startswith(
+                    "/tmp"
+                )  # nosec B108 - Validation de sécurité
                 or str(db_path_obj).startswith("/var")
                 or str(db_path_obj).startswith(str(Path.cwd()))
             ):
@@ -157,7 +161,9 @@ class CIADatabase:
         """Sauvegarde un document"""
         return self.add_document(filename, filename, "", "pdf", len(content))
 
-    def add_reminder(self, title: str, description: str, reminder_date: str) -> int | None:
+    def add_reminder(
+        self, title: str, description: str, reminder_date: str
+    ) -> int | None:
         """Ajoute un rappel"""
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
@@ -170,7 +176,9 @@ class CIADatabase:
             )
             return cursor.lastrowid
 
-    def save_reminder(self, title: str, description: str, reminder_date: str) -> int | None:
+    def save_reminder(
+        self, title: str, description: str, reminder_date: str
+    ) -> int | None:
         """Sauvegarde un rappel"""
         return self.add_reminder(title, description, reminder_date)
 
@@ -228,7 +236,9 @@ class CIADatabase:
         with sqlite3.connect(self.db_path) as conn:
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM emergency_contacts WHERE id = ?", (contact_id,))
+            cursor.execute(
+                "SELECT * FROM emergency_contacts WHERE id = ?", (contact_id,)
+            )
             row = cursor.fetchone()
             return dict(row) if row else None
 
@@ -248,10 +258,14 @@ class CIADatabase:
         with sqlite3.connect(self.db_path) as conn:
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM emergency_contacts ORDER BY is_primary DESC, name ASC")
+            cursor.execute(
+                "SELECT * FROM emergency_contacts ORDER BY is_primary DESC, name ASC"
+            )
             return [dict(row) for row in cursor.fetchall()]
 
-    def add_health_portal(self, name: str, url: str, description: str, category: str) -> int | None:
+    def add_health_portal(
+        self, name: str, url: str, description: str, category: str
+    ) -> int | None:
         """Ajoute un portail santé"""
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
@@ -264,7 +278,9 @@ class CIADatabase:
             )
             return cursor.lastrowid
 
-    def save_portal(self, name: str, url: str, description: str, category: str) -> int | None:
+    def save_portal(
+        self, name: str, url: str, description: str, category: str
+    ) -> int | None:
         """Sauvegarde un portail santé"""
         return self.add_health_portal(name, url, description, category)
 

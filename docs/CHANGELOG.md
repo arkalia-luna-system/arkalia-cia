@@ -1,13 +1,17 @@
 # Changelog
 
-> **Arkalia CIA** - All notable changes to this project will be documented in this file
+> **Arkalia CIA** - All notable changes to this project
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+**Last Updated**: November 19, 2025
+
+---
+
 ## [Unreleased]
 
-### Changed - 18 Novembre 2025
+### Changed - November 19, 2025
 - **🎨 Améliorations UX**:
   - Titre modifié : "Assistant Personnel" → "Assistant Santé Personnel" avec sous-titre "Votre santé au quotidien"
   - Icônes empty states colorisées (Documents=vert, Santé=rouge, Rappels=orange, Infos médicales=rouge)

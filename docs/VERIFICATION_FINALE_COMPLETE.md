@@ -1,6 +1,6 @@
 # Vérification Finale - Arkalia CIA
 
-**Date**: 18 Novembre 2025  
+**Date**: November 19, 2025  
 **Version**: 1.2.0  
 **Branche**: develop
 
@@ -190,7 +190,7 @@ L'application Arkalia CIA est maintenant :
 
 ---
 
-**Date de vérification**: 18 Novembre 2025  
+**Date de vérification**: November 19, 2025  
 **Vérifié par**: Assistant IA  
 **Prochaine étape**: Release v1.2.0
 

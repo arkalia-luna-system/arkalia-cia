@@ -31,13 +31,29 @@ class _LockScreenState extends State<LockScreen> {
 
   Future<void> _authenticateOnStartup() async {
     final shouldAuth = await AuthService.shouldAuthenticateOnStartup();
-    if (shouldAuth && _isBiometricAvailable) {
-      await Future.delayed(const Duration(milliseconds: 500));
-      await _authenticate();
-    } else if (!_isBiometricAvailable) {
-      // Si la biométrie n'est pas disponible, permettre l'accès direct
+    final authEnabled = await AuthService.isAuthEnabled();
+    
+    // Si l'authentification est désactivée, permettre l'accès direct
+    if (!authEnabled) {
       _unlockApp();
+      return;
     }
+    
+    // Si l'authentification au démarrage est désactivée, permettre l'accès direct
+    if (!shouldAuth) {
+      _unlockApp();
+      return;
+    }
+    
+    // Si la biométrie n'est pas disponible, permettre l'accès direct
+    if (!_isBiometricAvailable) {
+      _unlockApp();
+      return;
+    }
+    
+    // Authentification requise et disponible
+    await Future.delayed(const Duration(milliseconds: 500));
+    await _authenticate();
   }
 
   Future<void> _authenticate() async {

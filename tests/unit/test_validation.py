@@ -33,12 +33,16 @@ class TestValidationHelper:
 
         for phone in valid_phones:
             cleaned = re.sub(r"[\s\-\(\)]", "", phone)
-            assert belgian_pattern.match(cleaned) is not None, f"Phone {phone} should be valid"
+            assert (
+                belgian_pattern.match(cleaned) is not None
+            ), f"Phone {phone} should be valid"
 
         for phone in invalid_phones:
             if phone:
                 cleaned = re.sub(r"[\s\-\(\)]", "", phone)
-                assert belgian_pattern.match(cleaned) is None, f"Phone {phone} should be invalid"
+                assert (
+                    belgian_pattern.match(cleaned) is None
+                ), f"Phone {phone} should be invalid"
 
     def test_is_valid_url(self):
         """Test de validation des URLs"""
@@ -62,7 +66,9 @@ class TestValidationHelper:
 
         for url in invalid_urls:
             if url:
-                assert not (url.startswith(("http://", "https://"))), f"URL {url} should be invalid"
+                assert not (
+                    url.startswith(("http://", "https://"))
+                ), f"URL {url} should be invalid"
 
     def test_is_valid_email(self):
         """Test de validation des emails"""
@@ -84,11 +90,15 @@ class TestValidationHelper:
         email_pattern = re.compile(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
 
         for email in valid_emails:
-            assert email_pattern.match(email) is not None, f"Email {email} should be valid"
+            assert (
+                email_pattern.match(email) is not None
+            ), f"Email {email} should be valid"
 
         for email in invalid_emails:
             if email:
-                assert email_pattern.match(email) is None, f"Email {email} should be invalid"
+                assert (
+                    email_pattern.match(email) is None
+                ), f"Email {email} should be invalid"
 
     def test_is_valid_name(self):
         """Test de validation des noms"""
@@ -110,12 +120,16 @@ class TestValidationHelper:
         name_pattern = re.compile(r"^[a-zA-ZÀ-ÿ\s\-']+$")
 
         for name in valid_names:
-            assert len(name) >= 2 and len(name) <= 100, f"Name {name} length should be valid"
+            assert (
+                len(name) >= 2 and len(name) <= 100
+            ), f"Name {name} length should be valid"
             assert name_pattern.match(name) is not None, f"Name {name} should be valid"
 
         for name in invalid_names:
             if name:
-                is_invalid = len(name) < 2 or len(name) > 100 or name_pattern.match(name) is None
+                is_invalid = (
+                    len(name) < 2 or len(name) > 100 or name_pattern.match(name) is None
+                )
                 assert is_invalid, f"Name {name} should be invalid"
 
     def test_is_valid_date(self):

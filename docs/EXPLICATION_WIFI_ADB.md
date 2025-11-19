@@ -1,138 +1,196 @@
-# 🔌 Explication : WiFi ADB vs Mise à Jour Automatique
+# 🔌 WiFi ADB vs Automatic Updates - Explained
 
-## ❓ Question Fréquente
+> **Understanding what WiFi ADB does and doesn't do**
 
-> "Si je configure le WiFi ADB, est-ce que toutes mes apps se mettront à jour automatiquement ?"
-
-## ❌ Réponse : NON
-
-### **Ce que le WiFi ADB fait :**
-- ✅ Permet de **déployer vos apps de développement** (comme Arkalia CIA) sans câble USB
-- ✅ Une fois configuré, vous pouvez rester sans fil
-- ❌ **MAIS** vous devez TOUJOURS lancer `flutter run` manuellement pour mettre à jour
-- ❌ Ça ne met **PAS** à jour automatiquement
-- ❌ Ça ne concerne **QUE** vos apps de développement
-
-### **Ce que le WiFi ADB NE fait PAS :**
-- ❌ Ne met PAS à jour automatiquement vos apps
-- ❌ Ne remplace PAS le Play Store
-- ❌ Ne concerne PAS les apps du Play Store
-- ❌ Ne fonctionne PAS sans que vous lanciez une commande
+**Last Updated**: November 19, 2025  
+**Version**: 1.2.0  
+**Platform**: Android
 
 ---
 
-## 📱 Comment Ça Marche Vraiment
+## 📋 Table of Contents
 
-### **Scénario 1 : Vous développez Arkalia CIA**
-
-**Avec USB :**
-1. Vous modifiez le code
-2. Vous branchez le téléphone via USB
-3. Vous lancez `flutter run`
-4. L'app se met à jour sur le téléphone
-
-**Avec WiFi ADB :**
-1. Vous modifiez le code
-2. **Vous NE branchez PAS le téléphone** (câble USB)
-3. Vous lancez `flutter run`
-4. L'app se met à jour sur le téléphone **via WiFi**
-
-**Différence** : Pas besoin de câble USB, mais vous devez TOUJOURS lancer `flutter run` manuellement.
-
-### **Scénario 2 : Apps du Play Store (Gmail, WhatsApp, etc.)**
-
-**Rien ne change !**
-- ✅ Les apps du Play Store continuent de se mettre à jour normalement
-- ✅ Le Play Store fonctionne comme d'habitude
-- ✅ Le WiFi ADB n'a AUCUN impact sur ces apps
+1. [Frequently Asked Question](#frequently-asked-question)
+2. [What WiFi ADB Does](#what-wifi-adb-does)
+3. [How It Really Works](#how-it-really-works)
+4. [Summary](#summary)
+5. [What You Need to Do](#what-you-need-to-do)
+6. [Automated Script](#automated-script)
 
 ---
 
-## 🎯 En Résumé
+## ❓ Frequently Asked Question
 
-| Type d'App | Comment se met à jour ? | Impact WiFi ADB |
-|------------|-------------------------|-----------------|
-| **Arkalia CIA** (votre app) | Vous lancez `flutter run` | ✅ Permet de le faire sans USB |
-| **Gmail, WhatsApp, etc.** | Via le Play Store automatiquement | ❌ Aucun impact |
+> **"If I configure WiFi ADB, will all my apps update automatically?"**
 
----
-
-## 💡 Analogie Simple
-
-**Le WiFi ADB, c'est comme :**
-- 🚗 Avoir une voiture sans fil pour aller au travail
-- ✅ Vous n'avez plus besoin de prendre le bus (USB)
-- ❌ Mais vous devez TOUJOURS conduire vous-même (lancer `flutter run`)
-- ❌ Ça ne conduit PAS automatiquement
-
-**Les apps du Play Store, c'est comme :**
-- 🚌 Prendre le bus pour aller ailleurs
-- ✅ Le bus fonctionne toujours normalement
-- ✅ Rien ne change pour le bus
+## ❌ Answer: NO
 
 ---
 
-## ✅ Ce Que Vous Devez Faire
+## ✅ What WiFi ADB Does
 
-### **Pour mettre à jour Arkalia CIA :**
+| Feature | Status |
+|---------|--------|
+| **Deploy development apps** (like Arkalia CIA) without USB | ✅ Yes |
+| **Stay wireless** once configured | ✅ Yes |
+| **Requires manual `flutter run`** to update | ⚠️ Yes - Always manual |
+| **Automatic updates** | ❌ No |
+| **Only affects development apps** | ✅ Yes |
 
-**Option 1 : USB (simple)**
+### What WiFi ADB Does NOT Do
+
+- ❌ Does **NOT** automatically update your apps
+- ❌ Does **NOT** replace Play Store
+- ❌ Does **NOT** affect Play Store apps
+- ❌ Does **NOT** work without running a command
+
+---
+
+## 📱 How It Really Works
+
+### Scenario 1: Developing Arkalia CIA
+
+**With USB**:
+1. Modify code
+2. Connect phone via USB
+3. Run `flutter run`
+4. App updates on phone
+
+**With WiFi ADB**:
+1. Modify code
+2. **Do NOT connect phone** (no USB cable)
+3. Run `flutter run`
+4. App updates on phone **via WiFi**
+
+**Difference**: No USB cable needed, but you must **ALWAYS** run `flutter run` manually.
+
+### Scenario 2: Play Store Apps (Gmail, WhatsApp, etc.)
+
+**Nothing changes!**
+- ✅ Play Store apps continue updating normally
+- ✅ Play Store works as usual
+- ✅ WiFi ADB has **NO impact** on these apps
+
+---
+
+## 🎯 Summary
+
+| App Type | How It Updates | WiFi ADB Impact |
+|----------|----------------|-----------------|
+| **Arkalia CIA** (your app) | You run `flutter run` | ✅ Allows wireless deployment |
+| **Gmail, WhatsApp, etc.** | Via Play Store automatically | ❌ No impact |
+
+---
+
+## 💡 Simple Analogy
+
+### WiFi ADB is Like:
+
+- 🚗 Having a wireless car to go to work
+- ✅ You no longer need to take the bus (USB)
+- ❌ But you must **ALWAYS** drive yourself (run `flutter run`)
+- ❌ It does **NOT** drive automatically
+
+### Play Store Apps are Like:
+
+- 🚌 Taking the bus to go elsewhere
+- ✅ Bus works normally
+- ✅ Nothing changes for the bus
+
+---
+
+## ✅ What You Need to Do
+
+### To Update Arkalia CIA:
+
+#### Option 1: USB (Simple)
+
 ```bash
-# Branchez le téléphone
-cd ~/arkalia-cia-build/arkalia_cia  # Ou /Volumes/T7/arkalia-cia/arkalia_cia
+# Connect phone
+cd ~/arkalia-cia-build/arkalia_cia  # Or /Volumes/T7/arkalia-cia/arkalia_cia
 flutter run --release
 ```
 
-**Option 2 : WiFi (une fois configuré) - RECOMMANDÉ**
+#### Option 2: WiFi (Once Configured) - RECOMMENDED
+
 ```bash
-# Pas besoin de brancher
-cd ~/arkalia-cia-build/arkalia_cia  # Build sur disque local (recommandé)
+# No need to connect
+cd ~/arkalia-cia-build/arkalia_cia  # Build on local disk (recommended)
 flutter run --release -d 192.168.129.46:5555
 ```
 
-**Dans les deux cas** : Vous devez lancer la commande manuellement. Ça ne se fait PAS automatiquement.
+> **In both cases**: You must run the command manually. It does **NOT** happen automatically.
 
-### **Pour les autres apps :**
-- ✅ Rien à faire, elles se mettent à jour via le Play Store comme d'habitude
+### For Other Apps:
+
+- ✅ Nothing to do - they update via Play Store as usual
+
+---
+
+## 🛠️ Automated Script
+
+A secure script is available to simplify WiFi ADB connection:
+
+**File**: `arkalia_cia/connect_wifi_adb.sh`
+
+### Usage:
+
+```bash
+cd /Volumes/T7/arkalia-cia/arkalia_cia
+
+# Initial setup (phone connected)
+./connect_wifi_adb.sh setup
+
+# Reconnect later (without USB)
+./connect_wifi_adb.sh reconnect
+
+# Check status
+./connect_wifi_adb.sh status
+```
+
+> 🔒 **Security**: IP is saved in `.wifi_adb_ip` which is ignored by git. Your data stays private.
 
 ---
 
 ## 🔍 Conclusion
 
-**Le WiFi ADB = Outil de développement pratique**
-- ✅ Évite de rebrancher le câble USB
-- ❌ Ne remplace PAS la mise à jour automatique
-- ❌ Vous devez TOUJOURS lancer `flutter run` manuellement
+### WiFi ADB = Practical Development Tool
 
-**Les apps du Play Store = Fonctionnent normalement**
-- ✅ Rien ne change pour elles
-- ✅ Elles continuent de se mettre à jour automatiquement
+- ✅ Avoids reconnecting USB cable
+- ❌ Does **NOT** replace automatic updates
+- ❌ You must **ALWAYS** run `flutter run` manually
 
----
+### Play Store Apps = Work Normally
 
-## 🛠️ Script Automatique Disponible
-
-Un script sécurisé est disponible pour simplifier la connexion WiFi ADB :
-
-**Fichier** : `arkalia_cia/connect_wifi_adb.sh`
-
-**Utilisation :**
-```bash
-cd /Volumes/T7/arkalia-cia/arkalia_cia
-
-# Première configuration (téléphone branché)
-./connect_wifi_adb.sh setup
-
-# Reconnecter plus tard (sans USB)
-./connect_wifi_adb.sh reconnect
-
-# Vérifier le statut
-./connect_wifi_adb.sh status
-```
-
-> 🔒 **Sécurité** : L'IP est sauvegardée dans `.wifi_adb_ip` qui est ignoré par git. Vos données restent privées.
+- ✅ Nothing changes for them
+- ✅ They continue updating automatically
 
 ---
 
-**En bref** : Le WiFi ADB est juste un moyen pratique de déployer vos apps sans câble USB. Ça ne met RIEN à jour automatiquement. Vous devez toujours lancer `flutter run` vous-même. 🚀
+## 📊 Comparison
+
+| Aspect | WiFi ADB | Play Store |
+|--------|----------|------------|
+| **Automatic updates** | ❌ No | ✅ Yes |
+| **Manual command required** | ✅ Yes | ❌ No |
+| **Affects development apps** | ✅ Yes | ❌ No |
+| **Affects Play Store apps** | ❌ No | ✅ Yes |
+
+---
+
+## 📚 Related Documentation
+
+- **[TESTER_ET_METTRE_A_JOUR.md](TESTER_ET_METTRE_A_JOUR.md)** - Testing and update guide
+- **[BUILD_RELEASE_ANDROID.md](BUILD_RELEASE_ANDROID.md)** - Android build guide
+- **[INDEX_DOCUMENTATION.md](INDEX_DOCUMENTATION.md)** - Full documentation index
+
+---
+
+## 🎉 In Brief
+
+**WiFi ADB is just a convenient way to deploy your apps without USB cable. It does NOT update anything automatically. You must always run `flutter run` yourself.** 🚀
+
+---
+
+**Last Updated**: November 19, 2025
 

@@ -16,7 +16,6 @@
     "reportMissingImports": "none",
     "reportMissingTypeStubs": false,
     "reportImportCycles": false,
-    "reportUnusedTypeIgnoreComment": false,
     "reportGeneralTypeIssues": false,
     "typeCheckingMode": "basic"
 }
