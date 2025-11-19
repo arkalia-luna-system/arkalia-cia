@@ -41,6 +41,50 @@
 
 ---
 
+### 🔍 **PLAN_03 : Recherche Avancée** (Terminé - 80% ✅)
+
+#### ✅ **Terminé**
+- [x] Service `SearchService` avec recherche multi-critères
+- [x] Écran recherche avancée (`AdvancedSearchScreen`)
+- [x] Filtres (catégorie, date)
+- [x] Recherche dans documents et médecins
+- [x] Suggestions de recherche
+- [x] Intégration dans HomePage (bouton recherche avancée)
+
+#### ⚠️ **En cours / À faire**
+- [ ] Recherche sémantique avancée
+- [ ] Filtre par médecin dans recherche
+- [ ] Performance optimisée (<200ms)
+
+---
+
+### 📄 **PLAN_01 : Parser PDF Médicaux** (En cours - 40%)
+
+#### ✅ **Terminé**
+- [x] Backend extraction texte PDF (existant)
+- [x] Module `MetadataExtractor` pour extraction métadonnées
+- [x] Détection médecin, date, type examen
+- [x] Classification documents
+
+#### ⚠️ **En cours / À faire**
+- [ ] OCR pour PDF scannés (Tesseract)
+- [ ] Intégration complète dans API upload
+- [ ] Association automatique documents ↔ médecins
+
+#### ✅ **Terminé**
+- [x] Modèles `Doctor` et `Consultation`
+- [x] Service `DoctorService` (CRUD complet)
+- [x] Tables SQLite créées avec index
+- [x] Écran liste médecins (`DoctorsListScreen`)
+- [x] Écran détail médecin (`DoctorDetailScreen`)
+- [x] Écran ajout/modification (`AddEditDoctorScreen`)
+- [x] Recherche médecins (nom, spécialité)
+- [x] Filtres par spécialité
+- [x] Statistiques par médecin
+- [x] Intégration dans HomePage (bouton "Médecins")
+
+---
+
 ## 📋 **PROCHAINES ÉTAPES**
 
 ### **Priorité 1 : Finaliser Onboarding**
