@@ -2,7 +2,6 @@
 IA Conversationnelle pour analyse santé
 Analyse données CIA + ARIA pour dialogue intelligent
 """
-from typing import Dict, List, Optional
 from datetime import datetime
 import logging
 
@@ -13,10 +12,10 @@ class ConversationalAI:
     """IA conversationnelle pour santé"""
     
     def __init__(self, max_memory_size: int = 50):
-        self.context_memory = []
+        self.context_memory: list[dict] = []
         self.max_memory_size = max_memory_size  # Limiter la taille de la mémoire
     
-    def analyze_question(self, question: str, user_data: Dict) -> Dict[str, any]:
+    def analyze_question(self, question: str, user_data: dict) -> dict[str, any]:
         """
         Analyse une question et génère une réponse intelligente
         
@@ -79,7 +78,7 @@ class ConversationalAI:
         else:
             return 'general'
     
-    def _generate_answer(self, question_type: str, question: str, user_data: Dict) -> str:
+    def _generate_answer(self, question_type: str, question: str, user_data: dict) -> str:
         """Génère une réponse selon le type de question"""
         
         if question_type == 'pain':
@@ -97,7 +96,7 @@ class ConversationalAI:
         else:
             return self._answer_general_question(question, user_data)
     
-    def _answer_pain_question(self, question: str, user_data: Dict) -> str:
+    def _answer_pain_question(self, question: str, user_data: dict) -> str:
         """Répond aux questions sur la douleur"""
         # Analyser données douleur depuis ARIA si disponibles
         pain_data = user_data.get('pain_records', [])
@@ -111,20 +110,20 @@ class ConversationalAI:
         
         return "Je peux analyser vos douleurs si vous avez des données dans ARIA. "
     
-    def _answer_doctor_question(self, question: str, user_data: Dict) -> str:
+    def _answer_doctor_question(self, question: str, user_data: dict) -> str:
         """Répond aux questions sur les médecins"""
         doctors = user_data.get('doctors', [])
         
         if doctors:
             count = len(doctors)
-            specialties = set(d.get('specialty', '') for d in doctors if d.get('specialty'))
+            specialties = {d.get('specialty', '') for d in doctors if d.get('specialty')}
             specialties_str = ', '.join(specialties) if specialties else 'diverses spécialités'
             
             return f"Vous avez {count} médecin(s) enregistré(s) dans votre historique, couvrant {specialties_str}. "
         
         return "Vous n'avez pas encore de médecins enregistrés. "
     
-    def _answer_exam_question(self, question: str, user_data: Dict) -> str:
+    def _answer_exam_question(self, question: str, user_data: dict) -> str:
         """Répond aux questions sur les examens"""
         documents = user_data.get('documents', [])
         exam_docs = [d for d in documents if d.get('category') in ['resultat', 'examen']]
@@ -138,7 +137,7 @@ class ConversationalAI:
         
         return "Je n'ai pas trouvé d'examens récents dans vos documents. "
     
-    def _answer_medication_question(self, question: str, user_data: Dict) -> str:
+    def _answer_medication_question(self, question: str, user_data: dict) -> str:
         """Répond aux questions sur les médicaments"""
         documents = user_data.get('documents', [])
         medication_docs = [d for d in documents if d.get('category') == 'ordonnance']
@@ -150,7 +149,7 @@ class ConversationalAI:
         
         return "Je n'ai pas trouvé d'ordonnances récentes. "
     
-    def _answer_appointment_question(self, question: str, user_data: Dict) -> str:
+    def _answer_appointment_question(self, question: str, user_data: dict) -> str:
         """Répond aux questions sur les rendez-vous"""
         consultations = user_data.get('consultations', [])
         
@@ -162,7 +161,7 @@ class ConversationalAI:
         
         return "Je n'ai pas trouvé de rendez-vous à venir. "
     
-    def _answer_cause_effect_question(self, question: str, user_data: Dict) -> str:
+    def _answer_cause_effect_question(self, question: str, user_data: dict) -> str:
         """Répond aux questions cause-effet"""
         # Analyser corrélations entre données
         pain_data = user_data.get('pain_records', [])
@@ -173,11 +172,11 @@ class ConversationalAI:
         
         return "Pour analyser les causes et effets, j'ai besoin de plus de données (douleurs, examens). "
     
-    def _answer_general_question(self, question: str, user_data: Dict) -> str:
+    def _answer_general_question(self, question: str, user_data: dict) -> str:
         """Répond aux questions générales"""
         return "Je peux vous aider à analyser vos données de santé. Posez-moi une question spécifique sur vos médecins, examens, douleurs ou médicaments. "
     
-    def _find_related_documents(self, question: str, user_data: Dict) -> List[str]:
+    def _find_related_documents(self, question: str, user_data: dict) -> list[str]:
         """Trouve documents liés à la question"""
         documents = user_data.get('documents', [])
         related = []
@@ -192,7 +191,7 @@ class ConversationalAI:
         
         return related[:5]  # Limiter à 5 résultats
     
-    def _generate_suggestions(self, question_type: str, user_data: Dict) -> List[str]:
+    def _generate_suggestions(self, question_type: str, user_data: dict) -> list[str]:
         """Génère suggestions selon le type de question"""
         suggestions = []
         
@@ -223,7 +222,7 @@ class ConversationalAI:
         
         return suggestions
     
-    def _detect_patterns_in_question(self, question: str, user_data: Dict) -> Dict:
+    def _detect_patterns_in_question(self, question: str, user_data: dict) -> dict:
         """Détecte patterns dans la question"""
         patterns = {}
         
@@ -237,7 +236,7 @@ class ConversationalAI:
         
         return patterns
     
-    def prepare_appointment_questions(self, doctor_id: str, user_data: Dict) -> List[str]:
+    def prepare_appointment_questions(self, doctor_id: str, user_data: dict) -> list[str]:
         """Prépare questions pour un rendez-vous"""
         questions = [
             "Quels sont vos symptômes actuels ?",

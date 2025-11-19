@@ -43,13 +43,19 @@ class ConversationalAIService {
   }
   
   Future<Map<String, dynamic>> _getUserData() async {
-    // Récupérer toutes les données utilisateur
-    final documents = await LocalStorageService.getDocuments();
-    final doctors = await DoctorService.getDoctors();
+    // Récupérer seulement les données récentes pour économiser la mémoire
+    // Limiter à 10 documents récents, 5 médecins récents
+    final allDocuments = await LocalStorageService.getDocuments();
+    final allDoctors = await DoctorService.getDoctors();
+    
+    // Prendre seulement les 10 documents les plus récents
+    final documents = allDocuments.take(10).toList();
+    // Prendre seulement les 5 premiers médecins
+    final doctors = allDoctors.take(5).map((d) => d.toMap()).toList();
     
     return {
       'documents': documents,
-      'doctors': doctors.map((d) => d.toMap()).toList(),
+      'doctors': doctors,
       'consultations': [], // TODO: Récupérer consultations
       'pain_records': [], // TODO: Récupérer depuis ARIA
     };

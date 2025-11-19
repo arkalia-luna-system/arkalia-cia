@@ -320,12 +320,18 @@ class CIADatabase:
             cursor.execute("DELETE FROM health_portals WHERE id = ?", (portal_id,))
             return cursor.rowcount > 0
 
-    def get_health_portals(self) -> list[dict[str, Any]]:
-        """Récupère tous les portails santé"""
+    def get_health_portals(self, skip: int = 0, limit: int | None = None) -> list[dict[str, Any]]:
+        """Récupère les portails santé avec pagination"""
         with sqlite3.connect(self.db_path) as conn:
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM health_portals ORDER BY category, name ASC")
+            if limit is not None:
+                cursor.execute(
+                    "SELECT * FROM health_portals ORDER BY category, name ASC LIMIT ? OFFSET ?",
+                    (limit, skip)
+                )
+            else:
+                cursor.execute("SELECT * FROM health_portals ORDER BY category, name ASC")
             return [dict(row) for row in cursor.fetchall()]
 
 

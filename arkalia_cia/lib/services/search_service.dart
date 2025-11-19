@@ -54,27 +54,31 @@ class SearchService {
     return await openDatabase(path, version: 1);
   }
 
-  /// Recherche simple avec une requête texte
+  /// Recherche simple avec une requête texte (limité à 20 résultats par catégorie)
   static Future<Map<String, List<Map<String, dynamic>>>> searchAll(String query) async {
     final results = <String, List<Map<String, dynamic>>>{
       'documents': [],
       'reminders': [],
       'contacts': [],
     };
+    
+    const maxResults = 20; // Limiter les résultats pour économiser la mémoire
 
     try {
-      // Recherche dans les documents
+      // Recherche dans les documents (limiter à 50 pour la recherche)
       final documents = await LocalStorageService.getDocuments();
-      for (var doc in documents) {
+      for (var doc in documents.take(50)) {
+        if (results['documents']!.length >= maxResults) break;
         final name = (doc['original_name'] ?? doc['name'] ?? '').toLowerCase();
         if (name.contains(query.toLowerCase())) {
           results['documents']!.add(doc);
         }
       }
 
-      // Recherche dans les rappels
+      // Recherche dans les rappels (limiter à 50 pour la recherche)
       final reminders = await LocalStorageService.getReminders();
-      for (var reminder in reminders) {
+      for (var reminder in reminders.take(50)) {
+        if (results['reminders']!.length >= maxResults) break;
         final title = (reminder['title'] ?? '').toLowerCase();
         final description = (reminder['description'] ?? '').toLowerCase();
         if (title.contains(query.toLowerCase()) || description.contains(query.toLowerCase())) {
@@ -82,9 +86,10 @@ class SearchService {
         }
       }
 
-      // Recherche dans les contacts d'urgence
+      // Recherche dans les contacts d'urgence (limiter à 50 pour la recherche)
       final contacts = await LocalStorageService.getEmergencyContacts();
-      for (var contact in contacts) {
+      for (var contact in contacts.take(50)) {
+        if (results['contacts']!.length >= maxResults) break;
         final name = (contact['name'] ?? '').toLowerCase();
         final phone = (contact['phone'] ?? '').toLowerCase();
         if (name.contains(query.toLowerCase()) || phone.contains(query.toLowerCase())) {

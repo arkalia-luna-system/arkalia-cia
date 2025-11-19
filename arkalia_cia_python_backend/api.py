@@ -22,7 +22,6 @@ from slowapi.util import get_remote_address
 from arkalia_cia_python_backend.aria_integration.api import router as aria_router
 from arkalia_cia_python_backend.database import CIADatabase
 from arkalia_cia_python_backend.pdf_processor import PDFProcessor
-from arkalia_cia_python_backend.pdf_parser.metadata_extractor import MetadataExtractor
 from arkalia_cia_python_backend.ai.conversational_ai import ConversationalAI
 from arkalia_cia_python_backend.security_utils import (
     sanitize_error_detail,
@@ -656,8 +655,8 @@ async def create_reminder(request: Request, reminder: ReminderRequest):
         reminder_date=reminder.reminder_date,
     )
 
-    # Récupérer le rappel créé
-    reminders = db.get_reminders()
+    # Récupérer le rappel créé (seulement les 10 derniers pour économiser la mémoire)
+    reminders = db.get_reminders(skip=0, limit=10)
     created_reminder = next((r for r in reminders if r["id"] == reminder_id), None)
 
     if not created_reminder:
@@ -694,8 +693,8 @@ async def create_emergency_contact(request: Request, contact: EmergencyContactRe
         is_primary=contact.is_primary,
     )
 
-    # Récupérer le contact créé
-    contacts = db.get_emergency_contacts()
+    # Récupérer le contact créé (seulement les 10 derniers pour économiser la mémoire)
+    contacts = db.get_emergency_contacts(skip=0, limit=10)
     created_contact = next((c for c in contacts if c["id"] == contact_id), None)
 
     if not created_contact:
@@ -732,8 +731,8 @@ async def create_health_portal(request: Request, portal: HealthPortalRequest):
         category=portal.category or "",
     )
 
-    # Récupérer le portail créé
-    portals = db.get_health_portals()
+    # Récupérer le portail créé (seulement les 10 derniers pour économiser la mémoire)
+    portals = db.get_health_portals(skip=0, limit=10)
     created_portal = next((p for p in portals if p["id"] == portal_id), None)
 
     if not created_portal:
