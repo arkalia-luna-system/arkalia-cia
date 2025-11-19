@@ -47,8 +47,9 @@ class PDFProcessor:
         return f"{name}_{timestamp}{ext}"
 
     def extract_text_from_pdf(self, file_path: str, use_ocr: bool = False) -> str:
-        """Extrait le texte d'un PDF (optimisé mémoire)"""
+        """Extrait le texte d'un PDF, avec OCR si nécessaire"""
         try:
+            # D'abord essayer extraction texte normale
             with open(file_path, "rb") as file:
                 reader = PdfReader(file)
                 text_parts = []
@@ -57,17 +58,31 @@ class PDFProcessor:
                     page_text = page.extract_text()
                     text_parts.append(page_text)
                     # Libérer la référence de la page après extraction
-                    # (le GC Python gère automatiquement, mais on peut aider)
                     if i % 10 == 0:  # Nettoyer périodiquement
                         import gc
-
                         gc.collect()
 
                 result = "".join(text_parts)
-                # Libérer les parties après concaténation
                 del text_parts
-                return result
+            
+            # Si peu de texte et OCR disponible, utiliser OCR
+            if len(result.strip()) < 100 and (use_ocr or (hasattr(self, 'ocr') and self.ocr and self.ocr.is_available())):
+                if hasattr(self, 'ocr') and self.ocr and self.ocr.is_available():
+                    logger.info("Utilisation OCR pour PDF scanné")
+                    ocr_result = self.ocr.process_scanned_pdf(file_path)
+                    if ocr_result.get('text'):
+                        return ocr_result['text']
+            
+            return result
         except Exception as e:
+            logger.error(f"Erreur extraction PDF: {e}")
+            # Essayer OCR en dernier recours
+            if hasattr(self, 'ocr') and self.ocr and self.ocr.is_available():
+                try:
+                    ocr_result = self.ocr.process_scanned_pdf(file_path)
+                    return ocr_result.get('text', f"Erreur lors de l'extraction: {str(e)}")
+                except:
+                    pass
             return f"Erreur lors de l'extraction: {str(e)}"
 
     def save_pdf_to_uploads(self, file_path: str, filename: str) -> str:
