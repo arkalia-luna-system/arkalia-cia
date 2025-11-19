@@ -23,6 +23,7 @@ from arkalia_cia_python_backend.aria_integration.api import router as aria_route
 from arkalia_cia_python_backend.database import CIADatabase
 from arkalia_cia_python_backend.pdf_processor import PDFProcessor
 from arkalia_cia_python_backend.pdf_parser.metadata_extractor import MetadataExtractor
+from arkalia_cia_python_backend.ai.conversational_ai import ConversationalAI
 from arkalia_cia_python_backend.security_utils import (
     sanitize_error_detail,
     sanitize_log_message,
@@ -42,6 +43,7 @@ limiter = Limiter(key_func=get_remote_address)
 # Instances globales
 db = CIADatabase()
 pdf_processor = PDFProcessor()
+conversational_ai = ConversationalAI()
 
 
 # Modèles Pydantic
@@ -734,6 +736,74 @@ async def get_health_portals(request: Request):
     """Récupère tous les portails santé"""
     portals = db.get_health_portals()
     return [HealthPortalResponse(**portal) for portal in portals]
+
+
+# === IA CONVERSATIONNELLE ===
+
+
+class ChatRequest(BaseModel):
+    question: str = Field(..., min_length=1, max_length=500)
+    user_data: dict = Field(default_factory=dict)
+
+
+class ChatResponse(BaseModel):
+    answer: str
+    related_documents: list[str] = Field(default_factory=list)
+    suggestions: list[str] = Field(default_factory=list)
+    patterns_detected: dict = Field(default_factory=dict)
+    question_type: str = "general"
+
+
+@app.post("/api/ai/chat", response_model=ChatResponse)
+@limiter.limit("30/minute")  # Limite de 30 requêtes par minute
+async def chat_with_ai(request: Request, chat_request: ChatRequest):
+    """Chat avec l'IA conversationnelle"""
+    try:
+        result = conversational_ai.analyze_question(
+            chat_request.question,
+            chat_request.user_data
+        )
+        
+        return ChatResponse(
+            answer=result.get('answer', ''),
+            related_documents=result.get('related_documents', []),
+            suggestions=result.get('suggestions', []),
+            patterns_detected=result.get('patterns_detected', {}),
+            question_type=result.get('question_type', 'general')
+        )
+    except Exception as e:
+        logger.error(f"Erreur IA conversationnelle: {sanitize_log_message(str(e))}")
+        raise HTTPException(
+            status_code=500,
+            detail="Erreur lors du traitement de votre question"
+        )
+
+
+class PrepareAppointmentRequest(BaseModel):
+    doctor_id: str
+    user_data: dict = Field(default_factory=dict)
+
+
+@app.post("/api/ai/prepare-appointment")
+@limiter.limit("20/minute")
+async def prepare_appointment_questions(
+    request: Request,
+    appointment_request: PrepareAppointmentRequest
+):
+    """Prépare questions pour un rendez-vous"""
+    try:
+        questions = conversational_ai.prepare_appointment_questions(
+            appointment_request.doctor_id,
+            appointment_request.user_data
+        )
+        
+        return {"questions": questions}
+    except Exception as e:
+        logger.error(f"Erreur préparation RDV: {sanitize_log_message(str(e))}")
+        raise HTTPException(
+            status_code=500,
+            detail="Erreur lors de la préparation des questions"
+        )
 
 
 if __name__ == "__main__":

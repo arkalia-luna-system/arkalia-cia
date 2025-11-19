@@ -4,8 +4,6 @@ import '../../services/onboarding_service.dart';
 import 'import_progress_screen.dart';
 import '../home_page.dart';
 
-enum ImportType { portals, manualPDF, skip }
-
 class ImportChoiceScreen extends StatefulWidget {
   const ImportChoiceScreen({super.key});
 

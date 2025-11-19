@@ -54,6 +54,50 @@ class SearchService {
     return await openDatabase(path, version: 1);
   }
 
+  /// Recherche simple avec une requête texte
+  static Future<Map<String, List<Map<String, dynamic>>>> searchAll(String query) async {
+    final results = <String, List<Map<String, dynamic>>>{
+      'documents': [],
+      'reminders': [],
+      'contacts': [],
+    };
+
+    try {
+      // Recherche dans les documents
+      final documents = await LocalStorageService.getDocuments();
+      for (var doc in documents) {
+        final name = (doc['original_name'] ?? doc['name'] ?? '').toLowerCase();
+        if (name.contains(query.toLowerCase())) {
+          results['documents']!.add(doc);
+        }
+      }
+
+      // Recherche dans les rappels
+      final reminders = await LocalStorageService.getReminders();
+      for (var reminder in reminders) {
+        final title = (reminder['title'] ?? '').toLowerCase();
+        final description = (reminder['description'] ?? '').toLowerCase();
+        if (title.contains(query.toLowerCase()) || description.contains(query.toLowerCase())) {
+          results['reminders']!.add(reminder);
+        }
+      }
+
+      // Recherche dans les contacts d'urgence
+      final contacts = await LocalStorageService.getEmergencyContacts();
+      for (var contact in contacts) {
+        final name = (contact['name'] ?? '').toLowerCase();
+        final phone = (contact['phone'] ?? '').toLowerCase();
+        if (name.contains(query.toLowerCase()) || phone.contains(query.toLowerCase())) {
+          results['contacts']!.add(contact);
+        }
+      }
+    } catch (e) {
+      // En cas d'erreur, retourner les résultats partiels
+    }
+
+    return results;
+  }
+
   Future<List<SearchResult>> search(SearchFilters filters) async {
     final List<SearchResult> results = [];
 
