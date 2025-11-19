@@ -49,9 +49,13 @@
 - [x] Départage documents (`unshareDocument`)
 - [x] Intégration dans HomePage (bouton "Partage")
 
+#### ✅ **Terminé**
+- [x] **Service `NotificationService`** ✅ NOUVEAU
+- [x] **Notifications lors partage documents** ✅ NOUVEAU
+- [x] **Notifications planifiées** ✅ NOUVEAU
+
 #### ⚠️ **En cours / À faire**
 - [ ] Audit log complet (partiellement implémenté)
-- [ ] Notifications partage
 
 ---
 
@@ -97,10 +101,15 @@
 - [x] Intégration dans HomePage (bouton "Assistant IA")
 - [x] Endpoints API `/api/ai/chat` et `/api/ai/prepare-appointment`
 
+#### ✅ **Terminé**
+- [x] **Table `ai_conversations` en base** ✅ NOUVEAU
+- [x] **Sauvegarde automatique conversations** ✅ NOUVEAU
+- [x] **Endpoint API `/api/ai/conversations`** ✅ NOUVEAU
+- [x] **Affichage historique dans UI** ✅ NOUVEAU
+
 #### ⚠️ **En cours / À faire**
 - [ ] Analyse cause-effet avancée (basique implémenté)
 - [ ] Modèles LLM (optionnel)
-- [ ] Historique conversations
 
 ---
 
