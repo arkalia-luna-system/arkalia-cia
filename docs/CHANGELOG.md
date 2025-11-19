@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - **🔧 Logger Conditionnel** : Création de `AppLogger` avec `kDebugMode` pour éviter les logs en production
 - **📝 Release Notes** : Documentation complète des changements v1.2.0
+- **🔒 Mises à jour de sécurité** : Correction de toutes les vulnérabilités identifiées
 
 ### Changed
 - **⚡ Optimisations Code** :
@@ -24,6 +25,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **🔒 Sécurité** :
   - ✅ Vérifications `mounted` à 100% dans toutes les opérations async
   - ✅ Controllers correctement disposés (0 fuite mémoire)
+  - ✅ Mise à jour pip : 25.2 → 25.3 (CVE-2025-8869 corrigée)
+  - ✅ Mise à jour authlib : 1.6.3 → 1.6.5 (3 CVE corrigées)
+  - ✅ Mise à jour pypdf : 6.0.0 → 6.1.3 (2 CVE corrigées)
+  - ✅ Mise à jour starlette : 0.47.3 → 0.49.1 (CVE-2025-62727 corrigée)
+  - ✅ Mise à jour fastapi : 0.116.1 → 0.121.2 (compatibilité avec starlette 0.49.1)
 - **📊 Qualité Code** :
   - ✅ Flutter Analyze : 0 erreur, 0 avertissement
   - ✅ Black : Formatage conforme (18 fichiers)
@@ -31,9 +37,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - ✅ MyPy : 0 erreur (18 fichiers)
   - ✅ Bandit : 0 vulnérabilité
 - **🧹 Nettoyage** :
-  - ✅ Suppression fichiers macOS cachés
+  - ✅ Suppression build directory (28GB libérés)
+  - ✅ Suppression fichiers logs doublons
+  - ✅ Suppression fichiers macOS cachés (74 fichiers)
   - ✅ Suppression logs Flutter obsolètes
-  - ✅ Nettoyage build directory (29GB libérés)
+- **📦 Dépendances** :
+  - ✅ Toutes les versions mises à jour dans requirements.txt
+  - ✅ Version Python backend : 1.1.0 → 1.2.0 (pyproject.toml, setup.py)
 
 ### Fixed
 - **🐛 Corrections Sécurité** :

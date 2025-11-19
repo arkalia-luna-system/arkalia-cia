@@ -1,6 +1,7 @@
 # 🚀 Release Notes - Arkalia CIA v1.2.0
 
 **Date de Release** : 19 novembre 2025  
+**Dernière mise à jour** : 19 novembre 2025  
 **Version** : 1.2.0+1  
 **Statut** : ✅ Production-Ready (95%)
 

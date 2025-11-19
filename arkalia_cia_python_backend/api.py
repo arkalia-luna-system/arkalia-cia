@@ -329,16 +329,10 @@ app = FastAPI(
     title="Arkalia CIA API",
     description="API backend pour l'application mobile Arkalia CIA",
     version="1.0.0",
-    docs_url=(
-        "/docs" if os.getenv("ENVIRONMENT") != "production" else None
-    ),
-    redoc_url=(
-        "/redoc" if os.getenv("ENVIRONMENT") != "production" else None
-    ),
+    docs_url=("/docs" if os.getenv("ENVIRONMENT") != "production" else None),
+    redoc_url=("/redoc" if os.getenv("ENVIRONMENT") != "production" else None),
     # Désactiver OpenAPI schema en production pour réduire la surface d'attaque
-    openapi_url=(
-        "/openapi.json" if os.getenv("ENVIRONMENT") != "production" else None
-    ),
+    openapi_url=("/openapi.json" if os.getenv("ENVIRONMENT") != "production" else None),
 )
 
 # Ajouter le rate limiter

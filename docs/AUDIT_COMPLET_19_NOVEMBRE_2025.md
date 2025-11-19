@@ -1,7 +1,8 @@
 # 🔍 Audit Complet de l'Application Arkalia CIA
 
 **Date** : 19 novembre 2025  
-**Version** : 1.1.0+1  
+**Dernière mise à jour** : 19 novembre 2025  
+**Version** : 1.2.0+1  
 **Statut** : ✅ **AUDIT COMPLET ET CORRECTIONS APPLIQUÉES**
 
 ---

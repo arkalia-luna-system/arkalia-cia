@@ -52,9 +52,7 @@ class QuickEntry(BaseModel):
 def _check_aria_connection() -> bool:
     """Vérifie si ARIA est accessible"""
     try:
-        response = requests.get(
-            f"{ARIA_BASE_URL}/health", timeout=ARIA_TIMEOUT
-        )
+        response = requests.get(f"{ARIA_BASE_URL}/health", timeout=ARIA_TIMEOUT)
         return bool(response.status_code == 200)
     except Exception:
         return False
@@ -64,9 +62,7 @@ def _make_aria_request(method: str, endpoint: str, **kwargs) -> requests.Respons
     """Effectue une requête vers ARIA avec gestion d'erreurs améliorée"""
     try:
         url = f"{ARIA_BASE_URL}{endpoint}"
-        response = requests.request(
-            method, url, timeout=ARIA_TIMEOUT, **kwargs
-        )
+        response = requests.request(method, url, timeout=ARIA_TIMEOUT, **kwargs)
         return response
     except requests.RequestException as e:
         raise HTTPException(

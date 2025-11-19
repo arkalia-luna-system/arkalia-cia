@@ -27,9 +27,7 @@ class CIADatabase:
         if db_path_obj.is_absolute():
             # Pour les tests : permettre les fichiers temporaires (commencent par /tmp ou /var)
             if not (
-                str(db_path_obj).startswith(
-                    "/tmp"
-                )  # Validation de sécurité
+                str(db_path_obj).startswith("/tmp")  # Validation de sécurité
                 or str(db_path_obj).startswith("/var")
                 or str(db_path_obj).startswith(str(Path.cwd()))
             ):
