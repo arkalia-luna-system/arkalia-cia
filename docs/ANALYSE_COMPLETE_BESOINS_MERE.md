@@ -1,8 +1,8 @@
 # 📊 ANALYSE COMPLÈTE - BESOINS MÈRE & ÉCOSYSTÈME ARKALIA
 
 > **Date d'analyse** : 19 novembre 2025  
-> **Version** : 1.0  
-> **Auteur** : Analyse exhaustive écosystème Arkalia
+> **Version** : 2.0 (Fusion analyses complètes)  
+> **Auteur** : Analyse exhaustive écosystème Arkalia Luna System
 
 ---
 
@@ -10,14 +10,15 @@
 
 1. [Besoins Identifiés de votre Mère](#besoins-identifiés)
 2. [État Actuel Arkalia CIA](#etat-actuel-cia)
-3. [État Actuel ARIA](#etat-actuel-aria)
+3. [État Actuel ARIA (Détaillé)](#etat-actuel-aria)
 4. [État Actuel BBIA](#etat-actuel-bbia)
 5. [Gap Analysis - Ce qui Manque](#gap-analysis)
 6. [Aspects Légaux & Conformité](#aspects-legaux)
 7. [Sécurité & Confidentialité](#securite)
-8. [Projets Similaires Existants](#projets-similaires)
+8. [Projets Similaires Existants & Benchmark](#projets-similaires)
 9. [Roadmap Complète](#roadmap)
 10. [Recommandations Prioritaires](#recommandations)
+11. [État d'Avancement par Projet](#etat-avancement)
 
 ---
 
@@ -35,6 +36,7 @@
 - ✅ **Tout réuni au même endroit**
 - ✅ **Historique clair et unifié**
 - ✅ **Recherche facile** (examens, résultats, médecins)
+- ✅ **Export professionnel** : rapports PDF/Excel/CSV pour médecins
 
 **Priorité** : 🔴 **CRITIQUE**
 
@@ -47,6 +49,7 @@
 - ✅ **Référencer** chaque médecin avec coordonnées
 - ✅ **Recherche facile** par nom, spécialité, date
 - ✅ **Historique des consultations** par médecin
+- ✅ **Référentiel médecins** avec toutes les informations
 
 **Priorité** : 🔴 **CRITIQUE**
 
@@ -60,6 +63,7 @@
 - ✅ **Rechercher par date** (ex: "tous les examens de novembre")
 - ✅ **Rechercher par type** (ex: "toutes les radios")
 - ✅ **Rechercher par médecin** (ex: "tout ce que le Dr X a prescrit")
+- ✅ **Recherche ultra performante** sur tous types de documents
 
 **Priorité** : 🔴 **CRITIQUE**
 
@@ -73,6 +77,8 @@
 - ✅ **Aider pour les RDV** (questions à poser, préparer consultation)
 - ✅ **Aide à la prise de médicaments** (interactions, rappels)
 - ✅ **Prédictions** basées sur l'historique
+- ✅ **Détection corrélations** (stress ↔ douleurs, météo ↔ crises, etc.)
+- ✅ **Synthèse intelligente** pour rendez-vous
 
 **Priorité** : 🟠 **HAUTE**
 
@@ -85,6 +91,7 @@
 - ✅ **Contrôle total** : choisir ce qui est partagé
 - ✅ **Granularité fine** : partager certains documents mais pas d'autres
 - ✅ **Sécurité** : partage sécurisé uniquement avec famille de confiance
+- ✅ **Tableau de bord famille** : interface simple pour gérer partage
 
 **Priorité** : 🟠 **HAUTE**
 
@@ -97,6 +104,7 @@
 - ✅ **Intelligence invisible** : ça marche sans qu'elle s'en rende compte
 - ✅ **Clarté** : tout doit être évident
 - ✅ **Pas de complexité** visible
+- ✅ **Interface adaptative** selon profil utilisateur
 
 **Priorité** : 🔴 **CRITIQUE**
 
@@ -109,6 +117,7 @@
 - ✅ **Analyse croisée** : données CIA + données ARIA (douleurs)
 - ✅ **Cause à effet** : comprendre les liens entre douleurs et examens
 - ✅ **IA spécialisée douleurs** : parler de sa pathologie, examens, douleurs
+- ✅ **IA conversationnelle "médecin virtuel"** : dialogue intelligent santé
 
 **Priorité** : 🟠 **HAUTE**
 
@@ -121,6 +130,7 @@
 - ✅ **Télécharger données** depuis MaSanté
 - ✅ **Historique réel** avec vraies données téléchargées
 - ✅ **Synchronisation** avec les apps qu'elle utilise déjà
+- ✅ **Import automatique** historique médical complet
 
 **Priorité** : 🔴 **CRITIQUE**
 
@@ -138,7 +148,7 @@
 - ✅ Prévisualisation PDF
 - ✅ Partage PDF
 
-**Gap** : ⚠️ Pas d'import automatique depuis Andaman 7 / MaSanté
+**Gap** : ⚠️ Pas d'import automatique depuis Andaman 7 / MaSanté, pas de parsing intelligent PDF
 
 ---
 
@@ -179,6 +189,7 @@
 - ✅ Stockage 100% local
 - ✅ Aucune dépendance cloud
 - ✅ Mode hors ligne complet
+- ✅ CI/CD complet avec tests sécurité (Bandit, Safety)
 
 **Gap** : ✅ Conforme aux besoins
 
@@ -190,6 +201,7 @@
 - ✅ Navigation simple
 - ✅ Mode sombre optimisé (juste corrigé)
 - ✅ Contraste élevé
+- ✅ Interface moderne et responsive
 
 **Gap** : ⚠️ Peut être amélioré pour "intelligence invisible"
 
@@ -212,6 +224,8 @@
 - ❌ Import depuis MaSanté
 - ❌ Import depuis Réseau Santé Wallon
 - ❌ Parsing automatique documents médicaux
+- ❌ OCR/scan pour documents scannés
+- ❌ Extraction historique via NLP
 
 **Impact** : 🔴 **BLOQUANT** pour besoin principal
 
@@ -222,6 +236,7 @@
 - ❌ Historique consultations par médecin
 - ❌ Référencement complet (spécialité, coordonnées, dates)
 - ❌ Recherche avancée médecins
+- ❌ Module export/import médecins
 
 **Impact** : 🔴 **BLOQUANT**
 
@@ -233,6 +248,7 @@
 - ❌ Recherche par date
 - ❌ Recherche par médecin prescripteur
 - ❌ Filtres multiples combinés
+- ❌ Recherche sémantique avancée
 
 **Impact** : 🔴 **BLOQUANT**
 
@@ -245,6 +261,7 @@
 - ❌ Suggestions questions RDV
 - ❌ Aide interactions médicaments
 - ❌ Prédictions basées historique
+- ❌ Visualisations graphiques patterns
 
 **Impact** : 🟠 **HAUTE PRIORITÉ**
 
@@ -255,6 +272,7 @@
 - ❌ Contrôle granularité (choisir ce qui est partagé)
 - ❌ Sécurité partage (chiffrement, authentification)
 - ❌ Gestion permissions famille
+- ❌ Tableau de bord partage ergonomique
 
 **Impact** : 🟠 **HAUTE PRIORITÉ**
 
@@ -265,65 +283,178 @@
 - ❌ Analyse croisée CIA + ARIA
 - ❌ Cause à effet (douleurs ↔ examens)
 - ❌ Interface conversationnelle
+- ❌ IA "médecin virtuel" pour préparer RDV
 
 **Impact** : 🟠 **HAUTE PRIORITÉ**
 
 ---
 
-## 🧠 ÉTAT ACTUEL ARIA
+## 🧠 ÉTAT ACTUEL ARIA (DÉTAILLÉ)
 
-### 📊 **CE QUI EXISTE** (d'après GitHub)
+### ✅ **CE QUI EXISTE DÉJÀ** (Phases 1-7 terminées)
 
-#### ✅ **Module Tracking Douleur**
-- ✅ Suivi douleur (intensité, localisation, triggers)
-- ✅ Entrées douleur avec métadonnées
-- ✅ Historique douleurs
+#### 📊 **Module Tracking Douleur** (100% ✅)
+- ✅ Suivi douleur (intensité 0-10, localisation, triggers)
+- ✅ Entrées douleur avec métadonnées complètes
+- ✅ Historique douleurs complet
+- ✅ Filtres avancés (date, intensité, localisation)
+- ✅ Saisie ultra rapide
+- ✅ Export professionnel (PDF, Excel, CSV)
 
-#### ✅ **Analyse Patterns**
-- ✅ Détection patterns dans données douleur
-- ✅ Corrélations temporelles
-- ✅ Analytics santé
+---
 
-#### ✅ **IA Personnelle**
-- ✅ Assistant IA pour douleurs
-- ✅ Analyse prédictive
-- ✅ Suggestions basées données
+#### 🔗 **Health Connectors** (100% ✅)
+- ✅ Synchronisation automatique **Samsung Health**
+- ✅ Synchronisation automatique **Google Fit**
+- ✅ Synchronisation automatique **Apple Health**
+- ✅ Données récupérées : activité, sommeil, stress, pulsations, etc.
+- ✅ Synchronisation temps réel
+- ✅ Gestion erreurs et retry automatique
 
-#### ✅ **Intégration CIA**
-- ✅ Pont CIA ↔ ARIA
-- ✅ Synchronisation données
-- ✅ API REST pour communication
+**Note** : ✅ **Déjà opérationnel** - Peu de solutions le font aussi bien côté local
+
+---
+
+#### 📈 **Dashboard Interactif** (100% ✅)
+- ✅ Visualisations données temps réel
+- ✅ Corrélations automatiques (stress ↔ douleurs, activité ↔ bien-être)
+- ✅ Historique complet avec graphiques
+- ✅ Patterns intelligents détectés automatiquement
+- ✅ Mode sombre optimisé
+- ✅ Interface moderne et responsive
+
+---
+
+#### 📤 **Export Professionnel** (100% ✅)
+- ✅ Export PDF professionnel
+- ✅ Export Excel (format tableur)
+- ✅ Export CSV (données brutes)
+- ✅ Anonymisation disponible selon besoin
+- ✅ Rapports personnalisables pour médecins
+
+---
+
+#### 🤖 **Détection Patterns IA** (70% ✅)
+- ✅ IA qui trouve automatiquement corrélations
+- ✅ Patterns temporels (douleurs récurrentes)
+- ✅ Corrélations (stress ↔ douleurs, météo ↔ crises, activité ↔ bien-être)
+- ⚠️ À améliorer : modèles ML plus avancés (time series, clustering)
+
+---
+
+#### 🔐 **Confidentialité & RGPD** (100% ✅)
+- ✅ Stockage local seulement (rien dans le cloud)
+- ✅ Suppression données à tout moment
+- ✅ API droit à l'oubli implémentée
+- ✅ Respect RGPD complet
+- ✅ Contrôle utilisateur total
+
+---
+
+#### 📱 **Application Mobile Flutter** (60% ⚠️)
+- ✅ Architecture en place
+- ⚠️ En cours de développement
+- ⚠️ Interface à finaliser
+
+---
+
+#### 🧪 **Tests & Qualité** (100% ✅)
+- ✅ Tests unitaires complets
+- ✅ CI/CD complet
+- ✅ Sécurité (Bandit, Safety)
+- ✅ Couverture tests
+- ✅ Standards qualité code
+
+---
+
+### ⚠️ **CE QUI EST COMMENCÉ/EN COURS**
+
+#### 🔍 **Pattern Analysis** (70% ⚠️)
+- ✅ IA analyse corrélations de base
+- ✅ Patterns temporels basiques
+- ⚠️ **À renforcer** : Intégration modèles ML avancés (time series, NLP auto)
+- ⚠️ **À ajouter** : Prédictions plus précises
+
+---
+
+#### 🔮 **Prediction Engine** (50% ⚠️)
+- ✅ Prédiction crises basique
+- ✅ Recommandations personnalisées basiques
+- ⚠️ **À améliorer** : Nouveaux modèles ML pour prédictions plus précises
+
+---
+
+#### 📋 **Historique Consults/Référentiel Médecins** (30% ⚠️)
+- ✅ Module export/import basique
+- ✅ Recherche multi-critères basique
+- ⚠️ **À enrichir** : Ingestion automatique consultations depuis Réseau Santé Wallon, Andaman7, MaSanté
+- ⚠️ **À ajouter** : Référentiel médecins complet avec historique
+
+---
+
+#### 👨‍👩‍👧 **Partage Familial Sélectif** (40% ⚠️)
+- ✅ Prévu dans architecture
+- ⚠️ **À rendre ergonomique** : Gestion autorisations côté dashboard/interface
+- ⚠️ **À ajouter** : Tableau de bord partage simple pour ta mère
+
+---
+
+#### 💬 **IA Conversationnelle** (20% ⚠️)
+- ✅ Base IA pour extraire et synthétiser patterns
+- ❌ **Manque** : Dialogue intelligent pour "parler de la douleur et pathologie" en mode entité médicale
+- ❌ **Manque** : IA "médecin virtuel" pour préparer RDV
+
+---
+
+#### 📥 **Automatisation Import Historique Médical** (10% ⚠️)
+- ⚠️ **À développer** : Intégration automatique données apps externes (Andaman7 & autres)
+- ⚠️ **Nécessite** : Soit connecter leurs APIs, soit parsing manuel PDF/OCR
+
+---
+
+#### 🔎 **Recherche Ultra Performante** (40% ⚠️)
+- ✅ Prototype existant pour données structurées (douleurs, traitements)
+- ⚠️ **À généraliser** : Tous types documents historiques
+- ⚠️ **À ajouter** : OCR, NLP sur PDF/scan, ingestion doc médical
+
+---
 
 ### ❌ **CE QUI MANQUE**
 
-- ❌ Lecture automatique MD (dossiers médicaux)
-- ❌ Analyse croisée avancée CIA + ARIA
-- ❌ IA conversationnelle spécialisée
-- ❌ Interface unifiée avec CIA
+- ❌ Lecture automatique MD (dossiers médicaux) avec parsing intelligent
+- ❌ Analyse croisée avancée CIA + ARIA (douleurs ↔ examens)
+- ❌ IA conversationnelle spécialisée "médecin virtuel"
+- ❌ Interface unifiée complète avec CIA
+- ❌ Module robotique BBIA intégré
 
 ---
 
 ## 🤖 ÉTAT ACTUEL BBIA
 
-### 📊 **CE QUI EXISTE** (d'après GitHub)
+### 📊 **CE QUI EXISTE** (v1.3.2 - Stable Production)
 
 #### ✅ **Simulation Robot Reachy Mini**
-- ✅ Simulation MuJoCo complète
-- ✅ Contrôle robot
+- ✅ Simulation MuJoCo complète et fidèle
+- ✅ Contrôle robot complet
 - ✅ Vision computer (MediaPipe, DeepFace)
 - ✅ Détection émotions
-- ✅ Détection postures/gestes
+- ✅ Détection postures/gestes (33 points clés)
+- ✅ SDK complet conforme
+- ✅ Tests complets (1362 tests, 68.86% coverage)
 
 #### ✅ **Intelligence Cognitive**
 - ✅ Système émotions
 - ✅ Vision temps réel
 - ✅ Contrôle moteur
+- ✅ Dashboard UX avancé
 
 ### 🔮 **POTENTIEL FUTUR**
 
 - 🔮 Interface physique pour CIA/ARIA
 - 🔮 Assistant robotique santé
 - 🔮 Interaction naturelle (gestes, voix)
+- 🔮 Fusion santé IA/robot
+- 🔮 Affichage données santé sur robot
 
 ---
 
@@ -331,28 +462,28 @@
 
 ### 🔴 **PRIORITÉ CRITIQUE**
 
-| Besoin | État Actuel | Gap | Impact |
-|--------|-------------|-----|--------|
-| **Import Andaman 7 / MaSanté** | 0% | 100% | 🔴 BLOQUANT |
-| **Historique médecins complet** | 20% | 80% | 🔴 BLOQUANT |
-| **Recherche avancée examens** | 30% | 70% | 🔴 BLOQUANT |
-| **Interface ultra-simple** | 90% | 10% | 🟡 Amélioration |
+| Besoin | État Actuel | Gap | Impact | Solution |
+|--------|-------------|-----|--------|----------|
+| **Import Andaman 7 / MaSanté** | 0% | 100% | 🔴 BLOQUANT | Parser PDF + OCR/NLP (inspiration EDS-NLP, Arkhn) |
+| **Historique médecins complet** | 20% | 80% | 🔴 BLOQUANT | Module référencement médecins + historique consultations |
+| **Recherche avancée examens** | 30% | 70% | 🔴 BLOQUANT | Moteur recherche multi-critères + sémantique |
+| **Interface ultra-simple** | 90% | 10% | 🟡 Amélioration | Interface adaptative selon profil |
 
 ### 🟠 **PRIORITÉ HAUTE**
 
-| Besoin | État Actuel | Gap | Impact |
-|--------|-------------|-----|--------|
-| **IA analyse patterns** | 10% | 90% | 🟠 HAUTE |
-| **Partage familial** | 0% | 100% | 🟠 HAUTE |
-| **IA conversationnelle douleurs** | 0% | 100% | 🟠 HAUTE |
-| **Analyse croisée CIA+ARIA** | 20% | 80% | 🟠 HAUTE |
+| Besoin | État Actuel | Gap | Impact | Solution |
+|--------|-------------|-----|--------|----------|
+| **IA analyse patterns** | 70% (ARIA) / 10% (CIA) | 30% / 90% | 🟠 HAUTE | Améliorer modèles ML ARIA + intégrer dans CIA |
+| **Partage familial** | 40% (ARIA) / 0% (CIA) | 60% / 100% | 🟠 HAUTE | Tableau de bord partage ergonomique |
+| **IA conversationnelle douleurs** | 20% (ARIA) / 0% (CIA) | 80% / 100% | 🟠 HAUTE | IA "médecin virtuel" (inspiration Arkhn, PraxyConsultation) |
+| **Analyse croisée CIA+ARIA** | 20% | 80% | 🟠 HAUTE | Module fusion données + corrélations |
 
 ### 🟡 **PRIORITÉ MOYENNE**
 
-| Besoin | État Actuel | Gap | Impact |
-|--------|-------------|-----|--------|
-| **Intégration robot BBIA** | 0% | 100% | 🟡 FUTUR |
-| **Prédictions avancées** | 10% | 90% | 🟡 FUTUR |
+| Besoin | État Actuel | Gap | Impact | Solution |
+|--------|-------------|-----|--------|----------|
+| **Intégration robot BBIA** | 0% | 100% | 🟡 FUTUR | Fusion dashboard IA santé + robot émotionnel |
+| **Prédictions avancées** | 50% (ARIA) | 50% | 🟡 FUTUR | Modèles ML time series avancés |
 
 ---
 
@@ -362,10 +493,11 @@
 
 #### ✅ **RGPD (GDPR)**
 - ✅ **Consentement explicite** : Nécessaire pour traitement données santé
-- ✅ **Droit à l'oubli** : Possibilité de supprimer toutes données
-- ✅ **Portabilité données** : Export complet des données
+- ✅ **Droit à l'oubli** : Possibilité de supprimer toutes données (API implémentée dans ARIA)
+- ✅ **Portabilité données** : Export complet des données (PDF, Excel, CSV)
 - ✅ **Minimisation données** : Collecte uniquement nécessaire
 - ✅ **Sécurité** : Chiffrement AES-256 ✅ (déjà implémenté)
+- ✅ **Stockage local** : 100% local, aucun cloud (ARIA + CIA)
 
 **Statut** : ✅ **CONFORME** (architecture actuelle)
 
@@ -384,8 +516,18 @@
 - ⚠️ **Si diagnostic/traitement** : Nécessite certification CE
 - ✅ **Si simple gestion** : Pas de certification requise
 - ✅ **Statut actuel** : Simple gestion → ✅ Pas de certification requise
+- ⚠️ **Attention** : Si IA suggestions médicales → Vérifier si certification nécessaire
 
 **Recommandation** : ✅ **OK** tant que pas de diagnostic automatique
+
+---
+
+#### ⚠️ **Interopérabilité avec Apps Externes**
+- ⚠️ **Scraping/parsing docs** : Légal uniquement avec accord explicite de ta mère
+- ⚠️ **Export depuis apps** : Légal si utilisateur initie l'export
+- ✅ **Recommandation** : Toujours demander consentement avant import
+
+**Statut** : 🟡 **À VÉRIFIER** pour chaque source de données
 
 ---
 
@@ -393,22 +535,25 @@
 
 #### ✅ **Mesures Actuelles**
 - ✅ Chiffrement AES-256 (niveau militaire)
-- ✅ Stockage 100% local
+- ✅ Stockage 100% local (ARIA + CIA)
 - ✅ Aucune transmission cloud
-- ✅ Authentification biométrique
+- ✅ Authentification biométrique (CIA)
 - ✅ Clés dans Keychain/Keystore sécurisé
+- ✅ Tests sécurité réguliers (Bandit, Safety)
+- ✅ CI/CD avec scan vulnérabilités
 
 #### ⚠️ **À Ajouter pour Partage Familial**
 - ⚠️ Chiffrement bout-en-bout pour partage
 - ⚠️ Authentification famille (tokens sécurisés)
 - ⚠️ Audit log (qui a accédé à quoi)
 - ⚠️ Consentement explicite avant partage
+- ⚠️ Anonymisation optionnelle avant partage
 
 **Statut** : 🟡 **À IMPLÉMENTER** pour partage familial
 
 ---
 
-## 🔍 PROJETS SIMILAIRES EXISTANTS
+## 🔍 PROJETS SIMILAIRES EXISTANTS & BENCHMARK
 
 ### 📱 **Apps Santé Belges**
 
@@ -421,7 +566,7 @@
 
 **Recommandation** : 
 - 📧 Contacter Andaman 7 pour partenariat API
-- 📥 Alternative : Export manuel PDF depuis app → Import dans CIA
+- 📥 **Alternative** : Export manuel PDF depuis app → Import dans CIA/ARIA
 
 ---
 
@@ -432,8 +577,8 @@
 - 🔗 **Lien** : https://www.masante.be
 
 **Recommandation** :
-- 🔗 Intégration via eHealth API (nécessite certification)
-- 📥 Alternative : Export PDF → Import CIA
+- 🔗 Intégration via eHealth API (nécessite certification développeur)
+- 📥 **Alternative** : Export PDF → Import CIA/ARIA
 
 ---
 
@@ -444,16 +589,63 @@
 - 🔗 **Lien** : https://www.ehealth.fgov.be
 
 **Recommandation** :
-- 📋 Certification développeur eHealth (processus long)
-- 📥 Alternative : Export PDF → Import CIA
+- 📋 Certification développeur eHealth (processus long, 6+ mois)
+- 📥 **Alternative immédiate** : Export PDF → Import CIA/ARIA
 
 ---
 
-### 🌍 **Projets Open Source Similaires**
+### 🌍 **Projets Open Source Professionnels (Inspiration)**
+
+#### **EDS-NLP (APHP - Assistance Publique Hôpitaux de Paris)**
+- ✅ Entrepôt données santé hospitalier open source
+- ✅ Extraction automatique comorbidités, pseudonymisation
+- ✅ Super NLP pour données médicales
+- ✅ API pour chercheurs
+- 🔗 **Lien** : https://www.aphp.fr/actualites/ia-en-sante-lentrepot-de-donnees-de-sante-de-lap-hp-confirme-sa-demarche-open-source
+
+**Utilité** : 📚 **INSPIRATION MAJEURE** pour parsing NLP documents médicaux
+
+**Ce qu'on peut réutiliser** :
+- Techniques extraction données structurées depuis PDF
+- Pseudonymisation automatique
+- NLP spécialisé santé
+
+---
+
+#### **Arkhn Assistant IA**
+- ✅ Assistant IA santé open source
+- ✅ Extraction données médicales automatique
+- ✅ Analyse et synthèse intelligente
+- 🔗 **Lien** : https://www.arkhn.com
+
+**Utilité** : 📚 **INSPIRATION** pour IA conversationnelle santé
+
+**Ce qu'on peut réutiliser** :
+- Architecture IA "médecin virtuel"
+- Techniques extraction et synthèse
+- Interface conversationnelle santé
+
+---
+
+#### **PraxyConsultation**
+- ✅ Transcription IA santé (Belgique)
+- ✅ Assistant IA consultations
+- ✅ Extraction automatique données
+- 🔗 **Lien** : https://praxysante.fr/praxyconsultation
+
+**Utilité** : 📚 **INSPIRATION** pour IA aide RDV et transcription
+
+**Ce qu'on peut réutiliser** :
+- Techniques transcription consultations
+- IA préparation RDV
+- Extraction métadonnées consultations
+
+---
 
 #### **OpenEMR**
 - ✅ Gestion dossiers médicaux open source
 - ✅ Import/export données
+- ✅ Structure données médicales complète
 - 🔗 **Lien** : https://www.openemr.org
 
 **Utilité** : 📚 Inspiration pour structure données médicales
@@ -461,22 +653,47 @@
 ---
 
 #### **GNU Health**
-- ✅ Système santé open source
+- ✅ Système santé open source complet
 - ✅ Gestion patients, médecins, examens
+- ✅ Extraction automatique, anonymisation
+- ✅ Contrôle complet données
+- ⚠️ **Limite** : Interface complexe pour non informaticien
 - 🔗 **Lien** : https://www.gnuhealth.org
 
-**Utilité** : 📚 Inspiration pour modèles de données
+**Utilité** : 📚 Inspiration pour modèles de données et contrôle utilisateur
+
+**Différence avec Arkalia** : ✅ **Ton approche est plus personnalisée, local-famille, adaptative UX**
 
 ---
 
 #### **FHIR (Fast Healthcare Interoperability Resources)**
-- ✅ Standard international données santé
+- ✅ Standard international données santé (HL7)
 - ✅ Format échange données médicales
+- ✅ Adopté par eHealth Belgique
 - 🔗 **Lien** : https://www.hl7.org/fhir
 
 **Utilité** : 📚 **STANDARD RECOMMANDÉ** pour import/export données
 
-**Recommandation** : ✅ **ADOPTER FHIR** pour import données externes
+**Recommandation** : ✅ **ADOPTER FHIR** pour import données externes (Andaman 7, MaSanté, eHealth)
+
+---
+
+### 🎯 **CE QUE TU APPORTES DE NOUVEAU**
+
+#### ✅ **Avantages Concurrentiels Arkalia**
+
+| Aspect | Solutions Existantes | Arkalia Luna System |
+|--------|---------------------|---------------------|
+| **Cible** | Professionnels médicaux / Hôpitaux | Patient + Famille (personnalisé) |
+| **UX** | Complexe, technique | Ultra-simple, senior-friendly |
+| **Contrôle** | Institutionnel | Utilisateur contrôle total |
+| **Local-First** | Souvent cloud | 100% local, optionnel cloud |
+| **Partage Familial** | Limité | Contrôle granulaire complet |
+| **Synchronisation Apps** | Limité | Samsung Health, Google Fit, Apple Health ✅ |
+| **Modularité** | Monolithique | Architecture modulaire (CIA/ARIA/BBIA) |
+| **Robotique** | Aucun | Intégration BBIA (Reachy Mini) |
+
+**Conclusion** : ✅ **Tu as créé un "Dossier Patient IA centré patient/famille"** - C'est rare et innovant !
 
 ---
 
@@ -486,87 +703,170 @@
 
 #### 🎯 **Sprint 1.1 : Import Données Externes**
 - [ ] **Parser PDF médicaux** (extraction texte structuré)
+  - [ ] Utiliser PyPDF2 ou pdfplumber pour extraction texte
+  - [ ] Intégrer Tesseract OCR pour PDF scannés
+  - [ ] Inspiration EDS-NLP pour NLP spécialisé santé
 - [ ] **Détection type document** (ordonnance, résultat, compte-rendu)
+  - [ ] Classification automatique par NLP
+  - [ ] Détection patterns dans texte
 - [ ] **Extraction métadonnées** (médecin, date, type examen)
+  - [ ] Extraction entités nommées (NER) spécialisé santé
+  - [ ] Parsing dates et formats belges
 - [ ] **Import manuel PDF** depuis Andaman 7 / MaSanté
+  - [ ] Interface drag & drop
+  - [ ] Parsing automatique après import
 - [ ] **Structure données unifiée** (format interne standardisé)
+  - [ ] Adopter format FHIR pour interopérabilité
+  - [ ] Mapping vers structure interne
 
 **Livrables** :
-- Module parser PDF médicaux
+- Module parser PDF médicaux avec OCR
 - Interface import manuel
-- Base de données unifiée
+- Base de données unifiée (format FHIR-compatible)
+- Extraction métadonnées automatique
+
+**Outils recommandés** :
+- PyPDF2 / pdfplumber (extraction texte)
+- Tesseract OCR (PDF scannés)
+- spaCy / NLTK (NLP santé)
+- Inspiration EDS-NLP (techniques extraction)
 
 ---
 
 #### 🎯 **Sprint 1.2 : Historique Médecins Complet**
 - [ ] **Table médecins** (nom, spécialité, coordonnées, notes)
+  - [ ] Structure base de données médecins
+  - [ ] Champs : nom, prénom, spécialité, téléphone, email, adresse, notes
 - [ ] **Historique consultations** (date, motif, documents liés)
+  - [ ] Table consultations liée à médecins
+  - [ ] Liaison consultations ↔ documents
 - [ ] **Recherche médecins** (nom, spécialité, date)
+  - [ ] Recherche texte intégral
+  - [ ] Filtres multiples
 - [ ] **Interface gestion médecins** (ajout, modification, historique)
+  - [ ] Écran liste médecins
+  - [ ] Écran détail médecin avec historique
+  - [ ] Formulaire ajout/modification
 - [ ] **Liaison documents ↔ médecins** (quel médecin a prescrit quoi)
+  - [ ] Extraction automatique depuis parsing PDF
+  - [ ] Association manuelle possible
+  - [ ] Affichage dans historique médecin
 
 **Livrables** :
 - Module gestion médecins complet
 - Interface historique consultations
 - Recherche avancée médecins
+- Extraction automatique médecin depuis documents
 
 ---
 
 #### 🎯 **Sprint 1.3 : Recherche Avancée**
 - [ ] **Recherche par type examen** (radio, analyse, etc.)
+  - [ ] Classification types examens
+  - [ ] Filtre par type
 - [ ] **Recherche par date** (période, année)
+  - [ ] Sélecteur de période
+  - [ ] Recherche par année/mois
 - [ ] **Recherche par médecin** (tous documents d'un médecin)
+  - [ ] Filtre par médecin
+  - [ ] Affichage résultats groupés
 - [ ] **Filtres combinés** (type + date + médecin)
+  - [ ] Interface filtres multiples
+  - [ ] Combinaison logique (ET/OU)
 - [ ] **Recherche sémantique** (ex: "tous les examens cardiaques")
+  - [ ] NLP pour comprendre intention
+  - [ ] Mapping sémantique vers critères
 
 **Livrables** :
 - Moteur recherche avancée
 - Interface filtres multiples
 - Recherche sémantique basique
+- Performance optimisée (<200ms)
 
 ---
 
 ### 📅 **PHASE 2 : INTELLIGENCE ARTIFICIELLE** (3-4 mois)
 
-#### 🎯 **Sprint 2.1 : IA Analyse Patterns**
+#### 🎯 **Sprint 2.1 : IA Analyse Patterns (Amélioration ARIA)**
 - [ ] **Détection patterns temporels** (ex: douleurs récurrentes)
-- [ ] **Corrélations** (ex: médicament ↔ effet secondaire)
+  - [ ] Modèles time series (LSTM, Prophet)
+  - [ ] Détection saisonnalité, tendances
+- [ ] **Corrélations avancées** (ex: médicament ↔ effet secondaire)
+  - [ ] Analyse corrélations croisées
+  - [ ] Tests statistiques (Pearson, Spearman)
 - [ ] **Analyse tendances** (évolution paramètres santé)
+  - [ ] Visualisations temporelles
+  - [ ] Alertes anomalies
 - [ ] **Alertes intelligentes** (anomalies détectées)
+  - [ ] Détection outliers
+  - [ ] Notifications proactives
 - [ ] **Visualisations** (graphiques patterns)
+  - [ ] Graphiques interactifs
+  - [ ] Dashboard patterns
 
 **Livrables** :
-- Module analyse patterns
-- Détection corrélations
+- Module analyse patterns amélioré
+- Détection corrélations avancée
 - Interface visualisations
+- Modèles ML time series
+
+**Outils recommandés** :
+- Scikit-learn (ML basique)
+- TensorFlow Lite / PyTorch (ML avancé)
+- Prophet (time series)
+- Pandas (analyse données)
 
 ---
 
 #### 🎯 **Sprint 2.2 : IA Aide RDV & Médicaments**
 - [ ] **Génération questions RDV** (basé sur historique)
+  - [ ] Analyse historique consultations
+  - [ ] Suggestions questions pertinentes
+  - [ ] Inspiration Arkhn / PraxyConsultation
 - [ ] **Détection interactions médicaments** (base données interactions)
+  - [ ] Intégration base données médicaments (OpenFDA, etc.)
+  - [ ] Détection interactions dans ordonnances
+  - [ ] Alertes interactions dangereuses
 - [ ] **Rappels intelligents médicaments** (adaptatif)
+  - [ ] Adaptation selon historique prise
+  - [ ] Suggestions optimisation horaires
 - [ ] **Suggestions préparation RDV** (documents à apporter)
+  - [ ] Analyse historique médecin
+  - [ ] Liste documents pertinents
 - [ ] **IA conversationnelle basique** (chatbot santé)
+  - [ ] Chatbot pour questions santé
+  - [ ] Réponses basées sur données utilisateur
 
 **Livrables** :
 - Module IA RDV
 - Module IA médicaments
 - Chatbot santé basique
+- Base données interactions médicaments
 
 ---
 
 #### 🎯 **Sprint 2.3 : Intégration ARIA Avancée**
 - [ ] **Analyse croisée CIA + ARIA** (douleurs ↔ examens)
+  - [ ] Module fusion données
+  - [ ] Corrélations douleurs ↔ résultats examens
 - [ ] **Détection cause à effet** (ex: examen révèle cause douleur)
+  - [ ] Analyse temporelle (examen avant/après douleur)
+  - [ ] Détection liens causaux
 - [ ] **IA spécialisée douleurs** (conversation sur douleurs)
+  - [ ] IA conversationnelle douleurs
+  - [ ] Analyse pathologie + douleurs
 - [ ] **Lecture automatique MD** (parsing dossiers médicaux)
+  - [ ] Parsing dossiers médicaux complets
+  - [ ] Extraction toutes données structurées
 - [ ] **Interface unifiée** (CIA + ARIA dans même app)
+  - [ ] Navigation unifiée
+  - [ ] Dashboard fusionné
 
 **Livrables** :
 - Module analyse croisée
 - IA conversationnelle douleurs
 - Interface unifiée
+- Parsing MD automatique
 
 ---
 
@@ -574,28 +874,48 @@
 
 #### 🎯 **Sprint 3.1 : Partage Familial**
 - [ ] **Interface partage** (choisir ce qui est partagé)
+  - [ ] Tableau de bord partage simple
+  - [ ] Liste documents avec checkboxes
 - [ ] **Granularité fine** (document par document)
+  - [ ] Choix par document
+  - [ ] Choix par catégorie
 - [ ] **Gestion famille** (ajouter membres famille)
+  - [ ] Interface ajout membres
+  - [ ] Invitations sécurisées
 - [ ] **Permissions** (lecture seule, commentaires, etc.)
+  - [ ] Niveaux permissions
+  - [ ] Gestion par membre
 - [ ] **Chiffrement bout-en-bout** (sécurité partage)
+  - [ ] Chiffrement avant envoi
+  - [ ] Clés séparées par membre
 
 **Livrables** :
 - Module partage familial
 - Interface gestion permissions
-- Sécurité partage
+- Sécurité partage (chiffrement bout-en-bout)
+- Audit log accès
 
 ---
 
 #### 🎯 **Sprint 3.2 : Synchronisation Cloud Optionnelle**
 - [ ] **Backup cloud chiffré** (optionnel, utilisateur choisit)
+  - [ ] Chiffrement avant upload
+  - [ ] Stockage cloud sécurisé
 - [ ] **Sync multi-appareils** (si utilisateur veut)
+  - [ ] Synchronisation automatique
+  - [ ] Résolution conflits
 - [ ] **Restauration données** (depuis backup)
+  - [ ] Interface restauration
+  - [ ] Vérification intégrité
 - [ ] **Contrôle total** (utilisateur décide quoi sync)
+  - [ ] Choix données à synchroniser
+  - [ ] Désactivation possible
 
 **Livrables** :
 - Module sync cloud optionnel
 - Interface gestion backup
 - Restauration données
+- Contrôle utilisateur total
 
 ---
 
@@ -603,14 +923,22 @@
 
 #### 🎯 **Sprint 4.1 : Interface Robot BBIA**
 - [ ] **Contrôle robot depuis CIA** (commandes vocales)
+  - [ ] Intégration commandes vocales
+  - [ ] Contrôle robot depuis app
 - [ ] **Affichage données santé sur robot** (écran robot)
+  - [ ] Dashboard santé sur écran robot
+  - [ ] Visualisations données
 - [ ] **Interaction naturelle** (gestes, voix)
+  - [ ] Détection gestes
+  - [ ] Réponses robot
 - [ ] **Assistant robotique santé** (robot aide maman)
+  - [ ] Rappels vocaux
+  - [ ] Aide navigation app
 
 **Livrables** :
 - Intégration BBIA ↔ CIA
 - Interface robot
-- Assistant robotique
+- Assistant robotique santé
 
 ---
 
@@ -618,11 +946,12 @@
 
 ### 🔴 **URGENT (À FAIRE MAINTENANT)**
 
-1. **✅ Parser PDF Médicaux**
+1. **✅ Parser PDF Médicaux avec NLP**
    - **Pourquoi** : Base pour tout le reste
-   - **Complexité** : Moyenne
-   - **Temps** : 2-3 semaines
-   - **Outils** : PyPDF2, pdfplumber, ou Tesseract OCR
+   - **Complexité** : Moyenne-Élevée
+   - **Temps** : 3-4 semaines
+   - **Outils** : PyPDF2/pdfplumber + Tesseract OCR + spaCy/NLTK
+   - **Inspiration** : EDS-NLP (APHP) pour techniques extraction
 
 2. **✅ Historique Médecins Complet**
    - **Pourquoi** : Besoin critique exprimé
@@ -640,11 +969,12 @@
 
 ### 🟠 **IMPORTANT (PROCHAINS 3 MOIS)**
 
-4. **✅ IA Analyse Patterns**
-   - **Pourquoi** : Différenciateur clé
+4. **✅ IA Analyse Patterns (Améliorer ARIA)**
+   - **Pourquoi** : Différenciateur clé, déjà 70% fait dans ARIA
    - **Complexité** : Élevée
    - **Temps** : 1-2 mois
-   - **Outils** : Scikit-learn, TensorFlow Lite
+   - **Outils** : Scikit-learn, TensorFlow Lite, Prophet
+   - **Action** : Améliorer modèles ARIA existants
 
 5. **✅ Partage Familial**
    - **Pourquoi** : Besoin exprimé
@@ -656,28 +986,46 @@
    - **Pourquoi** : Complémentarité avec CIA
    - **Complexité** : Élevée
    - **Temps** : 1-2 mois
-   - **Dépendances** : ARIA fonctionnel
+   - **Dépendances** : ARIA fonctionnel (déjà fait ✅)
+
+7. **✅ IA Conversationnelle "Médecin Virtuel"**
+   - **Pourquoi** : Aide préparation RDV
+   - **Complexité** : Élevée
+   - **Temps** : 1-2 mois
+   - **Inspiration** : Arkhn, PraxyConsultation
 
 ---
 
 ### 🟡 **FUTUR (6+ MOIS)**
 
-7. **✅ Interface Robot BBIA**
+8. **✅ Interface Robot BBIA**
    - **Pourquoi** : Vision long terme
    - **Complexité** : Très élevée
    - **Temps** : 3-6 mois
-   - **Dépendances** : BBIA stable
+   - **Dépendances** : BBIA stable (déjà fait ✅)
+
+---
+
+## 📊 ÉTAT D'AVANCEMENT PAR PROJET
+
+| Projet | Fonctionnalités Opérationnelles | À Renforcer / Manque | État d'Avancement | Coverage Tests |
+|--------|-------------------------------|---------------------|-------------------|----------------|
+| **ARIA** | ✅ Tracking douleur<br/>✅ Dashboard interactif<br/>✅ Health Connectors (Samsung/Google/Apple)<br/>✅ Export pro (PDF/Excel/CSV)<br/>✅ IA patterns (70%)<br/>✅ RGPD complet<br/>✅ Tests CI/CD | ⚠️ Import historique consults/médecins<br/>⚠️ Partage familial personnalisé<br/>⚠️ IA médecin virtuel<br/>⚠️ Modèles ML avancés | **Phases 1-7 terminées**<br/>Pattern analysis/prediction en cours | ✅ Tests complets |
+| **CIA** | ✅ Mobile santé Flutter<br/>✅ Sécurité AES-256<br/>✅ Sync bidirectionnelle<br/>✅ Interface senior-friendly<br/>✅ Modules base (docs, santé, rappels, urgence)<br/>✅ Intégration ARIA basique | ⚠️ Finalisation UX<br/>⚠️ API cross-projets<br/>⚠️ Import données externes | **Beta Production Ready** | ✅ 85% coverage |
+| **BBIA-SIM** | ✅ Robot cognitif Reachy<br/>✅ IA émotions<br/>✅ SDK complet<br/>✅ Dashboard UX<br/>✅ Simulation MuJoCo fidèle<br/>✅ Vision computer | ⚠️ Fusion santé IA/robot<br/>⚠️ Intégration direct santé | **Stable Production (v1.3.2)** | ✅ 68.86% coverage<br/>1362 tests |
+| **Dashboard** | ✅ Visualisation temps réel<br/>✅ Analytics<br/>✅ Export multi-format<br/>✅ Mode sombre | ⚠️ Cross-fusion data (ARIA/CIA/BBIA)<br/>⚠️ Gestion dynamique partage | **Opérationnel, évolutif** | ✅ Tests complets |
 
 ---
 
 ## 📋 CHECKLIST CONFORMITÉ LÉGALE
 
 ### ✅ **RGPD**
-- [x] Chiffrement données sensibles
+- [x] Chiffrement données sensibles (AES-256)
 - [x] Consentement explicite (à ajouter pour partage)
-- [x] Droit à l'oubli (export/delete)
-- [x] Portabilité données (export complet)
+- [x] Droit à l'oubli (export/delete) - API implémentée ARIA
+- [x] Portabilité données (export complet PDF/Excel/CSV)
 - [x] Minimisation données
+- [x] Stockage local (100% local, optionnel cloud)
 - [ ] **À AJOUTER** : Politique confidentialité explicite
 - [ ] **À AJOUTER** : Consentement partage familial
 
@@ -685,42 +1033,152 @@
 - [x] Chiffrement AES-256
 - [x] Stockage local sécurisé
 - [x] Authentification biométrique
+- [x] Tests sécurité réguliers (Bandit, Safety)
+- [x] CI/CD avec scan vulnérabilités
 - [ ] **À AJOUTER** : Audit log (qui accède à quoi)
 - [ ] **À AJOUTER** : Chiffrement bout-en-bout (partage)
 
 ### ✅ **Certification**
 - [x] Pas de diagnostic automatique → Pas de certification MD requise
 - [x] Simple gestion données → Conforme
-- [ ] **À VÉRIFIER** : Si IA suggestions → Vérifier si certification nécessaire
+- [ ] **À VÉRIFIER** : Si IA suggestions médicales → Vérifier si certification nécessaire
+
+### ⚠️ **Interopérabilité**
+- [ ] **À VÉRIFIER** : Légalité parsing/scraping docs (toujours avec consentement)
+- [ ] **À IMPLÉMENTER** : Consentement explicite avant import données externes
 
 ---
 
 ## 🎯 CONCLUSION & PROCHAINES ÉTAPES
 
 ### ✅ **CE QUI FONCTIONNE DÉJÀ**
+
+#### **ARIA (Phases 1-7 terminées)** ✅
+- Tracking douleur complet et opérationnel
+- Health Connectors (Samsung Health, Google Fit, Apple Health) - **Rare et innovant !**
+- Dashboard interactif avec visualisations
+- Export professionnel (PDF, Excel, CSV)
+- IA patterns (70% fonctionnel)
+- RGPD complet avec API droit à l'oubli
+- Tests et CI/CD complets
+
+#### **CIA (Beta Production Ready)** ✅
 - Architecture solide et sécurisée
 - Interface senior-friendly
-- Modules de base fonctionnels
+- Modules de base fonctionnels (docs, santé, rappels, urgence)
 - Sécurité conforme RGPD
+- Intégration ARIA basique
+
+#### **BBIA (Stable Production v1.3.2)** ✅
+- Robot cognitif complet
+- Simulation MuJoCo fidèle
+- Vision computer opérationnelle
+- Tests complets (1362 tests, 68.86% coverage)
+
+---
 
 ### ⚠️ **CE QUI MANQUE CRITIQUEMENT**
-- Import données apps externes (Andaman 7, MaSanté)
-- Historique médecins complet
-- Recherche avancée examens
-- IA analyse patterns
-- Partage familial
+
+#### **Priorité Critique** 🔴
+1. **Import données apps externes** (Andaman 7, MaSanté) - **0% fait**
+2. **Historique médecins complet** - **20% fait**
+3. **Recherche avancée examens** - **30% fait**
+
+#### **Priorité Haute** 🟠
+4. **IA analyse patterns** - **70% fait dans ARIA**, à améliorer et intégrer CIA
+5. **Partage familial** - **40% prévu dans ARIA**, à rendre ergonomique
+6. **IA conversationnelle douleurs** - **20% base dans ARIA**, à développer
+7. **Analyse croisée CIA+ARIA** - **20% fait**, à approfondir
+
+---
 
 ### 🚀 **PROCHAINES ACTIONS IMMÉDIATES**
 
-1. **Semaine 1-2** : Parser PDF médicaux
-2. **Semaine 3-4** : Historique médecins complet
-3. **Semaine 5-7** : Recherche avancée
-4. **Mois 2-3** : IA analyse patterns
-5. **Mois 3-4** : Partage familial
+#### **Semaine 1-3 : Parser PDF Médicaux**
+- Implémenter parser PDF avec OCR
+- Inspiration EDS-NLP pour NLP santé
+- Extraction métadonnées automatique
+
+#### **Semaine 4-5 : Historique Médecins**
+- Module référencement médecins complet
+- Historique consultations
+- Recherche médecins
+
+#### **Semaine 6-8 : Recherche Avancée**
+- Moteur recherche multi-critères
+- Filtres combinés
+- Recherche sémantique basique
+
+#### **Mois 2-3 : IA Patterns (Améliorer ARIA)**
+- Améliorer modèles ML existants
+- Intégrer dans CIA
+- Visualisations avancées
+
+#### **Mois 3-4 : Partage Familial**
+- Tableau de bord partage ergonomique
+- Chiffrement bout-en-bout
+- Gestion permissions
+
+---
+
+### 💡 **POINTS DE VIGILANCE**
+
+1. **Interopérabilité réelle avec apps externes** :
+   - ✅ Toujours demander consentement explicite avant import
+   - ✅ Vérifier légalité parsing/scraping (jamais sans accord)
+   - ✅ Privilégier export manuel utilisateur → Import
+
+2. **Personnalisation UX** :
+   - ✅ Interface adaptative selon profil (pour ta mère, simplifier à l'extrême)
+   - ✅ Intelligence invisible (ça marche sans qu'elle s'en rende compte)
+
+3. **Sécurité privacy centrale** :
+   - ✅ Ne jamais partager sans consentement
+   - ✅ Exporter en mode anonymisé si possible
+   - ✅ Audit log pour traçabilité
+
+4. **Certification IA suggestions** :
+   - ⚠️ Vérifier si IA suggestions médicales nécessite certification
+   - ✅ Pour l'instant : simple gestion → OK
+
+---
+
+### 🎯 **VISION LONG TERME**
+
+**Écosystème Arkalia Luna System** :
+- **CIA** : Santé quotidienne mobile (existant ✅)
+- **ARIA** : Recherche santé & IA (70% fait ✅)
+- **BBIA** : Robotique cognitive (stable ✅)
+- **Fusion future** : Intelligence santé-robot conversationnelle intégrale
+
+**Innovation** : ✅ **Tu as créé un "Dossier Patient IA centré patient/famille"** - C'est rare et innovant par rapport aux solutions existantes (souvent centrées professionnels/hôpitaux) !
 
 ---
 
 **Document créé le** : 19 novembre 2025  
+**Version** : 2.0 (Fusion analyses complètes)  
 **Prochaine révision** : Après implémentation Phase 1  
-**Statut** : 📋 **ROADMAP VALIDÉE**
+**Statut** : 📋 **ROADMAP VALIDÉE & ENRICHIE**
 
+---
+
+## 📚 **RÉFÉRENCES & INSPIRATIONS**
+
+### **Projets Open Source Santé**
+- **EDS-NLP (APHP)** : https://www.aphp.fr/actualites/ia-en-sante-lentrepot-de-donnees-de-sante-de-lap-hp-confirme-sa-demarche-open-source
+- **Arkhn** : https://www.arkhn.com
+- **PraxyConsultation** : https://praxysante.fr/praxyconsultation
+- **GNU Health** : https://www.gnuhealth.org
+- **OpenEMR** : https://www.openemr.org
+- **FHIR Standard** : https://www.hl7.org/fhir
+
+### **Apps Santé Belges**
+- **Andaman 7** : https://www.andaman7.com
+- **MaSanté** : https://www.masante.be
+- **eHealth Belgique** : https://www.ehealth.fgov.be
+
+### **Projets Arkalia**
+- **ARKALIA CIA** : https://github.com/arkalia-luna-system/arkalia-cia
+- **ARKALIA ARIA** : https://github.com/arkalia-luna-system/Arkalia-aria
+- **BBIA-SIM** : https://github.com/arkalia-luna-system/bbia-sim
+- **Organisation** : https://github.com/arkalia-luna-system

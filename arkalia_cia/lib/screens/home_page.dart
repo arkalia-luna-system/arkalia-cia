@@ -106,8 +106,8 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Arkalia CIA'),
-        backgroundColor: Colors.blue[600],
-        foregroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
+        foregroundColor: Theme.of(context).colorScheme.onSurface,
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
@@ -152,20 +152,20 @@ class _HomePageState extends State<HomePage> {
               )
             else ...[
               // Titre principal
-              const Text(
+              Text(
                 'Assistant Santé Personnel',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.blue,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
               const SizedBox(height: 4),
-              const Text(
+              Text(
                 'Votre santé au quotidien',
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.grey,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontStyle: FontStyle.italic,
                 ),
               ),
@@ -268,6 +268,13 @@ class _HomePageState extends State<HomePage> {
     required Color color,
     required VoidCallback onTap,
   }) {
+    // Adapter les couleurs pour le mode sombre (moins saturées)
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final adaptedColor = isDark ? _getDarkModeColor(color) : color;
+    final subtitleColor = isDark 
+        ? Theme.of(context).colorScheme.onSurfaceVariant 
+        : Colors.grey[600];
+    
     return Semantics(
       label: '$title - $subtitle',
       button: true,
@@ -284,14 +291,15 @@ class _HomePageState extends State<HomePage> {
                 Icon(
                   icon,
                   size: 48,
-                  color: color,
+                  color: adaptedColor,
                 ),
                 const SizedBox(height: 8),
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -300,7 +308,7 @@ class _HomePageState extends State<HomePage> {
                   subtitle,
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.grey[600],
+                    color: subtitleColor,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -310,6 +318,17 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  /// Adapte les couleurs pour le mode sombre (moins saturées et plus douces)
+  Color _getDarkModeColor(Color originalColor) {
+    // Réduire la saturation et augmenter légèrement la luminosité
+    // pour des couleurs plus douces en mode sombre
+    final hsl = HSLColor.fromColor(originalColor);
+    return hsl
+        .withSaturation((hsl.saturation * 0.7).clamp(0.0, 1.0)) // Réduire saturation de 30%
+        .withLightness((hsl.lightness * 1.2).clamp(0.0, 0.9)) // Augmenter luminosité de 20%
+        .toColor();
   }
 
   void _showDocuments(BuildContext context) {
