@@ -12,8 +12,9 @@ logger = logging.getLogger(__name__)
 class ConversationalAI:
     """IA conversationnelle pour santé"""
     
-    def __init__(self):
+    def __init__(self, max_memory_size: int = 50):
         self.context_memory = []
+        self.max_memory_size = max_memory_size  # Limiter la taille de la mémoire
     
     def analyze_question(self, question: str, user_data: Dict) -> Dict[str, any]:
         """
@@ -47,6 +48,11 @@ class ConversationalAI:
         
         # Patterns détectés
         patterns = self._detect_patterns_in_question(question_lower, user_data)
+        
+        # Nettoyer la mémoire si elle devient trop grande
+        if len(self.context_memory) > self.max_memory_size:
+            # Garder seulement les 50 derniers éléments
+            self.context_memory = self.context_memory[-self.max_memory_size:]
         
         return {
             'answer': answer,
@@ -176,14 +182,15 @@ class ConversationalAI:
         documents = user_data.get('documents', [])
         related = []
         
-        # Recherche simple par mots-clés
+        # Recherche simple par mots-clés (limiter à 20 documents pour performance)
         keywords = question.split()
-        for doc in documents:
+        # Ne traiter que les premiers documents pour économiser la mémoire
+        for doc in documents[:20]:
             doc_name = (doc.get('original_name', '') + ' ' + doc.get('category', '')).lower()
             if any(kw in doc_name for kw in keywords if len(kw) > 3):
                 related.append(doc.get('id'))
         
-        return related[:5]  # Limiter à 5
+        return related[:5]  # Limiter à 5 résultats
     
     def _generate_suggestions(self, question_type: str, user_data: Dict) -> List[str]:
         """Génère suggestions selon le type de question"""

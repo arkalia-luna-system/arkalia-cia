@@ -525,10 +525,12 @@ async def upload_document(request: Request, file: UploadFile = File(...)):
                     pass
             raise HTTPException(status_code=400, detail=result["error"])
 
-        # Extraire métadonnées intelligentes
-        metadata_extractor = MetadataExtractor()
-        text_content = pdf_processor.extract_text_from_pdf(tmp_file_path)
-        metadata = metadata_extractor.extract_metadata(text_content)
+        # Extraire métadonnées intelligentes (seulement si nécessaire)
+        # Ne pas extraire tout le texte pour économiser la mémoire
+        # Les métadonnées seront extraites à la demande si nécessaire
+        # metadata_extractor = MetadataExtractor()
+        # text_content = pdf_processor.extract_text_from_pdf(tmp_file_path)
+        # metadata = metadata_extractor.extract_metadata(text_content)
 
         # Sauvegarder en base de données avec métadonnées
         doc_id = db.add_document(
@@ -576,9 +578,13 @@ async def upload_document(request: Request, file: UploadFile = File(...)):
 
 @app.get("/api/documents", response_model=list[DocumentResponse])
 @limiter.limit("60/minute")  # Limite de 60 requêtes par minute
-async def get_documents(request: Request):
-    """Récupère tous les documents"""
-    documents = db.get_documents()
+async def get_documents(request: Request, skip: int = 0, limit: int = 50):
+    """Récupère les documents avec pagination"""
+    if limit > 100:  # Limiter à 100 max par requête
+        limit = 100
+    if skip < 0:
+        skip = 0
+    documents = db.get_documents(skip=skip, limit=limit)
     return [DocumentResponse(**doc) for doc in documents]
 
 
@@ -664,9 +670,13 @@ async def create_reminder(request: Request, reminder: ReminderRequest):
 
 @app.get("/api/reminders", response_model=list[ReminderResponse])
 @limiter.limit("60/minute")  # Limite de 60 requêtes par minute
-async def get_reminders(request: Request):
-    """Récupère tous les rappels"""
-    reminders = db.get_reminders()
+async def get_reminders(request: Request, skip: int = 0, limit: int = 50):
+    """Récupère les rappels avec pagination"""
+    if limit > 100:  # Limiter à 100 max par requête
+        limit = 100
+    if skip < 0:
+        skip = 0
+    reminders = db.get_reminders(skip=skip, limit=limit)
     return [ReminderResponse(**reminder) for reminder in reminders]
 
 
@@ -698,9 +708,13 @@ async def create_emergency_contact(request: Request, contact: EmergencyContactRe
 
 @app.get("/api/emergency-contacts", response_model=list[EmergencyContactResponse])
 @limiter.limit("60/minute")  # Limite de 60 requêtes par minute
-async def get_emergency_contacts(request: Request):
-    """Récupère tous les contacts d'urgence"""
-    contacts = db.get_emergency_contacts()
+async def get_emergency_contacts(request: Request, skip: int = 0, limit: int = 50):
+    """Récupère les contacts d'urgence avec pagination"""
+    if limit > 100:  # Limiter à 100 max par requête
+        limit = 100
+    if skip < 0:
+        skip = 0
+    contacts = db.get_emergency_contacts(skip=skip, limit=limit)
     return [EmergencyContactResponse(**contact) for contact in contacts]
 
 
@@ -732,9 +746,13 @@ async def create_health_portal(request: Request, portal: HealthPortalRequest):
 
 @app.get("/api/health-portals", response_model=list[HealthPortalResponse])
 @limiter.limit("60/minute")  # Limite de 60 requêtes par minute
-async def get_health_portals(request: Request):
-    """Récupère tous les portails santé"""
-    portals = db.get_health_portals()
+async def get_health_portals(request: Request, skip: int = 0, limit: int = 50):
+    """Récupère les portails santé avec pagination"""
+    if limit > 100:  # Limiter à 100 max par requête
+        limit = 100
+    if skip < 0:
+        skip = 0
+    portals = db.get_health_portals(skip=skip, limit=limit)
     return [HealthPortalResponse(**portal) for portal in portals]
 
 
@@ -759,9 +777,18 @@ class ChatResponse(BaseModel):
 async def chat_with_ai(request: Request, chat_request: ChatRequest):
     """Chat avec l'IA conversationnelle"""
     try:
+        # Limiter les données utilisateur pour économiser la mémoire
+        # Ne garder que les données essentielles (max 10 documents récents, 5 médecins)
+        limited_user_data = {
+            'documents': chat_request.user_data.get('documents', [])[:10],
+            'doctors': chat_request.user_data.get('doctors', [])[:5],
+            'consultations': chat_request.user_data.get('consultations', [])[:5],
+            'pain_records': chat_request.user_data.get('pain_records', [])[:10],
+        }
+        
         result = conversational_ai.analyze_question(
             chat_request.question,
-            chat_request.user_data
+            limited_user_data
         )
         
         return ChatResponse(

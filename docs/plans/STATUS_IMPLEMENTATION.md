@@ -58,6 +58,28 @@
 
 ---
 
+### 💬 **PLAN_06 : IA Conversationnelle** (Terminé - 70% ✅)
+
+#### ✅ **Terminé**
+- [x] Module backend `ConversationalAI`
+- [x] Détection type question (douleur, médecin, examen, médicament, RDV)
+- [x] Génération réponses intelligentes
+- [x] Recherche documents liés
+- [x] Suggestions de questions
+- [x] Préparation questions pour RDV
+- [x] Service Flutter `ConversationalAIService`
+- [x] Écran chat (`ConversationalAIScreen`)
+- [x] Intégration dans HomePage (bouton "Assistant IA")
+- [x] Endpoints API `/api/ai/chat` et `/api/ai/prepare-appointment`
+
+#### ⚠️ **En cours / À faire**
+- [ ] Intégration données ARIA (douleurs)
+- [ ] Analyse cause-effet avancée
+- [ ] Modèles LLM (optionnel)
+- [ ] Historique conversations
+
+---
+
 ### 👨‍⚕️ **PLAN_02 : Historique Médecins** (Terminé - 100% ✅)
 
 #### ✅ **Terminé**
