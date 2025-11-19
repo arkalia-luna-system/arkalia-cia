@@ -54,7 +54,7 @@ def _check_aria_connection() -> bool:
     try:
         response = requests.get(
             f"{ARIA_BASE_URL}/health", timeout=ARIA_TIMEOUT
-        )  # nosec B113 - URL locale contrôlée
+        )
         return bool(response.status_code == 200)
     except Exception:
         return False
@@ -66,7 +66,7 @@ def _make_aria_request(method: str, endpoint: str, **kwargs) -> requests.Respons
         url = f"{ARIA_BASE_URL}{endpoint}"
         response = requests.request(
             method, url, timeout=ARIA_TIMEOUT, **kwargs
-        )  # nosec B113 - URL locale contrôlée, timeout configuré
+        )
         return response
     except requests.RequestException as e:
         raise HTTPException(

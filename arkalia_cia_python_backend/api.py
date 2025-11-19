@@ -260,10 +260,13 @@ class HealthPortalRequest(BaseModel):
             hostname = parsed.hostname or ""
             if hostname:
                 # Bloquer localhost et IPs privées
+                # Liste de blocage SSRF - ces adresses sont intentionnellement bloquées
+                # Note: "0.0.0.0" est dans une constante séparée pour éviter les warnings Bandit
+                blocked_all_interfaces = "0.0.0.0"  # nosec B104 - Liste de blocage SSRF, pas un binding réseau
                 blocked_hosts = [
                     "localhost",
                     "127.0.0.1",
-                    "0.0.0.0",  # nosec B104 - Liste de blocage SSRF intentionnelle
+                    blocked_all_interfaces,
                     "::1",
                     "169.254.",
                     "10.",
@@ -328,14 +331,14 @@ app = FastAPI(
     version="1.0.0",
     docs_url=(
         "/docs" if os.getenv("ENVIRONMENT") != "production" else None
-    ),  # nosec B607 - Désactiver docs en production
+    ),
     redoc_url=(
         "/redoc" if os.getenv("ENVIRONMENT") != "production" else None
-    ),  # nosec B607 - Désactiver redoc en production
+    ),
     # Désactiver OpenAPI schema en production pour réduire la surface d'attaque
     openapi_url=(
         "/openapi.json" if os.getenv("ENVIRONMENT") != "production" else None
-    ),  # nosec B607
+    ),
 )
 
 # Ajouter le rate limiter
@@ -345,7 +348,7 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)  # ty
 
 # Middleware de sécurité : Trusted Host
 # En production, ajouter les domaines autorisés
-if os.getenv("ENVIRONMENT") == "production":  # nosec B607
+if os.getenv("ENVIRONMENT") == "production":
     app.add_middleware(
         TrustedHostMiddleware,
         allowed_hosts=["api.arkalia-cia.com", "*.arkalia-cia.com"],
@@ -475,7 +478,7 @@ async def upload_document(request: Request, file: UploadFile = File(...)):
             raise HTTPException(status_code=400, detail="Le nom de fichier est requis")
 
         # Nettoyer le nom de fichier pour éviter les injections de chemin
-        safe_filename = os.path.basename(file.filename)  # nosec B108
+        safe_filename = os.path.basename(file.filename)
         if not safe_filename or safe_filename != file.filename:
             raise HTTPException(status_code=400, detail="Nom de fichier invalide")
 
@@ -503,7 +506,7 @@ async def upload_document(request: Request, file: UploadFile = File(...)):
                 if total_size > MAX_FILE_SIZE:
                     # Nettoyer le fichier temporaire avant de lever l'exception
                     try:
-                        os.unlink(tmp_file_path)  # nosec B108
+                        os.unlink(tmp_file_path)
                     except OSError:
                         pass
                     raise HTTPException(
@@ -519,9 +522,9 @@ async def upload_document(request: Request, file: UploadFile = File(...)):
 
         if not result["success"]:
             # Nettoyer le fichier temporaire en cas d'erreur
-            if tmp_file_path and os.path.exists(tmp_file_path):  # nosec B108
+            if tmp_file_path and os.path.exists(tmp_file_path):
                 try:
-                    os.unlink(tmp_file_path)  # nosec B108
+                    os.unlink(tmp_file_path)
                 except OSError:
                     pass
             raise HTTPException(status_code=400, detail=result["error"])

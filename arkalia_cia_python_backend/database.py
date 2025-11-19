@@ -29,7 +29,7 @@ class CIADatabase:
             if not (
                 str(db_path_obj).startswith(
                     "/tmp"
-                )  # nosec B108 - Validation de sécurité
+                )  # Validation de sécurité
                 or str(db_path_obj).startswith("/var")
                 or str(db_path_obj).startswith(str(Path.cwd()))
             ):

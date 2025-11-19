@@ -48,7 +48,7 @@ class AutoDocumenter:
 
         if config_path:
             try:
-                with open(config_path, encoding="utf-8") as f:  # nosec B108
+                with open(config_path, encoding="utf-8") as f:
                     user_config = yaml.safe_load(f)
                     default_config.update(user_config)
             except Exception as e:
@@ -191,7 +191,7 @@ class AutoDocumenter:
                     analysis["total_files"] += 1
 
                     try:
-                        with open(py_file, encoding="utf-8") as f:  # nosec B108
+                        with open(py_file, encoding="utf-8") as f:
                             content = f.read()
 
                         tree = ast.parse(content)
@@ -233,7 +233,7 @@ class AutoDocumenter:
         docstrings = []
 
         try:
-            with open(file_path, encoding="utf-8") as f:  # nosec B108
+            with open(file_path, encoding="utf-8") as f:
                 content = f.read()
 
             tree = ast.parse(content)
@@ -762,7 +762,7 @@ SOFTWARE.
     def save_documentation_history(self, output_path: str) -> bool:
         """Sauvegarde l'historique de documentation"""
         try:
-            with open(output_path, "w", encoding="utf-8") as f:  # nosec B108
+            with open(output_path, "w", encoding="utf-8") as f:
                 json.dump(self.doc_history, f, indent=2, default=str)
             return True
         except Exception as e:
@@ -772,7 +772,7 @@ SOFTWARE.
     def load_documentation_history(self, history_path: str) -> list[dict[str, Any]]:
         """Charge l'historique de documentation"""
         try:
-            with open(history_path, encoding="utf-8") as f:  # nosec B108
+            with open(history_path, encoding="utf-8") as f:
                 history: list[dict[str, Any]] = json.load(f)
                 self.doc_history = history
                 return history

@@ -34,13 +34,13 @@ class PDFProcessor:
     def generate_filename(self, original_name: str) -> str:
         """Génère un nom de fichier unique"""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        name, ext = os.path.splitext(original_name)  # nosec B108
+        name, ext = os.path.splitext(original_name)
         return f"{name}_{timestamp}{ext}"
 
     def extract_text_from_pdf(self, file_path: str) -> str:
         """Extrait le texte d'un PDF (optimisé mémoire)"""
         try:
-            with open(file_path, "rb") as file:  # nosec B108
+            with open(file_path, "rb") as file:
                 reader = PdfReader(file)
                 text_parts = []
                 # Traiter page par page pour éviter de charger tout en mémoire
@@ -74,11 +74,11 @@ class PDFProcessor:
         """Traite un fichier PDF et le sauvegarde avec validations de sécurité"""
         try:
             # Vérifier que le fichier existe
-            if not os.path.exists(file_path):  # nosec B108
+            if not os.path.exists(file_path):
                 return {"success": False, "error": "Fichier non trouvé"}
 
             # Vérifier la taille du fichier avant traitement
-            file_size = os.path.getsize(file_path)  # nosec B108
+            file_size = os.path.getsize(file_path)
             if file_size > MAX_PDF_SIZE:
                 return {
                     "success": False,
@@ -86,14 +86,14 @@ class PDFProcessor:
                 }
 
             # Vérifier que c'est bien un fichier (pas un répertoire)
-            if not os.path.isfile(file_path):  # nosec B108
+            if not os.path.isfile(file_path):
                 return {
                     "success": False,
                     "error": "Le chemin ne pointe pas vers un fichier",
                 }
 
             # Lire le PDF avec validation
-            with open(file_path, "rb") as file:  # nosec B108
+            with open(file_path, "rb") as file:
                 # Vérifier les premiers bytes pour confirmer que c'est un PDF
                 header = file.read(4)
                 if header != b"%PDF":
@@ -180,7 +180,7 @@ class PDFProcessor:
                 shutil.copy2(file_path, destination_path)
 
                 # Calculer la taille du fichier
-                file_size = os.path.getsize(destination_path)  # nosec B108
+                file_size = os.path.getsize(destination_path)
 
                 return {
                     "success": True,
@@ -223,10 +223,10 @@ class PDFProcessor:
     def get_file_info(self, file_path: str) -> dict[str, Any]:
         """Récupère les informations d'un fichier"""
         try:
-            if not os.path.exists(file_path):  # nosec B108
+            if not os.path.exists(file_path):
                 return {"success": False, "error": "Fichier non trouvé"}
 
-            stat = os.stat(file_path)  # nosec B108
+            stat = os.stat(file_path)
             return {
                 "success": True,
                 "file_size": stat.st_size,

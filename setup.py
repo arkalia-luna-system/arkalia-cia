@@ -5,7 +5,7 @@ from setuptools import find_packages, setup  # type: ignore
 
 setup(
     name="arkalia-cia",
-    version="1.1.0",
+    version="1.2.0",
     description="Arkalia CIA - Assistant Mobile Santé",
     long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",

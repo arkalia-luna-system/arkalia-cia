@@ -73,8 +73,8 @@ class SecurityDashboard:
         # Note: Utilisation de tempfile.gettempdir() serait préférable mais ici
         # on détecte les chemins temporaires pour éviter les scans sur /tmp
         if (
-            "/tmp/" in project_str  # nosec B108
-            or "/var/folders/" in project_str  # nosec B108
+            "/tmp/" in project_str
+            or "/var/folders/" in project_str
             or ("tmp" in project_str.lower() and "arkalia" not in project_str.lower())
         ):
             # Si c'est un répertoire temporaire, chercher le vrai projet
@@ -789,7 +789,7 @@ class SecurityDashboard:
 
             # Créer le fichier dashboard
             dashboard_file = self.dashboard_dir / "security_dashboard.html"
-            with open(dashboard_file, "w", encoding="utf-8") as f:  # nosec B108
+            with open(dashboard_file, "w", encoding="utf-8") as f:
                 f.write(dashboard_html)
 
             # Libérer la mémoire du HTML après écriture (le GC Python gère automatiquement)
@@ -2367,8 +2367,8 @@ def main():
     # on détecte les chemins temporaires pour éviter les scans sur /tmp
     project_str = str(project_path)
     if (
-        "/tmp/" in project_str  # nosec B108
-        or "/var/folders/" in project_str  # nosec B108
+        "/tmp/" in project_str
+        or "/var/folders/" in project_str
         or "tmp" in project_str.lower()
     ):
         # Si c'est un répertoire temporaire, chercher le vrai projet

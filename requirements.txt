@@ -5,19 +5,21 @@
 # Note: sqlite3 est inclus dans Python standard
 
 # Traitement de fichiers
-pypdf==6.0.0
+pypdf==6.1.3  # Updated: Security fixes (CVE-2025-62707, CVE-2025-62708)
 python-magic==0.4.27
 # pathlib2==2.3.7  # Removed: yanked version, using built-in pathlib
 
 # APIs et web
-fastapi==0.116.1
+fastapi==0.121.2  # Updated: Compatible with starlette 0.49.1 (security fixes)
 uvicorn==0.35.0
 pydantic==2.9.2  # Downgraded for safety compatibility
+starlette==0.49.1  # Updated: Security fix (CVE-2025-62727)
 
 # Sécurité et validation
 cryptography==46.0.3
 python-multipart==0.0.20
 slowapi==0.1.9  # Rate limiting pour FastAPI
+authlib==1.6.5  # Updated: Security fixes (CVE-2025-59420, CVE-2025-61920, CVE-2025-62706)
 
 # Utilitaires
 python-dotenv==1.1.1
