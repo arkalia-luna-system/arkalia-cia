@@ -6,7 +6,58 @@
 
 ## ✅ **CE QUI EST FAIT**
 
-### 🚀 **PLAN_00 : Onboarding Intelligent** (En cours - 30%)
+### 🚀 **PLAN_00 : Onboarding Intelligent** (En cours - 50%)
+
+#### ✅ **Terminé**
+- [x] Service onboarding (`OnboardingService`)
+- [x] Écran bienvenue (`WelcomeScreen`)
+- [x] Écran choix import (`ImportChoiceScreen`)
+- [x] Écran progression import (`ImportProgressScreen`)
+- [x] Import PDF manuel fonctionnel
+- [x] Intégration dans `LockScreen`
+- [x] Script reset onboarding
+
+#### ⚠️ **En cours / À faire**
+- [ ] Authentification portails santé (eHealth, Andaman 7, MaSanté)
+- [ ] Import automatique depuis portails
+- [ ] Extraction intelligente données essentielles
+- [ ] Création historique automatique
+
+---
+
+### 👨‍⚕️ **PLAN_02 : Historique Médecins** (Terminé - 100% ✅)
+
+#### ✅ **Terminé**
+- [x] Modèles `Doctor` et `Consultation`
+- [x] Service `DoctorService` (CRUD complet)
+- [x] Tables SQLite créées avec index
+- [x] Écran liste médecins (`DoctorsListScreen`)
+- [x] Écran détail médecin (`DoctorDetailScreen`)
+- [x] Écran ajout/modification (`AddEditDoctorScreen`)
+- [x] Recherche médecins (nom, spécialité)
+- [x] Filtres par spécialité
+- [x] Statistiques par médecin
+- [x] Intégration dans HomePage (bouton "Médecins")
+
+---
+
+## 📋 **PROCHAINES ÉTAPES**
+
+### **Priorité 1 : Finaliser Onboarding**
+1. Implémenter authentification portails santé
+2. Implémenter extraction intelligente
+3. Créer historique automatique
+
+### **Priorité 2 : Parser PDF (PLAN_01)**
+1. Backend extraction texte PDF (déjà fait partiellement)
+2. OCR pour PDF scannés
+3. Extraction métadonnées automatique
+4. Classification documents
+
+### **Priorité 3 : Recherche Avancée (PLAN_03)**
+1. Moteur recherche multi-critères
+2. Filtres combinés
+3. Recherche sémantique
 
 #### ✅ **Terminé**
 - [x] Service onboarding (`OnboardingService`)
