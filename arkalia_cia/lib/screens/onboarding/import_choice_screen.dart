@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
 import '../../services/onboarding_service.dart';
+import 'import_progress_screen.dart';
 import '../home_page.dart';
 
 enum ImportType { portals, manualPDF, skip }
@@ -12,6 +14,34 @@ class ImportChoiceScreen extends StatefulWidget {
 }
 
 class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
+  Future<void> _pickAndImportPDFs() async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf'],
+        allowMultiple: true,
+      );
+
+      if (result != null && result.files.isNotEmpty) {
+        // Rediriger vers écran progression
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ImportProgressScreen(
+              importType: ImportType.manualPDF,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erreur sélection fichiers: $e')),
+        );
+      }
+    }
+  }
+
   Future<void> _skipImport() async {
     await OnboardingService.completeOnboarding();
     if (mounted) {
@@ -85,13 +115,8 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
                 description: 'Sélectionner vos PDF médicaux\n'
                     'Extraction automatique données essentielles',
                 color: Colors.green,
-                onTap: () {
-                  // TODO: Implémenter import PDF
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Import PDF - À venir bientôt !'),
-                    ),
-                  );
+                onTap: () async {
+                  await _pickAndImportPDFs();
                 },
               ),
               
