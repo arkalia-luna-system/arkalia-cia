@@ -1,0 +1,93 @@
+# 📋 PLANS D'IMPLÉMENTATION - ARKALIA CIA
+
+> **Organisation des plans techniques** pour répondre aux besoins de votre mère
+
+---
+
+## 🎯 **STRUCTURE DES PLANS**
+
+Les plans sont organisés par **priorité critique** et **ordre d'implémentation recommandé** :
+
+### 🔴 **PRIORITÉ CRITIQUE** (À faire en premier)
+
+1. **[PLAN_01_PARSER_PDF_MEDICAUX.md](./PLAN_01_PARSER_PDF_MEDICAUX.md)**
+   - Import données apps externes (Andaman 7, MaSanté)
+   - Parsing PDF médicaux avec OCR/NLP
+   - Extraction métadonnées automatique
+   - **Temps estimé** : 3-4 semaines
+
+2. **[PLAN_02_HISTORIQUE_MEDECINS.md](./PLAN_02_HISTORIQUE_MEDECINS.md)**
+   - Référentiel médecins complet
+   - Historique consultations par médecin
+   - Recherche médecins avancée
+   - **Temps estimé** : 1-2 semaines
+
+3. **[PLAN_03_RECHERCHE_AVANCEE.md](./PLAN_03_RECHERCHE_AVANCEE.md)**
+   - Moteur recherche multi-critères
+   - Filtres combinés (type, date, médecin)
+   - Recherche sémantique
+   - **Temps estimé** : 2-3 semaines
+
+### 🟠 **PRIORITÉ HAUTE** (Prochains 3 mois)
+
+4. **[PLAN_04_IA_PATTERNS.md](./PLAN_04_IA_PATTERNS.md)**
+   - Amélioration IA patterns ARIA
+   - Détection corrélations avancées
+   - Modèles ML time series
+   - **Temps estimé** : 1-2 mois
+
+5. **[PLAN_05_PARTAGE_FAMILIAL.md](./PLAN_05_PARTAGE_FAMILIAL.md)**
+   - Tableau de bord partage ergonomique
+   - Contrôle granularité fine
+   - Chiffrement bout-en-bout
+   - **Temps estimé** : 1 mois
+
+6. **[PLAN_06_IA_CONVERSATIONNELLE.md](./PLAN_06_IA_CONVERSATIONNELLE.md)**
+   - IA "médecin virtuel"
+   - Analyse croisée CIA + ARIA
+   - Cause à effet (douleurs ↔ examens)
+   - **Temps estimé** : 1-2 mois
+
+---
+
+## 📊 **FORMAT DES PLANS**
+
+Chaque plan contient :
+
+1. **🎯 Objectif** : Ce qu'on veut accomplir
+2. **📋 Besoins** : Besoins spécifiques de votre mère
+3. **🏗️ Architecture** : Structure technique proposée
+4. **🔧 Implémentation** : Étapes détaillées avec code
+5. **✅ Tests** : Stratégie de tests
+6. **🚀 Performance** : Optimisations et bonnes pratiques
+7. **🔐 Sécurité** : Mesures de sécurité
+8. **📅 Timeline** : Planning détaillé
+
+---
+
+## 🚀 **ORDRE D'IMPLÉMENTATION RECOMMANDÉ**
+
+### **Phase 1 : Fondations** (2-3 mois)
+1. Parser PDF médicaux
+2. Historique médecins
+3. Recherche avancée
+
+### **Phase 2 : Intelligence** (3-4 mois)
+4. IA patterns (améliorer ARIA)
+5. IA conversationnelle
+
+### **Phase 3 : Partage** (2-3 mois)
+6. Partage familial
+
+---
+
+## 📚 **RESSOURCES**
+
+- **[ANALYSE_COMPLETE_BESOINS_MERE.md](../ANALYSE_COMPLETE_BESOINS_MERE.md)** : Analyse complète des besoins
+- **[ARCHITECTURE.md](../ARCHITECTURE.md)** : Architecture générale CIA
+- **[API.md](../API.md)** : Documentation API backend
+
+---
+
+**Dernière mise à jour** : 19 novembre 2025
+
