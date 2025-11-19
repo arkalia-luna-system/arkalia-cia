@@ -54,11 +54,26 @@ class ConversationalAIService {
     // Prendre seulement les 5 premiers médecins
     final doctors = allDoctors.take(5).map((d) => d.toMap()).toList();
     
+    // Récupérer données douleur depuis ARIA si disponible
+    List<Map<String, dynamic>> painRecords = [];
+    try {
+      final ariaResponse = await http.get(
+        Uri.parse('$_baseUrl/api/aria/pain-entries/recent?limit=10'),
+      );
+      if (ariaResponse.statusCode == 200) {
+        final data = jsonDecode(ariaResponse.body);
+        painRecords = List<Map<String, dynamic>>.from(data);
+      }
+    } catch (e) {
+      // ARIA non disponible, continuer sans
+    }
+    
     return {
       'documents': documents,
       'doctors': doctors,
       'consultations': [], // TODO: Récupérer consultations
-      'pain_records': [], // TODO: Récupérer depuis ARIA
+      'pain_records': painRecords,
+      'user_id': 'default', // TODO: Récupérer ID utilisateur réel
     };
   }
   
