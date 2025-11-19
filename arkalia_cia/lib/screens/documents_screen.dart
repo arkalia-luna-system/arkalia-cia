@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
@@ -22,18 +23,31 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   bool isUploading = false;
   final TextEditingController _searchController = TextEditingController();
   String _selectedCategory = 'Tous';
+  Timer? _debounceTimer;
 
   @override
   void initState() {
     super.initState();
     _loadDocuments();
-    _searchController.addListener(_filterDocuments);
+    _searchController.addListener(_onSearchChanged);
   }
 
   @override
   void dispose() {
+    _debounceTimer?.cancel();
+    _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
     super.dispose();
+  }
+
+  void _onSearchChanged() {
+    // Annuler le timer précédent s'il existe
+    _debounceTimer?.cancel();
+    
+    // Créer un nouveau timer avec un délai de 300ms
+    _debounceTimer = Timer(const Duration(milliseconds: 300), () {
+      _filterDocuments();
+    });
   }
 
   void _filterDocuments() {
@@ -275,7 +289,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           }
         } catch (e) {
           if (mounted) {
-            _showError('Erreur lors de l\'ouverture: ${result.message ?? e.toString()}');
+            _showError('Erreur lors de l\'ouverture: $e');
           }
         }
       }

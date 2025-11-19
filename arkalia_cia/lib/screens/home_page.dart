@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'documents_screen.dart';
@@ -26,6 +27,7 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
   bool _isSearching = false;
   Map<String, List<Map<String, dynamic>>> _searchResults = {};
+  Timer? _debounceTimer;
 
   @override
   void initState() {
@@ -36,12 +38,16 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
+    _debounceTimer?.cancel();
     _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
     super.dispose();
   }
 
-  Future<void> _onSearchChanged() async {
+  void _onSearchChanged() {
+    // Annuler le timer précédent s'il existe
+    _debounceTimer?.cancel();
+    
     final query = _searchController.text.trim();
     if (query.isEmpty) {
       if (mounted) {
@@ -53,11 +59,18 @@ class _HomePageState extends State<HomePage> {
       return;
     }
 
-    if (mounted) {
-      setState(() {
-        _isSearching = true;
-      });
-    }
+    // Créer un nouveau timer avec un délai de 500ms pour la recherche globale
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+      _performSearch(query);
+    });
+  }
+
+  Future<void> _performSearch(String query) async {
+    if (!mounted) return;
+    
+    setState(() {
+      _isSearching = true;
+    });
 
     final results = await SearchService.searchAll(query);
     if (mounted) {

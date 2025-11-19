@@ -235,6 +235,8 @@ class _SyncScreenState extends State<SyncScreen> {
   }
 
   Future<void> _startSync() async {
+    if (!mounted) return;
+    
     setState(() {
       _isSyncing = true;
       _syncProgress = 0.0;
@@ -246,6 +248,8 @@ class _SyncScreenState extends State<SyncScreen> {
       final backendEnabled = await BackendConfigService.isBackendEnabled();
       final ariaConnected = await ARIAService.checkConnection();
 
+      if (!mounted) return;
+      
       if (!backendEnabled && !ariaConnected) {
         _showError('Aucune connexion disponible. Activez le backend ou ARIA.');
         setState(() {
@@ -256,6 +260,7 @@ class _SyncScreenState extends State<SyncScreen> {
 
       // Synchroniser les documents
       if (_syncOptions['Documents'] == true) {
+        if (!mounted) return;
         setState(() {
           _syncStatus = 'Synchronisation des documents...';
           _syncProgress = 0.2;
@@ -265,6 +270,7 @@ class _SyncScreenState extends State<SyncScreen> {
 
       // Synchroniser les rappels
       if (_syncOptions['Rappels'] == true) {
+        if (!mounted) return;
         setState(() {
           _syncStatus = 'Synchronisation des rappels...';
           _syncProgress = 0.4;
@@ -274,6 +280,7 @@ class _SyncScreenState extends State<SyncScreen> {
 
       // Synchroniser les contacts d'urgence
       if (_syncOptions['Contacts d\'urgence'] == true) {
+        if (!mounted) return;
         setState(() {
           _syncStatus = 'Synchronisation des contacts...';
           _syncProgress = 0.6;
@@ -283,6 +290,7 @@ class _SyncScreenState extends State<SyncScreen> {
 
       // Synchroniser les informations médicales
       if (_syncOptions['Informations médicales'] == true) {
+        if (!mounted) return;
         setState(() {
           _syncStatus = 'Synchronisation des informations médicales...';
           _syncProgress = 0.8;
@@ -290,6 +298,8 @@ class _SyncScreenState extends State<SyncScreen> {
         await _syncEmergencyInfo();
       }
 
+      if (!mounted) return;
+      
       setState(() {
         _syncProgress = 1.0;
         _syncStatus = 'Synchronisation terminée avec succès !';
@@ -297,6 +307,8 @@ class _SyncScreenState extends State<SyncScreen> {
 
       await Future.delayed(const Duration(seconds: 1));
 
+      if (!mounted) return;
+      
       setState(() {
         _isSyncing = false;
         _syncProgress = 0.0;
@@ -305,6 +317,8 @@ class _SyncScreenState extends State<SyncScreen> {
 
       _showSuccess('Synchronisation réussie');
     } catch (e) {
+      if (!mounted) return;
+      
       setState(() {
         _isSyncing = false;
         _syncStatus = 'Erreur: $e';

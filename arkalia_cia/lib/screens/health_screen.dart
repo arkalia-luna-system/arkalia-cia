@@ -18,8 +18,11 @@ class _HealthScreenState extends State<HealthScreen> {
   @override
   void initState() {
     super.initState();
-    _loadPortals();
-    _addBelgianPortals();
+    // Charger d'abord les portails existants, puis ajouter les portails belges
+    _loadPortals().then((_) {
+      // Ajouter les portails belges après le chargement initial
+      _addBelgianPortals();
+    });
   }
 
   Future<void> _addBelgianPortals() async {
@@ -61,6 +64,7 @@ class _HealthScreenState extends State<HealthScreen> {
 
       final existingPortals = await ApiService.getHealthPortals();
       final existingUrls = existingPortals.map((p) => p['url'] as String).toSet();
+      bool hasNewPortals = false;
       
       for (final portal in belgianPortals) {
         if (!existingUrls.contains(portal['url'] as String)) {
@@ -75,7 +79,16 @@ class _HealthScreenState extends State<HealthScreen> {
           if (result['backend_unavailable'] == true || result['backend_disabled'] == true) {
             break; // Arrêter si le backend n'est pas disponible
           }
+          
+          if (result['success'] != false) {
+            hasNewPortals = true;
+          }
         }
+      }
+      
+      // Recharger les portails si de nouveaux ont été ajoutés
+      if (hasNewPortals && mounted) {
+        await _loadPortals();
       }
     } catch (e) {
       // Si le backend n'est pas disponible, ignorer silencieusement
