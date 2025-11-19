@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import '../../services/onboarding_service.dart';
 import 'import_progress_screen.dart';
+import 'import_type.dart';
 import '../home_page.dart';
 
 class ImportChoiceScreen extends StatefulWidget {

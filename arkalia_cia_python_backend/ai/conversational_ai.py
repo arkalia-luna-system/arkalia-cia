@@ -3,19 +3,35 @@ IA Conversationnelle pour analyse santé
 Analyse données CIA + ARIA pour dialogue intelligent
 """
 from datetime import datetime
+from typing import Any
 import logging
+
+try:
+    from arkalia_cia_python_backend.ai.aria_integration import ARIAIntegration
+    ARIA_AVAILABLE = True
+except ImportError:
+    ARIA_AVAILABLE = False
 
 logger = logging.getLogger(__name__)
 
 
 class ConversationalAI:
     """IA conversationnelle pour santé"""
-    
-    def __init__(self, max_memory_size: int = 50):
-        self.context_memory: list[dict] = []
+
+    def __init__(self, max_memory_size: int = 50, aria_base_url: str = "http://localhost:8001"):
+        self.context_memory: list[dict[str, Any]] = []
         self.max_memory_size = max_memory_size  # Limiter la taille de la mémoire
-    
-    def analyze_question(self, question: str, user_data: dict) -> dict[str, any]:
+        # Intégration ARIA si disponible
+        if ARIA_AVAILABLE:
+            try:
+                self.aria = ARIAIntegration(aria_base_url)
+            except Exception as e:
+                logger.warning(f"ARIA non disponible: {e}")
+                self.aria = None
+        else:
+            self.aria = None
+
+    def analyze_question(self, question: str, user_data: dict) -> dict[str, Any]:
         """
         Analyse une question et génère une réponse intelligente
         
@@ -98,15 +114,39 @@ class ConversationalAI:
     
     def _answer_pain_question(self, question: str, user_data: dict) -> str:
         """Répond aux questions sur la douleur"""
-        # Analyser données douleur depuis ARIA si disponibles
+        # Essayer d'abord depuis user_data
         pain_data = user_data.get('pain_records', [])
+        
+        # Si pas de données, essayer ARIA
+        if not pain_data and self.aria:
+            try:
+                user_id = user_data.get('user_id', 'default')
+                pain_data = self.aria.get_pain_records(user_id, limit=10)
+            except Exception as e:
+                logger.debug(f"Erreur récupération ARIA: {e}")
         
         if pain_data:
             recent_pain = pain_data[-1] if pain_data else None
             if recent_pain:
-                intensity = recent_pain.get('intensity', 'N/A')
-                location = recent_pain.get('location', 'N/A')
-                return f"D'après vos données récentes, vous avez signalé une douleur d'intensité {intensity} localisée à {location}. "
+                intensity = recent_pain.get('intensity', recent_pain.get('pain_level', 'N/A'))
+                location = recent_pain.get('location', recent_pain.get('body_part', 'N/A'))
+                date = recent_pain.get('date', recent_pain.get('timestamp', ''))
+                
+                answer = f"D'après vos données récentes, vous avez signalé une douleur d'intensité {intensity}/10 localisée à {location}"
+                if date:
+                    answer += f" le {date}"
+                answer += ". "
+                
+                # Analyser patterns si disponibles
+                if self.aria:
+                    try:
+                        patterns = self.aria.get_patterns(user_data.get('user_id', 'default'))
+                        if patterns.get('recurring_patterns'):
+                            answer += "J'ai détecté des patterns récurrents dans vos douleurs. "
+                    except:
+                        pass
+                
+                return answer
         
         return "Je peux analyser vos douleurs si vous avez des données dans ARIA. "
     
@@ -163,14 +203,42 @@ class ConversationalAI:
     
     def _answer_cause_effect_question(self, question: str, user_data: dict) -> str:
         """Répond aux questions cause-effet"""
-        # Analyser corrélations entre données
+        # Récupérer données douleur depuis ARIA si disponible
         pain_data = user_data.get('pain_records', [])
+        if not pain_data and self.aria:
+            try:
+                user_id = user_data.get('user_id', 'default')
+                pain_data = self.aria.get_pain_records(user_id, limit=20)
+            except:
+                pass
+        
         documents = user_data.get('documents', [])
         
         if pain_data and documents:
-            return "En analysant vos données, je peux identifier des corrélations entre vos douleurs et vos examens. "
+            # Analyser corrélations basiques
+            answer = "En analysant vos données, je peux identifier des corrélations entre vos douleurs et vos examens. "
+            
+            # Si ARIA disponible, récupérer patterns avancés
+            if self.aria:
+                try:
+                    patterns = self.aria.get_patterns(user_data.get('user_id', 'default'))
+                    if patterns.get('correlations'):
+                        answer += "ARIA a détecté des corrélations spécifiques. "
+                except:
+                    pass
+            
+            return answer
         
-        return "Pour analyser les causes et effets, j'ai besoin de plus de données (douleurs, examens). "
+        # Essayer de récupérer métriques santé depuis ARIA
+        if self.aria:
+            try:
+                health_metrics = self.aria.get_health_metrics(user_data.get('user_id', 'default'))
+                if health_metrics:
+                    return "J'ai accès à vos métriques santé depuis ARIA. Je peux analyser les corrélations entre douleurs, sommeil, activité et stress. "
+            except:
+                pass
+        
+        return "Pour analyser les causes et effets, j'ai besoin de plus de données (douleurs, examens). Connectez ARIA pour une analyse plus approfondie. "
     
     def _answer_general_question(self, question: str, user_data: dict) -> str:
         """Répond aux questions générales"""

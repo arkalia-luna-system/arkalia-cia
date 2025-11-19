@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../services/onboarding_service.dart';
 import '../home_page.dart';
-
-enum ImportType { portals, manualPDF, skip }
+import 'import_type.dart';
 
 class ImportProgressScreen extends StatefulWidget {
   final ImportType importType;
