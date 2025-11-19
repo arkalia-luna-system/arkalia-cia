@@ -47,6 +47,7 @@ db = CIADatabase()
 pdf_processor = PDFProcessor()
 conversational_ai = ConversationalAI()
 pattern_analyzer = AdvancedPatternAnalyzer()
+pattern_analyzer = AdvancedPatternAnalyzer()
 
 
 # Modèles Pydantic
@@ -830,6 +831,14 @@ async def chat_with_ai(request: Request, chat_request: ChatRequest):
 
         result = conversational_ai.analyze_question(
             chat_request.question, limited_user_data
+        )
+
+        # Sauvegarder conversation
+        db.add_ai_conversation(
+            question=chat_request.question,
+            answer=result.get("answer", ""),
+            question_type=result.get("question_type", "general"),
+            related_documents=','.join(result.get("related_documents", [])),
         )
 
         return ChatResponse(
