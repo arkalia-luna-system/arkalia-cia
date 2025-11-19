@@ -22,6 +22,7 @@ from slowapi.util import get_remote_address
 from arkalia_cia_python_backend.aria_integration.api import router as aria_router
 from arkalia_cia_python_backend.database import CIADatabase
 from arkalia_cia_python_backend.pdf_processor import PDFProcessor
+from arkalia_cia_python_backend.pdf_parser.metadata_extractor import MetadataExtractor
 from arkalia_cia_python_backend.security_utils import (
     sanitize_error_detail,
     sanitize_log_message,
@@ -522,7 +523,12 @@ async def upload_document(request: Request, file: UploadFile = File(...)):
                     pass
             raise HTTPException(status_code=400, detail=result["error"])
 
-        # Sauvegarder en base de données
+        # Extraire métadonnées intelligentes
+        metadata_extractor = MetadataExtractor()
+        text_content = pdf_processor.extract_text_from_pdf(tmp_file_path)
+        metadata = metadata_extractor.extract_metadata(text_content)
+
+        # Sauvegarder en base de données avec métadonnées
         doc_id = db.add_document(
             name=result["filename"],
             original_name=result["original_name"],
@@ -530,6 +536,9 @@ async def upload_document(request: Request, file: UploadFile = File(...)):
             file_type="pdf",
             file_size=result["file_size"],
         )
+        
+        # Sauvegarder métadonnées extraites (si table métadonnées existe)
+        # TODO: Créer table document_metadata si nécessaire
 
         # Nettoyer le fichier temporaire
         if tmp_file_path and os.path.exists(tmp_file_path):
