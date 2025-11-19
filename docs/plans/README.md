@@ -106,12 +106,33 @@ Guide complet pour tester l'app avec visualisation interface en temps réel :
 
 ---
 
+## 📊 **STATUT IMPLÉMENTATION**
+
+### **[STATUS_IMPLEMENTATION.md](./STATUS_IMPLEMENTATION.md)**
+
+Suivi en temps réel de l'implémentation :
+- ✅ Ce qui est fait
+- ⚠️ En cours
+- 📋 Prochaines étapes
+- 🐛 Problèmes rencontrés
+
+**État actuel** :
+- 🚀 PLAN_00 (Onboarding) : **30% fait**
+  - ✅ Écran bienvenue
+  - ✅ Écran choix import
+  - ✅ Service onboarding
+  - ⚠️ Import portails (à faire)
+  - ⚠️ Import PDF (à faire)
+
+---
+
 ## 📚 **RESSOURCES**
 
 - **[ANALYSE_COMPLETE_BESOINS_MERE.md](../ANALYSE_COMPLETE_BESOINS_MERE.md)** : Analyse complète des besoins
 - **[ARCHITECTURE.md](../ARCHITECTURE.md)** : Architecture générale CIA
 - **[API.md](../API.md)** : Documentation API backend
 - **[GUIDE_TEST_VISUEL_LIVE.md](./GUIDE_TEST_VISUEL_LIVE.md)** : Guide test visuel en live
+- **[STATUS_IMPLEMENTATION.md](./STATUS_IMPLEMENTATION.md)** : Statut implémentation
 
 ---
 
