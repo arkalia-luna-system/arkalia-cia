@@ -1007,6 +1007,14 @@ make security-audit-health
 
 # 4. Déploiement
 echo "🚀 Déploiement..."
+make deploy-health-module
+
+echo "✅ ARIA déployé avec succès !"
+echo "📱 Module Santé+ disponible dans CIA"
+echo "🎮 Gamification Quest intégrée"
+echo "🤖 ARIA IA personnelle active"
+echo "📊 Laboratoire personnel opérationnel"
+```
 
 ---
 
@@ -1021,15 +1029,5 @@ echo "🚀 Déploiement..."
 
 **Last Updated**: November 19, 2025  
 *This implementation guide provides step-by-step instructions for integrating ARIA functionality into Arkalia CIA.*
-make deploy-health-module
-
-echo "✅ ARIA déployé avec succès !"
-echo "📱 Module Santé+ disponible dans CIA"
-echo "🎮 Gamification Quest intégrée"
-echo "🤖 ARIA IA personnelle active"
-echo "📊 Laboratoire personnel opérationnel"
-```
-
----
 
 **🎯 Prêt à implémenter Dolorix étape par étape ?**
