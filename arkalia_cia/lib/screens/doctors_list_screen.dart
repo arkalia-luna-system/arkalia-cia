@@ -221,6 +221,7 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
     final specialties = _doctors
         .map((d) => d.specialty)
         .where((s) => s != null && s.isNotEmpty)
+        .cast<String>()
         .toSet()
         .toList();
     specialties.sort();
