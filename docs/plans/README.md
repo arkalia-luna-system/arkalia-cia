@@ -8,7 +8,16 @@
 
 Les plans sont organisés par **priorité critique** et **ordre d'implémentation recommandé** :
 
-### 🔴 **PRIORITÉ CRITIQUE** (À faire en premier)
+### 🚀 **PRIORITÉ ULTIME** (À faire EN PREMIER - Onboarding)
+
+0. **[PLAN_00_ONBOARDING_INTELLIGENT.md](./PLAN_00_ONBOARDING_INTELLIGENT.md)**
+   - Onboarding première connexion
+   - Import automatique portails santé
+   - Création historique intelligent (essentiel uniquement)
+   - Interface ultra-simple pour tous utilisateurs
+   - **Temps estimé** : 3-4 semaines
+
+### 🔴 **PRIORITÉ CRITIQUE** (À faire après onboarding)
 
 1. **[PLAN_01_PARSER_PDF_MEDICAUX.md](./PLAN_01_PARSER_PDF_MEDICAUX.md)**
    - Import données apps externes (Andaman 7, MaSanté)
