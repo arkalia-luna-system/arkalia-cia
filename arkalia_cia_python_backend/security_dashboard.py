@@ -70,10 +70,12 @@ class SecurityDashboard:
         project_str = str(resolved_path)
 
         # Détecter et éviter les répertoires temporaires
-        # Note: Utilisation de tempfile.gettempdir() serait préférable mais ici
-        # on détecte les chemins temporaires pour éviter les scans sur /tmp
+        # Utiliser tempfile.gettempdir() pour éviter les chemins hardcodés
+        import tempfile
+
+        temp_dir = tempfile.gettempdir()
         if (
-            "/tmp/" in project_str
+            temp_dir in project_str
             or "/var/folders/" in project_str
             or ("tmp" in project_str.lower() and "arkalia" not in project_str.lower())
         ):
@@ -2363,11 +2365,13 @@ def main():
     project_path = Path(args.project_path).resolve()
 
     # Vérifier que le chemin n'est pas un répertoire temporaire
-    # Note: Utilisation de tempfile.gettempdir() serait préférable mais ici
-    # on détecte les chemins temporaires pour éviter les scans sur /tmp
+    # Utiliser tempfile.gettempdir() pour éviter les chemins hardcodés
+    import tempfile
+
+    temp_dir = tempfile.gettempdir()
     project_str = str(project_path)
     if (
-        "/tmp/" in project_str
+        temp_dir in project_str
         or "/var/folders/" in project_str
         or "tmp" in project_str.lower()
     ):
