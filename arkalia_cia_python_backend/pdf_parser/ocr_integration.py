@@ -1,10 +1,11 @@
-"""
-Intégration OCR complète pour PDF scannés
-Utilise Tesseract OCR pour extraire texte depuis images
+"""Intégration OCR complète pour PDF scannés.
+
+Utilise Tesseract OCR pour extraire texte depuis images.
 """
 
 import logging
-import os
+import time
+from pathlib import Path
 from typing import Any
 
 logger = logging.getLogger(__name__)
@@ -20,15 +21,19 @@ except ImportError:
     logger.warning("OCR non disponible: pytesseract, pdf2image ou PIL non installés")
 
 
-class OCRIntegration:
-    """Intégration OCR complète pour PDF scannés"""
+# Seuil de détection PDF scanné (nombre de caractères minimum)
+MIN_TEXT_CHARS_FOR_SCANNED_DETECTION = 100
 
-    def __init__(self, tesseract_cmd: str | None = None):
-        """
-        Initialise l'intégration OCR
+
+class OCRIntegration:
+    """Intégration OCR complète pour PDF scannés."""
+
+    def __init__(self, tesseract_cmd: str | None = None) -> None:
+        """Initialise l'intégration OCR.
 
         Args:
-            tesseract_cmd: Chemin vers tesseract (optionnel, auto-détecté si None)
+            tesseract_cmd: Chemin vers tesseract (optionnel, auto-détecté si None).
+
         """
         self.ocr_available = OCR_AVAILABLE
         self.tesseract_config: str | None = None
@@ -44,7 +49,7 @@ class OCRIntegration:
                     "/opt/homebrew/bin/tesseract",  # macOS Homebrew
                 ]
                 for path in possible_paths:
-                    if os.path.exists(path):
+                    if Path(path).exists():
                         pytesseract.pytesseract.tesseract_cmd = path
                         break
 
@@ -52,19 +57,21 @@ class OCRIntegration:
             self.tesseract_config = "--oem 3 --psm 6 -l fra+eng"
 
     def is_available(self) -> bool:
-        """Vérifie si OCR est disponible"""
+        """Vérifie si OCR est disponible."""
         return self.ocr_available
 
     def process_scanned_pdf(
-        self, pdf_path: str, dpi: int = 300, max_pages: int = 50
+        self,
+        pdf_path: str,
+        dpi: int = 300,
+        max_pages: int = 50,
     ) -> dict[str, Any]:
-        """
-        Traite un PDF scanné avec OCR
+        """Traite un PDF scanné avec OCR.
 
         Args:
-            pdf_path: Chemin vers le PDF
-            dpi: Résolution DPI pour conversion (défaut: 300)
-            max_pages: Nombre max de pages à traiter (défaut: 50)
+            pdf_path: Chemin vers le PDF.
+            dpi: Résolution DPI pour conversion (défaut: 300).
+            max_pages: Nombre max de pages à traiter (défaut: 50).
 
         Returns:
             {
@@ -74,7 +81,8 @@ class OCRIntegration:
                 'is_scanned': True,
                 'page_count': int,
                 'processing_time': float
-            }
+            }.
+
         """
         if not self.ocr_available:
             return {
@@ -85,15 +93,16 @@ class OCRIntegration:
                 "error": "OCR non disponible. Installez pytesseract et pdf2image.",
             }
 
-        import time
-
         start_time = time.time()
 
         try:
             # Convertir PDF en images
-            logger.info(f"Conversion PDF en images: {pdf_path}")
+            logger.info("Conversion PDF en images: %s", pdf_path)
             images = convert_from_path(
-                pdf_path, dpi=dpi, first_page=1, last_page=max_pages
+                pdf_path,
+                dpi=dpi,
+                first_page=1,
+                last_page=max_pages,
             )
 
             if not images:
@@ -111,7 +120,7 @@ class OCRIntegration:
 
             for i, image in enumerate(images):
                 try:
-                    logger.debug(f"Traitement OCR page {i+1}/{len(images)}")
+                    logger.debug("Traitement OCR page %d/%d", i + 1, len(images))
 
                     # OCR sur chaque page
                     ocr_data = pytesseract.image_to_data(
@@ -142,8 +151,8 @@ class OCRIntegration:
                     else:
                         text_pages.append("")
 
-                except Exception as e:
-                    logger.warning(f"Erreur OCR page {i+1}: {e}")
+                except (ValueError, OSError, RuntimeError) as e:
+                    logger.warning("Erreur OCR page %d: %s", i + 1, e)
                     text_pages.append("")
 
             avg_confidence = (
@@ -161,8 +170,8 @@ class OCRIntegration:
                 "pages_with_text": pages_with_text,
             }
 
-        except Exception as e:
-            logger.error(f"Erreur OCR: {e}")
+        except (ValueError, OSError, RuntimeError) as e:
+            logger.exception("Erreur OCR: %s", e)
             return {
                 "text": "",
                 "pages": [],
@@ -173,14 +182,14 @@ class OCRIntegration:
             }
 
     def detect_if_scanned(self, pdf_path: str) -> bool:
-        """
-        Détecte si un PDF est scanné (image) ou contient du texte
+        """Détecte si un PDF est scanné (image) ou contient du texte.
 
         Args:
-            pdf_path: Chemin vers le PDF
+            pdf_path: Chemin vers le PDF.
 
         Returns:
-            True si le PDF semble être scanné
+            True si le PDF semble être scanné.
+
         """
         try:
             from pypdf import PdfReader
@@ -194,7 +203,7 @@ class OCRIntegration:
                 total_chars += len(text.strip())
 
             # Si très peu de texte, probablement scanné
-            return total_chars < 100
-        except Exception as e:
-            logger.warning(f"Erreur détection PDF scanné: {e}")
+            return total_chars < MIN_TEXT_CHARS_FOR_SCANNED_DETECTION
+        except (ValueError, OSError, RuntimeError) as e:
+            logger.warning("Erreur détection PDF scanné: %s", e)
             return False  # Par défaut, considérer comme texte
