@@ -255,8 +255,29 @@ class ApiService {
     String? description,
     String? category,
   }) async {
+    // Vérifier si le backend est disponible avant d'essayer
+    final backendEnabled = await BackendConfigService.isBackendEnabled();
+    if (!backendEnabled) {
+      return {
+        'success': false,
+        'error': 'Backend non disponible',
+        'backend_disabled': true,
+      };
+    }
+
     try {
       final baseUrlValue = await baseUrl;
+      
+      // Test rapide de connexion avant la requête principale
+      final isConnected = await BackendConfigService.testConnection(baseUrlValue);
+      if (!isConnected) {
+        return {
+          'success': false,
+          'error': 'Backend non disponible',
+          'backend_unavailable': true,
+        };
+      }
+
       final response = await http.post(
         Uri.parse('$baseUrlValue/api/health-portals'),
         headers: _headers,
@@ -266,7 +287,7 @@ class ApiService {
           'description': description,
           'category': category,
         }),
-      );
+      ).timeout(const Duration(seconds: 5));
 
       if (response.statusCode == 200) {
         return json.decode(response.body);
@@ -281,11 +302,21 @@ class ApiService {
         };
       }
     } catch (e) {
-      ErrorHelper.logError(e, context: 'createHealthPortal');
+      // Ne logger l'erreur que si ce n'est pas une erreur de connexion normale (backend non disponible)
+      final errorString = e.toString().toLowerCase();
+      final isConnectionRefused = e is SocketException && 
+                                  (errorString.contains('connection refused') || 
+                                   errorString.contains('errno = 61'));
+      
+      if (!isConnectionRefused) {
+        ErrorHelper.logError(e, context: 'createHealthPortal');
+      }
+      
       return {
         'success': false,
         'error': ErrorHelper.getUserFriendlyMessage(e),
         'technical_error': e.toString(),
+        'backend_unavailable': e is SocketException,
       };
     }
   }

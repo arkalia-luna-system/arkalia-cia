@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:open_filex/open_filex.dart';
 import '../services/local_storage_service.dart';
 import '../services/file_storage_service.dart';
 import '../services/category_service.dart';
@@ -260,12 +261,23 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         return;
       }
 
-      // Ouvrir le PDF avec une application externe
-      final uri = Uri.file(filePath);
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
-      } else {
-        _showError('Impossible d\'ouvrir le PDF. Installez une application de visualisation PDF.');
+      // Ouvrir le PDF avec open_filex (fonctionne mieux sur iOS/macOS)
+      final result = await OpenFilex.open(filePath);
+      
+      if (result.type != ResultType.done) {
+        // Si open_filex échoue, essayer avec url_launcher en fallback
+        try {
+          final uri = Uri.file(filePath);
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          } else {
+            _showError('Impossible d\'ouvrir le PDF. Installez une application de visualisation PDF.');
+          }
+        } catch (e) {
+          if (mounted) {
+            _showError('Erreur lors de l\'ouverture: ${result.message ?? e.toString()}');
+          }
+        }
       }
     } catch (e) {
       if (mounted) {

@@ -340,7 +340,8 @@ app = FastAPI(
 
 # Ajouter le rate limiter
 app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+# Type ignore pour compatibilité avec Starlette/FastAPI
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)  # type: ignore[arg-type]
 
 # Middleware de sécurité : Trusted Host
 # En production, ajouter les domaines autorisés

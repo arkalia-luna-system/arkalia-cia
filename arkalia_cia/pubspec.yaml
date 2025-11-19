@@ -34,6 +34,8 @@ dependencies:
 
   # Partage
   share_plus: ^7.2.1
+  # Ouverture de fichiers
+  open_filex: ^4.4.0
 
   # NOUVEAUX PLUGINS POUR PHASE 1 - STOCKAGE LOCAL
   shared_preferences: ^2.2.2

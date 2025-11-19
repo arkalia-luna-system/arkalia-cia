@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../services/api_service.dart';
+import '../services/backend_config_service.dart';
 import '../utils/validation_helper.dart';
 
 class HealthScreen extends StatefulWidget {
@@ -52,20 +53,27 @@ class _HealthScreenState extends State<HealthScreen> {
     
     // Vérifier et ajouter les portails s'ils n'existent pas déjà
     try {
+      // Vérifier d'abord si le backend est disponible
+      final backendEnabled = await BackendConfigService.isBackendEnabled();
+      if (!backendEnabled) {
+        return; // Backend désactivé, ignorer silencieusement
+      }
+
       final existingPortals = await ApiService.getHealthPortals();
       final existingUrls = existingPortals.map((p) => p['url'] as String).toSet();
       
       for (final portal in belgianPortals) {
         if (!existingUrls.contains(portal['url'] as String)) {
-          try {
-            await ApiService.createHealthPortal(
-              name: portal['name'] as String,
-              url: portal['url'] as String,
-              description: portal['description'] as String,
-              category: portal['category'] as String,
-            );
-          } catch (e) {
-            // Ignorer les erreurs si le portail existe déjà ou si le backend n'est pas disponible
+          final result = await ApiService.createHealthPortal(
+            name: portal['name'] as String,
+            url: portal['url'] as String,
+            description: portal['description'] as String,
+            category: portal['category'] as String,
+          );
+          
+          // Ignorer silencieusement si le backend n'est pas disponible
+          if (result['backend_unavailable'] == true || result['backend_disabled'] == true) {
+            break; // Arrêter si le backend n'est pas disponible
           }
         }
       }
