@@ -25,6 +25,7 @@ from arkalia_cia_python_backend.ai.conversational_ai import ConversationalAI
 from arkalia_cia_python_backend.ai.pattern_analyzer import AdvancedPatternAnalyzer
 from arkalia_cia_python_backend.aria_integration.api import router as aria_router
 from arkalia_cia_python_backend.database import CIADatabase
+from arkalia_cia_python_backend.pdf_parser.metadata_extractor import MetadataExtractor
 from arkalia_cia_python_backend.pdf_processor import PDFProcessor
 from arkalia_cia_python_backend.security_utils import (
     sanitize_error_detail,
@@ -46,7 +47,6 @@ limiter = Limiter(key_func=get_remote_address)
 db = CIADatabase()
 pdf_processor = PDFProcessor()
 conversational_ai = ConversationalAI()
-pattern_analyzer = AdvancedPatternAnalyzer()
 pattern_analyzer = AdvancedPatternAnalyzer()
 
 
@@ -546,18 +546,16 @@ async def upload_document(request: Request, file: UploadFile = File(...)):
             raise HTTPException(status_code=400, detail=result["error"])
 
         # Extraire métadonnées intelligentes
-        from arkalia_cia_python_backend.pdf_parser.metadata_extractor import MetadataExtractor
-        
         metadata = None
         text_content = ""
         try:
             # Extraire texte (avec OCR si nécessaire)
             text_content = pdf_processor.extract_text_from_pdf(tmp_file_path, use_ocr=False)
-            
+
             # Si peu de texte, essayer OCR
             if len(text_content.strip()) < 100:
                 text_content = pdf_processor.extract_text_from_pdf(tmp_file_path, use_ocr=True)
-            
+
             # Extraire métadonnées
             metadata_extractor = MetadataExtractor()
             metadata = metadata_extractor.extract_metadata(text_content)
@@ -576,14 +574,15 @@ async def upload_document(request: Request, file: UploadFile = File(...)):
 
         # Sauvegarder métadonnées extraites
         if metadata and doc_id:
+            doc_date = metadata.get("date")
             db.add_document_metadata(
                 document_id=doc_id,
-                doctor_name=metadata.get('doctor_name'),
-                doctor_specialty=metadata.get('doctor_specialty'),
-                document_date=metadata.get('date').isoformat() if metadata.get('date') else None,
-                exam_type=metadata.get('exam_type'),
-                document_type=metadata.get('document_type'),
-                keywords=','.join(metadata.get('keywords', [])),
+                doctor_name=metadata.get("doctor_name"),
+                doctor_specialty=metadata.get("doctor_specialty"),
+                document_date=doc_date.isoformat() if doc_date else None,
+                exam_type=metadata.get("exam_type"),
+                document_type=metadata.get("document_type"),
+                keywords=",".join(metadata.get("keywords", [])),
                 extracted_text=text_content[:5000] if text_content else None,  # Limiter à 5000 caractères
             )
 
