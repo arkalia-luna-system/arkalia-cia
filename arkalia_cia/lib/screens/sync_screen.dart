@@ -539,7 +539,7 @@ class _SyncScreenState extends State<SyncScreen> {
       final allData = await LocalStorageService.exportAllData();
       final filteredData = <String, dynamic>{
         'export_date': DateTime.now().toIso8601String(),
-        'version': '1.1.0',
+        'version': '1.2.0',
       };
 
       if (exportOptions['Documents'] == true) {

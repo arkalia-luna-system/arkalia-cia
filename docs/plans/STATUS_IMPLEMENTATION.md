@@ -25,6 +25,39 @@
 
 ---
 
+### 👨‍👩‍👧 **PLAN_05 : Partage Familial** (Terminé - 80% ✅)
+
+#### ✅ **Terminé**
+- [x] Modèle `FamilyMember`
+- [x] Service `FamilySharingService`
+- [x] Écran partage familial (`FamilySharingScreen`)
+- [x] Écran gestion membres (`ManageFamilyMembersScreen`)
+- [x] Sélection documents à partager
+- [x] Intégration dans HomePage (bouton "Partage")
+
+#### ⚠️ **En cours / À faire**
+- [ ] Chiffrement bout-en-bout (à améliorer)
+- [ ] Audit log complet
+- [ ] Notifications partage
+
+---
+
+### 🤖 **PLAN_04 : IA Patterns** (En cours - 30%)
+
+#### ✅ **Terminé**
+- [x] Module `AdvancedPatternAnalyzer`
+- [x] Détection patterns temporels
+- [x] Détection tendances
+- [x] Détection saisonnalité
+
+#### ⚠️ **En cours / À faire**
+- [ ] Intégration dans ARIA
+- [ ] Visualisations graphiques
+- [ ] Modèles ML avancés (Prophet)
+- [ ] Détection corrélations avancées
+
+---
+
 ### 👨‍⚕️ **PLAN_02 : Historique Médecins** (Terminé - 100% ✅)
 
 #### ✅ **Terminé**
