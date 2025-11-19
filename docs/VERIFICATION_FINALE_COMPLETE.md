@@ -181,16 +181,28 @@ grep -r "TODO\|FIXME\|XXX\|HACK" arkalia_cia/lib/ --include="*.dart"
 
 ---
 
+## ⚠️ **CE QUI N'EST PAS ENCORE FAIT (Modules métiers avancés)**
+
+### Modules métiers avancés restants :
+- ❌ Import automatique Andaman 7 / MaSanté / eHealth (pas de récupération API, pas d'automatisation)
+- ❌ Recherche ultra avancée NLP/AI performante (prototype basique seulement)
+- ❌ Référentiel médecin/consultation avancé complet (historique automatique connecté)
+- ❌ Partage familial sécurisé & granularité complète (dashboard dédié, chiffrement bout-en-bout)
+- ❌ IA conversationnelle santé complète ("médecin virtuel" intégré)
+- ❌ Intégration robot BBIA (roadmap uniquement)
+
 ## Conclusion
 
 L'application Arkalia CIA est maintenant :
 
-- Toutes les fonctionnalités implémentées
-- 85% couverture de tests
-- 0 erreur critique détectée
-- 0 vulnérabilité détectée
-- Documentation complète
-- Prête pour release v1.2.0
+- ✅ **Toutes les fonctionnalités infrastructure et utilisation quotidienne** implémentées
+- ✅ 85% couverture de tests
+- ✅ 0 erreur critique détectée
+- ✅ 0 vulnérabilité détectée
+- ✅ Documentation complète
+- ✅ Prête pour release v1.2.0 (infrastructure)
+
+⚠️ **Modules métiers avancés** restent à finaliser (voir section ci-dessus)
 
 ---
 

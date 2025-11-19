@@ -12,15 +12,17 @@
 
 ## 📊 Vue d'Ensemble Exécutive
 
-**Arkalia CIA** a été transformée d'une application fonctionnelle à une **application de niveau production** avec une qualité de code exceptionnelle et toutes les fonctionnalités critiques implémentées.
+**Arkalia CIA** a été transformée d'une application fonctionnelle à une **application de niveau production** avec une qualité de code exceptionnelle et toutes les fonctionnalités infrastructure implémentées.
 
 ### 🎯 Objectif Atteint
 
-✅ **100% des fonctionnalités critiques** implémentées  
+✅ **100% des fonctionnalités infrastructure et utilisation quotidienne** implémentées  
 ✅ **85% de couverture** de tests (vs 10.69% initialement)  
 ✅ **0 erreur critique** dans le code  
 ✅ **0 vulnérabilité** de sécurité  
 ✅ **Expérience utilisateur** exceptionnelle  
+
+⚠️ **Modules métiers avancés** (import automatique, recherche NLP, partage familial avancé, IA conversationnelle complète, intégration BBIA) restent à finaliser  
 
 ---
 
@@ -302,20 +304,56 @@
 
 ---
 
+## ⚠️ **CE QUI N'EST PAS ENCORE FAIT (Modules métiers avancés)**
+
+### 🔴 **Import automatique Andaman 7 / MaSanté / eHealth**
+- ❌ Pas de récupération via API
+- ❌ Pas d'automatisation d'import
+- ❌ Pas de parsing OCR/NLP sur PDF historiques
+- ⚠️ L'import est encore "manuel" (upload PDF uniquement)
+
+### 🔴 **Recherche ultra avancée et sémantique**
+- ⚠️ Prototype commencé (`SemanticSearchService` basique avec TF-IDF)
+- ❌ Pas au niveau "NLP/AI performant"
+- ❌ Pas de recherche intelligente par médecin, date, type d'examen avec NLP
+
+### 🔴 **Référentiel médecin/consultation avancé**
+- ✅ Module basique ok (`DoctorService`, CRUD complet)
+- ❌ Pas encore tout l'historique connecté automatiquement à chaque doc/examen
+- ❌ Pas d'association automatique documents ↔ médecins
+
+### 🔴 **Partage familial sécurisé & granularité**
+- ⚠️ Prévu/débuté pour 2026 (`FamilySharingService` existe)
+- ❌ Pas de dashboard partage dédié complet
+- ❌ Pas de chiffrement bout-en-bout sur les permissions famille/doc
+
+### 🔴 **IA conversationnelle santé**
+- ✅ Synchronisation ARIA ok (`ConversationalAI` backend existe)
+- ❌ Pas encore de "médecin virtuel" intégré côté CIA
+- ❌ Pas de dialogue santé intégré performant
+
+### 🔴 **Intégration robot BBIA**
+- ❌ Roadmap uniquement
+- ❌ Pas encore de fonctionnalités robotiques dans CIA
+
+---
+
 ## ✅ Conclusion
 
 **Arkalia CIA v1.2.0** représente une **transformation majeure** de l'application :
 
 ✅ **Qualité exceptionnelle** - 85% couverture, 0 erreur  
-✅ **Fonctionnalités complètes** - 100% des fonctionnalités critiques  
+✅ **Infrastructure complète** - 100% des fonctionnalités infrastructure et utilisation quotidienne  
 ✅ **Sécurité renforcée** - 0 vulnérabilité, chiffrement fort  
 ✅ **UX optimale** - Recherche, stats, accessibilité  
 ✅ **Robustesse** - Retry, cache, gestion erreurs  
 ✅ **Documentation complète** - Guides et résumés  
 
-**Statut Final**: 🟢 **VALIDÉ POUR PRODUCTION**
+**⚠️ Modules métiers avancés** - Import automatique, recherche NLP, partage familial avancé, IA conversationnelle complète, intégration BBIA restent à finaliser
 
-**Recommandation**: ✅ **APPROUVÉ POUR RELEASE v1.2.0**
+**Statut Final**: 🟢 **VALIDÉ POUR PRODUCTION** (infrastructure et usage quotidien)
+
+**Recommandation**: ✅ **APPROUVÉ POUR RELEASE v1.2.0** - Base solide, modules métiers avancés à venir
 
 ---
 

@@ -154,11 +154,34 @@
 
 ### Current Phase: **Production Ready** ✅
 
-- ✅ All core features implemented
+- ✅ All core infrastructure features implemented
 - ✅ Comprehensive test coverage (85%)
 - ✅ Security audit passed
 - ✅ Documentation complete
 - ✅ Ready for App Store/Play Store submission
+
+### ✅ **What is Really Done (100%)**
+
+**Infrastructure & Daily Use:**
+- ✅ Secure medical document management (PDF, images): upload, organization, full-text search, AES-256 encryption, local storage, simple sharing
+- ✅ Health reminders & calendar: notifications, native calendar integration, recurring reminders, appointment management
+- ✅ Emergency module: ICE, emergency card, Belgian emergency numbers, quick call
+- ✅ Ultra-accessible interface for seniors: large buttons, contrast, contextual help, validated senior user tests
+- ✅ Security & privacy: biometric authentication, key management, secure erasure, CI/CD security, regular audits, written GDPR policy
+- ✅ Basic CIA ↔ ARIA synchronization: tested and operational
+- ✅ Automated tests: 206/206 passing (85% coverage), non-regression + auto security
+- ✅ Complete documentation: installation, architecture, security, deployment, migration
+- ✅ Performance: measured and documented
+
+### ⚠️ **What is NOT Yet Done (Advanced Business Modules)**
+
+**Still Missing:**
+- ❌ Automatic import from Andaman 7 / MaSanté / eHealth: no API retrieval, no import automation, no OCR/NLP parsing on historical PDFs
+- ❌ Ultra-advanced semantic search: prototype started but not at "performant NLP/AI" level
+- ❌ Advanced doctor/consultation referential: basic module ok but not all history automatically connected to each doc/exam
+- ❌ Secure family sharing & granularity: planned/started for 2026, but no dedicated sharing dashboard, no end-to-end encryption on family/doc permissions
+- ❌ Conversational health AI: ARIA sync ok, but no "virtual doctor" or integrated health dialogue on CIA side
+- ❌ BBIA robot integration: roadmap only, no robotic features in CIA yet
 
 ### Next Steps
 

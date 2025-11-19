@@ -31,6 +31,11 @@
 - [x] **Endpoint API `/api/health-portals/import`** ✅ NOUVEAU
 
 #### ⚠️ **En cours / À faire**
+- [ ] **Import automatique depuis portails santé** ❌ PAS FAIT
+  - [ ] Récupération via API Andaman 7 / MaSanté / eHealth
+  - [ ] Automatisation d'import
+  - [ ] Parsing OCR/NLP sur PDF historiques
+  - ⚠️ Actuellement: Import manuel uniquement (upload PDF)
 - [ ] Extraction intelligente données essentielles (basique implémenté)
 - [ ] Création historique automatique optimisée
 
@@ -55,7 +60,10 @@
 - [x] **Notifications planifiées** ✅ NOUVEAU
 
 #### ⚠️ **En cours / À faire**
+- [ ] **Dashboard partage dédié complet** ❌ PAS FAIT
+- [ ] **Chiffrement bout-en-bout sur permissions famille/doc** ❌ PAS FAIT
 - [ ] Audit log complet (partiellement implémenté)
+- ⚠️ **Statut**: Prévu/débuté pour 2026, service de base existe mais pas complet
 
 ---
 
@@ -108,8 +116,11 @@
 - [x] **Affichage historique dans UI** ✅ NOUVEAU
 
 #### ⚠️ **En cours / À faire**
+- [ ] **"Médecin virtuel" intégré côté CIA** ❌ PAS FAIT
+- [ ] **Dialogue santé intégré performant** ❌ PAS FAIT
 - [ ] Analyse cause-effet avancée (basique implémenté)
 - [ ] Modèles LLM (optionnel)
+- ⚠️ **Statut**: Synchronisation ARIA ok, mais pas de dialogue santé intégré performant côté CIA
 
 ---
 
@@ -146,6 +157,10 @@
 - [x] **Score de pertinence** ✅ NOUVEAU
 
 #### ⚠️ **En cours / À faire**
+- [ ] **Recherche NLP/AI performante** ❌ PAS FAIT
+  - ⚠️ Prototype basique existe (`SemanticSearchService` avec TF-IDF simple)
+  - ❌ Pas au niveau "NLP/AI performant"
+  - ❌ Pas de recherche intelligente par médecin, date, type d'examen avec NLP
 - [ ] Performance optimisée (<200ms) - actuellement ~300ms
 
 ---
@@ -167,6 +182,10 @@
 - [x] **Sauvegarde métadonnées lors upload** ✅ NOUVEAU
 
 #### ⚠️ **En cours / À faire**
+- [ ] **Historique complet connecté automatiquement** ❌ PAS FAIT
+  - ✅ Module basique ok (`DoctorService`, CRUD complet)
+  - ❌ Pas encore tout l'historique connecté automatiquement à chaque doc/examen
+  - ❌ Pas d'association automatique documents ↔ médecins
 - [ ] Association automatique documents ↔ médecins (basique implémenté)
 
 #### ✅ **Terminé**
