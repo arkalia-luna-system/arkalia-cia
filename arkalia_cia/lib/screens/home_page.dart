@@ -9,6 +9,7 @@ import 'aria_screen.dart';
 import 'sync_screen.dart';
 import 'settings_screen.dart';
 import 'stats_screen.dart';
+import 'doctors_list_screen.dart';
 import '../services/local_storage_service.dart';
 import '../services/calendar_service.dart';
 import '../services/search_service.dart';
@@ -241,7 +242,17 @@ class _HomePageState extends State<HomePage> {
                       onTap: () => _showSync(context),
                     ),
 
-                    // Bouton 7: Statistiques
+                    // Bouton 7: Médecins
+                    _buildActionButton(
+                      context,
+                      icon: MdiIcons.doctor,
+                      title: 'Médecins',
+                      subtitle: 'Historique médecins',
+                      color: Colors.teal,
+                      onTap: () => _showDoctors(context),
+                    ),
+
+                    // Bouton 8: Statistiques
                     _buildActionButton(
                       context,
                       icon: MdiIcons.chartBox,
@@ -358,6 +369,13 @@ class _HomePageState extends State<HomePage> {
         _loadStats();
       }
     });
+  }
+
+  void _showDoctors(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const DoctorsListScreen()),
+    );
   }
 
   void _showEmergency(BuildContext context) {
