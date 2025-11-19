@@ -1,6 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
 import '../services/local_storage_service.dart';
+import 'notification_service.dart';
 
 class FamilyMember {
   final int? id;
@@ -154,6 +155,7 @@ class FamilySharingService {
     String documentId,
     List<int> memberIds, {
     bool encrypt = true,
+    bool sendNotification = true,
   }) async {
     if (encrypt) {
       await _initializeEncryption();

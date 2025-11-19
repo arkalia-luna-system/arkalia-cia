@@ -20,6 +20,7 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
   SearchFilters _filters = SearchFilters();
   List<SearchResult> _results = [];
   bool _isSearching = false;
+  bool _useSemanticSearch = false;
   List<String> _suggestions = [];
   List<Doctor> _doctors = [];
   String? _selectedCategory;
@@ -78,7 +79,7 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
     });
 
     try {
-      final results = await _searchService.search(_filters);
+      final results = await _searchService.search(_filters, useSemantic: _useSemanticSearch);
       setState(() {
         _results = results;
         _isSearching = false;

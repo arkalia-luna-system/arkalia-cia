@@ -2,6 +2,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../services/local_storage_service.dart';
 import '../services/doctor_service.dart';
+import 'semantic_search_service.dart';
 
 class SearchFilters {
   final String? query;
@@ -41,6 +42,7 @@ class SearchResult {
 
 class SearchService {
   static Database? _database;
+  static final SemanticSearchService _semanticSearch = SemanticSearchService();
 
   static Future<Database> get database async {
     if (_database != null) return _database!;
@@ -103,11 +105,18 @@ class SearchService {
     return results;
   }
 
-  Future<List<SearchResult>> search(SearchFilters filters) async {
+  Future<List<SearchResult>> search(SearchFilters filters, {bool useSemantic = false}) async {
     final List<SearchResult> results = [];
 
     // Recherche dans documents
-    final documents = await LocalStorageService.getDocuments();
+    List<Map<String, dynamic>> documents;
+    if (useSemantic && filters.query != null && filters.query!.isNotEmpty) {
+      // Recherche sémantique
+      documents = await _semanticSearch.semanticSearch(filters.query!);
+    } else {
+      documents = await LocalStorageService.getDocuments();
+    }
+
     for (var doc in documents) {
       final matches = _matchesDocument(doc, filters);
       if (matches) {
@@ -126,7 +135,12 @@ class SearchService {
     // Recherche dans médecins
     if (filters.query != null && filters.query!.isNotEmpty) {
       final doctorService = DoctorService();
-      final doctors = await doctorService.searchDoctors(filters.query!);
+      List<dynamic> doctors;
+      if (useSemantic) {
+        doctors = await _semanticSearch.semanticSearchDoctors(filters.query!);
+      } else {
+        doctors = await doctorService.searchDoctors(filters.query!);
+      }
       for (var doctor in doctors) {
         results.add(SearchResult(
           id: doctor.id?.toString() ?? '',
