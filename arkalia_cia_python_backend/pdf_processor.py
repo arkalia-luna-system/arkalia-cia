@@ -37,7 +37,7 @@ class PDFProcessor:
         name, ext = os.path.splitext(original_name)
         return f"{name}_{timestamp}{ext}"
 
-    def extract_text_from_pdf(self, file_path: str) -> str:
+    def extract_text_from_pdf(self, file_path: str, use_ocr: bool = False) -> str:
         """Extrait le texte d'un PDF (optimisé mémoire)"""
         try:
             with open(file_path, "rb") as file:

@@ -46,7 +46,8 @@ class ConversationalAIService {
     // Récupérer seulement les données récentes pour économiser la mémoire
     // Limiter à 10 documents récents, 5 médecins récents
     final allDocuments = await LocalStorageService.getDocuments();
-    final allDoctors = await DoctorService.getDoctors();
+    final doctorService = DoctorService();
+    final allDoctors = await doctorService.getAllDoctors();
     
     // Prendre seulement les 10 documents les plus récents
     final documents = allDocuments.take(10).toList();
