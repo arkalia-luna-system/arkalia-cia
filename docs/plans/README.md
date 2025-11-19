@@ -90,11 +90,28 @@ Chaque plan contient :
 
 ---
 
+## 🖥️ **GUIDE TEST VISUEL EN LIVE**
+
+### **[GUIDE_TEST_VISUEL_LIVE.md](./GUIDE_TEST_VISUEL_LIVE.md)**
+
+Guide complet pour tester l'app avec visualisation interface en temps réel :
+- ✅ Hot Reload Flutter (changements instantanés)
+- ✅ Simulateur iOS (iPhone virtuel)
+- ✅ Émulateur Android (Android virtuel)
+- ✅ Device physique (téléphone réel)
+- ✅ Widget Inspector (inspecter interface)
+- ✅ Flutter DevTools (outils développement)
+
+**Utilisation** : Voir l'interface en live pendant développement plutôt que tester chaque bouton individuellement.
+
+---
+
 ## 📚 **RESSOURCES**
 
 - **[ANALYSE_COMPLETE_BESOINS_MERE.md](../ANALYSE_COMPLETE_BESOINS_MERE.md)** : Analyse complète des besoins
 - **[ARCHITECTURE.md](../ARCHITECTURE.md)** : Architecture générale CIA
 - **[API.md](../API.md)** : Documentation API backend
+- **[GUIDE_TEST_VISUEL_LIVE.md](./GUIDE_TEST_VISUEL_LIVE.md)** : Guide test visuel en live
 
 ---
 
