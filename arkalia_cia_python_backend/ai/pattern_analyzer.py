@@ -146,9 +146,9 @@ class AdvancedPatternAnalyzer:
             if "date" in item:
                 try:
                     date = datetime.fromisoformat(item["date"])
-                    month = date.month
-                    monthly_counts[month] = monthly_counts.get(month, 0) + 1
-                except:
+                    month_str = str(date.month)
+                    monthly_counts[month_str] = monthly_counts.get(month_str, 0) + 1
+                except Exception:
                     continue
 
         if monthly_counts:

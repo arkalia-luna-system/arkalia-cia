@@ -158,7 +158,7 @@ class ConversationalAI:
                         )
                         if patterns.get("recurring_patterns"):
                             answer += "J'ai détecté des patterns récurrents dans vos douleurs. "
-                    except:
+                    except Exception:
                         pass
 
                 return answer
@@ -232,7 +232,7 @@ class ConversationalAI:
             try:
                 user_id = user_data.get("user_id", "default")
                 pain_data = self.aria.get_pain_records(user_id, limit=20)
-            except:
+            except Exception:
                 pass
 
         documents = user_data.get("documents", [])
@@ -249,7 +249,7 @@ class ConversationalAI:
                     )
                     if patterns.get("correlations"):
                         answer += "ARIA a détecté des corrélations spécifiques. "
-                except:
+                except Exception:
                     pass
 
             return answer
@@ -262,7 +262,7 @@ class ConversationalAI:
                 )
                 if health_metrics:
                     return "J'ai accès à vos métriques santé depuis ARIA. Je peux analyser les corrélations entre douleurs, sommeil, activité et stress. "
-            except:
+            except Exception:
                 pass
 
         return "Pour analyser les causes et effets, j'ai besoin de plus de données (douleurs, examens). Connectez ARIA pour une analyse plus approfondie. "

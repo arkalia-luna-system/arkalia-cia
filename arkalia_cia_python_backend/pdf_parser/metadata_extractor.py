@@ -89,7 +89,8 @@ class MetadataExtractor:
         for pattern in self.doctor_patterns:
             matches = re.findall(pattern, text, re.IGNORECASE)
             if matches:
-                return matches[0].strip()
+                result = matches[0].strip()
+                return str(result) if result else None
         return None
 
     def _extract_specialty(self, text: str) -> str | None:

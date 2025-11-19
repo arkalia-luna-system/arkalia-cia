@@ -15,9 +15,11 @@ from fastapi import FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from pydantic import BaseModel, Field, field_validator
-from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi import Limiter
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
+from starlette.requests import Request
+from starlette.responses import Response
 
 from arkalia_cia_python_backend.ai.conversational_ai import ConversationalAI
 from arkalia_cia_python_backend.aria_integration.api import router as aria_router
@@ -339,7 +341,23 @@ app = FastAPI(
 
 # Ajouter le rate limiter
 app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+
+def rate_limit_handler(request: Request, exc: Exception) -> Response:
+    """Handler personnalisé pour RateLimitExceeded"""
+    from slowapi.errors import RateLimitExceeded
+
+    if isinstance(exc, RateLimitExceeded):
+        from fastapi.responses import JSONResponse
+
+        return JSONResponse(
+            status_code=429,
+            content={"detail": "Trop de requêtes. Veuillez réessayer plus tard."},
+        )
+    raise exc
+
+
+app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
 
 # Middleware de sécurité : Trusted Host
 # En production, ajouter les domaines autorisés

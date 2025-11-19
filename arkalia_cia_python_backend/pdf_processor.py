@@ -77,8 +77,9 @@ class PDFProcessor:
                 if hasattr(self, "ocr") and self.ocr and self.ocr.is_available():
                     logger.info("Utilisation OCR pour PDF scanné")
                     ocr_result = self.ocr.process_scanned_pdf(file_path)
-                    if ocr_result.get("text"):
-                        return ocr_result["text"]
+                    text_result = ocr_result.get("text")
+                    if text_result:
+                        return str(text_result)
 
             return result
         except Exception as e:
@@ -87,8 +88,11 @@ class PDFProcessor:
             if hasattr(self, "ocr") and self.ocr and self.ocr.is_available():
                 try:
                     ocr_result = self.ocr.process_scanned_pdf(file_path)
-                    return ocr_result.get(
-                        "text", f"Erreur lors de l'extraction: {str(e)}"
+                    text_result = ocr_result.get("text")
+                    return (
+                        str(text_result)
+                        if text_result
+                        else f"Erreur lors de l'extraction: {str(e)}"
                     )
                 except Exception:
                     pass

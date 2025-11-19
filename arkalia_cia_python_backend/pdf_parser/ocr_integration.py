@@ -31,6 +31,7 @@ class OCRIntegration:
             tesseract_cmd: Chemin vers tesseract (optionnel, auto-détecté si None)
         """
         self.ocr_available = OCR_AVAILABLE
+        self.tesseract_config: str | None = None
 
         if OCR_AVAILABLE:
             if tesseract_cmd:
@@ -49,8 +50,6 @@ class OCRIntegration:
 
             # Configuration Tesseract pour français et anglais
             self.tesseract_config = "--oem 3 --psm 6 -l fra+eng"
-        else:
-            self.tesseract_config: str | None = None
 
     def is_available(self) -> bool:
         """Vérifie si OCR est disponible"""
