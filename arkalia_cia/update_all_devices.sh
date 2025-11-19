@@ -246,8 +246,23 @@ update_device() {
         
         log_info "Installation sur $device_id..."
         export PATH="$HOME/Library/Android/sdk/platform-tools:$PATH"
+        
+        # Vérifier que l'APK existe avant d'installer
+        if [ ! -f "build/app/outputs/flutter-apk/app-release.apk" ]; then
+            log_error "APK non trouvé : build/app/outputs/flutter-apk/app-release.apk"
+            return 1
+        fi
+        
+        # Forcer l'arrêt de l'app avant installation pour éviter les conflits
+        log_info "Arrêt de l'app avant installation..."
+        adb -s "$device_id" shell "am force-stop com.example.arkalia_cia" 2>/dev/null || true
+        sleep 1
+        
         if adb -s "$device_id" install -r build/app/outputs/flutter-apk/app-release.apk 2>&1 | tee /tmp/flutter_install_${device_id}.log; then
             build_success=true
+            log_success "Installation réussie sur $device_id"
+        else
+            log_error "Échec installation - voir /tmp/flutter_install_${device_id}.log"
         fi
         
     elif [[ "$device_id" == *"macos"* ]]; then
@@ -322,8 +337,23 @@ update_device() {
         
         log_info "Installation sur $device_id..."
         export PATH="$HOME/Library/Android/sdk/platform-tools:$PATH"
+        
+        # Vérifier que l'APK existe avant d'installer
+        if [ ! -f "build/app/outputs/flutter-apk/app-release.apk" ]; then
+            log_error "APK non trouvé : build/app/outputs/flutter-apk/app-release.apk"
+            return 1
+        fi
+        
+        # Forcer l'arrêt de l'app avant installation pour éviter les conflits
+        log_info "Arrêt de l'app avant installation..."
+        adb -s "$device_id" shell "am force-stop com.example.arkalia_cia" 2>/dev/null || true
+        sleep 1
+        
         if adb -s "$device_id" install -r build/app/outputs/flutter-apk/app-release.apk 2>&1 | tee /tmp/flutter_install_${device_id}.log; then
             build_success=true
+            log_success "Installation réussie sur $device_id"
+        else
+            log_error "Échec installation - voir /tmp/flutter_install_${device_id}.log"
         fi
     fi
     
