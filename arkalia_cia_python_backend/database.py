@@ -4,6 +4,7 @@ Adapté du storage.py d'Arkalia-Luna-Pro
 """
 
 import sqlite3
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -25,9 +26,11 @@ class CIADatabase:
         # Permettre les chemins absolus pour les fichiers temporaires de tests
         # et les chemins relatifs dans le répertoire courant
         if db_path_obj.is_absolute():
-            # Pour les tests : permettre les fichiers temporaires (commencent par /tmp ou /var)
+            # Pour les tests : permettre les fichiers temporaires
+            # Utiliser tempfile.gettempdir() pour éviter les chemins hardcodés
+            temp_dir = tempfile.gettempdir()
             if not (
-                str(db_path_obj).startswith("/tmp")  # Validation de sécurité
+                str(db_path_obj).startswith(temp_dir)
                 or str(db_path_obj).startswith("/var")
                 or str(db_path_obj).startswith(str(Path.cwd()))
             ):
@@ -100,6 +103,39 @@ class CIADatabase:
                     url TEXT NOT NULL,
                     description TEXT,
                     category TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """
+            )
+
+            # Table des métadonnées documents
+            cursor.execute(
+                """
+                CREATE TABLE IF NOT EXISTS document_metadata (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    document_id INTEGER NOT NULL,
+                    doctor_name TEXT,
+                    doctor_specialty TEXT,
+                    document_date TEXT,
+                    exam_type TEXT,
+                    document_type TEXT,
+                    keywords TEXT,
+                    extracted_text TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (document_id) REFERENCES documents(id) ON DELETE CASCADE
+                )
+            """
+            )
+
+            # Table des conversations IA
+            cursor.execute(
+                """
+                CREATE TABLE IF NOT EXISTS ai_conversations (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    question TEXT NOT NULL,
+                    answer TEXT NOT NULL,
+                    question_type TEXT,
+                    related_documents TEXT,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             """

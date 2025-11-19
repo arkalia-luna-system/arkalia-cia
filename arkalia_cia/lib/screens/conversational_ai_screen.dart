@@ -13,11 +13,36 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
   final TextEditingController _questionController = TextEditingController();
   final List<ChatMessage> _messages = [];
   bool _isLoading = false;
+  bool _showHistory = false;
 
   @override
   void initState() {
     super.initState();
     _addWelcomeMessage();
+    _loadHistory();
+  }
+
+  Future<void> _loadHistory() async {
+    final history = await _aiService.getConversationHistory(limit: 20);
+    if (history.isNotEmpty && mounted) {
+      setState(() {
+        // Ajouter messages historiques (sans doublons)
+        for (var conv in history.reversed) {
+          if (!_messages.any((m) => m.text == conv['question'])) {
+            _messages.insert(1, ChatMessage(
+              text: conv['question'],
+              isUser: true,
+              timestamp: DateTime.parse(conv['created_at']),
+            ));
+            _messages.insert(2, ChatMessage(
+              text: conv['answer'],
+              isUser: false,
+              timestamp: DateTime.parse(conv['created_at']),
+            ));
+          }
+        }
+      });
+    }
   }
 
   void _addWelcomeMessage() {
@@ -74,6 +99,15 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
       appBar: AppBar(
         title: const Text('Assistant IA Santé'),
         actions: [
+          IconButton(
+            icon: Icon(_showHistory ? Icons.chat : Icons.history),
+            onPressed: () {
+              setState(() {
+                _showHistory = !_showHistory;
+              });
+            },
+            tooltip: _showHistory ? 'Masquer historique' : 'Afficher historique',
+          ),
           IconButton(
             icon: const Icon(Icons.info_outline),
             onPressed: () {

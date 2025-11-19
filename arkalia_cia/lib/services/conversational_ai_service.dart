@@ -77,6 +77,23 @@ class ConversationalAIService {
     };
   }
   
+  Future<List<Map<String, dynamic>>> getConversationHistory({int limit = 50}) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$_baseUrl/api/ai/conversations?limit=$limit'),
+      );
+      
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return List<Map<String, dynamic>>.from(data);
+      }
+    } catch (e) {
+      // Erreur silencieuse
+    }
+    
+    return [];
+  }
+
   Future<List<String>> prepareAppointmentQuestions(String doctorId) async {
     try {
       final userData = await _getUserData();
