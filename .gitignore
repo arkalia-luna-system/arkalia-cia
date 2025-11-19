@@ -246,6 +246,7 @@ logs/
 .DS_Store
 ._*
 *~
+:memory:
 
 # IDE
 .vscode/
