@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
+import '../services/onboarding_service.dart';
 import 'home_page.dart';
+import 'onboarding/welcome_screen.dart';
 
 /// Écran de verrouillage avec authentification biométrique
 class LockScreen extends StatefulWidget {
@@ -85,10 +87,21 @@ class _LockScreenState extends State<LockScreen> {
     }
   }
 
-  void _unlockApp() {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => const HomePage()),
-    );
+  Future<void> _unlockApp() async {
+    // Vérifier si l'onboarding est complété
+    final onboardingCompleted = await OnboardingService.isOnboardingCompleted();
+    
+    if (!onboardingCompleted) {
+      // Première connexion : afficher onboarding
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+      );
+    } else {
+      // Onboarding complété : aller à l'accueil
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
+    }
   }
 
   @override
