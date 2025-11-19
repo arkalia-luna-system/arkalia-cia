@@ -13,7 +13,6 @@ logger = logging.getLogger(__name__)
 try:
     import pytesseract
     from pdf2image import convert_from_path
-    from PIL import Image
 
     OCR_AVAILABLE = True
 except ImportError:

@@ -5,6 +5,7 @@ Améliore l'existant ARIA avec modèles ML plus sophistiqués
 
 import logging
 from datetime import datetime
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -117,7 +118,7 @@ class AdvancedPatternAnalyzer:
 
             slope = numerator / denominator if denominator > 0 else 0
 
-            trends["slope"] = float(slope)
+            trends["slope"] = slope
             trends["direction"] = (
                 "increasing"
                 if slope > 0.1
@@ -140,7 +141,7 @@ class AdvancedPatternAnalyzer:
         seasonality = {}
 
         # Compter occurrences par mois
-        monthly_counts = {}
+        monthly_counts: dict[str, int] = {}
         for item in data:
             if "date" in item:
                 try:

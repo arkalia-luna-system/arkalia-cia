@@ -35,14 +35,13 @@ class PDFProcessor:
         self.upload_dir = Path(upload_dir)
         self.upload_dir.mkdir(exist_ok=True)
         # Initialiser OCR si disponible
+        self.ocr: OCRIntegration | None = None
         if OCR_AVAILABLE:
             try:
                 self.ocr = OCRIntegration()
             except Exception as e:
                 logger.warning(f"OCR non initialisé: {e}")
                 self.ocr = None
-        else:
-            self.ocr = None
 
     def generate_filename(self, original_name: str) -> str:
         """Génère un nom de fichier unique"""

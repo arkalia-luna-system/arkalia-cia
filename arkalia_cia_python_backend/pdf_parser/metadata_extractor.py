@@ -6,6 +6,7 @@ Inspiration : EDS-NLP pour extraction entités nommées santé
 import logging
 import re
 from datetime import datetime
+from typing import Any
 
 logger = logging.getLogger(__name__)
 

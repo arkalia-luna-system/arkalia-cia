@@ -61,12 +61,13 @@ class ARIAIntegration:
         try:
             response = self.session.get(
                 f"{self.aria_base_url}/api/patterns",
-                params={"user_id": user_id},
+                params={"user_id": str(user_id)},
                 timeout=5,
             )
 
             if response.status_code == 200:
-                return response.json()
+                data = response.json()
+                return dict(data) if isinstance(data, dict) else {}
             else:
                 return {}
         except Exception as e:
@@ -87,12 +88,13 @@ class ARIAIntegration:
         try:
             response = self.session.get(
                 f"{self.aria_base_url}/api/health-metrics",
-                params={"user_id": user_id, "days": days},
+                params={"user_id": str(user_id), "days": str(days)},
                 timeout=5,
             )
 
             if response.status_code == 200:
-                return response.json()
+                data = response.json()
+                return dict(data) if isinstance(data, dict) else {}
             else:
                 return {}
         except Exception as e:
