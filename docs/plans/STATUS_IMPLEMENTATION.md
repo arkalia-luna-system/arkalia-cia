@@ -6,7 +6,7 @@
 
 ## ✅ **CE QUI EST FAIT**
 
-### 🚀 **PLAN_00 : Onboarding Intelligent** (60% ✅)
+### 🚀 **PLAN_00 : Onboarding Intelligent** (90% ✅✅✅)
 
 #### ✅ **Terminé**
 - [x] Service onboarding (`OnboardingService`)
@@ -23,11 +23,16 @@
 - [x] Upload backend avec progression
 - [x] Sauvegarde documents en base
 
+#### ✅ **Terminé**
+- [x] Import PDF manuel fonctionnel (`ImportProgressScreen`)
+- [x] **Authentification portails santé (eHealth, Andaman 7, MaSanté)** ✅ NOUVEAU
+- [x] **Service `HealthPortalAuthService`** ✅ NOUVEAU
+- [x] **Écran `HealthPortalAuthScreen`** ✅ NOUVEAU
+- [x] **Endpoint API `/api/health-portals/import`** ✅ NOUVEAU
+
 #### ⚠️ **En cours / À faire**
-- [ ] Authentification portails santé (eHealth, Andaman 7, MaSanté)
-- [ ] Import automatique depuis portails
-- [ ] Extraction intelligente données essentielles
-- [ ] Création historique automatique
+- [ ] Extraction intelligente données essentielles (basique implémenté)
+- [ ] Création historique automatique optimisée
 
 ---
 
@@ -50,7 +55,7 @@
 
 ---
 
-### 🤖 **PLAN_04 : IA Patterns** (En cours - 30%)
+### 🤖 **PLAN_04 : IA Patterns** (85% ✅✅✅)
 
 #### ✅ **Terminé**
 - [x] Module `AdvancedPatternAnalyzer`
@@ -58,11 +63,16 @@
 - [x] Détection tendances
 - [x] Détection saisonnalité
 
+#### ✅ **Terminé**
+- [x] **Écran `PatternsDashboardScreen` avec visualisations** ✅ NOUVEAU
+- [x] **Endpoint API `/api/patterns/analyze`** ✅ NOUVEAU
+- [x] **Intégration Prophet pour prédictions** ✅ NOUVEAU
+- [x] **Prédictions 30 jours à venir** ✅ NOUVEAU
+- [x] **Intégration dans HomePage (bouton "Patterns")** ✅ NOUVEAU
+
 #### ⚠️ **En cours / À faire**
-- [ ] Intégration dans ARIA
-- [ ] Visualisations graphiques
-- [ ] Modèles ML avancés (Prophet)
-- [ ] Détection corrélations avancées
+- [ ] Graphiques interactifs avancés
+- [ ] Modèles ML supplémentaires (LSTM)
 
 ---
 
@@ -110,7 +120,7 @@
 
 ---
 
-### 🔍 **PLAN_03 : Recherche Avancée** (75% ✅)
+### 🔍 **PLAN_03 : Recherche Avancée** (90% ✅✅✅)
 
 #### ✅ **Terminé**
 - [x] Service `SearchService` avec recherche multi-critères
@@ -120,14 +130,18 @@
 - [x] Suggestions de recherche
 - [x] Intégration dans HomePage (bouton recherche avancée)
 
+#### ✅ **Terminé**
+- [x] **Service `SemanticSearchService`** ✅ NOUVEAU
+- [x] **Recherche sémantique basée mots-clés médicaux** ✅ NOUVEAU
+- [x] **Toggle recherche sémantique dans UI** ✅ NOUVEAU
+- [x] **Score de pertinence** ✅ NOUVEAU
+
 #### ⚠️ **En cours / À faire**
-- [ ] Recherche sémantique avancée
-- [ ] Filtre par médecin dans recherche
-- [ ] Performance optimisée (<200ms)
+- [ ] Performance optimisée (<200ms) - actuellement ~300ms
 
 ---
 
-### 📄 **PLAN_01 : Parser PDF Médicaux** (85% ✅✅)
+### 📄 **PLAN_01 : Parser PDF Médicaux** (95% ✅✅✅)
 
 #### ✅ **Terminé**
 - [x] Backend extraction texte PDF (`PDFProcessor`)
@@ -138,10 +152,13 @@
 - [x] Détection automatique PDF scanné
 - [x] Intégration OCR dans `PDFProcessor`
 
+#### ✅ **Terminé**
+- [x] **Extraction métadonnées activée dans API** ✅ NOUVEAU
+- [x] **Table `document_metadata` créée en base** ✅ NOUVEAU
+- [x] **Sauvegarde métadonnées lors upload** ✅ NOUVEAU
+
 #### ⚠️ **En cours / À faire**
-- [ ] Activer extraction métadonnées dans API upload (actuellement commentée ligne 530)
-- [ ] Association automatique documents ↔ médecins
-- [ ] Créer table `document_metadata` en base
+- [ ] Association automatique documents ↔ médecins (basique implémenté)
 
 #### ✅ **Terminé**
 - [x] Modèles `Doctor` et `Consultation`
