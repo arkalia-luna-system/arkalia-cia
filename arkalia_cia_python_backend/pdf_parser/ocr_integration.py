@@ -12,8 +12,8 @@ logger = logging.getLogger(__name__)
 
 # Vérifier disponibilité OCR
 try:
-    import pytesseract
-    from pdf2image import convert_from_path
+    import pytesseract  # type: ignore
+    from pdf2image import convert_from_path  # type: ignore
 
     OCR_AVAILABLE = True
 except ImportError:
