@@ -800,7 +800,7 @@ async def chat_with_ai(request: Request, chat_request: ChatRequest):
         logger.error(f"Erreur IA conversationnelle: {sanitize_log_message(str(e))}")
         raise HTTPException(
             status_code=500, detail="Erreur lors du traitement de votre question"
-        )
+        ) from e
 
 
 class PrepareAppointmentRequest(BaseModel):
@@ -824,7 +824,7 @@ async def prepare_appointment_questions(
         logger.error(f"Erreur préparation RDV: {sanitize_log_message(str(e))}")
         raise HTTPException(
             status_code=500, detail="Erreur lors de la préparation des questions"
-        )
+        ) from e
 
 
 if __name__ == "__main__":
