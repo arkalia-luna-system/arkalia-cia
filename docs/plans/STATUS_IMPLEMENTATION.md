@@ -6,7 +6,7 @@
 
 ## ✅ **CE QUI EST FAIT**
 
-### 🚀 **PLAN_00 : Onboarding Intelligent** (En cours - 50%)
+### 🚀 **PLAN_00 : Onboarding Intelligent** (60% ✅)
 
 #### ✅ **Terminé**
 - [x] Service onboarding (`OnboardingService`)
@@ -17,6 +17,12 @@
 - [x] Intégration dans `LockScreen`
 - [x] Script reset onboarding
 
+#### ✅ **Terminé**
+- [x] Import PDF manuel fonctionnel (`ImportProgressScreen`)
+- [x] Copie fichiers dans répertoire documents
+- [x] Upload backend avec progression
+- [x] Sauvegarde documents en base
+
 #### ⚠️ **En cours / À faire**
 - [ ] Authentification portails santé (eHealth, Andaman 7, MaSanté)
 - [ ] Import automatique depuis portails
@@ -25,19 +31,21 @@
 
 ---
 
-### 👨‍👩‍👧 **PLAN_05 : Partage Familial** (Terminé - 80% ✅)
+### 👨‍👩‍👧 **PLAN_05 : Partage Familial** (Terminé - 90% ✅✅✅)
 
 #### ✅ **Terminé**
-- [x] Modèle `FamilyMember`
-- [x] Service `FamilySharingService`
+- [x] Modèle `FamilyMember` et `SharedDocument`
+- [x] Service `FamilySharingService` complet
+- [x] Chiffrement AES-256 bout-en-bout (`encryptDocument`/`decryptDocument`)
+- [x] Génération clés sécurisées
 - [x] Écran partage familial (`FamilySharingScreen`)
 - [x] Écran gestion membres (`ManageFamilyMembersScreen`)
 - [x] Sélection documents à partager
+- [x] Départage documents (`unshareDocument`)
 - [x] Intégration dans HomePage (bouton "Partage")
 
 #### ⚠️ **En cours / À faire**
-- [ ] Chiffrement bout-en-bout (à améliorer)
-- [ ] Audit log complet
+- [ ] Audit log complet (partiellement implémenté)
 - [ ] Notifications partage
 
 ---
@@ -58,7 +66,7 @@
 
 ---
 
-### 💬 **PLAN_06 : IA Conversationnelle** (Terminé - 70% ✅)
+### 💬 **PLAN_06 : IA Conversationnelle** (Terminé - 85% ✅✅✅)
 
 #### ✅ **Terminé**
 - [x] Module backend `ConversationalAI`
@@ -67,14 +75,20 @@
 - [x] Recherche documents liés
 - [x] Suggestions de questions
 - [x] Préparation questions pour RDV
+- [x] Module `ARIAIntegration` backend
+- [x] Récupération données douleurs depuis ARIA
+- [x] Récupération patterns ARIA
+- [x] Récupération métriques santé ARIA
+- [x] Intégration ARIA dans réponses douleur (`_answer_pain_question`)
+- [x] Intégration ARIA dans analyse cause-effet (`_answer_cause_effect_question`)
 - [x] Service Flutter `ConversationalAIService`
+- [x] Récupération ARIA dans Flutter (`_getUserData`)
 - [x] Écran chat (`ConversationalAIScreen`)
 - [x] Intégration dans HomePage (bouton "Assistant IA")
 - [x] Endpoints API `/api/ai/chat` et `/api/ai/prepare-appointment`
 
 #### ⚠️ **En cours / À faire**
-- [ ] Intégration données ARIA (douleurs)
-- [ ] Analyse cause-effet avancée
+- [ ] Analyse cause-effet avancée (basique implémenté)
 - [ ] Modèles LLM (optionnel)
 - [ ] Historique conversations
 
@@ -96,7 +110,7 @@
 
 ---
 
-### 🔍 **PLAN_03 : Recherche Avancée** (Terminé - 80% ✅)
+### 🔍 **PLAN_03 : Recherche Avancée** (75% ✅)
 
 #### ✅ **Terminé**
 - [x] Service `SearchService` avec recherche multi-critères
@@ -113,18 +127,21 @@
 
 ---
 
-### 📄 **PLAN_01 : Parser PDF Médicaux** (En cours - 40%)
+### 📄 **PLAN_01 : Parser PDF Médicaux** (85% ✅✅)
 
 #### ✅ **Terminé**
-- [x] Backend extraction texte PDF (existant)
+- [x] Backend extraction texte PDF (`PDFProcessor`)
 - [x] Module `MetadataExtractor` pour extraction métadonnées
 - [x] Détection médecin, date, type examen
 - [x] Classification documents
+- [x] Module `OCRIntegration` avec Tesseract
+- [x] Détection automatique PDF scanné
+- [x] Intégration OCR dans `PDFProcessor`
 
 #### ⚠️ **En cours / À faire**
-- [ ] OCR pour PDF scannés (Tesseract)
-- [ ] Intégration complète dans API upload
+- [ ] Activer extraction métadonnées dans API upload (actuellement commentée ligne 530)
 - [ ] Association automatique documents ↔ médecins
+- [ ] Créer table `document_metadata` en base
 
 #### ✅ **Terminé**
 - [x] Modèles `Doctor` et `Consultation`
