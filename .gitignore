@@ -248,6 +248,9 @@ logs/
 *~
 :memory:
 
+# macOS resource fork files
+**/._*
+
 # IDE
 .vscode/
 .idea/
