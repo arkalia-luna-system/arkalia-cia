@@ -2,6 +2,25 @@
 
 > **Arkalia CIA** - Comprehensive service APIs and integration guide
 
+**Last Updated**: November 19, 2025  
+**Version**: 1.2.0  
+**Status**: ✅ **Production Ready**
+
+---
+
+## 📋 Table of Contents
+
+1. [Overview](#overview)
+2. [Service Architecture](#service-architecture)
+3. [Local Services](#local-services)
+4. [Backend API](#backend-api)
+5. [Error Handling](#error-handling)
+6. [Authentication](#authentication)
+7. [Rate Limiting](#rate-limiting)
+8. [Best Practices](#best-practices)
+
+---
+
 ## Overview
 
 Arkalia CIA implements a **hybrid API architecture** combining local services for offline functionality with optional backend APIs for advanced features. All APIs prioritize data privacy and minimal network dependency.
@@ -630,24 +649,17 @@ class ApiCache {
 }
 ```
 
-## Migration Guide
+## 📚 Related Documentation
 
-### API Version Changes
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - System architecture
+- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Deployment procedures
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Development guidelines
+- **[INDEX_DOCUMENTATION.md](INDEX_DOCUMENTATION.md)** - Full documentation index
 
-When upgrading between API versions, follow these steps:
+---
 
-1. **Check compatibility**: Review breaking changes
-2. **Update models**: Modify data models if needed
-3. **Test thoroughly**: Run all integration tests
-4. **Gradual rollout**: Deploy incrementally
-
-### Data Migration
-
-```dart
-class MigrationManager {
-  static Future<void> migrateTo(String version) async {
-    switch (version) {
-      case '2.0':
+**Last Updated**: November 19, 2025  
+*This API reference is maintained alongside code changes and updated with each release.*
         await _migrateToV2();
         break;
       case '3.0':

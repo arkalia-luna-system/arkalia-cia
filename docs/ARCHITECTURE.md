@@ -2,6 +2,29 @@
 
 > **Arkalia CIA** - Technical architecture and system design
 
+**Last Updated**: November 19, 2025  
+**Version**: 1.2.0  
+**Status**: ✅ **Production Ready**
+
+---
+
+## 📋 Table of Contents
+
+1. [Overview](#overview)
+2. [Architectural Principles](#architectural-principles)
+3. [System Architecture](#system-architecture)
+4. [Component Structure](#component-structure)
+5. [Data Flow Patterns](#data-flow-patterns)
+6. [Service Specifications](#service-specifications)
+7. [Security Architecture](#security-architecture)
+8. [Performance Considerations](#performance-considerations)
+9. [Deployment Architecture](#deployment-architecture)
+10. [Testing Strategy](#testing-strategy)
+11. [Future Roadmap](#future-roadmap)
+12. [Monitoring and Observability](#monitoring-and-observability)
+
+---
+
 ## Overview
 
 Arkalia CIA implements a **local-first architecture** prioritizing simplicity, reliability, and data privacy. The application operates entirely on-device without external dependencies for core functionality.
@@ -9,22 +32,31 @@ Arkalia CIA implements a **local-first architecture** prioritizing simplicity, r
 ## Architectural Principles
 
 ### 1. Local-First Design
-- All data stored locally on device
-- Zero network dependency for core operations
-- Optional synchronization in Phase 3
-- Offline-by-default functionality
+
+| Principle | Implementation | Benefit |
+|-----------|---------------|---------|
+| **Local Storage** | All data stored locally on device | Zero network dependency |
+| **Offline-First** | Core operations work offline | Maximum reliability |
+| **Optional Sync** | Synchronization in Phase 3 | Progressive enhancement |
+| **Data Privacy** | No cloud dependency required | Complete user control |
 
 ### 2. Native Integration
-- Leverages platform-native APIs
-- System calendar and contacts integration
-- Familiar user experience patterns
-- Minimal custom infrastructure
+
+| Integration | Platform | Purpose |
+|------------|----------|---------|
+| **System Calendar** | iOS/Android | Reminder functionality |
+| **System Contacts** | iOS/Android | Emergency contacts |
+| **Biometric Auth** | iOS/Android | Secure access |
+| **Notifications** | iOS/Android | Reminder alerts |
 
 ### 3. Security by Design
-- AES-256 encryption for sensitive data
-- Minimal permission requirements
-- No plaintext data storage
-- Privacy-first data handling
+
+| Security Layer | Implementation | Status |
+|----------------|---------------|--------|
+| **Encryption** | AES-256 for sensitive data | ✅ Active |
+| **Key Management** | Keychain/Keystore | ✅ Active |
+| **Permissions** | Minimal requirements | ✅ Configured |
+| **Data Storage** | No plaintext storage | ✅ Enforced |
 
 ## System Architecture
 
@@ -231,22 +263,23 @@ graph LR
 
 ### Permission Model
 
-| Permission | Purpose | Justification |
-|------------|---------|---------------|
-| Calendar | Read/Write events | Reminder functionality |
-| Contacts | Read contact info | Emergency contacts |
-| Storage | App-specific files | Document storage |
-| Notifications | Alert delivery | Reminder notifications |
+| Permission | Purpose | Justification | Platform |
+|------------|---------|---------------|----------|
+| **Calendar** | Read/Write events | Reminder functionality | iOS/Android |
+| **Contacts** | Read contact info | Emergency contacts | iOS/Android |
+| **Storage** | App-specific files | Document storage | iOS/Android |
+| **Notifications** | Alert delivery | Reminder notifications | iOS/Android |
+| **Biometric** | Device authentication | Secure access | iOS/Android |
 
 ### Data Classification
 
-| Data Type | Sensitivity | Encryption | Storage |
-|-----------|-------------|------------|---------|
-| Documents | High | AES-256 | Local only |
-| Health Info | High | AES-256 | Local only |
-| Reminders | Medium | Metadata only | Calendar sync |
-| Contacts | Medium | Reference only | System contacts |
-| Preferences | Low | None | Local storage |
+| Data Type | Sensitivity | Encryption | Storage | Sync |
+|-----------|-------------|------------|---------|------|
+| **Documents** | High | AES-256 | Local only | Optional |
+| **Health Info** | High | AES-256 | Local only | Optional |
+| **Reminders** | Medium | Metadata only | Calendar sync | System |
+| **Contacts** | Medium | Reference only | System contacts | System |
+| **Preferences** | Low | None | Local storage | No |
 
 ## Performance Considerations
 
@@ -350,12 +383,12 @@ graph TB
 
 ### Coverage Targets
 
-| Test Type | Coverage Target | Current Status | Codecov Flag |
-|-----------|----------------|----------------|--------------|
-| Unit Tests | 80% | 85% | `python` |
-| Integration | 70% | 85% | `python` |
-| Widget Tests | 60% | 45% | `flutter` |
-| E2E Tests | 50% | 30% | `flutter` |
+| Test Type | Coverage Target | Current Status | Codecov Flag | Status |
+|-----------|----------------|----------------|--------------|--------|
+| **Unit Tests** | 80% | 85% | `python` | ✅ Exceeded |
+| **Integration** | 70% | 85% | `python` | ✅ Exceeded |
+| **Widget Tests** | 60% | 45% | `flutter` | 🟡 In Progress |
+| **E2E Tests** | 50% | 30% | `flutter` | 🟡 In Progress |
 
 #### Codecov Integration
 
@@ -417,4 +450,14 @@ graph LR
 
 ---
 
+## 📚 Related Documentation
+
+- **[API.md](API.md)** - Complete API reference
+- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Deployment procedures
+- **[SECURITY.md](../SECURITY.md)** - Security policies
+- **[INDEX_DOCUMENTATION.md](INDEX_DOCUMENTATION.md)** - Full documentation index
+
+---
+
+**Last Updated**: November 19, 2025  
 *This architecture documentation is maintained alongside code changes and reviewed quarterly for accuracy and relevance.*

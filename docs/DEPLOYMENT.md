@@ -2,6 +2,25 @@
 
 > **Arkalia CIA** - Production deployment procedures and best practices
 
+**Last Updated**: November 19, 2025  
+**Version**: 1.2.0  
+**Status**: ✅ **Production Ready**
+
+---
+
+## 📋 Table of Contents
+
+1. [Overview](#overview)
+2. [Deployment Architecture](#deployment-architecture)
+3. [Prerequisites](#prerequisites)
+4. [Mobile App Deployment](#mobile-app-deployment)
+5. [Backend Deployment](#backend-deployment)
+6. [Environment Configuration](#environment-configuration)
+7. [Security Considerations](#security-considerations)
+8. [Monitoring and Maintenance](#monitoring-and-maintenance)
+
+---
+
 ## Overview
 
 Arkalia CIA follows a **progressive deployment strategy** across three phases, prioritizing stability and user experience. This guide covers deployment for mobile applications and backend services.

@@ -2,6 +2,24 @@
 
 > **Arkalia CIA** - Contribution guidelines and development standards
 
+**Last Updated**: November 19, 2025  
+**Version**: 1.2.0
+
+---
+
+## 📋 Table of Contents
+
+1. [Welcome Contributors](#welcome-contributors)
+2. [Code of Conduct](#code-of-conduct)
+3. [Getting Started](#getting-started)
+4. [Development Workflow](#development-workflow)
+5. [Code Standards](#code-standards)
+6. [Testing Requirements](#testing-requirements)
+7. [Documentation](#documentation)
+8. [Pull Request Process](#pull-request-process)
+
+---
+
 ## Welcome Contributors
 
 Arkalia CIA is an open-source project that welcomes community contributions. This guide outlines how to contribute effectively to the project while maintaining our quality standards.
@@ -34,13 +52,12 @@ Arkalia CIA is an open-source project that welcomes community contributions. Thi
 
 ### Prerequisites
 
-```bash
-# Required tools
-Flutter SDK: 3.35.3+
-Dart SDK: >=3.0.0 <4.0.0
-Python: 3.10+
-Git: Latest version
-```
+| Tool | Version | Purpose | Download |
+|------|---------|---------|----------|
+| **Flutter SDK** | 3.35.3+ | Mobile app development | [flutter.dev](https://flutter.dev) |
+| **Dart SDK** | >=3.0.0 <4.0.0 | Language runtime | Included with Flutter |
+| **Python** | 3.10+ | Backend services | [python.org](https://python.org) |
+| **Git** | Latest | Version control | [git-scm.com](https://git-scm.com) |
 
 ### Development Setup
 
@@ -650,9 +667,19 @@ Contributors are recognized in:
 - **GitHub Contributors** section
 - **Release notes** for major features
 
+## 📚 Related Documentation
+
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Technical architecture
+- **[API.md](API.md)** - API reference
+- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Deployment procedures
+- **[INDEX_DOCUMENTATION.md](INDEX_DOCUMENTATION.md)** - Full documentation index
+
+---
+
 ## Resources
 
 ### Documentation
+
 - [Architecture Guide](ARCHITECTURE.md)
 - [API Reference](API.md)
 - [Deployment Guide](DEPLOYMENT.md)

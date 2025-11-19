@@ -162,4 +162,14 @@ For migration questions or assistance:
 
 ---
 
+## 📚 Related Documentation
+
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Technical architecture
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines
+- **[CHANGELOG.md](CHANGELOG.md)** - Version history
+- **[INDEX_DOCUMENTATION.md](INDEX_DOCUMENTATION.md)** - Full documentation index
+
+---
+
+**Last Updated**: November 19, 2025  
 *This migration guide reflects the project's evolution toward a more professional and maintainable structure while preserving all functionality.*
