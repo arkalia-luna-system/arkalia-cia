@@ -550,17 +550,23 @@ async def upload_document(request: Request, file: UploadFile = File(...)):
         text_content = ""
         try:
             # Extraire texte (avec OCR si nécessaire)
-            text_content = pdf_processor.extract_text_from_pdf(tmp_file_path, use_ocr=False)
+            text_content = pdf_processor.extract_text_from_pdf(
+                tmp_file_path, use_ocr=False
+            )
 
             # Si peu de texte, essayer OCR
             if len(text_content.strip()) < 100:
-                text_content = pdf_processor.extract_text_from_pdf(tmp_file_path, use_ocr=True)
+                text_content = pdf_processor.extract_text_from_pdf(
+                    tmp_file_path, use_ocr=True
+                )
 
             # Extraire métadonnées
             metadata_extractor = MetadataExtractor()
             metadata = metadata_extractor.extract_metadata(text_content)
         except Exception as e:
-            logger.warning(f"Erreur extraction métadonnées: {sanitize_log_message(str(e))}")
+            logger.warning(
+                f"Erreur extraction métadonnées: {sanitize_log_message(str(e))}"
+            )
             metadata = None
 
         # Sauvegarder en base de données avec métadonnées
@@ -583,7 +589,9 @@ async def upload_document(request: Request, file: UploadFile = File(...)):
                 exam_type=metadata.get("exam_type"),
                 document_type=metadata.get("document_type"),
                 keywords=",".join(metadata.get("keywords", [])),
-                extracted_text=text_content[:5000] if text_content else None,  # Limiter à 5000 caractères
+                extracted_text=(
+                    text_content[:5000] if text_content else None
+                ),  # Limiter à 5000 caractères
             )
 
         # Nettoyer le fichier temporaire
@@ -837,7 +845,7 @@ async def chat_with_ai(request: Request, chat_request: ChatRequest):
             question=chat_request.question,
             answer=result.get("answer", ""),
             question_type=result.get("question_type", "general"),
-            related_documents=','.join(result.get("related_documents", [])),
+            related_documents=",".join(result.get("related_documents", [])),
         )
 
         return ChatResponse(

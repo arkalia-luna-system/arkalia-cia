@@ -199,6 +199,60 @@ class CIADatabase:
             cursor.execute("DELETE FROM documents WHERE id = ?", (doc_id,))
             return cursor.rowcount > 0
 
+    def add_document_metadata(
+        self,
+        document_id: int,
+        doctor_name: str | None = None,
+        doctor_specialty: str | None = None,
+        document_date: str | None = None,
+        exam_type: str | None = None,
+        document_type: str | None = None,
+        keywords: str | None = None,
+        extracted_text: str | None = None,
+    ) -> int | None:
+        """Ajoute des métadonnées à un document"""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                """
+                INSERT INTO document_metadata (
+                    document_id, doctor_name, doctor_specialty, document_date,
+                    exam_type, document_type, keywords, extracted_text
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+                (
+                    document_id,
+                    doctor_name,
+                    doctor_specialty,
+                    document_date,
+                    exam_type,
+                    document_type,
+                    keywords,
+                    extracted_text,
+                ),
+            )
+            return cursor.lastrowid
+
+    def add_ai_conversation(
+        self,
+        question: str,
+        answer: str,
+        question_type: str = "general",
+        related_documents: str | None = None,
+    ) -> int | None:
+        """Ajoute une conversation IA à la base de données"""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                """
+                INSERT INTO ai_conversations (question, answer, question_type, related_documents)
+                VALUES (?, ?, ?, ?)
+            """,
+                (question, answer, question_type, related_documents),
+            )
+            return cursor.lastrowid
+
     def save_document(self, filename: str, content: str, metadata: str) -> int | None:
         """Sauvegarde un document"""
         return self.add_document(filename, filename, "", "pdf", len(content))
