@@ -599,9 +599,9 @@ grep -r "TODO\|FIXME\|XXX\|HACK" arkalia_cia/lib/ --include="*.dart"
 
 | Problème | Occurrences | Fichiers | Action | Statut |
 |----------|-------------|----------|--------|--------|
-| debugPrint | 44 | 6 fichiers | Remplacer par logger conditionnel | ⚠️ À faire |
+| debugPrint | 0 | 0 fichier | Remplacer par logger conditionnel | ✅ **FAIT** (AppLogger créé) |
 | TODOs | 0 | - | Aucun TODO critique trouvé | ✅ OK |
-| Imports inutilisés | À vérifier | Tous fichiers Dart | `dart fix --apply` | ⚠️ À faire |
+| Imports inutilisés | 0 | - | `dart fix --apply` | ✅ **FAIT** (5 imports retirés) |
 | Gestion erreurs | 127 catch/on | 25 fichiers | Vérifier cohérence | ✅ OK (ErrorHelper utilisé) |
 
 ---
