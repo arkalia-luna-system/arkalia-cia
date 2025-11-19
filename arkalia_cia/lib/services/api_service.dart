@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '../utils/retry_helper.dart';
 import '../utils/error_helper.dart';
+import '../utils/app_logger.dart';
 import 'backend_config_service.dart';
 import 'offline_cache_service.dart';
 
@@ -73,7 +73,7 @@ class ApiService {
     // Essayer d'abord le cache offline
     final cached = await OfflineCacheService.getCachedData('documents');
     if (cached != null) {
-      debugPrint('Utilisation du cache offline pour documents');
+      AppLogger.debug('Utilisation du cache offline pour documents');
     }
 
     return RetryHelper.retryOnNetworkError(
@@ -113,7 +113,7 @@ class ApiService {
       
       // En cas d'erreur réseau, retourner le cache si disponible
       if (ErrorHelper.isNetworkError(e) && cached != null) {
-        debugPrint('Erreur réseau, utilisation du cache offline');
+        AppLogger.debug('Erreur réseau, utilisation du cache offline');
         return List<Map<String, dynamic>>.from(cached);
       }
       
@@ -132,7 +132,7 @@ class ApiService {
 
       return response.statusCode == 200;
     } catch (e) {
-      debugPrint('Erreur suppression document: $e');
+      AppLogger.error('Erreur suppression document', e);
       return false;
     }
   }

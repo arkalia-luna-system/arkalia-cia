@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:async';
-import 'package:flutter/foundation.dart';
+import 'app_logger.dart';
 
 /// Helper pour la gestion centralisée des erreurs réseau
 class ErrorHelper {
@@ -100,16 +100,14 @@ class ErrorHelper {
     final message = getUserFriendlyMessage(error);
     final httpCode = getHttpStatusCode(error);
     
-    debugPrint('=== ERREUR ${context != null ? "($context)" : ""} ===');
-    debugPrint('Message utilisateur: $message');
-    if (httpCode != null) {
-      debugPrint('Code HTTP: $httpCode');
-    }
-    debugPrint('Erreur technique: $error');
-    if (stackTrace != null) {
-      debugPrint('Stack trace: $stackTrace');
-    }
-    debugPrint('========================');
+    AppLogger.error(
+      '=== ERREUR ${context != null ? "($context)" : ""} ===\n'
+      'Message utilisateur: $message\n'
+      '${httpCode != null ? "Code HTTP: $httpCode\n" : ""}'
+      'Erreur technique: $error',
+      error,
+      stackTrace,
+    );
   }
 }
 

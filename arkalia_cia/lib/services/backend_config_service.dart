@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
+import '../utils/app_logger.dart';
 
 /// Service de configuration du backend API
 class BackendConfigService {
@@ -23,7 +24,7 @@ class BackendConfigService {
     // pour forcer la reconfiguration sur mobile
     if (savedUrl.contains('localhost') || savedUrl.contains('127.0.0.1')) {
       if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
-        debugPrint('⚠️ localhost détecté sur mobile - URL invalide, retour vide');
+        AppLogger.warning('localhost détecté sur mobile - URL invalide, retour vide');
         return '';
       }
     }

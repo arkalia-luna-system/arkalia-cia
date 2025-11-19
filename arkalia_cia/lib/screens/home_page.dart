@@ -316,7 +316,11 @@ class _HomePageState extends State<HomePage> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const DocumentsScreen()),
-    ).then((_) => _loadStats());
+    ).then((_) {
+      if (mounted) {
+        _loadStats();
+      }
+    });
   }
 
   void _showHealth(BuildContext context) {
@@ -330,7 +334,11 @@ class _HomePageState extends State<HomePage> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const RemindersScreen()),
-    ).then((_) => _loadStats());
+    ).then((_) {
+      if (mounted) {
+        _loadStats();
+      }
+    });
   }
 
   void _showEmergency(BuildContext context) {
@@ -358,7 +366,11 @@ class _HomePageState extends State<HomePage> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const SettingsScreen()),
-    ).then((_) => _loadStats());
+    ).then((_) {
+      if (mounted) {
+        _loadStats();
+      }
+    });
   }
 
   void _showStats(BuildContext context) {
@@ -378,15 +390,15 @@ class _HomePageState extends State<HomePage> {
         (_searchResults['contacts']?.length ?? 0);
 
     if (totalResults == 0) {
-      return Center(
+      return const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.search_off, size: 64, color: Colors.grey[400]),
-            const SizedBox(height: 16),
+            Icon(Icons.search_off, size: 64, color: Colors.grey),
+            SizedBox(height: 16),
             Text(
               'Aucun résultat trouvé',
-              style: TextStyle(color: Colors.grey[600], fontSize: 16),
+              style: TextStyle(color: Colors.grey, fontSize: 16),
             ),
           ],
         ),

@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/foundation.dart';
+import '../utils/app_logger.dart';
 
 /// Service de cache offline pour les données
 class OfflineCacheService {
@@ -29,9 +29,9 @@ class OfflineCacheService {
       await prefs.setString(cacheKey, jsonString);
       await prefs.setString(timestampKey, expiryTime.toIso8601String());
       
-      debugPrint('Données mises en cache: $key (expire: $expiryTime)');
+      AppLogger.debug('Données mises en cache: $key (expire: $expiryTime)');
     } catch (e) {
-      debugPrint('Erreur mise en cache $key: $e');
+      AppLogger.error('Erreur mise en cache $key', e);
     }
   }
 
@@ -57,13 +57,13 @@ class OfflineCacheService {
         // Cache expiré, nettoyer
         await prefs.remove(cacheKey);
         await prefs.remove(timestampKey);
-        debugPrint('Cache expiré pour: $key');
+        AppLogger.debug('Cache expiré pour: $key');
         return null;
       }
       
       return jsonDecode(cachedData);
     } catch (e) {
-      debugPrint('Erreur récupération cache $key: $e');
+      AppLogger.error('Erreur récupération cache $key', e);
       return null;
     }
   }
@@ -80,9 +80,9 @@ class OfflineCacheService {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('$_cachePrefix$key');
       await prefs.remove('$_cacheTimestampPrefix$key');
-      debugPrint('Cache supprimé pour: $key');
+      AppLogger.debug('Cache supprimé pour: $key');
     } catch (e) {
-      debugPrint('Erreur suppression cache $key: $e');
+      AppLogger.error('Erreur suppression cache $key', e);
     }
   }
 
@@ -106,7 +106,7 @@ class OfflineCacheService {
         }
       }
     } catch (e) {
-      debugPrint('Erreur nettoyage caches expirés: $e');
+      AppLogger.error('Erreur nettoyage caches expirés', e);
     }
   }
 
@@ -121,9 +121,9 @@ class OfflineCacheService {
           await prefs.remove(key);
         }
       }
-      debugPrint('Tous les caches ont été supprimés');
+      AppLogger.debug('Tous les caches ont été supprimés');
     } catch (e) {
-      debugPrint('Erreur suppression tous les caches: $e');
+      AppLogger.error('Erreur suppression tous les caches', e);
     }
   }
 }

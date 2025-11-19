@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import '../utils/app_logger.dart';
 import 'local_storage_service.dart';
 import 'api_service.dart';
 import 'backend_config_service.dart';
@@ -75,7 +75,7 @@ class AutoSyncService {
       // checkConnectivity() retourne une List<ConnectivityResult>
       return connectivityResult.contains(ConnectivityResult.wifi);
     } catch (e) {
-      debugPrint('Erreur vérification WiFi: $e');
+      AppLogger.warning('Erreur vérification WiFi: $e');
       // En cas d'erreur, autoriser la synchronisation par sécurité
       return true;
     }
@@ -84,7 +84,7 @@ class AutoSyncService {
   /// Synchronise automatiquement si activé et si nécessaire
   static Future<void> syncIfNeeded({bool force = false}) async {
     if (_isSyncing) {
-      debugPrint('Synchronisation déjà en cours, ignorée');
+      AppLogger.debug('Synchronisation déjà en cours, ignorée');
       return;
     }
 
@@ -98,7 +98,7 @@ class AutoSyncService {
     if (syncOnlyWifi && !force) {
       final isWifi = await _isWifiConnected();
       if (!isWifi) {
-        debugPrint('Synchronisation uniquement WiFi activée mais pas en WiFi, ignorée');
+        AppLogger.debug('Synchronisation uniquement WiFi activée mais pas en WiFi, ignorée');
         return;
       }
     }
@@ -115,11 +115,11 @@ class AutoSyncService {
           
           // Ne pas synchroniser si la dernière sync était il y a moins de 5 minutes
           if (diff.inMinutes < 5) {
-            debugPrint('Synchronisation récente (${diff.inMinutes} min), ignorée');
+            AppLogger.debug('Synchronisation récente (${diff.inMinutes} min), ignorée');
             return;
           }
         } catch (e) {
-          debugPrint('Erreur parsing dernière sync: $e');
+          AppLogger.warning('Erreur parsing dernière sync: $e');
         }
       }
     }
@@ -142,11 +142,11 @@ class AutoSyncService {
       final ariaConnected = await ARIAService.checkConnection();
 
       if (!backendEnabled && !ariaConnected) {
-        debugPrint('Aucune connexion disponible pour la synchronisation');
+        AppLogger.debug('Aucune connexion disponible pour la synchronisation');
         return;
       }
 
-      debugPrint('Début synchronisation automatique...');
+      AppLogger.debug('Début synchronisation automatique...');
 
       // Synchroniser les documents
       await _syncDocuments();
@@ -170,18 +170,18 @@ class AutoSyncService {
       await prefs.setString(_lastSyncStatsKey, jsonEncode(stats));
 
       final totalSynced = _lastDocsSynced + _lastRemindersSynced + _lastContactsSynced;
-      debugPrint('Synchronisation automatique terminée: $_lastDocsSynced docs, $_lastRemindersSynced rappels, $_lastContactsSynced contacts');
+      AppLogger.info('Synchronisation automatique terminée: $_lastDocsSynced docs, $_lastRemindersSynced rappels, $_lastContactsSynced contacts');
       
       // Afficher une notification silencieuse si des éléments ont été synchronisés
       if (totalSynced > 0) {
-        debugPrint('Notification: $totalSynced élément(s) synchronisé(s)');
+        AppLogger.debug('Notification: $totalSynced élément(s) synchronisé(s)');
         // Note: Les notifications peuvent être ajoutées ici avec flutter_local_notifications
         // si nécessaire pour informer l'utilisateur
       }
     } catch (e) {
-      debugPrint('Erreur lors de la synchronisation automatique: $e');
+      AppLogger.error('Erreur lors de la synchronisation automatique', e);
       // Notification d'erreur silencieuse
-      debugPrint('Notification erreur: Synchronisation échouée');
+      AppLogger.warning('Notification erreur: Synchronisation échouée');
     } finally {
       _isSyncing = false;
     }
@@ -230,7 +230,7 @@ class AutoSyncService {
             }
           }
         } catch (e) {
-          debugPrint('Erreur sync document ${doc['id']}: $e');
+          AppLogger.error('Erreur sync document ${doc['id']}', e);
         }
       }
 
@@ -258,7 +258,7 @@ class AutoSyncService {
             await LocalStorageService.saveDocument(docToSave);
             _lastDocsSynced++;
           } catch (e) {
-            debugPrint('Erreur sauvegarde document backend $docId: $e');
+            AppLogger.error('Erreur sauvegarde document backend $docId', e);
           }
         } else {
           // Document existe localement - vérifier si le backend est plus récent
@@ -284,12 +284,12 @@ class AutoSyncService {
               }
             }
           } catch (e) {
-            debugPrint('Erreur mise à jour document $docId: $e');
+            AppLogger.error('Erreur mise à jour document $docId', e);
           }
         }
       }
     } catch (e) {
-      debugPrint('Erreur sync documents: $e');
+      AppLogger.error('Erreur sync documents', e);
     }
   }
 
@@ -335,7 +335,7 @@ class AutoSyncService {
           );
           _lastRemindersSynced++;
         } catch (e) {
-          debugPrint('Erreur sync rappel ${reminder['id']}: $e');
+          AppLogger.error('Erreur sync rappel ${reminder['id']}', e);
         }
       }
 
@@ -362,7 +362,7 @@ class AutoSyncService {
             await LocalStorageService.saveReminder(reminderToSave);
             _lastRemindersSynced++;
           } catch (e) {
-            debugPrint('Erreur sauvegarde rappel backend $reminderId: $e');
+            AppLogger.error('Erreur sauvegarde rappel backend $reminderId', e);
           }
         } else {
           // Vérifier si le backend est plus récent
@@ -388,12 +388,12 @@ class AutoSyncService {
               }
             }
           } catch (e) {
-            debugPrint('Erreur mise à jour rappel $reminderId: $e');
+            AppLogger.error('Erreur mise à jour rappel $reminderId', e);
           }
         }
       }
     } catch (e) {
-      debugPrint('Erreur sync rappels: $e');
+      AppLogger.error('Erreur sync rappels', e);
     }
   }
 
@@ -439,7 +439,7 @@ class AutoSyncService {
           );
           _lastContactsSynced++;
         } catch (e) {
-          debugPrint('Erreur sync contact ${contact['id']}: $e');
+          AppLogger.error('Erreur sync contact ${contact['id']}', e);
         }
       }
 
@@ -466,7 +466,7 @@ class AutoSyncService {
             await LocalStorageService.saveEmergencyContact(contactToSave);
             _lastContactsSynced++;
           } catch (e) {
-            debugPrint('Erreur sauvegarde contact backend $contactId: $e');
+            AppLogger.error('Erreur sauvegarde contact backend $contactId', e);
           }
         } else {
           // Vérifier si le backend est plus récent
@@ -492,12 +492,12 @@ class AutoSyncService {
               }
             }
           } catch (e) {
-            debugPrint('Erreur mise à jour contact $contactId: $e');
+            AppLogger.error('Erreur mise à jour contact $contactId', e);
           }
         }
       }
     } catch (e) {
-      debugPrint('Erreur sync contacts: $e');
+      AppLogger.error('Erreur sync contacts', e);
     }
   }
 

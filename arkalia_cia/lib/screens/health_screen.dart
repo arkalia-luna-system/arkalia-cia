@@ -21,7 +21,9 @@ class _HealthScreenState extends State<HealthScreen> {
     // Charger d'abord les portails existants, puis ajouter les portails belges
     _loadPortals().then((_) {
       // Ajouter les portails belges après le chargement initial
-      _addBelgianPortals();
+      if (mounted) {
+        _addBelgianPortals();
+      }
     });
   }
 

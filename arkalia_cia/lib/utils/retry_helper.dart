@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
+import 'app_logger.dart';
 
 /// Helper pour retry automatique avec backoff exponentiel
 class RetryHelper {
@@ -27,11 +27,11 @@ class RetryHelper {
         attempt++;
         
         if (attempt >= maxRetries) {
-          debugPrint('Retry épuisé après $maxRetries tentatives. Dernière erreur: $e');
+          AppLogger.error('Retry épuisé après $maxRetries tentatives', e);
           rethrow;
         }
 
-        debugPrint('Tentative $attempt/$maxRetries échouée. Nouvelle tentative dans ${delay}s...');
+        AppLogger.debug('Tentative $attempt/$maxRetries échouée. Nouvelle tentative dans ${delay}s...');
         await Future.delayed(Duration(seconds: delay));
         
         // Backoff exponentiel : double le délai à chaque tentative

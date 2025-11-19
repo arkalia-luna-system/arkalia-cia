@@ -1,0 +1,4 @@
+# Fichiers générés par le script de mise à jour
+.wifi_adb_ip
+/tmp/flutter_build_*.log
+/tmp/flutter_update_*.log
