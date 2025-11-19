@@ -660,20 +660,3 @@ class ApiCache {
 
 **Last Updated**: November 19, 2025  
 *This API reference is maintained alongside code changes and updated with each release.*
-        await _migrateToV2();
-        break;
-      case '3.0':
-        await _migrateToV3();
-        break;
-    }
-  }
-
-  static Future<void> _migrateToV2() async {
-    // Add new fields, update schemas
-  }
-}
-```
-
----
-
-*This API documentation is automatically updated with each release. For questions or issues, please refer to our [GitHub Issues](https://github.com/arkalia-luna-system/arkalia-cia/issues).*

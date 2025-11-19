@@ -1,16 +1,34 @@
+import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart';
 
 /// Service de configuration du backend API
 class BackendConfigService {
   static const String _backendUrlKey = 'backend_api_url';
   static const String _backendEnabledKey = 'backend_enabled';
-  static const String _defaultUrl = 'http://localhost:8000';
 
   /// Récupère l'URL du backend depuis les préférences
   static Future<String> getBackendURL() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_backendUrlKey) ?? _defaultUrl;
+    final savedUrl = prefs.getString(_backendUrlKey);
+    
+    // Si aucune URL n'est configurée, retourner une chaîne vide
+    // L'app devra demander à l'utilisateur de configurer l'URL
+    if (savedUrl == null || savedUrl.isEmpty) {
+      return '';
+    }
+    
+    // Si l'URL contient localhost ou 127.0.0.1, remplacer par une IP vide
+    // pour forcer la reconfiguration sur mobile
+    if (savedUrl.contains('localhost') || savedUrl.contains('127.0.0.1')) {
+      if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+        debugPrint('⚠️ localhost détecté sur mobile - URL invalide, retour vide');
+        return '';
+      }
+    }
+    
+    return savedUrl;
   }
 
   /// Définit l'URL du backend

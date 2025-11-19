@@ -15,12 +15,29 @@ class ApiService {
     'Content-Type': 'application/json',
   };
 
+  /// Vérifie si le backend est configuré et disponible
+  static Future<bool> isBackendConfigured() async {
+    final url = await baseUrl;
+    if (url.isEmpty) {
+      return false;
+    }
+    return await BackendConfigService.isBackendEnabled();
+  }
+
   // === DOCUMENTS ===
 
   /// Upload un document PDF
   static Future<Map<String, dynamic>> uploadDocument(File pdfFile) async {
     try {
       final url = await baseUrl;
+      if (url.isEmpty) {
+        return {
+          'success': false,
+          'error': 'Backend non configuré. Configurez l\'URL du backend dans les paramètres.',
+          'backend_not_configured': true,
+        };
+      }
+      
       var request = http.MultipartRequest(
         'POST',
         Uri.parse('$url/api/documents/upload'),
@@ -62,6 +79,16 @@ class ApiService {
     return RetryHelper.retryOnNetworkError(
       fn: () async {
         final url = await baseUrl;
+        if (url.isEmpty) {
+          // Retourner le cache si disponible, sinon liste vide
+          if (cached != null && cached is List) {
+            return List<Map<String, dynamic>>.from(
+              cached.map((item) => item as Map<String, dynamic>)
+            );
+          }
+          return <Map<String, dynamic>>[];
+        }
+        
         final response = await http
             .get(
               Uri.parse('$url/api/documents'),
