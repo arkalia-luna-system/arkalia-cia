@@ -474,7 +474,7 @@ async def health_check(db: CIADatabase = Depends(get_database)):
         import shutil
 
         total, used, free = shutil.disk_usage("/")
-        storage_info = {
+        storage_info: dict[str, str | float] = {
             "status": "ok",
             "free_gb": round(free / (1024**3), 2),
             "used_percent": round(used / total * 100, 2),
