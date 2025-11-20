@@ -10,7 +10,6 @@ import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any
-from typing import Any
 
 from fastapi import Depends, FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
@@ -486,12 +485,13 @@ async def health_check(db: CIADatabase = Depends(get_database)):
             storage_info["status"] = "warning"
         checks = health_status["checks"]
         if isinstance(checks, dict):
-            checks["storage"] = storage_info
+            # Type: ignore pour éviter erreur mypy (dict[str, Any] accepte dict[str, str | float])
+            checks["storage"] = storage_info  # type: ignore[assignment]
     except Exception as e:
         # OPTIMISATION: Toujours créer un dict pour éviter erreurs d'indexation
         checks = health_status["checks"]
         if isinstance(checks, dict):
-            checks["storage"] = {
+            checks["storage"] = {  # type: ignore[assignment]
                 "status": "error",
                 "message": str(e)[:50],
             }

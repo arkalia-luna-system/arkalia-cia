@@ -4,16 +4,11 @@
   "score": 0,
   "errors": [
     "MyPy: arkalia_cia_python_backend/security_utils.py:10: error: Library stubs not installed for \"bleach\"  [import-untyped]",
-    "MyPy: arkalia_cia_python_backend/auth.py:14: error: Unused \"type: ignore\" comment  [unused-ignore]",
-    "MyPy: arkalia_cia_python_backend/api.py:463: error: Unsupported target for indexed assignment (\"Collection[str]\")  [index]",
-    "MyPy: arkalia_cia_python_backend/api.py:465: error: Unsupported target for indexed assignment (\"Collection[str]\")  [index]",
-    "MyPy: arkalia_cia_python_backend/api.py:481: error: Unsupported target for indexed assignment (\"Collection[str]\")  [index]",
-    "MyPy: arkalia_cia_python_backend/api.py:484: error: Unsupported target for indexed assignment (\"Collection[str]\")  [index]"
+    "MyPy: arkalia_cia_python_backend/api.py:487: error: Incompatible types in assignment (expression has type \"dict[str, str | float]\", target has type \"str | float | dict[str, str]\")  [assignment]"
   ],
   "warnings": [
     "Tri des imports isort à corriger",
     "Bandit: >> Issue: [B106:hardcoded_password_funcarg] Possible hardcoded password: 'bearer'",
-    "Bandit: >> Issue: [B104:hardcoded_bind_all_interfaces] Possible binding to all interfaces.",
     "Bandit: >> Issue: [B404:blacklist] Consider possible security implications associated with the subprocess module.",
     "Bandit: >> Issue: [B603:subprocess_without_shell_equals_true] subprocess call - check for execution of untrusted input.",
     "Bandit: >> Issue: [B108:hardcoded_tmp_directory] Probable insecure usage of temp file/directory.",

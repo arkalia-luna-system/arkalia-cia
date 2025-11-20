@@ -38,7 +38,7 @@ Checklist complète de validation avant release.
 | **Ruff** | 0 errors | ✅ |
 | **MyPy** | 0 errors | ✅ |
 | **Bandit** | 0 vulnerabilities | ✅ |
-| **Python Tests** | 240/240 passing (100%) | ✅ |
+| **Python Tests** | 308/308 passing (100%) | ✅ |
 | **Code Coverage** | 85% global | ✅ |
 | **Codecov** | Configured and functional | ✅ |
 

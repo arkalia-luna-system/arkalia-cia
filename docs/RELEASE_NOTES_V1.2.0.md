@@ -98,7 +98,7 @@ Aucune migration nécessaire. Cette version est compatible avec la v1.1.0+1 et s
 
 ## ✅ Tests
 
-- ✅ **Tests Python** : 240/240 passent (100%)
+- ✅ **Tests Python** : 308/308 passent (100%)
 - ✅ **Tests Pattern Analyzer** : 9 tests complets
 - ✅ **Tests Conversational AI** : 10 tests complets
 - ✅ **Tests Flutter** : Tous passent

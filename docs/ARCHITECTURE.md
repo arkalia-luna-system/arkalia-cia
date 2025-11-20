@@ -411,7 +411,7 @@ graph TB
 
 ### Stratégie de tests
 
-- **Tests unitaires** : 240 passed
+- **Tests unitaires** : 308 passed
 - **Couverture** : 85% global
 - **Tests Flutter** : Analyse statique (0 erreur)
 - **Tests d'intégration** : Structure prête

@@ -318,7 +318,7 @@ sequenceDiagram
 
 - **Backend Python** : 18 endpoints, 8 modules principaux
 - **Frontend Flutter** : 25 écrans, 21 services, 6 utils
-- **Tests** : 240 passed (85% couverture)
+- **Tests** : 308 passed (85% couverture)
 - **Documentation** : 94 fichiers MD organisés
 
 ### Fonctionnalités

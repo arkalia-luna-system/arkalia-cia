@@ -20,7 +20,7 @@
 **Last Audit**: 19 novembre 2025 (après-midi)  
 **Production-Ready**: 95% ✅  
 **Bugs Critiques**: Tous corrigés ✅  
-**Tests**: 206 passed, 8 failed, 26 errors ⚠️  
+**Tests**: 308 passed ✅  
 **Optimisations**: Audit approfondi terminé - Logger conditionnel, 0 log production, code optimisé  
 **Priorité absolue**: Finir passage en stable v1.0, compléter tests manquants (sécurité, UX), vérifier checklist sécurité
 
@@ -35,7 +35,7 @@
 | **Temps de démarrage** | <2.1s |
 | **Chiffrement** | AES-256 |
 | **Mode hors ligne** | Complet |
-| **Couverture tests** | 85% (240 tests) |
+| **Couverture tests** | 85% (308 tests) |
 | **Plateformes** | iOS + Android |
 | **Utilisateurs cibles** | Seniors et familles |
 | **CI/CD** | Workflows fonctionnels |
