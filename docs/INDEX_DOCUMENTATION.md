@@ -175,4 +175,4 @@ docs/
 
 ---
 
-*Dernière mise à jour : Janvier 2025*
+*Dernière mise à jour : 20 novembre 2025*
