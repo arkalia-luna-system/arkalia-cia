@@ -152,13 +152,24 @@
 
 ## 🎯 Project Status
 
+### 🔴 **PRIORITÉ ABSOLUE — PASSAGE EN STABLE v1.0**
+
+**CIA (Mobile/Santé) est la priorité absolue aujourd'hui** : c'est le seul module important non encore prêt en "production". Il représente le portfolio santé et sa stabilité va qualifier l'ensemble de l'écosystème.
+
+**Statut** : En cours, release Q1 2026
+
+**Actions immédiates** :
+1. Finir le passage en stable v1.0
+2. Compléter les tests manquants (sécurité, UX)
+3. Vérifier la checklist sécurité complète
+
 ### Current Phase: **Production Ready** ✅
 
 - ✅ All core infrastructure features implemented
 - ✅ Comprehensive test coverage (85%)
 - ✅ Security audit passed
 - ✅ Documentation complete
-- ✅ Ready for App Store/Play Store submission
+- ⚠️ Ready for App Store/Play Store submission (après validation tests manuels)
 
 ### ✅ **What is Really Done (100%)**
 

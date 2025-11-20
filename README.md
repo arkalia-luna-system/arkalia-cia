@@ -16,12 +16,13 @@
 
 ## Overview
 
-**Project Status**: Phase 2 - Enhanced Features completed (v1.2.0+1 - November 2025)  
+**Project Status**: En cours, release Q1 2026 - Passage en stable v1.0  
 **Last Audit**: 19 novembre 2025 (après-midi)  
 **Production-Ready**: 95% ✅  
 **Bugs Critiques**: Tous corrigés ✅  
 **Tests**: 206/206 passent (100%) ✅  
-**Optimisations**: Audit approfondi terminé - Logger conditionnel, 0 log production, code optimisé
+**Optimisations**: Audit approfondi terminé - Logger conditionnel, 0 log production, code optimisé  
+**Priorité absolue**: Finir passage en stable v1.0, compléter tests manquants (sécurité, UX), vérifier checklist sécurité
 
 **Arkalia CIA** est une application mobile développée avec Flutter pour la gestion de documents médicaux, rappels de santé et contacts d'urgence.
 

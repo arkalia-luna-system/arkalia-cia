@@ -1,7 +1,9 @@
 # ✅ CE QUI RESTE VRAIMENT À FAIRE — Release v1.0
 
 **Date** : November 19, 2025  
-**Statut actuel** : 95% Production-Ready ✅
+**Statut actuel** : En cours, release Q1 2026 - Passage en stable v1.0  
+**Production-Ready** : 95% ✅  
+**Priorité absolue** : Finir passage en stable v1.0, compléter tests manquants (sécurité, UX), vérifier checklist sécurité
 
 ---
 
@@ -210,6 +212,36 @@
 
 ---
 
+## 🎯 **PRIORITÉ ABSOLUE — PASSAGE EN STABLE v1.0**
+
+### **Statut actuel** : En cours, release Q1 2026
+
+**CIA (Mobile/Santé) est la priorité absolue aujourd'hui** : c'est le seul module important non encore prêt en "production". Il représente le portfolio santé et sa stabilité va qualifier l'ensemble de l'écosystème.
+
+### **Actions immédiates** :
+
+1. **Finir le passage en stable v1.0** 🔴
+   - [ ] Finaliser les tests manuels sur device réel (2-3h)
+   - [ ] Valider la checklist sécurité complète
+   - [ ] Vérifier tous les écrans fonctionnent correctement
+   - [ ] Tester sur iPhone réel (iOS 12+)
+   - [ ] Tester sur Android réel (API 21+)
+
+2. **Compléter les tests manquants** 🔴
+   - [ ] Tests sécurité (vérifier checklist sécurité complète)
+   - [ ] Tests UX (validation tous les écrans, navigation complète)
+   - [ ] Tests stabilité (pas de crash après usage prolongé)
+   - [ ] Tests mémoire (pas de fuites)
+
+3. **Vérifier la checklist sécurité** 🔴
+   - [ ] Vérifier chiffrement AES-256 actif partout
+   - [ ] Vérifier authentification biométrique fonctionnelle
+   - [ ] Vérifier permissions minimales requises
+   - [ ] Vérifier politique RGPD complète
+   - [ ] Vérifier 0 vulnérabilité détectée
+
+---
+
 ## ✅ VERDICT
 
 **Le projet est à 95% prêt pour release.**
@@ -217,6 +249,7 @@
 **Ce qui reste vraiment à faire** :
 - **1 tâche critique** : Tests manuels sur device réel (2-3h)
 - **2 tâches importantes** : Screenshots (1h) + Tests stabilité (1h)
+- **Priorité absolue** : Finir passage en stable v1.0 pour release Q1 2026
 
 **Total** : **3-4 heures** de travail réel → **Ready to ship** 🚀
 
