@@ -13,6 +13,7 @@ from pathlib import Path
 from fastapi import Depends, FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field, field_validator
 from slowapi import Limiter
 from slowapi.errors import RateLimitExceeded
@@ -53,6 +54,15 @@ from arkalia_cia_python_backend.security_utils import (
 )
 from arkalia_cia_python_backend.services.document_service import DocumentService
 
+# Patterns XSS compilés une fois pour performance
+_XSS_PATTERNS = [
+    re.compile(r"<script[^>]*>", re.IGNORECASE),
+    re.compile(r"javascript:", re.IGNORECASE),
+]
+
+# Cache de l'environnement pour éviter les appels répétés à os.getenv
+_ENVIRONMENT = os.getenv("ENVIRONMENT")
+
 logger = logging.getLogger(__name__)
 
 # Configuration du logging sécurisé
@@ -68,12 +78,11 @@ def get_rate_limit_key(request: Request):
     ip = get_remote_address(request)
 
     # Essayer d'extraire le user_id du token si présent
+    # OPTIMISATION: Import déjà fait en haut du fichier, pas besoin de réimporter
     try:
         auth_header = request.headers.get("authorization", "")
         if auth_header.startswith("Bearer "):
             token = auth_header.split(" ")[1]
-            from arkalia_cia_python_backend.auth import verify_token
-
             try:
                 token_data = verify_token(token, token_type="access")  # nosec B106
                 if token_data.user_id:
@@ -237,13 +246,9 @@ class HealthPortalRequest(BaseModel):
         if v is None:
             return None
         v = v.strip()
-        # Protection contre XSS
-        xss_patterns = [
-            r"<script[^>]*>",
-            r"javascript:",
-        ]
-        for pattern in xss_patterns:
-            if re.search(pattern, v, re.IGNORECASE):
+        # Protection contre XSS - OPTIMISATION: utiliser patterns compilés
+        for pattern in _XSS_PATTERNS:
+            if pattern.search(v):
                 raise ValueError("La catégorie contient des caractères non autorisés")
         return v
 
@@ -285,10 +290,10 @@ app = FastAPI(
     title="Arkalia CIA API",
     description="API backend pour l'application mobile Arkalia CIA",
     version="1.0.0",
-    docs_url=("/docs" if os.getenv("ENVIRONMENT") != "production" else None),
-    redoc_url=("/redoc" if os.getenv("ENVIRONMENT") != "production" else None),
+    docs_url=("/docs" if _ENVIRONMENT != "production" else None),
+    redoc_url=("/redoc" if _ENVIRONMENT != "production" else None),
     # Désactiver OpenAPI schema en production pour réduire la surface d'attaque
-    openapi_url=("/openapi.json" if os.getenv("ENVIRONMENT") != "production" else None),
+    openapi_url=("/openapi.json" if _ENVIRONMENT != "production" else None),
 )
 
 # Versioning API
@@ -302,11 +307,7 @@ app.state.start_time = time.time()
 
 def rate_limit_handler(request: Request, exc: Exception) -> Response:
     """Handler personnalisé pour RateLimitExceeded"""
-    from slowapi.errors import RateLimitExceeded
-
     if isinstance(exc, RateLimitExceeded):
-        from fastapi.responses import JSONResponse
-
         return JSONResponse(
             status_code=429,
             content={"detail": "Trop de requêtes. Veuillez réessayer plus tard."},
@@ -318,7 +319,7 @@ app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
 
 # Middleware de sécurité : Trusted Host
 # En production, ajouter les domaines autorisés
-if os.getenv("ENVIRONMENT") == "production":
+if _ENVIRONMENT == "production":
     app.add_middleware(
         TrustedHostMiddleware,
         allowed_hosts=["api.arkalia-cia.com", "*.arkalia-cia.com"],
@@ -442,7 +443,7 @@ async def health_check(db: CIADatabase = Depends(get_database)):
     Vérification de santé complète de l'API
     Vérifie: API, base de données, storage
     """
-    health_status = {
+    health_status: dict[str, str | dict[str, str | float]] = {
         "status": "healthy",
         "timestamp": datetime.now().isoformat(),
         "version": "1.3.1",
@@ -450,11 +451,22 @@ async def health_check(db: CIADatabase = Depends(get_database)):
     }
 
     # Vérifier base de données
+    # OPTIMISATION: Utiliser une méthode qui existe dans CIADatabase
     try:
-        db.execute_query("SELECT 1")
-        health_status["checks"]["database"] = "ok"
+        import sqlite3
+
+        # Vérifier la connexion à la base de données
+        with sqlite3.connect(db.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT 1")
+            cursor.fetchone()
+        checks = health_status["checks"]
+        if isinstance(checks, dict):
+            checks["database"] = "ok"
     except Exception as e:
-        health_status["checks"]["database"] = f"error: {str(e)[:50]}"
+        checks = health_status["checks"]
+        if isinstance(checks, dict):
+            checks["database"] = f"error: {str(e)[:50]}"
         health_status["status"] = "degraded"
 
     # Vérifier storage (disque)
@@ -462,16 +474,25 @@ async def health_check(db: CIADatabase = Depends(get_database)):
         import shutil
 
         total, used, free = shutil.disk_usage("/")
-        health_status["checks"]["storage"] = {
+        storage_info = {
             "status": "ok",
             "free_gb": round(free / (1024**3), 2),
             "used_percent": round(used / total * 100, 2),
         }
         if free / total < 0.1:  # Moins de 10% libre
             health_status["status"] = "degraded"
-            health_status["checks"]["storage"]["status"] = "warning"
+            storage_info["status"] = "warning"
+        checks = health_status["checks"]
+        if isinstance(checks, dict):
+            checks["storage"] = storage_info
     except Exception as e:
-        health_status["checks"]["storage"] = f"error: {str(e)[:50]}"
+        # OPTIMISATION: Toujours créer un dict pour éviter erreurs d'indexation
+        checks = health_status["checks"]
+        if isinstance(checks, dict):
+            checks["storage"] = {
+                "status": "error",
+                "message": str(e)[:50],
+            }
         health_status["status"] = "degraded"
 
     return health_status
@@ -734,9 +755,11 @@ async def get_document(
 ):
     """Récupère un document par ID (uniquement si appartient à l'utilisateur)"""
     # Vérifier que le document appartient à l'utilisateur
+    # OPTIMISATION: Utiliser un set pour recherche O(1) au lieu de O(n)
     if current_user.user_id:
         user_docs = db.get_user_documents(int(current_user.user_id))
-        if not any(doc["id"] == doc_id for doc in user_docs):
+        user_doc_ids = {doc["id"] for doc in user_docs}
+        if doc_id not in user_doc_ids:
             raise HTTPException(status_code=404, detail="Document non trouvé")
 
     document = db.get_document(doc_id)

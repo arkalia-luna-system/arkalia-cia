@@ -49,7 +49,7 @@ Checklist complète de validation avant release.
 | `database.py` | 100% | ✅ Perfect |
 | `exceptions.py` | 100% | ✅ Perfect |
 | `auto_documenter.py` | 92% | ✅ Excellent |
-| `document_service.py` | 97% | ✅ Excellent |
+| `document_service.py` | 90% | ✅ Excellent |
 | `pdf_processor.py` | 89% | ✅ Very Good |
 | `api.py` | 83% | ✅ Very Good |
 | `aria_integration/api.py` | 81% | ✅ Very Good |
@@ -57,7 +57,7 @@ Checklist complète de validation avant release.
 | `security_dashboard.py` | 67% | ✅ Good |
 | `security_dashboard.py` | 67% | ✅ Good |
 | `exceptions.py` | 100% | ✅ Parfait |
-| `document_service.py` | 97% | ✅ Excellent |
+| `document_service.py` | 90% | ✅ Excellent |
 
 **Action Required**: None - All OK ✅
 
@@ -352,7 +352,7 @@ Checklist complète de validation avant release.
 - ✅ **Optimisation massive tests** : Suppression gc.collect(), isolation complète, MagicMock pour scans
 - ✅ **Tests optimisés** : 140s → 0.26s pour security_dashboard (99.8% plus rapide)
 - ✅ **Tous les tests passent** : 308 tests collectés, tous passants (100%) - Vérifié le 20 novembre 2025
-- ✅ **Amélioration couverture** : `exceptions.py` 0% → 100%, `document_service.py` 39% → 97%
+- ✅ **Amélioration couverture** : `exceptions.py` 0% → 100%, `document_service.py` 39% → 90%
 - ✅ **Correction dashboard HTML** : Plus d'ouverture multiple, auto-refresh activé
 - ✅ **30+ nouveaux tests** créés pour améliorer la couverture globale
 

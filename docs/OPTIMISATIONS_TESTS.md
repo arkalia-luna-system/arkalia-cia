@@ -101,11 +101,11 @@ pytest tests/integration/test_integration.py -v
 
 ### Nouveaux Tests Créés
 - ✅ **test_exceptions.py** : 9 classes de test, 15 tests, 100% couverture `exceptions.py`
-- ✅ **test_document_service.py** : 1 classe de test, 15 tests, ~97% couverture `document_service.py`
+- ✅ **test_document_service.py** : 1 classe de test, 16 tests, ~90% couverture `document_service.py`
 
 ### Impact Couverture
 - `exceptions.py` : **0% → 100%** ✅
-- `document_service.py` : **39% → 97%** ✅
+- `document_service.py` : **39% → 90%** ✅
 - **Total nouveaux tests** : 30+ tests ajoutés
 
 ### Tests Couverts

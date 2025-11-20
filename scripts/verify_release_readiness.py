@@ -62,7 +62,10 @@ def check_python_tests() -> dict[str, Any]:
             "status": "✅",
             "passed": True,
             "test_count": test_count,
-            "message": f"{test_count} tests disponibles (vérification légère - pas d'exécution)",
+            "message": (
+                f"{test_count} tests disponibles "
+                "(vérification légère - pas d'exécution)"
+            ),
         }
     else:
         return {
@@ -146,7 +149,10 @@ def check_build_exists() -> dict[str, Any]:
             "passed": False,
             "apk_exists": False,
             "aab_exists": False,
-            "message": "Build APK n'existe pas - À créer avec: flutter build apk --release",
+            "message": (
+                "Build APK n'existe pas - "
+                "À créer avec: flutter build apk --release"
+            ),
         }
 
 
@@ -174,7 +180,10 @@ def check_screenshots() -> dict[str, Any]:
         "ios_count": len(ios_screenshots),
         "android_exists": len(android_screenshots) > 0,
         "ios_exists": len(ios_screenshots) > 0,
-        "message": f"Android: {len(android_screenshots)} screenshots, iOS: {len(ios_screenshots)} screenshots",
+        "message": (
+            f"Android: {len(android_screenshots)} screenshots, "
+            f"iOS: {len(ios_screenshots)} screenshots"
+        ),
     }
 
 

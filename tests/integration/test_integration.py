@@ -16,7 +16,8 @@ class TestIntegration:
 
     def setup_method(self):
         """Configuration avant chaque test"""
-        # Créer le fichier temporaire dans le répertoire courant pour éviter les problèmes de validation
+        # Créer le fichier temporaire dans le répertoire courant
+        # pour éviter les problèmes de validation
         test_db_dir = Path.cwd() / "test_temp"
         test_db_dir.mkdir(exist_ok=True)
         import uuid
@@ -196,7 +197,8 @@ class TestIntegration:
             self.test_data["reminder"]["id"],
             self.test_data["contact"]["id"],
         ]
-        # Dans ce cas, tous les IDs sont identiques (1), ce qui est normal pour les données de test
+        # Dans ce cas, tous les IDs sont identiques (1),
+        # ce qui est normal pour les données de test
         assert all(id_val == 1 for id_val in ids)  # Tous les IDs sont à 1
 
         # Vérifier que les timestamps sont valides
@@ -213,7 +215,8 @@ class TestIntegration:
         # Initialiser la DB une seule fois avant la boucle
         self.db.init_db()
 
-        # Utiliser directement la base de données pour des tests réels au lieu de boucles vides
+        # Utiliser directement la base de données pour des tests réels
+        # au lieu de boucles vides
         # Test réel : ajouter quelques documents à la base de données
         for i in range(
             5

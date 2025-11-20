@@ -74,7 +74,7 @@ class TestFilenameValidator:
         with pytest.raises(ValueError, match="requis"):
             validator.validate("")
         with pytest.raises(ValueError, match="requis"):
-            validator.validate(None)  # type: ignore[arg-type]
+            validator.validate(None)
 
     def test_invalid_type(self):
         """Test type invalide"""
@@ -87,20 +87,21 @@ class TestFilenameValidator:
     def test_ending_with_space_or_dot(self):
         """Test nom se terminant par espace ou point"""
         validator = FilenameValidator()
-        # Le validateur peut accepter ces noms selon l'implémentation
-        # Vérifier que le validateur fonctionne (ne plante pas)
-        try:
-            result1 = validator.validate("file .pdf")
-            # Si accepté, vérifier que c'est bien retourné
-            assert result1 == "file .pdf" or "file" in result1
-        except ValueError:
-            # Si rejeté, c'est aussi OK
-            pass
-        try:
-            result2 = validator.validate("file..pdf")
-            assert result2 == "file..pdf" or "file" in result2
-        except ValueError:
-            pass
+        # Le validateur doit rejeter les noms se terminant par espace ou point
+        # Note: Les espaces sont rejetés par la validation des caractères
+        # avant d'atteindre la validation de fin
+        with pytest.raises(ValueError, match="caractères non autorisés"):
+            validator.validate("file .pdf")
+        # Note: "file..pdf" est accepté car les doubles points sont autorisés
+        # par la regex (les points sont dans les caractères autorisés)
+        # Seuls les noms se terminant par un point sont rejetés
+        assert validator.validate("file..pdf") == "file..pdf"
+        # Test avec un nom qui passe la regex mais se termine par un point
+        # (doit être rejeté par la validation de fin)
+        with pytest.raises(
+            ValueError, match="ne peut pas se terminer par un espace ou un point"
+        ):
+            validator.validate("file.")
 
     def test_validate_pdf_valid(self):
         """Test validation PDF valide"""

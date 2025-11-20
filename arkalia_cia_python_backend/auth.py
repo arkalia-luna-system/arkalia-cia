@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from passlib.context import CryptContext  # type: ignore[import-untyped]
+from passlib.context import CryptContext
 from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)

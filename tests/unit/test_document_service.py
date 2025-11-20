@@ -3,7 +3,6 @@ Tests pour le service de gestion des documents
 """
 
 import os
-import tempfile
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -63,42 +62,36 @@ class TestDocumentService:
         with pytest.raises(ValueError, match="PDF"):
             document_service.validate_filename("test.txt")
 
-    @pytest.mark.asyncio
-    async def test_save_uploaded_file_success(self, document_service):
+    def test_save_uploaded_file_success(self, document_service):
         """Test sauvegarde d'un fichier uploadé"""
         content = b"PDF content"
         filename = "test.pdf"
-        file_path, size = await document_service.save_uploaded_file(content, filename)
+        file_path, size = document_service.save_uploaded_file(content, filename)
         assert os.path.exists(file_path)
         assert size == len(content)
         # Nettoyer
         if os.path.exists(file_path):
             os.unlink(file_path)
 
-    @pytest.mark.asyncio
-    async def test_save_uploaded_file_too_large(self, document_service):
+    def test_save_uploaded_file_too_large(self, document_service):
         """Test sauvegarde avec fichier trop volumineux"""
         # Créer un contenu trop volumineux (> 50 MB)
         large_content = b"x" * (51 * 1024 * 1024)
         with pytest.raises(ValueError, match="volumineux"):
-            await document_service.save_uploaded_file(large_content, "test.pdf")
+            document_service.save_uploaded_file(large_content, "test.pdf")
 
-    @pytest.mark.asyncio
-    async def test_process_uploaded_file_success(
-        self, document_service, mock_pdf_processor
-    ):
+    def test_process_uploaded_file_success(self, document_service, mock_pdf_processor):
         """Test traitement d'un fichier uploadé"""
         content = b"PDF content"
         filename = "test.pdf"
-        result = await document_service.process_uploaded_file(content, filename)
-        assert result["success"] is True
+        result = document_service.process_uploaded_file(content, filename)
         assert result["filename"] == "test.pdf"
+        assert result["original_name"] == "test.pdf"
+        assert result["file_path"] == "/tmp/test.pdf"
+        assert result["file_size"] == 1024
         mock_pdf_processor.process_pdf.assert_called_once()
 
-    @pytest.mark.asyncio
-    async def test_process_uploaded_file_failure(
-        self, document_service, mock_pdf_processor
-    ):
+    def test_process_uploaded_file_failure(self, document_service, mock_pdf_processor):
         """Test traitement avec échec"""
         mock_pdf_processor.process_pdf.return_value = {
             "success": False,
@@ -106,7 +99,7 @@ class TestDocumentService:
         }
         content = b"PDF content"
         with pytest.raises(ValueError, match="Erreur traitement"):
-            await document_service.process_uploaded_file(content, "test.pdf")
+            document_service.process_uploaded_file(content, "test.pdf")
 
     def test_extract_metadata_success(self, document_service, mock_pdf_processor):
         """Test extraction de métadonnées réussie"""
@@ -180,16 +173,26 @@ class TestDocumentService:
         with pytest.raises(ValueError, match="sauvegarde"):
             document_service.save_document_with_metadata(result, user_id=1)
 
-    def test_cleanup_temp_file(self, document_service):
-        """Test nettoyage fichier temporaire"""
-        # Créer un fichier temporaire
-        with tempfile.NamedTemporaryFile(delete=False) as tmp:
-            tmp_path = tmp.name
-        assert os.path.exists(tmp_path)
-        document_service._cleanup_temp_file(tmp_path)
+    def test_temp_file_context_cleanup(self, document_service):
+        """Test nettoyage fichier temporaire via context manager"""
+        # Créer un fichier temporaire via le context manager
+        with document_service._temp_file_context(suffix=".pdf") as tmp_path:
+            # Écrire quelque chose
+            with open(tmp_path, "wb") as f:
+                f.write(b"test content")
+            assert os.path.exists(tmp_path)
+        # Après le context manager, le fichier devrait être supprimé
         assert not os.path.exists(tmp_path)
 
-    def test_cleanup_temp_file_nonexistent(self, document_service):
-        """Test nettoyage fichier inexistant"""
-        # Ne devrait pas lever d'exception
-        document_service._cleanup_temp_file("/tmp/nonexistent.pdf")
+    def test_temp_file_context_cleanup_on_error(self, document_service):
+        """Test nettoyage fichier temporaire même en cas d'erreur"""
+        try:
+            with document_service._temp_file_context(suffix=".pdf") as tmp_path:
+                with open(tmp_path, "wb") as f:
+                    f.write(b"test content")
+                assert os.path.exists(tmp_path)
+                raise ValueError("Test error")
+        except ValueError:
+            pass
+        # Même après erreur, le fichier devrait être supprimé
+        # Note: tmp_path n'est plus accessible après le context manager

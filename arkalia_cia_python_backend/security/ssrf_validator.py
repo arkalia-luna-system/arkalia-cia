@@ -24,7 +24,7 @@ class SSRFValidator:
         return [
             "localhost",
             "127.0.0.1",
-            "0.0.0.0",
+            "0.0.0.0",  # nosec B104 - Liste de validation SSRF
             "::1",
             "169.254.",  # Link-local
             "10.",  # Private range 10.0.0.0/8

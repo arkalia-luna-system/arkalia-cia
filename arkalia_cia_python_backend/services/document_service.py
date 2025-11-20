@@ -7,6 +7,8 @@ import logging
 import os  # nosec B404
 import tempfile
 from contextlib import contextmanager
+from datetime import datetime
+from typing import cast
 
 from arkalia_cia_python_backend.config import get_settings
 from arkalia_cia_python_backend.database import CIADatabase
@@ -93,6 +95,9 @@ class DocumentService:
 
         Raises:
             ValueError: Si le fichier est trop volumineux
+
+        Note:
+            Le fichier temporaire doit être nettoyé par l'appelant après utilisation
         """
         total_size = len(file_content)
         max_size = self.settings.max_file_size_bytes
@@ -100,12 +105,15 @@ class DocumentService:
             max_mb = self.settings.max_file_size_mb
             raise ValueError(f"Le fichier est trop volumineux (max {max_mb} MB)")
 
-        # Créer fichier temporaire avec context manager pour cleanup garanti
-        with self._temp_file_context(suffix=".pdf") as tmp_file_path:
-            with open(tmp_file_path, "wb") as tmp_file:
-                tmp_file.write(file_content)
-            # Retourner le chemin (le cleanup se fera dans le context manager appelant)
-            return tmp_file_path, total_size
+        # Créer fichier temporaire (sans context manager car doit persister)
+        tmp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
+        tmp_file_path = tmp_file.name
+        try:
+            tmp_file.write(file_content)
+        finally:
+            tmp_file.close()
+
+        return tmp_file_path, total_size
 
     def process_uploaded_file(
         self, file_content: bytes, original_filename: str
@@ -127,18 +135,43 @@ class DocumentService:
         safe_filename = self.validate_filename(original_filename)
 
         # Sauvegarder dans fichier temporaire avec cleanup garanti
-        with self._temp_file_context(suffix=".pdf") as tmp_file_path:
-            # Écrire le contenu
-            with open(tmp_file_path, "wb") as tmp_file:
-                tmp_file.write(file_content)
+        tmp_file_path = None
+        try:
+            with self._temp_file_context(suffix=".pdf") as tmp_file_path:
+                # Écrire le contenu
+                with open(tmp_file_path, "wb") as tmp_file:
+                    tmp_file.write(file_content)
 
-            # Traiter le PDF
-            result = self.pdf_processor.process_pdf(tmp_file_path, safe_filename)
+                # Traiter le PDF
+                result = self.pdf_processor.process_pdf(tmp_file_path, safe_filename)
 
-            if not result["success"]:
-                raise ValueError(result.get("error", "Erreur traitement PDF"))
+                if not result.get("success", False):
+                    error_msg = result.get("error", "Erreur traitement PDF")
+                    raise ValueError(error_msg)
 
-            return result
+                # Convertir en DocumentResultDict (type-safe)
+                # process_pdf retourne preview_text, pas text_content
+                preview_text = result.get("preview_text", "")
+                return cast(
+                    DocumentResultDict,
+                    {
+                        "filename": result["filename"],
+                        "original_name": result["original_name"],
+                        "file_path": result["file_path"],
+                        "file_size": result["file_size"],
+                        "text_content": preview_text if preview_text else "",
+                    },
+                )
+        finally:
+            # Cleanup fichier temporaire
+            if tmp_file_path and os.path.exists(tmp_file_path):
+                try:
+                    os.unlink(tmp_file_path)
+                except OSError as e:
+                    logger.warning(
+                        f"Impossible de supprimer fichier temporaire "
+                        f"{tmp_file_path}: {e}"
+                    )
 
     def extract_metadata(self, file_path: str) -> DocumentMetadataDict | None:
         """
@@ -158,15 +191,37 @@ class DocumentService:
 
             # Si peu de texte, essayer OCR
             min_length = self.settings.min_text_length_for_ocr
-            if len(text_content.strip()) < min_length:
+            use_ocr = len(text_content.strip()) < min_length
+            if use_ocr:
                 text_content = self.pdf_processor.extract_text_from_pdf(
                     file_path, use_ocr=True
                 )
 
             # Extraire métadonnées
             metadata_extractor = MetadataExtractor()
-            metadata = metadata_extractor.extract_metadata(text_content)
-            return metadata
+            raw_metadata = metadata_extractor.extract_metadata(text_content)
+
+            # Convertir en DocumentMetadataDict (type-safe)
+            # Convertir datetime en string ISO si présent
+            doc_date = raw_metadata.get("date")
+            document_date_str: str | None = None
+            if isinstance(doc_date, datetime):
+                document_date_str = doc_date.isoformat()
+            elif doc_date is None:
+                document_date_str = None
+
+            return cast(
+                DocumentMetadataDict,
+                {
+                    "doctor_name": raw_metadata.get("doctor_name"),
+                    "doctor_specialty": raw_metadata.get("doctor_specialty"),
+                    "document_date": document_date_str,
+                    "exam_type": raw_metadata.get("exam_type"),
+                    "document_type": raw_metadata.get("document_type"),
+                    "keywords": raw_metadata.get("keywords", []),
+                    "extracted_text": raw_metadata.get("extracted_text", ""),
+                },
+            )
         except (ValueError, FileNotFoundError, OSError) as e:
             logger.warning(
                 f"Erreur extraction métadonnées: {sanitize_log_message(str(e))}"
@@ -222,19 +277,20 @@ class DocumentService:
         self, doc_id: int, metadata: DocumentMetadataDict
     ) -> None:
         """Sauvegarde les métadonnées d'un document"""
-        doc_date = metadata.get("date")
+        # document_date est déjà une string ISO dans DocumentMetadataDict
+        document_date_str = metadata.get("document_date")
         doctor_name = metadata.get("doctor_name")
         doctor_specialty = metadata.get("doctor_specialty")
+        keywords_list = metadata.get("keywords", [])
+        extracted_text = metadata.get("extracted_text", "")
 
         self.db.add_document_metadata(
             document_id=doc_id,
             doctor_name=doctor_name,
             doctor_specialty=doctor_specialty,
-            document_date=doc_date.isoformat() if doc_date else None,
+            document_date=document_date_str,
             exam_type=metadata.get("exam_type"),
             document_type=metadata.get("document_type"),
-            keywords=",".join(metadata.get("keywords", [])),
-            extracted_text=metadata.get("extracted_text", "")[
-                : self.settings.max_extracted_text_length
-            ],
+            keywords=",".join(keywords_list) if keywords_list else "",
+            extracted_text=extracted_text[: self.settings.max_extracted_text_length],
         )

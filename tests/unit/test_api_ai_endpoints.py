@@ -27,7 +27,8 @@ class TestAIChatEndpoint:
         test_db_dir.mkdir(exist_ok=True)
         db_path = str(test_db_dir / f"test_{uuid.uuid4().hex}.db")
 
-        # OPTIMISATION: Créer directement une instance de CIADatabase (api.db n'existe plus)
+        # OPTIMISATION: Créer directement une instance de CIADatabase
+        # (api.db n'existe plus)
         db = CIADatabase(db_path=db_path)
         db.init_db()
         yield db_path, db

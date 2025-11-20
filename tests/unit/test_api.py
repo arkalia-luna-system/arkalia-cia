@@ -32,12 +32,14 @@ class TestAPIEndpoints:
 
         from arkalia_cia_python_backend.database import CIADatabase
 
-        # Créer le fichier temporaire dans le répertoire courant pour éviter les problèmes de validation
+        # Créer le fichier temporaire dans le répertoire courant
+        # pour éviter les problèmes de validation
         test_db_dir = Path.cwd() / "test_temp"
         test_db_dir.mkdir(exist_ok=True)
         db_path = str(test_db_dir / f"test_{uuid.uuid4().hex}.db")
 
-        # OPTIMISATION: Créer directement une instance de CIADatabase (api.db n'existe plus)
+        # OPTIMISATION: Créer directement une instance de CIADatabase
+        # (api.db n'existe plus)
         db = CIADatabase(db_path=db_path)
         db.init_db()
         yield db_path, db
