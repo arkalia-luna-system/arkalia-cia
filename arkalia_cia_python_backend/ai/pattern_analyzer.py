@@ -8,8 +8,8 @@ from datetime import datetime, timedelta
 from typing import Any
 
 try:
-    import pandas as pd  # type: ignore[import-untyped]
-    from prophet import Prophet  # type: ignore[import-not-found]
+    import pandas as pd
+    from prophet import Prophet
 
     PROPHET_AVAILABLE = True
 except ImportError:
@@ -91,7 +91,8 @@ class AdvancedPatternAnalyzer:
                 intervals.append((date2 - date1).days)
 
             if intervals:
-                # Optimisé: calculer moyenne et écart-type en une seule passe pour réduire les itérations
+                # Optimisé: calculer moyenne et écart-type en une seule passe
+                # pour réduire les itérations
                 avg_interval = sum(intervals) / len(intervals)
                 # Utiliser sum avec générateur pour économiser la mémoire
                 variance = sum((x - avg_interval) ** 2 for x in intervals) / len(

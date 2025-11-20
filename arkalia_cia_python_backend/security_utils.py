@@ -7,14 +7,14 @@ import re
 from typing import Any
 
 try:
-    import bleach  # type: ignore[import-untyped]
+    import bleach
 
     BLEACH_AVAILABLE = True
 except ImportError:
     BLEACH_AVAILABLE = False
 
 try:
-    import phonenumbers  # type: ignore[import-not-found]
+    import phonenumbers
     from phonenumbers import NumberParseException
 
     PHONENUMBERS_AVAILABLE = True

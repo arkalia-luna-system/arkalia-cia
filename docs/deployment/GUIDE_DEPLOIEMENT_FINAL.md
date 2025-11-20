@@ -36,7 +36,7 @@
 
 | Check | Expected | Status |
 |-------|----------|--------|
-| **All tests pass** | 218/218 | ✅ |
+| **All tests pass** | 308/308 | ✅ |
 | **Code coverage** | ≥ 85% | ✅ |
 | **Critical errors** | 0 (Black, Ruff, MyPy, Bandit) | ✅ |
 | **Flutter analyze** | No errors | ✅ |
@@ -52,7 +52,7 @@
 # 1. Vérifier les tests
 cd /Volumes/T7/arkalia-cia
 python -m pytest tests/ -v
-# ✅ Attendu: 218 passed
+# ✅ Attendu: 308 tests collectés, tous passants
 
 # 2. Vérifier la couverture
 python -m pytest tests/ --cov=arkalia_cia_python_backend --cov-report=term
@@ -106,7 +106,7 @@ git merge release/v1.2.0 --no-ff -m "Release v1.2.0: Production ready"
 # 4. Tag de version
 git tag -a v1.2.0 -m "Version 1.2.0 - Production Ready
 - 11 nouvelles fonctionnalités majeures
-- 218 tests passent (100%)
+- 308 tests collectés, tous passants (100%)
 - 85% couverture code
 - 0 erreur critique
 - 0 vulnérabilité"
@@ -262,7 +262,7 @@ git push origin v1.2.1
 ## ✅ Checklist Finale de Déploiement
 
 ### Code
-- [x] Tous les tests passent (218/218)
+- [x] Tous les tests passent (308/308)
 - [x] Couverture ≥ 85%
 - [x] 0 erreur critique
 - [x] 0 vulnérabilité

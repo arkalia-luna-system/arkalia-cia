@@ -5,8 +5,9 @@ Pour appels externes fragiles (réseau, APIs)
 
 import logging
 import time
+from collections.abc import Callable
 from functools import wraps
-from typing import Any, Callable, TypeVar
+from typing import Any, TypeVar
 
 from arkalia_cia_python_backend.config import get_settings
 
@@ -49,7 +50,8 @@ def retry_with_backoff(
                     if attempt < retries - 1:
                         wait_time = factor**attempt
                         logger.warning(
-                            f"Tentative {attempt + 1}/{retries} échouée pour {func.__name__}: {e}. "
+                            f"Tentative {attempt + 1}/{retries} échouée "
+                            f"pour {func.__name__}: {e}. "
                             f"Retry dans {wait_time:.2f}s"
                         )
                         time.sleep(wait_time)

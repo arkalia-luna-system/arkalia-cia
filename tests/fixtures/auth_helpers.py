@@ -6,7 +6,6 @@ Helpers pour les tests d'authentification
 import uuid
 from pathlib import Path
 
-from arkalia_cia_python_backend import api
 from arkalia_cia_python_backend.auth import create_access_token, get_password_hash
 from arkalia_cia_python_backend.database import CIADatabase
 

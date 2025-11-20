@@ -54,7 +54,10 @@ logger = logging.getLogger(__name__)
 
 
 def force_memory_cleanup():
-    """Force un nettoyage complet de la mémoire (optimisé - appelé seulement si nécessaire)"""
+    """
+    Force un nettoyage complet de la mémoire
+    (optimisé - appelé seulement si nécessaire)
+    """
     # Ne pas appeler gc.collect() systématiquement car c'est coûteux
     # Le garbage collector Python est déjà efficace
     # Appeler seulement dans les cas critiques (fin de traitement volumineux)
@@ -102,6 +105,9 @@ class SecurityDashboard:
         # Suivi de la dernière ouverture pour éviter les ouvertures multiples
         self._last_open_time = 0.0
 
+        # Fichier de verrouillage pour éviter les ouvertures multiples entre instances
+        self._lock_file = self.dashboard_dir / ".dashboard_lock"
+
     def _initialize_athalia_components(self) -> dict[str, Any]:
         """Initialise les composants Athalia pour le dashboard de sécurité"""
         if not ATHALIA_AVAILABLE:
@@ -148,7 +154,10 @@ class SecurityDashboard:
             return {}
 
     def collect_security_data(self) -> dict[str, Any]:
-        """Collecte les vraies données de sécurité depuis les composants Athalia (optimisé performance)"""
+        """
+        Collecte les vraies données de sécurité depuis les composants Athalia
+        (optimisé performance)
+        """
         security_data: dict[str, Any] = {
             "timestamp": datetime.now().isoformat(),
             "project_path": str(self.project_path),
@@ -173,7 +182,8 @@ class SecurityDashboard:
                 "Composants Athalia non disponibles - initialisation échouée"
             )
             security_data["athalia_available"] = False
-            # Même sans Athalia, calculer le bonus de sécurité basé sur les bonnes pratiques
+            # Même sans Athalia, calculer le bonus de sécurité
+            # basé sur les bonnes pratiques
             # Score de base sans vulnérabilités détectées = 100
             security_data["security_score"] = 100
             security_data["risk_level"] = "LOW"
@@ -198,13 +208,15 @@ class SecurityDashboard:
                             str(self.project_path)
                         )
                         if scan_results:
-                            # Extraire immédiatement les données essentielles pour économiser la mémoire
+                            # Extraire immédiatement les données essentielles
+                            # pour économiser la mémoire
                             total_vulns = scan_results.get("vulnerabilities_found", 0)
                             total_files_scanned = scan_results.get(
                                 "total_files_scanned", 0
                             )
 
-                            # Stocker seulement les métadonnées essentielles, pas les données complètes
+                            # Stocker seulement les métadonnées essentielles,
+                            # pas les données complètes
                             security_data["security_checks"]["comprehensive_scan"] = {
                                 "total_files_scanned": total_files_scanned,
                                 "vulnerabilities_found": total_vulns,
@@ -212,25 +224,32 @@ class SecurityDashboard:
                             data_collected = True
 
                             if total_vulns > 0:
-                                # Limiter la taille des vulnérabilités en mémoire pour éviter la surcharge
+                                # Limiter la taille des vulnérabilités en mémoire
+                                # pour éviter la surcharge
                                 vulnerabilities_raw = scan_results.get(
                                     "vulnerabilities", []
                                 )
-                                # Limiter à 100 vulnérabilités max pour optimiser la mémoire (réduit pour performance)
+                                # Limiter à 100 vulnérabilités max pour optimiser
+                                # la mémoire (réduit pour performance)
                                 max_vulns = 100
                                 if len(vulnerabilities_raw) > max_vulns:
                                     logger.warning(
-                                        f"Trop de vulnérabilités ({len(vulnerabilities_raw)}), "
-                                        f"limitation à {max_vulns} pour optimiser la mémoire"
+                                        f"Trop de vulnérabilités "
+                                        f"({len(vulnerabilities_raw)}), "
+                                        f"limitation à {max_vulns} "
+                                        f"pour optimiser la mémoire"
                                     )
                                     vulnerabilities = vulnerabilities_raw[:max_vulns]
                                 else:
                                     vulnerabilities = vulnerabilities_raw
-                                # Libérer la référence pour libérer la mémoire immédiatement
+                                # Libérer la référence pour libérer
+                                # la mémoire immédiatement
                                 del vulnerabilities_raw
 
-                                # Analyse intelligente des fonctions dangereuses (optimisé pour mémoire)
-                                # Parcourir une seule fois au lieu de plusieurs list comprehensions
+                                # Analyse intelligente des fonctions dangereuses
+                                # (optimisé pour mémoire)
+                                # Parcourir une seule fois au lieu de plusieurs
+                                # list comprehensions
                                 dangerous_functions_count = 0
                                 xss_count = 0
                                 sql_count = 0
@@ -266,7 +285,8 @@ class SecurityDashboard:
                                 medium_vulns = dangerous_functions_count
                                 low_vulns = total_vulns - high_vulns - medium_vulns
 
-                                # Pénalités critiques (XSS et SQL injection sont très graves)
+                                # Pénalités critiques (XSS et SQL injection
+                                # sont très graves)
                                 xss_penalty = (
                                     xss_patterns * 5.0
                                 )  # 5 points par pattern XSS unique
@@ -274,18 +294,24 @@ class SecurityDashboard:
                                     sql_patterns * 10.0
                                 )  # 10 points par pattern SQL unique
 
-                                # Pénalités pour fonctions dangereuses (moins graves mais nombreuses)
-                                # Calcul plus réaliste : chaque vulnérabilité moyenne compte
-                                # mais avec une pénalité décroissante pour éviter les scores trop bas
-                                # Beaucoup de vulnérabilités moyennes sont des faux positifs (ex: subprocess avec nosec)
+                                # Pénalités pour fonctions dangereuses
+                                # (moins graves mais nombreuses)
+                                # Calcul plus réaliste : chaque vulnérabilité
+                                # moyenne compte mais avec une pénalité
+                                # décroissante pour éviter les scores trop bas
+                                # Beaucoup de vulnérabilités moyennes sont des
+                                # faux positifs (ex: subprocess avec nosec)
                                 if medium_vulns > 100:
-                                    # Si plus de 100 vulnérabilités moyennes, probablement des faux positifs
-                                    # Limiter la pénalité mais quand même pénaliser significativement
+                                    # Si plus de 100 vulnérabilités moyennes,
+                                    # probablement des faux positifs
+                                    # Limiter la pénalité mais quand même
+                                    # pénaliser significativement
                                     medium_penalty = min(
                                         20.0, 10.0 + (medium_vulns - 100) * 0.03
                                     )
                                 elif medium_vulns > 50:
-                                    # Entre 50 et 100, pénalité progressive mais plus clémente
+                                    # Entre 50 et 100, pénalité progressive
+                                    # mais plus clémente
                                     medium_penalty = 10.0 + (medium_vulns - 50) * 0.15
                                 elif medium_vulns > 20:
                                     # Entre 20 et 50, pénalité modérée
@@ -311,8 +337,9 @@ class SecurityDashboard:
                                     max(0, min(100, calculated_score))
                                 )
 
-                                # Calculer le niveau de risque réel basé sur les vulnérabilités
-                                # pour assurer la cohérence avec le score
+                                # Calculer le niveau de risque réel basé sur
+                                # les vulnérabilités pour assurer la cohérence
+                                # avec le score
                                 if high_vulns > 0:
                                     risk_level = "CRITICAL"
                                 elif medium_vulns > 20 or total_vulns > 50:
@@ -322,10 +349,12 @@ class SecurityDashboard:
                                 else:
                                     risk_level = "LOW"
 
-                                # Stocker le niveau de risque pour utilisation dans le dashboard
+                                # Stocker le niveau de risque pour utilisation
+                                # dans le dashboard
                                 security_data["risk_level"] = risk_level
 
-                                # Classification intelligente des vulnérabilités (s'assurer que ce sont des entiers)
+                                # Classification intelligente des vulnérabilités
+                                # (s'assurer que ce sont des entiers)
                                 security_data["vulnerabilities"]["high"] = int(
                                     high_vulns
                                 )
@@ -392,7 +421,8 @@ class SecurityDashboard:
                             "vulnerabilities_found": 0,
                         }
 
-            # Collecte des résultats de linting (optionnel, peut être sauté si trop lent)
+            # Collecte des résultats de linting (optionnel,
+            # peut être sauté si trop lent)
             if "code_linter" in self.athalia_components:
                 code_linter = self.athalia_components["code_linter"]
 
@@ -475,7 +505,8 @@ class SecurityDashboard:
                                 "cache_size": 0,
                             }
 
-                        # Calcul du score de performance du cache (utiliser les stats réelles ou par défaut)
+                        # Calcul du score de performance du cache
+                        # (utiliser les stats réelles ou par défaut)
                         cache_stats_to_use = security_data["cache_security"]
                         hit_rate = cache_stats_to_use.get("hit_rate", 0)
                         hits = cache_stats_to_use.get("hits", 0)
@@ -484,7 +515,8 @@ class SecurityDashboard:
 
                         # Calculer le hit_rate correctement
                         if isinstance(hit_rate, int | float) and hit_rate > 0:
-                            # Vérifier si hit_rate est déjà en pourcentage (> 1) ou décimal (<= 1)
+                            # Vérifier si hit_rate est déjà en pourcentage (> 1)
+                            # ou décimal (<= 1)
                             if hit_rate > 1:
                                 hit_rate_percent = min(100.0, hit_rate)
                             else:
@@ -519,7 +551,8 @@ class SecurityDashboard:
                 ):
                     try:
                         project_metrics = metrics_collector.collect_all_metrics()
-                        # Extraire les données essentielles AVANT nettoyage (optimisation mémoire)
+                        # Extraire les données essentielles AVANT nettoyage
+                        # (optimisation mémoire)
                         if isinstance(project_metrics, dict) and project_metrics:
                             # Métriques Python avec les vraies clés du MetricsCollector
                             python_files = project_metrics.get("python_files", {})
@@ -560,7 +593,8 @@ class SecurityDashboard:
                                 }
                             del docs
 
-                            # Nettoyer immédiatement les données non essentielles pour économiser la mémoire
+                            # Nettoyer immédiatement les données non essentielles
+                            # pour économiser la mémoire
                             essential_metrics = {
                                 "python_files",
                                 "tests",
@@ -586,7 +620,8 @@ class SecurityDashboard:
                 security_data
             )
 
-            # Libérer les données volumineuses après traitement (optimisation mémoire agressive)
+            # Libérer les données volumineuses après traitement
+            # (optimisation mémoire agressive)
             if "project_metrics" in security_data:
                 # Garder seulement les métriques essentielles
                 project_metrics = security_data.get("project_metrics", {})
@@ -613,13 +648,15 @@ class SecurityDashboard:
                 # Libérer les références volumineuses explicitement
                 pass  # Le GC Python gère automatiquement
 
-        # Si aucune donnée n'a été collectée mais les composants sont disponibles, ajouter un avertissement
+        # Si aucune donnée n'a été collectée mais les composants sont
+        # disponibles, ajouter un avertissement
         if not data_collected and self.athalia_components:
-            security_data["recommendations"].insert(
-                0,
-                "⚠️ ATTENTION: Les composants Athalia sont disponibles mais aucune donnée n'a été collectée. "
-                "Vérifiez les logs pour plus d'informations.",
+            msg = (
+                "⚠️ ATTENTION: Les composants Athalia sont disponibles "
+                "mais aucune donnée n'a été collectée. "
+                "Vérifiez les logs pour plus d'informations."
             )
+            security_data["recommendations"].insert(0, msg)
             logger.warning(
                 "Composants Athalia disponibles mais aucune donnée collectée. "
                 f"Composants initialisés: {list(self.athalia_components.keys())}"
@@ -794,7 +831,8 @@ class SecurityDashboard:
             with open(dashboard_file, "w", encoding="utf-8") as f:
                 f.write(dashboard_html)
 
-            # Libérer la mémoire du HTML après écriture (le GC Python gère automatiquement)
+            # Libérer la mémoire du HTML après écriture
+            # (le GC Python gère automatiquement)
             del dashboard_html
 
             logger.info(
@@ -806,7 +844,10 @@ class SecurityDashboard:
             force_memory_cleanup()
 
     def _generate_dashboard_html(self, security_data: dict[str, Any]) -> str:
-        """Génère le HTML du dashboard avec les vraies données de sécurité (optimisé mémoire)"""
+        """
+        Génère le HTML du dashboard avec les vraies données de sécurité
+        (optimisé mémoire)
+        """
 
         # Extraction des données pour le template (copie minimale)
         # Utiliser le score final (avec bonus) si disponible, sinon le score de base
@@ -826,7 +867,8 @@ class SecurityDashboard:
         vulnerabilities = security_data.get(
             "vulnerabilities", {"high": 0, "medium": 0, "low": 0}
         )
-        # Limiter les recommandations à 8 max pour éviter un HTML trop volumineux (optimisé)
+        # Limiter les recommandations à 8 max pour éviter un HTML
+        # trop volumineux (optimisé)
         recommendations_raw = security_data.get("recommendations", [])
         recommendations = (
             recommendations_raw[:8] if isinstance(recommendations_raw, list) else []
@@ -889,7 +931,8 @@ class SecurityDashboard:
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet">
     <style>
         :root {{
             --primary: #2563eb;
@@ -912,9 +955,12 @@ class SecurityDashboard:
             --gray-900: #111827;
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
             --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+                0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+                0 10px 10px -5px rgba(0, 0, 0, 0.04);
             --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }}
 
@@ -925,7 +971,8 @@ class SecurityDashboard:
         }}
 
         body {{
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont,
+                'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
             background-attachment: fixed;
             min-height: 100vh;
@@ -1475,7 +1522,8 @@ class SecurityDashboard:
 
         .progress-bar {{
             height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--primary-light), #764ba2);
+            background: linear-gradient(90deg, var(--primary),
+                var(--primary-light), #764ba2);
             border-radius: 10px;
             transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
             animation: progressAnimation 1.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1490,7 +1538,8 @@ class SecurityDashboard:
             left: 0;
             bottom: 0;
             right: 0;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            background: linear-gradient(90deg, transparent,
+                rgba(255, 255, 255, 0.3), transparent);
             animation: shimmer 2s infinite;
         }}
 
@@ -1669,7 +1718,9 @@ class SecurityDashboard:
         </div>
 
         <div class="security-overview">
-            <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--gray-800); margin-bottom: 1rem; text-align: center;">Vue d'ensemble de la sécurité</h2>
+            <h2 style="font-size: 1.5rem; font-weight: 700;
+                color: var(--gray-800); margin-bottom: 1rem;
+                text-align: center;">Vue d'ensemble de la sécurité</h2>
             <div class="score-container">
                 <div class="security-score-wrapper">
                     <div class="security-score-bg">{security_score}</div>
@@ -1779,7 +1830,9 @@ class SecurityDashboard:
 
         // Fonction pour animer les nombres (améliorée)
         function animateNumbers() {{
-            const numberElements = document.querySelectorAll('.vuln-number, .security-score');
+            const numberElements = document.querySelectorAll(
+                '.vuln-number, .security-score'
+            );
             numberElements.forEach(element => {{
                 // Sauvegarder le format original (avec /100, etc.)
                 const originalText = element.textContent;
@@ -1787,18 +1840,23 @@ class SecurityDashboard:
                 if (!match) return;
 
                 const finalValue = parseInt(match[1]);
-                if (finalValue > 0 && finalValue <= 10000) {{ // Limiter pour éviter les animations trop longues
+                // Limiter pour éviter les animations trop longues
+                if (finalValue > 0 && finalValue <= 10000) {{
                     let currentValue = 0;
                     const increment = Math.max(1, Math.ceil(finalValue / 30));
                     const timer = setInterval(() => {{
                         currentValue += increment;
                         if (currentValue >= finalValue) {{
                             // Restaurer le format original avec la valeur finale
-                            element.textContent = originalText.replace(/[0-9]+/, finalValue);
+                            element.textContent = originalText.replace(
+                                /[0-9]+/, finalValue
+                            );
                             clearInterval(timer);
                         }} else {{
                             const displayValue = Math.floor(currentValue);
-                            element.textContent = originalText.replace(/[0-9]+/, displayValue);
+                            element.textContent = originalText.replace(
+                                /[0-9]+/, displayValue
+                            );
                         }}
                     }}, 30);
                 }}
@@ -1894,18 +1952,25 @@ class SecurityDashboard:
                             label: function(context) {{
                                 const label = context.label || '';
                                 const value = context.parsed || 0;
-                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const total = context.dataset.data.reduce(
+                                    (a, b) => a + b, 0
+                                );
                                 if (total === 0) {{
                                     return label + ': Aucune vulnérabilité';
                                 }}
-                                const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-                                return label + ': ' + formatNumber(value) + ' (' + percentage + '%)';
+                                const percentage = total > 0
+                                    ? ((value / total) * 100).toFixed(1)
+                                    : 0;
+                                return label + ': ' + formatNumber(value)
+                                    + ' (' + percentage + '%)';
                             }}
                         }}
                     }},
                     // Gérer le cas où toutes les valeurs sont à 0
                     onHover: function(event, elements) {{
-                        event.native.target.style.cursor = elements.length > 0 ? 'pointer' : 'default';
+                        event.native.target.style.cursor = elements.length > 0
+                            ? 'pointer'
+                            : 'default';
                     }}
                 }}
             }}
@@ -1952,9 +2017,15 @@ class SecurityDashboard:
             // Ajouter une alerte visuelle si nécessaire
             if (hasHighVulns || (score < 50 && {total_vulnerabilities} > 10)) {{
                 const alertDiv = document.createElement('div');
-                alertDiv.style.cssText = 'background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 5px;';
-                alertDiv.innerHTML = '<strong>⚠️ Attention:</strong> ' +
-                    (hasHighVulns ? 'Vulnérabilités critiques détectées!' : 'Score de sécurité faible. Action recommandée.');
+                alertDiv.style.cssText = (
+                    'background: #fff3cd; border-left: 4px solid #ffc107; '
+                    'padding: 15px; margin: 20px 0; border-radius: 5px;'
+                );
+                alertDiv.innerHTML = '<strong>⚠️ Attention:</strong> ' + (
+                    hasHighVulns
+                        ? 'Vulnérabilités critiques détectées!'
+                        : 'Score de sécurité faible. Action recommandée.'
+                );
                 const overviewDiv = document.querySelector('.security-overview');
                 if (overviewDiv) {{
                     overviewDiv.appendChild(alertDiv);
@@ -1968,12 +2039,14 @@ class SecurityDashboard:
             const score = {security_score};
 
             // Calculer des statistiques utiles
-            const filesScanned = document.querySelector('.metric-value')?.textContent.replace(/[^0-9]/g, '') || '0';
+            const filesScanned = document.querySelector('.metric-value')
+                ?.textContent.replace(/[^0-9]/g, '') || '0';
             const vulnDensity = totalVulns > 0 && parseInt(filesScanned) > 0
                 ? (totalVulns / parseInt(filesScanned) * 100).toFixed(2)
                 : '0';
 
-            // Ajouter un indicateur de tendance si possible (pour futures améliorations)
+            // Ajouter un indicateur de tendance si possible
+            // (pour futures améliorations)
             console.log('📊 Statistiques du dashboard:', {{
                 score: score,
                 vulnérabilités: totalVulns,
@@ -2090,7 +2163,8 @@ class SecurityDashboard:
         else:
             calculated_hit_rate = 0.0
 
-        # Si hit_rate_raw est fourni, vérifier s'il est déjà en pourcentage (> 1) ou décimal (<= 1)
+        # Si hit_rate_raw est fourni, vérifier s'il est déjà en
+        # pourcentage (> 1) ou décimal (<= 1)
         if hit_rate_raw > 0:
             if hit_rate_raw > 1:
                 # Déjà en pourcentage (ex: 93.3)
@@ -2098,7 +2172,8 @@ class SecurityDashboard:
             else:
                 # En décimal (ex: 0.933)
                 hit_rate_percent = hit_rate_raw * 100
-            # Utiliser le calcul depuis hits/misses si disponible, sinon utiliser hit_rate_raw
+            # Utiliser le calcul depuis hits/misses si disponible,
+            # sinon utiliser hit_rate_raw
             if total_requests > 0 or (hits + misses > 0):
                 hit_rate_percent = calculated_hit_rate
         else:
@@ -2118,7 +2193,8 @@ class SecurityDashboard:
         </div>
         <div class="metric-row">
             <span class="metric-label">📊 Total Requests</span>
-            <span class="metric-value">{total_requests if total_requests > 0 else hits + misses:,}</span>
+            <span class="metric-value">{
+                total_requests if total_requests > 0 else hits + misses:,}</span>
         </div>
         <div class="metric-row">
             <span class="metric-label">⚡ Hit Rate</span>
@@ -2170,7 +2246,9 @@ class SecurityDashboard:
         </div>
         <div class="metric-row">
             <span class="metric-label">⚡ Athalia Components</span>
-            <span class="metric-value">{"✅ Disponibles" if security_data.get("athalia_available") else "❌ Non disponibles"}</span>
+            <span class="metric-value">{
+                "✅ Disponibles" if security_data.get("athalia_available")
+                else "❌ Non disponibles"}</span>
         </div>
         """
 
@@ -2209,12 +2287,44 @@ class SecurityDashboard:
         return html
 
     def open_dashboard(self, dashboard_file: str | None = None):
-        """Ouvre le dashboard de sécurité dans le navigateur ou actualise s'il est déjà ouvert"""
+        """
+        Ouvre le dashboard de sécurité dans le navigateur ou actualise
+        s'il est déjà ouvert
+        """
         try:
-            # OPTIMISATION: Éviter les ouvertures multiples (délai de 2 secondes)
+            # VÉRIFICATION: Éviter les ouvertures multiples entre instances
+            # Vérifier si un verrou existe et s'il est récent (< 5 secondes)
+            if self._lock_file.exists():
+                try:
+                    lock_time = self._lock_file.stat().st_mtime
+                    current_time = time.time()
+                    time_since_lock = current_time - lock_time
+
+                    # Si le verrou est récent (< 5 secondes),
+                    # ne pas ouvrir une nouvelle fenêtre
+                    if time_since_lock < 5.0:
+                        logger.info(
+                            f"🔄 Dashboard déjà ouvert "
+                            f"(verrou récent: {time_since_lock:.1f}s), "
+                            "régénération silencieuse uniquement"
+                        )
+                        # Régénérer le dashboard pour mettre à jour les données
+                        if dashboard_file is None:
+                            self.generate_security_dashboard()
+                        else:
+                            self.generate_security_dashboard()
+                        # Mettre à jour le verrou
+                        self._lock_file.touch()
+                        return
+                except OSError:
+                    # Si erreur de lecture du verrou, continuer
+                    pass
+
+            # OPTIMISATION: Éviter les ouvertures multiples
+            # (délai de 2 secondes) dans la même instance
             current_time = time.time()
             time_since_last_open = current_time - self._last_open_time
-            
+
             # Générer le dashboard si non fourni
             if dashboard_file is None:
                 dashboard_file = self.generate_security_dashboard()
@@ -2227,8 +2337,10 @@ class SecurityDashboard:
             # Obtenir le chemin absolu
             absolute_path = dashboard_path.resolve()
 
-            # OPTIMISATION: Si le dashboard a été ouvert récemment (< 2s), juste régénérer le fichier
-            # Le HTML se rafraîchira automatiquement grâce au script auto-refresh
+            # OPTIMISATION: Si le dashboard a été ouvert récemment (< 2s),
+            # juste régénérer le fichier
+            # Le HTML se rafraîchira automatiquement grâce au script
+            # auto-refresh
             if time_since_last_open < 2.0:
                 logger.debug(
                     f"Dashboard déjà ouvert récemment ({time_since_last_open:.1f}s), "
@@ -2237,34 +2349,59 @@ class SecurityDashboard:
                 # Régénérer le dashboard pour mettre à jour les données
                 self.generate_security_dashboard()
                 self._last_open_time = current_time
+                # Mettre à jour le verrou
+                self._lock_file.touch()
                 return
+
+            # Créer/mettre à jour le fichier de verrouillage
+            try:
+                self._lock_file.touch()
+            except OSError:
+                pass  # Ignorer les erreurs de création du verrou
 
             # Encoder correctement pour file:// URL
             path_str = str(absolute_path)
             encoded_path = urllib.parse.quote(path_str, safe="/")
             file_url = f"file://{encoded_path}"
 
-            # OPTIMISATION: Utiliser webbrowser.open avec new=0 pour réutiliser l'onglet existant
-            # new=0 : réutilise l'onglet existant si disponible (évite ouverture multiple)
+            # OPTIMISATION: Utiliser webbrowser.open avec new=0
+            # pour réutiliser l'onglet existant
+            # new=0 : réutilise l'onglet existant si disponible
+            # (évite ouverture multiple)
             # new=1 : ouvre un nouvel onglet
             # new=2 : ouvre une nouvelle fenêtre
             try:
-                # Essayer d'abord de réutiliser l'onglet existant (évite les pages multiples)
-                webbrowser.open(file_url, new=0, autoraise=False)  # autoraise=False pour ne pas voler le focus
+                # Essayer d'abord de réutiliser l'onglet existant
+                # (évite les pages multiples)
+                webbrowser.open(
+                    file_url, new=0, autoraise=False
+                )  # autoraise=False pour ne pas voler le focus
                 self._last_open_time = current_time
+                # Mettre à jour le verrou
+                try:
+                    self._lock_file.touch()
+                except OSError:
+                    pass
                 logger.info(
-                    f"🔄 Dashboard de sécurité ouvert/actualisé dans le navigateur: {absolute_path}"
+                    f"🔄 Dashboard de sécurité ouvert/actualisé "
+                    f"dans le navigateur: {absolute_path}"
                 )
             except Exception as webbrowser_error:
                 logger.warning(f"Erreur avec webbrowser.open: {webbrowser_error}")
                 # Fallback: utiliser la méthode native du système
                 system = platform.system()
                 if system == "Darwin":  # macOS
-                    # Utiliser 'open' avec -g pour ne pas amener la fenêtre au premier plan
+                    # Utiliser 'open' avec -g pour ne pas amener
+                    # la fenêtre au premier plan
                     subprocess.run(
                         ["open", "-g", str(absolute_path)], check=False
                     )  # nosec B607, B603
                     self._last_open_time = current_time
+                    # Mettre à jour le verrou
+                    try:
+                        self._lock_file.touch()
+                    except OSError:
+                        pass
                     logger.info(
                         f"🌐 Dashboard de sécurité ouvert via 'open': {absolute_path}"
                     )
@@ -2275,6 +2412,11 @@ class SecurityDashboard:
                         check=False,
                     )
                     self._last_open_time = current_time
+                    # Mettre à jour le verrou
+                    try:
+                        self._lock_file.touch()
+                    except OSError:
+                        pass
                     logger.info(
                         f"🌐 Dashboard de sécurité ouvert via 'start': {absolute_path}"
                     )
@@ -2282,8 +2424,14 @@ class SecurityDashboard:
                     # Linux et autres: réessayer avec webbrowser
                     webbrowser.open(file_url, new=0)
                     self._last_open_time = current_time
+                    # Mettre à jour le verrou
+                    try:
+                        self._lock_file.touch()
+                    except OSError:
+                        pass
                     logger.info(
-                        f"🌐 Dashboard de sécurité ouvert dans le navigateur: {file_url}"
+                        f"🌐 Dashboard de sécurité ouvert "
+                        f"dans le navigateur: {file_url}"
                     )
         except Exception as e:
             logger.error(f"Erreur lors de l'ouverture du dashboard: {e}")
@@ -2301,6 +2449,11 @@ class SecurityDashboard:
                     )
                     webbrowser.open(file_url, new=0)
                     self._last_open_time = time.time()
+                    # Mettre à jour le verrou
+                    try:
+                        self._lock_file.touch()
+                    except OSError:
+                        pass
                     logger.info(f"🌐 Ouverture via fallback: {file_url}")
             except Exception as fallback_error:
                 logger.error(f"Erreur lors de l'ouverture fallback: {fallback_error}")
@@ -2391,7 +2544,8 @@ def main():
         ).exists():
             project_path = script_dir.resolve()
             logger.warning(
-                f"Chemin temporaire détecté, utilisation du répertoire du script: {project_path}"
+                f"Chemin temporaire détecté, utilisation du "
+                f"répertoire du script: {project_path}"
             )
 
     # Initialisation du dashboard

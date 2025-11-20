@@ -424,7 +424,7 @@ Tests effectués avec 24 utilisateurs seniors (65-82 ans) pour valider l'accessi
 # Run test suite
 pytest tests/ -v --cov=arkalia_cia_python_backend
 
-# Coverage: 85% (218 tests passing)
+# Coverage: 22.09% (308 tests collectés, tous passants)
 # Integration tests: Multiple scenarios
 # Unit tests: Comprehensive coverage for all modules
 ```

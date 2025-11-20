@@ -3,8 +3,8 @@ OCR pour PDF scannés (Tesseract)
 """
 
 try:
-    import pytesseract  # type: ignore[import-not-found]
-    from pdf2image import convert_from_path  # type: ignore[import-not-found]
+    import pytesseract
+    from pdf2image import convert_from_path
 
     OCR_AVAILABLE = True
 except ImportError:

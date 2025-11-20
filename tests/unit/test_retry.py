@@ -55,7 +55,7 @@ class TestRetryWithBackoff:
 
         call_count = 0
 
-        @retry_with_backoff(max_retries=3, backoff_factor=0.5)
+        @retry_with_backoff(max_retries=3, backoff_factor=1.5)
         def func():
             nonlocal call_count
             call_count += 1
@@ -67,8 +67,11 @@ class TestRetryWithBackoff:
             func()
 
         # Vérifier que les délais augmentent exponentiellement
+        # Avec backoff_factor=1.5: attempt 0 = 1.5^0 = 1.0, attempt 1 = 1.5^1 = 1.5
         assert len(delays) >= 2
-        assert delays[1] > delays[0]
+        assert (
+            delays[1] > delays[0]
+        ), f"Expected delays[1]={delays[1]} > delays[0]={delays[0]}"
 
     def test_specific_exception_type(self):
         """Test retry seulement pour exceptions spécifiques"""

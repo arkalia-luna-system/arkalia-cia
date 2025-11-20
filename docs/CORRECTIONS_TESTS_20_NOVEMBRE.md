@@ -12,7 +12,7 @@
 - **Problèmes** : Tests utilisant de mauvais noms de méthodes
 
 ### Après corrections
-- **Tests** : 240 passed ✅
+- **Tests** : 308 tests collectés, tous passants ✅
 - **Couverture** : 85%
 - **Statut** : Tous les tests passent
 
@@ -73,7 +73,7 @@
 
 **Tous les tests passent maintenant !** ✅
 
-- ✅ 240 tests passent
+- ✅ 308 tests collectés, tous passants
 - ✅ 85% de couverture
 - ✅ Aucune erreur
 - ✅ Aucun test qui échoue

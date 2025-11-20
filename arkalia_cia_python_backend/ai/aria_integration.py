@@ -82,8 +82,8 @@ class ARIAIntegration:
                 if attempt < max_retries - 1:
                     wait_time = backoff_factor**attempt
                     logger.debug(
-                        f"Tentative {attempt + 1}/{max_retries} échouée ARIA patterns: {e}. "
-                        f"Retry dans {wait_time:.2f}s"
+                        f"Tentative {attempt + 1}/{max_retries} échouée "
+                        f"ARIA patterns: {e}. Retry dans {wait_time:.2f}s"
                     )
                     time.sleep(wait_time)
                 else:
@@ -126,8 +126,8 @@ class ARIAIntegration:
                 if attempt < max_retries - 1:
                     wait_time = backoff_factor**attempt
                     logger.debug(
-                        f"Tentative {attempt + 1}/{max_retries} échouée ARIA métriques: {e}. "
-                        f"Retry dans {wait_time:.2f}s"
+                        f"Tentative {attempt + 1}/{max_retries} échouée "
+                        f"ARIA métriques: {e}. Retry dans {wait_time:.2f}s"
                     )
                     time.sleep(wait_time)
                 else:

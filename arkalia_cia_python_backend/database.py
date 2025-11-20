@@ -465,7 +465,8 @@ class CIADatabase:
             cursor = conn.cursor()
             if limit is not None:
                 cursor.execute(
-                    "SELECT * FROM health_portals ORDER BY category, name ASC LIMIT ? OFFSET ?",
+                    "SELECT * FROM health_portals "
+                    "ORDER BY category, name ASC LIMIT ? OFFSET ?",
                     (limit, skip),
                 )
             else:

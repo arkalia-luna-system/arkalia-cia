@@ -202,7 +202,8 @@ class AutoDocumenter:
                                 analysis["total_functions"] += 1
                                 if ast.get_docstring(node):
                                     analysis["documented_functions"] += 1
-                                # Si c'est une méthode (dans une classe), compter comme méthode
+                                # Si c'est une méthode (dans une classe),
+                                # compter comme méthode
                                 parent = getattr(node, "parent", None)
                                 if parent and isinstance(parent, ast.ClassDef):
                                     analysis["total_methods"] += 1
@@ -212,7 +213,8 @@ class AutoDocumenter:
                                 analysis["total_classes"] += 1
                                 if ast.get_docstring(node):
                                     analysis["documented_classes"] += 1
-                                # Compter les méthodes directement dans la classe (sans double walk)
+                                # Compter les méthodes directement dans la classe
+                                # (sans double walk)
                                 for child in node.body:
                                     if isinstance(child, ast.FunctionDef):
                                         analysis["total_methods"] += 1

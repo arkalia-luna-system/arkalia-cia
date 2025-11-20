@@ -9,14 +9,14 @@ import tempfile
 from contextlib import contextmanager
 
 from arkalia_cia_python_backend.config import get_settings
-from arkalia_cia_python_backend.types import (
-    DocumentMetadataDict,
-    DocumentResultDict,
-)
 from arkalia_cia_python_backend.database import CIADatabase
 from arkalia_cia_python_backend.pdf_parser.metadata_extractor import MetadataExtractor
 from arkalia_cia_python_backend.pdf_processor import PDFProcessor
 from arkalia_cia_python_backend.security_utils import sanitize_log_message
+from arkalia_cia_python_backend.types import (
+    DocumentMetadataDict,
+    DocumentResultDict,
+)
 from arkalia_cia_python_backend.utils.filename_validator import (
     get_filename_validator,
 )

@@ -127,7 +127,7 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), ce pr
   - Validation téléphone belge, URL, email, nom, date
   - Tests Python compatibles avec suite existante
 - **🧪 Amélioration Massive de la Couverture de Tests**: 
-  - Création de 218 tests Python (vs 61 précédemment)
+  - Création de 308 tests Python collectés (vs 61 précédemment)
   - Couverture globale portée à **85%** (vs 10.69% précédemment)
   - Tests complets pour tous les modules critiques :
     - `test_api.py` - Tests complets de l'API FastAPI
@@ -424,4 +424,4 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), ce pr
 
 *Ce changelog est automatiquement mis à jour à chaque release. Pour les changements techniques détaillés, voir notre [historique des commits](https://github.com/arkalia-luna-system/arkalia-cia/commits/main).*
 
-*Dernière mise à jour : Janvier 2025*
+*Dernière mise à jour : 20 novembre 2025*

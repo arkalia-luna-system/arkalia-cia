@@ -20,7 +20,7 @@ Tous les tests sont **rapides et optimisés**. Aucun test ne cause de surcharge 
 
 - **Tests unitaires**: ~0.2-0.5s pour tous les tests unitaires
 - **Tests d'intégration**: ~0.3s pour 30 tests
-- **Total**: ~10-15 secondes pour tous les 218 tests
+- **Total**: ~3.5 secondes pour tous les 308 tests collectés
 
 ---
 
@@ -117,8 +117,8 @@ Aucun test ne nécessite une surveillance particulière. Tous sont rapides et op
 
 | Métrique | Valeur | Statut |
 |----------|--------|--------|
-| **Tests totaux** | 218 | ✅ |
-| **Temps total** | ~10-15s | ✅ Excellent |
+| **Tests totaux** | 308 | ✅ |
+| **Temps total** | ~3.5s | ✅ Excellent |
 
 ---
 
@@ -155,7 +155,7 @@ Aucun test ne nécessite une surveillance particulière. Tous sont rapides et op
 
 ## 🎉 Conclusion
 
-**Tous les tests sont optimisés et rapides.** Aucun test ne cause de surcharge significative. Le temps d'exécution total de ~10-15 secondes pour 218 tests est excellent.
+**Tous les tests sont optimisés et rapides.** Aucun test ne cause de surcharge significative. Le temps d'exécution total de ~3.5 secondes pour 308 tests collectés est excellent.
 
 **Recommandation**: Continuer à maintenir cette qualité en suivant les bonnes pratiques déjà en place.
 

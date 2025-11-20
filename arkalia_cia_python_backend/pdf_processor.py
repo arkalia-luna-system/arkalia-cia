@@ -95,7 +95,8 @@ class PDFProcessor:
                         else f"Erreur lors de l'extraction: {str(e)}"
                     )
                 except Exception as ocr_error:
-                    # Logger l'erreur OCR secondaire mais continuer avec résultat partiel
+                    # Logger l'erreur OCR secondaire mais continuer
+                    # avec résultat partiel
                     logger.warning(
                         f"Erreur OCR secondaire (non bloquante): {ocr_error}",
                         exc_info=False,
@@ -121,9 +122,10 @@ class PDFProcessor:
             # Vérifier la taille du fichier avant traitement
             file_size = os.path.getsize(file_path)
             if file_size > MAX_PDF_SIZE:
+                max_mb = MAX_PDF_SIZE / (1024 * 1024)
                 return {
                     "success": False,
-                    "error": f"Fichier trop volumineux (max {MAX_PDF_SIZE / (1024*1024):.0f} MB)",
+                    "error": f"Fichier trop volumineux (max {max_mb:.0f} MB)",
                 }
 
             # Vérifier que c'est bien un fichier (pas un répertoire)

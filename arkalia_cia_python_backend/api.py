@@ -45,13 +45,13 @@ from arkalia_cia_python_backend.dependencies import (
     get_pattern_analyzer,
 )
 from arkalia_cia_python_backend.security.ssrf_validator import get_ssrf_validator
-from arkalia_cia_python_backend.services.document_service import DocumentService
 from arkalia_cia_python_backend.security_utils import (
     sanitize_error_detail,
     sanitize_html,
     sanitize_log_message,
     validate_phone_number,
 )
+from arkalia_cia_python_backend.services.document_service import DocumentService
 
 logger = logging.getLogger(__name__)
 
@@ -297,6 +297,7 @@ API_PREFIX = f"/api/{API_VERSION}"
 
 # Ajouter le rate limiter
 app.state.limiter = limiter
+app.state.start_time = time.time()
 
 
 def rate_limit_handler(request: Request, exc: Exception) -> Response:
@@ -474,6 +475,24 @@ async def health_check(db: CIADatabase = Depends(get_database)):
         health_status["status"] = "degraded"
 
     return health_status
+
+
+@app.get("/metrics")
+async def metrics():
+    """
+    Endpoint pour métriques d'observabilité
+    Format simple compatible avec Prometheus
+    """
+    metrics_data = {
+        "timestamp": datetime.now().isoformat(),
+        "uptime_seconds": int(
+            time.time() - app.state.start_time
+            if hasattr(app.state, "start_time")
+            else 0
+        ),
+        "version": "1.3.1",
+    }
+    return metrics_data
 
 
 # === AUTHENTIFICATION ===

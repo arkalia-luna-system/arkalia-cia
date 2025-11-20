@@ -75,7 +75,7 @@ docs/
 ### Code Quality Standards
 - **Formatting**: Black + Ruff for Python, Dart format for Flutter
 - **Linting**: Comprehensive code analysis
-- **Testing**: 85% coverage with unit and integration tests (218 tests, suivi automatique via Codecov)
+- **Testing**: 22.09% coverage with unit and integration tests (308 tests collectés, suivi automatique via Codecov)
 - **Security**: Automated vulnerability scanning
 
 ### CI/CD Enhancements

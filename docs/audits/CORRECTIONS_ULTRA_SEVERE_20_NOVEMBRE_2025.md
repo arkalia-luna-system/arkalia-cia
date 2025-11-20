@@ -272,9 +272,18 @@
 ✓ Config OK: max_file=50MB
 ✓ SSRF Validator OK
 ✓ Filename Validator OK
+✓ Filename Validator OK
+✓ Retry Logic OK
 ✓ API import OK
 ✓ DocumentService import OK
 ```
+
+### Tests Créés ✅
+- ✅ `tests/unit/test_config.py` - 8 tests (2 classes)
+- ✅ `tests/unit/test_ssrf_validator.py` - 9 tests (2 classes)
+- ✅ `tests/unit/test_filename_validator.py` - 12 tests (2 classes)
+- ✅ `tests/unit/test_retry.py` - 7 tests (1 classe)
+- **Total**: 37 tests pour les nouveaux modules de sécurité
 
 ### Formatage
 ```bash

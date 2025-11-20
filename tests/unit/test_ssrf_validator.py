@@ -38,11 +38,11 @@ class TestSSRFValidator:
     def test_blocked_private_ips(self):
         """Test détection IPs privées"""
         validator = SSRFValidator()
-        with pytest.raises(ValueError, match="adresses IP privées"):
+        with pytest.raises(ValueError, match="adresses privées"):
             validator.validate("http://192.168.1.1")
-        with pytest.raises(ValueError, match="adresses IP privées"):
+        with pytest.raises(ValueError, match="adresses privées"):
             validator.validate("http://10.0.0.1")
-        with pytest.raises(ValueError, match="adresses IP privées"):
+        with pytest.raises(ValueError, match="adresses privées"):
             validator.validate("http://172.16.0.1")
 
     def test_blocked_link_local(self):
