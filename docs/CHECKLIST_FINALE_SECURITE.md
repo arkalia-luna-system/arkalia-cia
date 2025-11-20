@@ -249,11 +249,12 @@ L'application est maintenant sécurisée et prête pour la mise en production.
 
 ## Voir aussi
 
-- **[AUDIT_SECURITE_SENIOR.md](./AUDIT_SECURITE_SENIOR.md)** — Audit sécurité initial
-- **[AUDIT_POST_CORRECTIONS.md](./AUDIT_POST_CORRECTIONS.md)** — Audit après corrections
+- **[audits/AUDIT_SECURITE_SENIOR.md](./audits/AUDIT_SECURITE_SENIOR.md)** — Audit sécurité initial
+- **[audits/AUDIT_POST_CORRECTIONS.md](./audits/AUDIT_POST_CORRECTIONS.md)** — Audit après corrections
 - **[CORRECTIONS_SECURITE_EFFECTUEES.md](./CORRECTIONS_SECURITE_EFFECTUEES.md)** — Détails des corrections
-- **[CHECKLIST_RELEASE_CONSOLIDEE.md](./CHECKLIST_RELEASE_CONSOLIDEE.md)** — Checklist release
+- **[deployment/CHECKLIST_RELEASE_CONSOLIDEE.md](./deployment/CHECKLIST_RELEASE_CONSOLIDEE.md)** — Checklist release
 - **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
+- **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** — Documentation API complète
 
 ---
 

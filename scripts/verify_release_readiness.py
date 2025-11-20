@@ -17,7 +17,7 @@ BUILD_DIR = ARKALIA_CIA_DIR / "build" / "app" / "outputs"
 SCREENSHOTS_DIR = PROJECT_ROOT / "docs" / "screenshots"
 
 
-def run_command(cmd: list[str], cwd: Path | None = None) -> tuple[int, str, str]:
+def run_command(cmd: list[str], cwd: Path | None = None, timeout: int = 60) -> tuple[int, str, str]:
     """Exécute une commande et retourne le code de retour, stdout et stderr"""
     try:
         result = subprocess.run(
@@ -25,7 +25,7 @@ def run_command(cmd: list[str], cwd: Path | None = None) -> tuple[int, str, str]
             cwd=cwd or PROJECT_ROOT,
             capture_output=True,
             text=True,
-            timeout=300,
+            timeout=timeout,
         )
         return result.returncode, result.stdout, result.stderr
     except subprocess.TimeoutExpired:
@@ -38,7 +38,8 @@ def check_python_tests() -> dict[str, Any]:
     """Vérifie que tous les tests Python passent"""
     print("🔍 Vérification tests Python...")
     code, stdout, stderr = run_command(
-        ["python3", "-m", "pytest", "tests/", "-q", "--tb=no"]
+        ["python3", "-m", "pytest", "tests/", "-q", "--tb=no", "--maxfail=1"],
+        timeout=120
     )
     
     if code == 0:
@@ -73,18 +74,20 @@ def check_code_quality() -> dict[str, Any]:
     print("🔍 Vérification qualité code...")
     results = {}
     
-    # Black
+    # Black (rapide)
     code, stdout, stderr = run_command(
-        ["black", "--check", "arkalia_cia_python_backend/", "tests/"]
+        ["black", "--check", "arkalia_cia_python_backend/", "tests/"],
+        timeout=30
     )
     results["black"] = {
         "status": "✅" if code == 0 else "❌",
         "passed": code == 0,
     }
     
-    # Ruff
+    # Ruff (rapide)
     code, stdout, stderr = run_command(
-        ["ruff", "check", "arkalia_cia_python_backend/", "tests/"]
+        ["ruff", "check", "arkalia_cia_python_backend/", "tests/"],
+        timeout=30
     )
     results["ruff"] = {
         "status": "✅" if code == 0 else "❌",
@@ -92,18 +95,20 @@ def check_code_quality() -> dict[str, Any]:
         "output": stdout if code != 0 else "",
     }
     
-    # MyPy
+    # MyPy (peut être lent, timeout réduit)
     code, stdout, stderr = run_command(
-        ["mypy", "arkalia_cia_python_backend/", "--ignore-missing-imports"]
+        ["mypy", "arkalia_cia_python_backend/", "--ignore-missing-imports"],
+        timeout=45
     )
     results["mypy"] = {
         "status": "✅" if code == 0 else "⚠️",
         "passed": code == 0,
     }
     
-    # Bandit
+    # Bandit (peut être lent, timeout réduit)
     code, stdout, stderr = run_command(
-        ["bandit", "-r", "arkalia_cia_python_backend/", "-ll"]
+        ["bandit", "-r", "arkalia_cia_python_backend/", "-ll"],
+        timeout=45
     )
     results["bandit"] = {
         "status": "✅" if "No issues identified" in stdout else "❌",
@@ -227,7 +232,8 @@ def check_flutter_analyze() -> dict[str, Any]:
     """Vérifie Flutter analyze"""
     print("🔍 Vérification Flutter analyze...")
     code, stdout, stderr = run_command(
-        ["flutter", "analyze", ARKALIA_CIA_DIR]
+        ["flutter", "analyze", ARKALIA_CIA_DIR],
+        timeout=60
     )
     
     if code == 0:

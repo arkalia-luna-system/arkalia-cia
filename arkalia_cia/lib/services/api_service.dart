@@ -135,7 +135,7 @@ class ApiService {
           return <Map<String, dynamic>>[];
         }
         
-        final response = await makeAuthenticatedRequest(() async {
+        final response = await _makeAuthenticatedRequest(() async {
           final headers = await _headers;
           return await http
               .get(
@@ -170,7 +170,7 @@ class ApiService {
   static Future<bool> deleteDocument(int documentId) async {
     try {
       final url = await baseUrl;
-      await makeAuthenticatedRequest(() async {
+      await _makeAuthenticatedRequest(() async {
         final headers = await _headers;
         return await http.delete(
           Uri.parse('$url/api/v1/documents/$documentId'),
@@ -194,7 +194,7 @@ class ApiService {
   }) async {
     try {
       final url = await baseUrl;
-      final response = await makeAuthenticatedRequest(() async {
+      final response = await _makeAuthenticatedRequest(() async {
         final headers = await _headers;
         return await http.post(
           Uri.parse('$url/api/v1/reminders'),
@@ -233,7 +233,7 @@ class ApiService {
     return RetryHelper.retryOnNetworkError(
       fn: () async {
         final url = await baseUrl;
-        final response = await makeAuthenticatedRequest(() async {
+        final response = await _makeAuthenticatedRequest(() async {
           final headers = await _headers;
           return await http
               .get(
@@ -302,7 +302,7 @@ class ApiService {
     return RetryHelper.retryOnNetworkError(
       fn: () async {
         final url = await baseUrl;
-        final response = await makeAuthenticatedRequest(() async {
+        final response = await _makeAuthenticatedRequest(() async {
           final headers = await _headers;
           return await http
               .get(
@@ -402,7 +402,7 @@ class ApiService {
     return RetryHelper.retryOnNetworkError(
       fn: () async {
         final url = await baseUrl;
-        final response = await makeAuthenticatedRequest(() async {
+        final response = await _makeAuthenticatedRequest(() async {
           final headers = await _headers;
           return await http
               .get(
@@ -440,7 +440,7 @@ class ApiService {
 
   /// Méthode générique GET avec gestion automatique du refresh token
   static Future<dynamic> get(String endpoint) async {
-    return makeAuthenticatedRequest(() async {
+    return _makeAuthenticatedRequest(() async {
       final url = await baseUrl;
       if (url.isEmpty) {
         // Retourner une réponse HTTP vide au lieu d'une liste vide

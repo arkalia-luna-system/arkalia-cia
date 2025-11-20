@@ -668,14 +668,15 @@ class ApiCache {
 }
 ```
 
-## 📚 Related Documentation
+## Voir aussi
 
-- **[ARCHITECTURE.md](ARCHITECTURE.md)** - System architecture
-- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Deployment procedures
-- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Development guidelines
-- **[INDEX_DOCUMENTATION.md](INDEX_DOCUMENTATION.md)** - Full documentation index
+- **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** — Documentation API complète avec exemples détaillés
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture système détaillée
+- **[DEPLOYMENT.md](./DEPLOYMENT.md)** — Procédures de déploiement
+- **[CONTRIBUTING.md](./CONTRIBUTING.md)** — Standards de développement
+- **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
 
 ---
 
-**Last Updated**: November 19, 2025  
-*This API reference is maintained alongside code changes and updated with each release.*
+*Dernière mise à jour : Janvier 2025*  
+*Cette référence API est maintenue en parallèle avec les changements de code et mise à jour à chaque release.*
