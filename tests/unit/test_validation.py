@@ -7,8 +7,6 @@ et tester la logique de validation qui peut être partagée.
 import re
 from datetime import datetime
 
-import pytest
-
 
 class TestValidationHelper:
     """Tests pour ValidationHelper"""
