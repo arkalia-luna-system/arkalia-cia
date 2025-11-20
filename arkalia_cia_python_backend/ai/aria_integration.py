@@ -4,9 +4,12 @@ Récupère données douleurs et patterns depuis ARIA
 """
 
 import logging
+import time
 from typing import Any
 
 import requests
+
+from arkalia_cia_python_backend.config import get_settings
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +53,7 @@ class ARIAIntegration:
 
     def get_patterns(self, user_id: str) -> dict[str, Any]:
         """
-        Récupère les patterns détectés depuis ARIA
+        Récupère les patterns détectés depuis ARIA avec retry logic
 
         Args:
             user_id: ID utilisateur
@@ -58,25 +61,42 @@ class ARIAIntegration:
         Returns:
             Dict avec patterns détectés
         """
-        try:
-            response = self.session.get(
-                f"{self.aria_base_url}/api/patterns",
-                params={"user_id": str(user_id)},
-                timeout=5,
-            )
+        settings = get_settings()
+        max_retries = settings.max_retries
+        backoff_factor = settings.retry_backoff_factor
 
-            if response.status_code == 200:
-                data = response.json()
-                return dict(data) if isinstance(data, dict) else {}
-            else:
+        for attempt in range(max_retries):
+            try:
+                response = self.session.get(
+                    f"{self.aria_base_url}/api/patterns",
+                    params={"user_id": str(user_id)},
+                    timeout=5,
+                )
+
+                if response.status_code == 200:
+                    data = response.json()
+                    return dict(data) if isinstance(data, dict) else {}
+                else:
+                    return {}
+            except requests.RequestException as e:
+                if attempt < max_retries - 1:
+                    wait_time = backoff_factor**attempt
+                    logger.debug(
+                        f"Tentative {attempt + 1}/{max_retries} échouée ARIA patterns: {e}. "
+                        f"Retry dans {wait_time:.2f}s"
+                    )
+                    time.sleep(wait_time)
+                else:
+                    logger.debug(f"ARIA patterns non accessible: {e}")
+                    return {}
+            except Exception as e:
+                logger.warning(f"Erreur inattendue ARIA patterns: {e}")
                 return {}
-        except Exception as e:
-            logger.debug(f"ARIA patterns non accessible: {e}")
-            return {}
+        return {}
 
     def get_health_metrics(self, user_id: str, days: int = 30) -> dict[str, Any]:
         """
-        Récupère métriques santé depuis ARIA
+        Récupère métriques santé depuis ARIA avec retry logic
 
         Args:
             user_id: ID utilisateur
@@ -85,18 +105,35 @@ class ARIAIntegration:
         Returns:
             Dict avec métriques (sommeil, activité, stress, etc.)
         """
-        try:
-            response = self.session.get(
-                f"{self.aria_base_url}/api/health-metrics",
-                params={"user_id": str(user_id), "days": str(days)},
-                timeout=5,
-            )
+        settings = get_settings()
+        max_retries = settings.max_retries
+        backoff_factor = settings.retry_backoff_factor
 
-            if response.status_code == 200:
-                data = response.json()
-                return dict(data) if isinstance(data, dict) else {}
-            else:
+        for attempt in range(max_retries):
+            try:
+                response = self.session.get(
+                    f"{self.aria_base_url}/api/health-metrics",
+                    params={"user_id": str(user_id), "days": str(days)},
+                    timeout=5,
+                )
+
+                if response.status_code == 200:
+                    data = response.json()
+                    return dict(data) if isinstance(data, dict) else {}
+                else:
+                    return {}
+            except requests.RequestException as e:
+                if attempt < max_retries - 1:
+                    wait_time = backoff_factor**attempt
+                    logger.debug(
+                        f"Tentative {attempt + 1}/{max_retries} échouée ARIA métriques: {e}. "
+                        f"Retry dans {wait_time:.2f}s"
+                    )
+                    time.sleep(wait_time)
+                else:
+                    logger.debug(f"ARIA métriques non accessible: {e}")
+                    return {}
+            except Exception as e:
+                logger.warning(f"Erreur inattendue ARIA métriques: {e}")
                 return {}
-        except Exception as e:
-            logger.debug(f"ARIA métriques non accessible: {e}")
-            return {}
+        return {}

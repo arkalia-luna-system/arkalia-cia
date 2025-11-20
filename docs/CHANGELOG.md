@@ -71,7 +71,7 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), ce pr
   - ✅ Utilisation UUID pour fichiers temporaires uniques
   - ✅ Mock des opérations lourdes (MagicMock pour éviter scans complets)
   - ✅ Test security_dashboard optimisé : 140s → 0.26s (99.8% plus rapide)
-  - ✅ Tous les tests passent maintenant : 206/206 (100%)
+  - ✅ Tests : 240 passed (tous les tests passent)
 
 ### Added
 - **📥 Import/Export de Données Complet**: 

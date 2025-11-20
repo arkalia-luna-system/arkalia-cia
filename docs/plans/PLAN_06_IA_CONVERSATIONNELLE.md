@@ -1,6 +1,14 @@
-# 💬 PLAN 06 : IA CONVERSATIONNELLE DOULEURS
+# Plan 06 : IA conversationnelle douleurs
 
-> **IA "médecin virtuel" pour analyser douleurs, pathologie et examens**
+**Version** : 1.0.0  
+**Date** : 20 novembre 2025  
+**Statut** : ✅ Implémenté
+
+---
+
+## Vue d'ensemble
+
+IA "médecin virtuel" pour analyser douleurs, pathologie et examens.
 
 ---
 

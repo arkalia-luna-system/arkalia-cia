@@ -145,7 +145,11 @@ class ConversationalAI:
                 )
                 date = recent_pain.get("date", recent_pain.get("timestamp", ""))
 
-                answer = f"D'après vos données récentes, vous avez signalé une douleur d'intensité {intensity}/10 localisée à {location}"
+                answer = (
+                    f"D'après vos données récentes, vous avez signalé "
+                    f"une douleur d'intensité {intensity}/10 "
+                    f"localisée à {location}"
+                )
                 if date:
                     answer += f" le {date}"
                 answer += ". "
@@ -157,10 +161,19 @@ class ConversationalAI:
                             user_data.get("user_id", "default")
                         )
                         if patterns.get("recurring_patterns"):
-                            answer += "J'ai détecté des patterns récurrents dans vos douleurs. "
-                    except Exception:
-                        # Ignorer silencieusement si les patterns ne sont pas disponibles
-                        pass  # nosec B110
+                            answer += (
+                                "J'ai détecté des patterns récurrents "
+                                "dans vos douleurs. "
+                            )
+                    except Exception as pattern_error:
+                        # Logger l'erreur mais continuer sans patterns
+                        logger.debug(
+                            (
+                                f"Patterns ARIA non disponibles "
+                                f"(non bloquant): {pattern_error}"
+                            ),
+                            exc_info=False,
+                        )
 
                 return answer
 
@@ -179,7 +192,10 @@ class ConversationalAI:
                 ", ".join(specialties) if specialties else "diverses spécialités"
             )
 
-            return f"Vous avez {count} médecin(s) enregistré(s) dans votre historique, couvrant {specialties_str}. "
+            return (
+                f"Vous avez {count} médecin(s) enregistré(s) "
+                f"dans votre historique, couvrant {specialties_str}. "
+            )
 
         return "Vous n'avez pas encore de médecins enregistrés. "
 
@@ -195,7 +211,10 @@ class ConversationalAI:
             if recent:
                 exam_name = recent.get("original_name", "examen")
                 exam_date = recent.get("created_at", "")
-                return f"Votre dernier examen enregistré est '{exam_name}' du {exam_date}. "
+                return (
+                    f"Votre dernier examen enregistré est "
+                    f"'{exam_name}' du {exam_date}. "
+                )
 
         return "Je n'ai pas trouvé d'examens récents dans vos documents. "
 
@@ -207,7 +226,10 @@ class ConversationalAI:
         if medication_docs:
             recent = medication_docs[-1] if medication_docs else None
             if recent:
-                return f"Votre dernière ordonnance date du {recent.get('created_at', 'N/A')}. "
+                return (
+                    f"Votre dernière ordonnance date du "
+                    f"{recent.get('created_at', 'N/A')}. "
+                )
 
         return "Je n'ai pas trouvé d'ordonnances récentes. "
 
@@ -221,7 +243,10 @@ class ConversationalAI:
             ]
             if upcoming:
                 next_appt = upcoming[0]
-                return f"Votre prochain rendez-vous est prévu le {next_appt.get('date', 'N/A')}. "
+                return (
+                    f"Votre prochain rendez-vous est prévu le "
+                    f"{next_appt.get('date', 'N/A')}. "
+                )
 
         return "Je n'ai pas trouvé de rendez-vous à venir. "
 
@@ -233,15 +258,24 @@ class ConversationalAI:
             try:
                 user_id = user_data.get("user_id", "default")
                 pain_data = self.aria.get_pain_records(user_id, limit=20)
-            except Exception:
-                # Ignorer silencieusement si les données de douleur ne sont pas disponibles
-                pass  # nosec B110
+            except Exception as pain_error:
+                # Logger l'erreur mais continuer sans données de douleur
+                logger.debug(
+                    (
+                        f"Données douleur ARIA non disponibles "
+                        f"(non bloquant): {pain_error}"
+                    ),
+                    exc_info=False,
+                )
 
         documents = user_data.get("documents", [])
 
         if pain_data and documents:
             # Analyser corrélations basiques
-            answer = "En analysant vos données, je peux identifier des corrélations entre vos douleurs et vos examens. "
+            answer = (
+                "En analysant vos données, je peux identifier des "
+                "corrélations entre vos douleurs et vos examens. "
+            )
 
             # Si ARIA disponible, récupérer patterns avancés et métriques santé
             if self.aria:
@@ -256,7 +290,10 @@ class ConversationalAI:
                     )
 
                     if correlations:
-                        answer += f"J'ai détecté {len(correlations)} corrélation(s) significative(s) : "
+                        answer += (
+                            f"J'ai détecté {len(correlations)} "
+                            f"corrélation(s) significative(s) : "
+                        )
                         for corr in correlations[:3]:  # Limiter à 3 corrélations
                             answer += f"{corr['description']}. "
                     elif patterns.get("correlations"):
@@ -272,10 +309,19 @@ class ConversationalAI:
                 user_id = user_data.get("user_id", "default")
                 health_metrics = self.aria.get_health_metrics(user_id, days=30)
                 if health_metrics:
-                    return "En analysant vos métriques santé ARIA, je peux identifier des patterns. "
-            except Exception:
-                # Ignorer silencieusement si les métriques santé ne sont pas disponibles
-                pass  # nosec B110
+                    return (
+                        "En analysant vos métriques santé ARIA, "
+                        "je peux identifier des patterns. "
+                    )
+            except Exception as metrics_error:
+                # Logger l'erreur mais continuer sans métriques santé
+                logger.debug(
+                    (
+                        f"Métriques santé ARIA non disponibles "
+                        f"(non bloquant): {metrics_error}"
+                    ),
+                    exc_info=False,
+                )
 
         return "Je n'ai pas assez de données pour analyser les corrélations. "
 
@@ -306,7 +352,8 @@ class ConversationalAI:
 
                 if pain_dates and exam_dates:
                     # Vérifier si examens suivent pics de douleur (dans les 7 jours)
-                    # Optimisé: trier les dates d'examens pour recherche binaire au lieu de boucle imbriquée O(n²)
+                    # Optimisé: trier les dates d'examens pour recherche
+                    # binaire au lieu de boucle imbriquée O(n²)
                     exam_dates_sorted = sorted(exam_dates)
                     matches = 0
                     for pain_date in pain_dates:
@@ -327,7 +374,10 @@ class ConversationalAI:
                         correlations.append(
                             {
                                 "type": "pain_exam",
-                                "description": f"{matches} examen(s) effectué(s) après pic de douleur",
+                                "description": (
+                                    f"{matches} examen(s) effectué(s) "
+                                    f"après pic de douleur"
+                                ),
                                 "confidence": confidence,
                                 "severity": "high" if confidence > 0.5 else "medium",
                             }
@@ -355,7 +405,10 @@ class ConversationalAI:
                             correlations.append(
                                 {
                                     "type": "stress_pain",
-                                    "description": "Corrélation entre niveau de stress élevé et douleur",
+                                    "description": (
+                                        "Corrélation entre niveau de stress élevé "
+                                        "et douleur"
+                                    ),
                                     "confidence": max(0.7, stress_pain_corr),
                                     "severity": (
                                         "high" if stress_pain_corr > 0.6 else "medium"
@@ -378,7 +431,10 @@ class ConversationalAI:
                             correlations.append(
                                 {
                                     "type": "sleep_pain",
-                                    "description": "Corrélation entre manque de sommeil et douleur",
+                                    "description": (
+                                        "Corrélation entre manque de sommeil "
+                                        "et douleur"
+                                    ),
                                     "confidence": 0.65,
                                     "severity": "medium",
                                 }
@@ -437,12 +493,20 @@ class ConversationalAI:
             return float(
                 max(0.0, min(1.0, abs(correlation)))
             )  # Normaliser entre 0 et 1
-        except Exception:
+        except (ValueError, ZeroDivisionError, TypeError) as e:
+            logger.debug(f"Erreur calcul corrélation: {e}")
+            return 0.5
+        except Exception as e:
+            logger.warning(f"Erreur inattendue calcul corrélation: {e}")
             return 0.5
 
     def _answer_general_question(self, question: str, user_data: dict) -> str:
         """Répond aux questions générales"""
-        return "Je peux vous aider à analyser vos données de santé. Posez-moi une question spécifique sur vos médecins, examens, douleurs ou médicaments. "
+        return (
+            "Je peux vous aider à analyser vos données de santé. "
+            "Posez-moi une question spécifique sur vos médecins, "
+            "examens, douleurs ou médicaments. "
+        )
 
     def _find_related_documents(self, question: str, user_data: dict) -> list[str]:
         """Trouve documents liés à la question"""
@@ -527,7 +591,11 @@ class ConversationalAI:
             last_consult = doctor_consultations[-1]
             questions.insert(
                 0,
-                f"Depuis votre dernière consultation le {last_consult.get('date', 'N/A')}, qu'est-ce qui a changé ?",
+                (
+                    f"Depuis votre dernière consultation le "
+                    f"{last_consult.get('date', 'N/A')}, "
+                    f"qu'est-ce qui a changé ?"
+                ),
             )
 
         return questions

@@ -23,21 +23,6 @@ class CIADatabase:
                 "Chemin de base de données invalide: path traversal détecté"
             )
 
-        # Permettre les chemins absolus pour les fichiers temporaires de tests
-        # et les chemins relatifs dans le répertoire courant
-        if db_path_obj.is_absolute():
-            # Pour les tests : permettre les fichiers temporaires
-            # Utiliser tempfile.gettempdir() pour éviter les chemins hardcodés
-            temp_dir = tempfile.gettempdir()
-            if not (
-                str(db_path_obj).startswith(temp_dir)
-                or str(db_path_obj).startswith("/var")
-                or str(db_path_obj).startswith(str(Path.cwd()))
-            ):
-                # En production, on peut être plus strict si nécessaire
-                # Pour l'instant, on permet les chemins absolus pour compatibilité tests
-                pass
-
         # Validation stricte des chemins autorisés
         if db_path_obj.is_absolute():
             temp_dir = tempfile.gettempdir()
@@ -49,10 +34,6 @@ class CIADatabase:
                 raise ValueError(f"Chemin de base de données non autorisé: {db_path}")
 
         self.db_path = str(db_path_obj.resolve())
-        self.init_database()
-
-    def init_database(self):
-        """Initialise la base de données avec les tables nécessaires"""
         self.init_db()
 
     def init_db(self):
@@ -176,7 +157,8 @@ class CIADatabase:
                     document_id INTEGER NOT NULL,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-                    FOREIGN KEY (document_id) REFERENCES documents(id) ON DELETE CASCADE,
+                    FOREIGN KEY (document_id) REFERENCES documents(id)
+                        ON DELETE CASCADE,
                     UNIQUE(user_id, document_id)
                 )
             """
@@ -197,7 +179,9 @@ class CIADatabase:
             cursor = conn.cursor()
             cursor.execute(
                 """
-                INSERT INTO documents (name, original_name, file_path, file_type, file_size)
+                INSERT INTO documents (
+                    name, original_name, file_path, file_type, file_size
+                )
                 VALUES (?, ?, ?, ?, ?)
             """,
                 (name, original_name, file_path, file_type, file_size),
@@ -228,10 +212,6 @@ class CIADatabase:
             cursor.execute("SELECT * FROM documents WHERE id = ?", (doc_id,))
             row = cursor.fetchone()
             return dict(row) if row else None
-
-    def list_documents(self) -> list[dict[str, Any]]:
-        """Liste tous les documents"""
-        return self.get_documents()
 
     def delete_document(self, doc_id: int) -> bool:
         """Supprime un document par ID"""
@@ -287,7 +267,9 @@ class CIADatabase:
             cursor = conn.cursor()
             cursor.execute(
                 """
-                INSERT INTO ai_conversations (question, answer, question_type, related_documents)
+                INSERT INTO ai_conversations (
+                    question, answer, question_type, related_documents
+                )
                 VALUES (?, ?, ?, ?)
             """,
                 (question, answer, question_type, related_documents),
@@ -342,10 +324,6 @@ class CIADatabase:
             )
             return [dict(row) for row in cursor.fetchall()]
 
-    def save_document(self, filename: str, content: str, metadata: str) -> int | None:
-        """Sauvegarde un document"""
-        return self.add_document(filename, filename, "", "pdf", len(content))
-
     def add_reminder(
         self, title: str, description: str, reminder_date: str
     ) -> int | None:
@@ -361,12 +339,6 @@ class CIADatabase:
             )
             return cursor.lastrowid
 
-    def save_reminder(
-        self, title: str, description: str, reminder_date: str
-    ) -> int | None:
-        """Sauvegarde un rappel"""
-        return self.add_reminder(title, description, reminder_date)
-
     def get_reminder(self, reminder_id: int) -> dict[str, Any] | None:
         """Récupère un rappel par ID"""
         with sqlite3.connect(self.db_path) as conn:
@@ -375,10 +347,6 @@ class CIADatabase:
             cursor.execute("SELECT * FROM reminders WHERE id = ?", (reminder_id,))
             row = cursor.fetchone()
             return dict(row) if row else None
-
-    def list_reminders(self) -> list[dict[str, Any]]:
-        """Liste tous les rappels"""
-        return self.get_reminders()
 
     def delete_reminder(self, reminder_id: int) -> bool:
         """Supprime un rappel par ID"""
@@ -396,7 +364,8 @@ class CIADatabase:
             cursor = conn.cursor()
             if limit is not None:
                 cursor.execute(
-                    "SELECT * FROM reminders ORDER BY reminder_date ASC LIMIT ? OFFSET ?",
+                    "SELECT * FROM reminders "
+                    "ORDER BY reminder_date ASC LIMIT ? OFFSET ?",
                     (limit, skip),
                 )
             else:
@@ -418,12 +387,6 @@ class CIADatabase:
             )
             return cursor.lastrowid
 
-    def save_contact(
-        self, name: str, phone: str, relationship: str, is_primary: bool = False
-    ) -> int | None:
-        """Sauvegarde un contact d'urgence"""
-        return self.add_emergency_contact(name, phone, relationship, is_primary)
-
     def get_contact(self, contact_id: int) -> dict[str, Any] | None:
         """Récupère un contact par ID"""
         with sqlite3.connect(self.db_path) as conn:
@@ -434,10 +397,6 @@ class CIADatabase:
             )
             row = cursor.fetchone()
             return dict(row) if row else None
-
-    def list_contacts(self) -> list[dict[str, Any]]:
-        """Liste tous les contacts"""
-        return self.get_emergency_contacts()
 
     def delete_contact(self, contact_id: int) -> bool:
         """Supprime un contact par ID"""
@@ -455,12 +414,14 @@ class CIADatabase:
             cursor = conn.cursor()
             if limit is not None:
                 cursor.execute(
-                    "SELECT * FROM emergency_contacts ORDER BY is_primary DESC, name ASC LIMIT ? OFFSET ?",
+                    "SELECT * FROM emergency_contacts "
+                    "ORDER BY is_primary DESC, name ASC LIMIT ? OFFSET ?",
                     (limit, skip),
                 )
             else:
                 cursor.execute(
-                    "SELECT * FROM emergency_contacts ORDER BY is_primary DESC, name ASC"
+                    "SELECT * FROM emergency_contacts "
+                    "ORDER BY is_primary DESC, name ASC"
                 )
             return [dict(row) for row in cursor.fetchall()]
 
@@ -479,12 +440,6 @@ class CIADatabase:
             )
             return cursor.lastrowid
 
-    def save_portal(
-        self, name: str, url: str, description: str, category: str
-    ) -> int | None:
-        """Sauvegarde un portail santé"""
-        return self.add_health_portal(name, url, description, category)
-
     def get_portal(self, portal_id: int) -> dict[str, Any] | None:
         """Récupère un portail par ID"""
         with sqlite3.connect(self.db_path) as conn:
@@ -493,10 +448,6 @@ class CIADatabase:
             cursor.execute("SELECT * FROM health_portals WHERE id = ?", (portal_id,))
             row = cursor.fetchone()
             return dict(row) if row else None
-
-    def list_portals(self) -> list[dict[str, Any]]:
-        """Liste tous les portails"""
-        return self.get_health_portals()
 
     def delete_portal(self, portal_id: int) -> bool:
         """Supprime un portail par ID"""
@@ -610,5 +561,4 @@ class CIADatabase:
             return [dict(row) for row in cursor.fetchall()]
 
 
-# Instance globale
-db = CIADatabase()
+# NOTE: Instance globale supprimée - utiliser get_database() via Depends() dans api.py

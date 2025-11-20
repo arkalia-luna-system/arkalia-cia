@@ -94,9 +94,12 @@ class PDFProcessor:
                         if text_result
                         else f"Erreur lors de l'extraction: {str(e)}"
                     )
-                except Exception:
-                    # Ignorer silencieusement les erreurs d'extraction OCR secondaire
-                    pass  # nosec B110
+                except Exception as ocr_error:
+                    # Logger l'erreur OCR secondaire mais continuer avec résultat partiel
+                    logger.warning(
+                        f"Erreur OCR secondaire (non bloquante): {ocr_error}",
+                        exc_info=False,
+                    )
             return f"Erreur lors de l'extraction: {str(e)}"
 
     def save_pdf_to_uploads(self, file_path: str, filename: str) -> str:
@@ -275,5 +278,4 @@ class PDFProcessor:
             return {"success": False, "error": str(e)}
 
 
-# Instance globale
-pdf_processor = PDFProcessor()
+# NOTE: Instance globale supprimée - utiliser get_pdf_processor() via Depends() dans api.py

@@ -411,7 +411,7 @@ graph TB
 
 ### Stratégie de tests
 
-- **Tests unitaires** : 206 tests Python (100% passent)
+- **Tests unitaires** : 240 passed
 - **Couverture** : 85% global
 - **Tests Flutter** : Analyse statique (0 erreur)
 - **Tests d'intégration** : Structure prête

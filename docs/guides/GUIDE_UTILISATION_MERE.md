@@ -1,5 +1,13 @@
 # Guide d'utilisation — Arkalia CIA
 
+**Version** : 1.0.0  
+**Date** : 20 novembre 2025  
+**Statut** : ✅ Guide actif
+
+---
+
+## Vue d'ensemble
+
 Guide simple pour utiliser l'application Arkalia CIA.
 
 ---

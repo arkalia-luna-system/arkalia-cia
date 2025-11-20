@@ -2211,14 +2211,10 @@ class SecurityDashboard:
     def open_dashboard(self, dashboard_file: str | None = None):
         """Ouvre le dashboard de sécurité dans le navigateur ou actualise s'il est déjà ouvert"""
         try:
-            # Éviter les ouvertures multiples trop rapides (moins de 1 seconde entre deux ouvertures)
+            # OPTIMISATION: Éviter les ouvertures multiples (délai de 2 secondes)
             current_time = time.time()
-            if current_time - self._last_open_time < 1.0:
-                logger.debug(
-                    "Ouverture du dashboard ignorée (trop récente, réutilisation de l'onglet existant)"
-                )
-                return
-
+            time_since_last_open = current_time - self._last_open_time
+            
             # Générer le dashboard si non fourni
             if dashboard_file is None:
                 dashboard_file = self.generate_security_dashboard()
@@ -2231,18 +2227,30 @@ class SecurityDashboard:
             # Obtenir le chemin absolu
             absolute_path = dashboard_path.resolve()
 
+            # OPTIMISATION: Si le dashboard a été ouvert récemment (< 2s), juste régénérer le fichier
+            # Le HTML se rafraîchira automatiquement grâce au script auto-refresh
+            if time_since_last_open < 2.0:
+                logger.debug(
+                    f"Dashboard déjà ouvert récemment ({time_since_last_open:.1f}s), "
+                    "régénération silencieuse (auto-refresh activé)"
+                )
+                # Régénérer le dashboard pour mettre à jour les données
+                self.generate_security_dashboard()
+                self._last_open_time = current_time
+                return
+
             # Encoder correctement pour file:// URL
             path_str = str(absolute_path)
             encoded_path = urllib.parse.quote(path_str, safe="/")
             file_url = f"file://{encoded_path}"
 
-            # Utiliser webbrowser.open avec new=0 pour réutiliser l'onglet existant si possible
-            # new=0 : réutilise l'onglet existant si disponible
+            # OPTIMISATION: Utiliser webbrowser.open avec new=0 pour réutiliser l'onglet existant
+            # new=0 : réutilise l'onglet existant si disponible (évite ouverture multiple)
             # new=1 : ouvre un nouvel onglet
             # new=2 : ouvre une nouvelle fenêtre
             try:
-                # Essayer d'abord de réutiliser l'onglet existant
-                webbrowser.open(file_url, new=0, autoraise=True)
+                # Essayer d'abord de réutiliser l'onglet existant (évite les pages multiples)
+                webbrowser.open(file_url, new=0, autoraise=False)  # autoraise=False pour ne pas voler le focus
                 self._last_open_time = current_time
                 logger.info(
                     f"🔄 Dashboard de sécurité ouvert/actualisé dans le navigateur: {absolute_path}"

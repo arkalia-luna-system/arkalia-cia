@@ -1,9 +1,12 @@
-# 🧹 Nettoyage Automatique - Documentation Complète
+# Nettoyage automatique
 
-**Date**: 2025-01-XX  
-**Statut**: ✅ **IMPLÉMENTÉ ET TESTÉ**
+**Version** : 1.0.0  
+**Date** : 20 novembre 2025  
+**Statut** : ✅ Implémenté et testé
 
 ---
+
+## Vue d'ensemble
 
 ## 📋 Vue d'Ensemble
 

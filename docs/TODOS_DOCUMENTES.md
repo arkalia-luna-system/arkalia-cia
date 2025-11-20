@@ -1,0 +1,180 @@
+# 📝 TODOs Documentés - 20 Novembre 2025
+
+**Date**: 20 novembre 2025  
+**Statut**: Documentés pour implémentation future
+
+---
+
+## 🔴 TODOs CRITIQUES (Fonctionnalités manquantes)
+
+### 1. Import Portails Santé
+
+**Fichiers concernés**:
+- `arkalia_cia/lib/screens/onboarding/import_choice_screen.dart` (ligne 99)
+- `arkalia_cia/lib/screens/onboarding/import_progress_screen.dart` (ligne 104)
+
+**Description**: Implémenter l'import automatique depuis les portails santé belges (eHealth, Andaman 7, MaSanté)
+
+**Statut actuel**: 
+- ✅ Structure UI existe
+- ✅ Backend endpoint `/api/v1/health-portals/import` existe
+- ❌ Parsing réel des données portails non implémenté
+- ❌ Synchronisation automatique non implémentée
+
+**Priorité**: 🟠 ÉLEVÉE (fonctionnalité promise aux utilisateurs)
+
+**Estimation**: 2-3 semaines de développement
+
+**Dépendances**:
+- APIs OAuth des portails santé belges
+- Documentation APIs eHealth, Andaman 7, MaSanté
+- Parsing des formats de données spécifiques
+
+---
+
+### 2. Sélection Médecin dans Recherche Avancée
+
+**Fichier**: `arkalia_cia/lib/screens/advanced_search_screen.dart` (ligne 78)
+
+**Description**: Ajouter un sélecteur de médecin dans l'écran de recherche avancée
+
+**Statut actuel**:
+- ✅ Recherche avancée fonctionnelle
+- ✅ Filtres par date, type, etc.
+- ❌ Filtre par médecin manquant
+
+**Priorité**: 🟡 MOYENNE (amélioration UX)
+
+**Estimation**: 1-2 jours de développement
+
+**Implémentation suggérée**:
+```dart
+// Ajouter un DropdownButton pour sélectionner le médecin
+DropdownButton<String>(
+  items: doctors.map((doctor) => DropdownMenuItem(
+    value: doctor.id,
+    child: Text(doctor.name),
+  )).toList(),
+  onChanged: (doctorId) {
+    setState(() {
+      doctorId = doctorId;
+    });
+  },
+)
+```
+
+---
+
+## 🟡 TODOs MOYENS (Améliorations)
+
+### 3. Refresh Token pour Portails Santé
+
+**Fichier**: `arkalia_cia/lib/services/health_portal_auth_service.dart` (ligne 125)
+
+**Description**: Implémenter le rafraîchissement automatique des tokens OAuth pour les portails santé
+
+**Statut actuel**:
+- ✅ Authentification OAuth de base implémentée
+- ✅ Structure pour refresh token existe
+- ❌ Logique de refresh automatique non implémentée
+
+**Priorité**: 🟡 MOYENNE (amélioration robustesse)
+
+**Estimation**: 3-5 jours de développement
+
+**Implémentation suggérée**:
+- Vérifier expiration token avant chaque requête
+- Appeler endpoint refresh si token expiré
+- Gérer erreurs de refresh (re-authentification)
+
+---
+
+### 4. Endpoints Spécifiques Portails Santé
+
+**Fichier**: `arkalia_cia/lib/services/health_portal_auth_service.dart` (ligne 81)
+
+**Description**: Implémenter les endpoints spécifiques pour chaque portail santé quand les APIs seront disponibles
+
+**Statut actuel**:
+- ✅ Structure générique existe
+- ✅ Gestion OAuth de base
+- ❌ Endpoints spécifiques non implémentés (APIs non disponibles)
+
+**Priorité**: 🟢 BASSE (dépend de disponibilité APIs)
+
+**Estimation**: 1-2 semaines par portail (quand APIs disponibles)
+
+**Portails concernés**:
+- eHealth (API non documentée publiquement)
+- Andaman 7 (API privée)
+- MaSanté (API non documentée)
+
+---
+
+## 🟢 TODOs BAS (Notes techniques)
+
+### 5. Application ID Android
+
+**Fichier**: `arkalia_cia/android/app/build.gradle.kts` (ligne 30)
+
+**Description**: Spécifier un Application ID unique pour Android
+
+**Statut actuel**: 
+- ✅ Application ID par défaut fonctionne
+- ⚠️ Devrait être personnalisé pour production
+
+**Priorité**: 🟢 BASSE (pour production uniquement)
+
+**Action requise**: 
+- Choisir un Application ID unique (ex: `com.arkalia.cia`)
+- Mettre à jour `build.gradle.kts`
+
+---
+
+### 6. Configuration Signing Android
+
+**Fichier**: `arkalia_cia/android/app/build.gradle.kts` (ligne 42)
+
+**Description**: Ajouter configuration de signature pour release build
+
+**Statut actuel**:
+- ✅ Debug build fonctionne
+- ⚠️ Release build nécessite configuration signing
+
+**Priorité**: 🟢 BASSE (pour release uniquement)
+
+**Action requise**:
+- Créer keystore pour signature
+- Configurer `signingConfigs` dans `build.gradle.kts`
+
+---
+
+## 📊 RÉSUMÉ
+
+| Priorité | Nombre | Statut |
+|----------|--------|--------|
+| 🔴 Critique | 0 | - |
+| 🟠 Élevée | 1 | Import portails |
+| 🟡 Moyenne | 2 | Recherche médecin, Refresh token |
+| 🟢 Basse | 2 | Application ID, Signing |
+
+---
+
+## ✅ ACTIONS RECOMMANDÉES
+
+1. **Court terme** (1-2 semaines):
+   - Implémenter sélection médecin dans recherche avancée
+   - Documenter APIs portails santé (si disponibles)
+
+2. **Moyen terme** (1-2 mois):
+   - Implémenter import portails santé
+   - Implémenter refresh token automatique
+
+3. **Long terme** (quand APIs disponibles):
+   - Endpoints spécifiques par portail
+   - Configuration production Android
+
+---
+
+**Note**: Ces TODOs sont documentés mais ne bloquent pas le fonctionnement actuel de l'application. Ils représentent des améliorations et fonctionnalités futures.
+

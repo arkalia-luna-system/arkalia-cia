@@ -1,7 +1,7 @@
 # Guide build release Android
 
 **Version** : 1.2.0  
-**Dernière mise à jour** : 19 novembre 2025  
+**Dernière mise à jour** : 20 novembre 2025  
 **Cible** : Google Play Store
 
 Guide complet pour construire des releases Android prêtes pour la production.

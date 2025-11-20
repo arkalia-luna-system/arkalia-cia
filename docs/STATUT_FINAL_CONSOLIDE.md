@@ -34,10 +34,10 @@ Le projet Arkalia CIA exploite maintenant 100% de son potentiel avec toutes les 
 
 ### Fonctionnalités avancées
 
-- **IA Conversationnelle** : Chat intelligent avec ARIA, historique conversations
-- **IA Patterns** : Détection patterns, tendances, saisonnalité, prédictions Prophet
+- **IA Conversationnelle** : Chat intelligent avec ARIA, analyse croisée CIA+ARIA, cause-effet, historique conversations (70-80% complet)
+- **IA Patterns** : Détection patterns, tendances, saisonnalité, prédictions Prophet (70% complet, tests unitaires complets)
 - **Recherche Avancée** : Multi-critères, sémantique avec synonymes, filtres, cache
-- **Partage Familial** : Chiffrement AES-256, gestion membres, notifications, dashboard avec statistiques
+- **Partage Familial** : Chiffrement AES-256 bout-en-bout, gestion membres, permissions granulaires, notifications, dashboard avec statistiques (70-80% complet)
 - **Analyse Croisée CIA+ARIA** : Corrélations stress-douleur, sommeil-douleur
 
 ### Intégrations

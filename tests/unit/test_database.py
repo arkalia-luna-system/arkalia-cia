@@ -78,7 +78,7 @@ class TestDatabaseManager:
         # La DB est déjà initialisée par la fixture
 
         # Nettoyer les documents existants pour isoler ce test
-        existing_docs = db_manager.list_documents()
+        existing_docs = db_manager.get_documents()
         for doc in existing_docs:
             db_manager.delete_document(doc["id"])
 
@@ -99,7 +99,7 @@ class TestDatabaseManager:
         )
 
         # Lister les documents
-        documents = db_manager.list_documents()
+        documents = db_manager.get_documents()
         assert len(documents) == 2
 
     def test_delete_document(self, db_manager):
@@ -263,7 +263,7 @@ class TestDatabaseManager:
         # La DB est déjà initialisée par la fixture
 
         # Nettoyer les rappels existants pour isoler ce test
-        existing_reminders = db_manager.list_reminders()
+        existing_reminders = db_manager.get_reminders()
         for reminder in existing_reminders:
             db_manager.delete_reminder(reminder["id"])
 
@@ -278,7 +278,7 @@ class TestDatabaseManager:
             reminder_date="2024-12-30",
         )
 
-        reminders = db_manager.list_reminders()
+        reminders = db_manager.get_reminders()
         assert len(reminders) == 2
 
     def test_list_contacts(self, db_manager):
@@ -286,7 +286,7 @@ class TestDatabaseManager:
         # La DB est déjà initialisée par la fixture
 
         # Nettoyer les contacts existants pour isoler ce test
-        existing_contacts = db_manager.list_contacts()
+        existing_contacts = db_manager.get_emergency_contacts()
         for contact in existing_contacts:
             db_manager.delete_contact(contact["id"])
 
@@ -303,7 +303,7 @@ class TestDatabaseManager:
             is_primary=True,
         )
 
-        contacts = db_manager.list_contacts()
+        contacts = db_manager.get_emergency_contacts()
         assert len(contacts) == 2
 
     def test_list_portals(self, db_manager):
@@ -311,7 +311,7 @@ class TestDatabaseManager:
         # La DB est déjà initialisée par la fixture
 
         # Nettoyer les portails existants pour isoler ce test
-        existing_portals = db_manager.list_portals()
+        existing_portals = db_manager.get_health_portals()
         for portal in existing_portals:
             db_manager.delete_portal(portal["id"])
 
@@ -328,17 +328,19 @@ class TestDatabaseManager:
             category="medical",
         )
 
-        portals = db_manager.list_portals()
+        portals = db_manager.get_health_portals()
         assert len(portals) == 2
 
     def test_save_document(self, db_manager):
         """Test de sauvegarde d'un document"""
         # La DB est déjà initialisée par la fixture
 
-        doc_id = db_manager.save_document(
-            filename="test.pdf",
-            content="test content",
-            metadata="test metadata",
+        doc_id = db_manager.add_document(
+            name="test.pdf",
+            original_name="test.pdf",
+            file_path="/tmp/test.pdf",
+            file_type="pdf",
+            file_size=1024,
         )
 
         assert doc_id is not None
@@ -347,7 +349,7 @@ class TestDatabaseManager:
         """Test de sauvegarde d'un rappel"""
         # La DB est déjà initialisée par la fixture
 
-        reminder_id = db_manager.save_reminder(
+        reminder_id = db_manager.add_reminder(
             title="Test Reminder",
             description="Test description",
             reminder_date="2024-12-31",
@@ -359,7 +361,7 @@ class TestDatabaseManager:
         """Test de sauvegarde d'un contact"""
         # La DB est déjà initialisée par la fixture
 
-        contact_id = db_manager.save_contact(
+        contact_id = db_manager.add_emergency_contact(
             name="Test Contact",
             phone="1234567890",
             relationship="family",
@@ -372,7 +374,7 @@ class TestDatabaseManager:
         """Test de sauvegarde d'un portail"""
         # La DB est déjà initialisée par la fixture
 
-        portal_id = db_manager.save_portal(
+        portal_id = db_manager.add_health_portal(
             name="Test Portal",
             url="https://example.com",
             description="Test portal",

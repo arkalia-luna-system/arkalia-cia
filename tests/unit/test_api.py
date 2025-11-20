@@ -11,15 +11,19 @@ from fastapi.testclient import TestClient
 from arkalia_cia_python_backend import api
 from arkalia_cia_python_backend.api import API_PREFIX
 from arkalia_cia_python_backend.auth import create_access_token
+from arkalia_cia_python_backend.dependencies import get_database
 
 
 class TestAPIEndpoints:
     """Tests pour les endpoints de l'API"""
 
     @pytest.fixture
-    def client(self):
-        """Créer un client de test"""
-        return TestClient(api.app)
+    def client(self, temp_db):
+        """Créer un client de test avec dépendance override"""
+        db_path, db = temp_db
+        api.app.dependency_overrides[get_database] = lambda: db
+        yield TestClient(api.app)
+        api.app.dependency_overrides.clear()
 
     @pytest.fixture
     def temp_db(self):
@@ -33,20 +37,21 @@ class TestAPIEndpoints:
         test_db_dir.mkdir(exist_ok=True)
         db_path = str(test_db_dir / f"test_{uuid.uuid4().hex}.db")
 
-        original_db = api.db
-        api.db = CIADatabase(db_path=db_path)
-        yield db_path
-        api.db = original_db
+        # OPTIMISATION: Créer directement une instance de CIADatabase (api.db n'existe plus)
+        db = CIADatabase(db_path=db_path)
+        db.init_db()
+        yield db_path, db
         if Path(db_path).exists():
             Path(db_path).unlink()
 
     @pytest.fixture
     def auth_token(self, temp_db):
         """Créer un utilisateur de test et retourner un token"""
-
+        # OPTIMISATION: Utiliser l'instance de DB directement (api.db n'existe plus)
+        db_path, db = temp_db
         # Utiliser bcrypt directement pour éviter problèmes avec passlib
         password_hash = bcrypt.hashpw(b"test123", bcrypt.gensalt()).decode("utf-8")
-        user_id = api.db.create_user(
+        user_id = db.create_user(
             username="testuser", password_hash=password_hash, email="test@example.com"
         )
         token = create_access_token(
