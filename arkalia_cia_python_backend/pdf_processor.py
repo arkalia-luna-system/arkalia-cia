@@ -280,4 +280,5 @@ class PDFProcessor:
             return {"success": False, "error": str(e)}
 
 
-# NOTE: Instance globale supprimée - utiliser get_pdf_processor() via Depends() dans api.py
+# NOTE: Instance globale supprimée - utiliser get_pdf_processor()
+# via Depends() dans api.py
