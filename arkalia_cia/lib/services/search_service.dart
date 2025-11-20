@@ -3,6 +3,7 @@ import 'package:path/path.dart';
 import '../services/local_storage_service.dart';
 import '../services/doctor_service.dart';
 import 'semantic_search_service.dart';
+import 'offline_cache_service.dart';
 
 class SearchFilters {
   final String? query;
@@ -106,6 +107,20 @@ class SearchService {
   }
 
   Future<List<SearchResult>> search(SearchFilters filters, {bool useSemantic = false}) async {
+    // Vérifier le cache d'abord
+    final cacheKey = 'search_${filters.query}_${filters.category}_${filters.examType}';
+    final cachedResults = await OfflineCacheService.getCachedData(cacheKey);
+    if (cachedResults != null) {
+      return (cachedResults as List).map((r) => SearchResult(
+        id: r['id'],
+        title: r['title'],
+        type: r['type'],
+        date: r['date'] != null ? DateTime.tryParse(r['date']) : null,
+        preview: r['preview'],
+        relevanceScore: r['relevanceScore']?.toDouble(),
+      )).toList();
+    }
+
     final List<SearchResult> results = [];
 
     // Recherche dans documents
@@ -158,6 +173,20 @@ class SearchService {
       }
       return 0;
     });
+
+    // Mettre en cache les résultats (durée: 1 heure)
+    await OfflineCacheService.cacheData(
+      cacheKey,
+      results.map((r) => {
+        'id': r.id,
+        'title': r.title,
+        'type': r.type,
+        'date': r.date?.toIso8601String(),
+        'preview': r.preview,
+        'relevanceScore': r.relevanceScore,
+      }).toList(),
+      duration: const Duration(hours: 1),
+    );
 
     return results;
   }

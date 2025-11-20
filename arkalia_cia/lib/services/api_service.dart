@@ -6,14 +6,25 @@ import '../utils/error_helper.dart';
 import '../utils/app_logger.dart';
 import 'backend_config_service.dart';
 import 'offline_cache_service.dart';
+import 'auth_api_service.dart';
 
 class ApiService {
   static Future<String> get baseUrl async => await BackendConfigService.getBackendURL();
 
-  // Headers communs
-  static Map<String, String> get _headers => {
-    'Content-Type': 'application/json',
-  };
+  // Headers communs avec authentification JWT
+  static Future<Map<String, String>> get _headers async {
+    final headers = {
+      'Content-Type': 'application/json',
+    };
+    
+    // Ajouter le token JWT si disponible
+    final token = await AuthApiService.getAccessToken();
+    if (token != null) {
+      headers['Authorization'] = 'Bearer $token';
+    }
+    
+    return headers;
+  }
 
   /// Vérifie si le backend est configuré et disponible
   static Future<bool> isBackendConfigured() async {
@@ -26,7 +37,7 @@ class ApiService {
 
   // === DOCUMENTS ===
 
-  /// Upload un document PDF
+  /// Upload un document PDF avec gestion automatique du refresh token
   static Future<Map<String, dynamic>> uploadDocument(File pdfFile) async {
     try {
       final url = await baseUrl;
@@ -38,19 +49,53 @@ class ApiService {
         };
       }
       
-      var request = http.MultipartRequest(
-        'POST',
-        Uri.parse('$url/api/documents/upload'),
-      );
+      // Fonction pour créer et envoyer la requête multipart
+      Future<http.StreamedResponse> makeMultipartRequest() async {
+        var request = http.MultipartRequest(
+          'POST',
+          Uri.parse('$url/api/v1/documents/upload'),
+        );
+        
+        // Ajouter le token JWT
+        final token = await AuthApiService.getAccessToken();
+        if (token != null) {
+          request.headers['Authorization'] = 'Bearer $token';
+        }
 
-      request.files.add(await http.MultipartFile.fromPath(
-        'file',
-        pdfFile.path,
-        filename: pdfFile.path.split('/').last,
-      ));
+        request.files.add(await http.MultipartFile.fromPath(
+          'file',
+          pdfFile.path,
+          filename: pdfFile.path.split('/').last,
+        ));
 
-      var response = await request.send();
+        return await request.send();
+      }
+
+      // Première tentative
+      var response = await makeMultipartRequest();
       var responseBody = await response.stream.bytesToString();
+
+      // Si 401 (Unauthorized), essayer de rafraîchir le token
+      if (response.statusCode == 401) {
+        AppLogger.debug('Token expiré lors de l\'upload, tentative de rafraîchissement...');
+        final refreshResult = await AuthApiService.refreshToken();
+
+        if (refreshResult['success'] == true) {
+          // Token rafraîchi, réessayer l'upload
+          AppLogger.debug('Token rafraîchi avec succès, nouvelle tentative d\'upload...');
+          response = await makeMultipartRequest();
+          responseBody = await response.stream.bytesToString();
+        } else {
+          // Refresh échoué, déconnecter l'utilisateur
+          AppLogger.debug('Impossible de rafraîchir le token, déconnexion...');
+          await AuthApiService.logout();
+          return {
+            'success': false,
+            'error': 'Session expirée. Veuillez vous reconnecter.',
+            'session_expired': true,
+          };
+        }
+      }
 
       if (response.statusCode == 200) {
         return json.decode(responseBody);
@@ -61,6 +106,7 @@ class ApiService {
         };
       }
     } catch (e) {
+      AppLogger.error('Erreur upload document', e);
       return {
         'success': false,
         'error': 'Erreur: $e',
@@ -89,24 +135,23 @@ class ApiService {
           return <Map<String, dynamic>>[];
         }
         
-        final response = await http
-            .get(
-              Uri.parse('$url/api/documents'),
-              headers: _headers,
-            )
-            .timeout(const Duration(seconds: 10));
+        final response = await _makeAuthenticatedRequest(() async {
+          final headers = await _headers;
+          return await http
+              .get(
+                Uri.parse('$url/api/v1/documents'),
+                headers: headers,
+              )
+              .timeout(const Duration(seconds: 10));
+        });
 
-        if (response.statusCode == 200) {
-          List<dynamic> data = json.decode(response.body);
-          final result = data.cast<Map<String, dynamic>>();
-          
-          // Mettre en cache pour usage offline
-          await OfflineCacheService.cacheData('documents', result);
-          
-          return result;
-        } else {
-          throw Exception('Erreur HTTP ${response.statusCode}');
-        }
+        List<dynamic> data = response as List;
+        final result = data.cast<Map<String, dynamic>>();
+        
+        // Mettre en cache pour usage offline
+        await OfflineCacheService.cacheData('documents', result);
+        
+        return result;
       },
     ).catchError((e) {
       ErrorHelper.logError(e, context: 'getDocuments');
@@ -125,12 +170,14 @@ class ApiService {
   static Future<bool> deleteDocument(int documentId) async {
     try {
       final url = await baseUrl;
-      final response = await http.delete(
-        Uri.parse('$url/api/documents/$documentId'),
-        headers: _headers,
-      );
-
-      return response.statusCode == 200;
+      await _makeAuthenticatedRequest(() async {
+        final headers = await _headers;
+        return await http.delete(
+          Uri.parse('$url/api/v1/documents/$documentId'),
+          headers: headers,
+        );
+      });
+      return true;
     } catch (e) {
       AppLogger.error('Erreur suppression document', e);
       return false;
@@ -147,28 +194,27 @@ class ApiService {
   }) async {
     try {
       final url = await baseUrl;
-      final response = await http.post(
-        Uri.parse('$url/api/reminders'),
-        headers: _headers,
-        body: json.encode({
-          'title': title,
-          'description': description,
-          'reminder_date': reminderDate,
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        return json.decode(response.body);
-      } else {
-        final errorMsg = ErrorHelper.getUserFriendlyMessage(
-          Exception('HTTP ${response.statusCode}'),
+      final response = await _makeAuthenticatedRequest(() async {
+        final headers = await _headers;
+        return await http.post(
+          Uri.parse('$url/api/v1/reminders'),
+          headers: headers,
+          body: json.encode({
+            'title': title,
+            'description': description,
+            'reminder_date': reminderDate,
+          }),
         );
-        return {
-          'success': false,
-          'error': errorMsg,
-          'status_code': response.statusCode,
-        };
+      });
+
+      if (response is Map) {
+        return response;
       }
+      
+      return {
+        'success': true,
+        'data': response,
+      };
     } catch (e) {
       ErrorHelper.logError(e, context: 'createReminder');
       return {
@@ -184,19 +230,18 @@ class ApiService {
     return RetryHelper.retryOnNetworkError(
       fn: () async {
         final url = await baseUrl;
-        final response = await http
-            .get(
-              Uri.parse('$url/api/reminders'),
-              headers: _headers,
-            )
-            .timeout(const Duration(seconds: 10));
+        final response = await _makeAuthenticatedRequest(() async {
+          final headers = await _headers;
+          return await http
+              .get(
+                Uri.parse('$url/api/v1/reminders'),
+                headers: headers,
+              )
+              .timeout(const Duration(seconds: 10));
+        });
 
-        if (response.statusCode == 200) {
-          List<dynamic> data = json.decode(response.body);
-          return data.cast<Map<String, dynamic>>();
-        } else {
-          throw Exception('Erreur HTTP ${response.statusCode}');
-        }
+        List<dynamic> data = response as List;
+        return data.cast<Map<String, dynamic>>();
       },
     ).catchError((e) {
       ErrorHelper.logError(e, context: 'getReminders');
@@ -215,9 +260,10 @@ class ApiService {
   }) async {
     try {
       final url = await baseUrl;
+      final headers = await _headers;
       final response = await http.post(
-        Uri.parse('$url/api/emergency-contacts'),
-        headers: _headers,
+        Uri.parse('$url/api/v1/emergency-contacts'),
+        headers: headers,
         body: json.encode({
           'name': name,
           'phone': phone,
@@ -253,19 +299,18 @@ class ApiService {
     return RetryHelper.retryOnNetworkError(
       fn: () async {
         final url = await baseUrl;
-        final response = await http
-            .get(
-              Uri.parse('$url/api/emergency-contacts'),
-              headers: _headers,
-            )
-            .timeout(const Duration(seconds: 10));
+        final response = await _makeAuthenticatedRequest(() async {
+          final headers = await _headers;
+          return await http
+              .get(
+                Uri.parse('$url/api/v1/emergency-contacts'),
+                headers: headers,
+              )
+              .timeout(const Duration(seconds: 10));
+        });
 
-        if (response.statusCode == 200) {
-          List<dynamic> data = json.decode(response.body);
-          return data.cast<Map<String, dynamic>>();
-        } else {
-          throw Exception('Erreur HTTP ${response.statusCode}');
-        }
+        List<dynamic> data = response as List;
+        return data.cast<Map<String, dynamic>>();
       },
     ).catchError((e) {
       ErrorHelper.logError(e, context: 'getEmergencyContacts');
@@ -305,9 +350,10 @@ class ApiService {
         };
       }
 
+      final headers = await _headers;
       final response = await http.post(
-        Uri.parse('$baseUrlValue/api/health-portals'),
-        headers: _headers,
+        Uri.parse('$baseUrlValue/api/v1/health-portals'),
+        headers: headers,
         body: json.encode({
           'name': name,
           'url': url,
@@ -353,19 +399,18 @@ class ApiService {
     return RetryHelper.retryOnNetworkError(
       fn: () async {
         final url = await baseUrl;
-        final response = await http
-            .get(
-              Uri.parse('$url/api/health-portals'),
-              headers: _headers,
-            )
-            .timeout(const Duration(seconds: 10));
+        final response = await _makeAuthenticatedRequest(() async {
+          final headers = await _headers;
+          return await http
+              .get(
+                Uri.parse('$url/api/v1/health-portals'),
+                headers: headers,
+              )
+              .timeout(const Duration(seconds: 10));
+        });
 
-        if (response.statusCode == 200) {
-          List<dynamic> data = json.decode(response.body);
-          return data.cast<Map<String, dynamic>>();
-        } else {
-          throw Exception('Erreur HTTP ${response.statusCode}');
-        }
+        List<dynamic> data = response as List;
+        return data.cast<Map<String, dynamic>>();
       },
     ).catchError((e) {
       ErrorHelper.logError(e, context: 'getHealthPortals');
@@ -389,29 +434,72 @@ class ApiService {
     }
   }
 
-  /// Méthode générique GET
+  /// Méthode générique GET avec gestion automatique du refresh token
   static Future<dynamic> get(String endpoint) async {
-    try {
+    return _makeAuthenticatedRequest(() async {
       final url = await baseUrl;
       if (url.isEmpty) {
         return [];
       }
 
+      final headers = await _headers;
       final response = await http
           .get(
             Uri.parse('$url$endpoint'),
-            headers: _headers,
+            headers: headers,
           )
           .timeout(const Duration(seconds: 10));
 
-      if (response.statusCode == 200) {
-        return json.decode(response.body);
+      return response;
+    });
+  }
+
+  /// Méthode helper pour gérer automatiquement le refresh token en cas de 401
+  /// Retourne la réponse décodée si succès, ou lance une exception si erreur
+  static Future<dynamic> _makeAuthenticatedRequest(
+    Future<http.Response> Function() makeRequest,
+  ) async {
+    try {
+      var response = await makeRequest();
+
+      // Si 401 (Unauthorized), essayer de rafraîchir le token
+      if (response.statusCode == 401) {
+        AppLogger.debug('Token expiré, tentative de rafraîchissement...');
+        final refreshResult = await AuthApiService.refreshToken();
+
+        if (refreshResult['success'] == true) {
+          // Token rafraîchi, réessayer la requête avec les nouveaux headers
+          AppLogger.debug('Token rafraîchi avec succès, nouvelle tentative...');
+          response = await makeRequest();
+        } else {
+          // Refresh échoué, déconnecter l'utilisateur
+          AppLogger.debug('Impossible de rafraîchir le token, déconnexion...');
+          await AuthApiService.logout();
+          throw Exception('Session expirée. Veuillez vous reconnecter.');
+        }
+      }
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final body = response.body;
+        if (body.isEmpty) {
+          return {};
+        }
+        return json.decode(body);
       } else {
-        throw Exception('Erreur HTTP ${response.statusCode}');
+        // Pour les erreurs, essayer de décoder le message d'erreur
+        try {
+          final errorData = json.decode(response.body);
+          throw Exception(errorData['detail'] ?? 'Erreur HTTP ${response.statusCode}');
+        } catch (_) {
+          throw Exception('Erreur HTTP ${response.statusCode}');
+        }
       }
     } catch (e) {
-      AppLogger.error('Erreur GET $endpoint', e);
-      return [];
+      if (e.toString().contains('Session expirée')) {
+        rethrow;
+      }
+      AppLogger.error('Erreur requête authentifiée', e);
+      rethrow;
     }
   }
 }

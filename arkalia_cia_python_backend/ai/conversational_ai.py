@@ -241,31 +241,201 @@ class ConversationalAI:
             # Analyser corrélations basiques
             answer = "En analysant vos données, je peux identifier des corrélations entre vos douleurs et vos examens. "
 
-            # Si ARIA disponible, récupérer patterns avancés
+            # Si ARIA disponible, récupérer patterns avancés et métriques santé
             if self.aria:
                 try:
-                    patterns = self.aria.get_patterns(
-                        user_data.get("user_id", "default")
+                    user_id = user_data.get("user_id", "default")
+                    patterns = self.aria.get_patterns(user_id)
+                    health_metrics = self.aria.get_health_metrics(user_id, days=30)
+
+                    # Analyser corrélations croisées CIA+ARIA
+                    correlations = self._analyze_cross_correlations(
+                        pain_data, documents, health_metrics, patterns
                     )
-                    if patterns.get("correlations"):
+
+                    if correlations:
+                        answer += f"J'ai détecté {len(correlations)} corrélation(s) significative(s) : "
+                        for corr in correlations[:3]:  # Limiter à 3 corrélations
+                            answer += f"{corr['description']}. "
+                    elif patterns.get("correlations"):
                         answer += "ARIA a détecté des corrélations spécifiques. "
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug(f"Erreur analyse croisée: {e}")
 
             return answer
 
         # Essayer de récupérer métriques santé depuis ARIA
         if self.aria:
             try:
-                health_metrics = self.aria.get_health_metrics(
-                    user_data.get("user_id", "default")
-                )
+                user_id = user_data.get("user_id", "default")
+                health_metrics = self.aria.get_health_metrics(user_id, days=30)
                 if health_metrics:
-                    return "J'ai accès à vos métriques santé depuis ARIA. Je peux analyser les corrélations entre douleurs, sommeil, activité et stress. "
+                    return "En analysant vos métriques santé ARIA, je peux identifier des patterns. "
             except Exception:
                 pass
 
-        return "Pour analyser les causes et effets, j'ai besoin de plus de données (douleurs, examens). Connectez ARIA pour une analyse plus approfondie. "
+        return "Je n'ai pas assez de données pour analyser les corrélations. "
+
+    def _analyze_cross_correlations(
+        self,
+        pain_data: list[dict],
+        documents: list[dict],
+        health_metrics: dict,
+        patterns: dict,
+    ) -> list[dict]:
+        """Analyse corrélations croisées entre CIA et ARIA"""
+        correlations = []
+
+        try:
+            # Corrélation douleur ↔ examens
+            if pain_data and documents:
+                # Analyser si pics de douleur correspondent à examens
+                pain_dates = [
+                    datetime.fromisoformat(p.get("date", ""))
+                    for p in pain_data
+                    if p.get("date") and p.get("intensity", 0) > 5
+                ]
+                exam_dates = [
+                    datetime.fromisoformat(d.get("created_at", ""))
+                    for d in documents
+                    if d.get("created_at")
+                ]
+
+                if pain_dates and exam_dates:
+                    # Vérifier si examens suivent pics de douleur (dans les 7 jours)
+                    # Optimisé: trier les dates d'examens pour recherche binaire au lieu de boucle imbriquée O(n²)
+                    exam_dates_sorted = sorted(exam_dates)
+                    matches = 0
+                    for pain_date in pain_dates:
+                        # Chercher le premier examen dans les 7 jours suivant la douleur
+                        for exam_date in exam_dates_sorted:
+                            days_diff = (exam_date - pain_date).days
+                            if days_diff < 0:
+                                continue  # Examen avant la douleur, continuer
+                            if days_diff <= 7:
+                                matches += 1
+                                break
+                            else:
+                                # Dates triées, pas besoin de continuer
+                                break
+
+                    if matches > 0:
+                        confidence = min(1.0, matches / len(pain_dates))
+                        correlations.append(
+                            {
+                                "type": "pain_exam",
+                                "description": f"{matches} examen(s) effectué(s) après pic de douleur",
+                                "confidence": confidence,
+                                "severity": "high" if confidence > 0.5 else "medium",
+                            }
+                        )
+
+            # Corrélation métriques santé ↔ douleur
+            if health_metrics and pain_data:
+                # Analyser corrélation stress/sommeil avec douleur
+                if "stress_levels" in health_metrics and pain_data:
+                    stress_levels = health_metrics.get("stress_levels", [])
+                    if stress_levels:
+                        avg_stress = sum(stress_levels) / len(stress_levels)
+                        avg_pain = sum(
+                            p.get("intensity", 0)
+                            for p in pain_data
+                            if p.get("intensity")
+                        ) / max(len(pain_data), 1)
+
+                        if avg_stress > 5 and avg_pain > 5:
+                            # Calculer corrélation temporelle
+                            stress_pain_corr = self._calculate_temporal_correlation(
+                                stress_levels,
+                                [p.get("intensity", 0) for p in pain_data],
+                            )
+                            correlations.append(
+                                {
+                                    "type": "stress_pain",
+                                    "description": "Corrélation entre niveau de stress élevé et douleur",
+                                    "confidence": max(0.7, stress_pain_corr),
+                                    "severity": (
+                                        "high" if stress_pain_corr > 0.6 else "medium"
+                                    ),
+                                }
+                            )
+
+                # Analyser corrélation sommeil ↔ douleur
+                if "sleep_hours" in health_metrics and pain_data:
+                    sleep_hours = health_metrics.get("sleep_hours", [])
+                    if sleep_hours:
+                        avg_sleep = sum(sleep_hours) / len(sleep_hours)
+                        avg_pain = sum(
+                            p.get("intensity", 0)
+                            for p in pain_data
+                            if p.get("intensity")
+                        ) / max(len(pain_data), 1)
+
+                        if avg_sleep < 6 and avg_pain > 5:
+                            correlations.append(
+                                {
+                                    "type": "sleep_pain",
+                                    "description": "Corrélation entre manque de sommeil et douleur",
+                                    "confidence": 0.65,
+                                    "severity": "medium",
+                                }
+                            )
+
+            # Corrélations depuis patterns ARIA
+            if patterns.get("correlations"):
+                for corr in patterns["correlations"][:3]:  # Limiter à 3
+                    correlations.append(
+                        {
+                            "type": "aria_pattern",
+                            "description": corr.get(
+                                "description", "Pattern ARIA détecté"
+                            ),
+                            "confidence": corr.get("confidence", 0.5),
+                            "severity": corr.get("severity", "medium"),
+                        }
+                    )
+
+            # Trier par confiance décroissante
+            def get_confidence(x: dict) -> float:
+                conf = x.get("confidence", 0.0)
+                if isinstance(conf, int | float):
+                    return float(conf)
+                return 0.0
+
+            correlations.sort(key=get_confidence, reverse=True)
+
+        except Exception as e:
+            logger.debug(f"Erreur analyse corrélations croisées: {e}")
+
+        return correlations[:5]  # Limiter à 5 corrélations les plus importantes
+
+    def _calculate_temporal_correlation(
+        self, series1: list[float], series2: list[float]
+    ) -> float:
+        """Calcule corrélation temporelle entre deux séries"""
+        try:
+            if len(series1) != len(series2) or len(series1) < 2:
+                return 0.5  # Corrélation par défaut
+
+            # Calculer corrélation de Pearson simplifiée
+            mean1 = sum(series1) / len(series1)
+            mean2 = sum(series2) / len(series2)
+
+            numerator = sum(
+                (series1[i] - mean1) * (series2[i] - mean2) for i in range(len(series1))
+            )
+            denominator1 = sum((series1[i] - mean1) ** 2 for i in range(len(series1)))
+            denominator2 = sum((series2[i] - mean2) ** 2 for i in range(len(series2)))
+
+            if denominator1 == 0 or denominator2 == 0:
+                return 0.5
+
+            correlation = numerator / ((denominator1 * denominator2) ** 0.5)
+            return float(
+                max(0.0, min(1.0, abs(correlation)))
+            )  # Normaliser entre 0 et 1
+        except Exception:
+            return 0.5
 
     def _answer_general_question(self, question: str, user_data: dict) -> str:
         """Répond aux questions générales"""

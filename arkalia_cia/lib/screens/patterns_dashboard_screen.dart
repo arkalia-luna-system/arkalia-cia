@@ -3,6 +3,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../services/api_service.dart';
 import '../services/backend_config_service.dart';
+import '../services/offline_cache_service.dart';
+import '../services/auth_api_service.dart';
+import '../utils/app_logger.dart';
 
 class PatternsDashboardScreen extends StatefulWidget {
   const PatternsDashboardScreen({super.key});
@@ -29,30 +32,27 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
     });
 
     try {
-      // Récupérer données depuis documents et consultations
-      final url = await BackendConfigService.getBackendURL();
-      if (url.isEmpty) {
+      // Vérifier le cache d'abord
+      const cacheKey = 'patterns_analysis';
+      final cachedPatterns = await OfflineCacheService.getCachedData(cacheKey);
+      if (cachedPatterns != null) {
         setState(() {
-          _error = 'Backend non configuré';
+          _patterns = cachedPatterns as Map<String, dynamic>;
           _isLoading = false;
         });
         return;
       }
 
-      final documentsResponse = await http.get(
-        Uri.parse('$url/api/documents?limit=100'),
-        headers: {'Content-Type': 'application/json'},
-      );
-
-      if (documentsResponse.statusCode != 200) {
+      // Récupérer données depuis documents (utilise ApiService qui gère automatiquement le refresh token)
+      final documents = await ApiService.getDocuments();
+      
+      if (documents.isEmpty) {
         setState(() {
-          _error = 'Erreur lors de la récupération des documents';
+          _error = 'Aucun document disponible pour l\'analyse';
           _isLoading = false;
         });
         return;
       }
-
-      final documents = jsonDecode(documentsResponse.body) as List;
       
       // Convertir en format pour analyse
       final data = documents.map((doc) {
@@ -63,24 +63,33 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
         };
       }).toList();
 
-      // Analyser patterns
-      final response = await http.post(
-        Uri.parse('$url/api/patterns/analyze'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'data': data}),
-      ).timeout(const Duration(seconds: 30));
+      // Analyser patterns avec authentification et gestion automatique du refresh token
+      final url = await BackendConfigService.getBackendURL();
+      final response = await _makeAuthenticatedRequest(() async {
+        final patternHeaders = {'Content-Type': 'application/json'};
+        final patternToken = await AuthApiService.getAccessToken();
+        if (patternToken != null) {
+          patternHeaders['Authorization'] = 'Bearer $patternToken';
+        }
+        
+        return await http.post(
+          Uri.parse('$url/api/v1/patterns/analyze'),
+          headers: patternHeaders,
+          body: jsonEncode({'data': data}),
+        ).timeout(const Duration(seconds: 30));
+      });
 
-      if (response.statusCode == 200) {
-        setState(() {
-          _patterns = jsonDecode(response.body);
-          _isLoading = false;
-        });
-      } else {
-        setState(() {
-          _error = 'Erreur lors de l\'analyse';
-          _isLoading = false;
-        });
-      }
+      final patterns = response as Map<String, dynamic>;
+      setState(() {
+        _patterns = patterns;
+        _isLoading = false;
+      });
+      // Mettre en cache les résultats (durée: 6 heures)
+      await OfflineCacheService.cacheData(
+        cacheKey,
+        patterns,
+        duration: const Duration(hours: 6),
+      );
     } catch (e) {
       setState(() {
         _error = 'Erreur: $e';
@@ -134,6 +143,11 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
                           _buildTrendsSection(_patterns!['trends'] ?? {}),
                           const SizedBox(height: 24),
                           _buildSeasonalitySection(_patterns!['seasonality'] ?? {}),
+                          if (_patterns!['predictions'] != null &&
+                              (_patterns!['predictions'] as Map).isNotEmpty) ...[
+                            const SizedBox(height: 24),
+                            _buildPredictionsSection(_patterns!['predictions'] ?? {}),
+                          ],
                         ],
                       ),
                     ),
@@ -281,6 +295,88 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
       'Décembre',
     ];
     return months[month - 1];
+  }
+
+  Widget _buildPredictionsSection(Map<String, dynamic> predictions) {
+    final predictionsList = predictions['predictions'] as List? ?? [];
+    final trend = predictions['trend'] as Map<String, dynamic>? ?? {};
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Prédictions (${predictions['periods'] ?? 30} jours)',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 16),
+            if (trend.isNotEmpty) ...[
+              _buildTrendItem('Direction', trend['direction'] ?? 'stable'),
+              _buildTrendItem('Force', trend['strength']?.toStringAsFixed(2) ?? '0'),
+              const SizedBox(height: 16),
+            ],
+            if (predictionsList.isEmpty)
+              const Text('Aucune prédiction disponible')
+            else
+              ...predictionsList.take(5).map((pred) => _buildPredictionItem(pred, trend)),
+            if (predictionsList.length > 5)
+              Text(
+                '... et ${predictionsList.length - 5} autres prédictions',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPredictionItem(Map<String, dynamic> prediction, Map<String, dynamic> trend) {
+    final date = DateTime.tryParse(prediction['date'] ?? '');
+    final value = prediction['predicted_value'] ?? 0.0;
+    final lower = prediction['lower_bound'] ?? 0.0;
+    final upper = prediction['upper_bound'] ?? 0.0;
+    final direction = trend['direction'] ?? 'stable';
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  date != null
+                      ? '${date.day}/${date.month}/${date.year}'
+                      : 'Date inconnue',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  'Valeur: ${value.toStringAsFixed(2)} (${lower.toStringAsFixed(2)} - ${upper.toStringAsFixed(2)})',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
+            ),
+          ),
+          Chip(
+            label: Text(
+              direction == 'increasing' ? '↑' : direction == 'decreasing' ? '↓' : '→',
+              style: const TextStyle(fontSize: 16),
+            ),
+            backgroundColor: direction == 'increasing'
+                ? Colors.green.withOpacity(0.2)
+                : direction == 'decreasing'
+                    ? Colors.red.withOpacity(0.2)
+                    : Colors.grey.withOpacity(0.2),
+          ),
+        ],
+      ),
+    );
   }
 }
 

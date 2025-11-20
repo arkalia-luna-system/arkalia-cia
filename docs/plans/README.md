@@ -131,13 +131,7 @@ Suivi en temps réel de l'implémentation :
 - 📋 Prochaines étapes
 - 🐛 Problèmes rencontrés
 
-**État actuel** :
-- 🚀 PLAN_00 (Onboarding) : **30% fait**
-  - ✅ Écran bienvenue
-  - ✅ Écran choix import
-  - ✅ Service onboarding
-  - ⚠️ Import portails (à faire)
-  - ⚠️ Import PDF (à faire)
+**État actuel** : Voir **[STATUT_FINAL_CONSOLIDE.md](../STATUT_FINAL_CONSOLIDE.md)** pour le statut complet à 100% d'exploitation.
 
 ---
 
@@ -145,9 +139,10 @@ Suivi en temps réel de l'implémentation :
 
 - **[ANALYSE_COMPLETE_BESOINS_MERE.md](../ANALYSE_COMPLETE_BESOINS_MERE.md)** : Analyse complète des besoins
 - **[ARCHITECTURE.md](../ARCHITECTURE.md)** : Architecture générale CIA
-- **[API.md](../API.md)** : Documentation API backend
+- **[API_DOCUMENTATION.md](../API_DOCUMENTATION.md)** : Documentation API backend complète
+- **[STATUT_FINAL_CONSOLIDE.md](../STATUT_FINAL_CONSOLIDE.md)** : Statut final consolidé (100% exploitation)
 - **[GUIDE_TEST_VISUEL_LIVE.md](./GUIDE_TEST_VISUEL_LIVE.md)** : Guide test visuel en live
-- **[STATUS_IMPLEMENTATION.md](./STATUS_IMPLEMENTATION.md)** : Statut implémentation
+- **[STATUS_IMPLEMENTATION.md](./STATUS_IMPLEMENTATION.md)** : Statut implémentation détaillé
 
 ---
 

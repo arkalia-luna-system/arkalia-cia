@@ -5,6 +5,8 @@
 **Production-Ready** : 95% ✅  
 **Priorité absolue** : Finir passage en stable v1.0, compléter tests manquants (sécurité, UX), vérifier checklist sécurité
 
+> **Note** : Ce document est maintenant consolidé dans **[STATUT_FINAL_CONSOLIDE.md](./STATUT_FINAL_CONSOLIDE.md)** et **[CHECKLIST_RELEASE_CONSOLIDEE.md](./CHECKLIST_RELEASE_CONSOLIDEE.md)**. Voir ces fichiers pour la version complète et à jour.
+
 ---
 
 ## 🔴 PRIORITÉ 1 — BLOCANT POUR RELEASE

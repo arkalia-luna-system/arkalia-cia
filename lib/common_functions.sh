@@ -12,7 +12,7 @@ cleanup_processes() {
     local attempt=1
     local pids=""
     
-    # Trouver les PIDs une seule fois
+    # Trouver les PIDs une seule fois (optimisé: cache le résultat)
     pids=$(ps aux | grep -E "$pattern" | grep -v grep | awk '{print $2}' | tr '\n' ' ')
     
     if [ -z "$pids" ]; then
@@ -31,8 +31,15 @@ cleanup_processes() {
         
         sleep 1
         
-        # Vérifier si les processus sont toujours là
-        local remaining_pids=$(ps aux | grep -E "$pattern" | grep -v grep | awk '{print $2}' | tr '\n' ' ')
+        # Vérifier si les processus sont toujours là (optimisé: vérification directe des PIDs)
+        local remaining_pids=""
+        for pid in $pids; do
+            if ps -p "$pid" > /dev/null 2>&1; then
+                remaining_pids="$remaining_pids $pid"
+            fi
+        done
+        remaining_pids=$(echo "$remaining_pids" | xargs)
+        
         if [ -z "$remaining_pids" ]; then
             return 0
         fi
@@ -47,8 +54,13 @@ cleanup_processes() {
         sleep 1
     fi
     
-    # Vérification finale
-    local remaining=$(ps aux | grep -E "$pattern" | grep -v grep | wc -l | tr -d ' ')
+    # Vérification finale (optimisé: vérification directe des PIDs au lieu de ps aux complet)
+    local remaining=0
+    for pid in $pids; do
+        if ps -p "$pid" > /dev/null 2>&1; then
+            remaining=$((remaining + 1))
+        fi
+    done
     if [ "$remaining" -eq 0 ]; then
         return 0
     else

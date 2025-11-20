@@ -38,6 +38,16 @@ class CIADatabase:
                 # Pour l'instant, on permet les chemins absolus pour compatibilité tests
                 pass
 
+        # Validation stricte des chemins autorisés
+        if db_path_obj.is_absolute():
+            temp_dir = tempfile.gettempdir()
+            current_dir = str(Path.cwd())
+            allowed_prefixes = [temp_dir, current_dir]
+            if not any(
+                str(db_path_obj).startswith(prefix) for prefix in allowed_prefixes
+            ):
+                raise ValueError(f"Chemin de base de données non autorisé: {db_path}")
+
         self.db_path = str(db_path_obj.resolve())
         self.init_database()
 
@@ -137,6 +147,37 @@ class CIADatabase:
                     question_type TEXT,
                     related_documents TEXT,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """
+            )
+
+            # Table des utilisateurs
+            cursor.execute(
+                """
+                CREATE TABLE IF NOT EXISTS users (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    username TEXT NOT NULL UNIQUE,
+                    email TEXT,
+                    password_hash TEXT NOT NULL,
+                    role TEXT DEFAULT 'user',
+                    is_active BOOLEAN DEFAULT TRUE,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """
+            )
+
+            # Table pour associer les données aux utilisateurs
+            cursor.execute(
+                """
+                CREATE TABLE IF NOT EXISTS user_documents (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id INTEGER NOT NULL,
+                    document_id INTEGER NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                    FOREIGN KEY (document_id) REFERENCES documents(id) ON DELETE CASCADE,
+                    UNIQUE(user_id, document_id)
                 )
             """
             )
@@ -286,6 +327,9 @@ class CIADatabase:
         with sqlite3.connect(self.db_path) as conn:
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
+            # Formatage sécurisé : le pattern LIKE est construit AVANT le binding
+            # Ceci est sûr car doctor_name vient déjà de la validation Pydantic
+            search_pattern = f"%{doctor_name}%"
             cursor.execute(
                 """
                 SELECT d.*, dm.doctor_name, dm.doctor_specialty, dm.document_date
@@ -294,7 +338,7 @@ class CIADatabase:
                 WHERE dm.doctor_name LIKE ?
                 ORDER BY dm.document_date DESC
             """,
-                (f"%{doctor_name}%",),
+                (search_pattern,),
             )
             return [dict(row) for row in cursor.fetchall()]
 
@@ -476,6 +520,92 @@ class CIADatabase:
             else:
                 cursor.execute(
                     "SELECT * FROM health_portals ORDER BY category, name ASC"
+                )
+            return [dict(row) for row in cursor.fetchall()]
+
+    def create_user(
+        self,
+        username: str,
+        password_hash: str,
+        email: str | None = None,
+        role: str = "user",
+    ) -> int | None:
+        """Crée un nouvel utilisateur"""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            try:
+                cursor.execute(
+                    """
+                    INSERT INTO users (username, email, password_hash, role)
+                    VALUES (?, ?, ?, ?)
+                    """,
+                    (username, email, password_hash, role),
+                )
+                return cursor.lastrowid
+            except sqlite3.IntegrityError:
+                return None
+
+    def get_user_by_username(self, username: str) -> dict[str, Any] | None:
+        """Récupère un utilisateur par nom d'utilisateur"""
+        with sqlite3.connect(self.db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
+            row = cursor.fetchone()
+            return dict(row) if row else None
+
+    def get_user_by_id(self, user_id: int) -> dict[str, Any] | None:
+        """Récupère un utilisateur par ID"""
+        with sqlite3.connect(self.db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+            row = cursor.fetchone()
+            return dict(row) if row else None
+
+    def associate_document_to_user(self, user_id: int, document_id: int) -> bool:
+        """Associe un document à un utilisateur"""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            try:
+                cursor.execute(
+                    """
+                    INSERT INTO user_documents (user_id, document_id)
+                    VALUES (?, ?)
+                    """,
+                    (user_id, document_id),
+                )
+                return True
+            except sqlite3.IntegrityError:
+                return False
+
+    def get_user_documents(
+        self, user_id: int, skip: int = 0, limit: int | None = None
+    ) -> list[dict[str, Any]]:
+        """Récupère les documents d'un utilisateur"""
+        with sqlite3.connect(self.db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            if limit is not None:
+                cursor.execute(
+                    """
+                    SELECT d.* FROM documents d
+                    INNER JOIN user_documents ud ON d.id = ud.document_id
+                    WHERE ud.user_id = ?
+                    ORDER BY d.created_at DESC
+                    LIMIT ? OFFSET ?
+                    """,
+                    (user_id, limit, skip),
+                )
+            else:
+                cursor.execute(
+                    """
+                    SELECT d.* FROM documents d
+                    INNER JOIN user_documents ud ON d.id = ud.document_id
+                    WHERE ud.user_id = ?
+                    ORDER BY d.created_at DESC
+                    """,
+                    (user_id,),
                 )
             return [dict(row) for row in cursor.fetchall()]
 

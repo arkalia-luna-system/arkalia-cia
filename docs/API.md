@@ -1,14 +1,14 @@
 # API Reference
 
-> **Arkalia CIA** - Comprehensive service APIs and integration guide
+**Version** : 1.3.0  
+**Dernière mise à jour** : Janvier 2025  
+**Statut** : Production Ready (authentification complète)
 
-**Last Updated**: November 19, 2025  
-**Version**: 1.2.0  
-**Status**: ✅ **Production Ready**
+Guide complet des APIs et intégrations pour Arkalia CIA.
 
 ---
 
-## 📋 Table of Contents
+## Table des matières
 
 1. [Overview](#overview)
 2. [Service Architecture](#service-architecture)
@@ -338,13 +338,26 @@ Arkalia CIA intègre maintenant **ARKALIA ARIA** (Research Intelligence Assistan
 
 **Base URL ARIA**: `http://localhost:8001`
 
-**Endpoints d'intégration**:
-- `/api/aria/status` - Statut de l'intégration ARIA
-- `/api/aria/quick-pain-entry` - Saisie rapide de douleur
-- `/api/aria/pain-entry` - Saisie détaillée de douleur
-- `/api/aria/pain-entries` - Historique des entrées
-- `/api/aria/export/csv` - Export CSV pour professionnels
-- `/api/aria/patterns/recent` - Patterns récents
+**⚠️ IMPORTANT**: Tous les endpoints sont maintenant sous `/api/v1/` et nécessitent une authentification JWT.
+
+**Endpoints d'authentification** (sans token requis):
+- `POST /api/v1/auth/register` - Créer un compte utilisateur
+- `POST /api/v1/auth/login` - Se connecter et obtenir un token JWT
+- `POST /api/v1/auth/refresh` - Rafraîchir un token d'accès
+
+**Endpoints d'intégration** (authentification requise):
+- `/api/v1/aria/status` - Statut de l'intégration ARIA
+- `/api/v1/aria/quick-pain-entry` - Saisie rapide de douleur
+- `/api/v1/aria/pain-entry` - Saisie détaillée de douleur
+- `/api/v1/aria/pain-entries` - Historique des entrées
+- `/api/v1/aria/export/csv` - Export CSV pour professionnels
+- `/api/v1/aria/patterns/recent` - Patterns récents
+
+**Endpoints documents** (authentification requise):
+- `POST /api/v1/documents/upload` - Uploader un document PDF
+- `GET /api/v1/documents` - Récupérer les documents de l'utilisateur
+- `GET /api/v1/documents/{doc_id}` - Récupérer un document spécifique
+- `DELETE /api/v1/documents/{doc_id}` - Supprimer un document
 - `/api/aria/predictions/current` - Prédictions actuelles
 
 #### Exemple d'utilisation ARIA
@@ -516,7 +529,7 @@ try {
 }
 ```
 
-## Authentication (Phase 3)
+## Authentication ✅ IMPLÉMENTÉ
 
 ### JWT Token Flow
 
@@ -526,7 +539,7 @@ sequenceDiagram
     participant A as API
     participant D as Database
 
-    C->>A: POST /auth/login
+    C->>A: POST /api/v1/auth/login
     A->>D: Validate credentials
     D-->>A: User data
     A-->>C: JWT Token
@@ -558,11 +571,17 @@ static Map<String, String> get _authHeaders => {
 - Key derivation: PBKDF2
 - Storage: Keychain (iOS) / Keystore (Android)
 
-**API Security**:
-- HTTPS/TLS 1.3 for all communications
-- JWT tokens with short expiration
-- Rate limiting per client
-- Input validation and sanitization
+**API Security** ✅ **IMPLÉMENTÉ**:
+- ✅ HTTPS/TLS 1.3 for all communications
+- ✅ JWT tokens with short expiration (30 min access, 7 days refresh)
+- ✅ Rate limiting per client AND per user (IP + user_id)
+- ✅ Input validation and sanitization (Pydantic + bleach)
+- ✅ Magic number validation for file uploads
+- ✅ Path traversal protection
+- ✅ XSS protection with HTML sanitization
+- ✅ International phone number validation (phonenumbers)
+- ✅ API versioning (/api/v1/)
+- ✅ CORS configurable via environment variables
 
 ### Permissions
 

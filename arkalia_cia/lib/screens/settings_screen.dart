@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import '../services/theme_service.dart';
 import '../services/auth_service.dart';
+import '../services/auth_api_service.dart';
 import '../services/auto_sync_service.dart';
 import '../services/backend_config_service.dart';
+import 'auth/login_screen.dart';
 
 /// Écran de paramètres de l'application
 class SettingsScreen extends StatefulWidget {
@@ -127,6 +129,63 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     });
                   },
                 ),
+                if (_backendEnabled) ...[
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.person, color: Colors.blue),
+                    title: const Text('Compte utilisateur'),
+                    subtitle: FutureBuilder<String?>(
+                      future: AuthApiService.getUsername(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData && snapshot.data != null) {
+                          return Text('Connecté en tant que: ${snapshot.data}');
+                        }
+                        return const Text('Non connecté');
+                      },
+                    ),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () async {
+                      final isLoggedIn = await AuthApiService.isLoggedIn();
+                      if (isLoggedIn) {
+                        // Afficher dialog de déconnexion
+                        final shouldLogout = await showDialog<bool>(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text('Déconnexion'),
+                            content: const Text('Voulez-vous vous déconnecter ?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context, false),
+                                child: const Text('Annuler'),
+                              ),
+                              ElevatedButton(
+                                onPressed: () => Navigator.pop(context, true),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                  foregroundColor: Colors.white,
+                                ),
+                                child: const Text('Déconnexion'),
+                              ),
+                            ],
+                          ),
+                        );
+                        
+                        if (shouldLogout == true && mounted) {
+                          await AuthApiService.logout();
+                          Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(builder: (context) => const LoginScreen()),
+                            (route) => false,
+                          );
+                        }
+                      } else {
+                        // Rediriger vers login
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => const LoginScreen()),
+                        );
+                      }
+                    },
+                  ),
+                ],
               ],
             ),
           ),

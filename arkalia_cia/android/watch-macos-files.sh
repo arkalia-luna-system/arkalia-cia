@@ -54,10 +54,11 @@ echo "👀 Surveillance des fichiers macOS (PID: $$)"
 echo "   Pour arrêter: Ctrl+C ou './cleanup_all.sh'"
 echo ""
 
-# Surveiller en continu (toutes les 0.5 secondes) avec vérification du lock file
+# Surveiller en continu (toutes les 2 secondes pour réduire la charge CPU) avec vérification du lock file
+# Optimisé: 0.5s -> 2s pour réduire la charge CPU de 75%
 while [ -f "$LOCK_FILE" ]; do
     clean_macos_files
-    sleep 0.5
+    sleep 2
 done
 
 # Nettoyage à la fin

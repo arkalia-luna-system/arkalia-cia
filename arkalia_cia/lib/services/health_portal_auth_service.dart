@@ -1,7 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../services/api_service.dart';
+import 'backend_config_service.dart';
+import 'auth_api_service.dart';
 
 enum HealthPortal {
   ehealth,
@@ -10,7 +13,6 @@ enum HealthPortal {
 }
 
 class HealthPortalAuthService {
-  static const String _baseUrl = 'http://localhost:8000';
 
   // OAuth URLs pour chaque portail (à configurer selon documentation réelle)
   static const Map<HealthPortal, String> _authUrls = {
@@ -51,16 +53,80 @@ class HealthPortalAuthService {
     String accessToken,
   ) async {
     try {
-      // TODO: Implémenter récupération données selon portail
-      // Pour l'instant, retourner structure vide
-      return {
+      // Récupérer URL backend configurée
+      final baseUrl = await BackendConfigService.getBackendURL();
+      if (baseUrl.isEmpty) {
+        return {'error': 'Backend non configuré'};
+      }
+
+      // Structure pour stocker les données récupérées
+      final data = {
         'portal': _portalNames[portal],
-        'documents': [],
-        'consultations': [],
-        'exams': [],
+        'documents': <Map<String, dynamic>>[],
+        'consultations': <Map<String, dynamic>>[],
+        'exams': <Map<String, dynamic>>[],
       };
+
+      // Appel API backend pour récupérer données portail
+      // Note: Pour une implémentation complète, il faudrait des endpoints spécifiques
+      // pour chaque portail (eHealth, Andaman 7, MaSanté)
+      // Pour l'instant, utiliser l'endpoint générique d'import
+      try {
+        final headers = {'Content-Type': 'application/json'};
+        final token = await AuthApiService.getAccessToken();
+        if (token != null) {
+          headers['Authorization'] = 'Bearer $token';
+        }
+
+        // Appel backend pour récupérer données depuis portail
+        // TODO: Implémenter endpoints spécifiques selon portail quand APIs disponibles
+        // Pour l'instant, retourner structure vide prête pour données
+        
+        return data;
+      } catch (e) {
+        // En cas d'erreur, retourner structure vide
+        return data;
+      }
     } catch (e) {
       return {'error': e.toString()};
+    }
+  }
+
+  /// Sauvegarde le token OAuth pour un portail
+  Future<bool> saveAccessToken(HealthPortal portal, String accessToken, {String? refreshToken}) async {
+    try {
+      // Utiliser SharedPreferences pour stockage local
+      // Note: Pour production, utiliser flutter_secure_storage pour plus de sécurité
+      final prefs = await SharedPreferences.getInstance();
+      final portalKey = 'portal_token_${_portalNames[portal]?.toLowerCase()}';
+      await prefs.setString(portalKey, accessToken);
+      if (refreshToken != null) {
+        await prefs.setString('${portalKey}_refresh', refreshToken);
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Récupère le token OAuth sauvegardé pour un portail
+  Future<String?> getAccessToken(HealthPortal portal) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final portalKey = 'portal_token_${_portalNames[portal]?.toLowerCase()}';
+      return prefs.getString(portalKey);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// Rafraîchit le token OAuth si expiré
+  Future<String?> refreshAccessToken(HealthPortal portal, String refreshToken) async {
+    try {
+      // TODO: Implémenter refresh token selon portail
+      return null;
+    } catch (e) {
+      return null;
     }
   }
 
@@ -70,10 +136,22 @@ class HealthPortalAuthService {
     Map<String, dynamic> data,
   ) async {
     try {
+      // Récupérer URL backend configurée
+      final baseUrl = await BackendConfigService.getBackendURL();
+      if (baseUrl.isEmpty) {
+        return false;
+      }
+      
       // Envoyer données au backend pour traitement
+      final headers = {'Content-Type': 'application/json'};
+      final token = await AuthApiService.getAccessToken();
+      if (token != null) {
+        headers['Authorization'] = 'Bearer $token';
+      }
+      
       final response = await http.post(
-        Uri.parse('$_baseUrl/api/health-portals/import'),
-        headers: {'Content-Type': 'application/json'},
+        Uri.parse('$baseUrl/api/v1/health-portals/import'),
+        headers: headers,
         body: jsonEncode({
           'portal': _portalNames[portal],
           'data': data,

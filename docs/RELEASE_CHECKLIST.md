@@ -6,6 +6,8 @@
 **Target Version**: v1.2.0  
 **Status**: 🟡 **In Progress** (Technically ready, manual validations remaining)
 
+> **Note** : Ce document est maintenant consolidé dans **[CHECKLIST_RELEASE_CONSOLIDEE.md](./CHECKLIST_RELEASE_CONSOLIDEE.md)**. Voir ce fichier pour la version complète et à jour.
+
 ---
 
 ## 📋 Table of Contents

@@ -2,8 +2,9 @@ import 'dart:math';
 import '../services/local_storage_service.dart';
 import '../services/doctor_service.dart';
 
-/// Service de recherche sémantique basique
+/// Service de recherche sémantique amélioré
 /// Utilise des embeddings simples (TF-IDF) pour recherche sémantique
+/// Améliorations : pondération contextuelle, recherche par synonymes médicaux
 class SemanticSearchService {
   // Mots-clés médicaux avec poids
   static const Map<String, double> _medicalKeywords = {
@@ -21,6 +22,15 @@ class SemanticSearchService {
     'radio': 1.3,
     'scanner': 1.3,
     'irm': 1.3,
+  };
+
+  // Synonymes médicaux pour recherche améliorée
+  static const Map<String, List<String>> _medicalSynonyms = {
+    'douleur': ['mal', 'souffrance', 'douleurs', 'douloureux'],
+    'médicament': ['médicaments', 'traitement', 'thérapie', 'prescription'],
+    'examen': ['examens', 'test', 'tests', 'analyses', 'analyse'],
+    'médecin': ['docteur', 'docteurs', 'médecins', 'praticien', 'praticiens'],
+    'consultation': ['consultations', 'rdv', 'rendez-vous', 'visite'],
   };
 
   /// Recherche sémantique dans documents
@@ -69,6 +79,14 @@ class SemanticSearchService {
     for (final entry in _medicalKeywords.entries) {
       if (queryLower.contains(entry.key) && docText.contains(entry.key)) {
         score += entry.value * 1.5; // Bonus pour correspondance médicale
+      }
+      // Vérifier aussi les synonymes
+      if (_medicalSynonyms.containsKey(entry.key)) {
+        for (final synonym in _medicalSynonyms[entry.key]!) {
+          if (queryLower.contains(synonym) && docText.contains(entry.key)) {
+            score += entry.value * 1.2; // Bonus légèrement réduit pour synonymes
+          }
+        }
       }
     }
     

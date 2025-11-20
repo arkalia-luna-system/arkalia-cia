@@ -6,6 +6,21 @@ Fonctions helper pour la sécurité et la sanitization
 import re
 from typing import Any
 
+try:
+    import bleach
+
+    BLEACH_AVAILABLE = True
+except ImportError:
+    BLEACH_AVAILABLE = False
+
+try:
+    import phonenumbers
+    from phonenumbers import NumberParseException
+
+    PHONENUMBERS_AVAILABLE = True
+except ImportError:
+    PHONENUMBERS_AVAILABLE = False
+
 
 def sanitize_log_message(message: str) -> str:
     """
@@ -173,3 +188,68 @@ def mask_sensitive_data(
             masked[key] = value
 
     return masked
+
+
+def sanitize_html(text: str, allowed_tags: list[str] | None = None) -> str:
+    """
+    Sanitize HTML pour prévenir les attaques XSS.
+    Utilise bleach si disponible, sinon fallback sur regex basique.
+    """
+    if not text:
+        return ""
+
+    if BLEACH_AVAILABLE:
+        # Utiliser bleach pour une sanitization robuste
+        if allowed_tags is None:
+            # Tags autorisés par défaut (texte brut seulement)
+            allowed_tags = []
+        cleaned_text: str = bleach.clean(text, tags=allowed_tags, strip=True)
+        return cleaned_text
+    else:
+        # Fallback : supprimer tous les tags HTML
+        # Protection basique contre XSS
+        text = re.sub(
+            r"<script[^>]*>.*?</script>", "", text, flags=re.IGNORECASE | re.DOTALL
+        )
+        text = re.sub(
+            r"<iframe[^>]*>.*?</iframe>", "", text, flags=re.IGNORECASE | re.DOTALL
+        )
+        text = re.sub(r"javascript:", "", text, flags=re.IGNORECASE)
+        text = re.sub(r"on\w+\s*=", "", text, flags=re.IGNORECASE)
+        # Supprimer tous les autres tags HTML
+        text = re.sub(r"<[^>]+>", "", text)
+        return text.strip()
+
+
+def validate_phone_number(phone: str, default_region: str = "BE") -> tuple[bool, str]:
+    """
+    Valide un numéro de téléphone international.
+    Retourne (is_valid, normalized_number)
+    """
+    if not phone:
+        return False, ""
+
+    # Nettoyer le numéro
+    cleaned = re.sub(r"[\s\-\(\)]", "", phone.strip())
+
+    if PHONENUMBERS_AVAILABLE:
+        try:
+            parsed = phonenumbers.parse(cleaned, default_region)
+            if phonenumbers.is_valid_number(parsed):
+                # Formater en format international
+                normalized = phonenumbers.format_number(
+                    parsed, phonenumbers.PhoneNumberFormat.E164
+                )
+                return True, normalized
+            else:
+                return False, cleaned
+        except NumberParseException:
+            # Si le parsing échoue, essayer avec le format nettoyé
+            return False, cleaned
+    else:
+        # Fallback : validation basique
+        # Format belge ou international
+        if re.match(r"^(?:\+32|0)?4[0-9]{8}$|^\+\d{8,15}$", cleaned):
+            return True, cleaned
+        else:
+            return False, cleaned
