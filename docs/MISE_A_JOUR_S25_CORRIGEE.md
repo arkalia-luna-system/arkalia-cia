@@ -8,9 +8,9 @@
 ## ✅ **PROBLÈMES IDENTIFIÉS ET CORRIGÉS**
 
 ### 1. **Versions obsolètes dans le code**
-- ❌ `check_updates.sh` : Version attendue `1.1.0+1` (ancienne)
-- ❌ `settings_screen.dart` : Version affichée `1.1.0+1` (ancienne)
-- ❌ `sync_screen.dart` : Version export `1.1.0` (ancienne)
+- ✅ `check_updates.sh` : Version attendue `1.2.0+1` (actuelle)
+- ✅ `settings_screen.dart` : Version affichée `1.2.0+1` (actuelle)
+- ✅ `sync_screen.dart` : Version export `1.2.0` (actuelle)
 - ✅ **Corrigé** : Toutes mises à jour vers `1.2.0+1`
 
 ### 2. **Script de mise à jour amélioré**

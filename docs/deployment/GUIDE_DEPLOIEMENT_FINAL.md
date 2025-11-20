@@ -77,7 +77,7 @@ flutter pub get
 
 ```bash
 # 1. Mettre à jour pubspec.yaml
-# Version actuelle: 1.1.0+1
+# Version actuelle: 1.2.0+1
 # Nouvelle version: 1.2.0+1
 
 # 2. Mettre à jour CHANGELOG.md

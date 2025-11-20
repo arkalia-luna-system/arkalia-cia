@@ -354,7 +354,7 @@ Checklist complète de validation avant release.
 - **Total lignes de code** : ~12,000 lignes
 - **Tests** : 222 tests (100% réussite) ✅
 - **Couverture** : 85%
-- **Version** : v1.1.0+1
+- **Version** : v1.2.0+1
 - **Production-Ready** : 95%
 - **Optimisations tests** : Suppression gc.collect(), isolation complète, MagicMock
 

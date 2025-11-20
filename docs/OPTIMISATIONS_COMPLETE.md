@@ -1,7 +1,7 @@
 # ⚡ Optimisations Complètes - Arkalia CIA
 
 **Date**: November 19, 2025  
-**Version**: v1.1.0+1  
+**Version**: v1.2.0+1  
 **Statut**: ✅ **OPTIMISÉ**
 
 ---

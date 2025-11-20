@@ -1,6 +1,14 @@
-# 🚀 PLAN 00 : ONBOARDING INTELLIGENT & HISTORIQUE AUTOMATIQUE
+# Plan 00 : Onboarding intelligent et historique automatique
 
-> **Première connexion : import automatique intelligent pour créer historique complet dès le départ**
+**Version** : 1.0.0  
+**Date** : 20 novembre 2025  
+**Statut** : ✅ Implémenté
+
+---
+
+## Vue d'ensemble
+
+Première connexion : import automatique intelligent pour créer historique complet dès le départ.
 
 ---
 

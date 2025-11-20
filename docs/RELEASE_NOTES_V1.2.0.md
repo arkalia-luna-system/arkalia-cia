@@ -76,7 +76,7 @@ Cette version apporte des améliorations significatives en termes de qualité de
 
 ## 🔄 Migration
 
-Aucune migration nécessaire. Cette version est compatible avec la v1.1.0+1.
+Aucune migration nécessaire. Cette version est compatible avec la v1.1.0+1 et supérieure.
 
 ---
 
