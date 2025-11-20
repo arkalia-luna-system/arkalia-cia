@@ -64,7 +64,7 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
 
       // Analyser patterns avec authentification et gestion automatique du refresh token
       final url = await BackendConfigService.getBackendURL();
-      final response = await ApiService.makeAuthenticatedRequest(() async {
+      final response = await _makeAuthenticatedPatternRequest(() async {
         final patternHeaders = <String, String>{
           'Content-Type': 'application/json',
         };
