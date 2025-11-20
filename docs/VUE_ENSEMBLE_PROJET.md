@@ -29,8 +29,8 @@ graph TB
     end
 
     subgraph "Arkalia CIA — Composants"
-        D[Flutter App<br/>24 écrans]
-        E[Python Backend<br/>21 endpoints]
+        D[Flutter App<br/>25 écrans]
+        E[Python Backend<br/>18 endpoints]
         F[SQLite Local<br/>Stockage sécurisé]
     end
 
@@ -316,10 +316,10 @@ sequenceDiagram
 
 ### Code
 
-- **Backend Python** : 21 endpoints, 8 modules principaux
-- **Frontend Flutter** : 24 écrans, 20 services, 6 utils
+- **Backend Python** : 18 endpoints, 8 modules principaux
+- **Frontend Flutter** : 25 écrans, 21 services, 6 utils
 - **Tests** : 206 tests Python (100% passent), 85% couverture
-- **Documentation** : 70+ fichiers MD organisés
+- **Documentation** : 94 fichiers MD organisés
 
 ### Fonctionnalités
 
@@ -348,6 +348,16 @@ sequenceDiagram
 - Intégration robotique BBIA
 - Application web complémentaire
 - Modèles ML supplémentaires (LSTM)
+
+---
+
+## Voir aussi
+
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture technique détaillée
+- **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** — Documentation complète de l'API
+- **[STATUT_FINAL_CONSOLIDE.md](./STATUT_FINAL_CONSOLIDE.md)** — Statut final consolidé du projet
+- **[ANALYSE_COMPLETE_BESOINS_MERE.md](./ANALYSE_COMPLETE_BESOINS_MERE.md)** — Analyse complète des besoins
+- **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
 
 ---
 

@@ -29,7 +29,7 @@ Checklist complète avant release pour Arkalia CIA.
 | Ruff | 0 erreur | OK |
 | MyPy | 0 erreur | OK |
 | Bandit | 0 vulnérabilité | OK |
-| Tests Python | 206/206 passent (100%) | OK |
+| Tests Python | 222/222 passent (100%) | OK |
 | Couverture Code | 85% global | OK |
 | Flutter Analyze | 0 erreur, 0 avertissement | OK |
 

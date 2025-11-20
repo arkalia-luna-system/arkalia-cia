@@ -114,5 +114,16 @@ Aucune migration nécessaire. Cette version est compatible avec la v1.1.0+1.
 
 ---
 
-**Dernière mise à jour** : 19 novembre 2025 (après-midi)
+---
+
+## Voir aussi
+
+- **[CHANGELOG.md](./CHANGELOG.md)** — Historique complet des changements
+- **[CHANGELOG_AUTHENTIFICATION.md](./CHANGELOG_AUTHENTIFICATION.md)** — Changelog spécifique à l'authentification
+- **[STATUT_FINAL_CONSOLIDE.md](./STATUT_FINAL_CONSOLIDE.md)** — Statut final consolidé du projet
+- **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
+
+---
+
+**Dernière mise à jour** : Janvier 2025
 

@@ -149,3 +149,17 @@ Guides créés et fichiers MD mis à jour
 - Gestion automatique des sessions
 - Refresh token transparent pour l'utilisateur
 
+---
+
+## Voir aussi
+
+- **[STATUT_FINAL_ULTIME.md](./STATUT_FINAL_ULTIME.md)** — Statut final authentification JWT
+- **[guides/GUIDE_MISE_A_JOUR_FLUTTER.md](./guides/GUIDE_MISE_A_JOUR_FLUTTER.md)** — Guide mise à jour Flutter
+- **[CHECKLIST_FINALE_SECURITE.md](./CHECKLIST_FINALE_SECURITE.md)** — Checklist sécurité
+- **[CHANGELOG.md](./CHANGELOG.md)** — Changelog général du projet
+- **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
+
+---
+
+*Dernière mise à jour : Janvier 2025*
+

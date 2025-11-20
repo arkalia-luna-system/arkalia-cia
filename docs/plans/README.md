@@ -137,16 +137,15 @@ Suivi en temps réel de l'implémentation :
 
 ---
 
-## 📚 **RESSOURCES**
+## Voir aussi
 
-- **[ANALYSE_COMPLETE_BESOINS_MERE.md](../ANALYSE_COMPLETE_BESOINS_MERE.md)** : Analyse complète des besoins
-- **[ARCHITECTURE.md](../ARCHITECTURE.md)** : Architecture générale CIA
-- **[API_DOCUMENTATION.md](../API_DOCUMENTATION.md)** : Documentation API backend complète
-- **[STATUT_FINAL_CONSOLIDE.md](../STATUT_FINAL_CONSOLIDE.md)** : Statut final consolidé (100% exploitation)
-- **[GUIDE_TEST_VISUEL_LIVE.md](./GUIDE_TEST_VISUEL_LIVE.md)** : Guide test visuel en live
-- **[STATUS_IMPLEMENTATION.md](./STATUS_IMPLEMENTATION.md)** : Statut implémentation détaillé
-
----
+- **[ANALYSE_COMPLETE_BESOINS_MERE.md](../ANALYSE_COMPLETE_BESOINS_MERE.md)** — Analyse complète des besoins
+- **[ARCHITECTURE.md](../ARCHITECTURE.md)** — Architecture générale CIA
+- **[API_DOCUMENTATION.md](../API_DOCUMENTATION.md)** — Documentation API backend complète
+- **[STATUT_FINAL_CONSOLIDE.md](../STATUT_FINAL_CONSOLIDE.md)** — Statut final consolidé (100% exploitation)
+- **[GUIDE_TEST_VISUEL_LIVE.md](./GUIDE_TEST_VISUEL_LIVE.md)** — Guide test visuel en live
+- **[STATUS_IMPLEMENTATION.md](./STATUS_IMPLEMENTATION.md)** — Statut implémentation détaillé
+- **[INDEX_DOCUMENTATION.md](../INDEX_DOCUMENTATION.md)** — Index complet de la documentation
 
 ---
 

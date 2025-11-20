@@ -240,5 +240,17 @@ flutter doctor --android-licenses
 
 ---
 
-**Dernière mise à jour** : 19 novembre 2025
+---
+
+## Voir aussi
+
+- **[deployment/CONFIGURATION_BACKEND_WIFI.md](./CONFIGURATION_BACKEND_WIFI.md)** — Configuration backend WiFi
+- **[troubleshooting/EXPLICATION_WIFI_ADB.md](../troubleshooting/EXPLICATION_WIFI_ADB.md)** — Explication WiFi ADB
+- **[troubleshooting/TROUVER_CONNECT_VIA_NETWORK.md](../troubleshooting/TROUVER_CONNECT_VIA_NETWORK.md)** — Trouver et connecter via réseau
+- **[TESTER_ET_METTRE_A_JOUR.md](../TESTER_ET_METTRE_A_JOUR.md)** — Guide de test et mise à jour
+- **[INDEX_DOCUMENTATION.md](../INDEX_DOCUMENTATION.md)** — Index complet de la documentation
+
+---
+
+*Dernière mise à jour : Janvier 2025*
 

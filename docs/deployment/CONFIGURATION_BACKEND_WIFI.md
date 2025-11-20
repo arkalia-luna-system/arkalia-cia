@@ -148,5 +148,17 @@ L'app détecte automatiquement si le backend est disponible et utilise le cache 
 
 ---
 
-**Dernière mise à jour** : 19 novembre 2025
+---
+
+## Voir aussi
+
+- **[deployment/CONNECTER_S25_ANDROID.md](./CONNECTER_S25_ANDROID.md)** — Connexion Android
+- **[deployment/DEPLOIEMENT_WIFI_IOS.md](./DEPLOIEMENT_WIFI_IOS.md)** — Déploiement WiFi iOS
+- **[troubleshooting/EXPLICATION_WIFI_ADB.md](../troubleshooting/EXPLICATION_WIFI_ADB.md)** — Explication WiFi ADB
+- **[deployment/DEPLOYMENT.md](./DEPLOYMENT.md)** — Guide de déploiement général
+- **[INDEX_DOCUMENTATION.md](../INDEX_DOCUMENTATION.md)** — Index complet de la documentation
+
+---
+
+*Dernière mise à jour : Janvier 2025*
 

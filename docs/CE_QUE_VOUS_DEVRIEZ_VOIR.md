@@ -198,13 +198,15 @@ Once the app is launched, you can:
 
 ---
 
-## 📚 Related Documentation
+## Voir aussi
 
-- **[BUILD_RELEASE_ANDROID.md](BUILD_RELEASE_ANDROID.md)** - Android build guide
-- **[TESTER_ET_METTRE_A_JOUR.md](TESTER_ET_METTRE_A_JOUR.md)** - Testing and update guide
-- **[INDEX_DOCUMENTATION.md](INDEX_DOCUMENTATION.md)** - Full documentation index
+- **[deployment/BUILD_RELEASE_ANDROID.md](./deployment/BUILD_RELEASE_ANDROID.md)** — Guide build Android
+- **[TESTER_ET_METTRE_A_JOUR.md](./TESTER_ET_METTRE_A_JOUR.md)** — Guide de test et mise à jour
+- **[deployment/CONNECTER_S25_ANDROID.md](./deployment/CONNECTER_S25_ANDROID.md)** — Connexion Android
+- **[SCREENSHOTS_GUIDE.md](./SCREENSHOTS_GUIDE.md)** — Guide des screenshots
+- **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
 
 ---
 
-**Last Updated**: November 19, 2025
+*Dernière mise à jour : Janvier 2025*
 

@@ -259,6 +259,18 @@ void testApiCallWithToken() async {
 
 ---
 
-**Dernière mise à jour**: Janvier 2025  
-**Status**: ✅ Écrans UI créés et intégrés
+---
+
+## Voir aussi
+
+- **[CHANGELOG_AUTHENTIFICATION.md](../CHANGELOG_AUTHENTIFICATION.md)** — Changelog authentification JWT
+- **[STATUT_FINAL_ULTIME.md](../STATUT_FINAL_ULTIME.md)** — Statut final authentification
+- **[CHECKLIST_FINALE_SECURITE.md](../CHECKLIST_FINALE_SECURITE.md)** — Checklist sécurité
+- **[API_DOCUMENTATION.md](../API_DOCUMENTATION.md)** — Documentation API complète
+- **[INDEX_DOCUMENTATION.md](../INDEX_DOCUMENTATION.md)** — Index complet de la documentation
+
+---
+
+*Dernière mise à jour : Janvier 2025*  
+*Statut : Écrans UI créés et intégrés* ✅
 

@@ -346,13 +346,13 @@ Checklist complète de validation avant release.
 - ✅ Code propre et professionnel
 - ✅ **Optimisation massive tests** : Suppression gc.collect(), isolation complète, MagicMock pour scans
 - ✅ **Tests optimisés** : 140s → 0.26s pour security_dashboard (99.8% plus rapide)
-- ✅ **Tous les tests passent** : 206/206 tests passent (100%) - Vérifié le 20 novembre 2025
+- ✅ **Tous les tests passent** : 222/222 tests passent (100%) - Vérifié le 20 novembre 2025
 
 ### 📊 **MÉTRIQUES ACTUELLES**
 - **Lignes de code Flutter** : 7,560 lignes
 - **Lignes de code Python** : 4,333 lignes
 - **Total lignes de code** : ~12,000 lignes
-- **Tests** : 206 tests (100% réussite) ✅
+- **Tests** : 222 tests (100% réussite) ✅
 - **Couverture** : 85%
 - **Version** : v1.1.0+1
 - **Production-Ready** : 95%
@@ -411,7 +411,7 @@ Checklist complète de validation avant release.
 ## 📝 **NOTES**
 
 - Le code est **techniquement prêt** pour la release
-- Les tests automatisés passent à **100%** (206/206) ✅
+- Les tests automatisés passent à **100%** (222/222) ✅
 - La sécurité est **validée** (0 vulnérabilité)
 - **Privacy Policy et Terms of Service créés** (17 novembre 2025)
 - **Descriptions App Store/Play Store créées** (dans DEPLOYMENT.md)
@@ -420,4 +420,15 @@ Checklist complète de validation avant release.
 
 **Estimation temps restant**: 4-5 heures pour compléter les validations manuelles et prendre les screenshots.
 
-**Dernière mise à jour**: November 19, 2025
+---
+
+## Voir aussi
+
+- **[deployment/CHECKLIST_RELEASE_CONSOLIDEE.md](./deployment/CHECKLIST_RELEASE_CONSOLIDEE.md)** — Checklist release consolidée
+- **[RELEASE_NOTES_V1.2.0.md](./RELEASE_NOTES_V1.2.0.md)** — Notes de release détaillées
+- **[deployment/DEPLOYMENT.md](./deployment/DEPLOYMENT.md)** — Guide de déploiement
+- **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
+
+---
+
+*Dernière mise à jour : Janvier 2025*

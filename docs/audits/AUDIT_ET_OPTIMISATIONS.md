@@ -138,3 +138,14 @@ make test                   # ✅ Via Makefile
 
 **Tous les problèmes identifiés ont été corrigés et optimisés !** 🎉
 
+---
+
+## Voir aussi
+
+- [OPTIMISATION_SCRIPTS.md](../OPTIMISATION_SCRIPTS.md) - Optimisations des scripts
+- [OPTIMISATIONS_COMPLETE.md](../OPTIMISATIONS_COMPLETE.md) - Document complet des optimisations
+- [troubleshooting/TESTS_PROBLEMATIQUES.md](../troubleshooting/TESTS_PROBLEMATIQUES.md) - Tests problématiques
+- [INDEX_DOCUMENTATION.md](../INDEX_DOCUMENTATION.md) - Index de la documentation
+
+---
+

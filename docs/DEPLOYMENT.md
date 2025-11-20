@@ -757,12 +757,13 @@ kubectl apply -f canary-deployment.yaml
 ## Voir aussi
 
 - **[BUILD_RELEASE_ANDROID.md](./BUILD_RELEASE_ANDROID.md)** — Guide build Android
-- **[IOS_DEPLOYMENT_GUIDE.md](./IOS_DEPLOYMENT_GUIDE.md)** — Guide déploiement iOS
+- **[deployment/IOS_DEPLOYMENT_GUIDE.md](./deployment/IOS_DEPLOYMENT_GUIDE.md)** — Guide déploiement iOS
+- **[deployment/BUILD_RELEASE_ANDROID.md](./deployment/BUILD_RELEASE_ANDROID.md)** — Guide build Android
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture système
-- **[CHECKLIST_RELEASE_CONSOLIDEE.md](./CHECKLIST_RELEASE_CONSOLIDEE.md)** — Checklist release
+- **[deployment/CHECKLIST_RELEASE_CONSOLIDEE.md](./deployment/CHECKLIST_RELEASE_CONSOLIDEE.md)** — Checklist release
 - **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
 
 ---
 
-**Dernière mise à jour** : Janvier 2025  
-*This deployment guide is updated with each release. For support, contact [our team](mailto:arkalia.luna.system@gmail.com).*
+*Dernière mise à jour : Janvier 2025*  
+*Ce guide de déploiement est mis à jour à chaque release. Pour le support, contactez [notre équipe](mailto:arkalia.luna.system@gmail.com).*

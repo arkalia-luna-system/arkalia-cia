@@ -248,6 +248,17 @@ L'app est **déjà utilisable** avec :
 
 **L'app est fonctionnelle à 100% et prête pour usage immédiat !** 🚀✅✅✅
 
+---
+
+## Voir aussi
+
+- [STATUT_FINAL_CONSOLIDE.md](../STATUT_FINAL_CONSOLIDE.md) - Statut final consolidé du projet
+- [plans/STATUS_IMPLEMENTATION.md](plans/STATUS_IMPLEMENTATION.md) - Statut d'implémentation de tous les plans
+- [plans/README.md](plans/README.md) - Index des plans
+- [INDEX_DOCUMENTATION.md](../INDEX_DOCUMENTATION.md) - Index de la documentation
+
+---
+
 **Toutes les fonctionnalités critiques ET avancées sont implémentées !** ✅
 
 ### ✅ **Dernières Améliorations (20 novembre 2025)**

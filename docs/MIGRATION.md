@@ -166,15 +166,6 @@ For migration questions or assistance:
 
 ---
 
-## 📚 Related Documentation
-
-- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Technical architecture
-- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines
-- **[CHANGELOG.md](CHANGELOG.md)** - Version history
-- **[INDEX_DOCUMENTATION.md](INDEX_DOCUMENTATION.md)** - Full documentation index
-
----
-
 ## Voir aussi
 
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture système mise à jour

@@ -276,4 +276,16 @@ Si vous voulez documenter la couverture de code :
 
 ---
 
-**Dernière mise à jour**: November 19, 2025
+---
+
+## Voir aussi
+
+- **[SCREENSHOTS_CHECKLIST.md](./SCREENSHOTS_CHECKLIST.md)** — Checklist des screenshots
+- **[deployment/BUILD_RELEASE_ANDROID.md](./deployment/BUILD_RELEASE_ANDROID.md)** — Guide build Android
+- **[deployment/IOS_DEPLOYMENT_GUIDE.md](./deployment/IOS_DEPLOYMENT_GUIDE.md)** — Guide déploiement iOS
+- **[RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md)** — Checklist release
+- **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
+
+---
+
+*Dernière mise à jour : Janvier 2025*

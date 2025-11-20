@@ -346,7 +346,20 @@ flutter pub get
 
 ---
 
-**Dernière mise à jour**: November 19, 2025  
+---
+
+## Voir aussi
+
+- **[deployment/DEPLOYMENT.md](./DEPLOYMENT.md)** — Guide de déploiement général
+- **[deployment/BUILD_RELEASE_ANDROID.md](./BUILD_RELEASE_ANDROID.md)** — Guide build Android
+- **[deployment/IOS_DEPLOYMENT_GUIDE.md](./IOS_DEPLOYMENT_GUIDE.md)** — Guide déploiement iOS
+- **[deployment/CHECKLIST_RELEASE_CONSOLIDEE.md](./CHECKLIST_RELEASE_CONSOLIDEE.md)** — Checklist release consolidée
+- **[RELEASE_CHECKLIST.md](../RELEASE_CHECKLIST.md)** — Checklist release
+- **[INDEX_DOCUMENTATION.md](../INDEX_DOCUMENTATION.md)** — Index complet de la documentation
+
+---
+
+*Dernière mise à jour : Janvier 2025*  
 **Version**: 1.2.0  
 **Statut**: 🟢 **PRÊT POUR PRODUCTION**
 

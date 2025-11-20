@@ -1,206 +1,204 @@
-# 📱 Standalone App Operation - iPad/iPhone Independence
+# Application iOS indépendante du Mac
 
-> **Can the app work without being connected to Mac?**
-
-**Last Updated**: November 19, 2025  
-**Version**: 1.2.0  
-**Platform**: iOS
+**Version** : 1.2.0  
+**Date** : 19 novembre 2025  
+**Plateforme** : iOS
 
 ---
 
-## ✅ Quick Answer
+## Réponse rapide
 
-**YES!** Once the app is installed on your iPad/iPhone, you can **disconnect the device from Mac** and the app will work normally! 🎉
-
----
-
-## 🎯 How It Works
-
-### During Installation
-
-| Requirement | Status |
-|-------------|--------|
-| **iPad/iPhone connected** to Mac via USB | ✅ Required |
-| **Xcode/Flutter** installs the app | ✅ Automatic |
-| **App launches** automatically | ✅ Yes |
-
-### After Installation
-
-| Feature | Status |
-|---------|--------|
-| **Disconnect iPad** from Mac | ✅ Allowed |
-| **App works independently** | ✅ Yes |
-| **Normal usage** on iPad | ✅ Yes |
-| **All features work** without Mac | ✅ Yes |
+**Oui !** Une fois l'application installée sur votre iPad/iPhone, vous pouvez **déconnecter l'appareil du Mac** et l'application fonctionnera normalement !
 
 ---
 
-## ⏰ App Validity Duration
+## Fonctionnement
 
-### Free Apple ID Account
+### Pendant l'installation
 
-- ✅ App works for **7 days**
-- ⚠️ After 7 days, app expires and won't launch
-- 🔄 **To continue**: Reconnect iPad and relaunch from Xcode/Flutter
+| Exigence | Statut |
+|----------|--------|
+| **iPad/iPhone connecté** au Mac via USB | ✅ Requis |
+| **Xcode/Flutter** installe l'application | ✅ Automatique |
+| **L'application se lance** automatiquement | ✅ Oui |
 
-### Paid Developer Account (€100/year)
+### Après l'installation
 
-- ✅ App works **indefinitely**
-- ✅ No need to reconnect after 7 days
-- ✅ No expiration issues
-
-> **Note**: See [IOS_DEPLOYMENT_GUIDE.md](IOS_DEPLOYMENT_GUIDE.md) for details on free vs paid accounts.
+| Fonctionnalité | Statut |
+|----------------|--------|
+| **Déconnecter l'iPad** du Mac | ✅ Autorisé |
+| **L'application fonctionne indépendamment** | ✅ Oui |
+| **Utilisation normale** sur l'iPad | ✅ Oui |
+| **Toutes les fonctionnalités fonctionnent** sans Mac | ✅ Oui |
 
 ---
 
-## 🔄 Updating the App
+## Durée de validité de l'application
 
-If you modify the code and want to update the app on your iPad:
+### Compte Apple ID gratuit
 
-### Method 1: From Xcode (Recommended)
+- Application fonctionne pendant **7 jours**
+- Après 7 jours, l'application expire et ne se lancera plus
+- **Pour continuer** : Reconnecter l'iPad et relancer depuis Xcode/Flutter
 
-1. **Reconnect iPad** to Mac via USB
-2. **In Xcode**, click **▶️ Play** (or press **Cmd+R**)
-3. App will update and relaunch automatically
+### Compte développeur payant (100 €/an)
 
-### Method 2: From Flutter CLI
+- Application fonctionne **indéfiniment**
+- Pas besoin de reconnecter après 7 jours
+- Aucun problème d'expiration
+
+> **Note** : Voir [deployment/IOS_DEPLOYMENT_GUIDE.md](deployment/IOS_DEPLOYMENT_GUIDE.md) pour les détails sur les comptes gratuits vs payants.
+
+---
+
+## Mise à jour de l'application
+
+Si vous modifiez le code et souhaitez mettre à jour l'application sur votre iPad :
+
+### Méthode 1 : Depuis Xcode (Recommandé)
+
+1. **Reconnecter l'iPad** au Mac via USB
+2. **Dans Xcode**, cliquer sur **▶️ Play** (ou appuyer sur **Cmd+R**)
+3. L'application se mettra à jour et se relancera automatiquement
+
+### Méthode 2 : Depuis Flutter CLI
 
 ```bash
 cd /Volumes/T7/arkalia-cia/arkalia_cia
 flutter run
 ```
 
-> **Note**: You can disconnect the iPad after the update completes.
+> **Note** : Vous pouvez déconnecter l'iPad après la fin de la mise à jour.
 
 ---
 
-## 📱 Daily Usage
+## Utilisation quotidienne
 
-Once the app is installed:
+Une fois l'application installée :
 
-### What You Can Do Without Mac
+### Ce que vous pouvez faire sans Mac
 
-- ✅ **Use the app normally** on your iPad
-- ✅ **All features work**:
-  - Navigation within the app
-  - Data saving and storage
+- Utiliser l'application normalement sur votre iPad
+- Toutes les fonctionnalités fonctionnent :
+  - Navigation dans l'application
+  - Sauvegarde et stockage des données
   - Notifications
-  - All app functionality
-- ✅ **Take it anywhere** - fully portable
-- ✅ **Use offline** - no internet required for core features
+  - Toutes les fonctionnalités de l'application
+- L'emporter partout - entièrement portable
+- Utiliser hors ligne - pas besoin d'Internet pour les fonctionnalités principales
 
-### What Requires Mac
+### Ce qui nécessite le Mac
 
-- ❌ **Initial app installation**
-- ❌ **App updates** (after code modifications)
-- ❌ **Certificate renewal** (after 7-day expiration with free account)
+- Installation initiale de l'application
+- Mises à jour de l'application (après modifications du code)
+- Renouvellement du certificat (après expiration de 7 jours avec compte gratuit)
 
 ---
 
-## 📊 Summary Table
+## Tableau récapitulatif
 
-| Action | Mac Connection Required? |
+| Action | Connexion Mac requise ? |
 |--------|-------------------------|
-| **Install app** | ✅ Yes |
-| **Use app** | ❌ No |
-| **Update app** | ✅ Yes |
-| **Use after installation** | ❌ No |
-| **Daily usage** | ❌ No |
-| **All app features** | ❌ No |
+| **Installer l'application** | ✅ Oui |
+| **Utiliser l'application** | ❌ Non |
+| **Mettre à jour l'application** | ✅ Oui |
+| **Utiliser après installation** | ❌ Non |
+| **Utilisation quotidienne** | ❌ Non |
+| **Toutes les fonctionnalités** | ❌ Non |
 
 ---
 
-## ⚠️ Important Notes
+## Notes importantes
 
-### Certificate Expiration (Free Account)
+### Expiration du certificat (Compte gratuit)
 
-- Development certificates expire after **7 days**
-- App will stop launching after expiration
-- **Solution**: Reconnect to Mac and relaunch from Xcode/Flutter
-- Takes only **2 minutes** to renew
+- Les certificats de développement expirent après **7 jours**
+- L'application ne se lancera plus après expiration
+- **Solution** : Reconnecter au Mac et relancer depuis Xcode/Flutter
+- Ne prend que **2 minutes** pour renouveler
 
-### App Updates
+### Mises à jour de l'application
 
-- Mac connection required **only** when updating code
-- After update, you can disconnect immediately
-- App continues working independently
+- Connexion Mac requise **uniquement** lors de la mise à jour du code
+- Après la mise à jour, vous pouvez déconnecter immédiatement
+- L'application continue de fonctionner indépendamment
 
-### Data Persistence
+### Persistance des données
 
-- ✅ **All data is stored locally** on the device
-- ✅ **No Mac dependency** for data access
-- ✅ **Works completely offline**
-
----
-
-## 🎯 Use Cases
-
-### Scenario 1: Daily Use
-
-1. Install app once (requires Mac)
-2. Disconnect iPad
-3. Use app normally for 7 days
-4. Reconnect to renew (if using free account)
-
-### Scenario 2: Development
-
-1. Make code changes
-2. Reconnect iPad to Mac
-3. Update app via Xcode/Flutter
-4. Disconnect and test independently
-
-### Scenario 3: Travel
-
-1. Install app before travel
-2. Disconnect from Mac
-3. Use app during travel (no Mac needed)
-4. Reconnect after 7 days if needed
+- Toutes les données sont stockées localement sur l'appareil
+- Aucune dépendance Mac pour l'accès aux données
+- Fonctionne complètement hors ligne
 
 ---
 
-## 🔧 Troubleshooting
+## Cas d'usage
 
-### App Won't Launch After Disconnecting
+### Scénario 1 : Utilisation quotidienne
 
-**Possible causes**:
-1. Certificate expired (7-day limit with free account)
-2. Developer Mode disabled
-3. Certificate not trusted
+1. Installer l'application une fois (nécessite Mac)
+2. Déconnecter l'iPad
+3. Utiliser l'application normalement pendant 7 jours
+4. Reconnecter pour renouveler (si utilisation d'un compte gratuit)
 
-**Solutions**:
-- Reconnect to Mac and relaunch from Xcode
-- Check Developer Mode is enabled
-- Trust certificate in Settings (see [APPROUVER_CERTIFICAT_DEVELOPPEUR.md](APPROUVER_CERTIFICAT_DEVELOPPEUR.md))
+### Scénario 2 : Développement
 
-### App Works But Features Don't
+1. Modifier le code
+2. Reconnecter l'iPad au Mac
+3. Mettre à jour l'application via Xcode/Flutter
+4. Déconnecter et tester indépendamment
 
-- Check app permissions in Settings
-- Verify data was saved before disconnecting
-- Some features may require initial setup with Mac connected
+### Scénario 3 : Voyage
 
----
-
-## 📚 Related Documentation
-
-- **[IOS_DEPLOYMENT_GUIDE.md](IOS_DEPLOYMENT_GUIDE.md)** - Complete iOS deployment guide
-- **[APPROUVER_CERTIFICAT_DEVELOPPEUR.md](APPROUVER_CERTIFICAT_DEVELOPPEUR.md)** - Certificate trust guide
-- **[INDEX_DOCUMENTATION.md](INDEX_DOCUMENTATION.md)** - Full documentation index
+1. Installer l'application avant le voyage
+2. Déconnecter du Mac
+3. Utiliser l'application pendant le voyage (pas besoin de Mac)
+4. Reconnecter après 7 jours si nécessaire
 
 ---
 
-## 🎉 Conclusion
+## Dépannage
 
-**Once installed, the app works completely independently from Mac!**
+### L'application ne se lance pas après déconnexion
 
-You can:
-- ✅ Disconnect your iPad
-- ✅ Use the app normally
-- ✅ Take it anywhere
-- ✅ Use it without Mac
+**Causes possibles** :
+1. Certificat expiré (limite de 7 jours avec compte gratuit)
+2. Mode développeur désactivé
+3. Certificat non approuvé
 
-**Mac is only needed for installation or updates.**
+**Solutions** :
+- Reconnecter au Mac et relancer depuis Xcode
+- Vérifier que le mode développeur est activé
+- Approuver le certificat dans Réglages (voir [troubleshooting/APPROUVER_CERTIFICAT_DEVELOPPEUR.md](troubleshooting/APPROUVER_CERTIFICAT_DEVELOPPEUR.md))
+
+### L'application fonctionne mais pas les fonctionnalités
+
+- Vérifier les permissions de l'application dans Réglages
+- Vérifier que les données ont été sauvegardées avant la déconnexion
+- Certaines fonctionnalités peuvent nécessiter une configuration initiale avec le Mac connecté
 
 ---
 
-**For questions or issues, refer to the troubleshooting section or see [IOS_DEPLOYMENT_GUIDE.md](IOS_DEPLOYMENT_GUIDE.md).**
+## Voir aussi
+
+- [deployment/IOS_DEPLOYMENT_GUIDE.md](deployment/IOS_DEPLOYMENT_GUIDE.md) - Guide complet de déploiement iOS
+- [troubleshooting/APPROUVER_CERTIFICAT_DEVELOPPEUR.md](troubleshooting/APPROUVER_CERTIFICAT_DEVELOPPEUR.md) - Guide d'approbation du certificat
+- [INDEX_DOCUMENTATION.md](INDEX_DOCUMENTATION.md) - Index complet de la documentation
+
+---
+
+## Conclusion
+
+**Une fois installée, l'application fonctionne complètement indépendamment du Mac !**
+
+Vous pouvez :
+- Déconnecter votre iPad
+- Utiliser l'application normalement
+- L'emporter partout
+- L'utiliser sans Mac
+
+**Le Mac n'est nécessaire que pour l'installation ou les mises à jour.**
+
+---
+
+**Pour toute question ou problème, consultez la section dépannage ou voir [deployment/IOS_DEPLOYMENT_GUIDE.md](deployment/IOS_DEPLOYMENT_GUIDE.md).**
 

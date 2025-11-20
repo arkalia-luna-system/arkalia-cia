@@ -24,7 +24,7 @@ Guide de navigation dans la documentation du projet Arkalia CIA.
 
 ### API et intégration
 
-- **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** — Documentation API complète (21 endpoints)
+- **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** — Documentation API complète (18 endpoints)
 - **[API.md](./API.md)** — Documentation API (version simplifiée)
 - **[ARIA_IMPLEMENTATION_GUIDE.md](./ARIA_IMPLEMENTATION_GUIDE.md)** — Guide d'intégration ARIA
 
@@ -146,6 +146,32 @@ docs/
 ├── plans/                         # Plans d'implémentation
 └── archive/                       # Archives
 ```
+
+---
+
+## Navigation rapide
+
+### Par type de document
+
+| Type | Documents principaux |
+|------|---------------------|
+| **Statut** | `STATUT_FINAL_CONSOLIDE.md` |
+| **Architecture** | `ARCHITECTURE.md`, `VUE_ENSEMBLE_PROJET.md` |
+| **API** | `API_DOCUMENTATION.md`, `API.md` |
+| **Sécurité** | `CHECKLIST_FINALE_SECURITE.md`, `audits/AUDIT_SECURITE_SENIOR.md` |
+| **Release** | `deployment/CHECKLIST_RELEASE_CONSOLIDEE.md`, `RELEASE_NOTES_V1.2.0.md` |
+| **Guides** | `guides/GUIDE_UTILISATION_MERE.md`, `guides/GUIDE_MISE_A_JOUR_FLUTTER.md` |
+
+### Par besoin
+
+| Besoin | Document recommandé |
+|--------|---------------------|
+| Comprendre le projet | `STATUT_FINAL_CONSOLIDE.md` |
+| Démarrer le développement | `ARCHITECTURE.md`, `CONTRIBUTING.md` |
+| Utiliser l'API | `API_DOCUMENTATION.md` |
+| Déployer | `deployment/DEPLOYMENT.md`, `deployment/BUILD_RELEASE_ANDROID.md` |
+| Comprendre la sécurité | `CHECKLIST_FINALE_SECURITE.md` |
+| Utiliser l'application | `guides/GUIDE_UTILISATION_MERE.md` |
 
 ---
 

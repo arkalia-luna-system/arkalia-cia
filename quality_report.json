@@ -1,13 +1,12 @@
 {
   "timestamp": "/Volumes/T7/arkalia-cia",
   "project": "/Volumes/T7/arkalia-cia",
-  "score": 68,
+  "score": 70,
   "errors": [
-    "MyPy: scripts/verify_release_readiness.py:230: error: List item 2 has incompatible type \"Path\"; expected \"str\"  [list-item]",
+    "MyPy: scripts/verify_release_readiness.py:236: error: List item 2 has incompatible type \"Path\"; expected \"str\"  [list-item]",
     "MyPy: arkalia_cia_python_backend/security_utils.py:10: error: Library stubs not installed for \"bleach\"  [import-untyped]"
   ],
   "warnings": [
-    "Formatage Black à corriger",
     "Tri des imports isort à corriger",
     "Bandit non exécuté: Command '['bandit', '-r', '/Volumes/T7/arkalia-cia', '-f', 'txt']' timed out after 45 seconds",
     "Analyse de complexité non exécutée: [Errno 13] Permission denied: 'radon'",
@@ -15,5 +14,5 @@
     "Vérification couverture non exécutée: Command '['coverage', 'run', '-m', 'pytest', '/Volumes/T7/arkalia-cia']' timed out after 60 seconds"
   ],
   "fixes": [],
-  "quality_level": "MOYEN"
+  "quality_level": "BON"
 }

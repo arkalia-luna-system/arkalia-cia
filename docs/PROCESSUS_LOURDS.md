@@ -210,5 +210,15 @@ ps aux | sort -rk 3,3 | head -10
 
 ---
 
-**Dernière mise à jour**: November 19, 2025
+---
+
+## Voir aussi
+
+- **[OPTIMISATIONS_COMPLETE.md](./OPTIMISATIONS_COMPLETE.md)** — Optimisations complètes
+- **[troubleshooting/](../troubleshooting/)** — Guides de dépannage
+- **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
+
+---
+
+*Dernière mise à jour : Janvier 2025*
 

@@ -88,7 +88,12 @@ L'application est prête pour la production :
 ## Voir aussi
 
 - **[CHANGELOG_AUTHENTIFICATION.md](./CHANGELOG_AUTHENTIFICATION.md)** — Changelog authentification JWT
-- **[GUIDE_MISE_A_JOUR_FLUTTER.md](./GUIDE_MISE_A_JOUR_FLUTTER.md)** — Guide mise à jour Flutter
+- **[guides/GUIDE_MISE_A_JOUR_FLUTTER.md](./guides/GUIDE_MISE_A_JOUR_FLUTTER.md)** — Guide mise à jour Flutter
 - **[CHECKLIST_FINALE_SECURITE.md](./CHECKLIST_FINALE_SECURITE.md)** — Checklist sécurité
+- **[STATUT_FINAL_CONSOLIDE.md](./STATUT_FINAL_CONSOLIDE.md)** — Statut final consolidé du projet
 - **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
+
+---
+
+*Dernière mise à jour : Janvier 2025*
 

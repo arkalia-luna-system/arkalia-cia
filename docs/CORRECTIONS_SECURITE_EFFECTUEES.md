@@ -284,3 +284,16 @@ Tous les endpoints suivants ont été :
 
 **Note**: Les corrections critiques ont été effectuées. L'application est maintenant sécurisée pour une mise en production avec authentification complète.
 
+---
+
+## Voir aussi
+
+- **[audits/AUDIT_SECURITE_SENIOR.md](./audits/AUDIT_SECURITE_SENIOR.md)** — Audit sécurité initial
+- **[audits/AUDIT_POST_CORRECTIONS.md](./audits/AUDIT_POST_CORRECTIONS.md)** — Audit après corrections
+- **[CHECKLIST_FINALE_SECURITE.md](./CHECKLIST_FINALE_SECURITE.md)** — Checklist sécurité complète
+- **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
+
+---
+
+*Dernière mise à jour : Janvier 2025*
+

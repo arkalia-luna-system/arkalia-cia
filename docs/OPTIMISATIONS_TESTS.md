@@ -106,5 +106,16 @@ pytest tests/integration/test_integration.py -v
 
 ---
 
-**Dernière mise à jour** : November 19, 2025
+---
+
+## Voir aussi
+
+- **[OPTIMISATIONS_COMPLETE.md](./OPTIMISATIONS_COMPLETE.md)** — Optimisations complètes
+- **[audits/ANALYSE_PERFORMANCE_TESTS.md](./audits/ANALYSE_PERFORMANCE_TESTS.md)** — Analyse performance tests
+- **[audits/AUDIT_ET_OPTIMISATIONS.md](./audits/AUDIT_ET_OPTIMISATIONS.md)** — Audit et optimisations
+- **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
+
+---
+
+*Dernière mise à jour : Janvier 2025*
 

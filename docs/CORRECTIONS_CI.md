@@ -1,6 +1,18 @@
-# 🛠️ Corrections CI/CD - Arkalia CIA
+# Corrections CI/CD
 
-## 📋 Problèmes identifiés et corrigés
+**Version** : 1.0.0  
+**Date** : 19 novembre 2025  
+**Statut** : ✅ Corrigé
+
+---
+
+## Vue d'ensemble
+
+Ce document décrit les problèmes identifiés dans le pipeline CI/CD et les corrections apportées pour garantir un fonctionnement stable et fiable.
+
+---
+
+## Problèmes identifiés et corrigés
 
 ### 1. ❌ Erreurs de permissions GitHub Actions
 **Problème** : Les workflows GitHub Actions n'avaient pas les permissions nécessaires pour commenter sur les issues et pull requests, causant des erreurs `403 Resource not accessible by integration`.
@@ -123,3 +135,13 @@ Script de test pour vérifier les corrections :
 - [x] Documentation créée
 
 Toutes les corrections ont été appliquées avec succès et testées localement.
+
+---
+
+## Voir aussi
+
+- [VALIDATION.md](VALIDATION.md) - Checklist de validation du projet
+- [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) - Checklist de release
+- [INDEX_DOCUMENTATION.md](INDEX_DOCUMENTATION.md) - Index de la documentation
+
+---

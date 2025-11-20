@@ -276,5 +276,17 @@ if (mounted) {         // Avant setState
 
 **Toutes les optimisations sont documentées et implémentées !** ✅
 
-**Dernière mise à jour**: November 19, 2025 (optimisations mémoire supplémentaires)
+---
+
+## Voir aussi
+
+- **[audits/AUDIT_ET_OPTIMISATIONS.md](./audits/AUDIT_ET_OPTIMISATIONS.md)** — Audit et optimisations scripts
+- **[OPTIMISATIONS_TESTS.md](./OPTIMISATIONS_TESTS.md)** — Détails optimisations tests
+- **[audits/ANALYSE_PERFORMANCE_TESTS.md](./audits/ANALYSE_PERFORMANCE_TESTS.md)** — Analyse performance tests
+- **[STATUT_FINAL_CONSOLIDE.md](./STATUT_FINAL_CONSOLIDE.md)** — Statut final consolidé
+- **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
+
+---
+
+*Dernière mise à jour : Janvier 2025*
 

@@ -7,6 +7,8 @@
 
 Documentation complète de l'API REST d'Arkalia CIA.
 
+**Total endpoints** : 18 endpoints avec préfixe `/api/v1/` + 2 endpoints système (`/` et `/health`) = 20 endpoints au total.
+
 ---
 
 ## Table des matières
@@ -589,7 +591,7 @@ graph TB
 
 - **[API.md](./API.md)** — Documentation API (version simplifiée)
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture système détaillée
-- **[GUIDE_MISE_A_JOUR_FLUTTER.md](./GUIDE_MISE_A_JOUR_FLUTTER.md)** — Guide mise à jour Flutter
+- **[guides/GUIDE_MISE_A_JOUR_FLUTTER.md](./guides/GUIDE_MISE_A_JOUR_FLUTTER.md)** — Guide mise à jour Flutter
 - **[CHECKLIST_FINALE_SECURITE.md](./CHECKLIST_FINALE_SECURITE.md)** — Checklist sécurité
 - **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
 

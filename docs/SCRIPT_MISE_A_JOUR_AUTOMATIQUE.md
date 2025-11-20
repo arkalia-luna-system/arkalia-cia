@@ -268,5 +268,15 @@ cd /Volumes/T7/arkalia-cia/arkalia_cia
 
 ---
 
+## Voir aussi
+
+- [MISE_A_JOUR_S25_CORRIGEE.md](MISE_A_JOUR_S25_CORRIGEE.md) - Guide de mise à jour corrigé
+- [MISE_A_JOUR_S25_WIFI.md](MISE_A_JOUR_S25_WIFI.md) - Guide de mise à jour via WiFi
+- [OPTIMISATION_SCRIPTS.md](OPTIMISATION_SCRIPTS.md) - Optimisations des scripts
+- [deployment/GUIDE_DEPLOIEMENT_FINAL.md](deployment/GUIDE_DEPLOIEMENT_FINAL.md) - Guide de déploiement final
+- [INDEX_DOCUMENTATION.md](INDEX_DOCUMENTATION.md) - Index de la documentation
+
+---
+
 **Dernière mise à jour** : 19 novembre 2025
 

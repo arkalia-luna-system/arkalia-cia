@@ -87,7 +87,7 @@ arkalia_cia/lib/
 ├── main.dart                    # Point d'entrée application
 ├── models/                      # Modèles de données
 │   └── doctor.dart             # Modèle Doctor et Consultation
-├── screens/                     # Écrans UI (24 écrans)
+├── screens/                     # Écrans UI (25 écrans)
 │   ├── home_page.dart          # Dashboard principal
 │   ├── documents_screen.dart   # Gestion documents
 │   ├── doctors_list_screen.dart # Liste médecins
@@ -99,7 +99,7 @@ arkalia_cia/lib/
 │   └── auth/                   # Authentification
 │       ├── login_screen.dart
 │       └── register_screen.dart
-├── services/                    # Services métier (20 services)
+├── services/                    # Services métier (21 services)
 │   ├── api_service.dart         # Communication backend
 │   ├── local_storage_service.dart # Stockage local
 │   ├── doctor_service.dart      # Gestion médecins
@@ -118,7 +118,7 @@ arkalia_cia/lib/
 
 ```
 arkalia_cia_python_backend/
-├── api.py                       # FastAPI - 20+ endpoints
+├── api.py                       # FastAPI - 18 endpoints
 ├── auth.py                      # Authentification JWT
 ├── database.py                  # Gestion base de données
 ├── pdf_processor.py             # Traitement PDF

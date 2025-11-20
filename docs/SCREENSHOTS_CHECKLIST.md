@@ -155,5 +155,17 @@ screenshots/
 
 **Guide détaillé** : Voir `docs/SCREENSHOTS_GUIDE.md` pour tous les détails
 
-**Dernière vérification** : November 19, 2025
-**Dernière mise à jour** : November 19, 2025 - Screenshots Android capturés et validés ✅
+---
+
+## Voir aussi
+
+- **[SCREENSHOTS_GUIDE.md](./SCREENSHOTS_GUIDE.md)** — Guide détaillé des screenshots
+- **[deployment/BUILD_RELEASE_ANDROID.md](./deployment/BUILD_RELEASE_ANDROID.md)** — Guide build Android
+- **[deployment/IOS_DEPLOYMENT_GUIDE.md](./deployment/IOS_DEPLOYMENT_GUIDE.md)** — Guide déploiement iOS
+- **[RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md)** — Checklist release
+- **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
+
+---
+
+*Dernière vérification : Janvier 2025*  
+*Dernière mise à jour : Janvier 2025 — Screenshots Android capturés et validés* ✅

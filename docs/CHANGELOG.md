@@ -411,4 +411,17 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), ce pr
 
 ---
 
-*This changelog is automatically updated with each release. For detailed technical changes, see our [commit history](https://github.com/arkalia-luna-system/arkalia-cia/commits/main).*
+---
+
+## Voir aussi
+
+- **[RELEASE_NOTES_V1.2.0.md](./RELEASE_NOTES_V1.2.0.md)** — Notes de release détaillées
+- **[CHANGELOG_AUTHENTIFICATION.md](./CHANGELOG_AUTHENTIFICATION.md)** — Changelog spécifique à l'authentification
+- **[STATUT_FINAL_CONSOLIDE.md](./STATUT_FINAL_CONSOLIDE.md)** — Statut final consolidé du projet
+- **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
+
+---
+
+*Ce changelog est automatiquement mis à jour à chaque release. Pour les changements techniques détaillés, voir notre [historique des commits](https://github.com/arkalia-luna-system/arkalia-cia/commits/main).*
+
+*Dernière mise à jour : Janvier 2025*

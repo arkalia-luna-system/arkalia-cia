@@ -1,12 +1,19 @@
-# 🔍 PLAN 03 : RECHERCHE AVANCÉE
+# Plan 03 : Recherche avancée
 
-> **Moteur de recherche performant pour examens, documents et consultations**
+**Version** : 1.0.0  
+**Date** : 19 novembre 2025  
+**Statut** : 📋 Plan validé  
+**Priorité** : 🔴 Critique  
+**Temps estimé** : 2-3 semaines
 
 ---
 
-## 🎯 **OBJECTIF**
+## Objectif
 
-Permettre à votre mère de **retrouver facilement** n'importe quel document, examen ou consultation avec :
+Moteur de recherche performant pour examens, documents et consultations.
+
+Permettre de retrouver facilement n'importe quel document, examen ou consultation avec :
+
 - Recherche multi-critères (type, date, médecin)
 - Filtres combinés
 - Recherche sémantique ("tous les examens cardiaques")
@@ -14,27 +21,29 @@ Permettre à votre mère de **retrouver facilement** n'importe quel document, ex
 
 ---
 
-## 📋 **BESOINS IDENTIFIÉS**
+## Besoins identifiés
 
-### **Besoin Principal**
-- ✅ Rechercher un examen spécifique
-- ✅ Retrouver des résultats d'analyses
-- ✅ Rechercher par date (période, année)
-- ✅ Rechercher par type (radio, analyse, scanner)
-- ✅ Rechercher par médecin prescripteur
-- ✅ Filtres multiples combinés
+### Besoin principal
 
-### **Fonctionnalités Requises**
-- 🔍 Recherche texte intégral (déjà existante, à améliorer)
-- 📅 Filtre par date (période, année)
-- 🏷️ Filtre par type examen
-- 👨‍⚕️ Filtre par médecin
-- 🔗 Recherche sémantique basique
-- ⚡ Performance <200ms
+- Rechercher un examen spécifique
+- Retrouver des résultats d'analyses
+- Rechercher par date (période, année)
+- Rechercher par type (radio, analyse, scanner)
+- Rechercher par médecin prescripteur
+- Filtres multiples combinés
+
+### Fonctionnalités requises
+
+- Recherche texte intégral (déjà existante, à améliorer)
+- Filtre par date (période, année)
+- Filtre par type examen
+- Filtre par médecin
+- Recherche sémantique basique
+- Performance <200ms
 
 ---
 
-## 🏗️ **ARCHITECTURE**
+## Architecture
 
 ### **Index de Recherche**
 
@@ -72,7 +81,7 @@ arkalia_cia/
 
 ---
 
-## 🔧 **IMPLÉMENTATION DÉTAILLÉE**
+## Implémentation détaillée
 
 ### **Étape 1 : Service Recherche**
 
@@ -465,9 +474,9 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
 
 ---
 
-## ✅ **TESTS**
+## Tests
 
-### **Tests Performance**
+### Tests de performance
 
 ```dart
 // test/search_performance_test.dart
@@ -486,9 +495,9 @@ void main() {
 
 ---
 
-## 🚀 **PERFORMANCE**
+## Performance
 
-### **Optimisations**
+### Optimisations
 
 1. **Index SQLite** : Index sur colonnes recherchées
 2. **Limite résultats** : Limiter à 50 résultats par défaut
@@ -498,29 +507,36 @@ void main() {
 
 ---
 
-## 🔐 **SÉCURITÉ**
+## Sécurité
 
-1. **Sanitization** : Nettoyer requêtes utilisateur
-2. **Prévention SQL injection** : Utiliser paramètres liés
-3. **Limite résultats** : Empêcher requêtes trop lourdes
+1. **Sanitisation** : Nettoyer les requêtes utilisateur
+2. **Prévention injection SQL** : Utiliser des paramètres liés
+3. **Limite de résultats** : Empêcher les requêtes trop lourdes
 
 ---
 
-## 📅 **TIMELINE**
+## Planning
 
-### **Semaine 1 : Backend**
+### Semaine 1 : Backend
+
 - [ ] Jour 1-2 : Service recherche
 - [ ] Jour 3 : Recherche sémantique
-- [ ] Jour 4-5 : Tests performance
+- [ ] Jour 4-5 : Tests de performance
 
-### **Semaine 2 : Frontend**
+### Semaine 2 : Frontend
+
 - [ ] Jour 1-2 : Interface recherche
 - [ ] Jour 3 : Widgets filtres et résultats
 - [ ] Jour 4-5 : Tests UI
 
 ---
 
-**Statut** : 📋 **PLAN VALIDÉ**  
-**Priorité** : 🔴 **CRITIQUE**  
-**Temps estimé** : 2-3 semaines
+## Voir aussi
+
+- [plans/STATUS_IMPLEMENTATION.md](plans/STATUS_IMPLEMENTATION.md) - Statut d'implémentation de tous les plans
+- [plans/README.md](plans/README.md) - Index des plans
+- [ARCHITECTURE.md](ARCHITECTURE.md) - Architecture technique du projet
+- [INDEX_DOCUMENTATION.md](INDEX_DOCUMENTATION.md) - Index de la documentation
+
+---
 

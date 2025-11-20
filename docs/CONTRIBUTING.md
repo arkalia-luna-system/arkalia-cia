@@ -678,21 +678,33 @@ Contributors are recognized in:
 
 ## Resources
 
+## Voir aussi
+
 ### Documentation
 
-- [Architecture Guide](ARCHITECTURE.md)
-- [API Reference](API.md)
-- [Deployment Guide](DEPLOYMENT.md)
-- [Security Policy](../SECURITY.md)
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Guide d'architecture
+- **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** — Référence API complète
+- **[deployment/DEPLOYMENT.md](./deployment/DEPLOYMENT.md)** — Guide de déploiement
+- **[SECURITY.md](../SECURITY.md)** — Politique de sécurité
 
-### Learning Resources
+### Ressources d'apprentissage
+
 - [Flutter Documentation](https://docs.flutter.dev/)
 - [Dart Language Tour](https://dart.dev/guides/language/language-tour)
 - [FastAPI Documentation](https://fastapi.tiangolo.com/)
 - [Python Style Guide](https://pep8.org/)
 
+### Autres guides
+
+- **[MIGRATION.md](./MIGRATION.md)** — Guide de migration
+- **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
+
 ---
 
-**Thank you for contributing to Arkalia CIA!** 🚀
+**Merci de contribuer à Arkalia CIA !** 🚀
 
-Your contributions help make this project better for everyone. If you have questions, don't hesitate to ask in our community channels.
+Vos contributions aident à améliorer ce projet pour tous. Si vous avez des questions, n'hésitez pas à les poser dans nos canaux communautaires.
+
+---
+
+*Dernière mise à jour : Janvier 2025*

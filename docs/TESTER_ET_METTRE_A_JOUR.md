@@ -439,14 +439,15 @@ All critical errors are fixed. You can now test the app on your phone and see:
 
 ---
 
-## 📚 Related Documentation
+## Voir aussi
 
-- **[EXPLICATION_WIFI_ADB.md](EXPLICATION_WIFI_ADB.md)** - WiFi ADB explanation
-- **[BUILD_RELEASE_ANDROID.md](BUILD_RELEASE_ANDROID.md)** - Android build guide
-- **[CE_QUE_VOUS_DEVRIEZ_VOIR.md](CE_QUE_VOUS_DEVRIEZ_VOIR.md)** - What you should see
-- **[INDEX_DOCUMENTATION.md](INDEX_DOCUMENTATION.md)** - Full documentation index
+- **[troubleshooting/EXPLICATION_WIFI_ADB.md](./troubleshooting/EXPLICATION_WIFI_ADB.md)** — Explication WiFi ADB
+- **[deployment/BUILD_RELEASE_ANDROID.md](./deployment/BUILD_RELEASE_ANDROID.md)** — Guide build Android
+- **[CE_QUE_VOUS_DEVRIEZ_VOIR.md](./CE_QUE_VOUS_DEVRIEZ_VOIR.md)** — Ce que vous devriez voir
+- **[deployment/CONNECTER_S25_ANDROID.md](./deployment/CONNECTER_S25_ANDROID.md)** — Connexion Android
+- **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
 
 ---
 
-**Last Updated**: November 19, 2025
+*Dernière mise à jour : Janvier 2025*
 

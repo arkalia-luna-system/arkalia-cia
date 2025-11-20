@@ -251,25 +251,29 @@ adb install build/app/outputs/flutter-apk/app-release.apk
 
 ---
 
-## 📚 Related Documentation
+## Voir aussi
 
-- **[GRADLE_FIX_GUIDE.md](GRADLE_FIX_GUIDE.md)** - Gradle troubleshooting
-- **[RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md)** - Complete release checklist
-- **[DEPLOYMENT.md](DEPLOYMENT.md)** - General deployment guide
-- **[INDEX_DOCUMENTATION.md](INDEX_DOCUMENTATION.md)** - Documentation index
-
----
-
-## 🚀 Next Steps
-
-After successful build and testing:
-
-1. **Upload to Play Store** (if using AAB)
-2. **Test on multiple devices** before release
-3. **Monitor crash reports** after release
-4. **Gather user feedback** for next version
+- **[troubleshooting/GRADLE_FIX_GUIDE.md](../troubleshooting/GRADLE_FIX_GUIDE.md)** — Dépannage Gradle
+- **[RELEASE_CHECKLIST.md](../RELEASE_CHECKLIST.md)** — Checklist release complète
+- **[deployment/DEPLOYMENT.md](./DEPLOYMENT.md)** — Guide de déploiement général
+- **[deployment/IOS_DEPLOYMENT_GUIDE.md](./IOS_DEPLOYMENT_GUIDE.md)** — Guide déploiement iOS
+- **[SCREENSHOTS_GUIDE.md](../SCREENSHOTS_GUIDE.md)** — Guide des screenshots
+- **[INDEX_DOCUMENTATION.md](../INDEX_DOCUMENTATION.md)** — Index complet de la documentation
 
 ---
 
-**For questions or issues, refer to the troubleshooting section or open an issue on GitHub.**
+## Prochaines étapes
+
+Après un build et des tests réussis :
+
+1. **Uploader sur Play Store** (si utilisation AAB)
+2. **Tester sur plusieurs appareils** avant la release
+3. **Surveiller les rapports de crash** après la release
+4. **Collecter les retours utilisateurs** pour la prochaine version
+
+---
+
+*Pour questions ou problèmes, consultez la section dépannage ou ouvrez une issue sur GitHub.*
+
+*Dernière mise à jour : Janvier 2025*
 

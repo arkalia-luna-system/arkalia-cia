@@ -1194,3 +1194,16 @@ Analyse exhaustive de l'écosystème Arkalia Luna System et des besoins utilisat
 - **ARKALIA ARIA** : https://github.com/arkalia-luna-system/Arkalia-aria
 - **BBIA-SIM** : https://github.com/arkalia-luna-system/bbia-sim
 - **Organisation** : https://github.com/arkalia-luna-system
+
+---
+
+## Voir aussi (fin)
+
+- **[STATUT_FINAL_CONSOLIDE.md](./STATUT_FINAL_CONSOLIDE.md)** — Statut complet du projet
+- **[VUE_ENSEMBLE_PROJET.md](./VUE_ENSEMBLE_PROJET.md)** — Vue d'ensemble visuelle
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture système
+- **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
+
+---
+
+*Dernière mise à jour : Janvier 2025*

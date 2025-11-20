@@ -1037,7 +1037,17 @@ echo "📊 Laboratoire personnel opérationnel"
 
 ---
 
-**Last Updated**: November 19, 2025  
-*This implementation guide provides step-by-step instructions for integrating ARIA functionality into Arkalia CIA.*
+---
 
-**🎯 Prêt à implémenter Dolorix étape par étape ?**
+## Voir aussi (fin)
+
+- **[VUE_ENSEMBLE_PROJET.md](./VUE_ENSEMBLE_PROJET.md)** — Vue d'ensemble de l'écosystème Arkalia
+- **[ANALYSE_COMPLETE_BESOINS_MERE.md](./ANALYSE_COMPLETE_BESOINS_MERE.md)** — Analyse des besoins
+- **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** — Documentation API complète
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture système
+- **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
+
+---
+
+*Dernière mise à jour : Janvier 2025*  
+*Ce guide d'implémentation fournit des instructions étape par étape pour intégrer la fonctionnalité ARIA dans Arkalia CIA.*

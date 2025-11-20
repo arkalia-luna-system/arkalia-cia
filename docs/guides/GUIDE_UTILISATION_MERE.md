@@ -178,5 +178,16 @@ Si vous avez des questions ou des problèmes :
 
 ---
 
-**Bon usage de Arkalia CIA ! 🎉**
+## Voir aussi
+
+- **[STATUT_FINAL_CONSOLIDE.md](../STATUT_FINAL_CONSOLIDE.md)** — Statut complet du projet
+- **[ARCHITECTURE.md](../ARCHITECTURE.md)** — Architecture système
+- **[API_DOCUMENTATION.md](../API_DOCUMENTATION.md)** — Documentation API
+- **[INDEX_DOCUMENTATION.md](../INDEX_DOCUMENTATION.md)** — Index complet de la documentation
+
+---
+
+**Bon usage de Arkalia CIA !** 🎉
+
+*Dernière mise à jour : Janvier 2025*
 

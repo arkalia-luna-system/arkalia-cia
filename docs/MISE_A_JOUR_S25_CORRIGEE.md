@@ -134,5 +134,15 @@ adb -s 192.168.129.46:5555 shell "pm grant com.example.arkalia_cia android.permi
 
 ---
 
+## Voir aussi
+
+- [MISE_A_JOUR_S25_WIFI.md](MISE_A_JOUR_S25_WIFI.md) - Guide de mise à jour via WiFi
+- [deployment/CONFIGURATION_BACKEND_WIFI.md](deployment/CONFIGURATION_BACKEND_WIFI.md) - Configuration WiFi pour le backend
+- [deployment/CONNECTER_S25_ANDROID.md](deployment/CONNECTER_S25_ANDROID.md) - Guide de connexion Android
+- [TESTER_ET_METTRE_A_JOUR.md](TESTER_ET_METTRE_A_JOUR.md) - Guide complet de test et mise à jour
+- [INDEX_DOCUMENTATION.md](INDEX_DOCUMENTATION.md) - Index de la documentation
+
+---
+
 **Dernière mise à jour** : 19 novembre 2025
 
