@@ -445,7 +445,7 @@ async def health_check(db: CIADatabase = Depends(get_database)):
     Vérification de santé complète de l'API
     Vérifie: API, base de données, storage
     """
-    health_status: dict[str, str | dict[str, str | float | dict[str, str]]] = {
+    health_status: dict[str, Any] = {
         "status": "healthy",
         "timestamp": datetime.now().isoformat(),
         "version": "1.3.1",
