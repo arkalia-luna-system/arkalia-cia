@@ -159,7 +159,8 @@ class ConversationalAI:
                         if patterns.get("recurring_patterns"):
                             answer += "J'ai détecté des patterns récurrents dans vos douleurs. "
                     except Exception:
-                        pass
+                        # Ignorer silencieusement si les patterns ne sont pas disponibles
+                        pass  # nosec B110
 
                 return answer
 
@@ -233,7 +234,8 @@ class ConversationalAI:
                 user_id = user_data.get("user_id", "default")
                 pain_data = self.aria.get_pain_records(user_id, limit=20)
             except Exception:
-                pass
+                # Ignorer silencieusement si les données de douleur ne sont pas disponibles
+                pass  # nosec B110
 
         documents = user_data.get("documents", [])
 
@@ -272,7 +274,8 @@ class ConversationalAI:
                 if health_metrics:
                     return "En analysant vos métriques santé ARIA, je peux identifier des patterns. "
             except Exception:
-                pass
+                # Ignorer silencieusement si les métriques santé ne sont pas disponibles
+                pass  # nosec B110
 
         return "Je n'ai pas assez de données pour analyser les corrélations. "
 

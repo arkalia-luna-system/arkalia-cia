@@ -103,7 +103,7 @@ def create_refresh_token(data: dict) -> str:
     return encoded_jwt
 
 
-def verify_token(token: str, token_type: str = "access") -> TokenData:
+def verify_token(token: str, token_type: str = "access") -> TokenData:  # nosec B107
     """Vérifie et décode un token JWT"""
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -143,7 +143,7 @@ async def get_current_user(
 ) -> TokenData:
     """Dépendance FastAPI pour obtenir l'utilisateur actuel"""
     token = credentials.credentials
-    token_data = verify_token(token, token_type="access")
+    token_data = verify_token(token, token_type="access")  # nosec B106
     return token_data
 
 

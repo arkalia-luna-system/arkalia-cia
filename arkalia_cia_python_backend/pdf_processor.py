@@ -95,7 +95,8 @@ class PDFProcessor:
                         else f"Erreur lors de l'extraction: {str(e)}"
                     )
                 except Exception:
-                    pass
+                    # Ignorer silencieusement les erreurs d'extraction OCR secondaire
+                    pass  # nosec B110
             return f"Erreur lors de l'extraction: {str(e)}"
 
     def save_pdf_to_uploads(self, file_path: str, filename: str) -> str:

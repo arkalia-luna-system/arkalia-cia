@@ -1,0 +1,738 @@
+{
+  "errors": [
+    {
+      "filename": "arkalia_cia_python_backend/._api.py",
+      "reason": "syntax error while parsing AST from file"
+    },
+    {
+      "filename": "arkalia_cia_python_backend/._auth.py",
+      "reason": "syntax error while parsing AST from file"
+    },
+    {
+      "filename": "arkalia_cia_python_backend/._auto_documenter.py",
+      "reason": "syntax error while parsing AST from file"
+    },
+    {
+      "filename": "arkalia_cia_python_backend/._database.py",
+      "reason": "syntax error while parsing AST from file"
+    },
+    {
+      "filename": "arkalia_cia_python_backend/._exceptions.py",
+      "reason": "syntax error while parsing AST from file"
+    },
+    {
+      "filename": "arkalia_cia_python_backend/._pdf_processor.py",
+      "reason": "syntax error while parsing AST from file"
+    },
+    {
+      "filename": "arkalia_cia_python_backend/._security_dashboard.py",
+      "reason": "syntax error while parsing AST from file"
+    },
+    {
+      "filename": "arkalia_cia_python_backend/._security_utils.py",
+      "reason": "syntax error while parsing AST from file"
+    },
+    {
+      "filename": "arkalia_cia_python_backend/._storage.py",
+      "reason": "syntax error while parsing AST from file"
+    },
+    {
+      "filename": "arkalia_cia_python_backend/ai/._aria_integration.py",
+      "reason": "syntax error while parsing AST from file"
+    },
+    {
+      "filename": "arkalia_cia_python_backend/ai/._conversational_ai.py",
+      "reason": "syntax error while parsing AST from file"
+    },
+    {
+      "filename": "arkalia_cia_python_backend/ai/._pattern_analyzer.py",
+      "reason": "syntax error while parsing AST from file"
+    },
+    {
+      "filename": "arkalia_cia_python_backend/aria_integration/._api.py",
+      "reason": "syntax error while parsing AST from file"
+    },
+    {
+      "filename": "arkalia_cia_python_backend/pdf_parser/.___init__.py",
+      "reason": "syntax error while parsing AST from file"
+    },
+    {
+      "filename": "arkalia_cia_python_backend/pdf_parser/._metadata_extractor.py",
+      "reason": "syntax error while parsing AST from file"
+    },
+    {
+      "filename": "arkalia_cia_python_backend/pdf_parser/._ocr_integration.py",
+      "reason": "syntax error while parsing AST from file"
+    },
+    {
+      "filename": "arkalia_cia_python_backend/pdf_parser/._ocr_processor.py",
+      "reason": "syntax error while parsing AST from file"
+    }
+  ],
+  "generated_at": "2025-11-20T10:56:28Z",
+  "metrics": {
+    "_totals": {
+      "CONFIDENCE.HIGH": 8,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 6,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 14,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 6490,
+      "nosec": 0,
+      "skipped_tests": 9
+    },
+    "arkalia_cia_python_backend/._api.py": {
+      "loc": 1,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/._auth.py": {
+      "loc": 1,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/._auto_documenter.py": {
+      "loc": 1,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/._database.py": {
+      "loc": 1,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/._exceptions.py": {
+      "loc": 1,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/._pdf_processor.py": {
+      "loc": 1,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/._security_dashboard.py": {
+      "loc": 1,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/._security_utils.py": {
+      "loc": 1,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/._storage.py": {
+      "loc": 1,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/ai/._aria_integration.py": {
+      "loc": 1,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/ai/._conversational_ai.py": {
+      "loc": 1,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/ai/._pattern_analyzer.py": {
+      "loc": 1,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/ai/aria_integration.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 83,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/ai/conversational_ai.py": {
+      "CONFIDENCE.HIGH": 3,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 3,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 414,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/ai/pattern_analyzer.py": {
+      "CONFIDENCE.HIGH": 1,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 1,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 267,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/api.py": {
+      "CONFIDENCE.HIGH": 2,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 4,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 6,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 997,
+      "nosec": 0,
+      "skipped_tests": 1
+    },
+    "arkalia_cia_python_backend/aria_integration/._api.py": {
+      "loc": 1,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/aria_integration/__init__.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 6,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/aria_integration/api.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 161,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/auth.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 2,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 2,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 121,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/auto_documenter.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 794,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/database.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 538,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/exceptions.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 64,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/pdf_parser/.___init__.py": {
+      "loc": 1,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/pdf_parser/._metadata_extractor.py": {
+      "loc": 1,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/pdf_parser/._ocr_integration.py": {
+      "loc": 1,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/pdf_parser/._ocr_processor.py": {
+      "loc": 1,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/pdf_parser/__init__.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 5,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/pdf_parser/metadata_extractor.py": {
+      "CONFIDENCE.HIGH": 1,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 1,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 136,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/pdf_parser/ocr_integration.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 160,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/pdf_parser/ocr_processor.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 83,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/pdf_processor.py": {
+      "CONFIDENCE.HIGH": 1,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 1,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 213,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/security_dashboard.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 1954,
+      "nosec": 0,
+      "skipped_tests": 8
+    },
+    "arkalia_cia_python_backend/security_utils.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 189,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "arkalia_cia_python_backend/storage.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 288,
+      "nosec": 0,
+      "skipped_tests": 0
+    }
+  },
+  "results": [
+    {
+      "code": "160                             answer += \"J'ai d\u00e9tect\u00e9 des patterns r\u00e9currents dans vos douleurs. \"\n161                     except Exception:\n162                         pass\n163 \n",
+      "col_offset": 20,
+      "end_col_offset": 28,
+      "filename": "arkalia_cia_python_backend/ai/conversational_ai.py",
+      "issue_confidence": "HIGH",
+      "issue_cwe": {
+        "id": 703,
+        "link": "https://cwe.mitre.org/data/definitions/703.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "Try, Except, Pass detected.",
+      "line_number": 161,
+      "line_range": [
+        161,
+        162
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b110_try_except_pass.html",
+      "test_id": "B110",
+      "test_name": "try_except_pass"
+    },
+    {
+      "code": "234                 pain_data = self.aria.get_pain_records(user_id, limit=20)\n235             except Exception:\n236                 pass\n237 \n",
+      "col_offset": 12,
+      "end_col_offset": 20,
+      "filename": "arkalia_cia_python_backend/ai/conversational_ai.py",
+      "issue_confidence": "HIGH",
+      "issue_cwe": {
+        "id": 703,
+        "link": "https://cwe.mitre.org/data/definitions/703.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "Try, Except, Pass detected.",
+      "line_number": 235,
+      "line_range": [
+        235,
+        236
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b110_try_except_pass.html",
+      "test_id": "B110",
+      "test_name": "try_except_pass"
+    },
+    {
+      "code": "273                     return \"En analysant vos m\u00e9triques sant\u00e9 ARIA, je peux identifier des patterns. \"\n274             except Exception:\n275                 pass\n276 \n",
+      "col_offset": 12,
+      "end_col_offset": 20,
+      "filename": "arkalia_cia_python_backend/ai/conversational_ai.py",
+      "issue_confidence": "HIGH",
+      "issue_cwe": {
+        "id": 703,
+        "link": "https://cwe.mitre.org/data/definitions/703.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "Try, Except, Pass detected.",
+      "line_number": 274,
+      "line_range": [
+        274,
+        275
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b110_try_except_pass.html",
+      "test_id": "B110",
+      "test_name": "try_except_pass"
+    },
+    {
+      "code": "171                     monthly_counts[month_str] = monthly_counts.get(month_str, 0) + 1\n172                 except Exception:\n173                     continue\n174 \n",
+      "col_offset": 16,
+      "end_col_offset": 28,
+      "filename": "arkalia_cia_python_backend/ai/pattern_analyzer.py",
+      "issue_confidence": "HIGH",
+      "issue_cwe": {
+        "id": 703,
+        "link": "https://cwe.mitre.org/data/definitions/703.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "Try, Except, Continue detected.",
+      "line_number": 172,
+      "line_range": [
+        172,
+        173
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b112_try_except_continue.html",
+      "test_id": "B112",
+      "test_name": "try_except_continue"
+    },
+    {
+      "code": "71             try:\n72                 token_data = verify_token(token, token_type=\"access\")\n73                 if token_data.user_id:\n",
+      "col_offset": 29,
+      "end_col_offset": 69,
+      "filename": "arkalia_cia_python_backend/api.py",
+      "issue_confidence": "MEDIUM",
+      "issue_cwe": {
+        "id": 259,
+        "link": "https://cwe.mitre.org/data/definitions/259.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "Possible hardcoded password: 'access'",
+      "line_number": 72,
+      "line_range": [
+        72
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b106_hardcoded_password_funcarg.html",
+      "test_id": "B106",
+      "test_name": "hardcoded_password_funcarg"
+    },
+    {
+      "code": "75                     return f\"{ip}:user:{token_data.user_id}\"\n76             except Exception:\n77                 # Si le token est invalide, utiliser juste l'IP\n78                 pass\n79     except Exception:\n",
+      "col_offset": 12,
+      "end_col_offset": 20,
+      "filename": "arkalia_cia_python_backend/api.py",
+      "issue_confidence": "HIGH",
+      "issue_cwe": {
+        "id": 703,
+        "link": "https://cwe.mitre.org/data/definitions/703.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "Try, Except, Pass detected.",
+      "line_number": 76,
+      "line_range": [
+        76,
+        77,
+        78
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b110_try_except_pass.html",
+      "test_id": "B110",
+      "test_name": "try_except_pass"
+    },
+    {
+      "code": "78                 pass\n79     except Exception:\n80         pass\n81 \n",
+      "col_offset": 4,
+      "end_col_offset": 12,
+      "filename": "arkalia_cia_python_backend/api.py",
+      "issue_confidence": "HIGH",
+      "issue_cwe": {
+        "id": 703,
+        "link": "https://cwe.mitre.org/data/definitions/703.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "Try, Except, Pass detected.",
+      "line_number": 79,
+      "line_range": [
+        79,
+        80
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b110_try_except_pass.html",
+      "test_id": "B110",
+      "test_name": "try_except_pass"
+    },
+    {
+      "code": "596 \n597         return Token(\n598             access_token=access_token,\n599             refresh_token=refresh_token,\n600             token_type=\"bearer\",\n601         )\n602     except HTTPException:\n",
+      "col_offset": 15,
+      "end_col_offset": 9,
+      "filename": "arkalia_cia_python_backend/api.py",
+      "issue_confidence": "MEDIUM",
+      "issue_cwe": {
+        "id": 259,
+        "link": "https://cwe.mitre.org/data/definitions/259.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "Possible hardcoded password: 'bearer'",
+      "line_number": 597,
+      "line_range": [
+        597,
+        598,
+        599,
+        600,
+        601
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b106_hardcoded_password_funcarg.html",
+      "test_id": "B106",
+      "test_name": "hardcoded_password_funcarg"
+    },
+    {
+      "code": "616     try:\n617         token_data = verify_token(token_request.refresh_token, token_type=\"refresh\")\n618 \n",
+      "col_offset": 21,
+      "end_col_offset": 84,
+      "filename": "arkalia_cia_python_backend/api.py",
+      "issue_confidence": "MEDIUM",
+      "issue_cwe": {
+        "id": 259,
+        "link": "https://cwe.mitre.org/data/definitions/259.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "Possible hardcoded password: 'refresh'",
+      "line_number": 617,
+      "line_range": [
+        617
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b106_hardcoded_password_funcarg.html",
+      "test_id": "B106",
+      "test_name": "hardcoded_password_funcarg"
+    },
+    {
+      "code": "629 \n630         return Token(\n631             access_token=access_token,\n632             refresh_token=new_refresh_token,\n633             token_type=\"bearer\",\n634         )\n635     except HTTPException:\n",
+      "col_offset": 15,
+      "end_col_offset": 9,
+      "filename": "arkalia_cia_python_backend/api.py",
+      "issue_confidence": "MEDIUM",
+      "issue_cwe": {
+        "id": 259,
+        "link": "https://cwe.mitre.org/data/definitions/259.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "Possible hardcoded password: 'bearer'",
+      "line_number": 630,
+      "line_range": [
+        630,
+        631,
+        632,
+        633,
+        634
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b106_hardcoded_password_funcarg.html",
+      "test_id": "B106",
+      "test_name": "hardcoded_password_funcarg"
+    },
+    {
+      "code": "105 \n106 def verify_token(token: str, token_type: str = \"access\") -> TokenData:\n107     \"\"\"V\u00e9rifie et d\u00e9code un token JWT\"\"\"\n108     try:\n109         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])\n110 \n111         # V\u00e9rifier le type de token\n112         if payload.get(\"type\") != token_type:\n113             raise HTTPException(\n114                 status_code=status.HTTP_401_UNAUTHORIZED,\n115                 detail=\"Type de token invalide\",\n116             )\n117 \n118         user_id: str = payload.get(\"sub\")\n119         username: str = payload.get(\"username\")\n120         role: str = payload.get(\"role\", \"user\")\n121 \n122         if user_id is None:\n123             raise HTTPException(\n124                 status_code=status.HTTP_401_UNAUTHORIZED,\n125                 detail=\"Token invalide\",\n126             )\n127 \n128         return TokenData(user_id=user_id, username=username, role=role)\n129     except jwt.ExpiredSignatureError as e:\n130         raise HTTPException(\n131             status_code=status.HTTP_401_UNAUTHORIZED,\n132             detail=\"Token expir\u00e9\",\n133         ) from e\n134     except jwt.PyJWTError as e:\n135         raise HTTPException(\n136             status_code=status.HTTP_401_UNAUTHORIZED,\n137             detail=\"Token invalide\",\n138         ) from e\n139 \n",
+      "col_offset": 0,
+      "end_col_offset": 16,
+      "filename": "arkalia_cia_python_backend/auth.py",
+      "issue_confidence": "MEDIUM",
+      "issue_cwe": {
+        "id": 259,
+        "link": "https://cwe.mitre.org/data/definitions/259.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "Possible hardcoded password: 'access'",
+      "line_number": 106,
+      "line_range": [
+        106,
+        107,
+        108,
+        109,
+        110,
+        111,
+        112,
+        113,
+        114,
+        115,
+        116,
+        117,
+        118,
+        119,
+        120,
+        121,
+        122,
+        123,
+        124,
+        125,
+        126,
+        127,
+        128,
+        129,
+        130,
+        131,
+        132,
+        133,
+        134,
+        135,
+        136,
+        137,
+        138
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b107_hardcoded_password_default.html",
+      "test_id": "B107",
+      "test_name": "hardcoded_password_default"
+    },
+    {
+      "code": "145     token = credentials.credentials\n146     token_data = verify_token(token, token_type=\"access\")\n147     return token_data\n",
+      "col_offset": 17,
+      "end_col_offset": 57,
+      "filename": "arkalia_cia_python_backend/auth.py",
+      "issue_confidence": "MEDIUM",
+      "issue_cwe": {
+        "id": 259,
+        "link": "https://cwe.mitre.org/data/definitions/259.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "Possible hardcoded password: 'access'",
+      "line_number": 146,
+      "line_range": [
+        146
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b106_hardcoded_password_funcarg.html",
+      "test_id": "B106",
+      "test_name": "hardcoded_password_funcarg"
+    },
+    {
+      "code": "82                             return datetime(int(year), int(month), int(day))\n83                 except Exception:\n84                     continue\n85         return None\n",
+      "col_offset": 16,
+      "end_col_offset": 28,
+      "filename": "arkalia_cia_python_backend/pdf_parser/metadata_extractor.py",
+      "issue_confidence": "HIGH",
+      "issue_cwe": {
+        "id": 703,
+        "link": "https://cwe.mitre.org/data/definitions/703.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "Try, Except, Continue detected.",
+      "line_number": 83,
+      "line_range": [
+        83,
+        84
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b112_try_except_continue.html",
+      "test_id": "B112",
+      "test_name": "try_except_continue"
+    },
+    {
+      "code": "96                     )\n97                 except Exception:\n98                     pass\n99             return f\"Erreur lors de l'extraction: {str(e)}\"\n",
+      "col_offset": 16,
+      "end_col_offset": 24,
+      "filename": "arkalia_cia_python_backend/pdf_processor.py",
+      "issue_confidence": "HIGH",
+      "issue_cwe": {
+        "id": 703,
+        "link": "https://cwe.mitre.org/data/definitions/703.html"
+      },
+      "issue_severity": "LOW",
+      "issue_text": "Try, Except, Pass detected.",
+      "line_number": 97,
+      "line_range": [
+        97,
+        98
+      ],
+      "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b110_try_except_pass.html",
+      "test_id": "B110",
+      "test_name": "try_except_pass"
+    }
+  ]
+}

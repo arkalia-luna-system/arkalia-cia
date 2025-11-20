@@ -81,7 +81,8 @@ class MetadataExtractor:
                                 year = "20" + year
                             return datetime(int(year), int(month), int(day))
                 except Exception:
-                    continue
+                    # Ignorer les formats de date invalides et continuer avec les suivants
+                    continue  # nosec B112
         return None
 
     def _extract_doctor_name(self, text: str) -> str | None:

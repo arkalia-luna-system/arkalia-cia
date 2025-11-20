@@ -69,15 +69,16 @@ def get_rate_limit_key(request: Request):
             from arkalia_cia_python_backend.auth import verify_token
 
             try:
-                token_data = verify_token(token, token_type="access")
+                token_data = verify_token(token, token_type="access")  # nosec B106
                 if token_data.user_id:
                     # Combiner IP + user_id pour un rate limiting par utilisateur
                     return f"{ip}:user:{token_data.user_id}"
             except Exception:
                 # Si le token est invalide, utiliser juste l'IP
-                pass
+                pass  # nosec B110
     except Exception:
-        pass
+        # Fallback silencieux en cas d'erreur de parsing du token
+        pass  # nosec B110
 
     # Fallback : utiliser juste l'IP
     return ip
@@ -597,7 +598,7 @@ async def login(request: Request, credentials: UserLogin):
         return Token(
             access_token=access_token,
             refresh_token=refresh_token,
-            token_type="bearer",
+            token_type="bearer",  # nosec B106
         )
     except HTTPException:
         raise
@@ -614,7 +615,7 @@ async def login(request: Request, credentials: UserLogin):
 async def refresh_token_endpoint(request: Request, token_request: RefreshTokenRequest):
     """Rafraîchit un token d'accès avec un refresh token"""
     try:
-        token_data = verify_token(token_request.refresh_token, token_type="refresh")
+        token_data = verify_token(token_request.refresh_token, token_type="refresh")  # nosec B106
 
         # Créer un nouveau token d'accès
         new_token_data = {

@@ -170,7 +170,8 @@ class AdvancedPatternAnalyzer:
                     month_str = str(date.month)
                     monthly_counts[month_str] = monthly_counts.get(month_str, 0) + 1
                 except Exception:
-                    continue
+                    # Ignorer les dates invalides et continuer avec les suivantes
+                    continue  # nosec B112
 
         if monthly_counts:
             # Identifier mois avec plus d'occurrences
