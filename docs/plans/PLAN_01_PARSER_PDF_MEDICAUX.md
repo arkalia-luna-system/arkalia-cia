@@ -1,6 +1,14 @@
-# 📄 PLAN 01 : PARSER PDF MÉDICAUX
+# Plan 01 : Parser PDF médicaux
 
-> **Import intelligent des données depuis Andaman 7, MaSanté et autres sources**
+**Version** : 1.0.0  
+**Date** : 20 novembre 2025  
+**Statut** : ✅ Implémenté
+
+---
+
+## Vue d'ensemble
+
+Import intelligent des données depuis Andaman 7, MaSanté et autres sources.
 
 ---
 

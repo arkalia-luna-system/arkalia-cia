@@ -14,7 +14,7 @@ except ImportError:
     BLEACH_AVAILABLE = False
 
 try:
-    import phonenumbers
+    import phonenumbers  # type: ignore[import-not-found]
     from phonenumbers import NumberParseException
 
     PHONENUMBERS_AVAILABLE = True

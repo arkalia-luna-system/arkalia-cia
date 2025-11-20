@@ -1,6 +1,8 @@
 # Plans d'implémentation
 
-**Dernière mise à jour** : Janvier 2025
+**Version** : 1.0.0  
+**Date** : Janvier 2025  
+**Statut** : 📋 En cours
 
 Organisation des plans techniques pour répondre aux besoins utilisateur.
 

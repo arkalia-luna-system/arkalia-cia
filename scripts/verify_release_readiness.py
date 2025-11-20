@@ -21,9 +21,11 @@ def run_command(
 ) -> tuple[int, str, str]:
     """Exécute une commande et retourne le code de retour, stdout et stderr"""
     try:
+        # Convertir cwd en str si c'est un Path
+        cwd_str = str(cwd) if cwd else None
         result = subprocess.run(
             cmd,
-            cwd=cwd or PROJECT_ROOT,
+            cwd=cwd_str or PROJECT_ROOT,
             capture_output=True,
             text=True,
             timeout=timeout,
@@ -240,7 +242,7 @@ def check_flutter_analyze() -> dict[str, Any]:
 
     # Version ultra-légère : timeout très court
     code, stdout, stderr = run_command(
-        ["flutter", "analyze", "--no-fatal-infos", ARKALIA_CIA_DIR], timeout=20
+        ["flutter", "analyze", "--no-fatal-infos", str(ARKALIA_CIA_DIR)], timeout=20
     )
 
     if code == 0:

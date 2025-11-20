@@ -8,8 +8,8 @@ from datetime import datetime, timedelta
 from typing import Any
 
 try:
-    import pandas as pd
-    from prophet import Prophet
+    import pandas as pd  # type: ignore[import-untyped]
+    from prophet import Prophet  # type: ignore[import-not-found]
 
     PROPHET_AVAILABLE = True
 except ImportError:

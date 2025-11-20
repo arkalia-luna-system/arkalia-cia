@@ -1,8 +1,10 @@
 #!/bin/bash
 # Script de nettoyage complet pour tous les processus problématiques
-# Version optimisée et unifiée
+# Version optimisée et unifiée - Fusionne cleanup_memory.sh et cleanup_all.sh
+# Nettoie aussi les fichiers macOS cachés avec numéros (.!*!._*)
 
-set -e
+# Ne pas utiliser set -e car certaines commandes peuvent échouer normalement (find sans résultats)
+set +e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
@@ -64,7 +66,18 @@ cleanup_processes "while true.*find.*build.*delete|CLEANUP_PID" "boucle nettoyag
 echo ""
 
 # 6. Gradle daemons (optionnel)
-if [ "$1" == "--include-gradle" ] || [ "$1" == "--all" ]; then
+INCLUDE_GRADLE=false
+PURGE_MEMORY=false
+for arg in "$@"; do
+    if [ "$arg" == "--include-gradle" ] || [ "$arg" == "--all" ]; then
+        INCLUDE_GRADLE=true
+    fi
+    if [ "$arg" == "--purge-memory" ] || [ "$arg" == "--all" ]; then
+        PURGE_MEMORY=true
+    fi
+done
+
+if [ "$INCLUDE_GRADLE" = true ]; then
     echo "📋 Nettoyage Gradle daemons..."
     cleanup_processes "GradleDaemon|gradle.*daemon" "Gradle daemon" 3 false && echo "   ✅ Gradle daemon nettoyé" || echo "   ⚠️  Gradle daemon partiellement nettoyé"
     echo ""
@@ -81,7 +94,16 @@ if [ -d ".pytest_cache" ]; then
     echo "   ✅ Cache pytest nettoyé"
 fi
 
-if [ -f ".coverage" ] && [ "$1" != "--keep-coverage" ]; then
+# Vérifier si --keep-coverage est dans les arguments
+KEEP_COVERAGE=false
+for arg in "$@"; do
+    if [ "$arg" == "--keep-coverage" ]; then
+        KEEP_COVERAGE=true
+        break
+    fi
+done
+
+if [ -f ".coverage" ] && [ "$KEEP_COVERAGE" = false ]; then
     rm -f .coverage
     echo "   ✅ Fichier .coverage nettoyé"
 fi
@@ -112,8 +134,87 @@ if command -v python3 &> /dev/null; then
 fi
 
 echo ""
+
+# Nettoyer les fichiers macOS cachés (y compris ceux avec numéros)
+echo "📋 Nettoyage des fichiers macOS cachés..."
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+cd "$PROJECT_ROOT"
+
+# Compter avant suppression (méthode améliorée avec find + grep)
+# 1. Fichiers standards ._* (exclure .git, venv, build, etc.)
+STANDARD_COUNT=$(find . -type f -name "._*" ! -path "./.git/*" ! -path "./arkalia_cia_venv/*" ! -path "./.dart_tool/*" ! -path "./build/*" ! -path "./node_modules/*" ! -path "./.idea/*" 2>/dev/null | wc -l | tr -d ' ')
+
+# 2. Fichiers avec numéros .!nombre!._* (méthode robuste: find puis grep)
+NUMBERED_COUNT=$(find . -type f ! -path "./.git/*" ! -path "./arkalia_cia_venv/*" ! -path "./.dart_tool/*" ! -path "./build/*" ! -path "./node_modules/*" ! -path "./.idea/*" 2>/dev/null | grep -E "\.![0-9]+!\._" | wc -l | tr -d ' ')
+
+# 3. Fichiers .DS_Store
+DSSTORE_COUNT=$(find . -type f -name ".DS_Store" ! -path "./.git/*" ! -path "./arkalia_cia_venv/*" ! -path "./.dart_tool/*" ! -path "./build/*" ! -path "./node_modules/*" ! -path "./.idea/*" 2>/dev/null | wc -l | tr -d ' ')
+
+BEFORE_COUNT=$((STANDARD_COUNT + NUMBERED_COUNT + DSSTORE_COUNT))
+
+if [ "$BEFORE_COUNT" -gt 0 ]; then
+    echo "   📊 Trouvé $BEFORE_COUNT fichiers macOS cachés:"
+    [ "$STANDARD_COUNT" -gt 0 ] && echo "      - $STANDARD_COUNT fichiers ._*"
+    [ "$NUMBERED_COUNT" -gt 0 ] && echo "      - $NUMBERED_COUNT fichiers .!nombre!._*"
+    [ "$DSSTORE_COUNT" -gt 0 ] && echo "      - $DSSTORE_COUNT fichiers .DS_Store"
+    
+    # Supprimer les fichiers macOS cachés standards (._*)
+    if [ "$STANDARD_COUNT" -gt 0 ]; then
+        find . -type f -name "._*" ! -path "./.git/*" ! -path "./arkalia_cia_venv/*" ! -path "./.dart_tool/*" ! -path "./build/*" ! -path "./node_modules/*" ! -path "./.idea/*" -delete 2>/dev/null || true
+    fi
+    
+    # Supprimer les fichiers macOS avec numéros (format: .!28431!._fichier.md)
+    # Méthode robuste: find tous les fichiers puis grep pour le pattern
+    if [ "$NUMBERED_COUNT" -gt 0 ]; then
+        find . -type f ! -path "./.git/*" ! -path "./arkalia_cia_venv/*" ! -path "./.dart_tool/*" ! -path "./build/*" ! -path "./node_modules/*" ! -path "./.idea/*" 2>/dev/null | grep -E "\.![0-9]+!\._" | while read -r file; do
+            echo "      🗑️  Suppression: $file"
+            rm -f "$file" 2>/dev/null || true
+        done
+    fi
+    
+    # Supprimer les fichiers .DS_Store
+    if [ "$DSSTORE_COUNT" -gt 0 ]; then
+        find . -type f -name ".DS_Store" ! -path "./.git/*" ! -path "./arkalia_cia_venv/*" ! -path "./.dart_tool/*" ! -path "./build/*" ! -path "./node_modules/*" ! -path "./.idea/*" -delete 2>/dev/null || true
+    fi
+    
+    # Supprimer les dossiers macOS cachés
+    find . -type d -name ".AppleDouble" ! -path "./.git/*" ! -path "./arkalia_cia_venv/*" ! -path "./.dart_tool/*" ! -path "./build/*" ! -path "./node_modules/*" ! -path "./.idea/*" -exec rm -rf {} + 2>/dev/null || true
+    find . -type d -name ".Spotlight-V100" ! -path "./.git/*" ! -path "./arkalia_cia_venv/*" ! -path "./.dart_tool/*" ! -path "./build/*" ! -path "./node_modules/*" ! -path "./.idea/*" -exec rm -rf {} + 2>/dev/null || true
+    find . -type d -name ".Trashes" ! -path "./.git/*" ! -path "./arkalia_cia_venv/*" ! -path "./.dart_tool/*" ! -path "./build/*" ! -path "./node_modules/*" ! -path "./.idea/*" -exec rm -rf {} + 2>/dev/null || true
+    
+    # Vérifier après suppression
+    STANDARD_AFTER=$(find . -type f -name "._*" ! -path "./.git/*" ! -path "./arkalia_cia_venv/*" ! -path "./.dart_tool/*" ! -path "./build/*" ! -path "./node_modules/*" ! -path "./.idea/*" 2>/dev/null | wc -l | tr -d ' ')
+    NUMBERED_AFTER=$(find . -type f ! -path "./.git/*" ! -path "./arkalia_cia_venv/*" ! -path "./.dart_tool/*" ! -path "./build/*" ! -path "./node_modules/*" ! -path "./.idea/*" 2>/dev/null | grep -E "\.![0-9]+!\._" | wc -l | tr -d ' ')
+    DSSTORE_AFTER=$(find . -type f -name ".DS_Store" ! -path "./.git/*" ! -path "./arkalia_cia_venv/*" ! -path "./.dart_tool/*" ! -path "./build/*" ! -path "./node_modules/*" ! -path "./.idea/*" 2>/dev/null | wc -l | tr -d ' ')
+    AFTER_COUNT=$((STANDARD_AFTER + NUMBERED_AFTER + DSSTORE_AFTER))
+    
+    if [ "$AFTER_COUNT" -eq 0 ]; then
+        echo "   ✅ Tous les fichiers macOS cachés supprimés ($BEFORE_COUNT fichiers)"
+    else
+        echo "   ⚠️  Il reste $AFTER_COUNT fichiers (peut-être verrouillés)"
+        if [ "$NUMBERED_AFTER" -gt 0 ]; then
+            echo "      Fichiers avec numéros restants:"
+            find . -type f ! -path "./.git/*" ! -path "./arkalia_cia_venv/*" ! -path "./.dart_tool/*" ! -path "./build/*" ! -path "./node_modules/*" ! -path "./.idea/*" 2>/dev/null | grep -E "\.![0-9]+!\._" | head -5 | sed 's/^/         - /'
+        fi
+    fi
+else
+    echo "   ✅ Aucun fichier macOS caché trouvé"
+fi
+
+echo ""
+
+# Libérer le cache système si possible (macOS) - seulement si --purge-memory est spécifié
+if [ "$PURGE_MEMORY" = true ]; then
+    if command -v purge &> /dev/null; then
+        echo "💾 Libération du cache système..."
+        sudo purge 2>/dev/null || echo "   ⚠️  Nécessite les droits sudo pour purge"
+        echo ""
+    fi
+fi
+
 echo "✅ Nettoyage complet terminé"
 echo ""
 echo "💡 Astuce: Utilisez './cleanup_all.sh --include-gradle' pour nettoyer aussi les daemons Gradle"
 echo "💡 Astuce: Utilisez './cleanup_all.sh --keep-coverage' pour garder le fichier .coverage"
+echo "💡 Astuce: Utilisez './cleanup_all.sh --purge-memory' pour libérer aussi le cache système macOS"
 

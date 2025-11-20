@@ -1,7 +1,7 @@
 # Statut final consolidé — Arkalia CIA
 
-**Date** : 20 novembre 2025  
-**Version** : 1.2.0  
+**Date** : 20 novembre 2025
+**Version** : 1.2.0
 **Statut** : 95% Production-Ready - Passage en stable v1.0 en cours (Release Q1 2026)
 
 Document consolidé fusionnant tous les statuts et résumés du projet.
@@ -174,6 +174,5 @@ Le projet est production-ready à 100%.
 
 ---
 
-*Dernière mise à jour : Janvier 2025*  
+*Dernière mise à jour : 20 novembre 2025*
 *Statut : 100% d'exploitation atteint*
-

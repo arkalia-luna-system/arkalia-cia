@@ -1,7 +1,7 @@
 # Index de la documentation
 
-**Version** : 1.3.1  
-**Dernière mise à jour** : Janvier 2025
+**Version** : 1.3.1
+**Dernière mise à jour** : 20 novembre 2025
 
 Guide de navigation dans la documentation du projet Arkalia CIA.
 
@@ -172,6 +172,14 @@ docs/
 | Déployer | `deployment/DEPLOYMENT.md`, `deployment/BUILD_RELEASE_ANDROID.md` |
 | Comprendre la sécurité | `CHECKLIST_FINALE_SECURITE.md` |
 | Utiliser l'application | `guides/GUIDE_UTILISATION_MERE.md` |
+
+---
+
+## Voir aussi
+
+- [STATUT_FINAL_CONSOLIDE.md](STATUT_FINAL_CONSOLIDE.md) - Statut final consolidé du projet
+- [VALIDATION.md](VALIDATION.md) - Checklist de validation
+- [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) - Checklist de release
 
 ---
 

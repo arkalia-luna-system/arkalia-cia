@@ -1,7 +1,7 @@
 # Vue d'ensemble du projet — Arkalia CIA
 
-**Version** : 1.3.1  
-**Dernière mise à jour** : Janvier 2025
+**Version** : 1.3.1
+**Dernière mise à jour** : 20 novembre 2025
 
 Document de synthèse visuelle présentant l'écosystème complet Arkalia CIA.
 
@@ -75,16 +75,16 @@ sequenceDiagram
         D-->>B: Utilisateur valide
         B-->>A: JWT token
     end
-    
+
     A->>U: Affiche HomePage
-    
+
     U->>A: Upload document PDF
     A->>B: POST /api/v1/documents/upload
     B->>B: Traite PDF (OCR si besoin)
     B->>B: Extrait métadonnées
     B->>D: Sauvegarde document
     B-->>A: Document uploadé
-    
+
     U->>A: Pose question IA
     A->>B: POST /api/v1/ai/chat
     B->>ARIA: Récupère données douleurs
@@ -121,7 +121,7 @@ erDiagram
         string role
         datetime created_at
     }
-    
+
     documents {
         int id PK
         int user_id FK
@@ -130,7 +130,7 @@ erDiagram
         string category
         datetime created_at
     }
-    
+
     document_metadata {
         int id PK
         int document_id FK
@@ -141,7 +141,7 @@ erDiagram
         string document_type
         text extracted_text
     }
-    
+
     doctors {
         int id PK
         int user_id FK
@@ -151,7 +151,7 @@ erDiagram
         string phone
         string email
     }
-    
+
     consultations {
         int id PK
         int doctor_id FK
@@ -159,7 +159,7 @@ erDiagram
         string reason
         text notes
     }
-    
+
     ai_conversations {
         int id PK
         int user_id FK
@@ -272,15 +272,15 @@ graph TB
     B --> C[fetchPainData]
     B --> D[fetchPatterns]
     B --> E[fetchHealthMetrics]
-    
+
     C --> F[Pain Records]
     D --> G[Patterns Data]
     E --> H[Sleep, Activity, Stress]
-    
+
     F --> I[Enhanced AI Responses]
     G --> I
     H --> I
-    
+
     I --> J[User Question]
     J --> K[Intelligent Answer]
 ```
@@ -361,5 +361,4 @@ sequenceDiagram
 
 ---
 
-*Dernière mise à jour : Janvier 2025*
-
+*Dernière mise à jour : 20 novembre 2025*

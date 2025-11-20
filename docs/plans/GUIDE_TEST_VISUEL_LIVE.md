@@ -1,6 +1,14 @@
-# 🖥️ GUIDE : TEST VISUEL EN LIVE
+# Guide : Test visuel en live
 
-> **Tester l'app directement avec visualisation interface en temps réel**
+**Version** : 1.0.0  
+**Date** : 20 novembre 2025  
+**Statut** : ✅ Guide actif
+
+---
+
+## Vue d'ensemble
+
+Tester l'app directement avec visualisation interface en temps réel.
 
 ---
 

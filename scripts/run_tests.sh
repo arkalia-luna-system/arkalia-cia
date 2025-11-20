@@ -1,8 +1,10 @@
 #!/bin/bash
 # Script wrapper pour lancer pytest proprement sans doublons
 # Version optimisée - utilise cleanup_all.sh pour le nettoyage
+# Nettoie automatiquement après les tests (y compris fichiers macOS cachés)
 
-set -e
+# Ne pas utiliser set -e car on veut toujours faire le nettoyage même si les tests échouent
+set +e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
@@ -44,12 +46,36 @@ fi
 echo "✅ Environnement nettoyé, lancement des tests..."
 echo ""
 
-# Si aucun argument n'est fourni, utiliser les valeurs par défaut
+# Lancer pytest et capturer le code de sortie
 if [ $# -eq 0 ]; then
     echo "ℹ️  Aucun argument fourni, utilisation des valeurs par défaut: tests/ -v"
-    exec python3 -m pytest tests/ -v
+    python3 -m pytest tests/ -v
+    TEST_EXIT_CODE=$?
 else
     # Lancer pytest avec les arguments passés
-    exec python3 -m pytest "$@"
+    python3 -m pytest "$@"
+    TEST_EXIT_CODE=$?
 fi
+
+# Nettoyage automatique après les tests (toujours exécuté, même si les tests échouent)
+echo ""
+echo "🧹 Nettoyage automatique après les tests..."
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+cd "$PROJECT_ROOT"
+
+# Utiliser cleanup_all.sh pour le nettoyage complet
+"$SCRIPT_DIR/cleanup_all.sh" --keep-coverage > /dev/null 2>&1 || {
+    # Fallback si cleanup_all.sh échoue
+    echo "   ⚠️  Nettoyage partiel..."
+    if [ -d ".pytest_cache" ]; then
+        rm -rf .pytest_cache 2>/dev/null || true
+    fi
+    # Nettoyer les fichiers macOS cachés (y compris ceux avec numéros)
+    find . -type f \( -name "._*" -o -name ".!*!._*" -o -name ".DS_Store" \) ! -path "./.git/*" ! -path "./arkalia_cia_venv/*" ! -path "./.dart_tool/*" ! -path "./build/*" -delete 2>/dev/null || true
+    # Pattern alternatif pour fichiers avec numéros
+    find . -type f ! -path "./.git/*" ! -path "./arkalia_cia_venv/*" ! -path "./.dart_tool/*" ! -path "./build/*" | grep -E "\.![0-9]+!\._" | xargs rm -f 2>/dev/null || true
+}
+
+# Retourner le code de sortie des tests
+exit $TEST_EXIT_CODE
 

@@ -202,5 +202,18 @@ L'application respecte maintenant les standards de sécurité pour une applicati
 
 ---
 
+---
+
+## Voir aussi
+
+- [AUDIT_SECURITE_SENIOR.md](AUDIT_SECURITE_SENIOR.md) - Audit de sécurité senior
+- [AUDIT_COMPLET_19_NOVEMBRE_2025.md](AUDIT_COMPLET_19_NOVEMBRE_2025.md) - Audit complet du 19 novembre 2025
+- [CHECKLIST_FINALE_SECURITE.md](../CHECKLIST_FINALE_SECURITE.md) - Checklist finale de sécurité
+- [CORRECTIONS_SECURITE_EFFECTUEES.md](../CORRECTIONS_SECURITE_EFFECTUEES.md) - Corrections de sécurité effectuées
+- [INDEX_DOCUMENTATION.md](../INDEX_DOCUMENTATION.md) - Index de la documentation
+
+---
+
 **Fin de l'audit post-corrections**
 
+---

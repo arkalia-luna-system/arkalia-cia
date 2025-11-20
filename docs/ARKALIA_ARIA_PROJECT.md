@@ -1,6 +1,14 @@
-# 🧠 **ARKALIA-ARIA : PROJET DE RECHERCHE PERSONNELLE**
+# Arkalia-ARIA : Projet de recherche personnelle
 
-> **Objectif** : Créer arkalia-aria, laboratoire de recherche personnelle pour le suivi intelligent de la douleur chronique, avec contrôle total des données et IA personnelle.
+**Version** : 1.0.0  
+**Date** : 20 novembre 2025  
+**Statut** : 📋 Plan
+
+---
+
+## Vue d'ensemble
+
+**Objectif** : Créer arkalia-aria, laboratoire de recherche personnelle pour le suivi intelligent de la douleur chronique, avec contrôle total des données et IA personnelle.
 
 ---
 
@@ -478,3 +486,14 @@ Après 4 jours, tu auras :
 ---
 
 **🚀 Prêt à transformer CIA en laboratoire de recherche personnelle ?**
+
+---
+
+## Voir aussi
+
+- [ARKALIA_ARIA_SUMMARY.md](ARKALIA_ARIA_SUMMARY.md) - Résumé exécutif ARIA
+- [ARIA_IMPLEMENTATION_GUIDE.md](ARIA_IMPLEMENTATION_GUIDE.md) - Guide d'implémentation ARIA
+- [ARCHITECTURE.md](ARCHITECTURE.md) - Architecture technique du projet
+- [INDEX_DOCUMENTATION.md](INDEX_DOCUMENTATION.md) - Index de la documentation
+
+---

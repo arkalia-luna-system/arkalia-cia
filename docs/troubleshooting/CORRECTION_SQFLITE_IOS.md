@@ -1,7 +1,15 @@
-# 🔧 Correction Erreurs sqflite_darwin iOS
+# Correction erreurs sqflite_darwin iOS
 
+**Version** : 1.0.0  
 **Date** : 19 novembre 2025  
+**Statut** : ✅ Résolu  
 **Problème** : Erreurs de compilation iOS avec `sqflite_darwin`
+
+---
+
+## Vue d'ensemble
+
+Ce document décrit les erreurs rencontrées lors de la compilation iOS avec `sqflite_darwin` et les solutions appliquées.
 
 ---
 
@@ -141,6 +149,17 @@ Après ces corrections :
 - ✅ Les Pods sont correctement installés
 - ✅ Les fichiers Flutter sont générés
 - ✅ La compilation iOS devrait fonctionner
+
+---
+
+---
+
+## Voir aussi
+
+- [deployment/IOS_DEPLOYMENT_GUIDE.md](../deployment/IOS_DEPLOYMENT_GUIDE.md) - Guide complet de déploiement iOS
+- [APP_INDEPENDANTE_MAC.md](../APP_INDEPENDANTE_MAC.md) - Application iOS indépendante du Mac
+- [troubleshooting/APPROUVER_CERTIFICAT_DEVELOPPEUR.md](troubleshooting/APPROUVER_CERTIFICAT_DEVELOPPEUR.md) - Guide d'approbation du certificat
+- [INDEX_DOCUMENTATION.md](../INDEX_DOCUMENTATION.md) - Index de la documentation
 
 ---
 

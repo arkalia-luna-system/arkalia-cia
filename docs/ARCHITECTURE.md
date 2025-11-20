@@ -1,7 +1,7 @@
 # Architecture
 
-**Version** : 1.3.1  
-**Dernière mise à jour** : Janvier 2025  
+**Version** : 1.3.1
+**Dernière mise à jour** : 20 novembre 2025
 **Statut** : Production Ready
 
 Documentation technique de l'architecture et de la conception système d'Arkalia CIA.

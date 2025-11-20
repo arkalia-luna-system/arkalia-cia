@@ -1,6 +1,14 @@
-# 🧠 **ARKALIA-ARIA : RÉSUMÉ EXÉCUTIF**
+# Arkalia-ARIA : Résumé exécutif
 
-> **Arkalia Research Intelligence Assistant** - Laboratoire de recherche personnelle pour le suivi intelligent de la douleur chronique
+**Version** : 1.0.0  
+**Date** : 19 novembre 2025  
+**Statut** : 📋 Plan
+
+---
+
+## Vue d'ensemble
+
+**Arkalia Research Intelligence Assistant** - Laboratoire de recherche personnelle pour le suivi intelligent de la douleur chronique.
 
 ---
 
@@ -190,3 +198,14 @@ arkalia-aria/
 - 🚀 **Qualité enterprise** immédiate
 
 **On commence l'implémentation dès maintenant ?** 💻✨
+
+---
+
+## Voir aussi
+
+- [ARKALIA_ARIA_PROJECT.md](ARKALIA_ARIA_PROJECT.md) - Document complet du projet ARIA
+- [ARIA_IMPLEMENTATION_GUIDE.md](ARIA_IMPLEMENTATION_GUIDE.md) - Guide d'implémentation ARIA
+- [ARCHITECTURE.md](ARCHITECTURE.md) - Architecture technique du projet
+- [INDEX_DOCUMENTATION.md](INDEX_DOCUMENTATION.md) - Index de la documentation
+
+---

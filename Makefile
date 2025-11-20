@@ -35,13 +35,17 @@ install-dev: ## Installer les dépendances de développement
 
 test: ## Lancer les tests
 	@echo "$(GREEN)Lancement des tests...$(NC)"
-	@./cleanup_memory.sh > /dev/null 2>&1 || true
-	@./run_tests.sh tests/ -v
+	@./scripts/cleanup_all.sh --keep-coverage > /dev/null 2>&1 || true
+	@./scripts/run_tests.sh tests/ -v
+	@echo "$(GREEN)Nettoyage automatique après les tests...$(NC)"
+	@./scripts/cleanup_all.sh --keep-coverage > /dev/null 2>&1 || true
 
 test-cov: ## Lancer les tests avec couverture
 	@echo "$(GREEN)Lancement des tests avec couverture...$(NC)"
-	@./cleanup_memory.sh > /dev/null 2>&1 || true
-	@./run_tests.sh tests/ --cov=arkalia_cia_python_backend --cov-report=html --cov-report=term-missing
+	@./scripts/cleanup_all.sh --keep-coverage > /dev/null 2>&1 || true
+	@./scripts/run_tests.sh tests/ --cov=arkalia_cia_python_backend --cov-report=html --cov-report=term-missing
+	@echo "$(GREEN)Nettoyage automatique après les tests...$(NC)"
+	@./scripts/cleanup_all.sh --keep-coverage > /dev/null 2>&1 || true
 
 lint: ## Lancer le linting
 	@echo "$(GREEN)Lancement du linting...$(NC)"
@@ -60,6 +64,7 @@ security: ## Lancer les vérifications de sécurité
 
 clean: ## Nettoyer les fichiers temporaires
 	@echo "$(GREEN)Nettoyage...$(NC)"
+	@./scripts/cleanup_all.sh --keep-coverage || true
 	find . -type f -name "*.pyc" -delete
 	find . -type d -name "__pycache__" -delete
 	find . -type d -name "*.egg-info" -exec rm -rf {} +
@@ -69,6 +74,7 @@ clean: ## Nettoyer les fichiers temporaires
 	find . -type f -name "bandit-report.json" -delete
 	find . -type f -name "safety-report.json" -delete
 	find . -name "._*" -delete
+	find . -name ".!*!._*" -delete
 	find . -name ".DS_Store" -delete
 
 build: ## Construire le package
@@ -91,7 +97,7 @@ ci: clean install-dev check build ## Pipeline CI complet
 flutter-deps: ## Installer les dépendances Flutter
 	@echo "$(GREEN)Installation des dépendances Flutter...$(NC)"
 	@if command -v flutter >/dev/null 2>&1; then \
-		./clean_macos_files.sh; \
+		./scripts/cleanup_all.sh --keep-coverage > /dev/null 2>&1 || true; \
 		cd arkalia_cia && flutter pub get; \
 	else \
 		echo "$(YELLOW)Flutter non installé, skip...$(NC)"; \
@@ -116,8 +122,10 @@ flutter-build: ## Construire l'application Flutter
 flutter-test: ## Lancer les tests Flutter
 	@echo "$(GREEN)Lancement des tests Flutter...$(NC)"
 	@if command -v flutter >/dev/null 2>&1; then \
-		./clean_macos_files.sh; \
+		./scripts/cleanup_all.sh --keep-coverage > /dev/null 2>&1 || true; \
 		cd arkalia_cia && flutter test --coverage; \
+		echo "$(GREEN)Nettoyage automatique après les tests Flutter...$(NC)"; \
+		cd .. && ./scripts/cleanup_all.sh --keep-coverage > /dev/null 2>&1 || true; \
 	else \
 		echo "$(YELLOW)Flutter non installé, skip...$(NC)"; \
 	fi

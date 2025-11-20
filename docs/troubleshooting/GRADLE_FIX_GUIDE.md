@@ -1,8 +1,15 @@
-# 🔧 Guide de Correction Gradle - Arkalia CIA
+# Guide de correction Gradle
 
-**Date**: November 19, 2025
-**Objectif**: Forcer Gradle à utiliser `~/.gradle` au lieu de `/Volumes/T7/gradle`
-**Statut**: ✅ **RÉSOLU** - Solution ultra-robuste v3.0
+**Version** : 3.0  
+**Date** : 19 novembre 2025  
+**Statut** : ✅ Résolu - Solution ultra-robuste v3.0  
+**Objectif** : Forcer Gradle à utiliser `~/.gradle` au lieu de `/Volumes/T7/gradle`
+
+---
+
+## Vue d'ensemble
+
+Ce guide décrit la solution ultra-robuste pour forcer Gradle à utiliser le répertoire local `~/.gradle` au lieu du disque externe `/Volumes/T7/gradle`.
 
 ---
 
@@ -256,5 +263,15 @@ Script `init.gradle` v3.0 avec **4 niveaux de protection** :
 
 ---
 
-**Dernière mise à jour**: November 19, 2025
-**Version**: 3.0 - Ultra-robuste
+---
+
+## Voir aussi
+
+- [deployment/BUILD_RELEASE_ANDROID.md](../deployment/BUILD_RELEASE_ANDROID.md) - Guide de build Android
+- [troubleshooting/TESTS_PROBLEMATIQUES.md](troubleshooting/TESTS_PROBLEMATIQUES.md) - Tests problématiques
+- [INDEX_DOCUMENTATION.md](../INDEX_DOCUMENTATION.md) - Index de la documentation
+
+---
+
+**Dernière mise à jour** : 19 novembre 2025  
+**Version** : 3.0 - Ultra-robuste
