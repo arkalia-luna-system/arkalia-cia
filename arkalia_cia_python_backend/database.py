@@ -253,6 +253,51 @@ class CIADatabase:
             )
             return cursor.lastrowid
 
+    def get_ai_conversations(
+        self, limit: int = 50, skip: int = 0
+    ) -> list[dict[str, Any]]:
+        """Récupère les conversations IA avec pagination"""
+        with sqlite3.connect(self.db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            cursor.execute(
+                """
+                SELECT * FROM ai_conversations
+                ORDER BY created_at DESC
+                LIMIT ? OFFSET ?
+            """,
+                (limit, skip),
+            )
+            return [dict(row) for row in cursor.fetchall()]
+
+    def get_document_metadata(self, document_id: int) -> dict[str, Any] | None:
+        """Récupère les métadonnées d'un document"""
+        with sqlite3.connect(self.db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            cursor.execute(
+                "SELECT * FROM document_metadata WHERE document_id = ?", (document_id,)
+            )
+            row = cursor.fetchone()
+            return dict(row) if row else None
+
+    def get_documents_by_doctor_name(self, doctor_name: str) -> list[dict[str, Any]]:
+        """Récupère les documents associés à un médecin par nom"""
+        with sqlite3.connect(self.db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            cursor.execute(
+                """
+                SELECT d.*, dm.doctor_name, dm.doctor_specialty, dm.document_date
+                FROM documents d
+                JOIN document_metadata dm ON d.id = dm.document_id
+                WHERE dm.doctor_name LIKE ?
+                ORDER BY dm.document_date DESC
+            """,
+                (f"%{doctor_name}%",),
+            )
+            return [dict(row) for row in cursor.fetchall()]
+
     def save_document(self, filename: str, content: str, metadata: str) -> int | None:
         """Sauvegarde un document"""
         return self.add_document(filename, filename, "", "pdf", len(content))

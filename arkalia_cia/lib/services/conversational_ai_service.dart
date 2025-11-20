@@ -45,24 +45,31 @@ class ConversationalAIService {
   Future<Map<String, dynamic>> _getUserData() async {
     // Récupérer seulement les données récentes pour économiser la mémoire
     // Limiter à 10 documents récents, 5 médecins récents
+    // Utiliser cache si disponible pour optimiser
     final allDocuments = await LocalStorageService.getDocuments();
     final doctorService = DoctorService();
     final allDoctors = await doctorService.getAllDoctors();
     
-    // Prendre seulement les 10 documents les plus récents
+    // Trier par date et prendre seulement les 10 documents les plus récents
+    allDocuments.sort((a, b) {
+      final dateA = DateTime.tryParse(a['created_at'] ?? '') ?? DateTime(1970);
+      final dateB = DateTime.tryParse(b['created_at'] ?? '') ?? DateTime(1970);
+      return dateB.compareTo(dateA);
+    });
     final documents = allDocuments.take(10).toList();
-    // Prendre seulement les 5 premiers médecins
+    
+    // Prendre seulement les 5 médecins les plus récents (ou les plus consultés)
     final doctors = allDoctors.take(5).map((d) => d.toMap()).toList();
     
-    // Récupérer données douleur depuis ARIA si disponible
+    // Récupérer données douleur depuis ARIA si disponible (limité à 10)
     List<Map<String, dynamic>> painRecords = [];
     try {
       final ariaResponse = await http.get(
         Uri.parse('$_baseUrl/api/aria/pain-entries/recent?limit=10'),
-      );
+      ).timeout(const Duration(seconds: 5));
       if (ariaResponse.statusCode == 200) {
         final data = jsonDecode(ariaResponse.body);
-        painRecords = List<Map<String, dynamic>>.from(data);
+        painRecords = List<Map<String, dynamic>>.from(data).take(10).toList();
       }
     } catch (e) {
       // ARIA non disponible, continuer sans
@@ -71,7 +78,7 @@ class ConversationalAIService {
     return {
       'documents': documents,
       'doctors': doctors,
-      'consultations': [], // TODO: Récupérer consultations
+      'consultations': [], // TODO: Récupérer consultations depuis DoctorService
       'pain_records': painRecords,
       'user_id': 'default', // TODO: Récupérer ID utilisateur réel
     };

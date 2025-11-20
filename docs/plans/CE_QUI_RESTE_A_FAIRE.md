@@ -2,8 +2,9 @@
 
 > **Liste complète et précise des fonctionnalités manquantes après vérification du code réel**
 
-**Date** : 19 novembre 2025  
-**Statut actuel** : **95% des besoins critiques résolus !** ✅
+**Date** : 20 novembre 2025  
+**Statut actuel** : **95% des besoins critiques résolus !** ✅  
+**Dernière mise à jour** : 20 novembre 2025 (après corrections critiques)
 
 ---
 
@@ -27,7 +28,7 @@
 ---
 
 ### **2. Activer Extraction Métadonnées PDF** (PLAN_01)
-**Statut** : ✅ **IMPLÉMENTÉ**  
+**Statut** : ✅ **IMPLÉMENTÉ À 100%**  
 **Fichiers** : `api.py`, `database.py`
 
 #### **Terminé** :
@@ -35,9 +36,9 @@
 - [x] Table `document_metadata` créée en base ✅
 - [x] Sauvegarde métadonnées lors upload ✅
 - [x] Méthodes `add_document_metadata` et `get_document_metadata` ✅
-
-#### **À améliorer** :
-- [ ] Association automatique documents ↔ médecins (basique implémenté)
+- [x] **Association automatique documents ↔ médecins** ✅ NOUVEAU (20 nov 2025)
+- [x] **Méthode `find_doctor_by_name` pour recherche approximative** ✅ NOUVEAU
+- [x] **Méthode `get_documents_by_doctor_name` pour récupération documents** ✅ NOUVEAU
 
 ---
 

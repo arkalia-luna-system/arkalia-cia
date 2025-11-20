@@ -67,7 +67,7 @@
 
 ### **Backend Python Implémenté**
 
-#### ✅ **API Endpoints** (14+ endpoints ✅)
+#### ✅ **API Endpoints** (16+ endpoints ✅)
 - [x] `/api/documents/upload` - ✅ Existe avec validation sécurité
 - [x] `/api/documents` - ✅ Existe avec pagination
 - [x] `/api/reminders` - ✅ Existe avec pagination
@@ -75,6 +75,8 @@
 - [x] `/api/health-portals` - ✅ Existe avec pagination
 - [x] `/api/ai/chat` - ✅ Existe avec limitation mémoire
 - [x] `/api/ai/prepare-appointment` - ✅ Existe
+- [x] `/api/ai/conversations` - ✅ **NOUVEAU** (20 nov 2025) - Historique conversations IA
+- [x] `/api/patterns/analyze` - ✅ **NOUVEAU** (20 nov 2025) - Analyse patterns
 - [x] `/api/aria/*` - ✅ Existe (intégration ARIA)
 
 #### ✅ **Modules Backend**

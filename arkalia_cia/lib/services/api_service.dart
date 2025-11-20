@@ -388,4 +388,30 @@ class ApiService {
       return false;
     }
   }
+
+  /// Méthode générique GET
+  static Future<dynamic> get(String endpoint) async {
+    try {
+      final url = await baseUrl;
+      if (url.isEmpty) {
+        return [];
+      }
+
+      final response = await http
+          .get(
+            Uri.parse('$url$endpoint'),
+            headers: _headers,
+          )
+          .timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('Erreur HTTP ${response.statusCode}');
+      }
+    } catch (e) {
+      AppLogger.error('Erreur GET $endpoint', e);
+      return [];
+    }
+  }
 }

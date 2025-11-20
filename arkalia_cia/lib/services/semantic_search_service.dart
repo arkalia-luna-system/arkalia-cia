@@ -41,12 +41,19 @@ class SemanticSearchService {
     }).toList();
 
     // Trier par score décroissant
-    scoredDocs.sort((a, b) => (b['score'] as double).compareTo(a['score'] as double));
+    scoredDocs.sort((a, b) {
+      final scoreA = (a['score'] as double?) ?? 0.0;
+      final scoreB = (b['score'] as double?) ?? 0.0;
+      return scoreB.compareTo(scoreA);
+    });
 
-    // Retourner top résultats
+    // Retourner top résultats avec score > 0.1
     return scoredDocs
+        .where((item) {
+          final score = (item['score'] as double?) ?? 0.0;
+          return score > 0.1;
+        })
         .take(limit)
-        .where((item) => item['score'] > 0.1)
         .map((item) => item['document'] as Map<String, dynamic>)
         .toList();
   }
@@ -54,31 +61,53 @@ class SemanticSearchService {
   double _calculateSemanticScore(Map<String, dynamic> doc, String query) {
     double score = 0.0;
     
-    // Extraire texte du document
-    final docText = '${doc['original_name'] ?? ''} ${doc['name'] ?? ''} ${doc['category'] ?? ''}'.toLowerCase();
+    // Extraire texte du document (nom, catégorie, métadonnées si disponibles)
+    final docText = '${doc['original_name'] ?? ''} ${doc['name'] ?? ''} ${doc['category'] ?? ''} ${doc['keywords'] ?? ''}'.toLowerCase();
+    final queryLower = query.toLowerCase();
     
-    // Score basé sur mots-clés médicaux
+    // Score basé sur mots-clés médicaux (pondération élevée)
     for (final entry in _medicalKeywords.entries) {
-      if (query.contains(entry.key) && docText.contains(entry.key)) {
-        score += entry.value;
+      if (queryLower.contains(entry.key) && docText.contains(entry.key)) {
+        score += entry.value * 1.5; // Bonus pour correspondance médicale
       }
     }
     
-    // Score basé sur correspondance exacte
-    final queryWords = query.split(' ');
+    // Score basé sur correspondance exacte de mots complets
+    final queryWords = queryLower.split(' ').where((w) => w.length > 2).toList();
+    int exactMatches = 0;
     for (final word in queryWords) {
-      if (word.length > 3 && docText.contains(word)) {
+      if (docText.contains(word)) {
+        exactMatches++;
         score += 1.0;
       }
     }
     
-    // Normaliser score
-    return min(score / 10.0, 1.0);
+    // Bonus si plusieurs mots correspondent
+    if (exactMatches > 1) {
+      score += exactMatches * 0.5;
+    }
+    
+    // Score basé sur correspondance partielle (fuzzy)
+    for (final word in queryWords) {
+      if (word.length > 4) {
+        // Vérifier correspondance partielle (3+ caractères)
+        for (int i = 0; i <= docText.length - 3; i++) {
+          if (docText.substring(i, min(i + word.length, docText.length)) == word.substring(0, min(3, word.length))) {
+            score += 0.3;
+            break;
+          }
+        }
+      }
+    }
+    
+    // Normaliser score (max 1.0)
+    return min(score / 15.0, 1.0);
   }
 
   /// Recherche sémantique dans médecins
   Future<List<dynamic>> semanticSearchDoctors(String query) async {
-    final doctors = await DoctorService.getDoctors();
+    final doctorService = DoctorService();
+    final doctors = await doctorService.getAllDoctors();
     final queryLower = query.toLowerCase();
     
     final scoredDoctors = doctors.map((doctor) {
@@ -98,10 +127,17 @@ class SemanticSearchService {
       };
     }).toList();
 
-    scoredDoctors.sort((a, b) => (b['score'] as double).compareTo(a['score'] as double));
+    scoredDoctors.sort((a, b) {
+      final scoreA = (a['score'] as double?) ?? 0.0;
+      final scoreB = (b['score'] as double?) ?? 0.0;
+      return scoreB.compareTo(scoreA);
+    });
     
     return scoredDoctors
-        .where((item) => item['score'] > 0)
+        .where((item) {
+          final score = (item['score'] as double?) ?? 0.0;
+          return score > 0;
+        })
         .map((item) => item['doctor'])
         .toList();
   }

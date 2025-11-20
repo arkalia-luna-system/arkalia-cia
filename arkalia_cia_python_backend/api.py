@@ -581,10 +581,18 @@ async def upload_document(request: Request, file: UploadFile = File(...)):
         # Sauvegarder métadonnées extraites
         if metadata and doc_id:
             doc_date = metadata.get("date")
+            doctor_name = metadata.get("doctor_name")
+            doctor_specialty = metadata.get("doctor_specialty")
+
+            # Note: L'association avec les médecins se fait via les métadonnées
+            # Les consultations sont gérées côté Flutter (DoctorService)
+            # Le doctor_name et doctor_specialty sont stockés dans document_metadata
+            # pour permettre l'association automatique côté UI
+
             db.add_document_metadata(
                 document_id=doc_id,
-                doctor_name=metadata.get("doctor_name"),
-                doctor_specialty=metadata.get("doctor_specialty"),
+                doctor_name=doctor_name,
+                doctor_specialty=doctor_specialty,
                 document_date=doc_date.isoformat() if doc_date else None,
                 exam_type=metadata.get("exam_type"),
                 document_type=metadata.get("document_type"),
@@ -593,6 +601,11 @@ async def upload_document(request: Request, file: UploadFile = File(...)):
                     text_content[:5000] if text_content else None
                 ),  # Limiter à 5000 caractères
             )
+
+            # Note: L'association avec les médecins se fait via les métadonnées
+            # Les consultations sont gérées côté Flutter (DoctorService)
+            # Le doctor_id et doctor_name sont stockés dans document_metadata
+            # pour permettre l'association automatique côté UI
 
         # Nettoyer le fichier temporaire
         if tmp_file_path and os.path.exists(tmp_file_path):
@@ -865,6 +878,48 @@ async def chat_with_ai(request: Request, chat_request: ChatRequest):
 class PrepareAppointmentRequest(BaseModel):
     doctor_id: str
     user_data: dict = Field(default_factory=dict)
+
+
+@app.get("/api/ai/conversations")
+@limiter.limit("60/minute")
+async def get_ai_conversations(request: Request, limit: int = 50):
+    """Récupère l'historique des conversations IA"""
+    try:
+        if limit > 100:
+            limit = 100
+        if limit < 1:
+            limit = 10
+
+        conversations = db.get_ai_conversations(limit=limit)
+        return conversations
+    except Exception as e:
+        logger.error(
+            f"Erreur récupération conversations: {sanitize_log_message(str(e))}"
+        )
+        raise HTTPException(
+            status_code=500, detail="Erreur lors de la récupération des conversations"
+        ) from e
+
+
+class PatternAnalysisRequest(BaseModel):
+    data: list[dict] = Field(default_factory=list)
+
+
+@app.post("/api/patterns/analyze")
+@limiter.limit("30/minute")
+async def analyze_patterns(request: Request, pattern_request: PatternAnalysisRequest):
+    """Analyse les patterns dans les données"""
+    try:
+        if not pattern_request.data:
+            raise HTTPException(status_code=400, detail="Aucune donnée fournie")
+
+        patterns = pattern_analyzer.detect_temporal_patterns(pattern_request.data)
+        return patterns
+    except Exception as e:
+        logger.error(f"Erreur analyse patterns: {sanitize_log_message(str(e))}")
+        raise HTTPException(
+            status_code=500, detail="Erreur lors de l'analyse des patterns"
+        ) from e
 
 
 @app.post("/api/ai/prepare-appointment")

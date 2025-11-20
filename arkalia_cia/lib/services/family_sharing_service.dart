@@ -150,12 +150,13 @@ class FamilySharingService {
     );
   }
 
-  // Partage documents avec chiffrement
+  // Partage documents avec chiffrement et permissions granulaires
   Future<void> shareDocumentWithMembers(
     String documentId,
     List<int> memberIds, {
     bool encrypt = true,
     bool sendNotification = true,
+    String? permissionLevel, // 'view', 'download', 'full'
   }) async {
     if (encrypt) {
       await _initializeEncryption();
@@ -171,8 +172,70 @@ class FamilySharingService {
       isEncrypted: encrypt,
     );
     
-    sharedJson.add('$documentId:${memberIds.join(",")}:${sharedDoc.sharedAt.toIso8601String()}:${encrypt}');
+    // Format: documentId:memberIds:sharedAt:encrypt:permissionLevel
+    final permission = permissionLevel ?? 'view';
+    sharedJson.add('$documentId:${memberIds.join(",")}:${sharedDoc.sharedAt.toIso8601String()}:${encrypt}:$permission');
     await prefs.setStringList(_sharedDocumentsKey, sharedJson);
+    
+    // Envoyer notification si demandé
+    if (sendNotification) {
+      final members = await getFamilyMembers();
+      for (final memberId in memberIds) {
+        final member = members.firstWhere((m) => m.id == memberId, orElse: () => FamilyMember(name: 'Membre', email: '', relationship: ''));
+        final doc = await LocalStorageService.getDocuments();
+        final docName = doc.firstWhere((d) => d['id'] == documentId, orElse: () => {'name': 'Document'})['name'] ?? 'Document';
+        await NotificationService.notifyDocumentShared(
+          documentName: docName,
+          memberName: member.name,
+        );
+      }
+    }
+  }
+  
+  /// Récupère le niveau de permission pour un document partagé avec un membre
+  Future<String?> getDocumentPermission(String documentId, int memberId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final sharedJson = prefs.getStringList(_sharedDocumentsKey) ?? [];
+    
+    for (var entry in sharedJson) {
+      final parts = entry.split(':');
+      if (parts.length >= 5 && parts[0] == documentId) {
+        final memberIds = parts[1].split(',').map((id) => int.tryParse(id) ?? -1).toList();
+        if (memberIds.contains(memberId)) {
+          return parts[4]; // permissionLevel
+        }
+      }
+    }
+    return null;
+  }
+  
+  /// Met à jour les permissions pour un document partagé
+  Future<void> updateDocumentPermission(
+    String documentId,
+    int memberId,
+    String permissionLevel,
+  ) async {
+    final prefs = await SharedPreferences.getInstance();
+    final sharedJson = prefs.getStringList(_sharedDocumentsKey) ?? [];
+    final updatedJson = <String>[];
+    
+    for (var entry in sharedJson) {
+      final parts = entry.split(':');
+      if (parts.length >= 5 && parts[0] == documentId) {
+        final memberIds = parts[1].split(',').map((id) => int.tryParse(id) ?? -1).toList();
+        if (memberIds.contains(memberId)) {
+          // Mettre à jour la permission pour ce membre
+          parts[4] = permissionLevel;
+          updatedJson.add(parts.join(':'));
+        } else {
+          updatedJson.add(entry);
+        }
+      } else {
+        updatedJson.add(entry);
+      }
+    }
+    
+    await prefs.setStringList(_sharedDocumentsKey, updatedJson);
   }
 
   Future<List<String>> getSharedDocumentIds(int memberId) async {

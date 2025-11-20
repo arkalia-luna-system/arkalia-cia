@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../services/api_service.dart';
+import '../services/backend_config_service.dart';
 
 class PatternsDashboardScreen extends StatefulWidget {
   const PatternsDashboardScreen({super.key});
@@ -29,10 +30,32 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
 
     try {
       // Récupérer données depuis documents et consultations
-      final documents = await ApiService.get('/api/documents?limit=100');
+      final url = await BackendConfigService.getBackendURL();
+      if (url.isEmpty) {
+        setState(() {
+          _error = 'Backend non configuré';
+          _isLoading = false;
+        });
+        return;
+      }
+
+      final documentsResponse = await http.get(
+        Uri.parse('$url/api/documents?limit=100'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (documentsResponse.statusCode != 200) {
+        setState(() {
+          _error = 'Erreur lors de la récupération des documents';
+          _isLoading = false;
+        });
+        return;
+      }
+
+      final documents = jsonDecode(documentsResponse.body) as List;
       
       // Convertir en format pour analyse
-      final data = (documents as List).map((doc) {
+      final data = documents.map((doc) {
         return {
           'date': doc['created_at'],
           'type': doc['category'] ?? 'document',
@@ -42,10 +65,10 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
 
       // Analyser patterns
       final response = await http.post(
-        Uri.parse('${ApiService.baseUrl}/api/patterns/analyze'),
+        Uri.parse('$url/api/patterns/analyze'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'data': data}),
-      );
+      ).timeout(const Duration(seconds: 30));
 
       if (response.statusCode == 200) {
         setState(() {
