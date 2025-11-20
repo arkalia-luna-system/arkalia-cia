@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../services/api_service.dart';
 import 'backend_config_service.dart';
 import 'auth_api_service.dart';
 

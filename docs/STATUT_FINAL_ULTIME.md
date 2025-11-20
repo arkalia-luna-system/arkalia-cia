@@ -83,3 +83,12 @@ L'application est prête pour la production :
 - Testée — tests unitaires à jour
 - Documentée — documentation complète
 
+---
+
+## Voir aussi
+
+- **[CHANGELOG_AUTHENTIFICATION.md](./CHANGELOG_AUTHENTIFICATION.md)** — Changelog authentification JWT
+- **[GUIDE_MISE_A_JOUR_FLUTTER.md](./GUIDE_MISE_A_JOUR_FLUTTER.md)** — Guide mise à jour Flutter
+- **[CHECKLIST_FINALE_SECURITE.md](./CHECKLIST_FINALE_SECURITE.md)** — Checklist sécurité
+- **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
+

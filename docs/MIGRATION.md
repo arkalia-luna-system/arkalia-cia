@@ -175,5 +175,13 @@ For migration questions or assistance:
 
 ---
 
-**Last Updated**: November 19, 2025  
+## Voir aussi
+
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture système mise à jour
+- **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
+- **[STATUT_FINAL_CONSOLIDE.md](./STATUT_FINAL_CONSOLIDE.md)** — Statut complet du projet
+
+---
+
+**Dernière mise à jour** : Janvier 2025  
 *This migration guide reflects the project's evolution toward a more professional and maintainable structure while preserving all functionality.*

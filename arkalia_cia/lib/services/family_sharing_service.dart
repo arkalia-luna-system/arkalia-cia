@@ -101,7 +101,7 @@ class FamilySharingService {
     }
     
     final key = encrypt.Key.fromBase64(keyString);
-    final iv = encrypt.IV.fromLength(16);
+    // IV généré automatiquement lors de l'encryption, pas besoin de le stocker
     _encrypter = encrypt.Encrypter(encrypt.AES(key));
     _encryptionInitialized = true;
   }

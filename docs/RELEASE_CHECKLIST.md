@@ -4,7 +4,14 @@
 **Dernière mise à jour** : 19 novembre 2025  
 **Statut** : En cours (Techniquement prêt, validations manuelles restantes)
 
-> **Note** : Ce document est maintenant consolidé dans **[CHECKLIST_RELEASE_CONSOLIDEE.md](./CHECKLIST_RELEASE_CONSOLIDEE.md)**. Voir ce fichier pour la version complète et à jour.
+> **Note** : Ce document est maintenant consolidé dans **[deployment/CHECKLIST_RELEASE_CONSOLIDEE.md](./deployment/CHECKLIST_RELEASE_CONSOLIDEE.md)**. Voir ce fichier pour la version complète et à jour.
+
+---
+
+## Voir aussi
+
+- **[deployment/CHECKLIST_RELEASE_CONSOLIDEE.md](./deployment/CHECKLIST_RELEASE_CONSOLIDEE.md)** — Checklist complète avant release
+- **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
 
 Checklist complète de validation avant release.
 

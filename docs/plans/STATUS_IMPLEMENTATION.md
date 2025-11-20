@@ -228,4 +228,12 @@ pie title Progression des Plans
 
 ---
 
+## Voir aussi
+
+- **[plans/README.md](./README.md)** — Index des plans
+- **[STATUT_FINAL_CONSOLIDE.md](../STATUT_FINAL_CONSOLIDE.md)** — Statut complet du projet
+- **[INDEX_DOCUMENTATION.md](../INDEX_DOCUMENTATION.md)** — Index complet de la documentation
+
+---
+
 *Dernière mise à jour : Janvier 2025*

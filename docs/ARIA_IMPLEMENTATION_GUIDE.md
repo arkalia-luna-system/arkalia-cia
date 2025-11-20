@@ -1,21 +1,31 @@
-# 🛠️ ARKALIA-ARIA Implementation Guide
+# Guide d'implémentation ARIA — Arkalia CIA
 
-> **Practical guide** for implementing arkalia-aria step by step with all technical details
+**Version** : 1.3.1  
+**Dernière mise à jour** : Janvier 2025  
+**Statut** : Production Ready
 
-**Last Updated**: November 19, 2025  
-**Version**: 1.2.0  
-**Status**: ✅ **Production Ready**
+Guide pratique pour implémenter l'intégration ARIA étape par étape avec tous les détails techniques.
 
 ---
 
-## 📋 Table of Contents
+## Table des matières
 
-1. [Implementation Checklist](#implementation-checklist)
-2. [Day 1: ARIA Module in CIA](#day-1-aria-module-in-cia)
-3. [Day 2: Backend Integration](#day-2-backend-integration)
-4. [Day 3: Testing and Validation](#day-3-testing-and-validation)
-5. [Troubleshooting](#troubleshooting)
-6. [Best Practices](#best-practices)
+1. [Checklist d'implémentation](#checklist-dimplémentation)
+2. [Jour 1 : Module ARIA dans CIA](#jour-1-module-aria-dans-cia)
+3. [Jour 2 : Intégration Backend](#jour-2-intégration-backend)
+4. [Jour 3 : Tests et validation](#jour-3-tests-et-validation)
+5. [Dépannage](#dépannage)
+6. [Bonnes pratiques](#bonnes-pratiques)
+7. [Voir aussi](#voir-aussi)
+
+---
+
+## Voir aussi
+
+- **[ARIA_IMPLEMENTATION_GUIDE.md](./ARIA_IMPLEMENTATION_GUIDE.md)** — Guide complet d'intégration ARIA
+- **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** — Documentation API complète
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture système
+- **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
 
 ---
 

@@ -585,4 +585,14 @@ graph TB
 
 ---
 
+## Voir aussi
+
+- **[API.md](./API.md)** — Documentation API (version simplifiée)
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture système détaillée
+- **[GUIDE_MISE_A_JOUR_FLUTTER.md](./GUIDE_MISE_A_JOUR_FLUTTER.md)** — Guide mise à jour Flutter
+- **[CHECKLIST_FINALE_SECURITE.md](./CHECKLIST_FINALE_SECURITE.md)** — Checklist sécurité
+- **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
+
+---
+
 *Dernière mise à jour : Janvier 2025*

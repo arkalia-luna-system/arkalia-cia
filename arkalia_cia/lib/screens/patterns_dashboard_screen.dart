@@ -5,7 +5,6 @@ import '../services/api_service.dart';
 import '../services/backend_config_service.dart';
 import '../services/offline_cache_service.dart';
 import '../services/auth_api_service.dart';
-import '../utils/app_logger.dart';
 
 class PatternsDashboardScreen extends StatefulWidget {
   const PatternsDashboardScreen({super.key});
@@ -65,13 +64,14 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
 
       // Analyser patterns avec authentification et gestion automatique du refresh token
       final url = await BackendConfigService.getBackendURL();
-      final response = await _makeAuthenticatedRequest(() async {
-        final patternHeaders = {'Content-Type': 'application/json'};
-        final patternToken = await AuthApiService.getAccessToken();
-        if (patternToken != null) {
-          patternHeaders['Authorization'] = 'Bearer $patternToken';
+      final response = await ApiService.makeAuthenticatedRequest(() async {
+        final patternHeaders = <String, String>{
+          'Content-Type': 'application/json',
+        };
+        final token = await AuthApiService.getAccessToken();
+        if (token != null) {
+          patternHeaders['Authorization'] = 'Bearer $token';
         }
-        
         return await http.post(
           Uri.parse('$url/api/v1/patterns/analyze'),
           headers: patternHeaders,
@@ -95,6 +95,50 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
         _error = 'Erreur: $e';
         _isLoading = false;
       });
+    }
+  }
+
+  /// Méthode helper pour faire des requêtes authentifiées avec gestion du refresh token
+  // ignore: unused_element
+  Future<dynamic> _makeAuthenticatedPatternRequest(
+    Future<http.Response> Function() makeRequest,
+  ) async {
+    try {
+      var response = await makeRequest();
+
+      // Si 401 (Unauthorized), essayer de rafraîchir le token
+      if (response.statusCode == 401) {
+        final refreshResult = await AuthApiService.refreshToken();
+
+        if (refreshResult['success'] == true) {
+          // Token rafraîchi, réessayer la requête
+          response = await makeRequest();
+        } else {
+          // Refresh échoué, déconnecter l'utilisateur
+          await AuthApiService.logout();
+          throw Exception('Session expirée. Veuillez vous reconnecter.');
+        }
+      }
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final body = response.body;
+        if (body.isEmpty) {
+          return {};
+        }
+        return json.decode(body);
+      } else {
+        try {
+          final errorData = json.decode(response.body);
+          throw Exception(errorData['detail'] ?? 'Erreur HTTP ${response.statusCode}');
+        } catch (_) {
+          throw Exception('Erreur HTTP ${response.statusCode}');
+        }
+      }
+    } catch (e) {
+      if (e.toString().contains('Session expirée')) {
+        rethrow;
+      }
+      rethrow;
     }
   }
 

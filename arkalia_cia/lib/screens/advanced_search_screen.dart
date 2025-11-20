@@ -22,7 +22,8 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
   bool _isSearching = false;
   bool _useSemanticSearch = false;
   List<String> _suggestions = [];
-  List<Doctor> _doctors = [];
+  // ignore: unused_field
+  List<Doctor> _doctors = []; // Sera utilisé pour sélection médecin dans filtres
   String? _selectedCategory;
   DateTime? _startDate;
   DateTime? _endDate;

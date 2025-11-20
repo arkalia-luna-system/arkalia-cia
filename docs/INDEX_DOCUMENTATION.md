@@ -21,14 +21,27 @@ Guide de navigation dans la documentation du projet Arkalia CIA.
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture générale avec schémas Mermaid
 - **[VUE_ENSEMBLE_PROJET.md](./VUE_ENSEMBLE_PROJET.md)** — Vue d'ensemble visuelle complète
 - **[ANALYSE_COMPLETE_BESOINS_MERE.md](./ANALYSE_COMPLETE_BESOINS_MERE.md)** — Analyse des besoins utilisateur
-- **[ANALYSE_EXPLOITATION_PROJET.md](./ANALYSE_EXPLOITATION_PROJET.md)** — Audit d'exploitation
 
 ### API et intégration
 
-- **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** — Documentation API complète
+- **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** — Documentation API complète (21 endpoints)
 - **[API.md](./API.md)** — Documentation API (version simplifiée)
 - **[ARIA_IMPLEMENTATION_GUIDE.md](./ARIA_IMPLEMENTATION_GUIDE.md)** — Guide d'intégration ARIA
-- **[GUIDE_MISE_A_JOUR_FLUTTER.md](./GUIDE_MISE_A_JOUR_FLUTTER.md)** — Guide mise à jour Flutter (Authentification JWT)
+
+---
+
+## Guides
+
+### Guides utilisateur
+
+- **[guides/GUIDE_UTILISATION_MERE.md](./guides/GUIDE_UTILISATION_MERE.md)** — Guide utilisateur complet
+- **[plans/GUIDE_TEST_VISUEL_LIVE.md](./plans/GUIDE_TEST_VISUEL_LIVE.md)** — Guide test visuel
+
+### Guides développeur
+
+- **[guides/GUIDE_MISE_A_JOUR_FLUTTER.md](./guides/GUIDE_MISE_A_JOUR_FLUTTER.md)** — Guide mise à jour Flutter (Authentification JWT)
+- **[CONTRIBUTING.md](./CONTRIBUTING.md)** — Guide contributeur
+- **[MIGRATION.md](./MIGRATION.md)** — Guide migration
 
 ---
 
@@ -48,88 +61,56 @@ Tous les plans sont dans le dossier **[plans/](./plans/)** :
 
 ---
 
-## Sécurité et audits
+## Déploiement
 
-- **[CHECKLIST_FINALE_SECURITE.md](./CHECKLIST_FINALE_SECURITE.md)** — Checklist sécurité complète
-- **[AUDIT_SECURITE_SENIOR.md](./AUDIT_SECURITE_SENIOR.md)** — Audit sécurité
-- **[AUDIT_POST_CORRECTIONS.md](./AUDIT_POST_CORRECTIONS.md)** — Audit après corrections
-- **[CORRECTIONS_SECURITE_EFFECTUEES.md](./CORRECTIONS_SECURITE_EFFECTUEES.md)** — Détails des corrections sécurité
-
----
-
-## Déploiement et release
-
-- **[CHECKLIST_RELEASE_CONSOLIDEE.md](./CHECKLIST_RELEASE_CONSOLIDEE.md)** — Checklist complète avant release
-- **[RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md)** — Checklist release (ancienne version)
-- **[BUILD_RELEASE_ANDROID.md](./BUILD_RELEASE_ANDROID.md)** — Guide build Android
-- **[IOS_DEPLOYMENT_GUIDE.md](./IOS_DEPLOYMENT_GUIDE.md)** — Guide déploiement iOS
-- **[DEPLOYMENT.md](./DEPLOYMENT.md)** — Guide déploiement général
+- **[deployment/CHECKLIST_RELEASE_CONSOLIDEE.md](./deployment/CHECKLIST_RELEASE_CONSOLIDEE.md)** — Checklist complète avant release
+- **[deployment/BUILD_RELEASE_ANDROID.md](./deployment/BUILD_RELEASE_ANDROID.md)** — Guide build Android
+- **[deployment/IOS_DEPLOYMENT_GUIDE.md](./deployment/IOS_DEPLOYMENT_GUIDE.md)** — Guide déploiement iOS
+- **[deployment/DEPLOYMENT.md](./deployment/DEPLOYMENT.md)** — Guide déploiement général
+- **[deployment/CONFIGURATION_BACKEND_WIFI.md](./deployment/CONFIGURATION_BACKEND_WIFI.md)** — Configuration backend WiFi
+- **[deployment/CONNECTER_S25_ANDROID.md](./deployment/CONNECTER_S25_ANDROID.md)** — Connexion Android
+- **[deployment/DEPLOIEMENT_WIFI_IOS.md](./deployment/DEPLOIEMENT_WIFI_IOS.md)** — Déploiement WiFi iOS
 - **[RELEASE_NOTES_V1.2.0.md](./RELEASE_NOTES_V1.2.0.md)** — Notes de release
 
 ---
 
-## Guides utilisateur
+## Sécurité et audits
 
-- **[GUIDE_UTILISATION_MERE.md](./GUIDE_UTILISATION_MERE.md)** — Guide utilisateur complet
-- **[plans/GUIDE_TEST_VISUEL_LIVE.md](./plans/GUIDE_TEST_VISUEL_LIVE.md)** — Guide test visuel
-
----
-
-## Configuration et développement
-
-### Configuration backend
-
-- **[CONFIGURATION_BACKEND_WIFI.md](./CONFIGURATION_BACKEND_WIFI.md)** — Configuration backend WiFi
-- **[CONNECTER_S25_ANDROID.md](./CONNECTER_S25_ANDROID.md)** — Connexion Android
-- **[DEPLOIEMENT_WIFI_IOS.md](./DEPLOIEMENT_WIFI_IOS.md)** — Déploiement WiFi iOS
-
-### Développement
-
-- **[CONTRIBUTING.md](./CONTRIBUTING.md)** — Guide contributeur
-- **[MIGRATION.md](./MIGRATION.md)** — Guide migration
-- **[CHANGELOG.md](./CHANGELOG.md)** — Historique des changements
+- **[CHECKLIST_FINALE_SECURITE.md](./CHECKLIST_FINALE_SECURITE.md)** — Checklist sécurité complète
+- **[CORRECTIONS_SECURITE_EFFECTUEES.md](./CORRECTIONS_SECURITE_EFFECTUEES.md)** — Détails des corrections sécurité
+- **[audits/AUDIT_SECURITE_SENIOR.md](./audits/AUDIT_SECURITE_SENIOR.md)** — Audit sécurité
+- **[audits/AUDIT_POST_CORRECTIONS.md](./audits/AUDIT_POST_CORRECTIONS.md)** — Audit après corrections
+- **[audits/ANALYSE_EXPLOITATION_PROJET.md](./audits/ANALYSE_EXPLOITATION_PROJET.md)** — Audit d'exploitation
 
 ---
 
-## Dépannage et optimisations
+## Dépannage
 
-### Problèmes courants
+- **[troubleshooting/TESTS_PROBLEMATIQUES.md](./troubleshooting/TESTS_PROBLEMATIQUES.md)** — Problèmes tests
+- **[troubleshooting/TESTS_DOUBLONS_SOLUTION.md](./troubleshooting/TESTS_DOUBLONS_SOLUTION.md)** — Solution doublons tests
+- **[troubleshooting/ERREURS_STALE_FILES.md](./troubleshooting/ERREURS_STALE_FILES.md)** — Erreurs fichiers stale
+- **[troubleshooting/CORRECTION_SQFLITE_IOS.md](./troubleshooting/CORRECTION_SQFLITE_IOS.md)** — Correction SQFLite iOS
+- **[troubleshooting/GRADLE_FIX_GUIDE.md](./troubleshooting/GRADLE_FIX_GUIDE.md)** — Fix Gradle
+- **[troubleshooting/EXPLICATION_WIFI_ADB.md](./troubleshooting/EXPLICATION_WIFI_ADB.md)** — Explication WiFi ADB
+- **[troubleshooting/TROUVER_CONNECT_VIA_NETWORK.md](./troubleshooting/TROUVER_CONNECT_VIA_NETWORK.md)** — Trouver et connecter via réseau
+- **[troubleshooting/SOLUTION_FICHIERS_MACOS.md](./troubleshooting/SOLUTION_FICHIERS_MACOS.md)** — Solution fichiers macOS
 
-- **[TESTS_PROBLEMATIQUES.md](./TESTS_PROBLEMATIQUES.md)** — Problèmes tests
-- **[TESTS_DOUBLONS_SOLUTION.md](./TESTS_DOUBLONS_SOLUTION.md)** — Solution doublons tests
-- **[ERREURS_STALE_FILES.md](./ERREURS_STALE_FILES.md)** — Erreurs fichiers stale
-- **[CORRECTION_SQFLITE_IOS.md](./CORRECTION_SQFLITE_IOS.md)** — Correction SQFLite iOS
-- **[GRADLE_FIX_GUIDE.md](./GRADLE_FIX_GUIDE.md)** — Fix Gradle
+---
 
-### Optimisations
+## Optimisations et analyses
 
 - **[OPTIMISATIONS_COMPLETE.md](./OPTIMISATIONS_COMPLETE.md)** — Optimisations complètes
 - **[OPTIMISATIONS_TESTS.md](./OPTIMISATIONS_TESTS.md)** — Optimisations tests
-- **[ANALYSE_PERFORMANCE_TESTS.md](./ANALYSE_PERFORMANCE_TESTS.md)** — Analyse performance tests
+- **[audits/ANALYSE_PERFORMANCE_TESTS.md](./audits/ANALYSE_PERFORMANCE_TESTS.md)** — Analyse performance tests
+- **[audits/ANALYSE_BIOMETRIE.md](./audits/ANALYSE_BIOMETRIE.md)** — Analyse biométrie
+- **[audits/AUDIT_ET_OPTIMISATIONS.md](./audits/AUDIT_ET_OPTIMISATIONS.md)** — Audit et optimisations
 
 ---
 
-## Analyses et rapports
+## Changelog et historique
 
-- **[ANALYSE_BIOMETRIE.md](./ANALYSE_BIOMETRIE.md)** — Analyse biométrie
-- **[ANALYSE_PERFORMANCE_TESTS.md](./ANALYSE_PERFORMANCE_TESTS.md)** — Analyse performance
-- **[AUDIT_ET_OPTIMISATIONS.md](./AUDIT_ET_OPTIMISATIONS.md)** — Audit et optimisations
-- **[ARKALIA_ARIA_PROJECT.md](./ARKALIA_ARIA_PROJECT.md)** — Projet ARIA
-- **[ARKALIA_ARIA_SUMMARY.md](./ARKALIA_ARIA_SUMMARY.md)** — Résumé ARIA
-
----
-
-## Screenshots et validation
-
-- **[SCREENSHOTS_GUIDE.md](./SCREENSHOTS_GUIDE.md)** — Guide screenshots
-- **[SCREENSHOTS_CHECKLIST.md](./SCREENSHOTS_CHECKLIST.md)** — Checklist screenshots
-- **[VALIDATION.md](./VALIDATION.md)** — Validation projet
-
----
-
-## Archives
-
-Les anciens documents sont archivés dans **[archive/](./archive/)** pour référence historique.
+- **[CHANGELOG.md](./CHANGELOG.md)** — Historique des changements
+- **[CHANGELOG_AUTHENTIFICATION.md](./CHANGELOG_AUTHENTIFICATION.md)** — Changelog authentification JWT
 
 ---
 
@@ -139,30 +120,33 @@ Les anciens documents sont archivés dans **[archive/](./archive/)** pour réfé
 |-------|-------------------|
 | Statut projet | `STATUT_FINAL_CONSOLIDE.md` |
 | API | `API_DOCUMENTATION.md` |
-| Sécurité | `CHECKLIST_FINALE_SECURITE.md` |
-| Release | `CHECKLIST_RELEASE_CONSOLIDEE.md` |
-| Plans | `plans/README.md` |
-| Guide utilisateur | `GUIDE_UTILISATION_MERE.md` |
 | Architecture | `ARCHITECTURE.md` |
-| Index documentation | `INDEX_DOCUMENTATION.md` |
+| Vue d'ensemble | `VUE_ENSEMBLE_PROJET.md` |
+| Sécurité | `CHECKLIST_FINALE_SECURITE.md` |
+| Release | `deployment/CHECKLIST_RELEASE_CONSOLIDEE.md` |
+| Plans | `plans/README.md` |
+| Guide utilisateur | `guides/GUIDE_UTILISATION_MERE.md` |
+| Dépannage | `troubleshooting/` |
 
 ---
 
-## Notes importantes
+## Structure des dossiers
 
-- Les documents marqués comme "consolidés" fusionnent plusieurs anciens documents
-- Les anciens documents redondants ont été archivés ou supprimés
-- Voir `STATUT_FINAL_CONSOLIDE.md` pour le statut complet
+```
+docs/
+├── INDEX_DOCUMENTATION.md          # Ce fichier
+├── STATUT_FINAL_CONSOLIDE.md      # Statut principal
+├── ARCHITECTURE.md                 # Architecture système
+├── VUE_ENSEMBLE_PROJET.md         # Vue d'ensemble visuelle
+├── API_DOCUMENTATION.md           # Documentation API complète
+├── guides/                        # Guides utilisateur et développeur
+├── deployment/                    # Guides de déploiement
+├── troubleshooting/               # Dépannage
+├── audits/                        # Audits et analyses
+├── plans/                         # Plans d'implémentation
+└── archive/                       # Archives
+```
 
 ---
 
-## Nouvelles fonctionnalités (Janvier 2025)
-
-### Authentification JWT
-
-- Service `AuthApiService` créé
-- Écrans `LoginScreen` et `RegisterScreen` créés
-- Gestion automatique du refresh token dans toutes les méthodes
-- Intégration complète dans toute l'application
-
-Voir **[STATUT_FINAL_ULTIME.md](./STATUT_FINAL_ULTIME.md)** et **[CHANGELOG_AUTHENTIFICATION.md](./CHANGELOG_AUTHENTIFICATION.md)** pour les détails.
+*Dernière mise à jour : Janvier 2025*

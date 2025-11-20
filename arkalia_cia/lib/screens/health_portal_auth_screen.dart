@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/health_portal_auth_service.dart';
 import 'onboarding/import_progress_screen.dart';
+import 'onboarding/import_type.dart';
 
 class HealthPortalAuthScreen extends StatefulWidget {
   final HealthPortal portal;
@@ -31,15 +32,15 @@ class _HealthPortalAuthScreenState extends State<HealthPortalAuthScreen> {
         await Future.delayed(const Duration(seconds: 2));
         
         // Simuler récupération données (à remplacer par vraie implémentation)
-        final data = await _authService.fetchPortalData(widget.portal, 'token');
+        await _authService.fetchPortalData(widget.portal, 'token');
         
         if (mounted) {
           // Naviguer vers écran progression import
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               builder: (context) => ImportProgressScreen(
-                pdfFiles: [], // Données depuis portail, pas PDF
-                portalData: data,
+                importType: ImportType.portals,
+                portalIds: ['portal_${widget.portal.name}'],
               ),
             ),
           );

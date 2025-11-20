@@ -7,6 +7,17 @@ Document de synthèse visuelle présentant l'écosystème complet Arkalia CIA.
 
 ---
 
+## Table des matières
+
+1. [Architecture globale](#architecture-globale)
+2. [Flux utilisateur principal](#flux-utilisateur-principal)
+3. [Composants techniques](#composants-techniques)
+4. [Intégrations](#intégrations)
+5. [Flux de données](#flux-de-données)
+6. [Voir aussi](#voir-aussi)
+
+---
+
 ## Architecture globale
 
 ```mermaid

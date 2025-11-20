@@ -434,4 +434,14 @@ graph TB
 
 ---
 
+## Voir aussi
+
+- **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** — Documentation API complète
+- **[VUE_ENSEMBLE_PROJET.md](./VUE_ENSEMBLE_PROJET.md)** — Vue d'ensemble visuelle
+- **[DEPLOYMENT.md](./DEPLOYMENT.md)** — Guide de déploiement
+- **[CHECKLIST_FINALE_SECURITE.md](./CHECKLIST_FINALE_SECURITE.md)** — Checklist sécurité
+- **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
+
+---
+
 *Dernière mise à jour : Janvier 2025*

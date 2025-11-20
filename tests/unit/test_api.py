@@ -45,9 +45,7 @@ class TestAPIEndpoints:
         """Créer un utilisateur de test et retourner un token"""
 
         # Utiliser bcrypt directement pour éviter problèmes avec passlib
-        password_hash = bcrypt.hashpw(
-            b"test123", bcrypt.gensalt()
-        ).decode("utf-8")
+        password_hash = bcrypt.hashpw(b"test123", bcrypt.gensalt()).decode("utf-8")
         user_id = api.db.create_user(
             username="testuser", password_hash=password_hash, email="test@example.com"
         )

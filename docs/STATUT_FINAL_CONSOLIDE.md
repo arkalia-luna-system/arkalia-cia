@@ -164,6 +164,18 @@ Le projet est production-ready à 100%.
 
 ---
 
+---
+
+## Voir aussi
+
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture système détaillée
+- **[VUE_ENSEMBLE_PROJET.md](./VUE_ENSEMBLE_PROJET.md)** — Vue d'ensemble visuelle
+- **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** — Documentation API complète
+- **[plans/STATUS_IMPLEMENTATION.md](./plans/STATUS_IMPLEMENTATION.md)** — Statut détaillé d'implémentation
+- **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
+
+---
+
 *Dernière mise à jour : Janvier 2025*  
 *Statut : 100% d'exploitation atteint*
 

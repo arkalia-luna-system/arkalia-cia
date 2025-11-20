@@ -19,7 +19,7 @@
 - ✅ Tests mis à jour avec authentification
 - ✅ Documentation complète
 
-**Voir [RESUME_ULTIME_FINAL.md](../RESUME_ULTIME_FINAL.md) pour les détails complets.**
+**Voir [STATUT_FINAL_CONSOLIDE.md](../STATUT_FINAL_CONSOLIDE.md) pour les détails complets.**
 
 ---
 

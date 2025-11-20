@@ -207,13 +207,16 @@ class ApiService {
         );
       });
 
-      if (response is Map) {
-        return response;
+      if (response is http.Response) {
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          final jsonData = json.decode(response.body) as Map<String, dynamic>;
+          return jsonData;
+        }
       }
       
       return {
-        'success': true,
-        'data': response,
+        'success': false,
+        'error': 'Erreur lors de la création du rappel',
       };
     } catch (e) {
       ErrorHelper.logError(e, context: 'createReminder');
@@ -424,9 +427,10 @@ class ApiService {
   static Future<bool> testConnection() async {
     try {
       final url = await baseUrl;
+      final headers = await _headers;
       final response = await http.get(
         Uri.parse('$url/health'),
-        headers: _headers,
+        headers: headers,
       );
       return response.statusCode == 200;
     } catch (e) {
@@ -439,7 +443,8 @@ class ApiService {
     return _makeAuthenticatedRequest(() async {
       final url = await baseUrl;
       if (url.isEmpty) {
-        return [];
+        // Retourner une réponse HTTP vide au lieu d'une liste vide
+        return http.Response('[]', 200);
       }
 
       final headers = await _headers;
@@ -456,7 +461,7 @@ class ApiService {
 
   /// Méthode helper pour gérer automatiquement le refresh token en cas de 401
   /// Retourne la réponse décodée si succès, ou lance une exception si erreur
-  static Future<dynamic> _makeAuthenticatedRequest(
+  static Future<dynamic> makeAuthenticatedRequest(
     Future<http.Response> Function() makeRequest,
   ) async {
     try {
