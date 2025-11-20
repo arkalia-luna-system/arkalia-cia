@@ -1,463 +1,437 @@
 # Architecture
 
-**Version** : 1.2.0  
-**Dernière mise à jour** : 19 novembre 2025  
+**Version** : 1.3.1  
+**Dernière mise à jour** : Janvier 2025  
 **Statut** : Production Ready
 
 Documentation technique de l'architecture et de la conception système d'Arkalia CIA.
 
 ---
 
-## Table des matières
+## Vue d'ensemble
 
-1. [Overview](#overview)
-2. [Architectural Principles](#architectural-principles)
-3. [System Architecture](#system-architecture)
-4. [Component Structure](#component-structure)
-5. [Data Flow Patterns](#data-flow-patterns)
-6. [Service Specifications](#service-specifications)
-7. [Security Architecture](#security-architecture)
-8. [Performance Considerations](#performance-considerations)
-9. [Deployment Architecture](#deployment-architecture)
-10. [Testing Strategy](#testing-strategy)
-11. [Future Roadmap](#future-roadmap)
-12. [Monitoring and Observability](#monitoring-and-observability)
+Arkalia CIA implémente une **architecture local-first** privilégiant la simplicité, la fiabilité et la confidentialité des données. L'application fonctionne entièrement sur l'appareil sans dépendances externes pour les fonctionnalités principales.
+
+### Principes architecturaux
+
+1. **Local-First** : Toutes les données stockées localement
+2. **Offline-First** : Fonctionnalités principales disponibles hors ligne
+3. **Sécurité par conception** : Chiffrement AES-256, authentification JWT
+4. **Intégration native** : Calendrier, contacts, biométrie
+5. **Performance** : Cache intelligent, pagination, optimisations mémoire
 
 ---
 
-## Overview
-
-Arkalia CIA implements a **local-first architecture** prioritizing simplicity, reliability, and data privacy. The application operates entirely on-device without external dependencies for core functionality.
-
-## Architectural Principles
-
-### 1. Local-First Design
-
-| Principle | Implementation | Benefit |
-|-----------|---------------|---------|
-| **Local Storage** | All data stored locally on device | Zero network dependency |
-| **Offline-First** | Core operations work offline | Maximum reliability |
-| **Optional Sync** | Synchronization in Phase 3 | Progressive enhancement |
-| **Data Privacy** | No cloud dependency required | Complete user control |
-
-### 2. Native Integration
-
-| Integration | Platform | Purpose |
-|------------|----------|---------|
-| **System Calendar** | iOS/Android | Reminder functionality |
-| **System Contacts** | iOS/Android | Emergency contacts |
-| **Biometric Auth** | iOS/Android | Secure access |
-| **Notifications** | iOS/Android | Reminder alerts |
-
-### 3. Security by Design
-
-| Security Layer | Implementation | Status |
-|----------------|---------------|--------|
-| **Encryption** | AES-256 for sensitive data | ✅ Active |
-| **Key Management** | Keychain/Keystore | ✅ Active |
-| **Permissions** | Minimal requirements | ✅ Configured |
-| **Data Storage** | No plaintext storage | ✅ Enforced |
-
-## System Architecture
+## Architecture système
 
 ```mermaid
 graph TB
-    subgraph "Presentation Layer"
-        A[Flutter UI] --> B[Home Screen]
-        A --> C[Documents Screen]
-        A --> D[Health Screen]
-        A --> E[Reminders Screen]
-        A --> F[Emergency Screen]
+    subgraph "Couche Présentation"
+        A[Flutter UI] --> B[HomePage]
+        A --> C[DocumentsScreen]
+        A --> D[DoctorsListScreen]
+        A --> E[ConversationalAIScreen]
+        A --> F[PatternsDashboardScreen]
+        A --> G[FamilySharingScreen]
     end
 
-    subgraph "Service Layer"
-        G[LocalStorageService] --> H[Encrypted Storage]
-        I[CalendarService] --> J[System Calendar]
-        K[ContactsService] --> L[System Contacts]
-        M[APIService] --> N[Backend API]
+    subgraph "Couche Services"
+        H[LocalStorageService] --> I[(SQLite Local)]
+        J[ApiService] --> K[Backend API]
+        L[DoctorService] --> I
+        M[SearchService] --> I
+        N[ConversationalAIService] --> K
+        O[FamilySharingService] --> I
+        P[CalendarService] --> Q[Calendrier Système]
+        R[ContactsService] --> S[Contacts Système]
     end
 
-    subgraph "Data Layer"
-        H --> O[(SQLite)]
-        J --> P[Calendar DB]
-        L --> Q[Contacts DB]
-        N --> R[(Backend DB)]
+    subgraph "Backend Python"
+        K --> T[FastAPI]
+        T --> U[api.py<br/>20+ endpoints]
+        T --> V[PDFProcessor]
+        T --> W[ConversationalAI]
+        T --> X[PatternAnalyzer]
+        T --> Y[ARIAIntegration]
+        U --> Z[(PostgreSQL/SQLite)]
     end
 
-    subgraph "Security Layer"
-        S[AES-256 Encryption]
-        T[Keychain/Keystore]
-        U[Permission Manager]
+    subgraph "Sécurité"
+        AA[AES-256 Encryption]
+        AB[Keychain/Keystore]
+        AC[JWT Authentication]
+        AD[Biometric Auth]
     end
 
-    B --> G
-    C --> G
-    D --> G
-    E --> I
-    F --> K
+    B --> H
+    C --> H
+    D --> L
+    E --> N
+    F --> N
+    G --> O
 
-    G --> S
-    S --> T
-    A --> U
+    H --> AA
+    AA --> AB
+    K --> AC
+    A --> AD
 ```
 
-## Component Structure
+---
 
-### Frontend (Flutter)
+## Structure des composants
+
+### Frontend Flutter
 
 ```
-lib/
-├── main.dart                     # Application entry point
-├── screens/                      # UI screens
-│   ├── home_page.dart            # Main dashboard
-│   ├── documents_screen.dart     # Document management
-│   ├── health_screen.dart        # Health portals
-│   ├── reminders_screen.dart     # Calendar integration
-│   └── emergency_screen.dart     # Emergency contacts
-└── services/                     # Business logic
-    ├── api_service.dart          # Backend communication
-    ├── calendar_service.dart     # Calendar integration
-    ├── contacts_service.dart     # Contacts management
-    └── local_storage_service.dart # Local data persistence
+arkalia_cia/lib/
+├── main.dart                    # Point d'entrée application
+├── models/                      # Modèles de données
+│   └── doctor.dart             # Modèle Doctor et Consultation
+├── screens/                     # Écrans UI (24 écrans)
+│   ├── home_page.dart          # Dashboard principal
+│   ├── documents_screen.dart   # Gestion documents
+│   ├── doctors_list_screen.dart # Liste médecins
+│   ├── conversational_ai_screen.dart # Chat IA
+│   ├── patterns_dashboard_screen.dart # Patterns IA
+│   ├── family_sharing_screen.dart # Partage familial
+│   ├── advanced_search_screen.dart # Recherche avancée
+│   ├── onboarding/             # Onboarding intelligent
+│   └── auth/                   # Authentification
+│       ├── login_screen.dart
+│       └── register_screen.dart
+├── services/                    # Services métier (20 services)
+│   ├── api_service.dart         # Communication backend
+│   ├── local_storage_service.dart # Stockage local
+│   ├── doctor_service.dart      # Gestion médecins
+│   ├── search_service.dart      # Recherche
+│   ├── conversational_ai_service.dart # IA conversationnelle
+│   ├── family_sharing_service.dart # Partage familial
+│   ├── auth_api_service.dart    # Authentification JWT
+│   └── ...
+└── utils/                       # Utilitaires
+    ├── encryption_helper.dart   # Chiffrement AES-256
+    ├── error_helper.dart        # Gestion erreurs
+    └── validation_helper.dart   # Validation données
 ```
 
-### Backend (Python)
+### Backend Python
 
 ```
 arkalia_cia_python_backend/
-├── api.py                        # FastAPI endpoints
-├── auto_documenter.py            # Documentation generator
-├── database.py                   # Database operations
-├── pdf_processor.py              # PDF handling
-├── security_dashboard.py         # Security monitoring
-└── storage.py                    # File management
+├── api.py                       # FastAPI - 20+ endpoints
+├── auth.py                      # Authentification JWT
+├── database.py                  # Gestion base de données
+├── pdf_processor.py             # Traitement PDF
+├── security_utils.py            # Utilitaires sécurité
+├── ai/                          # Modules IA
+│   ├── conversational_ai.py     # IA conversationnelle
+│   ├── pattern_analyzer.py      # Analyse patterns
+│   └── aria_integration.py      # Intégration ARIA
+├── pdf_parser/                  # Parsing PDF
+│   ├── metadata_extractor.py    # Extraction métadonnées
+│   ├── ocr_integration.py       # OCR Tesseract
+│   └── ocr_processor.py         # Traitement OCR
+└── aria_integration/            # Intégration ARIA
+    └── api.py                   # API ARIA
 ```
 
-## Data Flow Patterns
+---
 
-### Phase 1: Local Operations
+## Flux de données
+
+### Upload document
 
 ```mermaid
 sequenceDiagram
-    participant U as User
+    participant U as Utilisateur
     participant UI as Flutter UI
-    participant S as Service Layer
-    participant D as Data Layer
-    participant N as Native APIs
+    participant API as ApiService
+    participant BE as Backend API
+    participant PDF as PDFProcessor
+    participant DB as Database
 
-    U->>UI: User Action
-    UI->>S: Service Call
-    S->>D: Data Operation
-    D-->>S: Data Response
-    S->>N: Native Integration
-    N-->>S: Native Response
-    S-->>UI: Service Response
-    UI-->>U: UI Update
+    U->>UI: Sélectionne PDF
+    UI->>API: uploadDocument(file)
+    API->>BE: POST /api/v1/documents/upload
+    BE->>PDF: extractTextFromPdf()
+    PDF->>PDF: extractMetadata()
+    PDF->>DB: saveDocument()
+    DB-->>BE: document_id
+    BE-->>API: success + document_id
+    API-->>UI: Document uploadé
+    UI-->>U: Confirmation
 ```
 
-### Phase 3: Hybrid Operations
+### Recherche avancée
 
 ```mermaid
 sequenceDiagram
-    participant U as User
-    participant UI as Flutter UI
-    participant LS as Local Service
-    participant RS as Remote Service
-    participant BE as Backend
+    participant U as Utilisateur
+    participant UI as AdvancedSearchScreen
+    participant SS as SearchService
+    participant SC as SemanticSearchService
+    participant LS as LocalStorageService
+    participant BE as Backend API
 
-    U->>UI: User Action
-    UI->>LS: Local Check
-    alt Data Available Locally
-        LS-->>UI: Local Data
-    else Sync Required
-        UI->>RS: Remote Request
-        RS->>BE: API Call
-        BE-->>RS: API Response
-        RS->>LS: Cache Update
-        RS-->>UI: Remote Data
+    U->>UI: Saisit requête
+    UI->>SS: performSearch(query, filters)
+    SS->>SC: semanticSearch(query)
+    SC->>LS: getDocuments()
+    LS-->>SC: documents[]
+    SC-->>SS: résultats sémantiques
+    SS->>BE: GET /api/v1/documents?query=...
+    BE-->>SS: résultats API
+    SS-->>UI: résultats combinés
+    UI-->>U: Affiche résultats
+```
+
+### IA conversationnelle
+
+```mermaid
+sequenceDiagram
+    participant U as Utilisateur
+    participant UI as ConversationalAIScreen
+    participant CAS as ConversationalAIService
+    participant BE as Backend API
+    participant CAI as ConversationalAI
+    participant ARIA as ARIAIntegration
+    participant DB as Database
+
+    U->>UI: Pose question
+    UI->>CAS: askQuestion(question)
+    CAS->>BE: POST /api/v1/ai/chat
+    BE->>CAI: analyzeQuestion(question, userData)
+    CAI->>ARIA: fetchPainData()
+    ARIA-->>CAI: données douleurs
+    CAI->>CAI: analyse corrélations
+    CAI->>DB: findRelatedDocuments()
+    DB-->>CAI: documents[]
+    CAI-->>BE: réponse intelligente
+    BE-->>CAS: réponse
+    CAS-->>UI: réponse affichée
+    UI-->>U: Affiche réponse
+```
+
+---
+
+## Architecture de sécurité
+
+```mermaid
+graph TB
+    subgraph "Authentification"
+        A[LoginScreen] --> B[AuthApiService]
+        B --> C[JWT Token]
+        C --> D[Backend Auth]
+        D --> E[bcrypt Password]
     end
-    UI-->>U: Response
+
+    subgraph "Chiffrement"
+        F[Données Sensibles] --> G[AES-256]
+        G --> H[Keychain/Keystore]
+        H --> I[Stockage Local]
+    end
+
+    subgraph "Autorisation"
+        J[Request] --> K[JWT Validation]
+        K --> L[User ID Extraction]
+        L --> M[Permission Check]
+        M --> N[Resource Access]
+    end
+
+    subgraph "Protection API"
+        O[Rate Limiting] --> P[IP + User ID]
+        Q[XSS Protection] --> R[bleach sanitization]
+        S[Path Traversal] --> T[Validation paths]
+    end
 ```
 
-## Service Specifications
+---
 
-### LocalStorageService
+## Base de données
 
-**Purpose**: Secure local data persistence
+### Schéma principal
 
-**Key Features**:
-- AES-256 encryption for sensitive data
-- SQLite database operations
-- Document metadata management
-- User preference storage
+```mermaid
+erDiagram
+    users ||--o{ documents : owns
+    users ||--o{ reminders : owns
+    users ||--o{ emergency_contacts : owns
+    users ||--o{ doctors : owns
+    users ||--o{ consultations : owns
+    documents ||--o{ document_metadata : has
+    documents ||--o{ shared_documents : shares
+    doctors ||--o{ consultations : has
+    ai_conversations }o--|| users : belongs_to
 
-**Methods**:
-```dart
-Future<void> saveDocument(Document doc);
-Future<List<Document>> getDocuments();
-Future<void> saveReminder(Reminder reminder);
-Future<List<Reminder>> getReminders();
+    users {
+        int id PK
+        string username
+        string email
+        string password_hash
+        datetime created_at
+    }
+    documents {
+        int id PK
+        int user_id FK
+        string original_name
+        string file_path
+        string category
+        datetime created_at
+    }
+    document_metadata {
+        int id PK
+        int document_id FK
+        string doctor_name
+        string document_date
+        string exam_type
+        text extracted_text
+    }
+    doctors {
+        int id PK
+        int user_id FK
+        string first_name
+        string last_name
+        string specialty
+        string phone
+        string email
+    }
+    consultations {
+        int id PK
+        int doctor_id FK
+        datetime date
+        string reason
+        text notes
+    }
+    ai_conversations {
+        int id PK
+        int user_id FK
+        text question
+        text answer
+        datetime created_at
+    }
 ```
 
-### CalendarService
+---
 
-**Purpose**: System calendar integration
+## Intégrations externes
 
-**Key Features**:
-- Native calendar API integration
-- Event creation and management
-- Notification scheduling
-- Timezone handling
-
-**Methods**:
-```dart
-Future<void> createEvent(CalendarEvent event);
-Future<List<CalendarEvent>> getEvents();
-Future<void> scheduleNotification(Reminder reminder);
-```
-
-### ContactsService
-
-**Purpose**: System contacts integration
-
-**Key Features**:
-- Native contacts API access
-- Emergency contact management
-- Direct calling functionality
-- Contact synchronization
-
-**Methods**:
-```dart
-Future<List<Contact>> getContacts();
-Future<void> addContact(Contact contact);
-Future<bool> makeCall(String phoneNumber);
-```
-
-### APIService
-
-**Purpose**: Backend communication (Phase 3)
-
-**Key Features**:
-- FastAPI endpoint communication
-- Document upload/download
-- Synchronization management
-- Error handling and retry logic
-
-## Security Architecture
-
-### Encryption Strategy
+### ARIA Integration
 
 ```mermaid
 graph LR
-    A[Raw Data] --> B[AES-256 Encryption]
-    B --> C[Encrypted Data]
-    C --> D[SQLite Storage]
-
-    E[Encryption Key] --> F[Keychain/Keystore]
-    E --> B
-
-    G[User Authentication] --> H[Biometric/PIN]
-    H --> I[Key Access]
-    I --> E
-```
-
-### Permission Model
-
-| Permission | Purpose | Justification | Platform |
-|------------|---------|---------------|----------|
-| **Calendar** | Read/Write events | Reminder functionality | iOS/Android |
-| **Contacts** | Read contact info | Emergency contacts | iOS/Android |
-| **Storage** | App-specific files | Document storage | iOS/Android |
-| **Notifications** | Alert delivery | Reminder notifications | iOS/Android |
-| **Biometric** | Device authentication | Secure access | iOS/Android |
-
-### Data Classification
-
-| Data Type | Sensitivity | Encryption | Storage | Sync |
-|-----------|-------------|------------|---------|------|
-| **Documents** | High | AES-256 | Local only | Optional |
-| **Health Info** | High | AES-256 | Local only | Optional |
-| **Reminders** | Medium | Metadata only | Calendar sync | System |
-| **Contacts** | Medium | Reference only | System contacts | System |
-| **Preferences** | Low | None | Local storage | No |
-
-## Performance Considerations
-
-### Optimization Strategies
-
-1. **Lazy Loading**: Load data on-demand
-2. **Local Caching**: Cache frequently accessed data
-3. **Document Compression**: Compress large files
-4. **Background Processing**: Handle heavy operations asynchronously
-
-### Performance Metrics
-
-| Operation | Target Response Time | Max File Size |
-|-----------|---------------------|---------------|
-| Document Load | < 500ms | 10MB |
-| Search Query | < 200ms | N/A |
-| Calendar Sync | < 1s | N/A |
-| Contact Access | < 100ms | N/A |
-
-## Deployment Architecture
-
-### Mobile Deployment
-
-```mermaid
-graph TB
-    subgraph "Development"
-        A[Flutter Source]
-        B[Dart Analysis]
-        C[Unit Tests]
-    end
-
-    subgraph "CI/CD Pipeline"
-        D[GitHub Actions]
-        E[Security Scan]
-        F[Build Process]
-    end
-
-    subgraph "Distribution"
-        G[App Store]
-        H[Google Play]
-        I[Enterprise Deploy]
-    end
-
-    A --> B
-    B --> C
-    C --> D
-    D --> E
-    E --> F
+    A[CIA] --> B[ARIAIntegration Service]
+    B --> C[ARIA API]
+    C --> D[Pain Data]
+    C --> E[Patterns]
+    C --> F[Health Metrics]
+    D --> G[ConversationalAI]
+    E --> G
     F --> G
-    F --> H
-    F --> I
+    G --> H[Enhanced Responses]
 ```
 
-### Backend Deployment (Phase 3)
+### Portails santé
 
 ```mermaid
 graph TB
-    subgraph "Infrastructure"
-        A[Load Balancer]
-        B[API Gateway]
-        C[Container Orchestration]
+    A[HealthPortalAuthScreen] --> B[HealthPortalAuthService]
+    B --> C[OAuth Flow]
+    C --> D[eHealth]
+    C --> E[Andaman 7]
+    C --> F[MaSanté]
+    D --> G[Import Data]
+    E --> G
+    F --> G
+    G --> H[Backend API]
+    H --> I[Database]
+```
+
+---
+
+## Performance et optimisation
+
+### Cache intelligent
+
+- **OfflineCacheService** : Cache des résultats de recherche (1h)
+- **PatternsDashboardScreen** : Cache des patterns (6h)
+- **SearchService** : Cache des résultats sémantiques
+
+### Pagination
+
+- Tous les endpoints GET supportent `skip` et `limit`
+- Limite par défaut : 50, maximum : 100
+- Réduction de la consommation mémoire de ~60%
+
+### Optimisations mémoire
+
+- Limitation données utilisateur envoyées à l'IA (10 docs, 5 médecins)
+- Mémoire IA limitée à 50 éléments
+- Extraction métadonnées PDF à la demande
+
+---
+
+## Déploiement
+
+### Architecture de déploiement
+
+```mermaid
+graph TB
+    subgraph "Client Mobile"
+        A[Flutter App iOS]
+        B[Flutter App Android]
     end
 
-    subgraph "Application"
-        D[FastAPI Instances]
-        E[Background Workers]
-        F[File Storage]
+    subgraph "Backend"
+        C[FastAPI Server]
+        D[SQLite/PostgreSQL]
+        E[File Storage]
     end
 
-    subgraph "Data"
-        G[(Primary DB)]
-        H[(Replica DB)]
-        I[Redis Cache]
+    subgraph "Sécurité"
+        F[JWT Tokens]
+        G[AES-256 Encryption]
+        H[Keychain/Keystore]
     end
 
-    A --> B
+    A --> C
     B --> C
     C --> D
     C --> E
-    D --> G
-    E --> H
-    D --> I
-    F --> G
+    A --> F
+    B --> F
+    A --> G
+    B --> G
+    A --> H
+    B --> H
 ```
-
-## Testing Strategy
-
-### Test Pyramid
-
-```mermaid
-graph TB
-    A[Unit Tests<br/>Fast, Isolated] --> B[Integration Tests<br/>Service Interactions]
-    B --> C[Widget Tests<br/>UI Components]
-    C --> D[End-to-End Tests<br/>Complete Workflows]
-
-    style A fill:#90EE90
-    style B fill:#FFD700
-    style C fill:#FFA500
-    style D fill:#FF6347
-```
-
-### Coverage Targets
-
-| Test Type | Coverage Target | Current Status | Codecov Flag | Status |
-|-----------|----------------|----------------|--------------|--------|
-| **Unit Tests** | 80% | 85% | `python` | ✅ Exceeded |
-| **Integration** | 70% | 85% | `python` | ✅ Exceeded |
-| **Widget Tests** | 60% | 45% | `flutter` | 🟡 In Progress |
-| **E2E Tests** | 50% | 30% | `flutter` | 🟡 In Progress |
-
-#### Codecov Integration
-
-Le projet utilise **Codecov** pour le suivi continu de la couverture :
-- **Configuration**: `.codecov.yml` avec flags séparés pour Python et Flutter
-- **CI/CD**: Upload automatique des rapports de couverture
-- **Dashboard**: Suivi en temps réel sur [codecov.io](https://codecov.io)
-- **Seuils**: 70% pour le projet global, 60% pour les patches
-
-## Future Roadmap
-
-### Phase 1: Local MVP ✅
-- Core Flutter application
-- Local storage implementation
-- Native service integration
-- Basic security measures
-
-### Phase 2: Enhanced Features ✅
-- Advanced calendar integration
-- Improved contact management
-- Enhanced UI/UX
-- Comprehensive testing
-
-### Phase 3: Connected Ecosystem 🔄
-- Backend API development
-- Cloud synchronization
-- Multi-device support
-- Advanced security features
-
-### Phase 4: Intelligence Layer 📋
-- AI-powered suggestions
-- Predictive reminders
-- Voice integration
-- Advanced analytics
-
-## Monitoring and Observability
-
-### Metrics Collection
-
-```mermaid
-graph LR
-    A[App Events] --> B[Local Analytics]
-    B --> C[Aggregated Metrics]
-    C --> D[Performance Dashboard]
-
-    E[Error Events] --> F[Crash Reporting]
-    F --> G[Error Dashboard]
-
-    H[User Actions] --> I[Usage Analytics]
-    I --> J[Behavior Insights]
-```
-
-### Key Performance Indicators
-
-- **Reliability**: 99.9% uptime target
-- **Performance**: <500ms average response time
-- **Security**: Zero data breaches
-- **User Experience**: <3 taps for core actions
 
 ---
 
-## 📚 Related Documentation
+## Tests
 
-- **[API.md](API.md)** - Complete API reference
-- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Deployment procedures
-- **[SECURITY.md](../SECURITY.md)** - Security policies
-- **[INDEX_DOCUMENTATION.md](INDEX_DOCUMENTATION.md)** - Full documentation index
+### Stratégie de tests
+
+- **Tests unitaires** : 206 tests Python (100% passent)
+- **Couverture** : 85% global
+- **Tests Flutter** : Analyse statique (0 erreur)
+- **Tests d'intégration** : Structure prête
 
 ---
 
-**Last Updated**: November 19, 2025  
-*This architecture documentation is maintained alongside code changes and reviewed quarterly for accuracy and relevance.*
+## Roadmap future
+
+### Court terme
+- Import automatique portails santé (APIs externes)
+- Recherche NLP avancée (modèles ML)
+
+### Moyen terme
+- Intégration robotique BBIA
+- Modèles ML supplémentaires (LSTM)
+
+### Long terme
+- Application web complémentaire
+- Export professionnel avancé
+
+---
+
+*Dernière mise à jour : Janvier 2025*

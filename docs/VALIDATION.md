@@ -1,14 +1,14 @@
-# ✅ Documentation Validation - Arkalia CIA
+# Validation documentation
 
-> **Quality assurance and validation checklist for project documentation**
+**Version** : 1.2.0  
+**Dernière mise à jour** : 19 novembre 2025  
+**Statut** : Validated
 
-**Last Updated**: November 19, 2025  
-**Version**: 1.2.0  
-**Status**: ✅ **Validated**
+Checklist d'assurance qualité et de validation pour la documentation du projet.
 
 ---
 
-## 📋 Table of Contents
+## Table des matières
 
 1. [Consistency Checklist](#consistency-checklist)
 2. [Technical Validation](#technical-validation)

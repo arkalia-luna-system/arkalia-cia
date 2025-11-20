@@ -3,6 +3,7 @@ Tests unitaires pour les endpoints AI de l'API
 """
 
 from pathlib import Path
+from typing import Any
 
 import pytest
 from fastapi.testclient import TestClient
@@ -43,9 +44,7 @@ class TestAIChatEndpoint:
         # Créer un utilisateur de test avec mot de passe court pour éviter problèmes bcrypt
         import bcrypt
 
-        password_hash = bcrypt.hashpw(
-            b"test123", bcrypt.gensalt()
-        ).decode("utf-8")
+        password_hash = bcrypt.hashpw(b"test123", bcrypt.gensalt()).decode("utf-8")
         user_id = api.db.create_user(
             username="testuser", password_hash=password_hash, email="test@example.com"
         )
@@ -116,35 +115,40 @@ class TestPatternAnalysisEndpoint:
         return TestClient(api.app)
 
     @pytest.fixture
-    def auth_token(self):
-        """Créer un utilisateur de test et retourner un token"""
+    def temp_db(self):
+        """Créer une base de données temporaire"""
         import uuid
-
-        import bcrypt
+        from pathlib import Path
 
         test_db_dir = Path.cwd() / "test_temp"
         test_db_dir.mkdir(exist_ok=True)
         db_path = str(test_db_dir / f"test_{uuid.uuid4().hex}.db")
+
         original_db = api.db
         api.db = CIADatabase(db_path=db_path)
+        yield db_path
+        api.db = original_db
+        if Path(db_path).exists():
+            Path(db_path).unlink()
+
+    @pytest.fixture
+    def auth_token(self, temp_db):
+        """Créer un utilisateur de test et retourner un token"""
+        import bcrypt
+
         # Utiliser bcrypt directement pour éviter problèmes avec passlib
-        password_hash = bcrypt.hashpw(
-            b"test123", bcrypt.gensalt()
-        ).decode("utf-8")
+        password_hash = bcrypt.hashpw(b"test123", bcrypt.gensalt()).decode("utf-8")
         user_id = api.db.create_user(
             username="testuser", password_hash=password_hash, email="test@example.com"
         )
         token = create_access_token(
             data={"sub": str(user_id), "username": "testuser", "role": "user"}
         )
-        yield token
-        api.db = original_db
-        if Path(db_path).exists():
-            Path(db_path).unlink()
+        return token
 
-    def test_pattern_analysis_basic(self, client, auth_token):
+    def test_pattern_analysis_basic(self, client, temp_db, auth_token):
         """Test d'analyse de patterns basique"""
-        pattern_data = {
+        pattern_data: dict[str, Any] = {
             "data": [
                 {"date": "2024-01-01", "value": 5},
                 {"date": "2024-01-02", "value": 6},
@@ -159,16 +163,16 @@ class TestPatternAnalysisEndpoint:
         data = response.json()
         assert isinstance(data, dict)
 
-    def test_pattern_analysis_empty_data(self, client, auth_token):
+    def test_pattern_analysis_empty_data(self, client, temp_db, auth_token):
         """Test d'analyse de patterns avec données vides"""
-        pattern_data = {"data": []}
+        pattern_data: dict[str, list] = {"data": []}
         headers = {"Authorization": f"Bearer {auth_token}"}
         response = client.post(
             "/api/v1/patterns/analyze", json=pattern_data, headers=headers
         )
         assert response.status_code == 400
 
-    def test_pattern_analysis_missing_data(self, client, auth_token):
+    def test_pattern_analysis_missing_data(self, client, temp_db, auth_token):
         """Test d'analyse de patterns sans données"""
         headers = {"Authorization": f"Bearer {auth_token}"}
         response = client.post("/api/v1/patterns/analyze", json={}, headers=headers)
@@ -196,9 +200,7 @@ class TestPrepareAppointmentEndpoint:
         original_db = api.db
         api.db = CIADatabase(db_path=db_path)
         # Utiliser bcrypt directement pour éviter problèmes avec passlib
-        password_hash = bcrypt.hashpw(
-            b"test123", bcrypt.gensalt()
-        ).decode("utf-8")
+        password_hash = bcrypt.hashpw(b"test123", bcrypt.gensalt()).decode("utf-8")
         user_id = api.db.create_user(
             username="testuser", password_hash=password_hash, email="test@example.com"
         )
@@ -292,9 +294,7 @@ class TestAIConversationsEndpoint:
         import bcrypt
 
         # Utiliser bcrypt directement pour éviter problèmes avec passlib
-        password_hash = bcrypt.hashpw(
-            b"test123", bcrypt.gensalt()
-        ).decode("utf-8")
+        password_hash = bcrypt.hashpw(b"test123", bcrypt.gensalt()).decode("utf-8")
         user_id = api.db.create_user(
             username="testuser", password_hash=password_hash, email="test@example.com"
         )
@@ -341,9 +341,7 @@ class TestPatternPredictEventsEndpoint:
         original_db = api.db
         api.db = CIADatabase(db_path=db_path)
         # Utiliser bcrypt directement pour éviter problèmes avec passlib
-        password_hash = bcrypt.hashpw(
-            b"test123", bcrypt.gensalt()
-        ).decode("utf-8")
+        password_hash = bcrypt.hashpw(b"test123", bcrypt.gensalt()).decode("utf-8")
         user_id = api.db.create_user(
             username="testuser", password_hash=password_hash, email="test@example.com"
         )
@@ -409,9 +407,7 @@ class TestHealthPortalImportEndpoint:
         original_db = api.db
         api.db = CIADatabase(db_path=db_path)
         # Utiliser bcrypt directement pour éviter problèmes avec passlib
-        password_hash = bcrypt.hashpw(
-            b"test123", bcrypt.gensalt()
-        ).decode("utf-8")
+        password_hash = bcrypt.hashpw(b"test123", bcrypt.gensalt()).decode("utf-8")
         user_id = api.db.create_user(
             username="testuser", password_hash=password_hash, email="test@example.com"
         )

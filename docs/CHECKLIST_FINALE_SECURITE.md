@@ -1,14 +1,15 @@
-# ✅ CHECKLIST FINALE DE SÉCURITÉ - ARKALIA CIA
+# Checklist sécurité
 
-**Date**: Janvier 2025  
-**Version**: 1.3.0  
-**Status**: ✅ **PRODUCTION READY**
+**Version** : 1.3.0  
+**Date** : Janvier 2025  
+**Statut** : Production Ready
 
 ---
 
-## 🔒 CORRECTIONS DE SÉCURITÉ
+## Corrections de sécurité
 
-### Authentification & Authorization
+### Authentification et autorisation
+
 - [x] Système JWT complet implémenté (`auth.py`)
 - [x] Endpoints d'authentification créés (`/api/v1/auth/*`)
 - [x] Tous les endpoints sensibles protégés avec `Depends(get_current_active_user)`
@@ -17,20 +18,23 @@
 - [x] Tokens avec expiration (30 min access, 7 jours refresh)
 - [x] Vérification des permissions par utilisateur
 
-### Validation & Sanitization
+### Validation et sanitization
+
 - [x] Validation fichiers par magic number (`%PDF`)
 - [x] Protection XSS avec bibliothèque `bleach`
 - [x] Validation téléphone internationale avec `phonenumbers`
 - [x] Sanitization HTML dans tous les validators
 - [x] Path traversal protection dans `database.py`
 
-### Rate Limiting & DoS Protection
+### Rate limiting et protection DoS
+
 - [x] Rate limiting par utilisateur (IP + user_id)
 - [x] Extraction automatique du user_id depuis le token JWT
 - [x] Limites configurées par endpoint
 - [x] Vérification taille des requêtes (Content-Length)
 
-### API & Architecture
+### API et architecture
+
 - [x] Versioning API (`/api/v1/`)
 - [x] CORS configurable via variables d'environnement
 - [x] Gestion d'erreurs améliorée (`exceptions.py`)
@@ -38,16 +42,18 @@
 
 ---
 
-## 📦 DÉPENDANCES
+## Dépendances
 
 ### Sécurité
-- [x] `passlib[bcrypt]==1.7.4` - Hashing de mots de passe
-- [x] `PyJWT==2.9.0` - JWT tokens
-- [x] `python-jose[cryptography]==3.3.0` - Alternative JWT
-- [x] `bleach==6.1.0` - Sanitization HTML/XSS
-- [x] `phonenumbers==8.13.27` - Validation téléphone
+
+- [x] `passlib[bcrypt]==1.7.4` — Hashing de mots de passe
+- [x] `PyJWT==2.9.0` — JWT tokens
+- [x] `python-jose[cryptography]==3.3.0` — Alternative JWT
+- [x] `bleach==6.1.0` — Sanitization HTML/XSS
+- [x] `phonenumbers==8.13.27` — Validation téléphone
 
 ### Installation
+
 ```bash
 pip install -r requirements.txt
 ```

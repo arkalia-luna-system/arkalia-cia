@@ -1,14 +1,14 @@
-# 📱 Android Release Build Guide - Arkalia CIA
+# Guide build release Android
 
-> **Complete guide for building production-ready Android releases**
+**Version** : 1.2.0  
+**Dernière mise à jour** : 19 novembre 2025  
+**Cible** : Google Play Store
 
-**Last Updated**: November 19, 2025  
-**Version**: 1.2.0  
-**Target**: Google Play Store
+Guide complet pour construire des releases Android prêtes pour la production.
 
 ---
 
-## 📋 Table of Contents
+## Table des matières
 
 1. [Pre-Build Checklist](#pre-build-checklist)
 2. [Build Commands](#build-commands)

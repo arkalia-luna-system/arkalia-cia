@@ -1,41 +1,42 @@
-# 🔒 AUDIT DE SÉCURITÉ - VUE CRITIQUE SENIOR
+# Audit de sécurité — Vue critique senior
 
-**Date**: 2025-01-XX  
-**Auditeur**: Senior Dev Strict (Mode Critique)  
-**Application**: Arkalia CIA Backend  
-**Niveau de sévérité**: 🔴 CRITIQUE | 🟠 ÉLEVÉ | 🟡 MOYEN | 🟢 FAIBLE
+**Date** : Janvier 2025  
+**Auditeur** : Senior Dev Strict (Mode Critique)  
+**Application** : Arkalia CIA Backend  
+**Niveau de sévérité** : CRITIQUE | ÉLEVÉ | MOYEN | FAIBLE
 
 ---
 
-## 🚨 PROBLÈMES CRITIQUES (À CORRIGER IMMÉDIATEMENT)
+## Problèmes critiques (À corriger immédiatement)
 
-### 1. 🔴 ABSENCE TOTALE D'AUTHENTIFICATION ET D'AUTHORIZATION
+### 1. Absence totale d'authentification et d'authorization
 
-**Problème**: Aucun endpoint n'est protégé par authentification. N'importe qui peut :
+**Problème** : Aucun endpoint n'est protégé par authentification. N'importe qui peut :
 - Uploader des documents
 - Supprimer des documents
 - Accéder à toutes les données médicales
 - Créer/modifier/supprimer des rappels, contacts d'urgence, portails santé
 
-**Code problématique**:
+**Code problématique** :
+
 ```python
 @app.post("/api/documents/upload")
 async def upload_document(request: Request, file: UploadFile = File(...)):
     # AUCUNE VÉRIFICATION D'AUTHENTIFICATION
 ```
 
-**Impact**: 
+**Impact** :
 - Violation massive de données médicales (RGPD)
 - N'importe qui peut accéder aux données de n'importe qui
 - Pas de traçabilité des actions
 
-**Solution requise**:
+**Solution requise** :
 - Implémenter JWT ou OAuth2
 - Ajouter un middleware d'authentification
-- Vérifier les tokens sur TOUS les endpoints sensibles
+- Vérifier les tokens sur tous les endpoints sensibles
 - Ajouter un système de permissions (RBAC)
 
-**Sévérité**: 🔴 CRITIQUE - Bloque la mise en production
+**Sévérité** : CRITIQUE — Bloque la mise en production
 
 ---
 

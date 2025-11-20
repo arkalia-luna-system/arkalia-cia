@@ -1,22 +1,91 @@
-# 📚 Documentation API Arkalia CIA
+# Documentation API — Arkalia CIA
 
-> **Version** : 1.2.0  
-> **Date** : 20 novembre 2025  
-> **Base URL** : `http://localhost:8000` (développement) ou configurée via `BackendConfigService`
+**Version** : 1.3.1  
+**Date** : Janvier 2025  
+**Base URL** : `http://localhost:8000` (développement) ou configurée via `BackendConfigService`  
+**Version API** : `/api/v1/`
 
-## 🔐 Authentification
+Documentation complète de l'API REST d'Arkalia CIA.
 
-Tous les endpoints (sauf `/` et `/health`) nécessitent une authentification via token JWT.
+---
 
-### Obtenir un token
+## Table des matières
+
+1. [Authentification](#authentification)
+2. [Endpoints Documents](#endpoints-documents)
+3. [Endpoints Médecins](#endpoints-médecins)
+4. [Endpoints Rappels](#endpoints-rappels)
+5. [Endpoints Contacts Urgence](#endpoints-contacts-urgence)
+6. [Endpoints Portails Santé](#endpoints-portails-santé)
+7. [Endpoints IA](#endpoints-ia)
+8. [Endpoints Patterns](#endpoints-patterns)
+9. [Gestion d'erreurs](#gestion-derreurs)
+10. [Rate Limiting](#rate-limiting)
+
+---
+
+## Authentification
+
+Tous les endpoints (sauf `/`, `/health` et `/api/v1/auth/*`) nécessitent une authentification via token JWT.
+
+### Flux d'authentification
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant API as Backend API
+    participant DB as Database
+
+    C->>API: POST /api/v1/auth/register
+    API->>DB: Créer utilisateur
+    DB-->>API: Utilisateur créé
+    API-->>C: 201 Created
+
+    C->>API: POST /api/v1/auth/login
+    API->>DB: Vérifier credentials
+    DB-->>API: Utilisateur valide
+    API->>API: Générer JWT
+    API-->>C: access_token + refresh_token
+
+    C->>API: GET /api/v1/documents (avec token)
+    API->>API: Valider JWT
+    API->>DB: Récupérer documents
+    DB-->>API: Documents
+    API-->>C: 200 OK + données
+```
+
+### Inscription
 
 ```http
-POST /api/auth/login
+POST /api/v1/auth/register
 Content-Type: application/json
 
 {
   "username": "utilisateur",
-  "password": "motdepasse"
+  "email": "user@example.com",
+  "password": "motdepasse123"
+}
+```
+
+**Réponse** :
+```json
+{
+  "id": 1,
+  "username": "utilisateur",
+  "email": "user@example.com",
+  "created_at": "2025-01-20T10:00:00"
+}
+```
+
+### Connexion
+
+```http
+POST /api/v1/auth/login
+Content-Type: application/json
+
+{
+  "username": "utilisateur",
+  "password": "motdepasse123"
 }
 ```
 
@@ -24,25 +93,38 @@ Content-Type: application/json
 ```json
 {
   "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
   "token_type": "bearer"
+}
+```
+
+### Rafraîchir le token
+
+```http
+POST /api/v1/auth/refresh
+Content-Type: application/json
+
+{
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
 
 ### Utiliser le token
 
-Ajouter dans les headers :
+Ajouter dans les headers de toutes les requêtes authentifiées :
+
 ```
 Authorization: Bearer <access_token>
 ```
 
 ---
 
-## 📄 Endpoints Documents
+## Endpoints Documents
 
-### Upload Document
+### Upload document
 
 ```http
-POST /api/documents/upload
+POST /api/v1/documents/upload
 Content-Type: multipart/form-data
 Authorization: Bearer <token>
 
@@ -55,20 +137,31 @@ category: examen|ordonnance|consultation|autre
 {
   "success": true,
   "document_id": 123,
-  "message": "Document uploadé avec succès"
+  "message": "Document uploadé avec succès",
+  "metadata": {
+    "doctor_name": "Dr. Dupont",
+    "document_date": "2025-01-15",
+    "exam_type": "Analyse sanguine"
+  }
 }
 ```
 
-### Liste Documents
+**Traitement** :
+- Extraction texte PDF
+- OCR automatique si PDF scanné
+- Extraction métadonnées (médecin, date, type)
+- Association automatique avec médecin si trouvé
+
+### Liste documents
 
 ```http
-GET /api/documents?skip=0&limit=50
+GET /api/v1/documents?skip=0&limit=50
 Authorization: Bearer <token>
 ```
 
 **Paramètres** :
 - `skip` (int, optionnel) : Nombre de documents à ignorer (défaut: 0)
-- `limit` (int, optionnel) : Nombre maximum de documents (défaut: 50, max: 100)
+- `limit` (int, optionnel) : Nombre maximum (défaut: 50, max: 100)
 
 **Réponse** :
 ```json
@@ -76,35 +169,174 @@ Authorization: Bearer <token>
   {
     "id": 1,
     "original_name": "examen_sanguin.pdf",
-    "file_path": "uploads/...",
+    "file_path": "uploads/user_1/doc_1.pdf",
     "category": "examen",
-    "created_at": "2024-01-01T10:00:00"
+    "created_at": "2025-01-20T10:00:00",
+    "metadata": {
+      "doctor_name": "Dr. Martin",
+      "document_date": "2025-01-15",
+      "exam_type": "Analyse sanguine"
+    }
   }
 ]
 ```
 
-### Récupérer Document
+### Récupérer document
 
 ```http
-GET /api/documents/{doc_id}
+GET /api/v1/documents/{doc_id}
 Authorization: Bearer <token>
 ```
 
-### Supprimer Document
+**Réponse** : Document complet avec métadonnées
+
+### Supprimer document
 
 ```http
-DELETE /api/documents/{doc_id}
+DELETE /api/v1/documents/{doc_id}
+Authorization: Bearer <token>
+```
+
+**Réponse** :
+```json
+{
+  "success": true,
+  "message": "Document supprimé avec succès"
+}
+```
+
+---
+
+## Endpoints Médecins
+
+Les médecins sont gérés côté client (Flutter) via `DoctorService` et stockés localement en SQLite. Pas d'endpoints backend dédiés actuellement.
+
+---
+
+## Endpoints Rappels
+
+### Créer rappel
+
+```http
+POST /api/v1/reminders
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{
+  "title": "Prise médicament",
+  "description": "Prendre médicament X",
+  "reminder_date": "2025-01-25T08:00:00",
+  "is_recurring": true,
+  "recurrence_pattern": "daily"
+}
+```
+
+**Réponse** :
+```json
+{
+  "id": 1,
+  "title": "Prise médicament",
+  "reminder_date": "2025-01-25T08:00:00",
+  "is_recurring": true,
+  "created_at": "2025-01-20T10:00:00"
+}
+```
+
+### Liste rappels
+
+```http
+GET /api/v1/reminders?skip=0&limit=50
+Authorization: Bearer <token>
+```
+
+**Paramètres** : `skip`, `limit` (pagination)
+
+---
+
+## Endpoints Contacts Urgence
+
+### Créer contact urgence
+
+```http
+POST /api/v1/emergency-contacts
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{
+  "name": "Jean Dupont",
+  "phone": "+32470123456",
+  "relationship": "Fils",
+  "is_ice": true
+}
+```
+
+### Liste contacts urgence
+
+```http
+GET /api/v1/emergency-contacts?skip=0&limit=50
 Authorization: Bearer <token>
 ```
 
 ---
 
-## 🤖 Endpoints IA
+## Endpoints Portails Santé
 
-### Chat Conversationnel
+### Créer portail santé
 
 ```http
-POST /api/ai/chat
+POST /api/v1/health-portals
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{
+  "name": "eHealth",
+  "portal_type": "ehealth",
+  "access_token": "token_oauth"
+}
+```
+
+### Liste portails santé
+
+```http
+GET /api/v1/health-portals?skip=0&limit=50
+Authorization: Bearer <token>
+```
+
+### Importer depuis portail
+
+```http
+POST /api/v1/health-portals/import
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{
+  "portal": "eHealth",
+  "data": {
+    "documents": [...],
+    "consultations": [...],
+    "exams": [...]
+  }
+}
+```
+
+**Réponse** :
+```json
+{
+  "success": true,
+  "documents_imported": 15,
+  "consultations_imported": 8,
+  "exams_imported": 12
+}
+```
+
+---
+
+## Endpoints IA
+
+### Chat conversationnel
+
+```http
+POST /api/v1/ai/chat
 Content-Type: application/json
 Authorization: Bearer <token>
 
@@ -123,17 +355,51 @@ Authorization: Bearer <token>
 ```json
 {
   "answer": "Voici vos derniers examens...",
-  "related_documents": ["doc1", "doc2"],
-  "suggestions": ["Question 1", "Question 2"],
-  "patterns_detected": {},
+  "related_documents": [1, 2, 3],
+  "suggestions": [
+    "Quand était mon dernier examen ?",
+    "Quels médecins ai-je consultés récemment ?"
+  ],
+  "patterns_detected": {
+    "type": "temporal",
+    "description": "Examens plus fréquents en hiver"
+  },
   "question_type": "exam"
 }
 ```
 
-### Préparer Rendez-vous
+**Types de questions supportées** :
+- `exam` : Questions sur examens
+- `doctor` : Questions sur médecins
+- `pain` : Questions sur douleurs (avec intégration ARIA)
+- `medication` : Questions sur médicaments
+- `appointment` : Questions sur rendez-vous
+- `cause_effect` : Analyse cause-effet (avec ARIA)
+
+### Historique conversations
 
 ```http
-POST /api/ai/prepare-appointment
+GET /api/v1/ai/conversations?limit=20
+Authorization: Bearer <token>
+```
+
+**Réponse** :
+```json
+[
+  {
+    "id": 1,
+    "question": "Quels sont mes derniers examens ?",
+    "answer": "Voici vos derniers examens...",
+    "question_type": "exam",
+    "created_at": "2025-01-20T10:00:00"
+  }
+]
+```
+
+### Préparer rendez-vous
+
+```http
+POST /api/v1/ai/prepare-appointment
 Content-Type: application/json
 Authorization: Bearer <token>
 
@@ -141,7 +407,8 @@ Authorization: Bearer <token>
   "doctor_id": "doc123",
   "user_data": {
     "consultations": [...],
-    "doctors": [...]
+    "doctors": [...],
+    "documents": [...]
   }
 }
 ```
@@ -151,251 +418,171 @@ Authorization: Bearer <token>
 {
   "questions": [
     "Quels sont vos symptômes actuels ?",
-    "Y a-t-il eu des changements depuis votre dernière visite ?"
+    "Avez-vous pris vos médicaments régulièrement ?",
+    "Y a-t-il eu des changements depuis la dernière consultation ?"
+  ],
+  "suggestions": [
+    "Apporter les derniers examens",
+    "Noter les questions avant le rendez-vous"
   ]
 }
 ```
 
-### Historique Conversations
-
-```http
-GET /api/ai/conversations?limit=50
-Authorization: Bearer <token>
-```
-
-**Paramètres** :
-- `limit` (int, optionnel) : Nombre maximum de conversations (défaut: 50, max: 100)
-
 ---
 
-## 📊 Endpoints Patterns
+## Endpoints Patterns
 
-### Analyser Patterns
+### Analyser patterns
 
 ```http
-POST /api/patterns/analyze
+POST /api/v1/patterns/analyze
 Content-Type: application/json
 Authorization: Bearer <token>
 
 {
-  "data": [
-    {"date": "2024-01-01", "value": 5, "type": "document"},
-    {"date": "2024-01-15", "value": 6, "type": "document"}
-  ]
-}
-```
-
-**Réponse** :
-```json
-{
-  "recurring_patterns": [
-    {
-      "type": "document",
-      "frequency_days": 14,
-      "confidence": 0.85
-    }
-  ],
-  "trends": {
-    "direction": "increasing",
-    "strength": 0.5,
-    "slope": 0.1
-  },
-  "seasonality": {
-    "peak_month": 1,
-    "peak_count": 5
-  },
-  "predictions": {
-    "periods": 30,
-    "predictions": [
-      {
-        "date": "2024-02-15T00:00:00",
-        "predicted_value": 7.0,
-        "lower_bound": 5.0,
-        "upper_bound": 9.0
-      }
-    ],
-    "trend": {
-      "direction": "increasing",
-      "strength": 0.5
-    }
+  "data": {
+    "pain_records": [...],
+    "consultations": [...],
+    "medications": [...]
   }
 }
 ```
 
-### Prédire Événements Futurs
-
-```http
-POST /api/patterns/predict-events
-Content-Type: application/json
-Authorization: Bearer <token>
-
-{
-  "data": [
-    {"date": "2024-01-01", "value": 1, "type": "document"},
-    {"date": "2024-01-15", "value": 1, "type": "document"}
-  ],
-  "event_type": "document",
-  "days_ahead": 30
-}
-```
-
 **Réponse** :
 ```json
 {
-  "predicted_dates": [
-    "2024-02-01T00:00:00",
-    "2024-02-15T00:00:00"
+  "patterns": [
+    {
+      "type": "temporal",
+      "description": "Douleurs plus fréquentes en hiver",
+      "confidence": 0.85,
+      "frequency": "monthly"
+    }
   ],
-  "confidence": 0.85,
-  "pattern_based": true
-}
-```
-
----
-
-## 🏥 Endpoints Portails Santé
-
-### Créer Portail
-
-```http
-POST /api/health-portals
-Content-Type: application/json
-Authorization: Bearer <token>
-
-{
-  "name": "eHealth",
-  "url": "https://www.ehealth.fgov.be",
-  "description": "Portail santé belge",
-  "category": "officiel"
-}
-```
-
-### Liste Portails
-
-```http
-GET /api/health-portals?skip=0&limit=50
-Authorization: Bearer <token>
-```
-
-### Importer Données Portail
-
-```http
-POST /api/health-portals/import
-Content-Type: application/json
-Authorization: Bearer <token>
-
-{
-  "portal": "eHealth",
-  "data": {
-    "documents": [
-      {
-        "name": "Document 1",
-        "date": "2024-01-01",
-        "type": "examen"
-      }
-    ],
-    "consultations": [],
-    "exams": []
+  "trends": {
+    "direction": "increasing",
+    "description": "Augmentation des consultations"
   },
-  "access_token": "token_oauth_optional"
+  "seasonality": {
+    "peak_months": [11, 12, 1],
+    "description": "Pic en hiver"
+  }
+}
+```
+
+### Prédire événements futurs
+
+```http
+POST /api/v1/patterns/predict-events
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{
+  "data": {
+    "pain_records": [...],
+    "consultations": [...]
+  },
+  "prediction_days": 30
 }
 ```
 
 **Réponse** :
 ```json
 {
-  "success": true,
-  "imported_count": 1,
-  "portal": "ehealth",
-  "errors": [],
-  "message": "1 élément(s) importé(s) depuis ehealth"
+  "predictions": [
+    {
+      "date": "2025-02-15",
+      "event_type": "pain_episode",
+      "probability": 0.75,
+      "confidence": 0.82
+    }
+  ],
+  "model": "prophet",
+  "accuracy": 0.78
 }
 ```
 
 ---
 
-## 📅 Endpoints Rappels
+## Gestion d'erreurs
 
-### Créer Rappel
+### Codes de statut HTTP
 
-```http
-POST /api/reminders
-Content-Type: application/json
-Authorization: Bearer <token>
+| Code | Signification |
+|------|--------------|
+| `200` | Succès |
+| `201` | Créé avec succès |
+| `400` | Requête invalide |
+| `401` | Non authentifié |
+| `403` | Accès interdit |
+| `404` | Ressource non trouvée |
+| `422` | Erreur de validation |
+| `429` | Trop de requêtes (rate limit) |
+| `500` | Erreur serveur |
 
+### Format d'erreur
+
+```json
 {
-  "title": "Rendez-vous médecin",
-  "description": "Consultation cardiologue",
-  "reminder_date": "2024-12-01T10:00:00",
-  "category": "consultation"
+  "detail": "Message d'erreur détaillé",
+  "error_code": "VALIDATION_ERROR",
+  "field": "email"
 }
 ```
 
-### Liste Rappels
+---
 
-```http
-GET /api/reminders?skip=0&limit=50
-Authorization: Bearer <token>
+## Rate Limiting
+
+Tous les endpoints sont protégés par un rate limiting :
+
+- **Par IP** : 100 requêtes/minute
+- **Par utilisateur** : 200 requêtes/minute
+- **Endpoints sensibles** : 10 requêtes/minute
+
+En cas de dépassement, réponse `429 Too Many Requests` avec header `Retry-After`.
+
+---
+
+## Schéma de flux complet
+
+```mermaid
+graph TB
+    subgraph "Client Flutter"
+        A[Écran UI] --> B[Service]
+        B --> C[ApiService]
+    end
+
+    subgraph "Backend API"
+        C --> D[FastAPI Router]
+        D --> E[Auth Middleware]
+        E --> F[Rate Limiter]
+        F --> G[Endpoint Handler]
+    end
+
+    subgraph "Traitement"
+        G --> H[PDFProcessor]
+        G --> I[ConversationalAI]
+        G --> J[PatternAnalyzer]
+        G --> K[ARIAIntegration]
+    end
+
+    subgraph "Données"
+        H --> L[(Database)]
+        I --> L
+        J --> L
+        K --> M[ARIA API]
+    end
+
+    L --> G
+    G --> F
+    F --> E
+    E --> D
+    D --> C
+    C --> B
+    B --> A
 ```
 
 ---
 
-## 🚨 Endpoints Contacts Urgence
-
-### Créer Contact
-
-```http
-POST /api/emergency-contacts
-Content-Type: application/json
-Authorization: Bearer <token>
-
-{
-  "name": "Jean Dupont",
-  "phone": "+32123456789",
-  "relationship": "conjoint",
-  "is_primary": true
-}
-```
-
-### Liste Contacts
-
-```http
-GET /api/emergency-contacts?skip=0&limit=50
-Authorization: Bearer <token>
-```
-
----
-
-## ⚠️ Codes d'Erreur
-
-- `400` : Requête invalide
-- `401` : Non authentifié
-- `403` : Accès interdit
-- `404` : Ressource non trouvée
-- `422` : Erreur de validation
-- `429` : Trop de requêtes (rate limit)
-- `500` : Erreur serveur
-
----
-
-## 🔒 Rate Limiting
-
-- `/api/documents/upload` : 10/minute
-- `/api/ai/chat` : 30/minute
-- `/api/patterns/analyze` : 30/minute
-- `/api/health-portals/import` : 10/minute
-- Autres endpoints : 60/minute
-
----
-
-## 📝 Notes
-
-- Tous les timestamps sont au format ISO 8601
-- Les dates sont en UTC
-- Les fichiers PDF sont limités à 10MB par défaut
-- La pagination est recommandée pour les grandes listes
-
----
-
-*Documentation générée le 20 novembre 2025*
-
+*Dernière mise à jour : Janvier 2025*

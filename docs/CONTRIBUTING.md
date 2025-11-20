@@ -1,13 +1,13 @@
-# Contributing Guide
+# Guide de contribution
 
-> **Arkalia CIA** - Contribution guidelines and development standards
+**Version** : 1.2.0  
+**Dernière mise à jour** : 19 novembre 2025
 
-**Last Updated**: November 19, 2025  
-**Version**: 1.2.0
+Guide des contributions et standards de développement pour Arkalia CIA.
 
 ---
 
-## 📋 Table of Contents
+## Table des matières
 
 1. [Welcome Contributors](#welcome-contributors)
 2. [Code of Conduct](#code-of-conduct)

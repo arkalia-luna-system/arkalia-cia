@@ -1,14 +1,14 @@
-# Deployment Guide
+# Guide de déploiement
 
-> **Arkalia CIA** - Production deployment procedures and best practices
+**Version** : 1.2.0  
+**Dernière mise à jour** : 19 novembre 2025  
+**Statut** : Production Ready
 
-**Last Updated**: November 19, 2025  
-**Version**: 1.2.0  
-**Status**: ✅ **Production Ready**
+Procédures de déploiement en production et bonnes pratiques pour Arkalia CIA.
 
 ---
 
-## 📋 Table of Contents
+## Table des matières
 
 1. [Overview](#overview)
 2. [Deployment Architecture](#deployment-architecture)

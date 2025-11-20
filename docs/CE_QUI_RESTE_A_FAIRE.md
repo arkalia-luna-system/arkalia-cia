@@ -1,21 +1,21 @@
-# ✅ CE QUI RESTE VRAIMENT À FAIRE — Release v1.0
+# Ce qui reste vraiment à faire — Release v1.0
 
-**Date** : November 19, 2025  
-**Statut actuel** : En cours, release Q1 2026 - Passage en stable v1.0  
-**Production-Ready** : 95% ✅  
+**Date** : 19 novembre 2025  
+**Statut actuel** : En cours, release Q1 2026 — Passage en stable v1.0  
+**Production-Ready** : 95%  
 **Priorité absolue** : Finir passage en stable v1.0, compléter tests manquants (sécurité, UX), vérifier checklist sécurité
 
 > **Note** : Ce document est maintenant consolidé dans **[STATUT_FINAL_CONSOLIDE.md](./STATUT_FINAL_CONSOLIDE.md)** et **[CHECKLIST_RELEASE_CONSOLIDEE.md](./CHECKLIST_RELEASE_CONSOLIDEE.md)**. Voir ces fichiers pour la version complète et à jour.
 
 ---
 
-## 🔴 PRIORITÉ 1 — BLOCANT POUR RELEASE
+## Priorité 1 — Blocant pour release
 
-### ✅ **4 TÂCHES COMPLÉTÉES**
+### 4 tâches complétées
 
-### 1. Fix Tests list_* Échoués ✅ **FAIT**
+### 1. Fix Tests list_* Échoués — FAIT
 
-**Résultat** : ✅ Tous les 21 tests passent maintenant (100%)
+**Résultat** : Tous les 21 tests passent maintenant (100%)
 - Code propre et conforme aux standards (Black, Ruff, Mypy)
 - Commit : `fix: Correction tests list_* échoués - nettoyage DB avant chaque test`
 
@@ -23,26 +23,26 @@
 
 ---
 
-### 2. Fix Test Security Dashboard ✅ **FAIT**
+### 2. Fix Test Security Dashboard — FAIT
 
 **Problème** : 1 test échouait dans `test_security_dashboard.py`
 - `test_collect_security_data_with_athalia_components` : `athalia_available` retournait False au lieu de True
-- **Performance** : Test très lent (140 secondes) à cause de scans complets réels
+- Performance : Test très lent (140 secondes) à cause de scans complets réels
 
-**Solution appliquée** : 
+**Solution appliquée** :
 - Correction du test pour vérifier que `athalia_components` n'est pas vide
-- **Optimisation performance** : Utilisation de MagicMock pour éviter les scans complets réels
+- Optimisation performance : Utilisation de MagicMock pour éviter les scans complets réels
 - Mock de tous les composants Athalia (security_validator, code_linter, cache_manager, metrics_collector)
 
-**Résultat** : ✅ Test passe maintenant
-- **Performance** : 0.54s au lieu de 140s (99.6% plus rapide) 🚀
+**Résultat** : Test passe maintenant
+- Performance : 0.54s au lieu de 140s (99.6% plus rapide)
 - Commit : `perf: Optimisation massive test security_dashboard - 140s → 0.54s`
 
 **Temps réel** : 15 minutes (correction + optimisation)
 
 ---
 
-### 3. Optimisation Massive Tests ✅ **FAIT**
+### 3. Optimisation massive tests — FAIT
 
 **Problème** : Tests très lents (263 secondes) avec 49 erreurs
 - Beaucoup de `gc.collect()` inutiles ralentissant les tests

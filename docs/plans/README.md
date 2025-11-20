@@ -1,12 +1,14 @@
-# 📋 PLANS D'IMPLÉMENTATION - ARKALIA CIA
+# Plans d'implémentation
 
-> **Organisation des plans techniques** pour répondre aux besoins de votre mère
+**Dernière mise à jour** : Janvier 2025
+
+Organisation des plans techniques pour répondre aux besoins utilisateur.
 
 ---
 
-## 🎯 **PRIORITÉ ABSOLUE — PASSAGE EN STABLE v1.0**
+## Priorité absolue — Passage en stable v1.0
 
-**CIA (Mobile/Santé) est la priorité absolue aujourd'hui** : c'est le seul module important non encore prêt en "production". Il représente le portfolio santé et sa stabilité va qualifier l'ensemble de l'écosystème.
+CIA (Mobile/Santé) est la priorité absolue : c'est le seul module important non encore prêt en production. Il représente le portfolio santé et sa stabilité va qualifier l'ensemble de l'écosystème.
 
 **Statut** : En cours, release Q1 2026
 
@@ -19,32 +21,32 @@
 
 ---
 
-## 🎯 **STRUCTURE DES PLANS**
+## Structure des plans
 
-Les plans sont organisés par **priorité critique** et **ordre d'implémentation recommandé** :
+Les plans sont organisés par priorité critique et ordre d'implémentation recommandé.
 
-### 🚀 **PRIORITÉ ULTIME** (À faire EN PREMIER - Onboarding)
+### Priorité ultime (À faire en premier — Onboarding)
 
 0. **[PLAN_00_ONBOARDING_INTELLIGENT.md](./PLAN_00_ONBOARDING_INTELLIGENT.md)**
    - Onboarding première connexion
    - Import automatique portails santé
    - Création historique intelligent (essentiel uniquement)
    - Interface ultra-simple pour tous utilisateurs
-   - **Temps estimé** : 3-4 semaines
+   - Temps estimé : 3-4 semaines
 
-### 🔴 **PRIORITÉ CRITIQUE** (À faire après onboarding)
+### Priorité critique (À faire après onboarding)
 
 1. **[PLAN_01_PARSER_PDF_MEDICAUX.md](./PLAN_01_PARSER_PDF_MEDICAUX.md)**
    - Import données apps externes (Andaman 7, MaSanté)
    - Parsing PDF médicaux avec OCR/NLP
    - Extraction métadonnées automatique
-   - **Temps estimé** : 3-4 semaines
+   - Temps estimé : 3-4 semaines
 
 2. **[PLAN_02_HISTORIQUE_MEDECINS.md](./PLAN_02_HISTORIQUE_MEDECINS.md)**
    - Référentiel médecins complet
    - Historique consultations par médecin
    - Recherche médecins avancée
-   - **Temps estimé** : 1-2 semaines
+   - Temps estimé : 1-2 semaines
 
 3. **[PLAN_03_RECHERCHE_AVANCEE.md](./PLAN_03_RECHERCHE_AVANCEE.md)**
    - Moteur recherche multi-critères

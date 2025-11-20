@@ -18,7 +18,8 @@ Guide de navigation dans la documentation du projet Arkalia CIA.
 
 ### Architecture et conception
 
-- **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture générale du projet
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture générale avec schémas Mermaid
+- **[VUE_ENSEMBLE_PROJET.md](./VUE_ENSEMBLE_PROJET.md)** — Vue d'ensemble visuelle complète
 - **[ANALYSE_COMPLETE_BESOINS_MERE.md](./ANALYSE_COMPLETE_BESOINS_MERE.md)** — Analyse des besoins utilisateur
 - **[ANALYSE_EXPLOITATION_PROJET.md](./ANALYSE_EXPLOITATION_PROJET.md)** — Audit d'exploitation
 

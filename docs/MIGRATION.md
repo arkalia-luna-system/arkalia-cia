@@ -1,10 +1,14 @@
-# Migration Guide
+# Guide de migration
 
-> **Arkalia CIA** - Documentation restructuring and architectural changes
+**Dernière mise à jour** : 19 novembre 2025
 
-## Overview
+Guide de restructuration de la documentation et des changements architecturaux.
 
-This document outlines the comprehensive documentation modernization and architectural clarifications implemented in the project.
+---
+
+## Vue d'ensemble
+
+Ce document décrit la modernisation complète de la documentation et les clarifications architecturales implémentées dans le projet.
 
 ## Documentation Restructure
 

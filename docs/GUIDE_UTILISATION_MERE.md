@@ -1,22 +1,24 @@
-# 📱 GUIDE D'UTILISATION - ARKALIA CIA
+# Guide d'utilisation — Arkalia CIA
 
-> **Guide simple pour utiliser l'application Arkalia CIA**
+Guide simple pour utiliser l'application Arkalia CIA.
 
 ---
 
-## 🚀 **PREMIÈRE CONNEXION**
+## Première connexion
 
-### **1. Ouvrir l'application**
+### Ouvrir l'application
+
 - Appuyez sur l'icône **Arkalia CIA** sur votre téléphone
 - Si c'est la première fois, vous verrez l'écran de bienvenue
 
-### **2. Choisir comment importer vos données**
+### Choisir comment importer vos données
+
 Vous avez 3 options :
 
 **Option A : Import automatique depuis portails santé**
 - Connectez-vous à eHealth, Andaman 7, MaSanté
 - Vos données seront importées automatiquement
-- ⚠️ Cette fonctionnalité arrive bientôt
+- Cette fonctionnalité arrive bientôt
 
 **Option B : Importer des PDF manuellement**
 - Sélectionnez vos documents PDF médicaux
@@ -28,9 +30,10 @@ Vous avez 3 options :
 
 ---
 
-## 👨‍⚕️ **GÉRER VOS MÉDECINS**
+## Gérer vos médecins
 
-### **Ajouter un médecin**
+### Ajouter un médecin
+
 1. Sur la page d'accueil, appuyez sur **"Médecins"**
 2. Appuyez sur le bouton **"+"** (en haut à droite ou en bas)
 3. Remplissez le formulaire :
@@ -40,21 +43,24 @@ Vous avez 3 options :
    - Notes personnelles
 4. Appuyez sur **"Ajouter le médecin"**
 
-### **Rechercher un médecin**
+### Rechercher un médecin
+
 1. Dans la liste des médecins, utilisez la barre de recherche
 2. Tapez le nom ou la spécialité
 3. Utilisez le filtre par spécialité si besoin
 
-### **Voir les détails d'un médecin**
+### Voir les détails d'un médecin
+
 - Appuyez sur un médecin dans la liste
 - Vous verrez toutes ses informations
 - Vous pourrez voir l'historique des consultations (bientôt)
 
 ---
 
-## 🔍 **RECHERCHER VOS DOCUMENTS**
+## Rechercher vos documents
 
-### **Recherche simple**
+### Recherche simple
+
 1. Sur la page d'accueil, utilisez la barre de recherche en haut
 2. Tapez ce que vous cherchez (nom de document, médecin, etc.)
 

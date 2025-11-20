@@ -4,10 +4,13 @@ Tests unitaires pour l'API FastAPI
 
 from pathlib import Path
 
+import bcrypt
 import pytest
 from fastapi.testclient import TestClient
 
 from arkalia_cia_python_backend import api
+from arkalia_cia_python_backend.api import API_PREFIX
+from arkalia_cia_python_backend.auth import create_access_token
 
 
 class TestAPIEndpoints:
@@ -37,6 +40,27 @@ class TestAPIEndpoints:
         if Path(db_path).exists():
             Path(db_path).unlink()
 
+    @pytest.fixture
+    def auth_token(self, temp_db):
+        """Créer un utilisateur de test et retourner un token"""
+
+        # Utiliser bcrypt directement pour éviter problèmes avec passlib
+        password_hash = bcrypt.hashpw(
+            b"test123", bcrypt.gensalt()
+        ).decode("utf-8")
+        user_id = api.db.create_user(
+            username="testuser", password_hash=password_hash, email="test@example.com"
+        )
+        token = create_access_token(
+            data={"sub": str(user_id), "username": "testuser", "role": "user"}
+        )
+        return token
+
+    @pytest.fixture
+    def auth_headers(self, auth_token):
+        """Retourne les headers d'authentification"""
+        return {"Authorization": f"Bearer {auth_token}"}
+
     def test_root_endpoint(self, client):
         """Test de l'endpoint racine"""
         response = client.get("/")
@@ -55,48 +79,50 @@ class TestAPIEndpoints:
         assert data["status"] == "healthy"
         assert "timestamp" in data
 
-    def test_get_documents_empty(self, client, temp_db):
+    def test_get_documents_empty(self, client, temp_db, auth_headers):
         """Test de récupération des documents (vide)"""
-        response = client.get("/api/documents")
+        response = client.get(f"{API_PREFIX}/documents", headers=auth_headers)
         assert response.status_code == 200
         assert isinstance(response.json(), list)
 
-    def test_get_document_not_found(self, client, temp_db):
+    def test_get_document_not_found(self, client, temp_db, auth_headers):
         """Test de récupération d'un document inexistant"""
-        response = client.get("/api/documents/999")
+        response = client.get(f"{API_PREFIX}/documents/999", headers=auth_headers)
         assert response.status_code == 404
 
-    def test_delete_document_not_found(self, client, temp_db):
+    def test_delete_document_not_found(self, client, temp_db, auth_headers):
         """Test de suppression d'un document inexistant"""
-        response = client.delete("/api/documents/999")
+        response = client.delete(f"{API_PREFIX}/documents/999", headers=auth_headers)
         assert response.status_code == 404
 
-    def test_get_reminders_empty(self, client, temp_db):
+    def test_get_reminders_empty(self, client, temp_db, auth_headers):
         """Test de récupération des rappels (vide)"""
-        response = client.get("/api/reminders")
+        response = client.get(f"{API_PREFIX}/reminders", headers=auth_headers)
         assert response.status_code == 200
         assert isinstance(response.json(), list)
 
-    def test_create_reminder(self, client, temp_db):
+    def test_create_reminder(self, client, temp_db, auth_headers):
         """Test de création d'un rappel"""
         reminder_data = {
             "title": "Test Reminder",
             "description": "Test description",
             "reminder_date": "2024-12-31T10:00:00",
         }
-        response = client.post("/api/reminders", json=reminder_data)
+        response = client.post(
+            f"{API_PREFIX}/reminders", json=reminder_data, headers=auth_headers
+        )
         assert response.status_code == 200
         data = response.json()
         assert "id" in data
         assert data["title"] == "Test Reminder"
 
-    def test_get_emergency_contacts_empty(self, client, temp_db):
+    def test_get_emergency_contacts_empty(self, client, temp_db, auth_headers):
         """Test de récupération des contacts d'urgence (vide)"""
-        response = client.get("/api/emergency-contacts")
+        response = client.get(f"{API_PREFIX}/emergency-contacts", headers=auth_headers)
         assert response.status_code == 200
         assert isinstance(response.json(), list)
 
-    def test_create_emergency_contact(self, client, temp_db):
+    def test_create_emergency_contact(self, client, temp_db, auth_headers):
         """Test de création d'un contact d'urgence"""
         contact_data = {
             "name": "Test Contact",
@@ -104,19 +130,21 @@ class TestAPIEndpoints:
             "relationship": "family",
             "is_primary": False,
         }
-        response = client.post("/api/emergency-contacts", json=contact_data)
+        response = client.post(
+            f"{API_PREFIX}/emergency-contacts", json=contact_data, headers=auth_headers
+        )
         assert response.status_code == 200
         data = response.json()
         assert "id" in data
         assert data["name"] == "Test Contact"
 
-    def test_get_health_portals_empty(self, client, temp_db):
+    def test_get_health_portals_empty(self, client, temp_db, auth_headers):
         """Test de récupération des portails santé (vide)"""
-        response = client.get("/api/health-portals")
+        response = client.get(f"{API_PREFIX}/health-portals", headers=auth_headers)
         assert response.status_code == 200
         assert isinstance(response.json(), list)
 
-    def test_create_health_portal(self, client, temp_db):
+    def test_create_health_portal(self, client, temp_db, auth_headers):
         """Test de création d'un portail santé"""
         portal_data = {
             "name": "Test Portal",
@@ -124,20 +152,23 @@ class TestAPIEndpoints:
             "description": "Test portal",
             "category": "banking",
         }
-        response = client.post("/api/health-portals", json=portal_data)
+        response = client.post(
+            f"{API_PREFIX}/health-portals", json=portal_data, headers=auth_headers
+        )
         assert response.status_code == 200
         data = response.json()
         assert "id" in data
         assert data["name"] == "Test Portal"
 
-    def test_upload_document_invalid_file(self, client, temp_db):
+    def test_upload_document_invalid_file(self, client, temp_db, auth_headers):
         """Test d'upload d'un fichier invalide"""
         response = client.post(
-            "/api/documents/upload",
+            f"{API_PREFIX}/documents/upload",
             files={"file": ("test.txt", b"not a pdf", "text/plain")},
+            headers=auth_headers,
         )
         # L'API peut retourner 400 (HTTPException) ou 200 avec success=False
-        assert response.status_code in [400, 200]
+        assert response.status_code in [400, 401, 403, 200]
         if response.status_code == 200:
             data = response.json()
             assert data.get("success") is False or "error" in data

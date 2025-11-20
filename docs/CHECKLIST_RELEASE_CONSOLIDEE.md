@@ -1,13 +1,14 @@
-# ✅ CHECKLIST RELEASE CONSOLIDÉE - ARKALIA CIA
+# Checklist release consolidée
 
-> **Checklist complète avant release**  
-> **Dernière mise à jour** : 20 novembre 2025  
-> **Version cible** : v1.2.0  
-> **Statut** : 🟡 **En cours** (Techniquement prêt, validations manuelles restantes)
+**Version cible** : v1.2.0  
+**Dernière mise à jour** : 20 novembre 2025  
+**Statut** : En cours (Techniquement prêt, validations manuelles restantes)
+
+Checklist complète avant release pour Arkalia CIA.
 
 ---
 
-## 📋 **TABLE DES MATIÈRES**
+## Table des matières
 
 1. [Qualité du Code](#1-qualité-du-code)
 2. [Sécurité](#2-sécurité)
@@ -18,33 +19,33 @@
 
 ---
 
-## ✅ **1. QUALITÉ DU CODE**
+## 1. Qualité du code
 
-### **Tests Automatisés**
+### Tests automatisés
 
 | Outil | Résultat | Statut |
 |-------|----------|--------|
-| **Black** | Formatage OK (0 erreurs) | ✅ |
-| **Ruff** | 0 erreur | ✅ |
-| **MyPy** | 0 erreur | ✅ |
-| **Bandit** | 0 vulnérabilité | ✅ |
-| **Tests Python** | 206/206 passent (100%) | ✅ |
-| **Couverture Code** | 85% global | ✅ |
-| **Flutter Analyze** | 0 erreur, 0 avertissement | ✅ |
+| Black | Formatage OK (0 erreurs) | OK |
+| Ruff | 0 erreur | OK |
+| MyPy | 0 erreur | OK |
+| Bandit | 0 vulnérabilité | OK |
+| Tests Python | 206/206 passent (100%) | OK |
+| Couverture Code | 85% global | OK |
+| Flutter Analyze | 0 erreur, 0 avertissement | OK |
 
-### **Couverture par Fichier**
+### Couverture par fichier
 
 | Fichier | Couverture | Statut |
 |---------|-----------|--------|
-| `database.py` | 100% | ✅ Parfait |
-| `auto_documenter.py` | 92% | ✅ Excellent |
-| `pdf_processor.py` | 89% | ✅ Très bon |
-| `api.py` | 83% | ✅ Très bon |
-| `aria_integration/api.py` | 81% | ✅ Très bon |
-| `storage.py` | 80% | ✅ Bon |
-| `security_dashboard.py` | 76% | ✅ Bon |
+| `database.py` | 100% | Parfait |
+| `auto_documenter.py` | 92% | Excellent |
+| `pdf_processor.py` | 89% | Très bon |
+| `api.py` | 83% | Très bon |
+| `aria_integration/api.py` | 81% | Très bon |
+| `storage.py` | 80% | Bon |
+| `security_dashboard.py` | 76% | Bon |
 
-**Action Requise** : Aucune - Tout OK ✅
+**Action requise** : Aucune — Tout OK
 
 ---
 

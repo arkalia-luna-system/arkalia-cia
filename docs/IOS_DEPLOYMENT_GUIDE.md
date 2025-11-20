@@ -1,53 +1,58 @@
-# 📱 Guide Complet : Déploiement iOS sur iPad/iPhone (GRATUIT)
+# Guide déploiement iOS — iPad/iPhone (Gratuit)
 
-**Date** : November 19, 2025  
-**Version** : 1.0
+**Version** : 1.0  
+**Date** : 19 novembre 2025
 
 ---
 
-## 🎯 **RÉSUMÉ EXÉCUTIF**
+## Résumé exécutif
 
 **Question** : Est-il possible de tester l'app sur iPad Pro sans payer les 100€ d'Apple Developer Program ?
 
-**Réponse** : **OUI, 100% GRATUIT !** Apple permet de tester vos apps sur vos propres appareils iOS avec un compte Apple ID gratuit.
+**Réponse** : Oui, 100% gratuit. Apple permet de tester vos apps sur vos propres appareils iOS avec un compte Apple ID gratuit.
 
 ---
 
-## ✅ **CE QUI EST POSSIBLE GRATUITEMENT**
+## Ce qui est possible gratuitement
 
-### **Avec un compte Apple ID gratuit :**
-- ✅ Tester l'app sur votre iPad Pro / iPhone
-- ✅ Installer l'app directement depuis Xcode
-- ✅ Déboguer l'app en temps réel
-- ✅ Utiliser toutes les fonctionnalités de développement
+### Avec un compte Apple ID gratuit
 
-### **Limitations du compte gratuit :**
-- ⏰ **L'app expire après 7 jours** → Réinstallation nécessaire toutes les semaines
-- 📱 **Maximum 3 apps signées** simultanément sur l'appareil
-- 🚫 **Pas de distribution sur App Store** (mais suffisant pour tester)
-- 🚫 **Pas de TestFlight**
+- Tester l'app sur votre iPad Pro / iPhone
+- Installer l'app directement depuis Xcode
+- Déboguer l'app en temps réel
+- Utiliser toutes les fonctionnalités de développement
 
-### **Avec le programme payant (100€/an) :**
-- ✅ L'app ne expire jamais
-- ✅ Distribution sur App Store
-- ✅ TestFlight pour bêta-testeurs
-- ✅ Certificats de distribution
+### Limitations du compte gratuit
 
-**Conclusion** : Pour tester sur votre iPad Pro, le compte gratuit suffit largement !
+- L'app expire après 7 jours — réinstallation nécessaire toutes les semaines
+- Maximum 3 apps signées simultanément sur l'appareil
+- Pas de distribution sur App Store (mais suffisant pour tester)
+- Pas de TestFlight
+
+### Avec le programme payant (100€/an)
+
+- L'app ne expire jamais
+- Distribution sur App Store
+- TestFlight pour bêta-testeurs
+- Certificats de distribution
+
+**Conclusion** : Pour tester sur votre iPad Pro, le compte gratuit suffit largement.
 
 ---
 
-## 📋 **PRÉREQUIS**
+## Prérequis
 
-### **Matériel :**
-- ✅ Mac (macOS requis)
-- ✅ iPad Pro / iPhone
-- ✅ Câble USB pour connecter l'appareil au Mac
+### Matériel
 
-### **Logiciel :**
-- ✅ Flutter installé
-- ✅ Xcode (gratuit, App Store)
-- ✅ CocoaPods (gratuit)
+- Mac (macOS requis)
+- iPad Pro / iPhone
+- Câble USB pour connecter l'appareil au Mac
+
+### Logiciel
+
+- Flutter installé
+- Xcode (gratuit, App Store)
+- CocoaPods (gratuit)
 - ✅ Compte Apple ID (gratuit)
 
 ---

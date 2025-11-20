@@ -1,49 +1,48 @@
 # Changelog
 
-> **Arkalia CIA** - All notable changes to this project
+**Dernière mise à jour** : 19 novembre 2025
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
-**Last Updated**: November 19, 2025
+Format basé sur [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), ce projet suit [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
 ## [1.2.0] - 2025-11-19
 
-### Added
-- **🔧 Logger Conditionnel** : Création de `AppLogger` avec `kDebugMode` pour éviter les logs en production
-- **📝 Release Notes** : Documentation complète des changements v1.2.0
-- **🔒 Mises à jour de sécurité** : Correction de toutes les vulnérabilités identifiées
+### Ajouté
 
-### Changed
-- **⚡ Optimisations Code** :
-  - ✅ Remplacement de tous les `debugPrint()` (44 occurrences) par `AppLogger` conditionnel
-  - ✅ Nettoyage de 5 imports inutilisés
-  - ✅ Optimisation widgets avec `const` pour réduire rebuilds
-  - ✅ Sécurisation callbacks `.then()` avec vérifications `mounted`
-- **🔒 Sécurité** :
-  - ✅ Vérifications `mounted` à 100% dans toutes les opérations async
-  - ✅ Controllers correctement disposés (0 fuite mémoire)
-  - ✅ Mise à jour pip : 25.2 → 25.3 (CVE-2025-8869 corrigée)
-  - ✅ Mise à jour authlib : 1.6.3 → 1.6.5 (3 CVE corrigées)
-  - ✅ Mise à jour pypdf : 6.0.0 → 6.1.3 (2 CVE corrigées)
-  - ✅ Mise à jour starlette : 0.47.3 → 0.49.1 (CVE-2025-62727 corrigée)
-  - ✅ Mise à jour fastapi : 0.116.1 → 0.121.2 (compatibilité avec starlette 0.49.1)
-- **📊 Qualité Code** :
-  - ✅ Flutter Analyze : 0 erreur, 0 avertissement
-  - ✅ Black : Formatage conforme (18 fichiers)
-  - ✅ Ruff : 0 erreur
-  - ✅ MyPy : 0 erreur (18 fichiers)
-  - ✅ Bandit : 0 vulnérabilité
-- **🧹 Nettoyage** :
-  - ✅ Suppression build directory (28GB libérés)
-  - ✅ Suppression fichiers logs doublons
-  - ✅ Suppression fichiers macOS cachés (74 fichiers)
-  - ✅ Suppression logs Flutter obsolètes
-- **📦 Dépendances** :
-  - ✅ Toutes les versions mises à jour dans requirements.txt
-  - ✅ Version Python backend : 1.1.0 → 1.2.0 (pyproject.toml, setup.py)
+- **Logger conditionnel** : Création de `AppLogger` avec `kDebugMode` pour éviter les logs en production
+- **Release Notes** : Documentation complète des changements v1.2.0
+- **Mises à jour de sécurité** : Correction de toutes les vulnérabilités identifiées
+
+### Modifié
+
+- **Optimisations code** :
+  - Remplacement de tous les `debugPrint()` (44 occurrences) par `AppLogger` conditionnel
+  - Nettoyage de 5 imports inutilisés
+  - Optimisation widgets avec `const` pour réduire rebuilds
+  - Sécurisation callbacks `.then()` avec vérifications `mounted`
+- **Sécurité** :
+  - Vérifications `mounted` à 100% dans toutes les opérations async
+  - Controllers correctement disposés (0 fuite mémoire)
+  - Mise à jour pip : 25.2 → 25.3 (CVE-2025-8869 corrigée)
+  - Mise à jour authlib : 1.6.3 → 1.6.5 (3 CVE corrigées)
+  - Mise à jour pypdf : 6.0.0 → 6.1.3 (2 CVE corrigées)
+  - Mise à jour starlette : 0.47.3 → 0.49.1 (CVE-2025-62727 corrigée)
+  - Mise à jour fastapi : 0.116.1 → 0.121.2 (compatibilité avec starlette 0.49.1)
+- **Qualité code** :
+  - Flutter Analyze : 0 erreur, 0 avertissement
+  - Black : Formatage conforme (18 fichiers)
+  - Ruff : 0 erreur
+  - MyPy : 0 erreur (18 fichiers)
+  - Bandit : 0 vulnérabilité
+- **Nettoyage** :
+  - Suppression build directory (28GB libérés)
+  - Suppression fichiers logs doublons
+  - Suppression fichiers macOS cachés (74 fichiers)
+  - Suppression logs Flutter obsolètes
+- **Dépendances** :
+  - Toutes les versions mises à jour dans requirements.txt
+  - Version Python backend : 1.1.0 → 1.2.0 (pyproject.toml, setup.py)
 
 ### Fixed
 - **🐛 Corrections Sécurité** :

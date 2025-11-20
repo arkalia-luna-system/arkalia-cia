@@ -1,48 +1,52 @@
-# 🚀 Release Notes - Arkalia CIA v1.2.0
+# Release Notes — Arkalia CIA v1.2.0
 
-**Date de Release** : 19 novembre 2025  
-**Dernière mise à jour** : 19 novembre 2025  
+**Date de release** : 19 novembre 2025  
 **Version** : 1.2.0+1  
-**Statut** : ✅ Production-Ready (95%)
+**Statut** : Production-Ready (95%)
 
 ---
 
-## 📋 Résumé
+## Résumé
 
 Cette version apporte des améliorations significatives en termes de qualité de code, performance et sécurité suite à un audit approfondi complet.
 
 ---
 
-## ✨ Nouvelles Fonctionnalités
+## Nouvelles fonctionnalités
 
-### 🔧 Logger Conditionnel
+### Logger conditionnel
+
 - Création de `AppLogger` avec support `kDebugMode`
 - Aucun log en production (meilleure performance)
 - Méthodes disponibles : `debug()`, `info()`, `warning()`, `error()`
 
 ---
 
-## 🔧 Améliorations
+## Améliorations
 
-### ⚡ Optimisations Code
+### Optimisations code
+
 - **Remplacement de tous les `debugPrint()`** : 44 occurrences remplacées par logger conditionnel
 - **Nettoyage imports** : 5 imports inutilisés retirés
 - **Optimisation widgets** : Utilisation de `const` pour réduire rebuilds inutiles
 - **Sécurisation callbacks** : Vérifications `mounted` ajoutées dans tous les callbacks `.then()`
 
-### 🔒 Sécurité
+### Sécurité
+
 - **Vérifications `mounted`** : 100% des opérations async vérifient `mounted`
 - **Controllers disposés** : 100% des controllers correctement nettoyés (0 fuite mémoire)
 - **Gestion erreurs** : ErrorHelper utilisé partout pour messages utilisateur cohérents
 
-### 📊 Qualité Code
-- **Flutter Analyze** : 0 erreur, 0 avertissement ✅
-- **Black** : Formatage conforme (18 fichiers) ✅
-- **Ruff** : 0 erreur ✅
-- **MyPy** : 0 erreur (18 fichiers) ✅
-- **Bandit** : 0 vulnérabilité ✅
+### Qualité code
 
-### 🧹 Nettoyage
+- **Flutter Analyze** : 0 erreur, 0 avertissement
+- **Black** : Formatage conforme (18 fichiers)
+- **Ruff** : 0 erreur
+- **MyPy** : 0 erreur (18 fichiers)
+- **Bandit** : 0 vulnérabilité
+
+### Nettoyage
+
 - Suppression fichiers macOS cachés
 - Suppression logs Flutter obsolètes
 - Nettoyage build directory (29GB libérés)
