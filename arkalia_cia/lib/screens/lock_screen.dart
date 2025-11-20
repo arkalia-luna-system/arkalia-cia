@@ -91,6 +91,8 @@ class _LockScreenState extends State<LockScreen> {
     // Vérifier si l'onboarding est complété
     final onboardingCompleted = await OnboardingService.isOnboardingCompleted();
     
+    if (!mounted) return;
+    
     if (!onboardingCompleted) {
       // Première connexion : afficher onboarding
       Navigator.of(context).pushReplacement(

@@ -161,7 +161,7 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.error_outline, size: 64, color: Colors.red),
+                      const Icon(Icons.error_outline, size: 64, color: Colors.red),
                       const SizedBox(height: 16),
                       Text(_error!),
                       const SizedBox(height: 16),

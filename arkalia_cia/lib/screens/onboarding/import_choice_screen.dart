@@ -23,10 +23,11 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
 
       if (result != null && result.files.isNotEmpty) {
         // Rediriger vers écran progression
+        if (!mounted) return;
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => ImportProgressScreen(
+            builder: (context) => const ImportProgressScreen(
               importType: ImportType.manualPDF,
             ),
           ),

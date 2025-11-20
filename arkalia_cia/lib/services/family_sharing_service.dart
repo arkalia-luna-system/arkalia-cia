@@ -174,7 +174,7 @@ class FamilySharingService {
     
     // Format: documentId:memberIds:sharedAt:encrypt:permissionLevel
     final permission = permissionLevel ?? 'view';
-    sharedJson.add('$documentId:${memberIds.join(",")}:${sharedDoc.sharedAt.toIso8601String()}:${encrypt}:$permission');
+    sharedJson.add('$documentId:${memberIds.join(",")}:${sharedDoc.sharedAt.toIso8601String()}:$encrypt:$permission');
     await prefs.setStringList(_sharedDocumentsKey, sharedJson);
     
     // Envoyer notification si demandé

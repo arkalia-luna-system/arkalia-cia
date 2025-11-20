@@ -16,7 +16,7 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
   List<FamilyMember> _members = [];
   List<Map<String, dynamic>> _documents = [];
   List<SharedDocument> _sharedDocuments = [];
-  Map<String, bool> _selectedDocuments = {};
+  final Map<String, bool> _selectedDocuments = {};
   bool _isLoading = true;
   late TabController _tabController;
 
