@@ -117,20 +117,20 @@
 
 ---
 
-### 3. Build Release Android ✅ **FAIT**
+### 3. Build Release Android ⚠️ **À RECRÉER**
 
-**Résultat** : ✅ Build release Android réussi
-- **APK créé** : `build/app/outputs/flutter-apk/app-release.apk` (55MB)
-- **Configuration** : `build.gradle.kts` vérifiée et correcte
-- **Solution fichiers macOS** : Utilisation de `prevent-macos-files.sh` + `watch-macos-files.sh` pendant le build
-- **Temps réel** : 40 minutes (nettoyage + build)
+**État actuel** : Le build APK n'existe plus actuellement (probablement nettoyé avec `flutter clean`)
 
-**À faire encore** :
+**À faire** :
+- [ ] Recréer le build release Android (`flutter build apk --release`)
+- [ ] Vérifier que le build fonctionne correctement
 - [ ] Tester le build release sur device réel Android
 - [ ] Vérifier signature APK (actuellement utilise debug keys - OK pour tests)
 - [ ] Créer build AAB pour Play Store si nécessaire (`flutter build appbundle --release`)
 
-**Guide créé** : `docs/BUILD_RELEASE_ANDROID.md` avec toutes les commandes
+**Temps estimé** : 1 heure (build + tests)
+
+**Guide disponible** : `docs/BUILD_RELEASE_ANDROID.md` avec toutes les commandes
 
 ---
 
@@ -138,11 +138,21 @@
 
 ### 4. Screenshots Propres (1h) ⚠️
 
-**État actuel** : Screenshots existent dans `docs/screenshots/android/` mais :
-- [ ] Vérifier qu'ils sont à jour avec les améliorations UX récentes
+**État actuel** : ✅ **8 screenshots Android existent** dans `docs/screenshots/android/` (capturés le 17 novembre 2025) :
+- ✅ screenshot-01-home-screen.jpeg
+- ✅ screenshot-02-detail-screen.jpeg
+- ✅ screenshot-03-documents-screen.jpeg
+- ✅ screenshot-04-aria-screen.jpeg
+- ✅ screenshot-05-health-screen.jpeg
+- ✅ screenshot-06-reminders-screen.jpeg
+- ✅ screenshot-07-emergency-screen.jpeg
+- ✅ screenshot-08-sync-screen.jpeg
+
+**À faire** :
+- [ ] Vérifier qu'ils sont à jour avec les améliorations UX récentes (novembre 2025)
 - [ ] Vérifier qu'il n'y a pas d'erreurs visibles
-- [ ] Prendre screenshots iOS si nécessaire
-- [ ] Organiser screenshots par plateforme
+- [ ] Prendre screenshots iOS si nécessaire (aucun screenshot iOS actuellement)
+- [ ] Organiser screenshots par plateforme (iOS manquant)
 
 **Temps estimé** : 1 heure
 
@@ -188,12 +198,12 @@
 | Fix test security_dashboard | 15 min | 🔴 Blocant | ✅ **FAIT** |
 | Optimisation tests | 30 min | 🔴 Blocant | ✅ **FAIT** |
 | Correction 2 tests échoués | 10 min | 🔴 Blocant | ✅ **FAIT** |
-| Build release Android | 40 min | 🔴 Blocant | ✅ **FAIT** |
+| Build release Android | 1h | 🔴 Blocant | ⚠️ À recréer |
 | Tests manuels device réel | 2-3h | 🔴 Blocant | ⚠️ À faire |
 | Screenshots propres | 1h | 🟡 Important | ⚠️ À faire |
 | Tests stabilité | 1h | 🟡 Recommandé | ⚠️ À faire |
 
-**Total estimé** : **3-4 heures** de travail réel restant
+**Total estimé** : **4-5 heures** de travail réel restant
 
 ---
 
@@ -248,12 +258,13 @@
 
 **Ce qui reste vraiment à faire** :
 - **1 tâche critique** : Tests manuels sur device réel (2-3h)
-- **2 tâches importantes** : Screenshots (1h) + Tests stabilité (1h)
+- **1 tâche critique** : Recréer build release Android (1h)
+- **2 tâches importantes** : Vérifier/mettre à jour screenshots (1h) + Tests stabilité (1h)
 - **Priorité absolue** : Finir passage en stable v1.0 pour release Q1 2026
 
-**Total** : **3-4 heures** de travail réel → **Ready to ship** 🚀
+**Total** : **4-5 heures** de travail réel → **Ready to ship** 🚀
 
-**Build release Android créé** : ✅ `app-release.apk` (55MB) disponible dans `arkalia_cia/build/app/outputs/flutter-apk/`
+**Build release Android** : ⚠️ **À RECRÉER** - Le fichier APK n'existe plus actuellement (probablement nettoyé). Guide disponible dans `docs/BUILD_RELEASE_ANDROID.md`
 
 **Tous les tests passent maintenant** : 206/206 (100%) ✅
 

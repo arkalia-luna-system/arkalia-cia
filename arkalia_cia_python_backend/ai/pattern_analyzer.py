@@ -100,7 +100,7 @@ class AdvancedPatternAnalyzer:
 
         # Analyser évolution valeurs numériques
         numeric_data = [
-            d for d in data if "value" in d and isinstance(d.get("value"), (int, float))
+            d for d in data if "value" in d and isinstance(d.get("value"), int | float)
         ]
 
         if len(numeric_data) > 1:

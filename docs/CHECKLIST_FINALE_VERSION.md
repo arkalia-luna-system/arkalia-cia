@@ -30,7 +30,7 @@
 - ✅ **Sécurité** : 100% (0 vulnérabilité, chiffrement AES-256)
 - ✅ **Tests automatisés** : 100% (tous les tests passent)
 - ✅ **Documentation technique** : 100% (complète)
-- ✅ **Build Android** : 100% (APK release créé)
+- ⚠️ **Build Android** : À recréer (APK nettoyé, guide disponible)
 - ✅ **Bugs critiques** : 100% corrigés
 - ✅ **Privacy Policy** : Créée ✅
 - ✅ **Terms of Service** : Créés ✅
@@ -87,7 +87,7 @@
 - [ ] Vérifier signature APK (actuellement utilise debug keys - OK pour tests)
 - [ ] Créer build AAB pour Play Store si nécessaire (`flutter build appbundle --release`)
 
-**Note** : Build Android release déjà créé ✅ (`app-release.apk` dans `build/app/outputs/flutter-apk/`)
+**Note** : ⚠️ Le build APK n'existe plus actuellement (probablement nettoyé). À recréer avec `flutter build apk --release`
 
 ---
 
