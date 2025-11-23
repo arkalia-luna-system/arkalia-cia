@@ -172,6 +172,19 @@ graph TB
 - Retry logic with exponential backoff
 - Data privacy: user controls what is shared between systems
 
+## Use Cases
+
+### Real-World Scenarios
+
+| User Profile | Problem | Solution with CIA | Result |
+|--------------|---------|-------------------|--------|
+| **Senior (65-80)** | Documents médicaux éparpillés, oubli médicaments | Organisation automatique, rappels intelligents | Documents trouvés en 2 clics, plus d'oubli |
+| **Patient douleur chronique** | Suivi douleur difficile, explication au médecin | Intégration ARIA, génération rapports | Patterns détectés, consultations efficaces |
+| **Famille** | Aide parent âgé sans violer vie privée | Partage familial sécurisé avec contrôle granulaire | Aide possible tout en respectant confidentialité |
+| **Professionnel santé** | Patients sans documents, historique flou | Réception rapports structurés | Consultations 30% plus efficaces |
+
+**📖 [Voir tous les cas d'usage détaillés →](docs/USE_CASES.md)**
+
 ## Live Demo & Screenshots
 
 ### 🎬 **Interactive Demo**
@@ -604,6 +617,7 @@ See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for development guidelines, code sta
 | [API Reference](docs/API.md) | Service APIs and integration guides |
 | [ARIA Integration](docs/ARIA_INTEGRATION.md) | **Clinical vision and technical integration with Arkalia ARIA** |
 | [Ecosystem Vision](docs/ECOSYSTEM_VISION.md) | **Strategic vision of Arkalia Luna System ecosystem** |
+| [Use Cases](docs/USE_CASES.md) | **Real-world usage scenarios for different user profiles** |
 | [Deployment](docs/DEPLOYMENT.md) | Installation and deployment procedures |
 | [Security](SECURITY.md) | Security policies and vulnerability reporting |
 | [Changelog](docs/CHANGELOG.md) | Version history and release notes |
