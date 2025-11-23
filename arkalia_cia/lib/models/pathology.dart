@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
 
 /// Configuration pour un rappel spécifique à une pathologie
 class ReminderConfig {
@@ -81,11 +82,28 @@ class Pathology {
   factory Pathology.fromMap(Map<String, dynamic> map) {
     final remindersMap = <String, ReminderConfig>{};
     if (map['reminders'] != null) {
-      final remindersData = map['reminders'] as Map<String, dynamic>;
+      // Gérer le cas où reminders est une String JSON (web) ou un Map (mobile)
+      Map<String, dynamic> remindersData;
+      if (map['reminders'] is String) {
+        try {
+          remindersData = json.decode(map['reminders'] as String) as Map<String, dynamic>;
+        } catch (e) {
+          remindersData = {};
+        }
+      } else if (map['reminders'] is Map) {
+        remindersData = Map<String, dynamic>.from(map['reminders'] as Map);
+      } else {
+        remindersData = {};
+      }
+      
       remindersData.forEach((key, value) {
-        remindersMap[key] = ReminderConfig.fromMap(
-          Map<String, dynamic>.from(value),
-        );
+        try {
+          remindersMap[key] = ReminderConfig.fromMap(
+            Map<String, dynamic>.from(value),
+          );
+        } catch (e) {
+          // Ignorer les erreurs de conversion
+        }
       });
     }
 

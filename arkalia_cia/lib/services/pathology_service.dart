@@ -128,23 +128,19 @@ class PathologyService {
     if (kIsWeb) {
       final pathologies = await _getPathologiesFromStorage();
       return pathologies.map((map) {
-        final converted = _convertWebMapToSqliteMap(map);
-        // Parser les reminders depuis JSON
-        if (converted['reminders'] != null && converted['reminders'] is String) {
-          try {
-            final remindersData = jsonDecode(converted['reminders'] as String) as Map<String, dynamic>;
-            final reminders = <String, ReminderConfig>{};
-            remindersData.forEach((key, value) {
-              reminders[key] = ReminderConfig.fromMap(
-                Map<String, dynamic>.from(value),
-              );
-            });
-            converted['reminders'] = reminders;
-          } catch (e) {
-            converted['reminders'] = <String, ReminderConfig>{};
-          }
+        try {
+          final converted = _convertWebMapToSqliteMap(map);
+          // Pathology.fromMap() gère maintenant les reminders en String JSON ou Map
+          return Pathology.fromMap(converted);
+        } catch (e) {
+          // En cas d'erreur, retourner une pathologie vide plutôt que de planter
+          return Pathology(
+            id: map['id'] is int ? map['id'] : int.tryParse(map['id']?.toString() ?? ''),
+            name: map['name']?.toString() ?? 'Pathologie inconnue',
+            description: map['description']?.toString(),
+            reminders: {},
+          );
         }
-        return Pathology.fromMap(converted);
       }).toList()
         ..sort((a, b) => a.name.compareTo(b.name));
     }
@@ -180,27 +176,23 @@ class PathologyService {
     if (kIsWeb) {
       final pathologies = await _getPathologiesFromStorage();
       final pathologyMap = pathologies.firstWhere(
-        (map) => map['id'] == id,
+        (map) {
+          final mapId = map['id'];
+          if (mapId is int) return mapId == id;
+          if (mapId is String) return int.tryParse(mapId) == id;
+          return mapId?.toString() == id.toString();
+        },
         orElse: () => <String, dynamic>{},
       );
       if (pathologyMap.isEmpty) return null;
-      final converted = _convertWebMapToSqliteMap(pathologyMap);
-      // Parser les reminders depuis JSON
-      if (converted['reminders'] != null && converted['reminders'] is String) {
-        try {
-          final remindersData = jsonDecode(converted['reminders'] as String) as Map<String, dynamic>;
-          final reminders = <String, ReminderConfig>{};
-          remindersData.forEach((key, value) {
-            reminders[key] = ReminderConfig.fromMap(
-              Map<String, dynamic>.from(value),
-            );
-          });
-          converted['reminders'] = reminders;
-        } catch (e) {
-          converted['reminders'] = <String, ReminderConfig>{};
-        }
+      try {
+        final converted = _convertWebMapToSqliteMap(pathologyMap);
+        // Pathology.fromMap() gère maintenant les reminders en String JSON ou Map
+        return Pathology.fromMap(converted);
+      } catch (e) {
+        // En cas d'erreur, retourner null plutôt que de planter
+        return null;
       }
-      return Pathology.fromMap(converted);
     }
     final db = await database;
     if (db == null) {
@@ -554,6 +546,11 @@ class PathologyService {
   // === RAPPELS ===
 
   Future<void> scheduleReminders(Pathology pathology) async {
+    // Sur le web, CalendarService n'est pas disponible
+    if (kIsWeb) {
+      return;
+    }
+    
     for (final entry in pathology.reminders.entries) {
       final reminderConfig = entry.value;
       final title = '[Pathologie] ${pathology.name} - ${reminderConfig.type}';
@@ -573,12 +570,16 @@ class PathologyService {
               reminderDate = reminderDate.add(const Duration(days: 1));
             }
 
-            await CalendarService.addReminder(
-              title: title,
-              description: pathology.description ?? '',
-              reminderDate: reminderDate,
-              recurrence: reminderConfig.frequency == 'daily' ? 'daily' : null,
-            );
+            try {
+              await CalendarService.addReminder(
+                title: title,
+                description: pathology.description ?? '',
+                reminderDate: reminderDate,
+                recurrence: reminderConfig.frequency == 'daily' ? 'daily' : null,
+              );
+            } catch (e) {
+              // Ignorer les erreurs de calendrier
+            }
           }
         }
       }

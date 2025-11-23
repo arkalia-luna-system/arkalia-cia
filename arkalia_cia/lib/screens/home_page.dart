@@ -442,17 +442,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _showDocuments(BuildContext context) {
-    // Utiliser un délai pour éviter les conflits de navigation
-    Future.microtask(() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const DocumentsScreen()),
+    ).then((_) {
       if (mounted) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const DocumentsScreen()),
-        ).then((_) {
-          if (mounted) {
-            _loadStats();
-          }
-        });
+        _loadStats();
       }
     });
   }
@@ -479,7 +474,11 @@ class _HomePageState extends State<HomePage> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const DoctorsListScreen()),
-    );
+    ).then((_) {
+      if (mounted) {
+        _loadStats();
+      }
+    });
   }
 
   void _showCalendar(BuildContext context) {
@@ -565,7 +564,11 @@ class _HomePageState extends State<HomePage> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const PathologyListScreen()),
-    );
+    ).then((_) {
+      if (mounted) {
+        _loadStats();
+      }
+    });
   }
 
   void _showHydration(BuildContext context) {
