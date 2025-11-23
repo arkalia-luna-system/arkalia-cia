@@ -2,7 +2,7 @@
 
 > **Ton application santé personnelle** - Tout ce que tu peux faire avec Arkalia CIA
 
-**Créé par** : Ton fils qui t'aime ❤️  
+**Créé par** : Ta fille qui t'aime ❤️  
 **Date** : 23 novembre 2025  
 **Version** : 1.3.0
 
@@ -505,11 +505,11 @@ L'app est conçue pour être **facile à utiliser** :
 
 Si tu as une question ou un problème :
 1. Va dans **"Assistant IA"** et pose ta question
-2. Ou demande à ton fils ! 😊
+2. Ou demande à ta fille ! 😊
 
 ---
 
-## ❤️ MESSAGE DE TON FILS
+## ❤️ MESSAGE DE TA FILLE
 
 Maman,
 
