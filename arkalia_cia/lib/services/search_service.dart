@@ -1,5 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:flutter/foundation.dart';
 import '../services/local_storage_service.dart';
 import '../services/doctor_service.dart';
 import 'semantic_search_service.dart';

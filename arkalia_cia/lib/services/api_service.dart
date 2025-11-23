@@ -154,7 +154,7 @@ class ApiService {
         return result;
       },
     ).catchError((e) {
-      ErrorHelper.logError(e, context: 'getDocuments');
+      ErrorHelper.logError('ApiService.getDocuments', e);
       
       // En cas d'erreur réseau, retourner le cache si disponible
       if (ErrorHelper.isNetworkError(e) && cached != null) {
@@ -219,7 +219,7 @@ class ApiService {
         'error': 'Erreur lors de la création du rappel',
       };
     } catch (e) {
-      ErrorHelper.logError(e, context: 'createReminder');
+      ErrorHelper.logError('ApiService.createReminder', e);
       return {
         'success': false,
         'error': ErrorHelper.getUserFriendlyMessage(e),
@@ -247,7 +247,7 @@ class ApiService {
         return data.cast<Map<String, dynamic>>();
       },
     ).catchError((e) {
-      ErrorHelper.logError(e, context: 'getReminders');
+      ErrorHelper.logError('ApiService.getReminders', e);
       return <Map<String, dynamic>>[];
     });
   }
@@ -288,7 +288,7 @@ class ApiService {
         };
       }
     } catch (e) {
-      ErrorHelper.logError(e, context: 'createEmergencyContact');
+      ErrorHelper.logError('ApiService.createEmergencyContact', e);
       return {
         'success': false,
         'error': ErrorHelper.getUserFriendlyMessage(e),
@@ -316,7 +316,7 @@ class ApiService {
         return data.cast<Map<String, dynamic>>();
       },
     ).catchError((e) {
-      ErrorHelper.logError(e, context: 'getEmergencyContacts');
+      ErrorHelper.logError('ApiService.getEmergencyContacts', e);
       return <Map<String, dynamic>>[];
     });
   }
@@ -385,7 +385,7 @@ class ApiService {
                                    errorString.contains('errno = 61'));
       
       if (!isConnectionRefused) {
-        ErrorHelper.logError(e, context: 'createHealthPortal');
+        ErrorHelper.logError('ApiService.createHealthPortal', e);
       }
       
       return {
@@ -416,7 +416,7 @@ class ApiService {
         return data.cast<Map<String, dynamic>>();
       },
     ).catchError((e) {
-      ErrorHelper.logError(e, context: 'getHealthPortals');
+      ErrorHelper.logError('ApiService.getHealthPortals', e);
       return <Map<String, dynamic>>[];
     });
   }
