@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
@@ -246,32 +247,59 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           isUploading = true;
         });
 
-        File sourceFile = File(result.files.single.path!);
-        final fileName = result.files.single.name;
+        final pickedFile = result.files.single;
+        final fileName = pickedFile.name;
         final timestamp = DateTime.now().millisecondsSinceEpoch;
         final uniqueFileName = '${timestamp}_$fileName';
 
-        // Copier le fichier vers le répertoire documents dédié
-        // Utiliser FileStorageService pour gérer le stockage des fichiers
-        final savedFile = await FileStorageService.copyToDocumentsDirectory(
-          sourceFile,
-          uniqueFileName,
-        );
+        File? savedFile;
+        if (kIsWeb) {
+          // Sur le web, utiliser bytes et stocker directement dans LocalStorageService
+          if (pickedFile.bytes == null) {
+            _showError('Impossible de lire le fichier sélectionné');
+            setState(() {
+              isUploading = false;
+            });
+            return;
+          }
+          // Sur le web, on ne peut pas utiliser FileStorageService
+          // On stocke directement dans LocalStorageService avec les bytes
+          savedFile = null; // Pas de File sur le web
+        } else {
+          // Sur mobile, utiliser path
+          if (pickedFile.path == null) {
+            _showError('Impossible de lire le fichier sélectionné');
+            setState(() {
+              isUploading = false;
+            });
+            return;
+          }
+          File sourceFile = File(pickedFile.path!);
+          savedFile = await FileStorageService.copyToDocumentsDirectory(
+            sourceFile,
+            uniqueFileName,
+          );
+        }
 
         // Demander la catégorie avant de sauvegarder
         if (!mounted) return;
         final category = await _showCategoryDialog();
         
         // Sauvegarder les métadonnées localement
-        final document = {
+        final document = <String, dynamic>{
           'id': timestamp.toString(), // ID en String pour cohérence
           'name': uniqueFileName,
           'original_name': fileName,
-          'path': savedFile.path,
-          'file_size': await savedFile.length(),
+          'path': kIsWeb ? uniqueFileName : savedFile!.path,
+          'file_size': kIsWeb ? pickedFile.bytes!.length : await savedFile!.length(),
           'category': category ?? 'Autre',
           'created_at': DateTime.now().toIso8601String(),
         };
+
+        // Sur le web, stocker aussi les bytes
+        if (kIsWeb && pickedFile.bytes != null) {
+          document['bytes'] = pickedFile.bytes;
+        }
 
         await LocalStorageService.saveDocument(document);
 
@@ -284,7 +312,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         // Vérifier si un médecin est détecté dans le document (métadonnées)
         // Note: L'extraction réelle se fait côté backend, ici on simule pour la démo
         // En production, les métadonnées viendront de l'API backend
-        await _checkAndShowDoctorDialog(savedFile.path, document);
+        final filePath = kIsWeb ? uniqueFileName : savedFile!.path;
+        await _checkAndShowDoctorDialog(filePath, document);
 
         _showSuccess('Document $fileName ajouté avec succès !');
         _loadDocuments(); // Recharger la liste

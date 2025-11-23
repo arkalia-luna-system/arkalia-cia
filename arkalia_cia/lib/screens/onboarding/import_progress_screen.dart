@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import '../../services/onboarding_service.dart';
 import '../../services/file_storage_service.dart';
 import '../../services/local_storage_service.dart';
@@ -10,12 +12,14 @@ class ImportProgressScreen extends StatefulWidget {
   final ImportType importType;
   final List<String>? portalIds;
   final List<String>? filePaths;
+  final List<Map<String, dynamic>>? fileDataList; // Pour le web: {name, bytes}
 
   const ImportProgressScreen({
     super.key,
     required this.importType,
     this.portalIds,
     this.filePaths,
+    this.fileDataList,
   });
 
   @override
@@ -51,6 +55,79 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
   }
 
   Future<void> _importManualPDF() async {
+    if (kIsWeb) {
+      await _importManualPDFWeb();
+    } else {
+      await _importManualPDFMobile();
+    }
+  }
+
+  Future<void> _importManualPDFWeb() async {
+    final fileDataList = widget.fileDataList ?? [];
+    
+    if (fileDataList.isEmpty) {
+      setState(() {
+        _currentStep = 'Aucun fichier à importer';
+        _isComplete = true;
+      });
+      await Future.delayed(const Duration(seconds: 2));
+      _completeOnboarding();
+      return;
+    }
+
+    int importedCount = 0;
+    int totalFiles = fileDataList.length;
+
+    setState(() {
+      _progress = 0.1;
+      _currentStep = 'Préparation import de $totalFiles fichier(s)...';
+    });
+
+    for (int i = 0; i < fileDataList.length; i++) {
+      final fileData = fileDataList[i];
+      final fileName = fileData['name'] as String;
+      final bytes = fileData['bytes'] as Uint8List;
+
+      try {
+        setState(() {
+          _progress = 0.1 + (i / totalFiles) * 0.7;
+          _currentStep = 'Import du fichier ${i + 1}/$totalFiles...';
+        });
+
+        final timestamp = DateTime.now().millisecondsSinceEpoch;
+        final uniqueFileName = '${timestamp}_$fileName';
+
+        // Sur le web, on stocke directement dans LocalStorageService
+        // On ne peut pas utiliser FileStorageService car il nécessite path_provider
+        final document = {
+          'id': '${timestamp}_$i',
+          'name': uniqueFileName,
+          'original_name': fileName,
+          'path': uniqueFileName, // Sur web, on utilise le nom comme identifiant
+          'file_size': bytes.length,
+          'category': 'Médical',
+          'created_at': DateTime.now().toIso8601String(),
+          'bytes': bytes, // Stocker les bytes pour le web
+        };
+
+        await LocalStorageService.saveDocument(document);
+        importedCount++;
+      } catch (e) {
+        // Ignorer les erreurs et continuer
+      }
+    }
+
+    setState(() {
+      _progress = 1.0;
+      _currentStep = '$importedCount fichier(s) importé(s) avec succès !';
+      _isComplete = true;
+    });
+
+    await Future.delayed(const Duration(seconds: 2));
+    _completeOnboarding();
+  }
+
+  Future<void> _importManualPDFMobile() async {
     final filePaths = widget.filePaths ?? [];
     
     if (filePaths.isEmpty) {

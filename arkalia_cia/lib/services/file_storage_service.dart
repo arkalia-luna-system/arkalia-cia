@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 
@@ -69,6 +71,27 @@ class FileStorageService {
     final documentsDir = await getDocumentsDirectory();
     final file = File(path.join(documentsDir.path, fileName));
     return await file.exists();
+  }
+
+  /// Sauvegarde des bytes vers le répertoire documents (pour le web)
+  static Future<File> saveBytesToDocumentsDirectory(
+    Uint8List bytes,
+    String fileName,
+  ) async {
+    if (kIsWeb) {
+      // Sur le web, on ne peut pas utiliser File directement
+      // On stocke les bytes dans SharedPreferences ou on utilise un autre mécanisme
+      // Pour l'instant, on retourne une erreur car le web nécessite une approche différente
+      throw UnsupportedError(
+        'saveBytesToDocumentsDirectory n\'est pas supporté sur le web. '
+        'Utilisez LocalStorageService pour stocker les données.',
+      );
+    }
+    
+    final documentsDir = await getDocumentsDirectory();
+    final destFile = File(path.join(documentsDir.path, fileName));
+    await destFile.writeAsBytes(bytes);
+    return destFile;
   }
 }
 

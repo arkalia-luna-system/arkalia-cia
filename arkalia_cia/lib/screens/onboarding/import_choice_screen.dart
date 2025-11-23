@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:file_picker/file_picker.dart';
 import '../../services/onboarding_service.dart';
 import 'import_progress_screen.dart';
@@ -22,32 +23,66 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
       );
 
       if (result != null && result.files.isNotEmpty) {
-        // Extraire les chemins des fichiers sélectionnés
-        final filePaths = result.files
-            .where((file) => file.path != null)
-            .map((file) => file.path!)
-            .toList();
-
-        if (filePaths.isEmpty) {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Aucun fichier valide sélectionné')),
-            );
+        if (kIsWeb) {
+          // Sur le web, utiliser bytes et créer des fichiers temporaires
+          final fileDataList = <Map<String, dynamic>>[];
+          for (final file in result.files) {
+            if (file.bytes != null) {
+              fileDataList.add({
+                'name': file.name,
+                'bytes': file.bytes!,
+              });
+            }
           }
-          return;
-        }
+          
+          if (fileDataList.isEmpty) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Aucun fichier valide sélectionné')),
+              );
+            }
+            return;
+          }
 
-        // Rediriger vers écran progression avec les fichiers
-        if (!mounted) return;
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ImportProgressScreen(
-              importType: ImportType.manualPDF,
-              filePaths: filePaths,
+          // Rediriger vers écran progression avec les données
+          if (!mounted) return;
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ImportProgressScreen(
+                importType: ImportType.manualPDF,
+                fileDataList: fileDataList,
+              ),
             ),
-          ),
-        );
+          );
+        } else {
+          // Sur mobile, utiliser paths
+          final filePaths = result.files
+              .where((file) => file.path != null)
+              .map((file) => file.path!)
+              .toList();
+
+          if (filePaths.isEmpty) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Aucun fichier valide sélectionné')),
+              );
+            }
+            return;
+          }
+
+          // Rediriger vers écran progression avec les fichiers
+          if (!mounted) return;
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ImportProgressScreen(
+                importType: ImportType.manualPDF,
+                filePaths: filePaths,
+              ),
+            ),
+          );
+        }
       }
     } catch (e) {
       if (mounted) {
