@@ -3,7 +3,7 @@
 **Date**: 20 novembre 2025  
 **Auditeur**: Senior Dev Expert Ultra-Strict (Mode Critique Maximal)  
 **Application**: Arkalia CIA  
-**Version**: 1.3.1  
+**Version**: 1.3.0  
 **Statut**: ⚠️ **NOUVEAUX PROBLÈMES CRITIQUES IDENTIFIÉS**
 
 ---

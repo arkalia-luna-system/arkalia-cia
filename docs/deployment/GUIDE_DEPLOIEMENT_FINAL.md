@@ -1,9 +1,9 @@
-# 🚀 Final Deployment Guide - Arkalia CIA v1.2.0
+# 🚀 Final Deployment Guide - Arkalia CIA v1.3.0
 
 > **Complete production deployment procedures**
 
-**Last Updated**: November 19, 2025  
-**Version**: 1.2.0  
+**Last Updated**: November 23, 2025  
+**Version**: 1.3.0  
 **Branch**: develop → main  
 **Status**: 🟢 **PRODUCTION READY**
 
@@ -77,8 +77,8 @@ flutter pub get
 
 ```bash
 # 1. Mettre à jour pubspec.yaml
-# Version actuelle: 1.2.0+1
-# Nouvelle version: 1.2.0+1
+# Version actuelle: 1.3.0+1
+# Nouvelle version: 1.3.0+1
 
 # 2. Mettre à jour CHANGELOG.md
 # Déplacer [Unreleased] vers [1.2.0] avec date
@@ -359,7 +359,7 @@ flutter pub get
 
 ---
 
-*Dernière mise à jour : Janvier 2025*  
-**Version**: 1.2.0  
+*Dernière mise à jour : 23 novembre 2025*  
+**Version**: 1.3.0  
 **Statut**: 🟢 **PRÊT POUR PRODUCTION**
 

@@ -15,7 +15,10 @@ class TestMedicationInteractions:
 
         interactions = self._check_interactions(medications)
         assert len(interactions) > 0
-        assert any("aspirine" in i.lower() or "anticoagulant" in i.lower() for i in interactions)
+        assert any(
+            "aspirine" in i.lower() or "anticoagulant" in i.lower()
+            for i in interactions
+        )
 
     def test_check_interactions_ibuprofen_aspirin(self):
         """Test détection interaction ibuprofène/aspirine"""
@@ -26,7 +29,9 @@ class TestMedicationInteractions:
 
         interactions = self._check_interactions(medications)
         assert len(interactions) > 0
-        assert any("ibuprofène" in i.lower() or "aspirine" in i.lower() for i in interactions)
+        assert any(
+            "ibuprofène" in i.lower() or "aspirine" in i.lower() for i in interactions
+        )
 
     def test_check_interactions_no_interaction(self):
         """Test qu'il n'y a pas d'interaction entre médicaments compatibles"""
@@ -97,7 +102,13 @@ class TestMedicationValidation:
 
     def test_validate_medication_frequency(self):
         """Test validation fréquence"""
-        valid_frequencies = ["daily", "twice_daily", "three_times_daily", "four_times_daily", "as_needed"]
+        valid_frequencies = [
+            "daily",
+            "twice_daily",
+            "three_times_daily",
+            "four_times_daily",
+            "as_needed",
+        ]
         for freq in valid_frequencies:
             assert self._validate_frequency(freq) is True
         assert self._validate_frequency("invalid") is False
@@ -112,7 +123,13 @@ class TestMedicationValidation:
 
     def _validate_frequency(self, frequency):
         """Valide la fréquence"""
-        valid = ["daily", "twice_daily", "three_times_daily", "four_times_daily", "as_needed"]
+        valid = [
+            "daily",
+            "twice_daily",
+            "three_times_daily",
+            "four_times_daily",
+            "as_needed",
+        ]
         return frequency in valid
 
 
@@ -142,4 +159,3 @@ class TestHydrationValidation:
     def _validate_goal(self, goal):
         """Valide l'objectif quotidien (ml)"""
         return isinstance(goal, int) and 0 < goal <= 10000
-

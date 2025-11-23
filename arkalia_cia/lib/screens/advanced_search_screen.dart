@@ -20,7 +20,7 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
   SearchFilters _filters = SearchFilters();
   List<SearchResult> _results = [];
   bool _isSearching = false;
-  final bool _useSemanticSearch = false;
+  bool _useSemanticSearch = true; // Activé par défaut pour meilleure qualité de recherche
   List<String> _suggestions = [];
   List<Doctor> _doctors = [];
   String? _selectedCategory;
@@ -255,6 +255,28 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
           ),
 
           const SizedBox(height: 16),
+
+          // Options de recherche
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: CheckboxListTile(
+                    title: const Text('Recherche sémantique'),
+                    subtitle: const Text('Meilleure qualité de résultats'),
+                    value: _useSemanticSearch,
+                    onChanged: (value) {
+                      setState(() {
+                        _useSemanticSearch = value ?? true;
+                      });
+                    },
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ),
+              ],
+            ),
+          ),
 
           // Bouton rechercher
           Padding(

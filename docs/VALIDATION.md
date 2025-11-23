@@ -1,7 +1,7 @@
 # Validation documentation
 
-**Version** : 1.2.0  
-**Dernière mise à jour** : 19 novembre 2025  
+**Version** : 1.3.0  
+**Dernière mise à jour** : 23 novembre 2025  
 **Statut** : Validated
 
 Checklist d'assurance qualité et de validation pour la documentation du projet.

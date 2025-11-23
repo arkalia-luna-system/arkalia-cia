@@ -1,6 +1,5 @@
 """Tests pour améliorations extraction métadonnées Phase 4"""
 
-import pytest
 from arkalia_cia_python_backend.pdf_parser.metadata_extractor import MetadataExtractor
 
 
@@ -142,4 +141,3 @@ class TestMetadataExtractorImproved:
         assert email is not None
         assert "@" in email
         assert ".com" in email
-

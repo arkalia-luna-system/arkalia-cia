@@ -2,8 +2,8 @@
 
 > **iOS Development Certificate Trust Guide** - First-time app installation
 
-**Last Updated**: November 19, 2025  
-**Version**: 1.2.0  
+**Last Updated**: November 23, 2025  
+**Version**: 1.3.0  
 **Platform**: iOS 16+
 
 ---

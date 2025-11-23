@@ -1,7 +1,7 @@
 # ✅ CERTIFICATION QUALITÉ PARFAITE - 10/10
 
-**Date**: 20 novembre 2025  
-**Version**: 1.3.1  
+**Date**: 23 novembre 2025  
+**Version**: 1.3.0  
 **Certification**: **10/10** ✅
 
 ---

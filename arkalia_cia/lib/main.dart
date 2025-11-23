@@ -8,11 +8,14 @@ import 'services/auto_sync_service.dart';
 import 'services/auth_api_service.dart';
 import 'services/backend_config_service.dart';
 import 'services/offline_cache_service.dart';
+import 'services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await LocalStorageService.init();
   await CalendarService.init();
+  // Initialiser le service de notifications au démarrage
+  await NotificationService.initialize();
   // Nettoyer automatiquement les caches expirés au démarrage
   await OfflineCacheService.clearExpiredCaches();
   runApp(const ArkaliaCIAApp());

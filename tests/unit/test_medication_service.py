@@ -32,7 +32,13 @@ class TestMedicationService:
 
     def test_medication_frequency_parsing(self):
         """Test parsing des fréquences"""
-        frequencies = ["daily", "twice_daily", "three_times_daily", "four_times_daily", "as_needed"]
+        frequencies = [
+            "daily",
+            "twice_daily",
+            "three_times_daily",
+            "four_times_daily",
+            "as_needed",
+        ]
         for freq in frequencies:
             assert self._is_valid_frequency(freq) is True
 
@@ -56,7 +62,9 @@ class TestMedicationService:
     def test_get_missed_doses_logic(self):
         """Test logique de détection des doses manquées"""
         # Médicament avec rappel à 8h
-        reminder_time = datetime.now().replace(hour=8, minute=0, second=0, microsecond=0)
+        reminder_time = datetime.now().replace(
+            hour=8, minute=0, second=0, microsecond=0
+        )
         now = datetime.now()
 
         if now.hour > 8:
@@ -76,7 +84,13 @@ class TestMedicationService:
 
     def _is_valid_frequency(self, frequency):
         """Valide la fréquence"""
-        valid = ["daily", "twice_daily", "three_times_daily", "four_times_daily", "as_needed"]
+        valid = [
+            "daily",
+            "twice_daily",
+            "three_times_daily",
+            "four_times_daily",
+            "as_needed",
+        ]
         return frequency in valid
 
     def _parse_times(self, times_str):
@@ -121,4 +135,3 @@ class TestMedicationTracking:
         total = 0
         percentage = (taken / total * 100) if total > 0 else 0
         assert percentage == 0
-

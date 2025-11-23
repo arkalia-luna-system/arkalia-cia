@@ -1,6 +1,5 @@
 """Tests pour IA conversationnelle pathologies Phase 4"""
 
-import pytest
 from arkalia_cia_python_backend.ai.conversational_ai import ConversationalAI
 
 
@@ -83,4 +82,3 @@ class TestPathologyAI:
         assert isinstance(questions, list)
         # Devrait avoir des questions générales
         assert len(questions) > 0
-

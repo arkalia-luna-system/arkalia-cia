@@ -140,6 +140,9 @@ class MedicationService {
   }
 
   Future<int> deleteMedication(int id) async {
+    // Annuler les notifications avant suppression
+    await cancelMedicationNotifications(id);
+    
     final db = await database;
     return await db.delete(
       'medications',
@@ -189,6 +192,18 @@ class MedicationService {
 
       // Programmer rappels adaptatifs si non pris (30min après)
       // Ceci sera géré par la méthode markAsTaken
+    }
+  }
+
+  /// Annule les notifications d'un médicament supprimé
+  Future<void> cancelMedicationNotifications(int medicationId) async {
+    final medication = await getMedicationById(medicationId);
+    if (medication == null) return;
+    
+    // Annuler toutes les notifications pour ce médicament
+    for (final time in medication.times) {
+      final notificationId = medicationId * 1000 + time.hour * 60 + time.minute;
+      await NotificationService.cancelNotification(notificationId);
     }
   }
 

@@ -1,7 +1,7 @@
 # ✅ QUALITÉ EXCELLENTE - 9.5/10
 
 **Date**: 20 novembre 2025  
-**Version**: 1.3.1  
+**Version**: 1.3.0  
 **Note Finale**: **9.5/10** ✅
 
 ---

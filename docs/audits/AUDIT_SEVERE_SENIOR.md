@@ -3,7 +3,7 @@
 **Date**: 20 novembre 2025 (Mise à jour)  
 **Auditeur**: Senior Dev Strict (Mode Critique)  
 **Application**: Arkalia CIA  
-**Version**: 1.3.1  
+**Version**: 1.3.0  
 **Statut**: ⚠️ **NOUVEAUX PROBLÈMES IDENTIFIÉS** - Voir [AUDIT_ULTRA_SEVERE_SENIOR.md](AUDIT_ULTRA_SEVERE_SENIOR.md) pour audit approfondi
 
 ---

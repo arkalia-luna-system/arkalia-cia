@@ -100,7 +100,9 @@ class TestHydrationStatistics:
         """Test calcul moyenne quotidienne"""
         total_amount = 14000  # 7 jours
         days_with_entries = 7
-        average_daily = total_amount // days_with_entries if days_with_entries > 0 else 0
+        average_daily = (
+            total_amount // days_with_entries if days_with_entries > 0 else 0
+        )
         assert average_daily == 2000
 
     def test_compliance_rate_calculation(self):
@@ -108,7 +110,9 @@ class TestHydrationStatistics:
         days_goal_reached = 5
         days_with_entries = 7
         compliance_rate = (
-            (days_goal_reached / days_with_entries * 100) if days_with_entries > 0 else 0
+            (days_goal_reached / days_with_entries * 100)
+            if days_with_entries > 0
+            else 0
         )
         assert compliance_rate == (5 / 7 * 100)
 
@@ -117,7 +121,8 @@ class TestHydrationStatistics:
         days_goal_reached = 7
         days_with_entries = 7
         compliance_rate = (
-            (days_goal_reached / days_with_entries * 100) if days_with_entries > 0 else 0
+            (days_goal_reached / days_with_entries * 100)
+            if days_with_entries > 0
+            else 0
         )
         assert compliance_rate == 100
-

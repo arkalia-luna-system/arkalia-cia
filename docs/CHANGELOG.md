@@ -205,7 +205,7 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), ce pr
   - Suppression logs Flutter obsolètes
 - **Dépendances** :
   - Toutes les versions mises à jour dans requirements.txt
-  - Version Python backend : 1.1.0 → 1.2.0 (pyproject.toml, setup.py)
+  - Version Python backend : 1.2.0 → 1.3.0 (pyproject.toml, setup.py)
 
 ### Fixed
 - **🐛 Corrections Sécurité** :
@@ -213,10 +213,6 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), ce pr
   - ✅ Élimination du risque d'erreurs "setState() called after dispose()"
 
 ---
-
-## [Unreleased]
-
-### Changed - November 19, 2025
 - **🎨 Améliorations UX**:
   - Titre modifié : "Assistant Personnel" → "Assistant Santé Personnel" avec sous-titre "Votre santé au quotidien"
   - Icônes empty states colorisées (Documents=vert, Santé=rouge, Rappels=orange, Infos médicales=rouge)

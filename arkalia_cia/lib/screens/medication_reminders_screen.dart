@@ -23,6 +23,25 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
     _loadMedications();
   }
 
+  /// Vérifie si un médicament a été pris pour une date et heure données
+  Future<bool> _isMedicationTaken(int medicationId, DateTime date, TimeOfDay time) async {
+    try {
+      final db = await _medicationService.database;
+      final dateStr = date.toIso8601String().split('T')[0];
+      final timeStr = '${time.hour}:${time.minute}';
+      
+      final result = await db.query(
+        'medication_taken',
+        where: 'medication_id = ? AND date = ? AND time = ? AND taken = 1',
+        whereArgs: [medicationId, dateStr, timeStr],
+      );
+      
+      return result.isNotEmpty;
+    } catch (e) {
+      return false;
+    }
+  }
+
   Future<void> _loadMedications() async {
     if (!mounted) return;
     setState(() {
@@ -408,12 +427,17 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
                                   medication.dosage ?? 'Sans dosage spécifié',
                                 ),
                                 children: medication.times.map((time) {
-                                  return MedicationReminderWidget(
-                                    medication: medication,
-                                    time: time,
-                                    isTaken: false, // TODO: Vérifier depuis la base
-                                    onTaken: () => _markAsTaken(medication, time),
-                                    onIgnore: () {},
+                                  return FutureBuilder<bool>(
+                                    future: _isMedicationTaken(medication.id!, DateTime.now(), time),
+                                    builder: (context, snapshot) {
+                                      return MedicationReminderWidget(
+                                        medication: medication,
+                                        time: time,
+                                        isTaken: snapshot.data ?? false,
+                                        onTaken: () => _markAsTaken(medication, time),
+                                        onIgnore: () {},
+                                      );
+                                    },
                                   );
                                 }).toList(),
                                 trailing: Row(

@@ -1,7 +1,7 @@
 # Checklist release consolidée
 
-**Version cible** : v1.2.0  
-**Dernière mise à jour** : 20 novembre 2025  
+**Version cible** : v1.3.0  
+**Dernière mise à jour** : 23 novembre 2025  
 **Statut** : En cours (Techniquement prêt, validations manuelles restantes)
 
 Checklist complète avant release pour Arkalia CIA.

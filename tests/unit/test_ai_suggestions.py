@@ -1,6 +1,5 @@
 """Tests pour suggestions IA Phase 4"""
 
-import pytest
 from arkalia_cia_python_backend.ai.conversational_ai import ConversationalAI
 
 
@@ -101,4 +100,3 @@ class TestAISuggestions:
 
         duplicates = ai.detect_duplicates(doctors)
         assert len(duplicates) == 0
-

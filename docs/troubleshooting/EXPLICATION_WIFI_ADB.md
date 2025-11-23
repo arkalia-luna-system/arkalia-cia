@@ -2,8 +2,8 @@
 
 > **Understanding what WiFi ADB does and doesn't do**
 
-**Last Updated**: November 19, 2025  
-**Version**: 1.2.0  
+**Last Updated**: November 23, 2025  
+**Version**: 1.3.0  
 **Platform**: Android
 
 ---

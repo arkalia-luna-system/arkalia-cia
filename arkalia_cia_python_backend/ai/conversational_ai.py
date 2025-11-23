@@ -201,14 +201,22 @@ class ConversationalAI:
             if exam_type != result.get("type"):
                 matches = re.findall(pattern, text_lower, re.IGNORECASE)
                 if matches:
-                    confidence = 0.7 if len(matches) == 1 else min(0.9, 0.7 + (len(matches) * 0.05))
+                    confidence = (
+                        0.7
+                        if len(matches) == 1
+                        else min(0.9, 0.7 + (len(matches) * 0.05))
+                    )
                     if confidence > 0.5:
-                        alternatives.append({"type": exam_type, "confidence": confidence})
+                        alternatives.append(
+                            {"type": exam_type, "confidence": confidence}
+                        )
 
         return {
             "type": result.get("type"),
             "confidence": result.get("confidence", 0.0),
-            "alternatives": sorted(alternatives, key=lambda x: x["confidence"], reverse=True),
+            "alternatives": sorted(
+                alternatives, key=lambda x: x["confidence"], reverse=True
+            ),
         }
 
     def suggest_doctor_completion(self, partial_doctor: dict) -> dict[str, Any]:
@@ -227,24 +235,30 @@ class ConversationalAI:
         # Vérifier champs manquants
         if not partial_doctor.get("address"):
             missing_fields.append("address")
-            suggestions.append({
-                "field": "address",
-                "message": "L'adresse du cabinet pourrait être trouvée dans vos documents récents.",
-            })
+            suggestions.append(
+                {
+                    "field": "address",
+                    "message": "L'adresse du cabinet pourrait être trouvée dans vos documents récents.",
+                }
+            )
 
         if not partial_doctor.get("phone"):
             missing_fields.append("phone")
-            suggestions.append({
-                "field": "phone",
-                "message": "Le numéro de téléphone pourrait être dans vos documents ou consultations.",
-            })
+            suggestions.append(
+                {
+                    "field": "phone",
+                    "message": "Le numéro de téléphone pourrait être dans vos documents ou consultations.",
+                }
+            )
 
         if not partial_doctor.get("email"):
             missing_fields.append("email")
-            suggestions.append({
-                "field": "email",
-                "message": "L'email pourrait être trouvé dans vos documents.",
-            })
+            suggestions.append(
+                {
+                    "field": "email",
+                    "message": "L'email pourrait être trouvé dans vos documents.",
+                }
+            )
 
         return {
             "suggestions": suggestions,
@@ -263,7 +277,7 @@ class ConversationalAI:
         duplicates = []
 
         for i, doctor1 in enumerate(doctors):
-            for doctor2 in doctors[i+1:]:
+            for doctor2 in doctors[i + 1 :]:
                 # Comparer noms
                 name1 = f"{doctor1.get('first_name', '')} {doctor1.get('last_name', '')}".strip().lower()
                 name2 = f"{doctor2.get('first_name', '')} {doctor2.get('last_name', '')}".strip().lower()
@@ -282,12 +296,15 @@ class ConversationalAI:
 
                 # Si similarité > 0.8, considérer comme doublon potentiel
                 if similarity_score > 0.8:
-                    duplicates.append({
-                        "doctor1": doctor1,
-                        "doctor2": doctor2,
-                        "similarity_score": similarity_score,
-                        "reason": "Nom similaire" + (" et même spécialité" if specialty_match else ""),
-                    })
+                    duplicates.append(
+                        {
+                            "doctor1": doctor1,
+                            "doctor2": doctor2,
+                            "similarity_score": similarity_score,
+                            "reason": "Nom similaire"
+                            + (" et même spécialité" if specialty_match else ""),
+                        }
+                    )
 
         return sorted(duplicates, key=lambda x: x["similarity_score"], reverse=True)
 
@@ -353,7 +370,9 @@ class ConversationalAI:
                 treatments = pathology.get("treatments", [])
                 if treatments:
                     treatments_suggested = treatments[:3]
-                    answer += f"Traitements possibles : {', '.join(treatments_suggested)}. "
+                    answer += (
+                        f"Traitements possibles : {', '.join(treatments_suggested)}. "
+                    )
 
                 # Suggestions selon le type de question
                 if "quand" in question_lower or "prochain" in question_lower:
@@ -391,11 +410,13 @@ class ConversationalAI:
         questions = []
 
         # Questions générales
-        questions.extend([
-            "Quels sont les résultats de mes derniers examens ?",
-            "Y a-t-il des changements dans mon traitement ?",
-            "Dois-je modifier mon mode de vie ?",
-        ])
+        questions.extend(
+            [
+                "Quels sont les résultats de mes derniers examens ?",
+                "Y a-t-il des changements dans mon traitement ?",
+                "Dois-je modifier mon mode de vie ?",
+            ]
+        )
 
         # Questions spécifiques par pathologie
         for pathology in pathologies:
@@ -409,9 +430,7 @@ class ConversationalAI:
                 )
 
             if exams:
-                questions.append(
-                    f"Quand dois-je refaire {exams[0]} pour {name} ?"
-                )
+                questions.append(f"Quand dois-je refaire {exams[0]} pour {name} ?")
 
         return questions[:8]  # Limiter à 8 questions
 

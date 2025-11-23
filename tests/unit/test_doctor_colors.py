@@ -1,7 +1,6 @@
 """Tests pour le mapping couleur par spécialité de médecin"""
 
 
-
 class TestDoctorColors:
     """Tests pour getColorForSpecialty"""
 
@@ -21,16 +20,25 @@ class TestDoctorColors:
     def test_generaliste_green(self):
         """Test que généraliste retourne vert"""
         specialty = "Généraliste"
-        assert "généraliste" in specialty.lower() or "médecin général" in specialty.lower()
+        assert (
+            "généraliste" in specialty.lower() or "médecin général" in specialty.lower()
+        )
 
     def test_default_grey(self):
         """Test que spécialité inconnue retourne gris"""
         specialty = "Spécialité Inconnue"
         # Par défaut, retourne Colors.grey
         assert specialty.lower() not in [
-            "cardiologue", "dermatologue", "gynécologue", "ophtalmologue",
-            "orthopédiste", "pneumologue", "rhumatologue", "neurologue",
-            "généraliste", "médecin général"
+            "cardiologue",
+            "dermatologue",
+            "gynécologue",
+            "ophtalmologue",
+            "orthopédiste",
+            "pneumologue",
+            "rhumatologue",
+            "neurologue",
+            "généraliste",
+            "médecin général",
         ]
 
     def test_case_insensitive(self):
@@ -45,4 +53,3 @@ class TestDoctorColors:
         """Test que les correspondances partielles fonctionnent"""
         specialty = "Cardiologie"
         assert "cardio" in specialty.lower() or "cardiologue" in specialty.lower()
-

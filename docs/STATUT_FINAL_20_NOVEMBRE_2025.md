@@ -1,7 +1,7 @@
 # ✅ Statut Final - Corrections Audit Sévère
 
 **Date**: 20 novembre 2025  
-**Version**: 1.3.1  
+**Version**: 1.2.0  
 **Note**: **9.5/10** ✅ **QUALITÉ EXCELLENTE CERTIFIÉE**
 
 ---

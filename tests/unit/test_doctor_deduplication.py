@@ -1,7 +1,6 @@
 """Tests pour la déduplication intelligente de médecins"""
 
 
-
 class TestDoctorDeduplication:
     """Tests pour findSimilarDoctors"""
 
@@ -18,9 +17,7 @@ class TestDoctorDeduplication:
     def test_similar_name(self):
         """Test détection nom similaire"""
         doctor1_name = "Jean Dupont"
-        doctor1_specialty = "Cardiologue"
         doctor2_name = "Jean Dupond"  # Faute de frappe
-        doctor2_specialty = "Cardiologue"
         # Devrait être détecté comme similaire (Jaro-Winkler > 0.85)
         assert doctor1_name != doctor2_name
         # Les noms sont très similaires
@@ -57,4 +54,3 @@ class TestDoctorDeduplication:
         # Devrait être détecté comme doublon si noms identiques
         assert doctor1_name == doctor2_name
         assert doctor1_specialty == doctor2_specialty
-

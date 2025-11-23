@@ -1,7 +1,7 @@
 # Guide build release Android
 
-**Version** : 1.2.0  
-**Dernière mise à jour** : 20 novembre 2025  
+**Version** : 1.3.0  
+**Dernière mise à jour** : 23 novembre 2025  
 **Cible** : Google Play Store
 
 Guide complet pour construire des releases Android prêtes pour la production.
@@ -25,7 +25,7 @@ Guide complet pour construire des releases Android prêtes pour la production.
 Verify version information in `pubspec.yaml`:
 
 ```yaml
-version: 1.2.0+1
+version: 1.3.0+1
 # Format: MAJOR.MINOR.PATCH+BUILD_NUMBER
 ```
 

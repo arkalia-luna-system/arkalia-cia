@@ -1,7 +1,7 @@
 # Statut Final — Authentification JWT
 
-**Version** : 1.3.1  
-**Date** : Janvier 2025  
+**Version** : 1.3.0  
+**Date** : 23 novembre 2025  
 **Statut** : Complété
 
 ---
@@ -95,5 +95,5 @@ L'application est prête pour la production :
 
 ---
 
-*Dernière mise à jour : Janvier 2025*
+*Dernière mise à jour : 23 novembre 2025*
 
