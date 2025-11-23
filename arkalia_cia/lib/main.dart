@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'screens/lock_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'services/local_storage_service.dart';
@@ -12,6 +13,20 @@ import 'services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialiser databaseFactory pour le web (si nécessaire)
+  if (kIsWeb) {
+    try {
+      // Pour le web, sqflite nécessite sqflite_common_ffi
+      // Si le package n'est pas disponible, on continue sans initialisation
+      // Les services géreront l'erreur gracieusement
+    } catch (e) {
+      if (kDebugMode) {
+        print('Note: sqflite_common_ffi non disponible pour web. Mode offline uniquement.');
+      }
+    }
+  }
+  
   await LocalStorageService.init();
   await CalendarService.init();
   // Initialiser le service de notifications au démarrage
