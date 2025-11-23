@@ -1,6 +1,7 @@
 #!/bin/bash
 # Script pour démarrer le backend Arkalia CIA
 # Utilise toujours le bon environnement virtuel
+# Vérifie les processus en double avant de démarrer
 
 set -e
 
@@ -8,12 +9,53 @@ set -e
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
+RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 # Chemin du projet
 PROJECT_ROOT="/Volumes/T7/arkalia-cia"
 VENV_PATH="/Volumes/T7/arkalia-luna-venv"
 BACKEND_DIR="${PROJECT_ROOT}/arkalia_cia_python_backend"
+LOCK_FILE="/tmp/arkalia_backend.lock"
+PORT=8000
+
+# Fonction de nettoyage
+cleanup() {
+    echo ""
+    echo -e "${YELLOW}🛑 Arrêt du serveur...${NC}"
+    rm -f "$LOCK_FILE"
+    exit 0
+}
+
+# Gérer les signaux pour nettoyer proprement
+trap cleanup SIGINT SIGTERM
+
+# Vérifier si le serveur tourne déjà
+if [ -f "$LOCK_FILE" ]; then
+    PID=$(cat "$LOCK_FILE" 2>/dev/null || echo "")
+    if [ -n "$PID" ] && ps -p "$PID" > /dev/null 2>&1; then
+        echo -e "${RED}⚠️  Le serveur backend tourne déjà (PID: $PID)${NC}"
+        echo -e "${YELLOW}   Utilisez './scripts/cleanup_all.sh' pour l'arrêter${NC}"
+        exit 1
+    else
+        rm -f "$LOCK_FILE"
+    fi
+fi
+
+# Vérifier si le port est déjà utilisé
+if lsof -Pi :$PORT -sTCP:LISTEN -t >/dev/null 2>&1 ; then
+    echo -e "${RED}⚠️  Le port $PORT est déjà utilisé${NC}"
+    echo -e "${YELLOW}   Utilisez './scripts/cleanup_all.sh' pour nettoyer les processus${NC}"
+    exit 1
+fi
+
+# Vérifier s'il y a déjà un processus uvicorn/api.py qui tourne
+if ps aux | grep -E "uvicorn.*api:app|python.*api\.py" | grep -v grep > /dev/null 2>&1; then
+    echo -e "${RED}⚠️  Un processus backend est déjà en cours d'exécution${NC}"
+    echo -e "${YELLOW}   Utilisez './scripts/cleanup_all.sh' pour l'arrêter${NC}"
+    ps aux | grep -E "uvicorn.*api:app|python.*api\.py" | grep -v grep | head -2
+    exit 1
+fi
 
 echo -e "${BLUE}🚀 Démarrage du backend Arkalia CIA${NC}"
 echo ""
@@ -51,6 +93,9 @@ python -c "from arkalia_cia_python_backend.app_types import DocumentMetadataDict
     pip install -e . > /dev/null 2>&1
     cd "$BACKEND_DIR"
 }
+
+# Créer le lock file
+echo $$ > "$LOCK_FILE"
 
 # Démarrer le serveur
 echo ""
