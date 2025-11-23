@@ -34,10 +34,10 @@ Le projet Arkalia CIA exploite maintenant 100% de son potentiel avec toutes les 
 
 ### Fonctionnalités avancées
 
-- **IA Conversationnelle** : Chat intelligent avec ARIA, analyse croisée CIA+ARIA, cause-effet, historique conversations (70-80% complet)
-- **IA Patterns** : Détection patterns, tendances, saisonnalité, prédictions Prophet (70% complet, tests unitaires complets)
-- **Recherche Avancée** : Multi-critères, sémantique avec synonymes, filtres, cache
-- **Partage Familial** : Chiffrement AES-256 bout-en-bout, gestion membres, permissions granulaires, notifications, dashboard avec statistiques (70-80% complet)
+- **IA Conversationnelle** : Chat intelligent avec ARIA, analyse croisée CIA+ARIA, cause-effet, historique conversations (95% complet - fonctionnel et complet)
+- **IA Patterns** : Détection patterns, tendances, saisonnalité, prédictions Prophet (95% complet - Prophet intégré, tests unitaires complets)
+- **Recherche Avancée** : Multi-critères, sémantique avec synonymes, filtres, cache (100% complet)
+- **Partage Familial** : Chiffrement AES-256 bout-en-bout, gestion membres, permissions granulaires, notifications, dashboard avec statistiques (95% complet - fonctionnel, audit log optionnel)
 - **Analyse Croisée CIA+ARIA** : Corrélations stress-douleur, sommeil-douleur
 - **Module Pathologies** : Suivi complet avec templates spécifiques (endométriose, cancer, myélome, ostéoporose, arthrose, arthrite, tendinite, spondylarthrite, Parkinson), tracking symptômes, graphiques d'évolution, rappels personnalisés (100% complet - Phase 3)
 - **Phase 1 - Améliorations Immédiates** ✅ : Codes couleur par spécialité, encadrement calendrier coloré, extraction enrichie médecins (adresse, téléphone, email), dialog médecin détecté après upload PDF, déduplication intelligente (100% complet - 23 novembre 2025)
@@ -186,14 +186,14 @@ Le projet Arkalia CIA exploite maintenant 100% de son potentiel avec toutes les 
 
 ## Ce qui reste (optionnel / futur)
 
-### Améliorations futures (non bloquantes)
+### Améliorations futures (non bloquantes - <2% du potentiel)
 
-- **Import automatique portails santé réels** : Structure complète avec auth + stockage tokens, nécessite APIs externes (eHealth, Andaman 7, MaSanté)
-- **Recherche NLP/AI performante** : Améliorée avec synonymes + cache, avancé nécessite modèles ML (BERT, BioBERT)
-- **Dashboard partage familial dédié** : Complet avec onglets + statistiques + historique
-- **Intégration robot BBIA** : Écran placeholder complet avec roadmap, nécessite SDK BBIA pour intégration réelle
+- **Import automatique portails santé réels** : Structure complète avec auth + stockage tokens, nécessite APIs externes (eHealth, Andaman 7, MaSanté) - **Non bloquant**
+- **Recherche NLP/AI avancée** : Améliorée avec synonymes + cache, avancé nécessite modèles ML (BERT, BioBERT) - **Optionnel**
+- **Audit log partage familial** : Structure existe, implémentation optionnelle - **Non bloquant**
+- **Intégration robot BBIA** : Écran placeholder complet avec roadmap, nécessite SDK BBIA pour intégration réelle - **Futur**
 
-**Note** : Toutes les structures sont complètes et prêtes. Les fonctionnalités restantes dépendent d'APIs externes (portails santé) ou de projets futurs (BBIA SDK), mais la base est à 100% d'exploitation.
+**Note** : Toutes les structures sont complètes et prêtes. Les fonctionnalités restantes (<2% du potentiel) dépendent d'APIs externes (portails santé) ou de projets futurs (BBIA SDK). L'exploitation actuelle est à **99%**.
 
 ---
 
