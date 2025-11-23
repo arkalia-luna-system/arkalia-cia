@@ -23,7 +23,7 @@
 **Tests**: 352 passed ✅ (70.83% coverage)  
 **Optimisations**: Audit approfondi terminé - Logger conditionnel, 0 log production, code optimisé  
 **Lint**: 0 erreur Flutter, 0 erreur Python ✅  
-**Dernières améliorations**: Sélection médecin recherche avancée, Refresh token portails santé
+**Dernières améliorations**: Phase 1-4 terminées (Codes couleur, calendrier, extraction enrichie, médicaments, hydratation, pathologies, IA améliorée)
 
 **Arkalia CIA** est une application mobile développée avec Flutter pour la gestion de documents médicaux, rappels de santé et contacts d'urgence.
 
