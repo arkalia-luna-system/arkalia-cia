@@ -20,6 +20,11 @@ Guide de navigation dans la documentation du projet Arkalia CIA.
   - Ce qui existe déjà vs ce qui manque
   - Plan d'implémentation détaillé
   - Pathologies familiales et besoins spécifiques
+- **[PROMPTS_IMPLEMENTATION_4_PHASES.md](./PROMPTS_IMPLEMENTATION_4_PHASES.md)** — Prompts détaillés pour implémentation
+  - 4 prompts complets, un par phase
+  - Instructions détaillées pour chaque tâche
+  - Tests à créer, vérifications, documentation
+  - Prêts à être utilisés par une IA
 
 ### Architecture et conception
 

@@ -331,6 +331,8 @@ class PathologyTracking {
 
 ## 🚀 PLAN D'IMPLÉMENTATION PRIORISÉ
 
+> **📋 PROMPTS DÉTAILLÉS** : Voir **[PROMPTS_IMPLEMENTATION_4_PHASES.md](./PROMPTS_IMPLEMENTATION_4_PHASES.md)** pour les prompts complets et détaillés de chaque phase, prêts à être utilisés par une IA.
+
 ### Phase 1 : Améliorations Immédiates (1-2 semaines)
 1. **Codes couleur par spécialité** 🎨
    - Mapping spécialité → couleur
