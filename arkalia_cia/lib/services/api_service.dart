@@ -507,4 +507,59 @@ class ApiService {
       rethrow;
     }
   }
+
+  // === RAPPORTS MÉDICAUX ===
+
+  /// Génère un rapport médical pré-consultation combinant CIA + ARIA
+  /// 
+  /// [consultationDate] Date de consultation (ISO format, optionnel, défaut: aujourd'hui)
+  /// [daysRange] Nombre de jours à inclure (défaut: 30)
+  /// [includeAria] Inclure les données ARIA si disponibles (défaut: true)
+  static Future<Map<String, dynamic>> generateMedicalReport({
+    String? consultationDate,
+    int daysRange = 30,
+    bool includeAria = true,
+  }) async {
+    try {
+      final url = await baseUrl;
+      if (url.isEmpty) {
+        return {
+          'success': false,
+          'error': 'Backend non configuré',
+          'backend_not_configured': true,
+        };
+      }
+
+      final headers = await _headers;
+      final body = json.encode({
+        if (consultationDate != null) 'consultation_date': consultationDate,
+        'days_range': daysRange,
+        'include_aria': includeAria,
+      });
+
+      final response = await http
+          .post(
+            Uri.parse('$url/api/v1/medical-reports/generate'),
+            headers: headers,
+            body: body,
+          )
+          .timeout(const Duration(seconds: 30));
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        final errorData = json.decode(response.body);
+        return {
+          'success': false,
+          'error': errorData['detail'] ?? 'Erreur lors de la génération du rapport',
+        };
+      }
+    } catch (e) {
+      AppLogger.error('Erreur génération rapport médical', e);
+      return {
+        'success': false,
+        'error': e.toString(),
+      };
+    }
+  }
 }

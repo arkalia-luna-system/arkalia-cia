@@ -3,6 +3,7 @@ import '../services/doctor_service.dart';
 import '../models/doctor.dart';
 import '../models/doctor.dart' as models;
 import 'add_edit_doctor_screen.dart';
+import 'medical_report_screen.dart';
 
 class DoctorDetailScreen extends StatefulWidget {
   final int doctorId;
@@ -63,6 +64,21 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
         title: Text(_doctor!.fullName),
         actions: [
           IconButton(
+            icon: const Icon(Icons.description),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MedicalReportScreen(
+                    doctorId: widget.doctorId,
+                    doctorName: _doctor!.fullName,
+                  ),
+                ),
+              );
+            },
+            tooltip: 'Générer rapport médical',
+          ),
+          IconButton(
             icon: const Icon(Icons.edit),
             onPressed: () async {
               final result = await Navigator.push(
@@ -87,6 +103,9 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
             
             // Statistiques
             if (_stats != null) _buildStats(),
+            
+            // Bouton générer rapport
+            _buildGenerateReportButton(),
             
             // Historique consultations
             Padding(
@@ -247,6 +266,38 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               )
             : null,
+      ),
+    );
+  }
+
+  Widget _buildGenerateReportButton() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: SizedBox(
+        width: double.infinity,
+        child: ElevatedButton.icon(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MedicalReportScreen(
+                  doctorId: widget.doctorId,
+                  doctorName: _doctor!.fullName,
+                ),
+              ),
+            );
+          },
+          icon: const Icon(Icons.description),
+          label: const Text(
+            'Générer rapport médical pré-consultation',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.green[600],
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+          ),
+        ),
       ),
     );
   }

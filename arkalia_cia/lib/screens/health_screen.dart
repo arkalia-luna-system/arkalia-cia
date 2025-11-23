@@ -4,6 +4,7 @@ import '../services/api_service.dart';
 import '../services/backend_config_service.dart';
 import '../utils/validation_helper.dart';
 import '../config/health_portals_config.dart';
+import 'medical_report_screen.dart';
 
 class HealthScreen extends StatefulWidget {
   const HealthScreen({super.key});
@@ -272,6 +273,18 @@ class _HealthScreenState extends State<HealthScreen> {
         backgroundColor: Colors.red[600],
         foregroundColor: Colors.white,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.description),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const MedicalReportScreen(),
+                ),
+              );
+            },
+            tooltip: 'Générer rapport médical',
+          ),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _loadPortals,
