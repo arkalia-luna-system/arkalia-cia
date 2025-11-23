@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
 import '../models/hydration_tracking.dart';
 import '../services/hydration_service.dart';
 
-/// Écran de gestion des rappels d'hydratation
+/// Écran de gestion des rappels d'hydratation avec design moderne et fonctionnalités intelligentes
 class HydrationRemindersScreen extends StatefulWidget {
   const HydrationRemindersScreen({super.key});
 
@@ -10,18 +11,44 @@ class HydrationRemindersScreen extends StatefulWidget {
   State<HydrationRemindersScreen> createState() => _HydrationRemindersScreenState();
 }
 
-class _HydrationRemindersScreenState extends State<HydrationRemindersScreen> {
+class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
+    with TickerProviderStateMixin {
   final HydrationService _hydrationService = HydrationService();
   Map<String, dynamic>? _dailyProgress;
   List<HydrationEntry> _todayEntries = [];
   HydrationGoal? _goal;
   bool _isLoading = false;
   DateTime _selectedDate = DateTime.now();
+  late AnimationController _progressAnimationController;
+  late AnimationController _pulseAnimationController;
+  late Animation<double> _progressAnimation;
+  Map<String, dynamic>? _weeklyStats;
+  String? _smartSuggestion;
 
   @override
   void initState() {
     super.initState();
+    _progressAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    );
+    _pulseAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat(reverse: true);
+    
+    _progressAnimation = CurvedAnimation(
+      parent: _progressAnimationController,
+      curve: Curves.easeOutCubic,
+    );
     _loadData();
+  }
+
+  @override
+  void dispose() {
+    _progressAnimationController.dispose();
+    _pulseAnimationController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadData() async {
@@ -36,12 +63,24 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen> {
       final goal = await _hydrationService.getHydrationGoal();
 
       if (mounted) {
+        // Charger les statistiques hebdomadaires pour les suggestions intelligentes
+        final now = DateTime.now();
+        final weekAgo = now.subtract(const Duration(days: 7));
+        final stats = await _hydrationService.getStatistics(weekAgo, now);
+        
         setState(() {
           _dailyProgress = progress;
           _todayEntries = entries;
           _goal = goal;
+          _weeklyStats = stats;
           _isLoading = false;
         });
+        
+        // Générer suggestion intelligente
+        _generateSmartSuggestion(progress, stats);
+        
+        // Animer la progression
+        _progressAnimationController.forward(from: 0);
       }
     } catch (e) {
       if (mounted) {
@@ -53,14 +92,59 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen> {
     }
   }
 
+  void _generateSmartSuggestion(Map<String, dynamic> progress, Map<String, dynamic> stats) {
+    final now = DateTime.now();
+    final hour = now.hour;
+    final total = progress['total'] as int? ?? 0;
+    final goal = progress['goal'] as int? ?? 2000;
+    final percentage = progress['percentage'] as int? ?? 0;
+    final averageDaily = stats['average_daily'] as int? ?? 0;
+    
+    String suggestion;
+    
+    if (percentage >= 100) {
+      suggestion = '🎉 Excellent ! Vous avez atteint votre objectif aujourd\'hui !';
+    } else if (hour < 10 && total < goal * 0.2) {
+      suggestion = '☀️ Bon matin ! Commencez votre journée avec un verre d\'eau.';
+    } else if (hour >= 10 && hour < 14 && total < goal * 0.4) {
+      suggestion = '💧 Pensez à boire régulièrement avant le déjeuner.';
+    } else if (hour >= 14 && hour < 18 && total < goal * 0.6) {
+      suggestion = '⏰ Après-midi : continuez à vous hydrater régulièrement.';
+    } else if (hour >= 18 && total < goal * 0.8) {
+      suggestion = '🌙 Il est temps de compléter votre hydratation quotidienne.';
+    } else if (averageDaily > 0 && total < averageDaily * 0.7) {
+      suggestion = '📊 Vous êtes en dessous de votre moyenne habituelle.';
+    } else {
+      final remaining = goal - total;
+      final glassesNeeded = (remaining / 250).ceil();
+      suggestion = '💡 Il vous reste environ $glassesNeeded verre${glassesNeeded > 1 ? 's' : ''} à boire aujourd\'hui.';
+    }
+    
+    setState(() {
+      _smartSuggestion = suggestion;
+    });
+  }
+
   Future<void> _markAsDrank(int amount) async {
     try {
       await _hydrationService.markAsDrank(amount);
       _loadData();
       if (mounted) {
+        // Animation de succès
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('$amount ml enregistrés'),
+            content: Row(
+              children: [
+                const Icon(Icons.check_circle, color: Colors.white),
+                const SizedBox(width: 8),
+                Text('$amount ml enregistrés'),
+              ],
+            ),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
             duration: const Duration(seconds: 2),
           ),
         );
@@ -146,30 +230,216 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen> {
     final stats = await _hydrationService.getStatistics(weekAgo, now);
 
     if (!mounted) return;
+    
+    // Récupérer les données quotidiennes pour le graphique
+    final dailyData = <Map<String, dynamic>>[];
+    for (int i = 6; i >= 0; i--) {
+      final date = now.subtract(Duration(days: i));
+      final progress = await _hydrationService.getDailyProgress(date);
+      dailyData.add({
+        'date': date,
+        'amount': progress['total'] as int? ?? 0,
+        'goal': progress['goal'] as int? ?? 2000,
+      });
+    }
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Statistiques de la semaine'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildStatRow('Total bu', '${stats['total_amount']} ml'),
-            _buildStatRow('Moyenne quotidienne', '${stats['average_daily']} ml'),
-            _buildStatRow('Jours avec entrées', '${stats['days_with_entries']}'),
-            _buildStatRow('Jours objectif atteint', '${stats['days_goal_reached']}'),
-            _buildStatRow('Taux de conformité', '${stats['compliance_rate']}%'),
-            const SizedBox(height: 16),
-            LinearProgressIndicator(
-              value: stats['compliance_rate'] / 100,
-              minHeight: 20,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 400),
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardColor,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '📊 Statistiques de la semaine',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  // Graphique en barres
+                  _buildWeeklyChart(dailyData),
+                  const SizedBox(height: 24),
+                  // Statistiques détaillées
+                  _buildStatCard('Total bu', '${stats['total_amount']} ml', Icons.water_drop),
+                  const SizedBox(height: 12),
+                  _buildStatCard('Moyenne quotidienne', '${stats['average_daily']} ml', Icons.trending_up),
+                  const SizedBox(height: 12),
+                  _buildStatCard('Jours objectif atteint', '${stats['days_goal_reached']}/7', Icons.check_circle),
+                  const SizedBox(height: 12),
+                  _buildStatCard('Taux de conformité', '${stats['compliance_rate']}%', Icons.analytics),
+                  const SizedBox(height: 16),
+                  LinearProgressIndicator(
+                    value: stats['compliance_rate'] / 100,
+                    minHeight: 8,
+                    borderRadius: BorderRadius.circular(4),
+                    backgroundColor: Colors.grey.withOpacity(0.2),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ],
+          ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Fermer'),
+      ),
+    );
+  }
+
+  Widget _buildWeeklyChart(List<Map<String, dynamic>> dailyData) {
+    final maxAmount = dailyData.map((d) => d['goal'] as int).reduce(math.max);
+    
+    return Container(
+      height: 200,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: dailyData.asMap().entries.map((entry) {
+          final data = entry.value;
+          final amount = data['amount'] as int;
+          final date = data['date'] as DateTime;
+          final height = maxAmount > 0 ? (amount / maxAmount) : 0.0;
+          final isToday = date.day == DateTime.now().day;
+          
+          return Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    '${amount}ml',
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 4),
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                          colors: isToday
+                              ? [
+                                  Theme.of(context).colorScheme.primary,
+                                  Theme.of(context).colorScheme.primary.withOpacity(0.6),
+                                ]
+                              : [
+                                  Theme.of(context).colorScheme.secondary.withOpacity(0.6),
+                                  Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                                ],
+                        ),
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(8),
+                        ),
+                      ),
+                      width: double.infinity,
+                      alignment: Alignment.bottomCenter,
+                      child: FractionallySizedBox(
+                        heightFactor: height,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: isToday
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context).colorScheme.secondary,
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(8),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    _getDayName(date.weekday),
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+                      color: isToday
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  String _getDayName(int weekday) {
+    const days = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+    return days[weekday - 1];
+  }
+
+  Widget _buildStatCard(String label, String value, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: Theme.of(context).colorScheme.primary),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                Text(
+                  value,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -208,11 +478,32 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen> {
     final goalGlasses = progress['goal_glasses'] as int? ?? 8;
     final isGoalReached = progress['is_goal_reached'] as bool? ?? false;
 
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     return Scaffold(
       appBar: AppBar(
-        title: const Text('💧 Rappels Hydratation'),
-        backgroundColor: Colors.cyan[600],
-        foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primary.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                Icons.water_drop,
+                color: theme.colorScheme.primary,
+              ),
+            ),
+            const SizedBox(width: 12),
+            const Text('Rappels Hydratation'),
+          ],
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.bar_chart),
@@ -233,22 +524,88 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Sélecteur de date
-                  Card(
+                  // Suggestion intelligente
+                  if (_smartSuggestion != null) ...[
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            theme.colorScheme.primary.withOpacity(0.1),
+                            theme.colorScheme.secondary.withOpacity(0.1),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: theme.colorScheme.primary.withOpacity(0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.lightbulb_outline,
+                            color: theme.colorScheme.primary,
+                            size: 28,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              _smartSuggestion!,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                  
+                  // Sélecteur de date amélioré
+                  Container(
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                     child: ListTile(
-                      leading: const Icon(Icons.calendar_today),
+                      leading: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primary.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(
+                          Icons.calendar_today,
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
                       title: const Text('Date sélectionnée'),
                       subtitle: Text(
                         '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       trailing: IconButton(
-                        icon: const Icon(Icons.edit),
+                        icon: Icon(Icons.edit, color: theme.colorScheme.primary),
                         onPressed: () async {
                           final date = await showDatePicker(
                             context: context,
                             initialDate: _selectedDate,
                             firstDate: DateTime.now().subtract(const Duration(days: 30)),
                             lastDate: DateTime.now().add(const Duration(days: 30)),
+                            builder: (context, child) {
+                              return Theme(
+                                data: theme.copyWith(
+                                  colorScheme: theme.colorScheme.copyWith(
+                                    primary: theme.colorScheme.primary,
+                                  ),
+                                ),
+                                child: child!,
+                              );
+                            },
                           );
                           if (date != null) {
                             setState(() {
