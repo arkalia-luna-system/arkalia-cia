@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../services/api_service.dart';
 import '../services/backend_config_service.dart';
 import '../utils/validation_helper.dart';
+import '../config/health_portals_config.dart';
 
 class HealthScreen extends StatefulWidget {
   const HealthScreen({super.key});
@@ -29,44 +30,8 @@ class _HealthScreenState extends State<HealthScreen> {
 
   Future<void> _addBelgianPortals() async {
     // Ajouter les portails santé belges pré-configurés si pas déjà présents
-    const belgianPortals = [
-      {
-        'name': 'eHealth',
-        'url': 'https://www.ehealth.fgov.be',
-        'description': 'Plateforme eHealth belge - Accès sécurisé aux données de santé',
-        'category': 'Administration',
-      },
-      {
-        'name': 'Inami',
-        'url': 'https://www.inami.fgov.be',
-        'description': 'Institut national d\'assurance maladie-invalidité',
-        'category': 'Administration',
-      },
-      {
-        'name': 'Sciensano',
-        'url': 'https://www.sciensano.be',
-        'description': 'Institut scientifique de santé publique',
-        'category': 'Information',
-      },
-      {
-        'name': 'SPF Santé Publique',
-        'url': 'https://www.health.belgium.be',
-        'description': 'Service public fédéral Santé publique',
-        'category': 'Administration',
-      },
-      {
-        'name': 'Andaman 7',
-        'url': 'https://www.andaman7.com',
-        'description': 'Application santé belge - Gestion de votre dossier médical',
-        'category': 'Application',
-      },
-      {
-        'name': 'MaSanté',
-        'url': 'https://www.masante.be',
-        'description': 'Portail santé belge - Accès à vos données médicales',
-        'category': 'Application',
-      },
-    ];
+    // Utilisation de la configuration centralisée
+    final belgianPortals = BelgianHealthPortals.getPortalsAsMaps();
     
     // Vérifier et ajouter les portails s'ils n'existent pas déjà
     try {

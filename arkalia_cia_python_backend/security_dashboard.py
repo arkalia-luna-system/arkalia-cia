@@ -27,17 +27,17 @@ if TYPE_CHECKING:
     )
 
 try:
-    from athalia_core.core.cache_manager import (  # pyright: ignore
-        CacheManager,  # noqa: F401
+    from athalia_core.core.cache_manager import (  # pyright: ignore; noqa: F401
+        CacheManager,
     )
-    from athalia_core.metrics.collector import (  # pyright: ignore
-        MetricsCollector,  # noqa: F401
+    from athalia_core.metrics.collector import (  # pyright: ignore; noqa: F401
+        MetricsCollector,
     )
-    from athalia_core.quality.code_linter import (  # pyright: ignore
-        CodeLinter,  # noqa: F401
+    from athalia_core.quality.code_linter import (  # pyright: ignore; noqa: F401
+        CodeLinter,
     )
-    from athalia_core.validation.security_validator import (  # pyright: ignore
-        CommandSecurityValidator,  # noqa: F401
+    from athalia_core.validation.security_validator import (  # pyright: ignore; noqa: F401
+        CommandSecurityValidator,
     )
 
     ATHALIA_AVAILABLE = True
