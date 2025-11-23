@@ -22,7 +22,6 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
   late AnimationController _progressAnimationController;
   late AnimationController _pulseAnimationController;
   late Animation<double> _progressAnimation;
-  Map<String, dynamic>? _weeklyStats;
   String? _smartSuggestion;
 
   @override
@@ -72,7 +71,6 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
           _dailyProgress = progress;
           _todayEntries = entries;
           _goal = goal;
-          _weeklyStats = stats;
           _isLoading = false;
         });
         
@@ -243,6 +241,8 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
       });
     }
 
+    if (!mounted) return;
+    final dialogTheme = Theme.of(context);
     showDialog(
       context: context,
       builder: (context) => Dialog(
@@ -250,7 +250,7 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
         child: Container(
           constraints: const BoxConstraints(maxWidth: 400),
           decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
+            color: dialogTheme.cardColor,
             borderRadius: BorderRadius.circular(20),
           ),
           child: SingleChildScrollView(
@@ -265,7 +265,7 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                     children: [
                       Text(
                         '📊 Statistiques de la semaine',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        style: dialogTheme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -277,24 +277,24 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                   ),
                   const SizedBox(height: 24),
                   // Graphique en barres
-                  _buildWeeklyChart(dailyData),
+                  _buildWeeklyChart(dailyData, dialogTheme),
                   const SizedBox(height: 24),
                   // Statistiques détaillées
-                  _buildStatCard('Total bu', '${stats['total_amount']} ml', Icons.water_drop),
+                  _buildStatCard('Total bu', '${stats['total_amount']} ml', Icons.water_drop, dialogTheme),
                   const SizedBox(height: 12),
-                  _buildStatCard('Moyenne quotidienne', '${stats['average_daily']} ml', Icons.trending_up),
+                  _buildStatCard('Moyenne quotidienne', '${stats['average_daily']} ml', Icons.trending_up, dialogTheme),
                   const SizedBox(height: 12),
-                  _buildStatCard('Jours objectif atteint', '${stats['days_goal_reached']}/7', Icons.check_circle),
+                  _buildStatCard('Jours objectif atteint', '${stats['days_goal_reached']}/7', Icons.check_circle, dialogTheme),
                   const SizedBox(height: 12),
-                  _buildStatCard('Taux de conformité', '${stats['compliance_rate']}%', Icons.analytics),
+                  _buildStatCard('Taux de conformité', '${stats['compliance_rate']}%', Icons.analytics, dialogTheme),
                   const SizedBox(height: 16),
                   LinearProgressIndicator(
                     value: stats['compliance_rate'] / 100,
                     minHeight: 8,
                     borderRadius: BorderRadius.circular(4),
-                    backgroundColor: Colors.grey.withOpacity(0.2),
+                    backgroundColor: Colors.grey.withValues(alpha: 0.2),
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      Theme.of(context).colorScheme.primary,
+                      dialogTheme.colorScheme.primary,
                     ),
                   ),
                 ],
@@ -306,14 +306,14 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
     );
   }
 
-  Widget _buildWeeklyChart(List<Map<String, dynamic>> dailyData) {
+  Widget _buildWeeklyChart(List<Map<String, dynamic>> dailyData, ThemeData theme) {
     final maxAmount = dailyData.map((d) => d['goal'] as int).reduce(math.max);
     
     return Container(
       height: 200,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        color: theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -336,7 +336,7 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                     '${amount}ml',
                     style: TextStyle(
                       fontSize: 10,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      color: theme.colorScheme.onSurfaceVariant,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -349,12 +349,12 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                           end: Alignment.topCenter,
                           colors: isToday
                               ? [
-                                  Theme.of(context).colorScheme.primary,
-                                  Theme.of(context).colorScheme.primary.withOpacity(0.6),
+                                  theme.colorScheme.primary,
+                                  theme.colorScheme.primary.withValues(alpha: 0.6),
                                 ]
                               : [
-                                  Theme.of(context).colorScheme.secondary.withOpacity(0.6),
-                                  Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                                  theme.colorScheme.secondary.withValues(alpha: 0.6),
+                                  theme.colorScheme.secondary.withValues(alpha: 0.3),
                                 ],
                         ),
                         borderRadius: const BorderRadius.vertical(
@@ -365,16 +365,16 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                       alignment: Alignment.bottomCenter,
                       child: FractionallySizedBox(
                         heightFactor: height,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: isToday
-                                ? Theme.of(context).colorScheme.primary
-                                : Theme.of(context).colorScheme.secondary,
-                            borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(8),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: isToday
+                                  ? theme.colorScheme.primary
+                                  : theme.colorScheme.secondary,
+                              borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(8),
+                              ),
                             ),
                           ),
-                        ),
                       ),
                     ),
                   ),
@@ -385,8 +385,8 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                       fontSize: 11,
                       fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
                       color: isToday
-                          ? Theme.of(context).colorScheme.primary
-                          : Theme.of(context).colorScheme.onSurfaceVariant,
+                          ? theme.colorScheme.primary
+                          : theme.colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -403,11 +403,11 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
     return days[weekday - 1];
   }
 
-  Widget _buildStatCard(String label, String value, IconData icon) {
+  Widget _buildStatCard(String label, String value, IconData icon, ThemeData theme) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        color: theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -415,10 +415,10 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+              color: theme.colorScheme.primary.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(icon, color: Theme.of(context).colorScheme.primary),
+            child: Icon(icon, color: theme.colorScheme.primary),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -429,31 +429,18 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                   label,
                   style: TextStyle(
                     fontSize: 12,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
                 Text(
                   value,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ],
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
-          Text(value),
         ],
       ),
     );
@@ -479,7 +466,6 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
     final isGoalReached = progress['is_goal_reached'] as bool? ?? false;
 
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
     
     return Scaffold(
       appBar: AppBar(
@@ -492,7 +478,7 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withOpacity(0.2),
+                color: theme.colorScheme.primary.withValues(alpha:0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
@@ -531,13 +517,13 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            theme.colorScheme.primary.withOpacity(0.1),
-                            theme.colorScheme.secondary.withOpacity(0.1),
+                            theme.colorScheme.primary.withValues(alpha:0.1),
+                            theme.colorScheme.secondary.withValues(alpha:0.1),
                           ],
                         ),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: theme.colorScheme.primary.withOpacity(0.3),
+                          color: theme.colorScheme.primary.withValues(alpha:0.3),
                           width: 1,
                         ),
                       ),
@@ -573,7 +559,7 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                       leading: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.primary.withOpacity(0.2),
+                          color: theme.colorScheme.primary.withValues(alpha:0.2),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Icon(
@@ -626,19 +612,19 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                         end: Alignment.bottomRight,
                         colors: isGoalReached
                             ? [
-                                theme.colorScheme.secondary.withOpacity(0.3),
-                                theme.colorScheme.secondary.withOpacity(0.1),
+                                theme.colorScheme.secondary.withValues(alpha:0.3),
+                                theme.colorScheme.secondary.withValues(alpha:0.1),
                               ]
                             : [
-                                theme.colorScheme.primary.withOpacity(0.3),
-                                theme.colorScheme.primary.withOpacity(0.1),
+                                theme.colorScheme.primary.withValues(alpha:0.3),
+                                theme.colorScheme.primary.withValues(alpha:0.1),
                               ],
                       ),
                       borderRadius: BorderRadius.circular(24),
                       border: Border.all(
                         color: isGoalReached
-                            ? theme.colorScheme.secondary.withOpacity(0.5)
-                            : theme.colorScheme.primary.withOpacity(0.5),
+                            ? theme.colorScheme.secondary.withValues(alpha:0.5)
+                            : theme.colorScheme.primary.withValues(alpha:0.5),
                         width: 2,
                       ),
                     ),
@@ -766,26 +752,38 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                       _buildQuickButton('Autre', null, Icons.edit, theme),
                     ],
                   ),
-                  const SizedBox(height: 24),
-                  // Historique du jour
-                  const Text(
+                  const SizedBox(height: 32),
+                  // Historique du jour amélioré
+                  Text(
                     'Historique du jour',
-                    style: TextStyle(
-                      fontSize: 18,
+                    style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 16),
                   _todayEntries.isEmpty
-                      ? const Card(
-                          child: Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: Center(
-                              child: Text(
-                                'Aucune consommation enregistrée aujourd\'hui',
-                                style: TextStyle(color: Colors.grey),
+                      ? Container(
+                          padding: const EdgeInsets.all(32.0),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.surfaceContainerHighest,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.water_drop_outlined,
+                                size: 64,
+                                color: theme.colorScheme.onSurfaceVariant.withValues(alpha:0.5),
                               ),
-                            ),
+                              const SizedBox(height: 16),
+                              Text(
+                                'Aucune consommation enregistrée aujourd\'hui',
+                                style: theme.textTheme.bodyLarge?.copyWith(
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
                           ),
                         )
                       : ListView.builder(
@@ -795,16 +793,46 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                           itemBuilder: (context, index) {
                             final entry = _todayEntries[index];
                             final time = entry.time;
-                            return Card(
-                              margin: const EdgeInsets.only(bottom: 8),
+                            return Container(
+                              margin: const EdgeInsets.only(bottom: 12),
+                              decoration: BoxDecoration(
+                                color: theme.colorScheme.surfaceContainerHighest,
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: theme.colorScheme.outline.withValues(alpha:0.2),
+                                ),
+                              ),
                               child: ListTile(
-                                leading: const Icon(Icons.water_drop, color: Colors.cyan),
-                                title: Text('${entry.amount} ml'),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
+                                leading: Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: theme.colorScheme.primary.withValues(alpha:0.2),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Icon(
+                                    Icons.water_drop,
+                                    color: theme.colorScheme.primary,
+                                  ),
+                                ),
+                                title: Text(
+                                  '${entry.amount} ml',
+                                  style: theme.textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                                 subtitle: Text(
                                   '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}',
+                                  style: theme.textTheme.bodySmall,
                                 ),
                                 trailing: IconButton(
-                                  icon: const Icon(Icons.delete, color: Colors.red),
+                                  icon: Icon(
+                                    Icons.delete_outline,
+                                    color: theme.colorScheme.error,
+                                  ),
                                   onPressed: () async {
                                     final confirm = await showDialog<bool>(
                                       context: context,
@@ -819,7 +847,7 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                                           ElevatedButton(
                                             onPressed: () => Navigator.pop(context, true),
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.red,
+                                              backgroundColor: theme.colorScheme.error,
                                             ),
                                             child: const Text('Supprimer'),
                                           ),
@@ -842,53 +870,137 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
     );
   }
 
-  Widget _buildQuickButton(String label, int? amount, IconData icon) {
-    return ElevatedButton.icon(
-      onPressed: () {
-        if (amount != null) {
-          _markAsDrank(amount);
-        } else {
-          // Ouvrir dialog pour saisie manuelle
-          final controller = TextEditingController();
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Quantité'),
-              content: TextField(
-                controller: controller,
-                decoration: const InputDecoration(
-                  labelText: 'Quantité (ml)',
-                  border: OutlineInputBorder(),
+  Widget _buildQuickButton(String label, int? amount, IconData icon, ThemeData theme) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        gradient: LinearGradient(
+          colors: [
+            theme.colorScheme.primary.withValues(alpha:0.8),
+            theme.colorScheme.primary.withValues(alpha:0.6),
+          ],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: theme.colorScheme.primary.withValues(alpha:0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            if (amount != null) {
+              _markAsDrank(amount);
+            } else {
+              // Ouvrir dialog pour saisie manuelle améliorée
+              final controller = TextEditingController();
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  title: Row(
+                    children: [
+                      Icon(
+                        Icons.edit,
+                        color: theme.colorScheme.primary,
+                      ),
+                      const SizedBox(width: 8),
+                      const Text('Quantité personnalisée'),
+                    ],
+                  ),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextField(
+                        controller: controller,
+                        decoration: InputDecoration(
+                          labelText: 'Quantité (ml)',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          prefixIcon: const Icon(Icons.water_drop),
+                        ),
+                        keyboardType: TextInputType.number,
+                        autofocus: true,
+                      ),
+                      const SizedBox(height: 16),
+                      Wrap(
+                        spacing: 8,
+                        children: [
+                          _buildQuickAmountChip(controller, '250', theme),
+                          _buildQuickAmountChip(controller, '500', theme),
+                          _buildQuickAmountChip(controller, '750', theme),
+                          _buildQuickAmountChip(controller, '1000', theme),
+                        ],
+                      ),
+                    ],
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Annuler'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        final amount = int.tryParse(controller.text);
+                        if (amount != null && amount > 0) {
+                          Navigator.pop(context);
+                          _markAsDrank(amount);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Veuillez entrer une quantité valide'),
+                            ),
+                          );
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: theme.colorScheme.primary,
+                      ),
+                      child: const Text('Enregistrer'),
+                    ),
+                  ],
                 ),
-                keyboardType: TextInputType.number,
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Annuler'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    final amount = int.tryParse(controller.text);
-                    if (amount != null && amount > 0) {
-                      Navigator.pop(context);
-                      _markAsDrank(amount);
-                    }
-                  },
-                  child: const Text('Enregistrer'),
+              );
+            }
+          },
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, color: Colors.white),
+                const SizedBox(width: 8),
+                Text(
+                  label,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                 ),
               ],
             ),
-          );
-        }
-      },
-      icon: Icon(icon),
-      label: Text(label),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.cyan[100],
-        foregroundColor: Colors.cyan[900],
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          ),
+        ),
       ),
+    );
+  }
+
+  Widget _buildQuickAmountChip(TextEditingController controller, String amount, ThemeData theme) {
+    return ActionChip(
+      label: Text('$amount ml'),
+      onPressed: () {
+        controller.text = amount;
+      },
+      backgroundColor: theme.colorScheme.primaryContainer,
+      labelStyle: TextStyle(color: theme.colorScheme.onPrimaryContainer),
     );
   }
 }
