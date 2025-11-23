@@ -6,11 +6,11 @@
 ## 📊 Statistiques Réelles (Vérifiées)
 
 ### Structure Actuelle
-- **Fichiers de test**: 20 fichiers
-- **Tests collectés**: 308 tests
-- **Classes de test**: 55+ classes
-- **Couverture**: 22.09% (seuil minimum: 15%)
-- **Fixtures**: 37+ fixtures
+- **Fichiers de test**: 24 fichiers
+- **Tests collectés**: 359 tests
+- **Classes de test**: 60+ classes
+- **Couverture**: ~20% (seuil minimum: 15%)
+- **Fixtures**: 40+ fixtures
 
 ### Organisation
 ```
@@ -18,24 +18,28 @@ tests/
 ├── fixtures/          (2 fichiers)
 │   ├── __init__.py
 │   └── auth_helpers.py
-├── unit/             (18 fichiers)
+├── unit/             (22 fichiers)
 │   ├── test_api.py
 │   ├── test_api_ai_endpoints.py
 │   ├── test_aria_integration.py
+│   ├── test_auth.py ✅ (nouveau)
 │   ├── test_auto_documenter.py
 │   ├── test_backend_services.py
-│   ├── test_config.py ✅ (nouveau)
+│   ├── test_config.py ✅
 │   ├── test_conversational_ai.py
 │   ├── test_database.py
+│   ├── test_dependencies.py ✅ (nouveau)
 │   ├── test_document_service.py
 │   ├── test_exceptions.py
-│   ├── test_filename_validator.py ✅ (nouveau)
+│   ├── test_filename_validator.py ✅
 │   ├── test_pattern_analyzer.py (optimisé)
 │   ├── test_pdf_processor.py
-│   ├── test_retry.py ✅ (nouveau)
+│   ├── test_retry.py ✅
+│   ├── test_search_doctor_filter.py ✅ (amélioré)
 │   ├── test_security_dashboard.py
+│   ├── test_security_utils.py ✅ (nouveau)
 │   ├── test_security_vulnerabilities.py
-│   ├── test_ssrf_validator.py ✅ (nouveau)
+│   ├── test_ssrf_validator.py ✅
 │   ├── test_storage.py
 │   └── test_validation.py
 └── integration/      (1 fichier)

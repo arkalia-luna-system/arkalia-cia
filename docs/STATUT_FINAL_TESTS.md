@@ -10,13 +10,17 @@ Suite complète de tests optimisée, organisée et configurée pour une exécuti
 ## 📈 Statistiques Globales
 
 ### Structure
-- **Fichiers de test**: 20 (16 + 4 nouveaux modules sécurité)
-- **Classes de test**: 55+ (47 + 8+ nouvelles)
-- **Méthodes de test**: 308 tests collectés
-- **Fixtures**: 37+
-- **Tests unitaires**: ~292
+- **Fichiers de test**: 24 (20 + 4 nouveaux modules)
+- **Classes de test**: 60+ classes
+- **Méthodes de test**: 359 tests collectés
+- **Fixtures**: 40+
+- **Tests unitaires**: ~343
 - **Tests d'intégration**: ~16
-- **Tests sécurité nouveaux**: 37 tests (config: 8, ssrf: 9, filename: 12, retry: 7)
+- **Nouveaux tests ajoutés**: 
+  - test_security_utils.py (37 tests)
+  - test_dependencies.py (6 tests)
+  - test_auth.py (18 tests)
+  - test_search_doctor_filter.py amélioré (7 tests)
 
 ### Organisation
 ```
