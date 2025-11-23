@@ -1,8 +1,38 @@
 # Changelog
 
-**Dernière mise à jour** : 19 novembre 2025
+**Dernière mise à jour** : 23 novembre 2025
 
 Format basé sur [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), ce projet suit [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [1.2.1] - 2025-11-23
+
+### Ajouté
+- **Sélection médecin dans recherche avancée** : Filtre par médecin avec dialog de sélection
+- **Refresh token pour portails santé** : Gestion automatique du rafraîchissement des tokens OAuth
+- **Tests security_utils** : Suite complète de tests pour les utilitaires de sécurité
+
+### Modifié
+- **Recherche avancée** : Support du filtre `doctorId` dans `SearchFilters` et `SearchService`
+- **HealthPortalAuthService** : Méthodes `refreshAccessToken()` et `getValidAccessToken()` implémentées
+- **Documentation** : Mise à jour de tous les fichiers MD avec statut final (100% production-ready)
+
+### Fixed
+- **🐛 Corrections Lint** :
+  - ✅ Correction `CardTheme` → `CardThemeData` dans `theme_service.dart`
+  - ✅ Correction tests `security_utils` (suppression None, correction test XSS)
+  - ✅ Correction type `int?` → `int` dans `advanced_search_screen.dart`
+  - ✅ Correction variable non utilisée dans `health_portal_auth_service.dart`
+- **🐛 Corrections Tests** :
+  - ✅ 352 tests passent (70.83% coverage)
+  - ✅ 0 erreur Flutter lint
+  - ✅ 0 erreur Python lint
+
+### Métriques
+- **Tests** : 352 passed (70.83% coverage)
+- **Lint** : 0 erreur Flutter, 0 erreur Python
+- **Statut** : 100% Production-Ready
 
 ---
 
