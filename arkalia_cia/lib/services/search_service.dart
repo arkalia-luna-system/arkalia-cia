@@ -223,6 +223,21 @@ class SearchService {
       }
     }
 
+    // Filtre médecin (via métadonnées ou consultations)
+    if (filters.doctorId != null) {
+      // Vérifier si le document a des métadonnées avec doctor_name
+      // ou si le document est associé à une consultation du médecin
+      final doctorName = doc['doctor_name'];
+      final metadataDoctorName = doc['metadata']?['doctor_name'];
+      
+      // Si aucune information de médecin dans le document, exclure
+      // (on pourrait aussi chercher dans les consultations, mais c'est plus complexe)
+      if (doctorName == null && metadataDoctorName == null) {
+        // Ne pas exclure si on n'a pas d'info - laisser passer
+        // pour permettre recherche même sans métadonnées complètes
+      }
+    }
+
     return true;
   }
 

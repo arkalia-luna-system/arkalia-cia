@@ -96,10 +96,12 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
                     'Création automatique historique intelligent',
                 color: Colors.blue,
                 onTap: () {
-                  // TODO: Implémenter import portails
+                  // Note: L'import automatique nécessite les APIs OAuth des portails santé
+                  // La structure est prête (HealthPortalAuthService), mais nécessite
+                  // la configuration des endpoints OAuth pour eHealth, Andaman 7, MaSanté
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Import portails - À venir bientôt !'),
+                      content: Text('Import portails - Nécessite configuration APIs OAuth'),
                     ),
                   );
                 },

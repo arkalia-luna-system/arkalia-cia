@@ -101,12 +101,14 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
       _currentStep = 'Connexion aux portails...';
     });
 
-    // TODO: Implémenter import portails
+    // Note: L'import automatique nécessite les APIs OAuth des portails santé
+    // La structure est prête (HealthPortalAuthService), mais nécessite
+    // la configuration des endpoints OAuth pour eHealth, Andaman 7, MaSanté
     await Future.delayed(const Duration(seconds: 2));
 
     setState(() {
       _progress = 1.0;
-      _currentStep = 'Import portails - À venir bientôt !';
+      _currentStep = 'Import portails - Nécessite configuration APIs OAuth';
       _isComplete = true;
     });
 

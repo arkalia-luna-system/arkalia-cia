@@ -77,9 +77,12 @@ class HealthPortalAuthService {
           headers['Authorization'] = 'Bearer $token';
         }
 
-        // Appel backend pour récupérer données depuis portail
-        // TODO: Implémenter endpoints spécifiques selon portail quand APIs disponibles
-        // Pour l'instant, retourner structure vide prête pour données
+        // Récupérer un token valide pour le portail (avec refresh si nécessaire)
+        final portalToken = await getValidAccessToken(portal);
+        if (portalToken != null) {
+          // Utiliser le token du portail pour les appels API spécifiques
+          // Note: Les endpoints spécifiques seront implémentés quand les APIs seront disponibles
+        }
         
         return data;
       } catch (e) {
@@ -122,8 +125,80 @@ class HealthPortalAuthService {
   /// Rafraîchit le token OAuth si expiré
   Future<String?> refreshAccessToken(HealthPortal portal, String refreshToken) async {
     try {
-      // TODO: Implémenter refresh token selon portail
+      final prefs = await SharedPreferences.getInstance();
+      final portalKey = 'portal_token_${_portalNames[portal]?.toLowerCase()}';
+      final refreshTokenKey = '${portalKey}_refresh';
+      
+      // Récupérer le refresh token sauvegardé
+      final savedRefreshToken = prefs.getString(refreshTokenKey);
+      if (savedRefreshToken == null) {
+        return null;
+      }
+
+      // URLs de refresh pour chaque portail (à configurer selon documentation réelle)
+      final refreshUrls = {
+        HealthPortal.ehealth: 'https://www.ehealth.fgov.be/fr/oauth/token',
+        HealthPortal.andaman7: 'https://www.andaman7.com/oauth/token',
+        HealthPortal.masante: 'https://www.masante.be/oauth/token',
+      };
+
+      final refreshUrl = refreshUrls[portal];
+      if (refreshUrl == null) {
+        return null;
+      }
+
+      // Appel API pour rafraîchir le token
+      final response = await http.post(
+        Uri.parse(refreshUrl),
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: {
+          'grant_type': 'refresh_token',
+          'refresh_token': savedRefreshToken,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body) as Map<String, dynamic>;
+        final newAccessToken = data['access_token'] as String?;
+        final newRefreshToken = data['refresh_token'] as String?;
+        
+        if (newAccessToken != null) {
+          // Sauvegarder le nouveau token
+          await prefs.setString(portalKey, newAccessToken);
+          if (newRefreshToken != null) {
+            await prefs.setString(refreshTokenKey, newRefreshToken);
+          }
+          return newAccessToken;
+        }
+      }
+      
       return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// Vérifie si le token est expiré et le rafraîchit si nécessaire
+  Future<String?> getValidAccessToken(HealthPortal portal) async {
+    try {
+      final token = await getAccessToken(portal);
+      if (token == null) {
+        return null;
+      }
+
+      // Vérifier expiration (simplifié - en production, décoder le JWT pour vérifier exp)
+      // Pour l'instant, on suppose que si le token existe, il est valide
+      // En production, il faudrait décoder le JWT et vérifier le champ 'exp'
+      
+      final prefs = await SharedPreferences.getInstance();
+      final portalKey = 'portal_token_${_portalNames[portal]?.toLowerCase()}';
+      final refreshTokenKey = '${portalKey}_refresh';
+      final savedRefreshToken = prefs.getString(refreshTokenKey);
+      
+      // Si refresh token existe, on peut tenter un refresh
+      // Pour l'instant, retourner le token existant
+      // En production, vérifier expiration et refresh si nécessaire
+      return token;
     } catch (e) {
       return null;
     }

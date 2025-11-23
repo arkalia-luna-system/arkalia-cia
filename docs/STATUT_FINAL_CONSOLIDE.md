@@ -174,5 +174,6 @@ Le projet est production-ready à 100%.
 
 ---
 
-*Dernière mise à jour : 20 novembre 2025*
+*Dernière mise à jour : 23 novembre 2025*
 *Statut : 100% d'exploitation atteint*
+*Améliorations : Sélection médecin dans recherche avancée, Refresh token portails santé*

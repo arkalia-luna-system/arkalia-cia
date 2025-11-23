@@ -22,11 +22,11 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
   bool _isSearching = false;
   final bool _useSemanticSearch = false;
   List<String> _suggestions = [];
-  // ignore: unused_field
-  List<Doctor> _doctors = []; // Sera utilisé pour sélection médecin dans filtres
+  List<Doctor> _doctors = [];
   String? _selectedCategory;
   DateTime? _startDate;
   DateTime? _endDate;
+  int? _selectedDoctorId;
 
   @override
   void initState() {
@@ -75,7 +75,7 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
         category: _selectedCategory,
         startDate: _startDate,
         endDate: _endDate,
-        doctorId: null, // TODO: Ajouter sélection médecin
+        doctorId: _selectedDoctorId,
       );
     });
 
@@ -193,6 +193,27 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
                       setState(() {
                         _startDate = null;
                         _endDate = null;
+                      });
+                      _performSearch();
+                    }
+                  },
+                ),
+                
+                // Filtre médecin
+                FilterChip(
+                  label: Text(_selectedDoctorId != null && _doctors.isNotEmpty
+                      ? (_doctors.firstWhere(
+                          (d) => d.id == _selectedDoctorId,
+                          orElse: () => _doctors.first,
+                        ).fullName)
+                      : 'Médecin'),
+                  selected: _selectedDoctorId != null,
+                  onSelected: (selected) {
+                    if (selected) {
+                      _showDoctorDialog();
+                    } else {
+                      setState(() {
+                        _selectedDoctorId = null;
                       });
                       _performSearch();
                     }
@@ -345,6 +366,50 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
       setState(() {
         _startDate = picked.start;
         _endDate = picked.end;
+      });
+      _performSearch();
+    }
+  }
+
+  Future<void> _showDoctorDialog() async {
+    if (_doctors.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Aucun médecin disponible')),
+        );
+      }
+      return;
+    }
+
+    final selected = await showDialog<int>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Choisir médecin'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: _doctors.length,
+            itemBuilder: (context, index) {
+              final doctor = _doctors[index];
+              return RadioListTile<int>(
+                title: Text(doctor.fullName),
+                subtitle: doctor.specialty != null ? Text(doctor.specialty!) : null,
+                value: doctor.id,
+                groupValue: _selectedDoctorId,
+                onChanged: (value) {
+                  Navigator.pop(context, value);
+                },
+              );
+            },
+          ),
+        ),
+      ),
+    );
+    
+    if (selected != null) {
+      setState(() {
+        _selectedDoctorId = selected;
       });
       _performSearch();
     }

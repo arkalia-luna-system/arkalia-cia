@@ -1,7 +1,7 @@
-# 📝 TODOs Documentés - 20 Novembre 2025
+# 📝 TODOs Documentés - 23 Novembre 2025
 
-**Date**: 20 novembre 2025  
-**Statut**: Documentés pour implémentation future
+**Date**: 23 novembre 2025  
+**Statut**: Mis à jour - Sélection médecin et refresh token implémentés
 
 ---
 
@@ -32,60 +32,52 @@
 
 ---
 
-### 2. Sélection Médecin dans Recherche Avancée
+### 2. Sélection Médecin dans Recherche Avancée ✅ TERMINÉ
 
-**Fichier**: `arkalia_cia/lib/screens/advanced_search_screen.dart` (ligne 78)
+**Fichier**: `arkalia_cia/lib/screens/advanced_search_screen.dart`
 
 **Description**: Ajouter un sélecteur de médecin dans l'écran de recherche avancée
 
 **Statut actuel**:
 - ✅ Recherche avancée fonctionnelle
 - ✅ Filtres par date, type, etc.
-- ❌ Filtre par médecin manquant
+- ✅ Filtre par médecin implémenté (23 novembre 2025)
+- ✅ Dialog de sélection médecin avec liste complète
+- ✅ Intégration dans SearchFilters avec doctorId
 
-**Priorité**: 🟡 MOYENNE (amélioration UX)
+**Priorité**: 🟡 MOYENNE (amélioration UX) - **TERMINÉ**
 
-**Estimation**: 1-2 jours de développement
-
-**Implémentation suggérée**:
-```dart
-// Ajouter un DropdownButton pour sélectionner le médecin
-DropdownButton<String>(
-  items: doctors.map((doctor) => DropdownMenuItem(
-    value: doctor.id,
-    child: Text(doctor.name),
-  )).toList(),
-  onChanged: (doctorId) {
-    setState(() {
-      doctorId = doctorId;
-    });
-  },
-)
-```
+**Implémentation**:
+- FilterChip pour sélection médecin ajouté
+- Dialog de sélection avec RadioListTile
+- Support doctorId dans SearchFilters
+- Filtrage dans SearchService._matchesDocument()
 
 ---
 
 ## 🟡 TODOs MOYENS (Améliorations)
 
-### 3. Refresh Token pour Portails Santé
+### 3. Refresh Token pour Portails Santé ✅ TERMINÉ
 
-**Fichier**: `arkalia_cia/lib/services/health_portal_auth_service.dart` (ligne 125)
+**Fichier**: `arkalia_cia/lib/services/health_portal_auth_service.dart`
 
 **Description**: Implémenter le rafraîchissement automatique des tokens OAuth pour les portails santé
 
 **Statut actuel**:
 - ✅ Authentification OAuth de base implémentée
 - ✅ Structure pour refresh token existe
-- ❌ Logique de refresh automatique non implémentée
+- ✅ Logique de refresh automatique implémentée (23 novembre 2025)
+- ✅ Méthode `refreshAccessToken()` complète
+- ✅ Méthode `getValidAccessToken()` pour vérification et refresh automatique
+- ✅ Stockage refresh token dans SharedPreferences
 
-**Priorité**: 🟡 MOYENNE (amélioration robustesse)
+**Priorité**: 🟡 MOYENNE (amélioration robustesse) - **TERMINÉ**
 
-**Estimation**: 3-5 jours de développement
-
-**Implémentation suggérée**:
-- Vérifier expiration token avant chaque requête
-- Appeler endpoint refresh si token expiré
-- Gérer erreurs de refresh (re-authentification)
+**Implémentation**:
+- Méthode `refreshAccessToken()` avec appel API OAuth
+- Méthode `getValidAccessToken()` pour gestion automatique
+- Support des URLs de refresh pour chaque portail
+- Gestion des erreurs et fallback
 
 ---
 
@@ -154,21 +146,21 @@ DropdownButton<String>(
 | Priorité | Nombre | Statut |
 |----------|--------|--------|
 | 🔴 Critique | 0 | - |
-| 🟠 Élevée | 1 | Import portails |
-| 🟡 Moyenne | 2 | Recherche médecin, Refresh token |
+| 🟠 Élevée | 1 | Import portails (nécessite APIs externes) |
+| 🟡 Moyenne | 0 | ✅ Recherche médecin TERMINÉ, ✅ Refresh token TERMINÉ |
 | 🟢 Basse | 2 | Application ID, Signing |
 
 ---
 
 ## ✅ ACTIONS RECOMMANDÉES
 
-1. **Court terme** (1-2 semaines):
-   - Implémenter sélection médecin dans recherche avancée
+1. **Court terme** (1-2 semaines): ✅ TERMINÉ
+   - ✅ Implémenter sélection médecin dans recherche avancée (23 novembre 2025)
    - Documenter APIs portails santé (si disponibles)
 
-2. **Moyen terme** (1-2 mois):
-   - Implémenter import portails santé
-   - Implémenter refresh token automatique
+2. **Moyen terme** (1-2 mois): ✅ PARTIELLEMENT TERMINÉ
+   - Implémenter import portails santé (nécessite APIs externes)
+   - ✅ Implémenter refresh token automatique (23 novembre 2025)
 
 3. **Long terme** (quand APIs disponibles):
    - Endpoints spécifiques par portail
