@@ -115,7 +115,10 @@ class DoctorService {
       return doctorMap['id'] as int;
     }
     final db = await database;
-    return await db!.insert('doctors', doctor.toMap());
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
+    return await db.insert('doctors', doctor.toMap());
   }
 
   Future<List<Doctor>> getAllDoctors() async {
