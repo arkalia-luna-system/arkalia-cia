@@ -177,3 +177,5 @@ Le projet est production-ready à 100%.
 *Dernière mise à jour : 23 novembre 2025*
 *Statut : 100% d'exploitation atteint*
 *Améliorations : Sélection médecin dans recherche avancée, Refresh token portails santé, Filtre type examen, Audit log partage familial, Export/import médecins, Application ID Android, Tests corrigés, Lint zéro erreur*
+
+> **📋 NOUVEAUX BESOINS** : Voir **[BESOINS_MERE_23_NOVEMBRE_2025.md](./BESOINS_MERE_23_NOVEMBRE_2025.md)** pour l'analyse complète des besoins exprimés par votre mère (codes couleur médecins, rappels intelligents médicaments/hydratation, module pathologies familiales, etc.)

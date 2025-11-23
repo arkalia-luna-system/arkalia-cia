@@ -1,8 +1,10 @@
 # Analyse complète — Besoins utilisateur et écosystème Arkalia
 
 **Date d'analyse** : 19 novembre 2025  
-**Version** : 2.0 (Fusion analyses complètes)  
-**Dernière mise à jour** : Janvier 2025
+**Version** : 2.1 (Mise à jour avec besoins 23 novembre 2025)  
+**Dernière mise à jour** : 23 novembre 2025
+
+> **⚠️ NOUVEAU** : Voir **[BESOINS_MERE_23_NOVEMBRE_2025.md](./BESOINS_MERE_23_NOVEMBRE_2025.md)** pour l'analyse complète des nouveaux besoins exprimés par votre mère (codes couleur, rappels intelligents, pathologies familiales, etc.)
 
 Analyse exhaustive de l'écosystème Arkalia Luna System et des besoins utilisateur.
 

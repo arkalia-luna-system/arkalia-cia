@@ -15,6 +15,11 @@ Guide de navigation dans la documentation du projet Arkalia CIA.
   - Statut complet d'exploitation
   - Fonctionnalités implémentées
   - Métriques et conclusion
+- **[BESOINS_MERE_23_NOVEMBRE_2025.md](./BESOINS_MERE_23_NOVEMBRE_2025.md)** — Analyse complète des nouveaux besoins
+  - Besoins exprimés par votre mère
+  - Ce qui existe déjà vs ce qui manque
+  - Plan d'implémentation détaillé
+  - Pathologies familiales et besoins spécifiques
 
 ### Architecture et conception
 
