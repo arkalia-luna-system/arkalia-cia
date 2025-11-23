@@ -392,10 +392,11 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
             itemCount: _doctors.length,
             itemBuilder: (context, index) {
               final doctor = _doctors[index];
+              if (doctor.id == null) return const SizedBox.shrink();
               return RadioListTile<int>(
                 title: Text(doctor.fullName),
                 subtitle: doctor.specialty != null ? Text(doctor.specialty!) : null,
-                value: doctor.id,
+                value: doctor.id!,
                 groupValue: _selectedDoctorId,
                 onChanged: (value) {
                   Navigator.pop(context, value);

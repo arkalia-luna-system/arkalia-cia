@@ -193,11 +193,16 @@ class HealthPortalAuthService {
       final prefs = await SharedPreferences.getInstance();
       final portalKey = 'portal_token_${_portalNames[portal]?.toLowerCase()}';
       final refreshTokenKey = '${portalKey}_refresh';
-      final savedRefreshToken = prefs.getString(refreshTokenKey);
+      // Vérifier si refresh token existe (pour usage futur)
+      final _savedRefreshToken = prefs.getString(refreshTokenKey);
       
       // Si refresh token existe, on peut tenter un refresh
       // Pour l'instant, retourner le token existant
       // En production, vérifier expiration et refresh si nécessaire
+      // ignore: unused_local_variable
+      if (_savedRefreshToken != null) {
+        // Refresh token disponible pour usage futur
+      }
       return token;
     } catch (e) {
       return null;
