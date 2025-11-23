@@ -46,22 +46,22 @@ class SearchService {
   static Database? _database;
   static final SemanticSearchService _semanticSearch = SemanticSearchService();
 
-  static Future<Database> get database async {
+  static Future<Database?> get database async {
+    if (kIsWeb) return null; // Sur le web, on n'utilise pas SQLite
     if (_database != null) return _database!;
     _database = await _initDatabase();
     return _database!;
   }
 
   static Future<Database> _initDatabase() async {
+    if (kIsWeb) {
+      throw UnsupportedError('SQLite non disponible sur le web');
+    }
     try {
       final dbPath = await getDatabasesPath();
       final path = join(dbPath, 'arkalia_cia.db');
       return await openDatabase(path, version: 1);
     } catch (e) {
-      // Sur le web, sqflite peut ne pas fonctionner, on retourne une erreur silencieuse
-      if (kIsWeb) {
-        throw Exception('Base de données non disponible sur le web.');
-      }
       rethrow;
     }
   }
