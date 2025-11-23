@@ -238,7 +238,37 @@
 
 ---
 
-### 7. Endpoints Spécifiques Portails Santé
+### 7. Phase 1 - Améliorations Immédiates ✅ TERMINÉE
+
+**Date**: 23 novembre 2025
+
+**Description**: Implémentation Phase 1 selon BESOINS_MERE_23_NOVEMBRE_2025.md
+
+**Statut actuel**:
+- ✅ Codes couleur par spécialité (Doctor.getColorForSpecialty())
+- ✅ Badges colorés dans doctors_list_screen.dart
+- ✅ Encadrement coloré dans calendar_screen.dart (table_calendar)
+- ✅ Extraction enrichie médecins (adresse, téléphone, email) dans metadata_extractor.py
+- ✅ Déduplication intelligente (findSimilarDoctors()) dans doctor_service.dart
+- ✅ Bouton Calendrier dans home_page.dart
+- ✅ Tests unitaires créés (test_metadata_extractor_enriched.py)
+
+**Priorité**: 🟢 TERMINÉ
+
+**Fichiers modifiés/créés**:
+- `arkalia_cia/lib/models/doctor.dart` - Méthode getColorForSpecialty()
+- `arkalia_cia/lib/screens/doctors_list_screen.dart` - Badges colorés
+- `arkalia_cia/lib/services/calendar_service.dart` - Support couleurs médecins
+- `arkalia_cia/lib/screens/calendar_screen.dart` - Écran calendrier complet
+- `arkalia_cia/lib/screens/home_page.dart` - Bouton Calendrier
+- `arkalia_cia/lib/services/doctor_service.dart` - findSimilarDoctors()
+- `arkalia_cia_python_backend/pdf_parser/metadata_extractor.py` - Extraction enrichie
+- `arkalia_cia/pubspec.yaml` - Ajout table_calendar
+- `tests/unit/test_metadata_extractor_enriched.py` - Tests extraction enrichie
+
+---
+
+### 8. Endpoints Spécifiques Portails Santé
 
 **Fichier**: `arkalia_cia/lib/services/health_portal_auth_service.dart` (ligne 81)
 

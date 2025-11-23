@@ -15,6 +15,8 @@ import 'family_sharing_screen.dart';
 import 'conversational_ai_screen.dart';
 import 'patterns_dashboard_screen.dart';
 import 'bbia_integration_screen.dart';
+import 'pathology_list_screen.dart';
+import 'calendar_screen.dart';
 import '../services/local_storage_service.dart';
 import '../services/calendar_service.dart';
 import '../services/search_service.dart';
@@ -226,6 +228,16 @@ class _HomePageState extends State<HomePage> {
                       onTap: () => _showHealth(context),
                     ),
 
+                    // Bouton 2b: Pathologies
+                    _buildActionButton(
+                      context,
+                      icon: MdiIcons.medicalBag,
+                      title: 'Pathologies',
+                      subtitle: 'Suivi pathologies',
+                      color: Colors.purple,
+                      onTap: () => _showPathologies(context),
+                    ),
+
                     // Bouton 3: Rappels simples
                     _buildActionButton(
                       context,
@@ -274,6 +286,16 @@ class _HomePageState extends State<HomePage> {
                       subtitle: 'Historique médecins',
                       color: Colors.teal,
                       onTap: () => _showDoctors(context),
+                    ),
+
+                    // Bouton Calendrier
+                    _buildActionButton(
+                      context,
+                      icon: MdiIcons.calendar,
+                      title: 'Calendrier',
+                      subtitle: 'RDV et rappels',
+                      color: Colors.blue,
+                      onTap: () => _showCalendar(context),
                     ),
 
                     // Bouton 8: Partage Familial
@@ -442,6 +464,13 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _showCalendar(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const CalendarScreen()),
+    );
+  }
+
   void _showFamilySharing(BuildContext context) {
     Navigator.push(
       context,
@@ -506,6 +535,13 @@ class _HomePageState extends State<HomePage> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const StatsScreen()),
+    );
+  }
+
+  void _showPathologies(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const PathologyListScreen()),
     );
   }
 

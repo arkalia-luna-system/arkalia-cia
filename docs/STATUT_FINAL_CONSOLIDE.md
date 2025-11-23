@@ -40,6 +40,7 @@ Le projet Arkalia CIA exploite maintenant 100% de son potentiel avec toutes les 
 - **Partage Familial** : Chiffrement AES-256 bout-en-bout, gestion membres, permissions granulaires, notifications, dashboard avec statistiques (70-80% complet)
 - **Analyse Croisée CIA+ARIA** : Corrélations stress-douleur, sommeil-douleur
 - **Module Pathologies** : Suivi complet avec templates spécifiques (endométriose, cancer, myélome, ostéoporose, arthrose, arthrite, tendinite, spondylarthrite, Parkinson), tracking symptômes, graphiques d'évolution, rappels personnalisés (100% complet - Phase 3)
+- **Phase 1 - Améliorations Immédiates** ✅ : Codes couleur par spécialité, encadrement calendrier coloré, extraction enrichie médecins (adresse, téléphone, email), déduplication intelligente (100% complet - 23 novembre 2025)
 
 ### Intégrations
 

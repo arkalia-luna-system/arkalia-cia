@@ -333,22 +333,22 @@ class PathologyTracking {
 
 > **📋 PROMPTS DÉTAILLÉS** : Voir **[PROMPTS_IMPLEMENTATION_4_PHASES.md](./PROMPTS_IMPLEMENTATION_4_PHASES.md)** pour les prompts complets et détaillés de chaque phase, prêts à être utilisés par une IA.
 
-### Phase 1 : Améliorations Immédiates (1-2 semaines)
-1. **Codes couleur par spécialité** 🎨
-   - Mapping spécialité → couleur
-   - Badges dans annuaire
-   - Couleur dans calendrier
-   - Configuration personnalisée
+### Phase 1 : Améliorations Immédiates (1-2 semaines) ✅ TERMINÉE
+1. **Codes couleur par spécialité** 🎨 ✅
+   - ✅ Mapping spécialité → couleur (Doctor.getColorForSpecialty())
+   - ✅ Badges dans annuaire (doctors_list_screen.dart)
+   - ✅ Couleur dans calendrier (calendar_service.dart)
+   - ⚠️ Configuration personnalisée (à venir Phase 2)
 
-2. **Encadrement calendrier** 📅
-   - Écran calendrier dédié
-   - Encadrement coloré par médecin
-   - Popup détail RDV
+2. **Encadrement calendrier** 📅 ✅
+   - ✅ Écran calendrier dédié (calendar_screen.dart avec table_calendar)
+   - ✅ Encadrement coloré par médecin (marqueurs colorés)
+   - ✅ Popup détail RDV (dialog avec infos complètes)
 
-3. **Extraction enrichie médecins** 👨‍⚕️
-   - Patterns adresse, téléphone, email
-   - Dialog de complétion automatique
-   - Déduplication intelligente
+3. **Extraction enrichie médecins** 👨‍⚕️ ✅
+   - ✅ Patterns adresse, téléphone, email (metadata_extractor.py)
+   - ⚠️ Dialog de complétion automatique (à intégrer dans upload flow)
+   - ✅ Déduplication intelligente (findSimilarDoctors())
 
 ### Phase 2 : Rappels Intelligents (2-3 semaines) ✅ TERMINÉE
 1. **Module médicaments** 💊 ✅
