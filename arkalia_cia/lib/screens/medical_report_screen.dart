@@ -44,6 +44,16 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
     });
 
     try {
+      // Vérifier si le backend est configuré
+      final backendConfigured = await ApiService.isBackendConfigured();
+      if (!backendConfigured) {
+        setState(() {
+          _error = 'Backend non configuré.\n\nVeuillez configurer l\'URL du backend dans les paramètres (⚙️ > Backend API).';
+          _isLoading = false;
+        });
+        return;
+      }
+
       final result = await ApiService.generateMedicalReport(
         consultationDate: widget.consultationDate,
         daysRange: 30,
@@ -56,15 +66,38 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
           _isLoading = false;
         });
       } else {
+        // Message d'erreur plus clair
+        String errorMessage = 'Erreur lors de la génération du rapport';
+        if (result['error'] != null) {
+          final error = result['error'] as String;
+          if (error.contains('Backend non configuré')) {
+            errorMessage = 'Backend non configuré.\n\nVeuillez configurer l\'URL du backend dans les paramètres.';
+          } else if (error.contains('Connection') || error.contains('Failed')) {
+            errorMessage = 'Impossible de se connecter au backend.\n\nVérifiez que le backend est démarré et que l\'URL est correcte.';
+          } else {
+            errorMessage = error;
+          }
+        }
+        
         setState(() {
-          _error = result['error'] ?? 'Erreur lors de la génération du rapport';
+          _error = errorMessage;
           _isLoading = false;
         });
       }
     } catch (e) {
       AppLogger.error('Erreur génération rapport', e);
+      String errorMessage = 'Erreur lors de la génération du rapport';
+      final errorStr = e.toString();
+      if (errorStr.contains('Backend non configuré')) {
+        errorMessage = 'Backend non configuré.\n\nVeuillez configurer l\'URL du backend dans les paramètres.';
+      } else if (errorStr.contains('Connection') || errorStr.contains('Failed')) {
+        errorMessage = 'Impossible de se connecter au backend.\n\nVérifiez que le backend est démarré et que l\'URL est correcte.';
+      } else {
+        errorMessage = 'Erreur: $errorStr';
+      }
+      
       setState(() {
-        _error = 'Erreur: ${e.toString()}';
+        _error = errorMessage;
         _isLoading = false;
       });
     }
