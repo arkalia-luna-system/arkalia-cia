@@ -8,6 +8,7 @@ import 'package:open_filex/open_filex.dart';
 import '../services/local_storage_service.dart';
 import '../services/file_storage_service.dart';
 import '../services/category_service.dart';
+import '../widgets/exam_type_badge.dart';
 
 class DocumentsScreen extends StatefulWidget {
   const DocumentsScreen({super.key});
@@ -23,6 +24,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   bool isUploading = false;
   final TextEditingController _searchController = TextEditingController();
   String _selectedCategory = 'Tous';
+  String? _selectedExamType; // Filtre par type d'examen
   Timer? _debounceTimer;
 
   @override
@@ -60,9 +62,42 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         final matchesSearch = name.contains(query);
         final matchesCategory = _selectedCategory == 'Tous' ||
             (doc['category'] ?? 'Non catégorisé') == _selectedCategory;
-        return matchesSearch && matchesCategory;
+        
+        // Filtre par type d'examen
+        bool matchesExamType = true; // Par défaut, pas de filtre
+        if (_selectedExamType != null) {
+          matchesExamType = false; // Si filtre actif, chercher correspondance
+          final metadata = doc['metadata'];
+          if (metadata != null && metadata is Map) {
+            final examType = metadata['exam_type']?.toString().toLowerCase();
+            if (examType == _selectedExamType!.toLowerCase()) {
+              matchesExamType = true;
+            }
+          }
+          // Aussi chercher dans le nom du document
+          if (!matchesExamType) {
+            matchesExamType = name.contains(_selectedExamType!.toLowerCase());
+          }
+        }
+        
+        return matchesSearch && matchesCategory && matchesExamType;
       }).toList();
     });
+  }
+  
+  /// Obtient la répartition des examens par type
+  Map<String, int> _getExamTypeDistribution() {
+    final distribution = <String, int>{};
+    for (var doc in documents) {
+      final metadata = doc['metadata'];
+      if (metadata != null && metadata is Map) {
+        final examType = metadata['exam_type'];
+        if (examType != null) {
+          distribution[examType] = (distribution[examType] ?? 0) + 1;
+        }
+      }
+    }
+    return distribution;
   }
 
   Future<void> _loadDocuments() async {
@@ -408,6 +443,12 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                     );
                   },
                 ),
+                const SizedBox(height: 8),
+                // Filtres rapides par type d'examen
+                _buildExamTypeFilters(),
+                const SizedBox(height: 8),
+                // Statistiques répartition examens
+                _buildExamStatistics(),
               ],
             ),
           ),
@@ -510,6 +551,16 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  // Badge type d'examen si disponible
+                                  if (doc['metadata'] != null && doc['metadata'] is Map)
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom: 4),
+                                      child: ExamTypeBadge(
+                                        examType: doc['metadata']['exam_type'],
+                                        confidence: doc['metadata']['exam_type_confidence']?.toDouble(),
+                                        showConfidence: doc['metadata']['needs_verification'] == true,
+                                      ),
+                                    ),
                                   Text('Taille: ${_formatFileSize(doc['file_size'] ?? 0)}'),
                                   Text('Ajouté: ${doc['created_at'] ?? 'Inconnu'}'),
                                 ],

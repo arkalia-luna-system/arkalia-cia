@@ -1,5 +1,45 @@
 # Changelog
 
+## [1.3.0] - 2025-11-23
+
+### Phase 4 : Améliorations IA — TERMINÉE
+
+#### Reconnaissance améliorée
+- ✅ Patterns examens enrichis avec synonymes et abréviations (scanner/CT/TDM, IRM/MRI, etc.)
+- ✅ Score de confiance pour chaque type d'examen détecté
+- ✅ Flag `needs_verification` si confiance < 0.7
+- ✅ Patterns médecins enrichis (Pr., Professeur, Mme, MD)
+- ✅ Extraction enrichie : adresse, téléphone, email depuis PDF
+
+#### Suggestions intelligentes
+- ✅ `suggest_exam_type()` : suggère le type d'examen le plus probable
+- ✅ `suggest_doctor_completion()` : suggère de compléter les infos manquantes
+- ✅ `detect_duplicates()` : détecte doublons médecins avec scoring
+- ✅ Suggestions de recherche avec synonymes médicaux
+- ✅ Pré-remplissage formulaire médecin depuis PDF détecté
+
+#### IA conversationnelle pathologies
+- ✅ `answer_pathology_question()` : répond aux questions sur pathologies
+- ✅ `suggest_questions_for_appointment()` : génère questions pertinentes pour RDV
+- ✅ Détection automatique de la pathologie mentionnée
+- ✅ Suggestions examens, traitements, rappels selon pathologie
+- ✅ Widget `PathologyAISuggestions` pour affichage suggestions
+
+#### Interface visuelle améliorée
+- ✅ Widget `ExamTypeBadge` : badge coloré avec icône selon type d'examen
+- ✅ Filtres rapides par type d'examen dans documents
+- ✅ Statistiques répartition examens par type (graphique)
+- ✅ Badges colorés médecins plus visibles (16x16px avec bordure)
+- ✅ Légende des couleurs avec filtres par spécialité
+- ✅ Recherche par type d'examen avec autocomplétion
+
+#### Tests
+- ✅ 16 nouveaux tests pour Phase 4 (tous passent)
+- ✅ 0 erreur de lint Python
+- ✅ 0 erreur de lint Flutter
+
+---
+
 **Dernière mise à jour** : 23 novembre 2025
 
 Format basé sur [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), ce projet suit [Semantic Versioning](https://semver.org/spec/v2.0.0.html).

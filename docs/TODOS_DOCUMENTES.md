@@ -57,6 +57,95 @@
 
 ## 🟡 TODOs MOYENS (Améliorations)
 
+### Phase 2 : Rappels Médicaments et Hydratation ✅ TERMINÉ
+
+**Fichiers créés**:
+- `arkalia_cia/lib/models/medication.dart`
+- `arkalia_cia/lib/models/hydration_tracking.dart`
+- `arkalia_cia/lib/services/medication_service.dart`
+- `arkalia_cia/lib/services/hydration_service.dart`
+- `arkalia_cia/lib/screens/medication_reminders_screen.dart`
+- `arkalia_cia/lib/screens/hydration_reminders_screen.dart`
+- `arkalia_cia/lib/widgets/medication_reminder_widget.dart`
+- `arkalia_cia/lib/screens/calendar_screen.dart`
+
+**Fichiers modifiés**:
+- `arkalia_cia/lib/services/calendar_service.dart` (intégration médicaments et hydratation)
+
+**Tests créés**:
+- `tests/unit/test_medication_service.py`
+- `tests/unit/test_hydration_service.py`
+- `tests/unit/test_medication_interactions.py`
+
+**Description**: Module complet de rappels médicaments intelligents et suivi d'hydratation
+
+**Statut actuel**:
+- ✅ Modèles Medication, MedicationTaken, HydrationEntry, HydrationGoal créés
+- ✅ Services MedicationService et HydrationService avec CRUD complet
+- ✅ Rappels adaptatifs pour médicaments (30min après si non pris)
+- ✅ Rappels hydratation toutes les 2h (8h-20h) avec renforcement si objectif non atteint
+- ✅ Écrans avec liste, formulaire, suivi, graphiques
+- ✅ Intégration calendrier avec distinction visuelle (💊 médicaments, 💧 hydratation, 🏥 RDV)
+- ✅ Tests Python complets pour interactions, validation, logique métier
+- ✅ Documentation mise à jour
+
+**Priorité**: 🟠 ÉLEVÉE - **TERMINÉ** (23 novembre 2025)
+
+**Implémentation**:
+- Structure complète avec modèles et services
+- Rappels intelligents avec adaptation selon historique
+- Suivi de prise avec statistiques et graphiques
+- Détection basique d'interactions médicamenteuses
+- Objectif hydratation avec badge "Hydratation parfaite"
+- Tests unitaires Python pour validation
+
+---
+
+### Phase 3 : Module Pathologies ✅ TERMINÉ
+
+**Fichiers créés**:
+- `arkalia_cia/lib/models/pathology.dart`
+- `arkalia_cia/lib/models/pathology_tracking.dart`
+- `arkalia_cia/lib/services/pathology_service.dart`
+- `arkalia_cia/lib/screens/pathology_list_screen.dart`
+- `arkalia_cia/lib/screens/pathology_detail_screen.dart`
+- `arkalia_cia/lib/screens/pathology_tracking_screen.dart`
+- `arkalia_cia/lib/screens/calendar_screen.dart`
+
+**Fichiers modifiés**:
+- `arkalia_cia/lib/screens/home_page.dart` (ajout bouton Pathologies)
+- `arkalia_cia/pubspec.yaml` (ajout fl_chart)
+
+**Tests créés**:
+- `tests/unit/test_pathology_service.py`
+- `tests/unit/test_pathology_tracking.py`
+- `tests/unit/test_pathology_templates.py`
+
+**Description**: Module complet de suivi de pathologies avec templates spécifiques
+
+**Statut actuel**:
+- ✅ Modèles Pathology et PathologyTracking créés
+- ✅ Service PathologyService avec CRUD complet
+- ✅ 9 templates prédéfinis (endométriose, cancer, myélome, ostéoporose, arthrose, arthrite, tendinite, spondylarthrite, Parkinson)
+- ✅ Écrans liste, détail avec graphiques, formulaire de tracking adaptatif
+- ✅ Intégration calendrier avec rappels colorés
+- ✅ Tests Python complets
+- ✅ Documentation mise à jour
+
+**Priorité**: 🟠 ÉLEVÉE - **TERMINÉ** (23 novembre 2025)
+
+**Implémentation**:
+- Structure de base complète avec modèles et service
+- Templates pour toutes les pathologies familiales
+- Écrans avec graphiques d'évolution (fl_chart)
+- Formulaire adaptatif selon la pathologie
+- Intégration avec calendrier et home_page
+- Tests unitaires Python pour validation
+
+---
+
+## 🟡 TODOs MOYENS (Améliorations)
+
 ### 3. Filtre Type d'Examen dans Recherche Avancée ✅ TERMINÉ
 
 **Fichier**: `arkalia_cia/lib/screens/advanced_search_screen.dart`

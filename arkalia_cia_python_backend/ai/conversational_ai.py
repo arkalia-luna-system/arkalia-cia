@@ -4,6 +4,7 @@ Analyse données CIA + ARIA pour dialogue intelligent
 """
 
 import logging
+import re
 from datetime import datetime
 from typing import Any
 
@@ -178,6 +179,241 @@ class ConversationalAI:
                 return answer
 
         return "Je peux analyser vos douleurs si vous avez des données dans ARIA. "
+
+    def suggest_exam_type(self, text: str) -> dict[str, Any]:
+        """
+        Suggère le type d'examen le plus probable depuis un texte
+
+        Returns:
+            {'type': str, 'confidence': float, 'alternatives': List[str]}
+        """
+        from arkalia_cia_python_backend.pdf_parser.metadata_extractor import (
+            MetadataExtractor,
+        )
+
+        extractor = MetadataExtractor()
+        result = extractor._extract_exam_type_with_confidence(text)
+
+        # Trouver alternatives (autres types possibles avec confiance > 0.5)
+        alternatives = []
+        text_lower = text.lower()
+        for exam_type, pattern in extractor.exam_patterns.items():
+            if exam_type != result.get("type"):
+                matches = re.findall(pattern, text_lower, re.IGNORECASE)
+                if matches:
+                    confidence = 0.7 if len(matches) == 1 else min(0.9, 0.7 + (len(matches) * 0.05))
+                    if confidence > 0.5:
+                        alternatives.append({"type": exam_type, "confidence": confidence})
+
+        return {
+            "type": result.get("type"),
+            "confidence": result.get("confidence", 0.0),
+            "alternatives": sorted(alternatives, key=lambda x: x["confidence"], reverse=True),
+        }
+
+    def suggest_doctor_completion(self, partial_doctor: dict) -> dict[str, Any]:
+        """
+        Suggère de compléter les informations manquantes d'un médecin
+
+        Args:
+            partial_doctor: Dict avec nom, spécialité, etc. (peut être incomplet)
+
+        Returns:
+            {'suggestions': List[dict], 'missing_fields': List[str]}
+        """
+        suggestions = []
+        missing_fields = []
+
+        # Vérifier champs manquants
+        if not partial_doctor.get("address"):
+            missing_fields.append("address")
+            suggestions.append({
+                "field": "address",
+                "message": "L'adresse du cabinet pourrait être trouvée dans vos documents récents.",
+            })
+
+        if not partial_doctor.get("phone"):
+            missing_fields.append("phone")
+            suggestions.append({
+                "field": "phone",
+                "message": "Le numéro de téléphone pourrait être dans vos documents ou consultations.",
+            })
+
+        if not partial_doctor.get("email"):
+            missing_fields.append("email")
+            suggestions.append({
+                "field": "email",
+                "message": "L'email pourrait être trouvé dans vos documents.",
+            })
+
+        return {
+            "suggestions": suggestions,
+            "missing_fields": missing_fields,
+        }
+
+    def detect_duplicates(self, doctors: list[dict]) -> list[dict[str, Any]]:
+        """
+        Détecte les doublons potentiels dans une liste de médecins
+
+        Returns:
+            List de {'doctor1': dict, 'doctor2': dict, 'similarity_score': float}
+        """
+        from difflib import SequenceMatcher
+
+        duplicates = []
+
+        for i, doctor1 in enumerate(doctors):
+            for doctor2 in doctors[i+1:]:
+                # Comparer noms
+                name1 = f"{doctor1.get('first_name', '')} {doctor1.get('last_name', '')}".strip().lower()
+                name2 = f"{doctor2.get('first_name', '')} {doctor2.get('last_name', '')}".strip().lower()
+
+                name_similarity = SequenceMatcher(None, name1, name2).ratio()
+
+                # Comparer spécialités
+                specialty1 = (doctor1.get("specialty") or "").lower()
+                specialty2 = (doctor2.get("specialty") or "").lower()
+                specialty_match = specialty1 == specialty2 and specialty1 != ""
+
+                # Score de similarité combiné
+                similarity_score = name_similarity
+                if specialty_match:
+                    similarity_score = min(1.0, similarity_score + 0.2)
+
+                # Si similarité > 0.8, considérer comme doublon potentiel
+                if similarity_score > 0.8:
+                    duplicates.append({
+                        "doctor1": doctor1,
+                        "doctor2": doctor2,
+                        "similarity_score": similarity_score,
+                        "reason": "Nom similaire" + (" et même spécialité" if specialty_match else ""),
+                    })
+
+        return sorted(duplicates, key=lambda x: x["similarity_score"], reverse=True)
+
+    def answer_pathology_question(
+        self, question: str, pathologies: list[dict]
+    ) -> dict[str, Any]:
+        """
+        Répond aux questions sur les pathologies
+
+        Args:
+            question: Question de l'utilisateur
+            pathologies: Liste des pathologies suivies
+
+        Returns:
+            {
+                'answer': str,
+                'pathology_mentioned': str | None,
+                'suggestions': List[str],
+                'exams_suggested': List[str],
+                'treatments_suggested': List[str]
+            }
+        """
+        question_lower = question.lower()
+        pathology_mentioned = None
+
+        # Détecter quelle pathologie est mentionnée
+        for pathology in pathologies:
+            name = pathology.get("name", "").lower()
+            if name in question_lower:
+                pathology_mentioned = pathology.get("name")
+                break
+
+        if not pathology_mentioned and pathologies:
+            # Si aucune pathologie spécifique, utiliser la première
+            pathology_mentioned = pathologies[0].get("name")
+
+        answer = ""
+        suggestions = []
+        exams_suggested = []
+        treatments_suggested = []
+
+        if pathology_mentioned:
+            pathology = next(
+                (p for p in pathologies if p.get("name") == pathology_mentioned),
+                {},
+            )
+
+            if pathology:
+                answer = f"Concernant votre suivi de {pathology_mentioned}, "
+
+                # Informations sur la pathologie
+                symptoms = pathology.get("symptoms", [])
+                if symptoms:
+                    answer += f"les symptômes suivis sont : {', '.join(symptoms[:3])}. "
+
+                # Suggérer examens
+                exams = pathology.get("exams", [])
+                if exams:
+                    exams_suggested = exams[:3]
+                    answer += f"Examens recommandés : {', '.join(exams_suggested)}. "
+
+                # Suggérer traitements
+                treatments = pathology.get("treatments", [])
+                if treatments:
+                    treatments_suggested = treatments[:3]
+                    answer += f"Traitements possibles : {', '.join(treatments_suggested)}. "
+
+                # Suggestions selon le type de question
+                if "quand" in question_lower or "prochain" in question_lower:
+                    suggestions.append(
+                        f"Vérifiez vos rappels pour {pathology_mentioned} dans le calendrier."
+                    )
+                if "symptôme" in question_lower or "douleur" in question_lower:
+                    suggestions.append(
+                        f"Enregistrez vos symptômes pour {pathology_mentioned} dans le suivi."
+                    )
+        else:
+            answer = "Je peux vous aider avec vos pathologies. Quelle pathologie vous intéresse ?"
+
+        return {
+            "answer": answer,
+            "pathology_mentioned": pathology_mentioned,
+            "suggestions": suggestions,
+            "exams_suggested": exams_suggested,
+            "treatments_suggested": treatments_suggested,
+        }
+
+    def suggest_questions_for_appointment(
+        self, doctor_id: str, pathologies: list[dict]
+    ) -> list[str]:
+        """
+        Génère des questions pertinentes pour un RDV selon pathologies suivies
+
+        Args:
+            doctor_id: ID du médecin
+            pathologies: Liste des pathologies suivies
+
+        Returns:
+            List de questions suggérées
+        """
+        questions = []
+
+        # Questions générales
+        questions.extend([
+            "Quels sont les résultats de mes derniers examens ?",
+            "Y a-t-il des changements dans mon traitement ?",
+            "Dois-je modifier mon mode de vie ?",
+        ])
+
+        # Questions spécifiques par pathologie
+        for pathology in pathologies:
+            name = pathology.get("name", "")
+            symptoms = pathology.get("symptoms", [])
+            exams = pathology.get("exams", [])
+
+            if symptoms:
+                questions.append(
+                    f"Concernant {name}, mes symptômes ({', '.join(symptoms[:2])}) sont-ils normaux ?"
+                )
+
+            if exams:
+                questions.append(
+                    f"Quand dois-je refaire {exams[0]} pour {name} ?"
+                )
+
+        return questions[:8]  # Limiter à 8 questions
 
     def _answer_doctor_question(self, question: str, user_data: dict) -> str:
         """Répond aux questions sur les médecins"""

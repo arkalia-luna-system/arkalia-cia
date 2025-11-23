@@ -4,8 +4,9 @@ import '../models/doctor.dart';
 
 class AddEditDoctorScreen extends StatefulWidget {
   final Doctor? doctor;
+  final Map<String, dynamic>? detectedData; // Données détectées depuis PDF
 
-  const AddEditDoctorScreen({super.key, this.doctor});
+  const AddEditDoctorScreen({super.key, this.doctor, this.detectedData});
 
   @override
   State<AddEditDoctorScreen> createState() => _AddEditDoctorScreenState();
@@ -40,6 +41,23 @@ class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> {
       _cityController.text = widget.doctor!.city ?? '';
       _postalCodeController.text = widget.doctor!.postalCode ?? '';
       _notesController.text = widget.doctor!.notes ?? '';
+    } else if (widget.detectedData != null) {
+      // Pré-remplir avec données détectées depuis PDF
+      final data = widget.detectedData!;
+      final doctorName = data['doctor_name'] as String?;
+      if (doctorName != null) {
+        final parts = doctorName.split(' ');
+        if (parts.isNotEmpty) {
+          _firstNameController.text = parts[0];
+          if (parts.length > 1) {
+            _lastNameController.text = parts.sublist(1).join(' ');
+          }
+        }
+      }
+      _specialtyController.text = data['doctor_specialty'] ?? '';
+      _phoneController.text = data['phone'] ?? '';
+      _emailController.text = data['email'] ?? '';
+      _addressController.text = data['address'] ?? '';
     }
   }
 

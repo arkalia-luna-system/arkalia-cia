@@ -262,11 +262,43 @@ class SearchService {
   Future<List<String>> getSearchSuggestions(String partialQuery) async {
     final documents = await LocalStorageService.getDocuments();
     final suggestions = <String>{};
+    final queryLower = partialQuery.toLowerCase();
     
+    // Synonymes médicaux pour améliorer les suggestions
+    final synonyms = {
+      'scanner': ['IRM', 'tomodensitométrie', 'CT', 'scanner CT'],
+      'irm': ['scanner', 'imagerie par résonance', 'MRI'],
+      'analyse': ['prélèvement', 'sang', 'urine', 'laboratoire', 'test'],
+      'radio': ['radiographie', 'RX', 'rayon X'],
+      'echographie': ['échographie', 'ultrasons', 'écho', 'US'],
+    };
+    
+    // Recherche directe dans les noms
     for (var doc in documents) {
       final name = doc['original_name'] ?? doc['name'] ?? '';
-      if (name.toLowerCase().contains(partialQuery.toLowerCase())) {
+      if (name.toLowerCase().contains(queryLower)) {
         suggestions.add(name);
+      }
+    }
+    
+    // Recherche avec synonymes
+    for (var entry in synonyms.entries) {
+      if (queryLower.contains(entry.key)) {
+        for (var synonym in entry.value) {
+          suggestions.add('Rechercher "$synonym"');
+        }
+      }
+    }
+    
+    // Recherche dans les métadonnées (type d'examen)
+    for (var doc in documents) {
+      final metadata = doc['metadata'];
+      if (metadata != null && metadata is Map) {
+        final examType = metadata['exam_type']?.toString().toLowerCase();
+        if (examType != null && examType.contains(queryLower)) {
+          final name = doc['original_name'] ?? doc['name'] ?? '';
+          suggestions.add(name);
+        }
       }
     }
     
