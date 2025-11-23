@@ -7,7 +7,7 @@
 
 Documentation complète de l'API REST d'Arkalia CIA.
 
-**Total endpoints** : 18 endpoints avec préfixe `/api/v1/` + 2 endpoints système (`/` et `/health`) = 20 endpoints au total.
+**Total endpoints** : 19 endpoints avec préfixe `/api/v1/` + 2 endpoints système (`/` et `/health`) = 21 endpoints au total.
 
 ---
 
@@ -19,10 +19,11 @@ Documentation complète de l'API REST d'Arkalia CIA.
 4. [Endpoints Rappels](#endpoints-rappels)
 5. [Endpoints Contacts Urgence](#endpoints-contacts-urgence)
 6. [Endpoints Portails Santé](#endpoints-portails-santé)
-7. [Endpoints IA](#endpoints-ia)
-8. [Endpoints Patterns](#endpoints-patterns)
-9. [Gestion d'erreurs](#gestion-derreurs)
-10. [Rate Limiting](#rate-limiting)
+7. [Endpoints Rapports Médicaux](#endpoints-rapports-médicaux)
+8. [Endpoints IA](#endpoints-ia)
+9. [Endpoints Patterns](#endpoints-patterns)
+10. [Gestion d'erreurs](#gestion-derreurs)
+11. [Rate Limiting](#rate-limiting)
 
 ---
 
@@ -429,6 +430,101 @@ Authorization: Bearer <token>
   ]
 }
 ```
+
+---
+
+## Endpoints Rapports Médicaux
+
+### Générer rapport médical pré-consultation
+
+```http
+POST /api/v1/medical-reports/generate
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{
+  "consultation_date": "2025-12-01T10:00:00Z",
+  "days_range": 30,
+  "include_aria": true
+}
+```
+
+**Paramètres** :
+- `consultation_date` (string, optionnel) : Date de consultation au format ISO (défaut: aujourd'hui)
+- `days_range` (int, optionnel) : Nombre de jours à inclure (défaut: 30, min: 1, max: 365)
+- `include_aria` (bool, optionnel) : Inclure les données ARIA si disponibles (défaut: true)
+
+**Réponse** :
+```json
+{
+  "success": true,
+  "report_date": "2025-12-01T10:00:00Z",
+  "generated_at": "2025-11-23T14:30:00Z",
+  "days_range": 30,
+  "sections": {
+    "documents": {
+      "title": "DOCUMENTS MÉDICAUX (CIA)",
+      "items": [
+        {
+          "name": "Analyse sanguine.pdf",
+          "date": "2025-11-15T00:00:00Z",
+          "type": "Examen",
+          "description": ""
+        }
+      ],
+      "count": 5
+    },
+    "consultations": {
+      "title": "CONSULTATIONS RÉCENTES",
+      "items": [],
+      "count": 0
+    },
+    "aria": {
+      "title": "DONNÉES ARIA (30 derniers jours)",
+      "pain_timeline": {
+        "average_intensity": 6.2,
+        "max_intensity": 8,
+        "peak_pain": {
+          "intensity": 8,
+          "date": "2025-11-12T14:30:00Z"
+        },
+        "most_common_location": "Genou droit",
+        "location_percentage": 78,
+        "most_common_triggers": [
+          {
+            "trigger": "Activité physique",
+            "count": 15,
+            "percentage": 45
+          }
+        ],
+        "total_entries": 33
+      },
+      "patterns": {
+        "sleep_correlation": {
+          "correlation": 0.78,
+          "description": "Douleur ↑ de 40% les jours où sommeil <6h"
+        }
+      },
+      "health_metrics": {
+        "sleep": {
+          "avg_30d": 6.2,
+          "target": 7.0,
+          "trend": "↓ -0.5h vs mois précédent"
+        }
+      }
+    }
+  },
+  "formatted_text": "RAPPORT MÉDICAL - Consultation du 01/12/2025\n============================================\n\nDOCUMENTS MÉDICAUX (CIA)\n- Analyse sanguine.pdf (Examen) - 15/11/2025\n..."
+}
+```
+
+**Fonctionnalités** :
+- Combine automatiquement données CIA (documents) + ARIA (douleur, patterns, métriques)
+- Graceful degradation : fonctionne même si ARIA n'est pas disponible
+- Format texte structuré prêt pour partage (email, messages, etc.)
+- Export PDF prévu en Phase 2
+
+**Rate limiting** : 10 requêtes par minute
 
 ---
 
