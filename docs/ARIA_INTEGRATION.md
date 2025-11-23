@@ -371,14 +371,21 @@ final response = await conversationalAI.ask(
 
 ## 📈 Roadmap d'Amélioration
 
-### Phase actuelle (v1.0)
+### Phase actuelle (v1.0) ✅
 - ✅ Synchronisation basique CIA ↔ ARIA
 - ✅ Récupération données douleur
-- ✅ Enrichissement IA conversationnelle
-- ✅ Export médical basique
+- ✅ Enrichissement IA conversationnelle avec patterns ARIA
+- ✅ **Génération de rapports médicaux pré-consultation** (implémenté)
+  - Service backend `MedicalReportService`
+  - Endpoint API `/api/v1/medical-reports/generate`
+  - Interface Flutter `MedicalReportScreen`
+  - Partage de rapports (texte formaté)
+  - Combinaison CIA (documents) + ARIA (douleur, patterns, métriques)
+- ✅ Tests unitaires et d'intégration complets
 
 ### Phase 2 (Q1 2026)
-- 🔄 Génération automatique de rapports avant RDV
+- 🔄 Export PDF des rapports médicaux
+- 🔄 Génération automatique de rapports avant RDV (notifications)
 - 🔄 Détection proactive de patterns critiques
 - 🔄 Suggestions personnalisées basées sur patterns
 

@@ -2,8 +2,9 @@
 Tests unitaires pour MedicalReportService
 """
 
+from datetime import datetime
+
 import pytest
-from datetime import datetime, timedelta
 
 from arkalia_cia_python_backend.database import CIADatabase
 from arkalia_cia_python_backend.services.medical_report_service import (
@@ -140,4 +141,3 @@ class TestMedicalReportService:
 
         result = report_service.export_report_to_text(report)
         assert result == ""
-

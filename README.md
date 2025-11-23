@@ -152,8 +152,8 @@ graph TB
 - **Pain tracking data** synchronization
 - **Pattern analysis** (psychological, pain triggers, correlations)
 - **Health metrics** (sleep, activity, stress) from ARIA
-- **Conversational AI enhancement** with pain context
-- **Medical export** preparation for healthcare professionals
+- **Conversational AI enhancement** with pain context and patterns
+- **Medical report generation** for pre-consultation preparation
 
 **Data Flow CIA ↔ ARIA**:
 - **CIA → ARIA**: Documents médicaux, consultations, examens (agrégats)
@@ -161,10 +161,15 @@ graph TB
 - **Clinical Vision**: CIA = "coffre-fort santé généraliste", ARIA = "microscope douleur/mental"
 
 **Example Use Cases**:
-1. **Before medical appointment**: CIA retrieves relevant pain data from ARIA to generate a summary report
+1. **Before medical appointment**: Generate comprehensive medical report combining:
+   - CIA documents (last 30 days)
+   - ARIA pain timeline (intensity, locations, triggers)
+   - ARIA detected patterns (sleep correlation, weather, seasonality)
+   - ARIA health metrics (sleep, stress, activity)
+   - Share report with healthcare professional
 2. **Daily pain tracking**: User notes pain in ARIA → CIA sees aggregated insights for document context
-3. **Pattern detection**: ARIA detects pain patterns → CIA uses this context in conversational AI responses
-4. **Medical export**: User can export combined CIA documents + ARIA pain timeline for healthcare professionals
+3. **Pattern detection**: ARIA detects pain patterns → CIA uses this context in conversational AI responses with detailed pattern information
+4. **Medical export**: User can generate and share combined CIA documents + ARIA pain timeline for healthcare professionals via the medical report feature
 
 **Technical Integration**:
 - REST API communication (optional, local-first)

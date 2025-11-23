@@ -2,22 +2,24 @@
 Tests d'intégration pour l'endpoint API de génération de rapports médicaux
 """
 
-import pytest
 from datetime import datetime, timedelta
 from pathlib import Path
+
+import bcrypt
+import pytest
 from fastapi.testclient import TestClient
 
 from arkalia_cia_python_backend import api
+from arkalia_cia_python_backend.auth import create_access_token
 from arkalia_cia_python_backend.database import CIADatabase
 from arkalia_cia_python_backend.dependencies import get_database
-from arkalia_cia_python_backend.auth import create_access_token
-import bcrypt
 
 
 @pytest.fixture
 def temp_db():
     """Base de données temporaire pour tests"""
     import uuid
+
     test_db_dir = Path.cwd() / "test_temp"
     test_db_dir.mkdir(exist_ok=True)
     db_path = str(test_db_dir / f"test_report_{uuid.uuid4().hex}.db")
@@ -101,7 +103,9 @@ class TestMedicalReportAPI:
         assert "formatted_text" in data
         assert "documents" in data["sections"]
 
-    def test_generate_report_with_consultation_date(self, client, temp_db, auth_headers):
+    def test_generate_report_with_consultation_date(
+        self, client, temp_db, auth_headers
+    ):
         """Test génération rapport avec date de consultation"""
         consultation_date = (datetime.now() + timedelta(days=7)).isoformat()
 
@@ -196,4 +200,3 @@ class TestMedicalReportAPI:
         # Les 10 premières doivent réussir, la 11ème peut être limitée
         success_count = sum(1 for code in responses if code == 200)
         assert success_count >= 10  # Au moins 10 doivent réussir
-
