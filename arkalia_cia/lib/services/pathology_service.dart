@@ -919,19 +919,584 @@ class PathologyService {
     );
   }
 
-  /// Liste tous les templates disponibles
+  /// Crée un template pour Alzheimer
+  static Pathology createAlzheimerTemplate() {
+    return Pathology(
+      name: 'Alzheimer',
+      description: 'Suivi de la maladie d\'Alzheimer avec mémoire et cognition',
+      symptoms: [
+        'Perte de mémoire',
+        'Troubles du langage',
+        'Désorientation',
+        'Changements d\'humeur',
+      ],
+      treatments: [
+        'Médicaments anticholinestérasiques',
+        'Thérapie cognitive',
+        'Activités stimulantes',
+      ],
+      exams: [
+        'IRM cérébrale',
+        'Tests neuropsychologiques',
+        'Consultation neurologue',
+      ],
+      reminders: {
+        'medication': ReminderConfig(
+          type: 'medication',
+          frequency: 'daily',
+          times: ['08:00', '20:00'],
+        ),
+        'consultation': ReminderConfig(
+          type: 'consultation',
+          frequency: 'monthly',
+          times: ['09:00'],
+        ),
+      },
+      color: Colors.teal,
+    );
+  }
+
+  /// Crée un template pour l'anémie
+  static Pathology createAnemiaTemplate() {
+    return Pathology(
+      name: 'Anémie',
+      description: 'Suivi de l\'anémie avec fatigue et carences',
+      symptoms: [
+        'Fatigue',
+        'Pâleur',
+        'Essoufflement',
+        'Vertiges',
+      ],
+      treatments: [
+        'Supplémentation en fer',
+        'Vitamine B12',
+        'Acide folique',
+      ],
+      exams: [
+        'Numération formule sanguine',
+        'Ferritine',
+        'Vitamine B12',
+      ],
+      reminders: {
+        'medication': ReminderConfig(
+          type: 'medication',
+          frequency: 'daily',
+          times: ['08:00'],
+        ),
+        'exam': ReminderConfig(
+          type: 'exam',
+          frequency: 'monthly',
+          times: ['09:00'],
+        ),
+      },
+      color: Colors.red.shade300,
+    );
+  }
+
+  /// Crée un template pour l'asthme
+  static Pathology createAsthmaTemplate() {
+    return Pathology(
+      name: 'Asthme',
+      description: 'Suivi de l\'asthme avec crises et traitement de fond',
+      symptoms: [
+        'Essoufflement',
+        'Sifflements',
+        'Toux',
+        'Oppression thoracique',
+      ],
+      treatments: [
+        'Corticoïdes inhalés',
+        'Bronchodilatateurs',
+        'Traitement de crise',
+      ],
+      exams: [
+        'Spirométrie',
+        'Peak flow',
+        'Tests allergologiques',
+      ],
+      reminders: {
+        'medication': ReminderConfig(
+          type: 'medication',
+          frequency: 'daily',
+          times: ['08:00', '20:00'],
+        ),
+        'exam': ReminderConfig(
+          type: 'exam',
+          frequency: 'monthly',
+          times: ['09:00'],
+        ),
+      },
+      color: Colors.cyan,
+    );
+  }
+
+  /// Crée un template pour le diabète
+  static Pathology createDiabetesTemplate() {
+    return Pathology(
+      name: 'Diabète',
+      description: 'Suivi du diabète avec glycémie et traitements',
+      symptoms: [
+        'Soif excessive',
+        'Urination fréquente',
+        'Fatigue',
+        'Vision floue',
+      ],
+      treatments: [
+        'Insuline',
+        'Médicaments antidiabétiques',
+        'Régime alimentaire',
+      ],
+      exams: [
+        'Glycémie',
+        'HbA1c',
+        'Bilan rénal',
+        'Examen des pieds',
+      ],
+      reminders: {
+        'medication': ReminderConfig(
+          type: 'medication',
+          frequency: 'daily',
+          times: ['08:00', '12:00', '18:00', '22:00'],
+        ),
+        'exam': ReminderConfig(
+          type: 'exam',
+          frequency: 'monthly',
+          times: ['09:00'],
+        ),
+      },
+      color: Colors.blue,
+    );
+  }
+
+  /// Crée un template pour la dépression
+  static Pathology createDepressionTemplate() {
+    return Pathology(
+      name: 'Dépression',
+      description: 'Suivi de la dépression avec humeur et traitement',
+      symptoms: [
+        'Tristesse persistante',
+        'Perte d\'intérêt',
+        'Fatigue',
+        'Troubles du sommeil',
+      ],
+      treatments: [
+        'Antidépresseurs',
+        'Psychothérapie',
+        'Activité physique',
+      ],
+      exams: [
+        'Consultation psychiatre',
+        'Consultation psychologue',
+      ],
+      reminders: {
+        'medication': ReminderConfig(
+          type: 'medication',
+          frequency: 'daily',
+          times: ['08:00'],
+        ),
+        'consultation': ReminderConfig(
+          type: 'consultation',
+          frequency: 'weekly',
+          times: ['14:00'],
+        ),
+      },
+      color: Colors.blueGrey,
+    );
+  }
+
+  /// Crée un template pour l'eczéma
+  static Pathology createEczemaTemplate() {
+    return Pathology(
+      name: 'Eczéma',
+      description: 'Suivi de l\'eczéma avec poussées et soins cutanés',
+      symptoms: [
+        'Démangeaisons',
+        'Rougeurs',
+        'Sécheresse cutanée',
+        'Desquamation',
+      ],
+      treatments: [
+        'Corticoïdes locaux',
+        'Émollients',
+        'Antihistaminiques',
+      ],
+      exams: [
+        'Consultation dermatologue',
+        'Tests allergologiques',
+      ],
+      reminders: {
+        'medication': ReminderConfig(
+          type: 'medication',
+          frequency: 'daily',
+          times: ['08:00', '20:00'],
+        ),
+        'consultation': ReminderConfig(
+          type: 'consultation',
+          frequency: 'monthly',
+          times: ['09:00'],
+        ),
+      },
+      color: Colors.pink.shade200,
+    );
+  }
+
+  /// Crée un template pour la fibromyalgie
+  static Pathology createFibromyalgiaTemplate() {
+    return Pathology(
+      name: 'Fibromyalgie',
+      description: 'Suivi de la fibromyalgie avec douleurs et fatigue',
+      symptoms: [
+        'Douleurs diffuses',
+        'Fatigue chronique',
+        'Troubles du sommeil',
+        'Troubles cognitifs',
+      ],
+      treatments: [
+        'Antalgiques',
+        'Antidépresseurs',
+        'Kinésithérapie',
+      ],
+      exams: [
+        'Consultation rhumatologue',
+        'Bilan douleur',
+      ],
+      reminders: {
+        'medication': ReminderConfig(
+          type: 'medication',
+          frequency: 'daily',
+          times: ['08:00', '20:00'],
+        ),
+        'therapy': ReminderConfig(
+          type: 'therapy',
+          frequency: 'weekly',
+          times: ['14:00'],
+        ),
+      },
+      color: Colors.purple.shade300,
+    );
+  }
+
+  /// Crée un template pour l'hypertension
+  static Pathology createHypertensionTemplate() {
+    return Pathology(
+      name: 'Hypertension',
+      description: 'Suivi de l\'hypertension artérielle avec tension et traitement',
+      symptoms: [
+        'Maux de tête',
+        'Vertiges',
+        'Palpitations',
+      ],
+      treatments: [
+        'Inhibiteurs ACE',
+        'Diurétiques',
+        'Bêta-bloquants',
+      ],
+      exams: [
+        'Mesure tension artérielle',
+        'Électrocardiogramme',
+        'Bilan rénal',
+      ],
+      reminders: {
+        'medication': ReminderConfig(
+          type: 'medication',
+          frequency: 'daily',
+          times: ['08:00'],
+        ),
+        'exam': ReminderConfig(
+          type: 'exam',
+          frequency: 'daily',
+          times: ['08:00', '20:00'],
+        ),
+      },
+      color: Colors.red.shade700,
+    );
+  }
+
+  /// Crée un template pour l'hypothyroïdie
+  static Pathology createHypothyroidismTemplate() {
+    return Pathology(
+      name: 'Hypothyroïdie',
+      description: 'Suivi de l\'hypothyroïdie avec hormones et traitement',
+      symptoms: [
+        'Fatigue',
+        'Prise de poids',
+        'Frilosité',
+        'Ralentissement',
+      ],
+      treatments: [
+        'Lévothyroxine',
+      ],
+      exams: [
+        'TSH',
+        'T4 libre',
+        'Consultation endocrinologue',
+      ],
+      reminders: {
+        'medication': ReminderConfig(
+          type: 'medication',
+          frequency: 'daily',
+          times: ['08:00'],
+        ),
+        'exam': ReminderConfig(
+          type: 'exam',
+          frequency: 'monthly',
+          times: ['09:00'],
+        ),
+      },
+      color: Colors.orange.shade300,
+    );
+  }
+
+  /// Crée un template pour la migraine
+  static Pathology createMigraineTemplate() {
+    return Pathology(
+      name: 'Migraine',
+      description: 'Suivi des migraines avec crises et traitements',
+      symptoms: [
+        'Maux de tête intenses',
+        'Nausées',
+        'Sensibilité à la lumière',
+        'Aura visuelle',
+      ],
+      treatments: [
+        'Triptans',
+        'Antalgiques',
+        'Traitement de fond',
+      ],
+      exams: [
+        'Consultation neurologue',
+        'IRM cérébrale',
+      ],
+      reminders: {
+        'medication': ReminderConfig(
+          type: 'medication',
+          frequency: 'daily',
+          times: ['08:00'],
+        ),
+        'consultation': ReminderConfig(
+          type: 'consultation',
+          frequency: 'monthly',
+          times: ['09:00'],
+        ),
+      },
+      color: Colors.deepPurple,
+    );
+  }
+
+  /// Crée un template pour la polyarthrite rhumatoïde
+  static Pathology createRheumatoidArthritisTemplate() {
+    return Pathology(
+      name: 'Polyarthrite rhumatoïde',
+      description: 'Suivi de la polyarthrite rhumatoïde avec douleurs articulaires',
+      symptoms: [
+        'Douleurs articulaires',
+        'Raideur matinale',
+        'Gonflement',
+        'Déformation',
+      ],
+      treatments: [
+        'Traitements de fond',
+        'Anti-inflammatoires',
+        'Corticoïdes',
+      ],
+      exams: [
+        'Radiographie',
+        'Analyses sanguines',
+        'Échographie articulaire',
+      ],
+      reminders: {
+        'medication': ReminderConfig(
+          type: 'medication',
+          frequency: 'daily',
+          times: ['08:00', '20:00'],
+        ),
+        'consultation': ReminderConfig(
+          type: 'consultation',
+          frequency: 'monthly',
+          times: ['09:00'],
+        ),
+      },
+      color: Colors.deepOrange.shade400,
+    );
+  }
+
+  /// Crée un template pour le psoriasis
+  static Pathology createPsoriasisTemplate() {
+    return Pathology(
+      name: 'Psoriasis',
+      description: 'Suivi du psoriasis avec poussées et traitements',
+      symptoms: [
+        'Plaques rouges',
+        'Desquamation',
+        'Démangeaisons',
+        'Douleurs articulaires',
+      ],
+      treatments: [
+        'Corticoïdes locaux',
+        'Traitements systémiques',
+        'Photothérapie',
+      ],
+      exams: [
+        'Consultation dermatologue',
+        'Bilan articulaire',
+      ],
+      reminders: {
+        'medication': ReminderConfig(
+          type: 'medication',
+          frequency: 'daily',
+          times: ['08:00', '20:00'],
+        ),
+        'consultation': ReminderConfig(
+          type: 'consultation',
+          frequency: 'monthly',
+          times: ['09:00'],
+        ),
+      },
+      color: Colors.red.shade400,
+    );
+  }
+
+  /// Crée un template pour le reflux gastro-œsophagien
+  static Pathology createGerdTemplate() {
+    return Pathology(
+      name: 'Reflux gastro-œsophagien',
+      description: 'Suivi du RGO avec brûlures et traitement',
+      symptoms: [
+        'Brûlures d\'estomac',
+        'Régurgitations',
+        'Douleurs thoraciques',
+        'Toux chronique',
+      ],
+      treatments: [
+        'Inhibiteurs de la pompe à protons',
+        'Anti-H2',
+        'Antiacides',
+      ],
+      exams: [
+        'Endoscopie digestive',
+        'pH-métrie',
+      ],
+      reminders: {
+        'medication': ReminderConfig(
+          type: 'medication',
+          frequency: 'daily',
+          times: ['08:00', '20:00'],
+        ),
+        'consultation': ReminderConfig(
+          type: 'consultation',
+          frequency: 'monthly',
+          times: ['09:00'],
+        ),
+      },
+      color: Colors.amber.shade700,
+    );
+  }
+
+  /// Crée un template pour la sclérose en plaques
+  static Pathology createMultipleSclerosisTemplate() {
+    return Pathology(
+      name: 'Sclérose en plaques',
+      description: 'Suivi de la sclérose en plaques avec poussées et traitement',
+      symptoms: [
+        'Troubles visuels',
+        'Fatigue',
+        'Troubles moteurs',
+        'Troubles sensitifs',
+      ],
+      treatments: [
+        'Traitements de fond',
+        'Corticoïdes',
+        'Kinésithérapie',
+      ],
+      exams: [
+        'IRM cérébrale',
+        'Ponction lombaire',
+        'Consultation neurologue',
+      ],
+      reminders: {
+        'medication': ReminderConfig(
+          type: 'medication',
+          frequency: 'daily',
+          times: ['08:00'],
+        ),
+        'consultation': ReminderConfig(
+          type: 'consultation',
+          frequency: 'monthly',
+          times: ['09:00'],
+        ),
+      },
+      color: Colors.blue.shade800,
+    );
+  }
+
+  /// Crée un template pour le syndrome du côlon irritable
+  static Pathology createIbsTemplate() {
+    return Pathology(
+      name: 'Syndrome du côlon irritable',
+      description: 'Suivi du syndrome du côlon irritable avec symptômes digestifs',
+      symptoms: [
+        'Douleurs abdominales',
+        'Ballonnements',
+        'Diarrhée',
+        'Constipation',
+      ],
+      treatments: [
+        'Régime alimentaire',
+        'Probiotiques',
+        'Antispasmodiques',
+      ],
+      exams: [
+        'Consultation gastro-entérologue',
+        'Coloscopie',
+      ],
+      reminders: {
+        'medication': ReminderConfig(
+          type: 'medication',
+          frequency: 'daily',
+          times: ['08:00', '20:00'],
+        ),
+        'consultation': ReminderConfig(
+          type: 'consultation',
+          frequency: 'monthly',
+          times: ['09:00'],
+        ),
+      },
+      color: Colors.green.shade600,
+    );
+  }
+
+  /// Liste tous les templates disponibles (triés par ordre alphabétique)
   static List<Pathology> getAllTemplates() {
-    return [
-      createEndometriosisTemplate(),
-      createCancerTemplate(),
-      createMyelomaTemplate(),
-      createOsteoporosisTemplate(),
+    final templates = [
+      createAlzheimerTemplate(),
+      createAnemiaTemplate(),
       createArthritisTemplate(),
       createArthritisRheumatoidTemplate(),
-      createTendinitisTemplate(),
-      createSpondylitisTemplate(),
+      createAsthmaTemplate(),
+      createCancerTemplate(),
+      createDepressionTemplate(),
+      createDiabetesTemplate(),
+      createEczemaTemplate(),
+      createEndometriosisTemplate(),
+      createFibromyalgiaTemplate(),
+      createGerdTemplate(),
+      createHypertensionTemplate(),
+      createHypothyroidismTemplate(),
+      createIbsTemplate(),
+      createMigraineTemplate(),
+      createMultipleSclerosisTemplate(),
+      createMyelomaTemplate(),
+      createOsteoporosisTemplate(),
       createParkinsonTemplate(),
+      createPsoriasisTemplate(),
+      createRheumatoidArthritisTemplate(),
+      createSpondylitisTemplate(),
+      createTendinitisTemplate(),
     ];
+    
+    // Trier par ordre alphabétique
+    templates.sort((a, b) => a.name.compareTo(b.name));
+    return templates;
   }
 }
 
