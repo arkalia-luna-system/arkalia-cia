@@ -1,6 +1,5 @@
 """Tests pour le mapping couleur par spécialité de médecin"""
 
-import pytest
 
 
 class TestDoctorColors:

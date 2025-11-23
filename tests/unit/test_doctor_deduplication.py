@@ -1,6 +1,5 @@
 """Tests pour la déduplication intelligente de médecins"""
 
-import pytest
 
 
 class TestDoctorDeduplication:
