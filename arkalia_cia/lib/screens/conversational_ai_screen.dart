@@ -90,8 +90,13 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
         final errorMessage = e.toString();
         if (errorMessage.contains('Backend non configuré')) {
           userMessage = '⚠️ Backend non configuré.\n\nVeuillez configurer l\'URL du backend dans les paramètres (⚙️ > Backend API).';
-        } else if (errorMessage.contains('Failed host lookup') || errorMessage.contains('Connection refused')) {
-          userMessage = '⚠️ Impossible de se connecter au backend.\n\nVérifiez que le backend est démarré et que l\'URL est correcte dans les paramètres.';
+        } else if (errorMessage.contains('Failed to fetch') || 
+                   errorMessage.contains('Failed host lookup') || 
+                   errorMessage.contains('Connection refused') ||
+                   errorMessage.contains('NetworkError')) {
+          userMessage = '⚠️ Erreur de connexion au backend.\n\n'
+              'Détails : Failed to fetch\n\n'
+              'Vérifiez la configuration du backend dans les paramètres.';
         } else {
           // Utiliser ErrorHelper pour un message utilisateur clair
           userMessage = '⚠️ ${ErrorHelper.getUserFriendlyMessage(e)}';
@@ -101,6 +106,11 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
           text: userMessage,
           isUser: false,
           timestamp: DateTime.now(),
+          suggestions: [
+            'Vérifier la configuration du backend',
+            'Vérifier que le backend est démarré',
+            'Tester la connexion dans les paramètres',
+          ],
         ));
         _isLoading = false;
       });
@@ -173,7 +183,7 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
               color: Theme.of(context).colorScheme.surface,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withValues(alpha: 0.1),
                   blurRadius: 4,
                   offset: const Offset(0, -2),
                 ),

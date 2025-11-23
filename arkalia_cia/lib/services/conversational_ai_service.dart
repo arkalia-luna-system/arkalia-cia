@@ -97,19 +97,24 @@ class ConversationalAIService {
       final errorMessage = e.toString();
       String userMessage;
       
-      if (errorMessage.contains('Failed host lookup') || errorMessage.contains('Connection refused')) {
-        userMessage = '⚠️ Impossible de se connecter au backend.\n\n'
+      if (errorMessage.contains('Failed to fetch') || 
+          errorMessage.contains('Failed host lookup') || 
+          errorMessage.contains('Connection refused') ||
+          errorMessage.contains('NetworkError')) {
+        final baseUrl = await BackendConfigService.getBackendURL();
+        userMessage = '⚠️ Erreur de connexion au backend.\n\n'
+            'Détails : Failed to fetch, uri=$baseUrl/api/v1/ai/chat\n\n'
             'Vérifiez que :\n'
-            '• Le backend est démarré (http://localhost:8000)\n'
-            '• L\'URL est correctement configurée dans les paramètres\n'
+            '• Le backend est démarré\n'
+            '• L\'URL est correctement configurée dans les paramètres (⚙️ > Backend API)\n'
             '• Votre connexion réseau fonctionne';
       } else if (errorMessage.contains('timeout')) {
         userMessage = '⏱️ Le backend met trop de temps à répondre.\n\n'
             'Vérifiez que le backend est bien démarré et accessible.';
       } else {
         userMessage = '⚠️ Erreur de connexion au backend.\n\n'
-            'Détails : ${errorMessage.contains("Exception:") ? errorMessage.split("Exception:")[1].trim() : "Erreur inconnue"}\n\n'
-            'Vérifiez la configuration du backend dans les paramètres.';
+            'Détails : ${errorMessage.contains("Exception:") ? errorMessage.split("Exception:")[1].trim() : errorMessage}\n\n'
+            'Vérifiez la configuration du backend dans les paramètres (⚙️ > Backend API).';
       }
       
       return AIResponse(
