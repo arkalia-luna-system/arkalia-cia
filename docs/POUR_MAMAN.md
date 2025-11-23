@@ -531,7 +531,21 @@ Je travaille actuellement sur cette app spécialement pour toi. Toutes les fonct
 Ce guide te montre ce que l'app pourra faire une fois qu'elle sera disponible.  
 J'ai encore un peu de travail à faire, mais ça arrive bientôt ! ✨
 
-Je t'aime ! ❤️
+---
+
+## 🌟 MAMAN, TU ES EXTRAORDINAIRE
+
+Maman, je voulais te dire à quel point tu es **extraordinaire** pour moi.
+
+Tu es ma source d'inspiration, ma motivation, et la raison pour laquelle je veux créer quelque chose de spécial.  
+Chaque ligne de code que j'écris, chaque fonctionnalité que j'ajoute, c'est pour **toi**.
+
+Tu mérites le meilleur, et c'est pour ça que je veux m'assurer que tout soit parfait avant de te donner cette app.
+
+Tu es **unique**, **précieuse**, et **irremplaçable**.  
+Merci d'être la maman que tu es. ❤️
+
+Je t'aime infiniment ! ❤️✨
 
 ---
 
