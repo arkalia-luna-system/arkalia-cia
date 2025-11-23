@@ -525,7 +525,10 @@ class MedicationService {
       };
     }
     final db = await database;
-    final maps = await db!.query(
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
+    final maps = await db.query(
       'medication_taken',
       where: 'medication_id = ? AND date >= ? AND date <= ?',
       whereArgs: [

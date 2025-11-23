@@ -113,12 +113,15 @@ class PathologyService {
       return map['id'] as int;
     }
     final db = await database;
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
     final remindersJson = jsonEncode(
       pathology.reminders.map((key, value) => MapEntry(key, value.toMap())),
     );
     final map = pathology.toMap();
     map['reminders'] = remindersJson;
-    return await db!.insert('pathologies', map);
+    return await db.insert('pathologies', map);
   }
 
   Future<List<Pathology>> getAllPathologies() async {
@@ -146,7 +149,10 @@ class PathologyService {
         ..sort((a, b) => a.name.compareTo(b.name));
     }
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db!.query(
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
+    final List<Map<String, dynamic>> maps = await db.query(
       'pathologies',
       orderBy: 'name ASC',
     );
@@ -197,7 +203,10 @@ class PathologyService {
       return Pathology.fromMap(converted);
     }
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db!.query(
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
+    final List<Map<String, dynamic>> maps = await db.query(
       'pathologies',
       where: 'id = ?',
       whereArgs: [id],
@@ -239,13 +248,16 @@ class PathologyService {
       return 1;
     }
     final db = await database;
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
     final updatedPathology = pathology.copyWith(updatedAt: DateTime.now());
     final remindersJson = jsonEncode(
       updatedPathology.reminders.map((key, value) => MapEntry(key, value.toMap())),
     );
     final map = updatedPathology.toMap();
     map['reminders'] = remindersJson;
-    return await db!.update(
+    return await db.update(
       'pathologies',
       map,
       where: 'id = ?',
@@ -265,7 +277,10 @@ class PathologyService {
       return 1;
     }
     final db = await database;
-    return await db!.delete(
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
+    return await db.delete(
       'pathologies',
       where: 'id = ?',
       whereArgs: [id],
@@ -307,9 +322,12 @@ class PathologyService {
       return map['id'] as int;
     }
     final db = await database;
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
     final map = tracking.toMap();
     map['data'] = jsonEncode(tracking.data);
-    return await db!.insert('pathology_tracking', map);
+    return await db.insert('pathology_tracking', map);
   }
 
   Future<List<PathologyTracking>> getTrackingByPathology(

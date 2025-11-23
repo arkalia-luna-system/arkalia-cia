@@ -27,7 +27,7 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
   Future<bool> _isMedicationTaken(int medicationId, DateTime date, TimeOfDay time) async {
     try {
       // Utiliser la méthode du service qui gère déjà le web
-      final stats = await _medicationService.getMedicationStats(
+      final tracking = await _medicationService.getMedicationTracking(
         medicationId,
         date,
         date,
@@ -36,14 +36,13 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
       final timeStr = '${time.hour}:${time.minute}';
       
       // Vérifier dans les entrées si le médicament a été pris à cette heure
-      final entries = stats['entries'] as List?;
+      final entries = tracking['entries'] as List?;
       if (entries != null) {
         return entries.any((entry) {
-          if (entry is Map) {
-            final entryDate = entry['date']?.toString().split('T')[0];
-            final entryTime = entry['time']?.toString();
-            final taken = entry['taken'] == 1 || entry['taken'] == true;
-            return entryDate == dateStr && entryTime == timeStr && taken;
+          if (entry is MedicationTaken) {
+            final entryDate = entry.date.toIso8601String().split('T')[0];
+            final entryTime = '${entry.time.hour}:${entry.time.minute}';
+            return entryDate == dateStr && entryTime == timeStr && entry.taken;
           }
           return false;
         });
