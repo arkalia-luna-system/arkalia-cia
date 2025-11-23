@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/conversational_ai_service.dart';
+import '../utils/error_helper.dart';
 
 class ConversationalAIScreen extends StatefulWidget {
   const ConversationalAIScreen({super.key});
@@ -83,15 +84,17 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
       });
     } catch (e) {
       setState(() {
-        final errorMessage = e.toString();
         String userMessage;
         
+        // Utiliser ErrorHelper pour des messages utilisateur cohérents
+        final errorMessage = e.toString();
         if (errorMessage.contains('Backend non configuré')) {
           userMessage = '⚠️ Backend non configuré.\n\nVeuillez configurer l\'URL du backend dans les paramètres (⚙️ > Backend API).';
         } else if (errorMessage.contains('Failed host lookup') || errorMessage.contains('Connection refused')) {
           userMessage = '⚠️ Impossible de se connecter au backend.\n\nVérifiez que le backend est démarré et que l\'URL est correcte dans les paramètres.';
         } else {
-          userMessage = '⚠️ Erreur: ${errorMessage.contains("Exception:") ? errorMessage.split("Exception:")[1].trim() : errorMessage}';
+          // Utiliser ErrorHelper pour un message utilisateur clair
+          userMessage = '⚠️ ${ErrorHelper.getUserFriendlyMessage(e)}';
         }
         
         _messages.add(ChatMessage(

@@ -153,7 +153,12 @@ class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> {
             )
           else
             IconButton(
-              icon: const Icon(Icons.check),
+              icon: Icon(
+                Icons.check,
+                color: _formKey.currentState?.validate() == true
+                    ? Theme.of(context).colorScheme.primary
+                    : Colors.grey,
+              ),
               onPressed: _formKey.currentState?.validate() == true ? _saveDoctor : null,
               tooltip: 'Enregistrer',
             ),
