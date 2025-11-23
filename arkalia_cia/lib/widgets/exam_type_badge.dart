@@ -24,7 +24,7 @@ class ExamTypeBadge extends StatelessWidget {
       case 'scanner':
         return Icons.scanner;
       case 'irm':
-        return Icons.mri;
+        return Icons.medical_services; // MRI icon not available, using medical_services
       case 'echographie':
       case 'échographie':
         return Icons.waves;

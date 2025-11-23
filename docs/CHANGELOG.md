@@ -2,6 +2,99 @@
 
 ## [1.3.0] - 2025-11-23
 
+### Phase 1 : Améliorations Immédiates — TERMINÉE
+
+#### Codes couleur par spécialité
+- ✅ Méthode `Doctor.getColorForSpecialty()` avec mapping complet (13 spécialités)
+- ✅ Badges colorés dans `doctors_list_screen.dart` (16x16px avec bordure)
+- ✅ Légende des couleurs avec filtres par spécialité
+- ✅ Intégration couleurs dans `calendar_service.dart` pour événements
+
+#### Encadrement calendrier
+- ✅ Écran `calendar_screen.dart` avec `table_calendar`
+- ✅ Marqueurs colorés par médecin sur calendrier
+- ✅ Popup détail RDV avec informations complètes (médecin, adresse, documents)
+- ✅ Distinction visuelle : consultations (colorées), rappels (orange)
+
+#### Extraction enrichie médecins
+- ✅ Méthodes `_extract_address()`, `_extract_phone()`, `_extract_email()` dans `metadata_extractor.py`
+- ✅ Patterns adresses belges (rue, avenue, code postal)
+- ✅ Patterns téléphones belges (04XX/XX.XX.XX, +32)
+- ✅ Extraction automatique depuis PDF avec intégration dans métadonnées
+
+#### Déduplication intelligente
+- ✅ Méthode `findSimilarDoctors()` dans `doctor_service.dart`
+- ✅ Comparaison nom + spécialité avec tolérance variations orthographe
+- ✅ Scoring de similarité (>80% nom ou >60% nom + spécialité identique)
+
+#### Tests
+- ✅ Tests extraction enrichie (`test_metadata_extractor_enriched.py`)
+- ✅ Tests déduplication médecins (`test_doctor_deduplication.py`)
+- ✅ Tests codes couleur (`test_doctor_colors.py`)
+
+---
+
+### Phase 2 : Rappels Intelligents — TERMINÉE
+
+#### Module médicaments
+- ✅ Modèle `Medication` avec posologie, fréquence, heures
+- ✅ Service `MedicationService` avec CRUD complet
+- ✅ Écran `medication_reminders_screen.dart` avec liste, formulaire, suivi
+- ✅ Widget `medication_reminder_widget.dart` pour affichage rappels
+- ✅ Rappels adaptatifs : rappel 30min après si non pris
+- ✅ Suivi de prise avec statistiques et graphiques
+- ✅ Détection basique interactions médicamenteuses
+
+#### Module hydratation
+- ✅ Modèles `HydrationEntry` et `HydrationGoal` (défaut 2000ml = 8 verres)
+- ✅ Service `HydrationService` avec CRUD complet
+- ✅ Écran `hydration_reminders_screen.dart` avec barre progression, objectifs
+- ✅ Rappels toutes les 2h (8h-20h) avec renforcement si objectif non atteint
+- ✅ Badge "Hydratation parfaite" si objectif atteint
+- ✅ Graphiques consommation sur la semaine
+
+#### Intégration calendrier
+- ✅ Distinction visuelle : 💊 médicaments, 💧 hydratation, 🏥 RDV
+- ✅ Filtres par type d'événement dans `calendar_screen.dart`
+- ✅ Affichage rappels médicaments et hydratation avec icônes
+
+#### Tests
+- ✅ Tests `test_medication_service.py` : CRUD, rappels, suivi
+- ✅ Tests `test_hydration_service.py` : suivi, rappels, objectifs
+- ✅ Tests `test_medication_interactions.py` : détection interactions
+
+---
+
+### Phase 3 : Module Pathologies — TERMINÉE
+
+#### Structure de base
+- ✅ Modèles `Pathology` et `PathologyTracking` avec structure complète
+- ✅ Service `PathologyService` avec CRUD complet, statistiques, rappels
+- ✅ Écrans : liste, détail avec graphiques (fl_chart), formulaire tracking adaptatif
+
+#### Templates prédéfinis (9 pathologies)
+- ✅ Endométriose : cycle, douleurs, saignements, fatigue
+- ✅ Cancer : traitements, effets secondaires, examens
+- ✅ Myélome : douleurs osseuses, analyses biologiques
+- ✅ Ostéoporose : fractures, activité physique, calcium/vitamine D
+- ✅ Arthrose : douleurs articulaires, mobilité, médicaments
+- ✅ Arthrite : traitements de fond, kinésithérapie
+- ✅ Tendinite : rééducation, repos
+- ✅ Spondylarthrite : suivi complet
+- ✅ Parkinson : tremblements, rigidité, médicaments (horaires stricts)
+
+#### Intégration
+- ✅ Calendrier avec rappels colorés par pathologie
+- ✅ Bouton "Pathologies" dans `home_page.dart`
+- ✅ Graphiques d'évolution douleur avec fl_chart
+
+#### Tests
+- ✅ Tests `test_pathology_service.py` : structure, templates
+- ✅ Tests `test_pathology_tracking.py` : tracking, statistiques
+- ✅ Tests `test_pathology_templates.py` : tous les templates
+
+---
+
 ### Phase 4 : Améliorations IA — TERMINÉE
 
 #### Reconnaissance améliorée

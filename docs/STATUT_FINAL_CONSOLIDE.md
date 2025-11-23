@@ -91,6 +91,15 @@ Le projet Arkalia CIA exploite maintenant 100% de son potentiel avec toutes les 
 
 ## Améliorations finales appliquées
 
+### Phase 1 : Améliorations Immédiates (23 novembre 2025) ✅
+
+- **Codes couleur par spécialité** : Méthode `Doctor.getColorForSpecialty()` avec mapping 13 spécialités, badges colorés 16x16px dans annuaire, légende avec filtres
+- **Encadrement calendrier** : Écran `calendar_screen.dart` avec `table_calendar`, marqueurs colorés par médecin, popup détail RDV complet
+- **Extraction enrichie médecins** : Méthodes `_extract_address()`, `_extract_phone()`, `_extract_email()` dans `metadata_extractor.py` avec patterns belges
+- **Déduplication intelligente** : Méthode `findSimilarDoctors()` avec scoring de similarité (>80% nom ou >60% nom + spécialité)
+- **Tests** : Tests extraction enrichie, déduplication, codes couleur
+- **Documentation** : Mise à jour BESOINS_MERE_23_NOVEMBRE_2025.md et STATUT_FINAL_CONSOLIDE.md
+
 ### Phase 2 : Rappels Médicaments et Hydratation (23 novembre 2025) ✅
 
 - **Modèles** : `Medication`, `MedicationTaken`, `HydrationEntry`, `HydrationGoal` avec structure complète
@@ -187,14 +196,14 @@ Toutes les fonctionnalités critiques et avancées sont :
 
 Le projet est production-ready à 100%.
 
-## 🎉 Phase 4 : Améliorations IA — TERMINÉE (23 novembre 2025)
+### Phase 4 : Améliorations IA (23 novembre 2025) ✅
 
-### Améliorations implémentées
-
-1. **Reconnaissance améliorée** : Patterns enrichis, score de confiance, extraction enrichie (adresse, téléphone, email)
-2. **Suggestions intelligentes** : Type d'examen, complétion médecin, détection doublons
-3. **IA conversationnelle pathologies** : Réponses contextuelles, suggestions questions RDV
-4. **Interface visuelle améliorée** : Badges colorés, filtres rapides, statistiques, légende couleurs
+- **Reconnaissance améliorée** : Patterns examens enrichis (synonymes, abréviations), score de confiance, flag `needs_verification` si confiance < 0.7, patterns médecins enrichis
+- **Suggestions intelligentes** : `suggest_exam_type()`, `suggest_doctor_completion()`, `detect_duplicates()`, suggestions recherche avec synonymes, pré-remplissage formulaire
+- **IA conversationnelle pathologies** : `answer_pathology_question()`, `suggest_questions_for_appointment()`, détection automatique pathologie, suggestions examens/traitements/rappels
+- **Interface visuelle améliorée** : Widget `ExamTypeBadge`, filtres rapides par type examen, statistiques répartition, badges médecins plus visibles, légende couleurs
+- **Tests** : 16 nouveaux tests Phase 4 (tous passent), 0 erreur lint Python/Flutter
+- **Documentation** : Mise à jour BESOINS_MERE_23_NOVEMBRE_2025.md et STATUT_FINAL_CONSOLIDE.md
 
 Voir [BESOINS_MERE_23_NOVEMBRE_2025.md](./BESOINS_MERE_23_NOVEMBRE_2025.md) pour détails complets.
 

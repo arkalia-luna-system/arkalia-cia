@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../models/medication.dart';
 import '../services/medication_service.dart';
 import '../widgets/medication_reminder_widget.dart';
@@ -149,7 +148,7 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
                 ListTile(
                   title: const Text('Date de début'),
                   subtitle: Text(startDate != null
-                      ? '${startDate.day}/${startDate.month}/${startDate.year}'
+                      ? '${startDate!.day}/${startDate!.month}/${startDate!.year}'
                       : 'Non définie'),
                   trailing: const Icon(Icons.calendar_today),
                   onTap: () async {
@@ -329,19 +328,6 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
   @override
   Widget build(BuildContext context) {
     final activeMedications = _medications.where((m) => m.isActiveOnDate(_selectedDate)).toList();
-    final todayMedications = activeMedications.where((m) {
-      return m.times.any((time) {
-        final reminderTime = DateTime(
-          _selectedDate.year,
-          _selectedDate.month,
-          _selectedDate.day,
-          time.hour,
-          time.minute,
-        );
-        return reminderTime.isBefore(DateTime.now()) || 
-               _selectedDate.day == DateTime.now().day;
-      });
-    }).toList();
 
     return Scaffold(
       appBar: AppBar(

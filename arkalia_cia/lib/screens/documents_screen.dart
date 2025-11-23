@@ -100,6 +100,102 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     return distribution;
   }
 
+  /// Construit les filtres rapides par type d'examen
+  Widget _buildExamTypeFilters() {
+    final distribution = _getExamTypeDistribution();
+    if (distribution.isEmpty) return const SizedBox.shrink();
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          FilterChip(
+            label: const Text('Tous'),
+            selected: _selectedExamType == null,
+            onSelected: (selected) {
+              setState(() {
+                _selectedExamType = null;
+              });
+              _filterDocuments();
+            },
+          ),
+          const SizedBox(width: 8),
+          ...distribution.keys.map((examType) => Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: FilterChip(
+                  label: Text('$examType (${distribution[examType]})'),
+                  selected: _selectedExamType == examType,
+                  onSelected: (selected) {
+                    setState(() {
+                      _selectedExamType = selected ? examType : null;
+                    });
+                    _filterDocuments();
+                  },
+                ),
+              )),
+        ],
+      ),
+    );
+  }
+
+  /// Construit les statistiques de répartition des examens
+  Widget _buildExamStatistics() {
+    final distribution = _getExamTypeDistribution();
+    if (distribution.isEmpty) return const SizedBox.shrink();
+
+    final total = distribution.values.fold(0, (sum, count) => sum + count);
+    if (total == 0) return const SizedBox.shrink();
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.grey[100],
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Répartition des examens',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+          ),
+          const SizedBox(height: 8),
+          ...distribution.entries.map((entry) {
+            final percentage = (entry.value / total * 100).round();
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      '${entry.key}: ${entry.value}',
+                      style: const TextStyle(fontSize: 11),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 100,
+                    child: LinearProgressIndicator(
+                      value: entry.value / total,
+                      backgroundColor: Colors.grey[300],
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Colors.blue[400]!,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '$percentage%',
+                    style: const TextStyle(fontSize: 11),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
   Future<void> _loadDocuments() async {
     if (!mounted) return;
     

@@ -153,7 +153,7 @@ class MedicationService {
 
     final now = DateTime.now();
     final startDate = medication.startDate.isBefore(now) ? now : medication.startDate;
-    final endDate = medication.endDate ?? startDate.add(const Duration(days: 365));
+    // final endDate = medication.endDate ?? startDate.add(const Duration(days: 365));
 
     for (final time in medication.times) {
       // Créer le premier rappel

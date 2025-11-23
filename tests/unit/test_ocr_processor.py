@@ -2,7 +2,7 @@
 Tests unitaires pour ocr_processor
 """
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 from arkalia_cia_python_backend.pdf_parser.ocr_processor import OCRProcessor
 
