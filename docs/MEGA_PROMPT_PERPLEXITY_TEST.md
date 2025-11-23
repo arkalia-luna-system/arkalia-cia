@@ -8,16 +8,34 @@
 
 ## ⚠️ INSTRUCTIONS CRITIQUES - LIS-MOI EN PREMIER !
 
-### 🚨 CE QUE TU DOIS FAIRE
+### 🚨 CE QUE TU DOIS FAIRE - TEST EN DIRECT OBLIGATOIRE
 
 **TU DOIS TESTER L'APPLICATION EN DIRECT DANS TON NAVIGATEUR COMET !**
 
 1. ✅ **Ouvre Comet** (ton navigateur)
 2. ✅ **Va à** : `http://localhost:8080` (ou `http://localhost:8081` si 8080 est occupé)
 3. ✅ **INTERAGIS avec l'application** comme un utilisateur réel
-4. ✅ **Clique sur les boutons**, remplis les formulaires, teste toutes les fonctionnalités
-5. ✅ **OBSERVE** ce qui se passe, ce qui fonctionne, ce qui ne fonctionne pas
-6. ✅ **NOTE** tous les problèmes visuels, fonctionnels, de performance
+4. ✅ **Clique sur TOUS les boutons**, remplis TOUS les formulaires, teste TOUTES les fonctionnalités
+5. ✅ **OBSERVE ATTENTIVEMENT** :
+   - Ce qui fonctionne
+   - Ce qui ne fonctionne pas
+   - Les temps de chargement
+   - Les messages d'erreur
+   - Les problèmes visuels (couleurs, textes, espacements)
+   - Les problèmes d'accessibilité (contraste, taille des textes)
+   - Les bugs (crashes, comportements inattendus)
+6. ✅ **TESTE À FOND** :
+   - Ne te contente PAS de survoler
+   - Clique sur CHAQUE module
+   - Remplis des formulaires complets
+   - Teste les cas limites (champs vides, valeurs invalides)
+   - Teste les cas d'erreur (déconnexion backend, fichiers invalides)
+7. ✅ **NOTE TOUT** :
+   - Problèmes critiques (bloquants)
+   - Problèmes élevés (majeurs)
+   - Problèmes mineurs (cosmétiques)
+   - Points forts
+   - Suggestions d'amélioration
 
 ### ❌ CE QUE TU NE DOIS PAS FAIRE
 
@@ -25,8 +43,10 @@
 - ❌ **NE PAS** juste lire les fichiers de documentation
 - ❌ **NE PAS** faire une analyse statique du code
 - ❌ **NE PAS** supposer comment ça fonctionne
+- ❌ **NE PAS** te contenter de survoler l'interface
+- ❌ **NE PAS** ignorer les petits détails (ils sont importants !)
 
-**TU DOIS TESTER L'APP EN DIRECT COMME UN UTILISATEUR RÉEL !**
+**TU DOIS TESTER L'APP EN DIRECT COMME UN UTILISATEUR RÉEL QUI UTILISE L'APP POUR LA PREMIÈRE FOIS !**
 
 ---
 

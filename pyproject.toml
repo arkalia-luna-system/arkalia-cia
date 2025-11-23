@@ -145,3 +145,28 @@ ignore_missing_imports = true
 [[tool.mypy.overrides]]
 module = "bleach.*"
 ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "pytesseract.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "pdf2image.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "pandas.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "prophet.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "passlib.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "arkalia_cia_python_backend.*"
+ignore_missing_imports = false
+follow_imports = "normal"

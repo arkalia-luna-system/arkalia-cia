@@ -52,9 +52,17 @@ class SearchService {
   }
 
   static Future<Database> _initDatabase() async {
-    final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'arkalia_cia.db');
-    return await openDatabase(path, version: 1);
+    try {
+      final dbPath = await getDatabasesPath();
+      final path = join(dbPath, 'arkalia_cia.db');
+      return await openDatabase(path, version: 1);
+    } catch (e) {
+      // Sur le web, sqflite peut ne pas fonctionner, on retourne une erreur silencieuse
+      if (kIsWeb) {
+        throw Exception('Base de données non disponible sur le web.');
+      }
+      rethrow;
+    }
   }
 
   /// Recherche simple avec une requête texte (limité à 20 résultats par catégorie)

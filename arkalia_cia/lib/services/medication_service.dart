@@ -1,7 +1,9 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import '../models/medication.dart';
+import '../utils/error_helper.dart';
 import 'calendar_service.dart';
 import 'notification_service.dart';
 
@@ -16,21 +18,29 @@ class MedicationService {
   }
 
   Future<Database> _initDatabase() async {
-    final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'arkalia_cia.db');
+    try {
+      final dbPath = await getDatabasesPath();
+      final path = join(dbPath, 'arkalia_cia.db');
 
-    return await openDatabase(
-      path,
-      version: 3,
-      onCreate: (db, version) async {
-        await _createTables(db);
-      },
-      onUpgrade: (db, oldVersion, newVersion) async {
-        if (oldVersion < 3) {
+      return await openDatabase(
+        path,
+        version: 3,
+        onCreate: (db, version) async {
           await _createTables(db);
-        }
-      },
-    );
+        },
+        onUpgrade: (db, oldVersion, newVersion) async {
+          if (oldVersion < 3) {
+            await _createTables(db);
+          }
+        },
+      );
+    } catch (e) {
+      ErrorHelper.logError('MedicationService._initDatabase', e);
+      if (kIsWeb) {
+        throw Exception('Base de données non disponible sur le web. Utilisez le mode offline avec SharedPreferences.');
+      }
+      rethrow;
+    }
   }
 
   Future<void> _createTables(Database db) async {

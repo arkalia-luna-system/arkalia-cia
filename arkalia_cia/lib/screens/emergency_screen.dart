@@ -75,8 +75,12 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
   }
 
   Future<bool> _requestContactsPermissionWithDialog() async {
+    // Ne pas afficher le dialog si on n'est pas sur l'écran Urgence
+    if (!mounted) return false;
+    
     final result = await showDialog<bool>(
       context: context,
+      barrierDismissible: true,
       builder: (context) => AlertDialog(
         title: const Text('Permission Contacts'),
         content: const Text(
@@ -86,11 +90,15 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
             child: const Text('Annuler'),
           ),
           ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(true),
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
             child: const Text('Autoriser'),
           ),
         ],

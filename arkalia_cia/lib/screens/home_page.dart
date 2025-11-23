@@ -192,7 +192,8 @@ class _HomePageState extends State<HomePage> {
               Text(
                 'Votre santé au quotidien',
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontStyle: FontStyle.italic,
                 ),
@@ -415,7 +416,8 @@ class _HomePageState extends State<HomePage> {
                 Text(
                   subtitle,
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
                     color: subtitleColor,
                   ),
                   textAlign: TextAlign.center,
@@ -440,12 +442,17 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _showDocuments(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const DocumentsScreen()),
-    ).then((_) {
+    // Utiliser un délai pour éviter les conflits de navigation
+    Future.microtask(() {
       if (mounted) {
-        _loadStats();
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const DocumentsScreen()),
+        ).then((_) {
+          if (mounted) {
+            _loadStats();
+          }
+        });
       }
     });
   }
@@ -511,10 +518,15 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _showEmergency(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const EmergencyScreen()),
-    );
+    // Utiliser un délai pour éviter les conflits de navigation
+    Future.microtask(() {
+      if (mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const EmergencyScreen()),
+        );
+      }
+    });
   }
 
   void _showARIA(BuildContext context) {
@@ -695,8 +707,9 @@ class _HomePageState extends State<HomePage> {
                   Text(
                     'Documents',
                     style: TextStyle(
-                      fontSize: 12,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                 ],
@@ -732,8 +745,9 @@ class _HomePageState extends State<HomePage> {
                   Text(
                     'Rappels',
                     style: TextStyle(
-                      fontSize: 12,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                 ],

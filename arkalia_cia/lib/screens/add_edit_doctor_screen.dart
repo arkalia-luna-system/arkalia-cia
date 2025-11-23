@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/doctor_service.dart';
 import '../models/doctor.dart';
+import '../utils/error_helper.dart';
 
 class AddEditDoctorScreen extends StatefulWidget {
   final Doctor? doctor;
@@ -120,8 +121,14 @@ class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> {
     } catch (e) {
       setState(() => _isSaving = false);
       if (mounted) {
+        ErrorHelper.logError('AddEditDoctorScreen._saveDoctor', e);
+        final userMessage = ErrorHelper.getUserFriendlyMessage(e);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur sauvegarde: $e')),
+          SnackBar(
+            content: Text(userMessage),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 4),
+          ),
         );
       }
     }
@@ -136,12 +143,19 @@ class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> {
           if (_isSaving)
             const Padding(
               padding: EdgeInsets.all(16.0),
-              child: CircularProgressIndicator(),
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                ),
+              ),
             )
           else
             IconButton(
               icon: const Icon(Icons.check),
-              onPressed: _saveDoctor,
+              onPressed: _formKey.currentState?.validate() == true ? _saveDoctor : null,
+              tooltip: 'Enregistrer',
             ),
         ],
       ),
@@ -272,9 +286,20 @@ class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> {
               onPressed: _isSaving ? null : _saveDoctor,
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 56),
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
               ),
               child: _isSaving
-                  ? const CircularProgressIndicator()
+                  ? SizedBox(
+                      height: 24,
+                      width: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Theme.of(context).colorScheme.onPrimary,
+                        ),
+                      ),
+                    )
                   : Text(widget.doctor == null ? 'Ajouter' : 'Enregistrer'),
             ),
           ],

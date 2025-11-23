@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:flutter/foundation.dart';
 import '../models/doctor.dart';
+import '../utils/error_helper.dart';
 
 class DoctorService {
   static Database? _database;
@@ -13,21 +15,31 @@ class DoctorService {
   }
 
   Future<Database> _initDatabase() async {
-    final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'arkalia_cia.db');
+    try {
+      final dbPath = await getDatabasesPath();
+      final path = join(dbPath, 'arkalia_cia.db');
 
-    return await openDatabase(
-      path,
-      version: 2,
-      onCreate: (db, version) async {
-        await _createTables(db);
-      },
-      onUpgrade: (db, oldVersion, newVersion) async {
-        if (oldVersion < 2) {
+      return await openDatabase(
+        path,
+        version: 2,
+        onCreate: (db, version) async {
           await _createTables(db);
-        }
-      },
-    );
+        },
+        onUpgrade: (db, oldVersion, newVersion) async {
+          if (oldVersion < 2) {
+            await _createTables(db);
+          }
+        },
+      );
+    } catch (e) {
+      ErrorHelper.logError('DoctorService._initDatabase', e);
+      // Sur le web, sqflite peut ne pas fonctionner
+      // On va utiliser une base en mémoire comme fallback
+      if (kIsWeb) {
+        throw Exception('Base de données non disponible sur le web. Utilisez le mode offline avec SharedPreferences.');
+      }
+      rethrow;
+    }
   }
 
   Future<void> _createTables(Database db) async {
