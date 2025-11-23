@@ -634,9 +634,16 @@ Authorization: Bearer <token>
 
 Tous les endpoints sont protégés par un rate limiting :
 
+| Endpoint | Limite |
+|----------|--------|
+| `/api/v1/medical-reports/generate` | 10/minute |
+| `/api/v1/ai/chat` | 30/minute |
+| `/api/v1/patterns/analyze` | 30/minute |
+| Autres endpoints | 60/minute |
+
+**Limites globales** :
 - **Par IP** : 100 requêtes/minute
 - **Par utilisateur** : 200 requêtes/minute
-- **Endpoints sensibles** : 10 requêtes/minute
 
 En cas de dépassement, réponse `429 Too Many Requests` avec header `Retry-After`.
 
