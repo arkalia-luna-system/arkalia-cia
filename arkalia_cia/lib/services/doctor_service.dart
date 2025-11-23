@@ -174,6 +174,74 @@ class DoctorService {
     return List.generate(maps.length, (i) => Consultation.fromMap(maps[i]));
   }
 
+  /// Trouve des médecins similaires (détection de doublons)
+  /// Compare nom + spécialité avec tolérance aux variations d'orthographe
+  Future<List<Doctor>> findSimilarDoctors(Doctor doctor) async {
+    final allDoctors = await getAllDoctors();
+    
+    final similarDoctors = <Doctor>[];
+    
+    for (final existingDoctor in allDoctors) {
+      // Ignorer le même médecin
+      if (existingDoctor.id == doctor.id) {
+        continue;
+      }
+      
+      // Comparer les noms (tolérance aux variations)
+      final nameSimilarity = _calculateNameSimilarity(
+        doctor.fullName.toLowerCase(),
+        existingDoctor.fullName.toLowerCase(),
+      );
+      
+      // Comparer les spécialités si présentes
+      bool specialtyMatch = false;
+      if (doctor.specialty != null && existingDoctor.specialty != null) {
+        final specialtySimilarity = _calculateNameSimilarity(
+          doctor.specialty!.toLowerCase(),
+          existingDoctor.specialty!.toLowerCase(),
+        );
+        specialtyMatch = specialtySimilarity > 0.7;
+      }
+      
+      // Si nom très similaire (>80%) ou nom similaire (>60%) + spécialité identique
+      if (nameSimilarity > 0.8 || (nameSimilarity > 0.6 && specialtyMatch)) {
+        similarDoctors.add(existingDoctor);
+      }
+    }
+    
+    return similarDoctors;
+  }
+  
+  /// Calcule la similarité entre deux chaînes (algorithme simple)
+  double _calculateNameSimilarity(String str1, String str2) {
+    if (str1 == str2) return 1.0;
+    if (str1.isEmpty || str2.isEmpty) return 0.0;
+    
+    // Vérifier si l'un contient l'autre
+    if (str1.contains(str2) || str2.contains(str1)) {
+      return 0.9;
+    }
+    
+    // Comparer les mots
+    final words1 = str1.split(' ').where((w) => w.isNotEmpty).toList();
+    final words2 = str2.split(' ').where((w) => w.isNotEmpty).toList();
+    
+    if (words1.isEmpty || words2.isEmpty) return 0.0;
+    
+    int commonWords = 0;
+    for (final word1 in words1) {
+      for (final word2 in words2) {
+        if (word1 == word2 || word1.contains(word2) || word2.contains(word1)) {
+          commonWords++;
+          break;
+        }
+      }
+    }
+    
+    final maxWords = words1.length > words2.length ? words1.length : words2.length;
+    return commonWords / maxWords;
+  }
+
   Future<Map<String, dynamic>> getDoctorStats(int doctorId) async {
     final db = await database;
     
@@ -256,10 +324,10 @@ class DoctorService {
         // Importer consultations pour ce médecin
         final doctorConsultations = consultationsData.firstWhere(
           (c) => c['doctor_id'] == (doctorMap['id'] as int?),
-          orElse: () => null,
+          orElse: () => <String, dynamic>{},
         );
         
-        if (doctorConsultations != null && newId != null) {
+        if (doctorConsultations.isNotEmpty && newId != 0) {
           final consultations = (doctorConsultations['consultations'] as List<dynamic>? ?? [])
               .map((c) {
                 final consultationMap = Map<String, dynamic>.from(c);

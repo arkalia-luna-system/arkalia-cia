@@ -277,7 +277,9 @@ class MetadataExtractor:
                             following_text,
                         )
                         if city_match:
-                            return str(f"{address}, {postal_match.group()} {city_match.group(1)}")
+                            return str(
+                                f"{address}, {postal_match.group()} {city_match.group(1)}"
+                            )
                         return str(f"{address}, {postal_match.group()}")
                 return str(address)
         return None
