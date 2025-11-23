@@ -126,7 +126,7 @@ class HydrationService {
       return entries
           .where((map) {
             final date = map['date'] as String?;
-            return date != null && date >= startStr && date <= endStr;
+            return date != null && date.compareTo(startStr) >= 0 && date.compareTo(endStr) <= 0;
           })
           .map((map) => HydrationEntry.fromMap(_convertWebMapToSqliteMap(map)))
           .toList()

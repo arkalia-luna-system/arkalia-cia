@@ -325,14 +325,14 @@ class PathologyService {
         final startStr = startDate.toIso8601String();
         filtered = filtered.where((map) {
           final date = map['date'] as String?;
-          return date != null && date >= startStr;
+          return date != null && date.compareTo(startStr) >= 0;
         }).toList();
       }
       if (endDate != null) {
         final endStr = endDate.toIso8601String();
         filtered = filtered.where((map) {
           final date = map['date'] as String?;
-          return date != null && date <= endStr;
+          return date != null && date.compareTo(endStr) <= 0;
         }).toList();
       }
       

@@ -132,7 +132,10 @@ class DoctorService {
         });
     }
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db!.query(
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
+    final List<Map<String, dynamic>> maps = await db.query(
       'doctors',
       orderBy: 'last_name ASC, first_name ASC',
     );
@@ -150,7 +153,10 @@ class DoctorService {
       return Doctor.fromMap(_convertWebMapToSqliteMap(doctorMap));
     }
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db!.query(
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
+    final List<Map<String, dynamic>> maps = await db.query(
       'doctors',
       where: 'id = ?',
       whereArgs: [id],
@@ -173,7 +179,10 @@ class DoctorService {
         ..sort((a, b) => a.lastName.compareTo(b.lastName));
     }
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db!.query(
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
+    final List<Map<String, dynamic>> maps = await db.query(
       'doctors',
       where: 'last_name LIKE ? OR first_name LIKE ? OR specialty LIKE ?',
       whereArgs: ['%$query%', '%$query%', '%$query%'],
@@ -189,7 +198,10 @@ class DoctorService {
         ..sort((a, b) => a.lastName.compareTo(b.lastName));
     }
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db!.query(
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
+    final List<Map<String, dynamic>> maps = await db.query(
       'doctors',
       where: 'specialty = ?',
       whereArgs: [specialty],
@@ -209,8 +221,11 @@ class DoctorService {
       return 1;
     }
     final db = await database;
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
     final updatedDoctor = doctor.copyWith(updatedAt: DateTime.now());
-    return await db!.update(
+    return await db.update(
       'doctors',
       updatedDoctor.toMap(),
       where: 'id = ?',
@@ -230,8 +245,11 @@ class DoctorService {
       return 1;
     }
     final db = await database;
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
     // Supprimer aussi les consultations associées (CASCADE)
-    return await db!.delete(
+    return await db.delete(
       'doctors',
       where: 'id = ?',
       whereArgs: [id],
@@ -272,7 +290,10 @@ class DoctorService {
       return consultationMap['id'] as int;
     }
     final db = await database;
-    return await db!.insert('consultations', consultation.toMap());
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
+    return await db.insert('consultations', consultation.toMap());
   }
 
   Future<List<Consultation>> getConsultationsByDoctor(int doctorId) async {
@@ -285,7 +306,10 @@ class DoctorService {
         ..sort((a, b) => b.date.compareTo(a.date));
     }
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db!.query(
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
+    final List<Map<String, dynamic>> maps = await db.query(
       'consultations',
       where: 'doctor_id = ?',
       whereArgs: [doctorId],
@@ -375,9 +399,12 @@ class DoctorService {
       };
     }
     final db = await database;
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
     
     // Nombre consultations
-    final countResult = await db!.rawQuery(
+    final countResult = await db.rawQuery(
       'SELECT COUNT(*) as count FROM consultations WHERE doctor_id = ?',
       [doctorId],
     );

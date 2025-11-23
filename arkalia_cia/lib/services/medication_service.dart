@@ -109,7 +109,10 @@ class MedicationService {
       return id;
     }
     final db = await database;
-    final id = await db!.insert('medications', medication.toMap());
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
+    final id = await db.insert('medications', medication.toMap());
     // Programmer les rappels
     await scheduleReminders(medication.copyWith(id: id));
     return id;
@@ -122,7 +125,10 @@ class MedicationService {
         ..sort((a, b) => a.name.compareTo(b.name));
     }
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db!.query(
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
+    final List<Map<String, dynamic>> maps = await db.query(
       'medications',
       orderBy: 'name ASC',
     );
@@ -141,8 +147,11 @@ class MedicationService {
         ..sort((a, b) => a.name.compareTo(b.name));
     }
     final db = await database;
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
     final now = DateTime.now();
-    final List<Map<String, dynamic>> maps = await db!.query(
+    final List<Map<String, dynamic>> maps = await db.query(
       'medications',
       where: 'start_date <= ? AND (end_date IS NULL OR end_date >= ?)',
       whereArgs: [now.toIso8601String(), now.toIso8601String()],
@@ -162,7 +171,10 @@ class MedicationService {
       return Medication.fromMap(_convertWebMapToSqliteMap(medicationMap));
     }
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db!.query(
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
+    final List<Map<String, dynamic>> maps = await db.query(
       'medications',
       where: 'id = ?',
       whereArgs: [id],
@@ -185,7 +197,10 @@ class MedicationService {
       return 1;
     }
     final db = await database;
-    final result = await db!.update(
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
+    final result = await db.update(
       'medications',
       medication.toMap(),
       where: 'id = ?',
@@ -211,7 +226,10 @@ class MedicationService {
       return 1;
     }
     final db = await database;
-    return await db!.delete(
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
+    return await db.delete(
       'medications',
       where: 'id = ?',
       whereArgs: [id],
@@ -328,11 +346,14 @@ class MedicationService {
       return;
     }
     final db = await database;
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
     final dateStr = date.toIso8601String().split('T')[0];
     final timeStr = '${time.hour}:${time.minute}';
 
     // Vérifier si l'entrée existe déjà
-    final existing = await db!.query(
+    final existing = await db.query(
       'medication_taken',
       where: 'medication_id = ? AND date = ? AND time = ?',
       whereArgs: [medicationId, dateStr, timeStr],
@@ -405,12 +426,15 @@ class MedicationService {
     }
 
     final db = await database;
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
     for (final medication in activeMedications) {
       if (!medication.isActiveOnDate(date)) continue;
 
       for (final time in medication.times) {
         // Vérifier si pris
-        final taken = await db!.query(
+        final taken = await db.query(
           'medication_taken',
           where: 'medication_id = ? AND date = ? AND time = ? AND taken = 1',
           whereArgs: [medication.id, dateStr, '${time.hour}:${time.minute}'],

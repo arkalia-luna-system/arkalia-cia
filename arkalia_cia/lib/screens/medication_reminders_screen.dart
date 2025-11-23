@@ -26,17 +26,29 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
   /// Vérifie si un médicament a été pris pour une date et heure données
   Future<bool> _isMedicationTaken(int medicationId, DateTime date, TimeOfDay time) async {
     try {
-      final db = await _medicationService.database;
+      // Utiliser la méthode du service qui gère déjà le web
+      final stats = await _medicationService.getMedicationStats(
+        medicationId,
+        date,
+        date,
+      );
       final dateStr = date.toIso8601String().split('T')[0];
       final timeStr = '${time.hour}:${time.minute}';
       
-      final result = await db.query(
-        'medication_taken',
-        where: 'medication_id = ? AND date = ? AND time = ? AND taken = 1',
-        whereArgs: [medicationId, dateStr, timeStr],
-      );
-      
-      return result.isNotEmpty;
+      // Vérifier dans les entrées si le médicament a été pris à cette heure
+      final entries = stats['entries'] as List?;
+      if (entries != null) {
+        return entries.any((entry) {
+          if (entry is Map) {
+            final entryDate = entry['date']?.toString().split('T')[0];
+            final entryTime = entry['time']?.toString();
+            final taken = entry['taken'] == 1 || entry['taken'] == true;
+            return entryDate == dateStr && entryTime == timeStr && taken;
+          }
+          return false;
+        });
+      }
+      return false;
     } catch (e) {
       return false;
     }
