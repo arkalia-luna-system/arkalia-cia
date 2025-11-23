@@ -211,6 +211,16 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
+      - name: "Check Coverage Files"
+        id: check-coverage
+        run: |
+          if ls coverage/*.xml 1>/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+        continue-on-error: true
+
       - name: "Upload Coverage to Codecov"
         uses: codecov/codecov-action@v5
         with:
@@ -219,7 +229,7 @@ jobs:
           fail_ci_if_error: false
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
-        if: hashFiles('coverage/*.xml') != ''
+        if: steps.check-coverage.outputs.exists == 'true'
 
       - name: "Upload Coverage HTML"
         uses: actions/upload-artifact@v4
@@ -227,7 +237,8 @@ jobs:
           name: coverage-html-python-${{ matrix.python }}
           path: htmlcov/
           retention-days: 30
-        if: hashFiles('htmlcov/**') != ''
+          if-no-files-found: warn
+        if: always()
 
   # ========================================
   # TESTS COMPATIBILITÉ CROISÉE
@@ -296,7 +307,7 @@ jobs:
             coverage/*.xml
           retention-days: 7
           if-no-files-found: warn
-        if: hashFiles('test-results/*.xml') != '' || hashFiles('coverage/*.xml') != ''
+        if: always()
 
   # ========================================
   # SÉCURITÉ & QUALITÉ
@@ -350,7 +361,8 @@ jobs:
             *-report.json
             *-report.txt
           retention-days: 90
-        if: hashFiles('*-report.json') != '' || hashFiles('*-report.txt') != ''
+          if-no-files-found: warn
+        if: always()
 
   # ========================================
   # BUILD & PACKAGE
