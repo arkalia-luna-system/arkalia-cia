@@ -83,8 +83,19 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
       });
     } catch (e) {
       setState(() {
+        final errorMessage = e.toString();
+        String userMessage;
+        
+        if (errorMessage.contains('Backend non configuré')) {
+          userMessage = '⚠️ Backend non configuré.\n\nVeuillez configurer l\'URL du backend dans les paramètres (⚙️ > Backend API).';
+        } else if (errorMessage.contains('Failed host lookup') || errorMessage.contains('Connection refused')) {
+          userMessage = '⚠️ Impossible de se connecter au backend.\n\nVérifiez que le backend est démarré et que l\'URL est correcte dans les paramètres.';
+        } else {
+          userMessage = '⚠️ Erreur: ${errorMessage.contains("Exception:") ? errorMessage.split("Exception:")[1].trim() : errorMessage}';
+        }
+        
         _messages.add(ChatMessage(
-          text: 'Erreur: $e',
+          text: userMessage,
           isUser: false,
           timestamp: DateTime.now(),
         ));

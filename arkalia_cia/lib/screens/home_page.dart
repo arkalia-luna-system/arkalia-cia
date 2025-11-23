@@ -664,28 +664,40 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildStatsWidgets() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Row(
       children: [
         Expanded(
           child: Card(
-            color: Colors.green[50],
+            elevation: 2,
+            color: isDark 
+                ? Theme.of(context).colorScheme.surfaceContainerHigh
+                : Colors.green[50],
             child: Padding(
               padding: const EdgeInsets.all(12.0),
               child: Column(
                 children: [
-                  const Icon(Icons.folder, color: Colors.green, size: 32),
+                  Icon(
+                    Icons.folder, 
+                    color: isDark ? Colors.green[300] : Colors.green[700], 
+                    size: 32,
+                  ),
                   const SizedBox(height: 8),
                   Text(
                     '$_documentCount',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.green,
+                      color: isDark ? Colors.green[300] : Colors.green[700],
                     ),
                   ),
-                  const Text(
+                  Text(
                     'Documents',
-                    style: TextStyle(fontSize: 12),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),
@@ -695,24 +707,34 @@ class _HomePageState extends State<HomePage> {
         const SizedBox(width: 12),
         Expanded(
           child: Card(
-            color: Colors.orange[50],
+            elevation: 2,
+            color: isDark 
+                ? Theme.of(context).colorScheme.surfaceContainerHigh
+                : Colors.orange[50],
             child: Padding(
               padding: const EdgeInsets.all(12.0),
               child: Column(
                 children: [
-                  const Icon(Icons.notifications, color: Colors.orange, size: 32),
+                  Icon(
+                    Icons.notifications, 
+                    color: isDark ? Colors.orange[300] : Colors.orange[700], 
+                    size: 32,
+                  ),
                   const SizedBox(height: 8),
                   Text(
                     '$_upcomingRemindersCount',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.orange,
+                      color: isDark ? Colors.orange[300] : Colors.orange[700],
                     ),
                   ),
-                  const Text(
+                  Text(
                     'Rappels',
-                    style: TextStyle(fontSize: 12),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),
