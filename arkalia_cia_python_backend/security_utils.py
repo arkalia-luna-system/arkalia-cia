@@ -7,7 +7,7 @@ import re
 from typing import Any
 
 try:
-    import bleach  # type: ignore[import-untyped]
+    import bleach
 
     BLEACH_AVAILABLE = True
 except ImportError:
