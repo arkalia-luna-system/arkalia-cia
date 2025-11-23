@@ -261,10 +261,16 @@ ARIAIntegrationSettings(
 
 ## 🔗 Voir aussi
 
+### Documentation CIA
+- **[README.md](../README.md)** — Vue d'ensemble du projet CIA
 - **[ARIA_INTEGRATION.md](./ARIA_INTEGRATION.md)** — Détails intégration CIA ↔ ARIA
+- **[USE_CASES.md](./USE_CASES.md)** — Cas d'usage concrets par profils utilisateurs
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture technique
-- **[README.md](../README.md)** — Vue d'ensemble CIA
 - **[VUE_ENSEMBLE_PROJET.md](./VUE_ENSEMBLE_PROJET.md)** — Vue d'ensemble visuelle
+
+### Documentation Projets Liés
+- **[README ARIA](https://github.com/arkalia-luna-system/arkalia-aria/blob/main/README.md)** — Vue d'ensemble ARIA
+- **[README BBIA-SIM](https://github.com/arkalia-luna-system/bbia-sim/blob/main/README.md)** — Vue d'ensemble BBIA
 
 ---
 
