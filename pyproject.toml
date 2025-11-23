@@ -167,6 +167,10 @@ module = "passlib.*"
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
+module = "pydantic_settings.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
 module = "arkalia_cia_python_backend.*"
 ignore_missing_imports = false
 follow_imports = "normal"

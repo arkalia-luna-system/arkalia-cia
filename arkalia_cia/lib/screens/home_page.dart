@@ -517,15 +517,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _showEmergency(BuildContext context) {
-    // Utiliser un délai pour éviter les conflits de navigation
-    Future.microtask(() {
-      if (mounted) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const EmergencyScreen()),
-        );
-      }
-    });
+    // Navigation directe sans délai
+    if (!mounted) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const EmergencyScreen()),
+    );
   }
 
   void _showARIA(BuildContext context) {

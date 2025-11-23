@@ -662,7 +662,7 @@ async def refresh_token_endpoint(request: Request, token_request: RefreshTokenRe
         return Token(
             access_token=access_token,
             refresh_token=new_refresh_token,
-            token_type="bearer",
+            token_type="bearer",  # nosec B106 - "bearer" est le type de token OAuth standard, pas un mot de passe
         )
     except HTTPException:
         raise
