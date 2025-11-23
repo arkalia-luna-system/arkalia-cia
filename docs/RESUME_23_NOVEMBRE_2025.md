@@ -1,6 +1,6 @@
-# 📋 RÉSUMÉ COMPLET - 23 NOVEMBRE 2025
+# 📋 RÉSUMÉ COMPLET - 23-24 NOVEMBRE 2025
 
-**Date** : 23 novembre 2025  
+**Date** : 23-24 novembre 2025  
 **Version** : 1.3.0  
 **Status** : 100% Production-Ready - 100% bugs corrigés - Accessibilité optimisée
 
@@ -32,7 +32,14 @@
    - Form submission : Fonctionne maintenant sur le web
    - Persistance des données : Complète sur le web
 
-2. **Amélioration accessibilité** : 13 textes corrigés
+3. **🔴 CORRECTIONS CRITIQUES RAPPELS ET FORMAT HEURE (24 NOVEMBRE)** : ✅ **RÉSOLU**
+   - Module Rappels : Form submission fonctionne maintenant sur le web
+   - Format heure : Passage de AM/PM à format 24h européen (10H, 20H)
+   - CalendarService : Protection web ajoutée (kIsWeb check)
+   - RemindersScreen : Sauvegarde directe dans LocalStorageService sur web
+   - Tous les showTimePicker : Format 24h forcé avec alwaysUse24HourFormat
+
+4. **Amélioration accessibilité** : 13 textes corrigés
    - `documents_screen.dart` : 3 corrections
    - `advanced_search_screen.dart` : 1 correction
    - `doctors_list_screen.dart` : 2 corrections
@@ -42,12 +49,12 @@
    - `doctor_detail_screen.dart` : 1 correction
    - `aria_screen.dart` : 2 corrections
 
-3. **Améliorations UX** :
+5. **Améliorations UX** :
    - ErrorHelper intégré dans Assistant IA
    - Feedback visuel bouton Ajouter amélioré
    - Messages utilisateur cohérents partout
 
-4. **Scripts utilitaires** :
+6. **Scripts utilitaires** :
    - `fix_ram_overheat.sh` : Gestion RAM/surchauffe Mac
 
 ---

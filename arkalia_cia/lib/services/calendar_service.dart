@@ -2,6 +2,7 @@ import 'package:device_calendar/device_calendar.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import '../models/doctor.dart';
 import 'doctor_service.dart';
 
@@ -41,6 +42,10 @@ class CalendarService {
     String? recurrence, // 'daily', 'weekly', 'monthly', ou null
     int? doctorId, // ID du médecin pour couleur
   }) async {
+    // Sur le web, device_calendar n'est pas disponible
+    if (kIsWeb) {
+      return false;
+    }
     try {
       // Récupérer les calendriers disponibles
       final calendarsResult = await _deviceCalendarPlugin.retrieveCalendars();
