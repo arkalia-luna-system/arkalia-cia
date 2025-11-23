@@ -28,11 +28,11 @@ Votre mère a exprimé plusieurs besoins importants pour améliorer l'utilisatio
 - ✅ Filtre par type d'examen dans recherche avancée (implémenté 23 novembre 2025)
 - ✅ Classification automatique des documents (ordonnance, résultat, compte-rendu)
 
-**Ce qui manque** ⚠️ :
-- ⚠️ **Reconnaissance automatique lors de l'upload** : L'extraction existe mais n'est pas toujours visible à l'utilisateur
-- ⚠️ **Suggestions intelligentes** : L'IA pourrait suggérer le type d'examen si non détecté
-- ⚠️ **Catégorisation visuelle** : Icônes/couleurs par type d'examen dans la liste
-- ⚠️ **Historique par type d'examen** : Voir tous les scanners, toutes les analyses, etc.
+**Ce qui a été implémenté** ✅ :
+- ✅ **Reconnaissance automatique lors de l'upload** : Extraction visible avec badge "Type détecté" (Phase 4)
+- ✅ **Suggestions intelligentes** : IA suggère le type d'examen si non détecté avec score de confiance (Phase 4)
+- ✅ **Catégorisation visuelle** : Widget `ExamTypeBadge` avec icônes/couleurs par type d'examen (Phase 4)
+- ✅ **Filtres rapides** : Boutons "Voir tous les scanners", "Voir toutes les analyses" avec statistiques (Phase 4)
 
 **Comment développer** 🚀 :
 1. **Améliorer l'extraction** : Enrichir les patterns dans `metadata_extractor.py` avec plus de variantes
@@ -58,12 +58,12 @@ Votre mère a exprimé plusieurs besoins importants pour améliorer l'utilisatio
 - ✅ Annuaire complet des médecins (`DoctorService`, `DoctorsListScreen`)
 - ✅ Ajout manuel de médecins avec formulaire complet
 
-**Ce qui manque** ⚠️ :
-- ⚠️ **Ajout automatique** : Quand un médecin est détecté dans un PDF, proposer de l'ajouter à l'annuaire
-- ⚠️ **Détection d'adresse** : Extraire l'adresse du cabinet depuis les documents
-- ⚠️ **Détection numéro de téléphone** : Extraire le numéro de contact
-- ⚠️ **Détection email** : Extraire l'email si présent
-- ⚠️ **Déduplication intelligente** : Éviter les doublons (même médecin avec orthographe différente)
+**Ce qui a été implémenté** ✅ :
+- ✅ **Ajout automatique** : Dialog "Médecin détecté" après upload PDF avec pré-remplissage formulaire (Phase 1)
+- ✅ **Détection d'adresse** : Extraction automatique adresses belges depuis PDF (Phase 1)
+- ✅ **Détection numéro de téléphone** : Extraction automatique téléphones belges (Phase 1)
+- ✅ **Détection email** : Extraction automatique emails depuis PDF (Phase 1)
+- ✅ **Déduplication intelligente** : Méthode `findSimilarDoctors()` avec scoring de similarité (Phase 1)
 
 **Comment développer** 🚀 :
 1. **Dialog de confirmation** : Après upload PDF, si médecin détecté, proposer "Ajouter Dr. X à l'annuaire ?"
@@ -87,11 +87,11 @@ Votre mère a exprimé plusieurs besoins importants pour améliorer l'utilisatio
 - ✅ Liste des médecins avec affichage
 - ✅ Intégration calendrier natif (`CalendarService`)
 
-**Ce qui manque** ⚠️ :
-- ❌ **Codes couleur par spécialité** : Pas de système de couleurs
-- ❌ **Affichage couleur dans calendrier** : Les RDV n'ont pas de couleur selon le médecin
-- ❌ **Affichage couleur dans annuaire** : Les médecins n'ont pas de badge coloré
-- ❌ **Configuration personnalisée** : L'utilisateur ne peut pas choisir ses couleurs
+**Ce qui a été implémenté** ✅ :
+- ✅ **Codes couleur par spécialité** : Méthode `Doctor.getColorForSpecialty()` avec 13 spécialités (Phase 1)
+- ✅ **Affichage couleur dans calendrier** : Encadrement coloré par médecin dans `calendar_screen.dart` (Phase 1)
+- ✅ **Affichage couleur dans annuaire** : Badges colorés 12x12px dans `doctors_list_screen.dart` (Phase 1)
+- ✅ **Légende des couleurs** : Affichage légende avec filtres par spécialité (Phase 1)
 
 **Comment développer** 🚀 :
 1. **Système de couleurs** : Créer un mapping spécialité → couleur dans `doctor_service.dart`
@@ -128,10 +128,10 @@ Votre mère a exprimé plusieurs besoins importants pour améliorer l'utilisatio
 - ✅ Ajout de rappels au calendrier avec préfixe "[Santé]"
 - ✅ Notifications pour les rappels
 
-**Ce qui manque** ⚠️ :
-- ⚠️ **Encadrement visuel** : Pas d'indication visuelle spéciale pour les RDV médicaux
-- ⚠️ **Distinction RDV vs rappels** : Tous les événements sont traités de la même manière
-- ⚠️ **Vue calendrier dans l'app** : Pas d'écran calendrier dédié dans l'app
+**Ce qui a été implémenté** ✅ :
+- ✅ **Encadrement visuel** : Encadrement coloré par médecin dans calendrier (Phase 1)
+- ✅ **Distinction RDV vs rappels** : Icônes distinctives (🏥 consultations, 💊 médicaments, 💧 hydratation, 🔔 rappels) (Phase 2)
+- ✅ **Vue calendrier dans l'app** : Écran `calendar_screen.dart` avec `table_calendar` et vue mensuelle (Phase 1)
 
 **Comment développer** 🚀 :
 1. **Écran calendrier dédié** : Créer `calendar_screen.dart` avec vue mensuelle/semaine
@@ -156,12 +156,12 @@ Votre mère a exprimé plusieurs besoins importants pour améliorer l'utilisatio
 - ✅ Service `DoctorService` avec CRUD complet
 - ✅ Extraction automatique nom + spécialité depuis PDF
 
-**Ce qui manque** ⚠️ :
-- ⚠️ **Extraction automatique adresse** : L'IA n'extrait pas encore l'adresse depuis les documents
-- ⚠️ **Extraction automatique téléphone** : L'IA n'extrait pas encore le numéro
-- ⚠️ **Extraction automatique email** : L'IA n'extrait pas encore l'email
-- ⚠️ **Suggestions intelligentes** : L'IA ne suggère pas de compléter les infos manquantes
-- ⚠️ **Validation adresse** : Pas de vérification que l'adresse est valide
+**Ce qui a été implémenté** ✅ :
+- ✅ **Extraction automatique adresse** : Méthode `_extract_address()` avec patterns belges (Phase 1)
+- ✅ **Extraction automatique téléphone** : Méthode `_extract_phone()` avec patterns belges (Phase 1)
+- ✅ **Extraction automatique email** : Méthode `_extract_email()` avec pattern standard (Phase 1)
+- ✅ **Suggestions intelligentes** : `suggest_doctor_completion()` pour compléter infos manquantes (Phase 4)
+- ✅ **Pré-remplissage formulaire** : Formulaire pré-rempli avec données extraites depuis PDF (Phase 1)
 
 **Comment développer** 🚀 :
 1. **Améliorer extraction** : Enrichir `metadata_extractor.py` avec patterns pour adresse, téléphone, email
@@ -186,12 +186,12 @@ Votre mère a exprimé plusieurs besoins importants pour améliorer l'utilisatio
 - ✅ Notifications locales programmées
 - ✅ Intégration calendrier natif
 
-**Ce qui manque** ⚠️ :
-- ⚠️ **Rappels médicaments intelligents** : Pas de système dédié aux médicaments avec posologie
-- ⚠️ **Rappels hydratation** : Pas de rappel spécifique pour boire de l'eau
-- ⚠️ **Rappels diabétiques** : Pas de module spécifique pour le suivi diabète
-- ⚠️ **Adaptation intelligente** : Les rappels ne s'adaptent pas selon l'historique de prise
-- ⚠️ **Rappels contextuels** : Pas de rappels basés sur l'heure (ex: avant repas)
+**Ce qui a été implémenté** ✅ :
+- ✅ **Rappels médicaments intelligents** : Module complet `MedicationService` avec posologie, fréquence, heures (Phase 2)
+- ✅ **Rappels hydratation** : Module complet `HydrationService` avec objectifs quotidiens (2000ml = 8 verres) (Phase 2)
+- ✅ **Adaptation intelligente** : Rappels adaptatifs (30min après si non pris pour médicaments) (Phase 2)
+- ✅ **Rappels contextuels** : Rappels toutes les 2h pour hydratation (8h-20h) (Phase 2)
+- ✅ **Suivi de prise** : Marquer médicaments comme pris, statistiques, graphiques (Phase 2)
 
 **Comment développer** 🚀 :
 
@@ -317,15 +317,14 @@ class PathologyTracking {
 
 | Fonctionnalité | Existe | Manque | Priorité |
 |----------------|--------|--------|----------|
-| **Reconnaissance examens** | ✅ Extraction automatique | ⚠️ Interface visuelle, suggestions | 🟡 Moyenne |
-| **Reconnaissance médecins** | ✅ Extraction nom + spécialité | ⚠️ Extraction adresse/téléphone, ajout auto | 🟡 Moyenne |
-| **Codes couleur spécialités** | ❌ | ❌ Système complet | 🟠 Élevée |
-| **Encadrement calendrier** | ✅ Calendrier natif | ⚠️ Vue calendrier dans app, encadrement | 🟠 Élevée |
-| **Annuaire enrichi** | ✅ Formulaire complet | ⚠️ Extraction auto, validation, carte | 🟡 Moyenne |
-| **Rappels médicaments** | ✅ Rappels génériques | ⚠️ Module dédié, suivi prise, interactions | 🟠 Élevée |
-| **Rappels hydratation** | ❌ | ❌ Module complet | 🟡 Moyenne |
-| **Module diabète** | ❌ | ❌ Module complet | 🟢 Basse (si besoin) |
-| **Module pathologies** | ❌ | ❌ Module complet | 🟠 Élevée |
+| **Reconnaissance examens** | ✅ Extraction automatique | ✅ Interface visuelle, suggestions, badges | ✅ TERMINÉ (Phase 4) |
+| **Reconnaissance médecins** | ✅ Extraction nom + spécialité | ✅ Extraction adresse/téléphone/email, ajout auto | ✅ TERMINÉ (Phase 1) |
+| **Codes couleur spécialités** | ✅ Système complet | ✅ Badges, calendrier, légende | ✅ TERMINÉ (Phase 1) |
+| **Encadrement calendrier** | ✅ Calendrier natif | ✅ Vue calendrier dans app, encadrement coloré | ✅ TERMINÉ (Phase 1) |
+| **Annuaire enrichi** | ✅ Formulaire complet | ✅ Extraction auto, dialog détection, pré-remplissage | ✅ TERMINÉ (Phase 1) |
+| **Rappels médicaments** | ✅ Module dédié | ✅ Suivi prise, interactions, rappels adaptatifs | ✅ TERMINÉ (Phase 2) |
+| **Rappels hydratation** | ✅ Module complet | ✅ Objectifs quotidiens, rappels 2h, statistiques | ✅ TERMINÉ (Phase 2) |
+| **Module pathologies** | ✅ Module complet | ✅ 9 templates, tracking, graphiques | ✅ TERMINÉ (Phase 3) |
 
 ---
 
@@ -338,7 +337,7 @@ class PathologyTracking {
    - ✅ Mapping spécialité → couleur (Doctor.getColorForSpecialty())
    - ✅ Badges dans annuaire (doctors_list_screen.dart)
    - ✅ Couleur dans calendrier (calendar_service.dart)
-   - ⚠️ Configuration personnalisée (à venir Phase 2)
+   - ✅ Légende des couleurs avec filtres par spécialité (Phase 1)
 
 2. **Encadrement calendrier** 📅 ✅
    - ✅ Écran calendrier dédié (calendar_screen.dart avec table_calendar)

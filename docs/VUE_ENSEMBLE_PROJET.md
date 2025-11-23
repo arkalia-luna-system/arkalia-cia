@@ -1,6 +1,6 @@
 # Vue d'ensemble du projet — Arkalia CIA
 
-**Version** : 1.2.1
+**Version** : 1.3.0
 **Dernière mise à jour** : 23 novembre 2025
 
 Document de synthèse visuelle présentant l'écosystème complet Arkalia CIA.
@@ -317,18 +317,21 @@ sequenceDiagram
 ### Code
 
 - **Backend Python** : 18 endpoints, 8 modules principaux
-- **Frontend Flutter** : 25 écrans, 21 services, 6 utils
-- **Tests** : 308 passed (85% couverture)
+- **Frontend Flutter** : 28 écrans, 22 services, 6 utils
+- **Tests** : 352 passed (70.83% couverture)
 - **Documentation** : 94 fichiers MD organisés
+- **Phases d'améliorations** : 4 phases terminées (23 novembre 2025)
 
 ### Fonctionnalités
 
-- **Gestion Documents** : Upload, OCR, métadonnées, recherche
-- **Gestion Médecins** : CRUD complet, historique, statistiques
-- **IA Conversationnelle** : Chat intelligent avec ARIA
+- **Gestion Documents** : Upload, OCR, métadonnées, recherche, badges type examen, filtres
+- **Gestion Médecins** : CRUD complet, historique, statistiques, codes couleur, déduplication
+- **Rappels Intelligents** : Médicaments adaptatifs, hydratation, calendrier intégré
+- **Module Pathologies** : 9 templates spécifiques, tracking symptômes, graphiques
+- **IA Conversationnelle** : Chat intelligent avec ARIA, suggestions pathologies
 - **IA Patterns** : Détection patterns, prédictions Prophet
 - **Partage Familial** : Chiffrement AES-256, dashboard
-- **Recherche** : Multi-critères, sémantique, cache
+- **Recherche** : Multi-critères, sémantique, cache, suggestions intelligentes
 
 ---
 
@@ -361,4 +364,5 @@ sequenceDiagram
 
 ---
 
-*Dernière mise à jour : 20 novembre 2025*
+*Dernière mise à jour : 23 novembre 2025*
+*Version : 1.3.0 - Toutes les 4 phases d'améliorations terminées*
