@@ -72,7 +72,7 @@ class Pathology {
       'treatments': treatments.join(','),
       'exams': exams.join(','),
       'reminders': reminders.map((key, value) => MapEntry(key, value.toMap())),
-      'color': (color.alpha << 24) | (color.red << 16) | (color.green << 8) | color.blue,
+      'color': (((color.a * 255.0).round() & 0xff) << 24) | (((color.r * 255.0).round() & 0xff) << 16) | (((color.g * 255.0).round() & 0xff) << 8) | ((color.b * 255.0).round() & 0xff),
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };
