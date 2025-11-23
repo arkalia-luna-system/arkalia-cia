@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../models/doctor.dart';
@@ -201,6 +202,80 @@ class DoctorService {
       'consultation_count': count,
       'last_visit': lastVisit?.toIso8601String(),
     };
+  }
+
+  /// Exporte tous les médecins au format JSON
+  Future<String> exportDoctors() async {
+    final doctors = await getAllDoctors();
+    final consultations = <int, List<Consultation>>{};
+    
+    for (final doctor in doctors) {
+      if (doctor.id != null) {
+        consultations[doctor.id!] = await getConsultationsByDoctor(doctor.id!);
+      }
+    }
+    
+    final exportData = {
+      'version': '1.0',
+      'export_date': DateTime.now().toIso8601String(),
+      'doctors': doctors.map((d) => d.toMap()).toList(),
+      'consultations': consultations.entries.map((e) => {
+        'doctor_id': e.key,
+        'consultations': e.value.map((c) => c.toMap()).toList(),
+      }).toList(),
+    };
+    
+    return jsonEncode(exportData);
+  }
+
+  /// Importe des médecins depuis un JSON
+  Future<void> importDoctors(String jsonData) async {
+    try {
+      final data = jsonDecode(jsonData) as Map<String, dynamic>;
+      final doctorsData = data['doctors'] as List<dynamic>? ?? [];
+      final consultationsData = data['consultations'] as List<dynamic>? ?? [];
+      
+      // Importer médecins
+      for (final doctorMap in doctorsData) {
+        final doctor = Doctor.fromMap(Map<String, dynamic>.from(doctorMap));
+        // Ne pas utiliser l'ID existant pour éviter conflits
+        final newDoctor = Doctor(
+          firstName: doctor.firstName,
+          lastName: doctor.lastName,
+          specialty: doctor.specialty,
+          phone: doctor.phone,
+          email: doctor.email,
+          address: doctor.address,
+          city: doctor.city,
+          postalCode: doctor.postalCode,
+          country: doctor.country,
+          notes: doctor.notes,
+        );
+        final newId = await insertDoctor(newDoctor);
+        
+        // Importer consultations pour ce médecin
+        final doctorConsultations = consultationsData.firstWhere(
+          (c) => c['doctor_id'] == (doctorMap['id'] as int?),
+          orElse: () => null,
+        );
+        
+        if (doctorConsultations != null && newId != null) {
+          final consultations = (doctorConsultations['consultations'] as List<dynamic>? ?? [])
+              .map((c) {
+                final consultationMap = Map<String, dynamic>.from(c);
+                consultationMap['doctor_id'] = newId; // Utiliser le nouvel ID
+                return Consultation.fromMap(consultationMap);
+              })
+              .toList();
+          
+          for (final consultation in consultations) {
+            await insertConsultation(consultation);
+          }
+        }
+      }
+    } catch (e) {
+      throw Exception('Erreur import médecins: $e');
+    }
   }
 }
 

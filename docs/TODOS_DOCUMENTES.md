@@ -57,7 +57,29 @@
 
 ## 🟡 TODOs MOYENS (Améliorations)
 
-### 3. Refresh Token pour Portails Santé ✅ TERMINÉ
+### 3. Filtre Type d'Examen dans Recherche Avancée ✅ TERMINÉ
+
+**Fichier**: `arkalia_cia/lib/screens/advanced_search_screen.dart`
+
+**Description**: Ajouter un filtre par type d'examen dans la recherche avancée
+
+**Statut actuel**:
+- ✅ Filtre type d'examen implémenté (23 novembre 2025)
+- ✅ Dialog de sélection avec types d'examens courants
+- ✅ Support examType dans SearchFilters
+- ✅ Filtrage dans SearchService._matchesDocument()
+
+**Priorité**: 🟡 MOYENNE (amélioration UX) - **TERMINÉ**
+
+**Implémentation**:
+- FilterChip pour sélection type d'examen ajouté
+- Dialog de sélection avec RadioListTile
+- Liste de types d'examens médicaux courants
+- Filtrage par nom de document et métadonnées
+
+---
+
+### 4. Refresh Token pour Portails Santé ✅ TERMINÉ
 
 **Fichier**: `arkalia_cia/lib/services/health_portal_auth_service.dart`
 
@@ -81,7 +103,53 @@
 
 ---
 
-### 4. Endpoints Spécifiques Portails Santé
+### 5. Audit Log Partage Familial ✅ TERMINÉ
+
+**Fichier**: `arkalia_cia/lib/services/family_sharing_service.dart`
+
+**Description**: Implémenter un audit log complet pour le partage familial (qui a accédé à quoi)
+
+**Statut actuel**:
+- ✅ Classe `SharingAuditLog` créée (23 novembre 2025)
+- ✅ Méthodes `getAuditLogForDocument()` et `getAuditLogForMember()` implémentées
+- ✅ Méthodes `logDocumentAccess()` et `logDocumentDownload()` implémentées
+- ✅ Enregistrement automatique lors du partage et du départage
+- ✅ Stockage dans SharedPreferences
+
+**Priorité**: 🟡 MOYENNE (amélioration sécurité) - **TERMINÉ**
+
+**Implémentation**:
+- Classe SharingAuditLog avec actions (shared, accessed, downloaded, unshared)
+- Stockage dans SharedPreferences avec clé `sharing_audit_log`
+- Méthodes pour récupérer l'audit log par document ou par membre
+- Enregistrement automatique lors des actions de partage
+
+---
+
+### 6. Export/Import Médecins ✅ TERMINÉ
+
+**Fichier**: `arkalia_cia/lib/services/doctor_service.dart`
+
+**Description**: Permettre l'export et l'import des médecins et consultations au format JSON
+
+**Statut actuel**:
+- ✅ Méthode `exportDoctors()` implémentée (23 novembre 2025)
+- ✅ Méthode `importDoctors()` implémentée (23 novembre 2025)
+- ✅ Export au format JSON avec version et date
+- ✅ Import avec gestion des IDs pour éviter conflits
+- ✅ Import des consultations associées
+
+**Priorité**: 🟡 MOYENNE (amélioration fonctionnalité) - **TERMINÉ**
+
+**Implémentation**:
+- Export JSON avec structure complète (doctors, consultations)
+- Import avec création de nouveaux IDs pour éviter conflits
+- Gestion des consultations lors de l'import
+- Format JSON versionné pour compatibilité future
+
+---
+
+### 7. Endpoints Spécifiques Portails Santé
 
 **Fichier**: `arkalia_cia/lib/services/health_portal_auth_service.dart` (ligne 81)
 
@@ -105,7 +173,17 @@
 
 ## 🟢 TODOs BAS (Notes techniques)
 
-### 5. Application ID Android
+### 8. Application ID Android ✅ TERMINÉ
+
+**Fichier**: `arkalia_cia/android/app/build.gradle.kts` (ligne 30)
+
+**Description**: Spécifier un Application ID unique pour Android
+
+**Statut actuel**: 
+- ✅ Application ID mis à jour : `com.arkalia.cia` (23 novembre 2025)
+- ✅ TODO supprimé
+
+**Priorité**: 🟢 BASSE (pour production uniquement) - **TERMINÉ**
 
 **Fichier**: `arkalia_cia/android/app/build.gradle.kts` (ligne 30)
 
@@ -123,7 +201,7 @@
 
 ---
 
-### 6. Configuration Signing Android
+### 9. Configuration Signing Android
 
 **Fichier**: `arkalia_cia/android/app/build.gradle.kts` (ligne 42)
 
@@ -147,8 +225,8 @@
 |----------|--------|--------|
 | 🔴 Critique | 0 | - |
 | 🟠 Élevée | 1 | Import portails (nécessite APIs externes) |
-| 🟡 Moyenne | 0 | ✅ Recherche médecin TERMINÉ, ✅ Refresh token TERMINÉ |
-| 🟢 Basse | 2 | Application ID, Signing |
+| 🟡 Moyenne | 0 | ✅ Tous terminés (Recherche médecin, Refresh token, Type examen, Audit log, Export/import) |
+| 🟢 Basse | 1 | Signing (Application ID TERMINÉ) |
 
 ---
 

@@ -223,6 +223,24 @@ class SearchService {
       }
     }
 
+    // Filtre type d'examen
+    if (filters.examType != null) {
+      final docName = (doc['original_name'] ?? doc['name'] ?? '').toLowerCase();
+      final examTypeLower = filters.examType!.toLowerCase();
+      // Rechercher le type d'examen dans le nom du document ou les métadonnées
+      if (!docName.contains(examTypeLower)) {
+        final metadata = doc['metadata'];
+        if (metadata != null && metadata is Map) {
+          final metadataText = metadata.toString().toLowerCase();
+          if (!metadataText.contains(examTypeLower)) {
+            return false;
+          }
+        } else {
+          return false;
+        }
+      }
+    }
+
     // Filtre médecin (via métadonnées ou consultations)
     if (filters.doctorId != null) {
       // Vérifier si le document a des métadonnées avec doctor_name

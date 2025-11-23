@@ -24,9 +24,23 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
   List<String> _suggestions = [];
   List<Doctor> _doctors = [];
   String? _selectedCategory;
+  String? _selectedExamType;
   DateTime? _startDate;
   DateTime? _endDate;
   int? _selectedDoctorId;
+  
+  // Types d'examens médicaux courants
+  static const List<String> _examTypes = [
+    'Analyse de sang',
+    'Radiographie',
+    'IRM',
+    'Scanner',
+    'Échographie',
+    'ECG',
+    'Biopsie',
+    'Endoscopie',
+    'Autre',
+  ];
 
   @override
   void initState() {
@@ -73,6 +87,7 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
       _filters = SearchFilters(
         query: _searchController.text.isNotEmpty ? _searchController.text : null,
         category: _selectedCategory,
+        examType: _selectedExamType,
         startDate: _startDate,
         endDate: _endDate,
         doctorId: _selectedDoctorId,
@@ -193,6 +208,22 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
                       setState(() {
                         _startDate = null;
                         _endDate = null;
+                      });
+                      _performSearch();
+                    }
+                  },
+                ),
+                
+                // Filtre type d'examen
+                FilterChip(
+                  label: Text(_selectedExamType ?? 'Type examen'),
+                  selected: _selectedExamType != null,
+                  onSelected: (selected) {
+                    if (selected) {
+                      _showExamTypeDialog();
+                    } else {
+                      setState(() {
+                        _selectedExamType = null;
                       });
                       _performSearch();
                     }
@@ -366,6 +397,41 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
       setState(() {
         _startDate = picked.start;
         _endDate = picked.end;
+      });
+      _performSearch();
+    }
+  }
+
+  Future<void> _showExamTypeDialog() async {
+    final selected = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Choisir type d\'examen'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: _examTypes.map((type) {
+            return RadioListTile<String>(
+              title: Text(type),
+              value: type,
+              groupValue: _selectedExamType,
+              onChanged: (value) {
+                Navigator.pop(context, value);
+              },
+            );
+          }).toList(),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Annuler'),
+          ),
+        ],
+      ),
+    );
+    
+    if (selected != null) {
+      setState(() {
+        _selectedExamType = selected;
       });
       _performSearch();
     }
