@@ -48,4 +48,15 @@ class ErrorHelper {
       print('[$context] Erreur technique: $error');
     }
   }
+  
+  /// Vérifie si une erreur est une erreur réseau
+  static bool isNetworkError(dynamic error) {
+    final errorString = error.toString().toLowerCase();
+    return errorString.contains('failed host lookup') ||
+        errorString.contains('connection refused') ||
+        errorString.contains('network') ||
+        errorString.contains('timeout') ||
+        errorString.contains('socketexception') ||
+        errorString.contains('connection error');
+  }
 }
