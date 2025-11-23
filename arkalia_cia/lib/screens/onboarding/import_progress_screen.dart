@@ -1,16 +1,21 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../services/onboarding_service.dart';
+import '../../services/file_storage_service.dart';
+import '../../services/local_storage_service.dart';
 import '../home_page.dart';
 import 'import_type.dart';
 
 class ImportProgressScreen extends StatefulWidget {
   final ImportType importType;
   final List<String>? portalIds;
+  final List<String>? filePaths;
 
   const ImportProgressScreen({
     super.key,
     required this.importType,
     this.portalIds,
+    this.filePaths,
   });
 
   @override
@@ -46,41 +51,85 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
   }
 
   Future<void> _importManualPDF() async {
+    final filePaths = widget.filePaths ?? [];
+    
+    if (filePaths.isEmpty) {
+      setState(() {
+        _currentStep = 'Aucun fichier à importer';
+        _isComplete = true;
+      });
+      await Future.delayed(const Duration(seconds: 2));
+      _completeOnboarding();
+      return;
+    }
+
+    int importedCount = 0;
+    int totalFiles = filePaths.length;
+
     setState(() {
       _progress = 0.1;
-      _currentStep = 'Préparation import PDF...';
+      _currentStep = 'Préparation import de $totalFiles fichier(s)...';
     });
 
-    // Simuler progression import
-    await Future.delayed(const Duration(seconds: 1));
-    
-    setState(() {
-      _progress = 0.3;
-      _currentStep = 'Analyse des documents...';
-    });
+    for (int i = 0; i < filePaths.length; i++) {
+      final filePath = filePaths[i];
+      final file = File(filePath);
+      
+      if (!await file.exists()) {
+        continue;
+      }
 
-    await Future.delayed(const Duration(seconds: 1));
+      try {
+        setState(() {
+          _progress = 0.1 + (i / totalFiles) * 0.7;
+          _currentStep = 'Import du fichier ${i + 1}/$totalFiles...';
+        });
 
-    setState(() {
-      _progress = 0.6;
-      _currentStep = 'Extraction données essentielles...';
-    });
+        // Obtenir le nom du fichier
+        final fileName = file.path.split('/').last;
+        final timestamp = DateTime.now().millisecondsSinceEpoch;
+        final uniqueFileName = '${timestamp}_$fileName';
 
-    await Future.delayed(const Duration(seconds: 1));
+        // Copier le fichier vers le répertoire documents
+        final savedFile = await FileStorageService.copyToDocumentsDirectory(
+          file,
+          uniqueFileName,
+        );
+
+        // Sauvegarder les métadonnées
+        final document = {
+          'id': '${timestamp}_$i',
+          'name': uniqueFileName,
+          'original_name': fileName,
+          'path': savedFile.path,
+          'file_size': await savedFile.length(),
+          'category': 'Médical',
+          'created_at': DateTime.now().toIso8601String(),
+        };
+
+        await LocalStorageService.saveDocument(document);
+        importedCount++;
+
+        // Petit délai pour l'animation
+        await Future.delayed(const Duration(milliseconds: 300));
+      } catch (e) {
+        // Continuer avec le fichier suivant en cas d'erreur
+        continue;
+      }
+    }
 
     setState(() {
       _progress = 0.9;
-      _currentStep = 'Création historique...';
+      _currentStep = 'Finalisation...';
     });
 
     await Future.delayed(const Duration(seconds: 1));
 
-    // Extraction intelligente (simulée pour l'instant)
     final result = {
       'doctors': 0,
       'exams': 0,
       'dates': 0,
-      'summary': 'Aucun document importé pour le moment',
+      'summary': '$importedCount document(s) importé(s) avec succès',
     };
 
     setState(() {

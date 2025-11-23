@@ -22,13 +22,29 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
       );
 
       if (result != null && result.files.isNotEmpty) {
-        // Rediriger vers écran progression
+        // Extraire les chemins des fichiers sélectionnés
+        final filePaths = result.files
+            .where((file) => file.path != null)
+            .map((file) => file.path!)
+            .toList();
+
+        if (filePaths.isEmpty) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Aucun fichier valide sélectionné')),
+            );
+          }
+          return;
+        }
+
+        // Rediriger vers écran progression avec les fichiers
         if (!mounted) return;
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => const ImportProgressScreen(
+            builder: (context) => ImportProgressScreen(
               importType: ImportType.manualPDF,
+              filePaths: filePaths,
             ),
           ),
         );

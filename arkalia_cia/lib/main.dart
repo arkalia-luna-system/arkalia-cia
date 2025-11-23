@@ -142,7 +142,9 @@ class _InitialScreenState extends State<_InitialScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
+      backgroundColor: isDark ? Colors.grey[900] : Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -150,14 +152,28 @@ class _InitialScreenState extends State<_InitialScreen> {
             Icon(
               Icons.health_and_safety,
               size: 80,
-              color: Theme.of(context).colorScheme.primary,
+              color: isDark ? Colors.white : Colors.green[700],
             ),
             const SizedBox(height: 24),
-            const CircularProgressIndicator(),
+            CircularProgressIndicator(
+              color: isDark ? Colors.white : Colors.green[700],
+            ),
             const SizedBox(height: 16),
             Text(
               'Chargement...',
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+                color: isDark ? Colors.white : Colors.grey[900],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Cela peut prendre quelques instants',
+              style: TextStyle(
+                fontSize: 14,
+                color: isDark ? Colors.grey[400] : Colors.grey[600],
+              ),
             ),
           ],
         ),
