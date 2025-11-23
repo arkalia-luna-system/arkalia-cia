@@ -148,6 +148,10 @@ class CalendarService {
 
   /// Récupère les rappels à venir depuis le calendrier
   static Future<List<Map<String, dynamic>>> getUpcomingReminders() async {
+    // Sur le web, device_calendar n'est pas disponible
+    if (kIsWeb) {
+      return [];
+    }
     try {
       final events = await getUpcomingEvents();
       final now = DateTime.now();
@@ -164,12 +168,17 @@ class CalendarService {
               })
           .toList();
     } catch (e) {
-      throw Exception('Erreur lors de la récupération des rappels: $e');
+      // Retourner liste vide plutôt que de planter
+      return [];
     }
   }
 
   /// Récupère les événements à venir
   static Future<List<Event>> getUpcomingEvents() async {
+    // Sur le web, device_calendar n'est pas disponible
+    if (kIsWeb) {
+      return [];
+    }
     try {
       final calendarsResult = await _deviceCalendarPlugin.retrieveCalendars();
       if (!calendarsResult.isSuccess || calendarsResult.data!.isEmpty) {

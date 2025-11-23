@@ -27,19 +27,27 @@ class _RemindersScreenState extends State<RemindersScreen> {
     });
 
     try {
-      // Charger depuis le stockage local ET le calendrier natif
+      // Charger depuis le stockage local
       final localReminders = await LocalStorageService.getReminders();
-      final calendarEvents = await CalendarService.getUpcomingReminders();
-
-      // Convertir les événements calendrier en format local
-      final calendarReminders = calendarEvents.map((event) => {
-        'id': event['id'] ?? '',
-        'title': (event['title'] ?? '').replaceFirst('[Santé] ', ''),
-        'description': event['description'] ?? '',
-        'reminder_date': event['reminder_date'] ?? '',
-        'is_completed': false,
-        'source': 'calendar',
-      }).toList();
+      
+      // Essayer de charger depuis le calendrier natif (mobile seulement)
+      List<Map<String, dynamic>> calendarReminders = [];
+      if (!kIsWeb) {
+        try {
+          final calendarEvents = await CalendarService.getUpcomingReminders();
+          // Convertir les événements calendrier en format local
+          calendarReminders = calendarEvents.map((event) => {
+            'id': event['id'] ?? '',
+            'title': (event['title'] ?? '').replaceFirst('[Santé] ', ''),
+            'description': event['description'] ?? '',
+            'reminder_date': event['reminder_date'] ?? '',
+            'is_completed': false,
+            'source': 'calendar',
+          }).toList();
+        } catch (e) {
+          // Ignorer les erreurs de calendrier, on a déjà les rappels locaux
+        }
+      }
 
       if (mounted) {
         setState(() {
