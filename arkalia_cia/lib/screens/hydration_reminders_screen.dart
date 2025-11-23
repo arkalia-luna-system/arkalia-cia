@@ -618,70 +618,128 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                     ),
                   ),
                   const SizedBox(height: 24),
-                  // Objectif et progression
-                  Card(
-                    color: isGoalReached ? Colors.green[50] : Colors.cyan[50],
+                  // Objectif et progression avec design moderne
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: isGoalReached
+                            ? [
+                                theme.colorScheme.secondary.withOpacity(0.3),
+                                theme.colorScheme.secondary.withOpacity(0.1),
+                              ]
+                            : [
+                                theme.colorScheme.primary.withOpacity(0.3),
+                                theme.colorScheme.primary.withOpacity(0.1),
+                              ],
+                      ),
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(
+                        color: isGoalReached
+                            ? theme.colorScheme.secondary.withOpacity(0.5)
+                            : theme.colorScheme.primary.withOpacity(0.5),
+                        width: 2,
+                      ),
+                    ),
                     child: Padding(
-                      padding: const EdgeInsets.all(24.0),
+                      padding: const EdgeInsets.all(28.0),
                       child: Column(
                         children: [
                           if (isGoalReached) ...[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
-                                Icon(Icons.emoji_events, color: Colors.amber, size: 32),
-                                SizedBox(width: 8),
-                                Text(
-                                  'Hydratation parfaite !',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.green,
+                            AnimatedBuilder(
+                              animation: _pulseAnimationController,
+                              builder: (context, child) {
+                                return Transform.scale(
+                                  scale: 1.0 + (_pulseAnimationController.value * 0.1),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.emoji_events,
+                                        color: theme.colorScheme.secondary,
+                                        size: 36,
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Text(
+                                        'Hydratation parfaite !',
+                                        style: theme.textTheme.titleLarge?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: theme.colorScheme.secondary,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                              ],
+                                );
+                              },
                             ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 20),
                           ],
                           Text(
                             '$glasses / $goalGlasses verres',
-                            style: const TextStyle(
-                              fontSize: 32,
+                            style: theme.textTheme.displaySmall?.copyWith(
                               fontWeight: FontWeight.bold,
+                              color: theme.colorScheme.onSurface,
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 12),
                           Text(
                             '$total ml / $goal ml',
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.grey[600],
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
                             ),
                           ),
-                          const SizedBox(height: 16),
-                          LinearProgressIndicator(
-                            value: percentage / 100,
-                            minHeight: 24,
-                            backgroundColor: Colors.grey[300],
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              isGoalReached ? Colors.green : Colors.cyan,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            '$percentage%',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
+                          const SizedBox(height: 24),
+                          // Barre de progression animée
+                          AnimatedBuilder(
+                            animation: _progressAnimation,
+                            builder: (context, child) {
+                              final animatedPercentage = percentage * _progressAnimation.value;
+                              return Column(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: LinearProgressIndicator(
+                                      value: animatedPercentage / 100,
+                                      minHeight: 28,
+                                      backgroundColor: theme.colorScheme.surfaceContainerHighest,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        isGoalReached
+                                            ? theme.colorScheme.secondary
+                                            : theme.colorScheme.primary,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    '${animatedPercentage.toInt()}%',
+                                    style: theme.textTheme.titleLarge?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: isGoalReached
+                                          ? theme.colorScheme.secondary
+                                          : theme.colorScheme.primary,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
                           ),
                           if (!isGoalReached && progress['remaining'] != null) ...[
-                            const SizedBox(height: 8),
-                            Text(
-                              'Il reste ${progress['remaining']} ml à boire',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[600],
+                            const SizedBox(height: 16),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                color: theme.colorScheme.surfaceContainerHighest,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                'Il reste ${progress['remaining']} ml à boire',
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                ),
                               ),
                             ),
                           ],
@@ -689,24 +747,23 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                       ),
                     ),
                   ),
-                  const SizedBox(height: 24),
-                  // Boutons rapides
-                  const Text(
+                  const SizedBox(height: 32),
+                  // Boutons rapides améliorés
+                  Text(
                     'Enregistrer une consommation',
-                    style: TextStyle(
-                      fontSize: 18,
+                    style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
                   Wrap(
                     spacing: 12,
                     runSpacing: 12,
                     children: [
-                      _buildQuickButton('1 verre', 250, Icons.water_drop),
-                      _buildQuickButton('2 verres', 500, Icons.water_drop),
-                      _buildQuickButton('1 bouteille', 500, Icons.local_drink),
-                      _buildQuickButton('Autre', null, Icons.edit),
+                      _buildQuickButton('1 verre', 250, Icons.water_drop, theme),
+                      _buildQuickButton('2 verres', 500, Icons.water_drop, theme),
+                      _buildQuickButton('1 bouteille', 500, Icons.local_drink, theme),
+                      _buildQuickButton('Autre', null, Icons.edit, theme),
                     ],
                   ),
                   const SizedBox(height: 24),
