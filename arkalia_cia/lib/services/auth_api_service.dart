@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart';
 import '../utils/app_logger.dart';
 import '../utils/error_helper.dart';
 import 'backend_config_service.dart';
@@ -8,10 +10,38 @@ import 'backend_config_service.dart';
 /// Service d'authentification API pour Arkalia CIA
 /// Gère l'authentification JWT avec le backend
 class AuthApiService {
-  static const _storage = FlutterSecureStorage();
+  static const _secureStorage = FlutterSecureStorage();
   static const String _accessTokenKey = 'jwt_access_token';
   static const String _refreshTokenKey = 'jwt_refresh_token';
   static const String _usernameKey = 'username';
+
+  /// Stockage sécurisé (mobile) ou SharedPreferences (web)
+  static Future<void> _writeSecure(String key, String value) async {
+    if (kIsWeb) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(key, value);
+    } else {
+      await _secureStorage.write(key: key, value: value);
+    }
+  }
+
+  static Future<String?> _readSecure(String key) async {
+    if (kIsWeb) {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString(key);
+    } else {
+      return await _secureStorage.read(key: key);
+    }
+  }
+
+  static Future<void> _deleteSecure(String key) async {
+    if (kIsWeb) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(key);
+    } else {
+      await _secureStorage.delete(key: key);
+    }
+  }
 
   /// Enregistre un nouvel utilisateur
   static Future<Map<String, dynamic>> register({
@@ -89,9 +119,9 @@ class AuthApiService {
         final refreshToken = data['refresh_token'] as String;
 
         // Stocker les tokens de manière sécurisée
-        await _storage.write(key: _accessTokenKey, value: accessToken);
-        await _storage.write(key: _refreshTokenKey, value: refreshToken);
-        await _storage.write(key: _usernameKey, value: username);
+        await _writeSecure(_accessTokenKey, accessToken);
+        await _writeSecure(_refreshTokenKey, refreshToken);
+        await _writeSecure(_usernameKey, username);
 
         return {
           'success': true,
@@ -117,7 +147,7 @@ class AuthApiService {
   /// Rafraîchit le token d'accès avec le refresh token
   static Future<Map<String, dynamic>> refreshToken() async {
     try {
-      final refreshToken = await _storage.read(key: _refreshTokenKey);
+      final refreshToken = await _readSecure(_refreshTokenKey);
       if (refreshToken == null) {
         return {
           'success': false,
@@ -140,8 +170,8 @@ class AuthApiService {
         final newRefreshToken = data['refresh_token'] as String;
 
         // Mettre à jour les tokens
-        await _storage.write(key: _accessTokenKey, value: accessToken);
-        await _storage.write(key: _refreshTokenKey, value: newRefreshToken);
+        await _writeSecure(_accessTokenKey, accessToken);
+        await _writeSecure(_refreshTokenKey, newRefreshToken);
 
         return {
           'success': true,
@@ -167,7 +197,7 @@ class AuthApiService {
 
   /// Récupère le token d'accès actuel
   static Future<String?> getAccessToken() async {
-    return await _storage.read(key: _accessTokenKey);
+    return await _readSecure(_accessTokenKey);
   }
 
   /// Vérifie si l'utilisateur est connecté
@@ -178,14 +208,14 @@ class AuthApiService {
 
   /// Déconnecte l'utilisateur
   static Future<void> logout() async {
-    await _storage.delete(key: _accessTokenKey);
-    await _storage.delete(key: _refreshTokenKey);
-    await _storage.delete(key: _usernameKey);
+    await _deleteSecure(_accessTokenKey);
+    await _deleteSecure(_refreshTokenKey);
+    await _deleteSecure(_usernameKey);
   }
 
   /// Récupère le nom d'utilisateur stocké
   static Future<String?> getUsername() async {
-    return await _storage.read(key: _usernameKey);
+    return await _readSecure(_usernameKey);
   }
 }
 

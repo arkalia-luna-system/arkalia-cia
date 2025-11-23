@@ -15,6 +15,11 @@ class CalendarService {
 
   /// Initialise le service calendrier
   static Future<void> init() async {
+    // Sur le web, device_calendar et notifications ne sont pas disponibles
+    if (kIsWeb) {
+      return;
+    }
+    
     // Configuration des notifications locales
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
