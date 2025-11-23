@@ -31,9 +31,9 @@ class ExamTypeBadge extends StatelessWidget {
       case 'biopsie':
         return Icons.medical_services;
       case 'mammographie':
-        return Icons.breastfeeding;
+        return Icons.medical_services; // breastfeeding icon not available
       case 'densitometrie':
-        return Icons.bone;
+        return Icons.medical_services; // bone icon not available
       case 'endoscopie':
         return Icons.visibility;
       case 'electrocardiogramme':
