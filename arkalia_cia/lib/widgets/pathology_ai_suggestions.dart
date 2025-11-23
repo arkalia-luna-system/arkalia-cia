@@ -50,7 +50,7 @@ class PathologyAISuggestions extends StatelessWidget {
           Text(
             'Questions à poser à votre médecin :',
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 14, // Minimum 14sp pour accessibilité seniors
               color: Colors.blue[700],
               fontWeight: FontWeight.w600,
             ),
@@ -74,7 +74,7 @@ class PathologyAISuggestions extends StatelessWidget {
                       child: Text(
                         question,
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 14, // Minimum 14sp pour accessibilité seniors
                           color: Colors.blue[900],
                         ),
                       ),

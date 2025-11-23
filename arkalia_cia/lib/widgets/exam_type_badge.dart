@@ -137,7 +137,7 @@ class ExamTypeBadge extends StatelessWidget {
           Text(
             needsVerification ? '$label ?' : label,
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 14, // Minimum 14sp pour accessibilité seniors
               color: color,
               fontWeight: FontWeight.w600,
             ),

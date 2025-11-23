@@ -10,6 +10,9 @@ from arkalia_cia_python_backend.ai.pattern_analyzer import AdvancedPatternAnalyz
 from arkalia_cia_python_backend.database import CIADatabase
 from arkalia_cia_python_backend.pdf_processor import PDFProcessor
 from arkalia_cia_python_backend.services.document_service import DocumentService
+from arkalia_cia_python_backend.services.medical_report_service import (
+    MedicalReportService,
+)
 
 
 @lru_cache
@@ -58,3 +61,12 @@ def get_document_service() -> DocumentService:
         db=get_database(),
         pdf_processor=get_pdf_processor(),
     )
+
+
+@lru_cache
+def get_medical_report_service() -> MedicalReportService:
+    """
+    Retourne une instance de MedicalReportService
+    Utilise lru_cache pour singleton par requête
+    """
+    return MedicalReportService(db=get_database())

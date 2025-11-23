@@ -335,7 +335,7 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                   Text(
                     '${amount}ml',
                     style: TextStyle(
-                      fontSize: 10,
+                      fontSize: 14, // Minimum 14sp pour accessibilité seniors
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
                     textAlign: TextAlign.center,
@@ -382,7 +382,7 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                   Text(
                     _getDayName(date.weekday),
                     style: TextStyle(
-                      fontSize: 11,
+                      fontSize: 14, // Minimum 14sp pour accessibilité seniors
                       fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
                       color: isToday
                           ? theme.colorScheme.primary
@@ -428,7 +428,7 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                 Text(
                   label,
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 14, // Minimum 14sp pour accessibilité seniors
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),

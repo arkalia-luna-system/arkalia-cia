@@ -155,17 +155,70 @@ class ConversationalAI:
                     answer += f" le {date}"
                 answer += ". "
 
-                # Analyser patterns si disponibles
+                # Analyser patterns si disponibles et enrichir la réponse
                 if self.aria:
                     try:
                         patterns = self.aria.get_patterns(
                             user_data.get("user_id", "default")
                         )
-                        if patterns.get("recurring_patterns"):
-                            answer += (
-                                "J'ai détecté des patterns récurrents "
-                                "dans vos douleurs. "
-                            )
+                        health_metrics = self.aria.get_health_metrics(
+                            user_data.get("user_id", "default"), days=30
+                        )
+
+                        # Enrichir avec patterns détaillés
+                        pattern_details = []
+                        if patterns:
+                            # Patterns de corrélation sommeil
+                            if "sleep_correlation" in patterns:
+                                sleep_corr = patterns["sleep_correlation"]
+                                if isinstance(sleep_corr, dict):
+                                    corr_value = sleep_corr.get("correlation", 0)
+                                    desc = sleep_corr.get("description", "")
+                                    if corr_value > 0.7 and desc:
+                                        pattern_details.append(desc)
+
+                            # Patterns météo
+                            if "weather_correlation" in patterns:
+                                weather_corr = patterns["weather_correlation"]
+                                if isinstance(weather_corr, dict):
+                                    corr_value = weather_corr.get("correlation", 0)
+                                    desc = weather_corr.get("description", "")
+                                    if corr_value > 0.6 and desc:
+                                        pattern_details.append(desc)
+
+                            # Tendances saisonnières
+                            if "seasonal_trend" in patterns:
+                                seasonal = patterns["seasonal_trend"]
+                                if isinstance(seasonal, dict):
+                                    trend = seasonal.get("trend", "")
+                                    if trend:
+                                        pattern_details.append(
+                                            f"Tendance saisonnière : {trend}"
+                                        )
+
+                        # Ajouter détails patterns à la réponse
+                        if pattern_details:
+                            answer += "\n\nPatterns détectés :\n"
+                            for detail in pattern_details[:3]:  # Limiter à 3 patterns
+                                answer += f"• {detail}\n"
+
+                        # Ajouter contexte métriques santé si disponible
+                        if health_metrics:
+                            sleep_avg = health_metrics.get("sleep", {}).get("avg_30d")
+                            stress_avg = health_metrics.get("stress", {}).get("avg_30d")
+
+                            if sleep_avg and sleep_avg < 6:
+                                answer += (
+                                    f"\nNote : Votre sommeil moyen est de {sleep_avg}h/jour. "
+                                    "Un sommeil insuffisant peut aggraver les douleurs."
+                                )
+
+                            if stress_avg and stress_avg > 7:
+                                answer += (
+                                    f"\nNote : Votre niveau de stress est élevé ({stress_avg}/10). "
+                                    "Le stress peut influencer vos douleurs."
+                                )
+
                     except Exception as pattern_error:
                         # Logger l'erreur mais continuer sans patterns
                         logger.debug(

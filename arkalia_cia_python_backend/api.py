@@ -44,6 +44,7 @@ from arkalia_cia_python_backend.dependencies import (
     get_conversational_ai,
     get_database,
     get_document_service,
+    get_medical_report_service,
     get_pattern_analyzer,
 )
 from arkalia_cia_python_backend.security.ssrf_validator import get_ssrf_validator
@@ -54,6 +55,9 @@ from arkalia_cia_python_backend.security_utils import (
     validate_phone_number,
 )
 from arkalia_cia_python_backend.services.document_service import DocumentService
+from arkalia_cia_python_backend.services.medical_report_service import (
+    MedicalReportService,
+)
 
 # Patterns XSS compilés une fois pour performance
 _XSS_PATTERNS = [
@@ -1141,6 +1145,85 @@ async def get_ai_conversations(
         )
         raise HTTPException(
             status_code=500, detail="Erreur lors de la récupération des conversations"
+        ) from e
+
+
+# === RAPPORTS MÉDICAUX ===
+
+
+class MedicalReportRequest(BaseModel):
+    consultation_date: str | None = Field(
+        None, description="Date de consultation (ISO format, défaut: aujourd'hui)"
+    )
+    days_range: int = Field(30, ge=1, le=365, description="Nombre de jours à inclure")
+    include_aria: bool = Field(
+        True, description="Inclure les données ARIA si disponibles"
+    )
+
+
+class MedicalReportResponse(BaseModel):
+    report_date: str
+    generated_at: str
+    days_range: int
+    sections: dict
+    formatted_text: str
+    success: bool = True
+
+
+@app.post(
+    f"{API_PREFIX}/medical-reports/generate", response_model=MedicalReportResponse
+)
+@limiter.limit("10/minute")  # Limite de 10 rapports par minute
+async def generate_medical_report(
+    request: Request,
+    report_request: MedicalReportRequest,
+    current_user: TokenData = Depends(get_current_active_user),
+    db: CIADatabase = Depends(get_database),
+    report_service: MedicalReportService = Depends(get_medical_report_service),
+):
+    """
+    Génère un rapport médical pré-consultation combinant CIA + ARIA
+
+    Combine :
+    - Documents médicaux pertinents (CIA)
+    - Consultations récentes (CIA)
+    - Timeline douleur (ARIA)
+    - Patterns détectés (ARIA)
+    - Métriques santé (ARIA)
+    """
+    try:
+        # Parser la date de consultation si fournie
+        consultation_date = None
+        if report_request.consultation_date:
+            try:
+                consultation_date = datetime.fromisoformat(
+                    report_request.consultation_date.replace("Z", "+00:00")
+                )
+            except (ValueError, AttributeError):
+                consultation_date = None
+
+        # Générer le rapport
+        report = report_service.generate_pre_consultation_report(
+            user_id=str(current_user.user_id),
+            consultation_date=consultation_date,
+            days_range=report_request.days_range,
+            include_aria=report_request.include_aria,
+        )
+
+        return MedicalReportResponse(
+            report_date=report["report_date"],
+            generated_at=report["generated_at"],
+            days_range=report["days_range"],
+            sections=report["sections"],
+            formatted_text=report["formatted_text"],
+            success=True,
+        )
+    except Exception as e:
+        logger.error(
+            f"Erreur génération rapport médical: {sanitize_log_message(str(e))}"
+        )
+        raise HTTPException(
+            status_code=500, detail="Erreur lors de la génération du rapport médical"
         ) from e
 
 
