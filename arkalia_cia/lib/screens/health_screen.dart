@@ -54,6 +54,18 @@ class _HealthScreenState extends State<HealthScreen> {
         'description': 'Service public fédéral Santé publique',
         'category': 'Administration',
       },
+      {
+        'name': 'Andaman 7',
+        'url': 'https://www.andaman7.com',
+        'description': 'Application santé belge - Gestion de votre dossier médical',
+        'category': 'Application',
+      },
+      {
+        'name': 'MaSanté',
+        'url': 'https://www.masante.be',
+        'description': 'Portail santé belge - Accès à vos données médicales',
+        'category': 'Application',
+      },
     ];
     
     // Vérifier et ajouter les portails s'ils n'existent pas déjà

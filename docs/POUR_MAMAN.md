@@ -82,7 +82,7 @@ Quand tu ouvres l'app, tu vois une grille avec **14 boutons** :
 3. Tu appuies sur un portail pour l'ouvrir dans le navigateur
 
 **Ce que tu pourras faire** :
-- ✅ Voir les portails santé belges (eHealth, Inami, Sciensano, SPF Santé)
+- ✅ Voir les portails santé belges pré-configurés (eHealth, Inami, Sciensano, SPF Santé, Andaman 7, MaSanté)
 - ✅ Ajouter un nouveau portail
 - ✅ Ouvrir un portail dans le navigateur
 - ✅ Configurer l'authentification OAuth (pour import automatique futur)
