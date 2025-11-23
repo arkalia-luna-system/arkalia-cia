@@ -19,60 +19,8 @@ class _HealthScreenState extends State<HealthScreen> {
   @override
   void initState() {
     super.initState();
-    // Charger d'abord les portails existants, puis ajouter les portails belges
-    _loadPortals().then((_) {
-      // Ajouter les portails belges après le chargement initial
-      if (mounted) {
-        _addBelgianPortals();
-      }
-    });
-  }
-
-  Future<void> _addBelgianPortals() async {
-    // Ajouter les portails santé belges pré-configurés si pas déjà présents
-    // Utilisation de la configuration centralisée
-    final belgianPortals = BelgianHealthPortals.getPortalsAsMaps();
-    
-    // Vérifier et ajouter les portails s'ils n'existent pas déjà
-    try {
-      // Vérifier d'abord si le backend est disponible
-      final backendEnabled = await BackendConfigService.isBackendEnabled();
-      if (!backendEnabled) {
-        return; // Backend désactivé, ignorer silencieusement
-      }
-
-      final existingPortals = await ApiService.getHealthPortals();
-      final existingUrls = existingPortals.map((p) => p['url'] as String).toSet();
-      bool hasNewPortals = false;
-      
-      for (final portal in belgianPortals) {
-        if (!existingUrls.contains(portal['url'] as String)) {
-          final result = await ApiService.createHealthPortal(
-            name: portal['name'] as String,
-            url: portal['url'] as String,
-            description: portal['description'] as String,
-            category: portal['category'] as String,
-          );
-          
-          // Ignorer silencieusement si le backend n'est pas disponible
-          if (result['backend_unavailable'] == true || result['backend_disabled'] == true) {
-            break; // Arrêter si le backend n'est pas disponible
-          }
-          
-          if (result['success'] != false) {
-            hasNewPortals = true;
-          }
-        }
-      }
-      
-      // Recharger les portails si de nouveaux ont été ajoutés
-      if (hasNewPortals && mounted) {
-        await _loadPortals();
-      }
-    } catch (e) {
-      // Si le backend n'est pas disponible, ignorer silencieusement
-      // Les portails seront ajoutés lors de la prochaine connexion
-    }
+    // Charger les portails (backend + pré-configurés)
+    _loadPortals();
   }
 
   Future<void> _loadPortals() async {
@@ -81,21 +29,65 @@ class _HealthScreenState extends State<HealthScreen> {
       isLoading = true;
     });
 
+    // Toujours afficher les portails pré-configurés
+    final belgianPortals = BelgianHealthPortals.getPortalsAsMaps();
+    final Set<String> existingUrls = {};
+    List<Map<String, dynamic>> allPortals = [];
+
     try {
-      final ports = await ApiService.getHealthPortals();
-      if (mounted) {
-        setState(() {
-          portals = ports;
-          isLoading = false;
-        });
+      // Essayer de charger depuis le backend si disponible
+      final backendEnabled = await BackendConfigService.isBackendEnabled();
+      if (backendEnabled) {
+        try {
+          final backendPortals = await ApiService.getHealthPortals();
+          existingUrls.addAll(backendPortals.map((p) => p['url'] as String));
+          allPortals.addAll(backendPortals);
+          
+          // Ajouter les portails pré-configurés qui ne sont pas déjà dans le backend
+          for (final portal in belgianPortals) {
+            if (!existingUrls.contains(portal['url'] as String)) {
+              // Essayer d'ajouter au backend (silencieusement)
+              try {
+                final result = await ApiService.createHealthPortal(
+                  name: portal['name'] as String,
+                  url: portal['url'] as String,
+                  description: portal['description'] as String,
+                  category: portal['category'] as String,
+                );
+                
+                if (result['success'] != false && 
+                    result['backend_unavailable'] != true && 
+                    result['backend_disabled'] != true) {
+                  // Ajouter à la liste si créé avec succès
+                  allPortals.add(portal);
+                } else {
+                  // Ajouter quand même à la liste pour affichage
+                  allPortals.add(portal);
+                }
+              } catch (e) {
+                // En cas d'erreur, ajouter quand même pour affichage
+                allPortals.add(portal);
+              }
+            }
+          }
+        } catch (e) {
+          // Si erreur backend, utiliser uniquement les portails pré-configurés
+          allPortals = List.from(belgianPortals);
+        }
+      } else {
+        // Backend désactivé, utiliser uniquement les portails pré-configurés
+        allPortals = List.from(belgianPortals);
       }
     } catch (e) {
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-        _showError('Erreur lors du chargement des portails: $e');
-      }
+      // En cas d'erreur, utiliser les portails pré-configurés
+      allPortals = List.from(belgianPortals);
+    }
+
+    if (mounted) {
+      setState(() {
+        portals = allPortals;
+        isLoading = false;
+      });
     }
   }
 
