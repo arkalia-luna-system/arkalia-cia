@@ -298,7 +298,7 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
         ),
         Text(
           label,
-          style: const TextStyle(fontSize: 12, color: Colors.grey),
+          style: const TextStyle(fontSize: 14, color: Colors.grey),
         ),
       ],
     );
@@ -338,7 +338,7 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
                         getTitlesWidget: (value, meta) {
                           return Text(
                             value.toInt().toString(),
-                            style: const TextStyle(fontSize: 10),
+                            style: const TextStyle(fontSize: 12),
                           );
                         },
                       ),

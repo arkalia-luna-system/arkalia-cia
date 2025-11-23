@@ -159,7 +159,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         children: [
           const Text(
             'Répartition des examens',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
           ),
           const SizedBox(height: 8),
           ...distribution.entries.map((entry) {
@@ -171,7 +171,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                   Expanded(
                     child: Text(
                       '${entry.key}: ${entry.value}',
-                      style: const TextStyle(fontSize: 11),
+                      style: const TextStyle(fontSize: 14),
                     ),
                   ),
                   SizedBox(
@@ -187,7 +187,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                   const SizedBox(width: 8),
                   Text(
                     '$percentage%',
-                    style: const TextStyle(fontSize: 11),
+                    style: const TextStyle(fontSize: 14),
                   ),
                 ],
               ),

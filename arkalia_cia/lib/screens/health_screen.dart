@@ -388,7 +388,7 @@ class _HealthScreenState extends State<HealthScreen> {
                                   category.toUpperCase(),
                                   style: TextStyle(
                                     color: color,
-                                    fontSize: 10,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),

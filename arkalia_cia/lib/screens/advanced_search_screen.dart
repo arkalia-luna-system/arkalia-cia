@@ -342,7 +342,7 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
                                     Text(
                                       '${result.date!.day}/${result.date!.month}/${result.date!.year}',
                                       style: TextStyle(
-                                        fontSize: 12,
+                                        fontSize: 14,
                                         color: Colors.grey[600],
                                       ),
                                     ),

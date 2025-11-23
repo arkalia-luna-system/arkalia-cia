@@ -276,7 +276,7 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
         children: [
           const Text(
             'Légende des couleurs (spécialités)',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
           ),
           const SizedBox(height: 8),
           Wrap(
@@ -316,7 +316,7 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                       Text(
                         entry.value,
                         style: TextStyle(
-                          fontSize: 11,
+                          fontSize: 14,
                           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                         ),
                       ),

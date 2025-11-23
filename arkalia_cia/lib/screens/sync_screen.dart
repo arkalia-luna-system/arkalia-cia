@@ -174,7 +174,7 @@ class _SyncScreenState extends State<SyncScreen> {
               Text(
                 '${(_syncProgress * 100).toInt()}%',
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 14,
                   color: Colors.grey[600],
                 ),
               ),

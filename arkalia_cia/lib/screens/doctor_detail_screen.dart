@@ -209,7 +209,7 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
                 children: [
                   const Text(
                     'Dernière visite',
-                    style: TextStyle(fontSize: 12),
+                    style: TextStyle(fontSize: 14),
                   ),
                   Text(
                     _formatDate(_stats!['last_visit']),
