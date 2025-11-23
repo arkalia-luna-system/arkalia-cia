@@ -677,11 +677,22 @@ Pour tester les endpoints API si nécessaire.
 ## 🚀 COMMENCE MAINTENANT !
 
 **ÉTAPE 1** : Ouvre Comet  
-**ÉTAPE 2** : Va à `http://localhost:8080`  
+**ÉTAPE 2** : Va à `http://localhost:8080` (ou 8081 si occupé)  
 **ÉTAPE 3** : Commence à tester l'application comme un utilisateur réel !  
 **ÉTAPE 4** : Note TOUT ce que tu observes !  
 **ÉTAPE 5** : Génère un rapport complet !
 
+### ⚠️ IMPORTANT : NE BLOQUE PAS SUR DES DÉTAILS
+
+- **Si tu rencontres un problème**, note-le et continue à tester
+- **Ne passe pas 30 minutes sur un seul bug** - teste toute l'app d'abord
+- **Si quelque chose ne fonctionne pas**, essaie de contourner et teste autre chose
+- **L'objectif est d'avoir une vue d'ensemble complète**, pas de résoudre chaque problème individuellement
+- **Teste TOUS les modules** avant de te concentrer sur un problème spécifique
+- **Note les problèmes mais continue** - tu pourras revenir dessus après
+
 **SOIS EXHAUSTIF** : Teste TOUT, observe TOUT, note TOUT !
+
+**MAIS SOIS EFFICACE** : Ne bloque pas sur un seul problème, teste toute l'app !
 
 **BONNE CHANCE ! 🎯**
