@@ -1,8 +1,8 @@
-# 🎯 MÉGA PROMPT POUR PERPLEXITY - TEST EN DIRECT ARKALIA CIA
+# 🎯 MÉGA PROMPT POUR PERPLEXITY - TEST COMPLET ARKALIA CIA
 
 **Date** : 23 novembre 2025  
 **Version Application** : 1.3.0  
-**Objectif** : **TESTER L'APPLICATION EN DIRECT** dans le navigateur Comet, pas analyser le code !
+**Objectif** : **TESTER L'APPLICATION EN DIRECT** dans le navigateur Comet avec les outils browser de Perplexity
 
 ---
 
@@ -10,13 +10,14 @@
 
 ### 🚨 CE QUE TU DOIS FAIRE - TEST EN DIRECT OBLIGATOIRE
 
-**TU DOIS TESTER L'APPLICATION EN DIRECT DANS TON NAVIGATEUR COMET !**
+**TU ES PERPLEXITY ASSISTANT DANS COMET - TU AS ACCÈS AUX OUTILS BROWSER !**
 
-1. ✅ **Ouvre Comet** (ton navigateur)
-2. ✅ **Va à** : `http://localhost:8080` (ou `http://localhost:8081` si 8080 est occupé)
-3. ✅ **INTERAGIS avec l'application** comme un utilisateur réel
-4. ✅ **Clique sur TOUS les boutons**, remplis TOUS les formulaires, teste TOUTES les fonctionnalités
-5. ✅ **OBSERVE ATTENTIVEMENT** :
+1. ✅ **Utilise `browser_navigate`** pour aller à `http://localhost:8080` (ou `http://localhost:8081`)
+2. ✅ **Utilise `browser_snapshot`** pour capturer l'état de la page après chaque action importante
+3. ✅ **Utilise `browser_click`** pour cliquer sur TOUS les boutons et tester TOUTES les fonctionnalités
+4. ✅ **Utilise `browser_type`** pour remplir TOUS les formulaires avec des données réalistes
+5. ✅ **Utilise `browser_take_screenshot`** pour capturer des screenshots des problèmes ou des écrans importants
+6. ✅ **OBSERVE ATTENTIVEMENT** avec `browser_snapshot` :
    - Ce qui fonctionne
    - Ce qui ne fonctionne pas
    - Les temps de chargement
@@ -24,18 +25,19 @@
    - Les problèmes visuels (couleurs, textes, espacements)
    - Les problèmes d'accessibilité (contraste, taille des textes)
    - Les bugs (crashes, comportements inattendus)
-6. ✅ **TESTE À FOND** :
+7. ✅ **TESTE À FOND** :
    - Ne te contente PAS de survoler
-   - Clique sur CHAQUE module
-   - Remplis des formulaires complets
+   - Clique sur CHAQUE module avec `browser_click`
+   - Remplis des formulaires complets avec `browser_type`
    - Teste les cas limites (champs vides, valeurs invalides)
-   - Teste les cas d'erreur (déconnexion backend, fichiers invalides)
-7. ✅ **NOTE TOUT** :
-   - Problèmes critiques (bloquants)
-   - Problèmes élevés (majeurs)
-   - Problèmes mineurs (cosmétiques)
-   - Points forts
-   - Suggestions d'amélioration
+   - Teste les cas d'erreur
+8. ✅ **NOTE TOUT** :
+   - Problèmes critiques (bloquants) 🔴
+   - Problèmes élevés (majeurs) 🟠
+   - Problèmes moyens (UX) 🟡
+   - Problèmes mineurs (cosmétiques) 🟢
+   - Points forts ✅
+   - Suggestions d'amélioration 💡
 
 ### ❌ CE QUE TU NE DOIS PAS FAIRE
 
@@ -46,7 +48,7 @@
 - ❌ **NE PAS** te contenter de survoler l'interface
 - ❌ **NE PAS** ignorer les petits détails (ils sont importants !)
 
-**TU DOIS TESTER L'APP EN DIRECT COMME UN UTILISATEUR RÉEL QUI UTILISE L'APP POUR LA PREMIÈRE FOIS !**
+**TU DOIS UTILISER TES OUTILS BROWSER POUR TESTER L'APP EN DIRECT COMME UN UTILISATEUR RÉEL !**
 
 ---
 
@@ -61,12 +63,16 @@ ou si le port est occupé :
 http://localhost:8081
 ```
 
-### Vérification
-Avant de commencer, vérifie que l'application est bien accessible :
-1. Ouvre Comet
-2. Va à `http://localhost:8080`
-3. Tu devrais voir l'interface de l'application Arkalia CIA
-4. Si tu vois une erreur ou une page blanche, dis-le dans ton rapport
+### Première Action
+**Utilise `browser_navigate` pour aller à l'URL :**
+```
+browser_navigate: http://localhost:8080
+```
+
+### Vérification Initiale
+1. Utilise `browser_snapshot` pour voir l'état initial
+2. Tu devrais voir l'interface de l'application Arkalia CIA
+3. Si tu vois une erreur ou une page blanche, note-le dans ton rapport
 
 ### Backend API (optionnel pour tests avancés)
 ```
@@ -95,32 +101,28 @@ Pour tester les endpoints API si nécessaire.
   - Fils : Thomas (06 98 76 54 32)
   - Médecin traitant : Dr. Moreau (081 23 45 67)
 
-### Documents à Importer (si possible)
-- 5-10 PDF médicaux variés (ordonnances, résultats d'examens, comptes-rendus)
-- Dates variées (derniers 2 ans)
-- Types variés (radiologie, analyses sanguines, consultations)
-
 **UTILISE CES DONNÉES** pour créer un profil complet dans l'application et tester toutes les fonctionnalités avec des données réalistes.
 
 ---
 
-## ✅ CHECKLIST DE TEST EN DIRECT
+## 📋 CHECKLIST COMPLÈTE DE TEST - MODULE PAR MODULE
 
 ### 🔐 1. PREMIÈRE OUVERTURE & ONBOARDING
 
-#### Actions à Faire
-1. **Ouvre l'application** dans Comet (`http://localhost:8080`)
-2. **Observe l'écran de chargement** :
-   - Combien de temps ça prend ?
+#### Actions à Faire avec Browser Tools
+1. **`browser_navigate`** vers `http://localhost:8080`
+2. **`browser_snapshot`** pour voir l'écran initial
+3. **Observe l'écran de chargement** :
+   - Combien de temps ça prend ? (utilise `browser_wait_for` si nécessaire)
    - Y a-t-il un message de chargement ?
    - Les couleurs sont-elles agréables ?
-3. **Si c'est la première fois** :
+4. **Si c'est la première fois** :
    - Y a-t-il un écran de bienvenue ?
    - Les explications sont-elles claires ?
    - Peux-tu choisir d'importer des données ou commencer vide ?
-4. **Teste l'import PDF** :
-   - Clique sur "Importer des PDF"
-   - Peux-tu sélectionner des fichiers ?
+5. **Teste l'import PDF** (si disponible) :
+   - **`browser_click`** sur "Importer des PDF" ou bouton similaire
+   - **`browser_snapshot`** pour voir le résultat
    - Les fichiers s'importent-ils correctement ?
    - Vois-tu une barre de progression ?
 
@@ -138,33 +140,72 @@ Pour tester les endpoints API si nécessaire.
 
 ---
 
-### 📄 2. GESTION DOCUMENTS
+### 🏠 2. PAGE D'ACCUEIL (HOME PAGE)
 
-#### Actions à Faire
-1. **Va dans "Documents"** (bouton vert sur la page d'accueil)
-2. **Importe des PDF** :
-   - Clique sur le bouton "+" ou "Importer"
-   - Sélectionne 3-5 fichiers PDF
+#### Actions à Faire avec Browser Tools
+1. **`browser_snapshot`** pour voir la page d'accueil complète
+2. **Identifie tous les modules disponibles** :
+   - Documents (vert)
+   - Santé (rouge)
+   - Rappels (orange)
+   - Urgence (violet)
+   - ARIA (rouge)
+   - Sync (bleu)
+   - Médecins (teal)
+   - Pathologies (violet)
+   - Hydratation (cyan)
+   - Calendrier (bleu)
+   - Recherche Avancée
+   - Assistant IA
+   - Patterns
+   - Partage Familial
+   - Statistiques
+   - Paramètres
+3. **Vérifie le design** :
+   - Les couleurs sont-elles cohérentes ?
+   - Les boutons sont-ils assez grands ?
+   - Les textes sont-ils lisibles ?
+   - Y a-t-il des icônes claires ?
+
+#### Points Visuels à Vérifier
+- ✅ **Couleurs** : Chaque module a-t-il sa couleur distinctive ?
+- ✅ **Icônes** : Les icônes sont-elles claires et compréhensibles ?
+- ✅ **Textes** : Les textes sont-ils lisibles (taille ≥ 16px) ?
+- ✅ **Espacements** : Y a-t-il assez d'espace entre les éléments ?
+- ✅ **Boutons** : Les boutons sont-ils assez grands pour cliquer facilement (≥ 44x44px) ?
+
+---
+
+### 📄 3. GESTION DOCUMENTS
+
+#### Actions à Faire avec Browser Tools
+1. **`browser_click`** sur le bouton "Documents" (vert)
+2. **`browser_snapshot`** pour voir l'écran Documents
+3. **Importe des PDF** :
+   - **`browser_click`** sur le bouton "+" ou "Importer"
+   - **`browser_snapshot`** pour voir le dialogue
+   - Note si tu peux sélectionner des fichiers
    - Observe le processus d'import
-3. **Vérifie l'affichage** :
+4. **Vérifie l'affichage** :
+   - **`browser_snapshot`** pour voir la liste des documents
    - Les documents apparaissent-ils dans la liste ?
    - Les noms sont-ils corrects ?
    - Y a-t-il des badges de type (ordonnance, résultat, etc.) ?
    - Les couleurs des badges sont-elles visibles ?
-4. **Teste la recherche** :
-   - Utilise la barre de recherche
-   - Recherche par nom de document
+5. **Teste la recherche** :
+   - **`browser_click`** sur la barre de recherche
+   - **`browser_type`** pour entrer un terme de recherche
+   - **`browser_snapshot`** pour voir les résultats
    - Les résultats apparaissent-ils rapidement ?
-5. **Teste les filtres** :
-   - Filtre par type de document
-   - Filtre par date
+6. **Teste les filtres** (si disponibles) :
+   - **`browser_click`** sur les filtres
    - Les filtres fonctionnent-ils correctement ?
-6. **Ouvre un document** :
-   - Clique sur un document
+7. **Ouvre un document** :
+   - **`browser_click`** sur un document
+   - **`browser_snapshot`** pour voir le résultat
    - S'ouvre-t-il correctement ?
-   - Peux-tu le lire ?
-7. **Teste le partage** :
-   - Partage un document
+8. **Teste le partage** (si disponible) :
+   - **`browser_click`** sur le bouton de partage
    - Fonctionne-t-il ?
 
 #### Points Visuels à Vérifier
@@ -177,41 +218,52 @@ Pour tester les endpoints API si nécessaire.
 
 #### Problèmes à Détecter
 - ❌ Documents qui disparaissent après import
-- ❌ Métadonnées incorrectes (mauvais médecin, mauvaise date)
+- ❌ Métadonnées incorrectes
 - ❌ Recherche qui ne trouve pas les documents
-- ❌ Performance lente avec plusieurs documents
+- ❌ Performance lente
 - ❌ Badges de type manquants ou incorrects
 - ❌ Textes trop petits ou illisibles
-- ❌ Boutons trop petits
 
 ---
 
-### 👨‍⚕️ 3. GESTION MÉDECINS
+### 👨‍⚕️ 4. GESTION MÉDECINS
 
-#### Actions à Faire
-1. **Va dans "Médecins"** (bouton teal sur la page d'accueil)
-2. **Ajoute des médecins** :
-   - Clique sur "Ajouter un médecin"
-   - Remplis le formulaire avec les médecins de Patricia
-   - Observe si l'extraction automatique fonctionne (si tu importes un PDF)
-3. **Vérifie les codes couleur** :
+#### Actions à Faire avec Browser Tools
+1. **`browser_click`** sur "Médecins" (teal)
+2. **`browser_snapshot`** pour voir l'écran Médecins
+3. **Ajoute des médecins** :
+   - **`browser_click`** sur "Ajouter un médecin" ou bouton "+"
+   - **`browser_snapshot`** pour voir le formulaire
+   - **`browser_type`** pour remplir le formulaire :
+     - Prénom : "Martin"
+     - Nom : "Dubois"
+     - Spécialité : "Gynécologue"
+     - Téléphone : "02 123 45 67"
+     - Email : "martin.dubois@example.com"
+     - Adresse : "Rue de la Santé 123"
+     - Ville : "Bruxelles"
+     - Code postal : "1000"
+   - **`browser_click`** sur "Enregistrer" ou "Sauvegarder"
+   - **`browser_snapshot`** pour voir le résultat
+   - **VÉRIFIE** : Le médecin apparaît-il dans la liste ?
+4. **Répète** pour les autres médecins (Dr. Laurent, Dr. Moreau)
+5. **Vérifie les codes couleur** :
+   - **`browser_snapshot`** pour voir la liste
    - Chaque spécialité a-t-elle une couleur ?
    - Y a-t-il des badges colorés dans la liste ?
-   - Y a-t-il une légende des couleurs ?
-4. **Teste la recherche** :
-   - Recherche par nom de médecin
-   - Recherche par spécialité
-   - Les résultats apparaissent-ils rapidement ?
-5. **Teste les filtres** :
-   - Filtre par spécialité
-   - Les filtres fonctionnent-ils correctement ?
-6. **Ouvre un médecin** :
-   - Clique sur un médecin
+6. **Teste la recherche** :
+   - **`browser_click`** sur la barre de recherche
+   - **`browser_type`** pour entrer "Dubois"
+   - **`browser_snapshot`** pour voir les résultats
+7. **Ouvre un médecin** :
+   - **`browser_click`** sur un médecin dans la liste
+   - **`browser_snapshot`** pour voir les détails
    - Vois-tu ses détails ?
    - Y a-t-il un historique de consultations ?
-   - Y a-t-il des statistiques ?
-7. **Ajoute une consultation** :
-   - Ajoute une consultation pour un médecin
+8. **Ajoute une consultation** :
+   - **`browser_click`** sur "Ajouter consultation" (si disponible)
+   - Remplis le formulaire
+   - **`browser_click`** sur "Enregistrer"
    - La consultation apparaît-elle dans l'historique ?
 
 #### Points Visuels à Vérifier
@@ -222,32 +274,36 @@ Pour tester les endpoints API si nécessaire.
 - ✅ **Couleurs** : Les couleurs sont-elles cohérentes et agréables ?
 
 #### Problèmes à Détecter
-- ❌ Doublons non détectés (même médecin ajouté deux fois)
+- ❌ **CRITIQUE** : Form submission qui échoue (message d'erreur)
+- ❌ Doublons non détectés
 - ❌ Couleurs manquantes pour certaines spécialités
-- ❌ Extraction automatique qui échoue
-- ❌ Données manquantes après extraction
+- ❌ Données qui ne se sauvegardent pas
 - ❌ Interface confuse
 
 ---
 
-### 📋 4. MODULE PATHOLOGIES
+### 📋 5. MODULE PATHOLOGIES
 
-#### Actions à Faire
-1. **Va dans "Pathologies"** (bouton violet sur la page d'accueil)
-2. **Crée une pathologie** :
-   - Clique sur "Ajouter une pathologie"
+#### Actions à Faire avec Browser Tools
+1. **`browser_click`** sur "Pathologies" (violet)
+2. **`browser_snapshot`** pour voir l'écran Pathologies
+3. **Crée une pathologie** :
+   - **`browser_click`** sur "Ajouter une pathologie" ou bouton "+"
+   - **`browser_snapshot`** pour voir le formulaire
    - Choisis un template (endométriose, arthrose, etc.)
-   - Remplis les informations
-3. **Ajoute des entrées de suivi** :
-   - Ajoute plusieurs entrées de suivi (symptômes, douleur, etc.)
-   - Observe les graphiques
-4. **Vérifie les graphiques** :
+   - **`browser_type`** pour remplir les informations
+   - **`browser_click`** sur "Enregistrer"
+   - **`browser_snapshot`** pour voir le résultat
+   - **VÉRIFIE** : La pathologie apparaît-elle dans la liste ?
+4. **Ajoute des entrées de suivi** :
+   - **`browser_click`** sur une pathologie
+   - **`browser_click`** sur "Ajouter suivi" ou similaire
+   - Remplis plusieurs entrées de suivi
+   - **`browser_snapshot`** pour voir les graphiques
+5. **Vérifie les graphiques** :
    - Les graphiques s'affichent-ils correctement ?
    - Sont-ils lisibles et clairs ?
    - Les couleurs sont-elles cohérentes ?
-5. **Teste les rappels** :
-   - Configure des rappels pour une pathologie
-   - Les rappels fonctionnent-ils ?
 
 #### Points Visuels à Vérifier
 - ✅ **Graphiques** : Les graphiques sont-ils clairs et lisibles ?
@@ -255,90 +311,90 @@ Pour tester les endpoints API si nécessaire.
 - ✅ **Formulaires** : Les formulaires sont-ils adaptatifs selon la pathologie ?
 
 #### Problèmes à Détecter
+- ❌ **CRITIQUE** : Form submission qui échoue
 - ❌ Graphiques qui ne s'affichent pas
 - ❌ Données qui se perdent
-- ❌ Rappels qui ne fonctionnent pas
 - ❌ Interface confuse
 
 ---
 
-### 💊 5. RAPPELS MÉDICAMENTS
+### 💊 6. RAPPELS MÉDICAMENTS
 
-#### Actions à Faire
-1. **Va dans "Rappels"** (bouton orange sur la page d'accueil)
-2. **Ajoute des médicaments** :
-   - Ajoute les médicaments de Patricia
-   - Configure les heures de prise
-   - Configure les rappels
-3. **Vérifie les rappels** :
-   - Les rappels se déclenchent-ils aux bonnes heures ?
-   - Y a-t-il des notifications ?
-   - Les rappels adaptatifs fonctionnent-ils (30min après si non pris) ?
-4. **Teste le suivi** :
-   - Marque un médicament comme "pris"
-   - Marque un médicament comme "non pris"
+#### Actions à Faire avec Browser Tools
+1. **`browser_click`** sur "Rappels" (orange)
+2. **`browser_snapshot`** pour voir l'écran Rappels
+3. **Ajoute des médicaments** :
+   - **`browser_click`** sur "Ajouter médicament" ou bouton "+"
+   - **`browser_snapshot`** pour voir le formulaire
+   - **`browser_type`** pour remplir :
+     - Nom : "Levothyrox"
+     - Dosage : "75µg"
+     - Heure : "8h"
+     - Fréquence : "Tous les jours"
+   - **`browser_click`** sur "Enregistrer"
+   - **`browser_snapshot`** pour voir le résultat
+   - **VÉRIFIE** : Le médicament apparaît-il dans la liste ?
+4. **Répète** pour les autres médicaments
+5. **Teste le suivi** :
+   - **`browser_click`** sur "Marquer comme pris" (si disponible)
    - Les statistiques se mettent-elles à jour ?
-5. **Vérifie le calendrier** :
-   - Va dans "Calendrier"
-   - Y a-t-il des icônes 💊 pour les médicaments ?
-   - Les médicaments apparaissent-ils aux bonnes dates/heures ?
 
 #### Points Visuels à Vérifier
-- ✅ **Icônes** : Les icônes 💊 sont-elles visibles dans le calendrier ?
-- ✅ **Notifications** : Les notifications sont-elles claires ?
+- ✅ **Icônes** : Les icônes 💊 sont-elles visibles ?
 - ✅ **Liste** : La liste est-elle organisée par heure ?
+- ✅ **Notifications** : Les notifications sont-elles claires ?
 
 #### Problèmes à Détecter
+- ❌ **CRITIQUE** : Form submission qui échoue
+- ❌ Données qui ne se sauvegardent pas
 - ❌ Rappels qui ne se déclenchent pas
-- ❌ Notifications manquantes
-- ❌ Données qui se perdent
-- ❌ Icônes manquantes dans le calendrier
+- ❌ Interface confuse
 
 ---
 
-### 💧 6. MODULE HYDRATATION
+### 💧 7. MODULE HYDRATATION
 
-#### Actions à Faire
-1. **Va dans "Hydratation"** (bouton cyan sur la page d'accueil)
-2. **Configure l'objectif** :
-   - Définis un objectif quotidien (ex: 1.5L)
-3. **Ajoute des entrées** :
-   - Ajoute plusieurs entrées d'hydratation dans la journée
-4. **Vérifie la barre de progression** :
+#### Actions à Faire avec Browser Tools
+1. **`browser_click`** sur "Hydratation" (cyan)
+2. **`browser_snapshot`** pour voir l'écran Hydratation
+3. **Configure l'objectif** :
+   - **`browser_click`** sur "Configurer objectif" (si disponible)
+   - **`browser_type`** pour définir un objectif (ex: 1.5L)
+   - **`browser_click`** sur "Enregistrer"
+4. **Ajoute des entrées** :
+   - **`browser_click`** sur "Ajouter" ou bouton "+"
+   - Remplis plusieurs entrées d'hydratation
+   - **`browser_snapshot`** pour voir la barre de progression
+5. **Vérifie la barre de progression** :
    - La barre de progression se met-elle à jour ?
    - Est-elle claire et colorée ?
-5. **Vérifie les rappels** :
-   - Les rappels toutes les 2h (8h-20h) fonctionnent-ils ?
-6. **Vérifie le calendrier** :
-   - Va dans "Calendrier"
-   - Y a-t-il des icônes 💧 pour l'hydratation ?
 
 #### Points Visuels à Vérifier
 - ✅ **Barre de progression** : Est-elle claire et colorée ?
-- ✅ **Icônes** : Les icônes 💧 sont-elles visibles dans le calendrier ?
+- ✅ **Icônes** : Les icônes 💧 sont-elles visibles ?
 - ✅ **Objectifs** : Les objectifs sont-ils affichés clairement ?
 
 #### Problèmes à Détecter
-- ❌ Rappels qui ne se déclenchent pas
+- ❌ **CRITIQUE** : Form submission qui échoue
+- ❌ Données qui ne se sauvegardent pas
 - ❌ Progression qui ne se met pas à jour
-- ❌ Données qui se perdent
 
 ---
 
-### 📅 7. CALENDRIER
+### 📅 8. CALENDRIER
 
-#### Actions à Faire
-1. **Va dans "Calendrier"** (bouton bleu sur la page d'accueil)
-2. **Observe l'affichage** :
+#### Actions à Faire avec Browser Tools
+1. **`browser_click`** sur "Calendrier" (bleu)
+2. **`browser_snapshot`** pour voir le calendrier complet
+3. **Observe l'affichage** :
    - Vois-tu un calendrier mensuel ?
    - Y a-t-il des marqueurs colorés sur les dates ?
    - Les marqueurs sont-ils distincts (médecin, médicament, hydratation) ?
-3. **Clique sur une date** :
+4. **Clique sur une date** :
+   - **`browser_click`** sur une date avec des événements
+   - **`browser_snapshot`** pour voir le popup
    - Y a-t-il un popup avec les détails ?
    - Les détails sont-ils clairs ?
-4. **Teste les filtres** :
-   - Filtre par type (médecin, médicament, hydratation)
-   - Les filtres fonctionnent-ils ?
 5. **Vérifie l'encadrement coloré** :
    - Les rendez-vous médicaux sont-ils encadrés par couleur selon le médecin ?
    - Les couleurs sont-elles visibles et distinctes ?
@@ -353,26 +409,22 @@ Pour tester les endpoints API si nécessaire.
 - ❌ Marqueurs qui ne s'affichent pas
 - ❌ Couleurs manquantes ou incorrectes
 - ❌ Popup qui ne s'affiche pas
-- ❌ Données qui se perdent
 
 ---
 
-### 🔍 8. RECHERCHE AVANCÉE
+### 🔍 9. RECHERCHE AVANCÉE
 
-#### Actions à Faire
-1. **Va dans "Recherche Avancée"** (bouton avec icône "tune" ou "Recherche Avancée")
-2. **Teste la recherche multi-critères** :
-   - Combine plusieurs filtres (date, type, médecin)
+#### Actions à Faire avec Browser Tools
+1. **`browser_click`** sur "Recherche Avancée" ou icône de recherche
+2. **`browser_snapshot`** pour voir l'écran de recherche
+3. **Teste la recherche multi-critères** :
+   - **`browser_type`** dans la barre de recherche
+   - **`browser_click`** sur les filtres (date, type, médecin)
+   - **`browser_snapshot`** pour voir les résultats
    - Les résultats apparaissent-ils correctement ?
-3. **Teste la recherche sémantique** :
-   - Recherche avec des synonymes médicaux
-   - Les résultats sont-ils pertinents ?
 4. **Teste les suggestions** :
-   - Commence à taper dans la barre de recherche
+   - **`browser_type`** quelques lettres
    - Y a-t-il des suggestions qui apparaissent ?
-5. **Teste le filtre médecin** :
-   - Sélectionne un médecin dans les filtres
-   - Les résultats sont-ils filtrés correctement ?
 
 #### Points Visuels à Vérifier
 - ✅ **Interface** : L'interface est-elle intuitive ?
@@ -383,29 +435,27 @@ Pour tester les endpoints API si nécessaire.
 - ❌ Recherche qui ne trouve pas les résultats
 - ❌ Filtres qui ne fonctionnent pas
 - ❌ Performance lente
-- ❌ Interface confuse
 
 ---
 
-### 🤖 9. ASSISTANT IA CONVERSATIONNEL
+### 🤖 10. ASSISTANT IA CONVERSATIONNEL
 
-#### Actions à Faire
-1. **Va dans "Assistant IA"** (bouton teal sur la page d'accueil)
-2. **Pose des questions** :
-   - "Quels sont mes médicaments ?"
+#### Actions à Faire avec Browser Tools
+1. **`browser_click`** sur "Assistant IA" ou "Chat IA"
+2. **`browser_snapshot`** pour voir l'interface de chat
+3. **Pose des questions** :
+   - **`browser_type`** : "Quels sont mes médicaments ?"
+   - **`browser_click`** sur "Envoyer" ou appuie sur Entrée
+   - **`browser_wait_for`** pour attendre la réponse
+   - **`browser_snapshot`** pour voir la réponse
+4. **Pose d'autres questions** :
    - "Quand ai-je vu mon médecin la dernière fois ?"
    - "Quels sont mes rendez-vous cette semaine ?"
    - "Quelles sont mes pathologies ?"
-3. **Observe les réponses** :
+5. **Observe les réponses** :
    - Les réponses sont-elles pertinentes ?
    - Y a-t-il des erreurs ?
    - Les réponses sont-elles claires ?
-4. **Teste l'intégration ARIA** :
-   - Pose une question sur les douleurs
-   - L'IA utilise-t-elle les données ARIA si disponibles ?
-5. **Vérifie l'historique** :
-   - Y a-t-il un historique des conversations ?
-   - Peux-tu revoir les anciennes conversations ?
 
 #### Points Visuels à Vérifier
 - ✅ **Interface chat** : L'interface est-elle claire (bulles, couleurs) ?
@@ -416,24 +466,21 @@ Pour tester les endpoints API si nécessaire.
 - ❌ Réponses qui ne sont pas pertinentes
 - ❌ Erreurs dans les réponses
 - ❌ Performance lente
-- ❌ Interface confuse
 
 ---
 
-### 📊 10. IA PATTERNS
+### 📊 11. IA PATTERNS
 
-#### Actions à Faire
-1. **Va dans "Patterns"** (bouton indigo sur la page d'accueil)
-2. **Observe les patterns détectés** :
+#### Actions à Faire avec Browser Tools
+1. **`browser_click`** sur "Patterns" ou "IA Patterns"
+2. **`browser_snapshot`** pour voir le dashboard Patterns
+3. **Observe les patterns détectés** :
    - Y a-t-il des patterns récurrents détectés ?
    - Les patterns sont-ils clairs et compréhensibles ?
-3. **Vérifie les graphiques** :
+4. **Vérifie les graphiques** :
    - Les graphiques s'affichent-ils correctement ?
    - Sont-ils interactifs ?
    - Les couleurs sont-elles cohérentes ?
-4. **Vérifie les prédictions** :
-   - Y a-t-il des prédictions pour les 30 prochains jours ?
-   - Les prédictions sont-elles claires ?
 
 #### Points Visuels à Vérifier
 - ✅ **Graphiques** : Les graphiques sont-ils clairs et interactifs ?
@@ -442,50 +489,52 @@ Pour tester les endpoints API si nécessaire.
 
 #### Problèmes à Détecter
 - ❌ Patterns non détectés
-- ❌ Prédictions incorrectes
 - ❌ Graphiques qui ne s'affichent pas
 - ❌ Interface confuse
 
 ---
 
-### 👨‍👩‍👧 11. PARTAGE FAMILIAL
+### 👨‍👩‍👧 12. PARTAGE FAMILIAL
 
-#### Actions à Faire
-1. **Va dans "Partage"** (bouton violet sur la page d'accueil)
-2. **Ajoute des membres** :
-   - Ajoute des membres de la famille
+#### Actions à Faire avec Browser Tools
+1. **`browser_click`** sur "Partage" ou "Partage Familial"
+2. **`browser_snapshot`** pour voir l'écran Partage
+3. **Ajoute des membres** :
+   - **`browser_click`** sur "Ajouter membre"
+   - Remplis le formulaire
+   - **`browser_click`** sur "Enregistrer"
    - Les membres sont-ils ajoutés correctement ?
-3. **Partage un document** :
-   - Partage un document avec un membre
-   - Le partage fonctionne-t-il ?
 4. **Vérifie le dashboard** :
    - Y a-t-il un onglet "Statistiques" ?
    - Les statistiques sont-elles affichées ?
-   - Y a-t-il un historique de partage ?
 
 #### Points Visuels à Vérifier
 - ✅ **Dashboard** : Le dashboard est-il clair et informatif ?
 - ✅ **Onglets** : Les onglets "Partager" et "Statistiques" sont-ils visibles ?
-- ✅ **Indicateurs** : Les indicateurs visuels (documents partagés) sont-ils clairs ?
 
 #### Problèmes à Détecter
 - ❌ Partage qui échoue
-- ❌ Permissions incorrectes
 - ❌ Interface confuse
 
 ---
 
-### 🚨 12. CONTACTS D'URGENCE
+### 🚨 13. CONTACTS D'URGENCE
 
-#### Actions à Faire
-1. **Va dans "Urgence"** (bouton violet sur la page d'accueil)
-2. **Ajoute des contacts** :
-   - Ajoute les contacts d'urgence de Patricia
-   - Les contacts sont-ils ajoutés correctement ?
-3. **Teste l'appel rapide** :
-   - Clique sur un contact
+#### Actions à Faire avec Browser Tools
+1. **`browser_click`** sur "Urgence" (violet)
+2. **`browser_snapshot`** pour voir l'écran Urgence
+3. **Ajoute des contacts** :
+   - **`browser_click`** sur "Ajouter contact"
+   - **`browser_type`** pour remplir :
+     - Nom : "Marie"
+     - Téléphone : "06 12 34 56 78"
+     - Relation : "Fille"
+   - **`browser_click`** sur "Enregistrer"
+   - **VÉRIFIE** : Le contact apparaît-il dans la liste ?
+4. **Teste l'appel rapide** :
+   - **`browser_click`** sur un contact
    - L'appel fonctionne-t-il ? (ou au moins l'interface)
-4. **Vérifie la carte d'urgence** :
+5. **Vérifie la carte d'urgence** :
    - Y a-t-il une carte d'urgence médicale ?
    - Les informations critiques sont-elles affichées ?
 
@@ -501,17 +550,22 @@ Pour tester les endpoints API si nécessaire.
 
 ---
 
-### ⚙️ 13. PARAMÈTRES
+### ⚙️ 14. PARAMÈTRES
 
-#### Actions à Faire
-1. **Va dans "Paramètres"** (icône engrenage en haut à droite)
-2. **Teste le thème** :
+#### Actions à Faire avec Browser Tools
+1. **`browser_click`** sur "Paramètres" ou icône engrenage
+2. **`browser_snapshot`** pour voir l'écran Paramètres
+3. **Teste le thème** :
+   - **`browser_click`** sur l'option thème
    - Change entre mode clair/sombre/système
+   - **`browser_snapshot`** pour voir les changements
    - Les changements sont-ils immédiats ?
-   - Les couleurs sont-elles agréables dans les deux modes ?
-3. **Configure le backend** :
-   - Si tu veux tester l'API, configure l'URL du backend
-4. **Vérifie les autres options** :
+4. **Configure le backend** (si tu veux tester l'API) :
+   - **`browser_click`** sur "Configuration Backend"
+   - **`browser_type`** : "http://localhost:8000"
+   - **`browser_click`** sur "Tester connexion"
+   - **`browser_snapshot`** pour voir le résultat
+5. **Vérifie les autres options** :
    - Cache, notifications, sécurité, etc.
 
 #### Points Visuels à Vérifier
@@ -522,27 +576,43 @@ Pour tester les endpoints API si nécessaire.
 #### Problèmes à Détecter
 - ❌ Paramètres qui ne se sauvegardent pas
 - ❌ Interface confuse
-- ❌ Options manquantes
+
+---
+
+### 📊 15. STATISTIQUES
+
+#### Actions à Faire avec Browser Tools
+1. **`browser_click`** sur "Statistiques" ou "Stats"
+2. **`browser_snapshot`** pour voir le dashboard Stats
+3. **Observe les graphiques** :
+   - Y a-t-il des graphiques ?
+   - Sont-ils clairs et lisibles ?
+   - Les données sont-elles correctes ?
+
+#### Points Visuels à Vérifier
+- ✅ **Graphiques** : Les graphiques sont-ils clairs ?
+- ✅ **Couleurs** : Les couleurs sont-elles cohérentes ?
 
 ---
 
 ## 🎨 TEST VISUEL GLOBAL
 
 ### Mode Clair
-1. **Change en mode clair** (si disponible)
-2. **Observe** :
+1. **`browser_click`** pour changer en mode clair (si disponible)
+2. **`browser_snapshot`** pour capturer l'état
+3. **Observe** :
    - Les couleurs sont-elles agréables ?
    - Le contraste est-il suffisant ?
    - Les textes sont-ils lisibles ?
    - Les boutons sont-ils visibles ?
 
 ### Mode Sombre
-1. **Change en mode sombre** (si disponible)
-2. **Observe** :
-   - Les couleurs sont-elles douces (pas trop agressives) ?
+1. **`browser_click`** pour changer en mode sombre
+2. **`browser_snapshot`** pour capturer l'état
+3. **Observe** :
+   - Les couleurs sont-elles douces ?
    - Le contraste est-il suffisant ?
    - Les textes sont-ils lisibles ?
-   - Les boutons sont-ils visibles ?
 
 ### Points à Vérifier Partout
 - ✅ **Couleurs primaires** : Bleu pour actions principales
@@ -560,19 +630,17 @@ Pour tester les endpoints API si nécessaire.
 
 ## ⚡ TEST DE PERFORMANCE
 
-### À Mesurer
+### À Mesurer avec Browser Tools
 1. **Temps de démarrage** :
-   - Combien de temps prend le chargement initial ?
+   - Utilise `browser_wait_for` pour mesurer le temps
    - Cible : < 3 secondes
 2. **Navigation** :
-   - La navigation est-elle fluide ?
+   - Navigue entre les modules
    - Y a-t-il des saccades ou des ralentissements ?
 3. **Recherche** :
+   - **`browser_type`** dans la recherche
    - Combien de temps prend une recherche ?
    - Cible : < 1 seconde
-4. **Import PDF** :
-   - Combien de temps prend l'import d'un PDF ?
-   - Y a-t-il une barre de progression ?
 
 ### Problèmes à Détecter
 - ❌ Chargement trop lent (> 5 secondes)
@@ -584,17 +652,16 @@ Pour tester les endpoints API si nécessaire.
 
 ## 🐛 TEST DES CAS LIMITES
 
-### À Tester
+### À Tester avec Browser Tools
 1. **Champs vides** :
    - Essaie de soumettre un formulaire avec des champs obligatoires vides
+   - **`browser_click`** sur "Enregistrer" sans remplir
+   - **`browser_snapshot`** pour voir le message d'erreur
    - Y a-t-il un message d'erreur clair ?
 2. **Données invalides** :
-   - Essaie d'entrer des données invalides (dates, numéros, etc.)
+   - **`browser_type`** des données invalides (dates, numéros, etc.)
    - Y a-t-il une validation ?
-3. **Réseau déconnecté** :
-   - Déconnecte-toi du réseau (si possible)
-   - L'app fonctionne-t-elle en mode offline ?
-4. **Actions multiples** :
+3. **Actions multiples** :
    - Fais plusieurs actions rapidement
    - L'app gère-t-elle bien les actions simultanées ?
 
@@ -606,6 +673,54 @@ Pour tester les endpoints API si nécessaire.
 
 ---
 
+## 🔴 TESTS CRITIQUES - FORM SUBMISSION
+
+### ⚠️ TEST OBLIGATOIRE - FORMULAIRE MÉDECINS
+
+**C'EST LE TEST LE PLUS IMPORTANT - LE PROBLÈME CRITIQUE DU RAPPORT D'AUDIT !**
+
+1. **`browser_click`** sur "Médecins"
+2. **`browser_click`** sur "Ajouter un médecin"
+3. **`browser_snapshot`** pour voir le formulaire
+4. **Remplis le formulaire COMPLET** :
+   - **`browser_type`** dans chaque champ :
+     - Prénom : "Test"
+     - Nom : "Médecin"
+     - Spécialité : "Généraliste"
+     - Téléphone : "02 123 45 67"
+     - Email : "test@example.com"
+     - Adresse : "Rue Test 123"
+     - Ville : "Bruxelles"
+     - Code postal : "1000"
+5. **`browser_click`** sur "Enregistrer" ou "Sauvegarder"
+6. **`browser_wait_for`** pour attendre la réponse (2-3 secondes)
+7. **`browser_snapshot`** pour voir le résultat
+8. **VÉRIFIE CRITIQUEMENT** :
+   - ✅ **SUCCÈS** : Le médecin apparaît dans la liste → **PROBLÈME CORRIGÉ !**
+   - ❌ **ÉCHEC** : Message d'erreur "Base de données non disponible" → **PROBLÈME TOUJOURS PRÉSENT !**
+   - ❌ **ÉCHEC** : Message d'erreur générique → **PROBLÈME TOUJOURS PRÉSENT !**
+   - ❌ **ÉCHEC** : Le formulaire reste ouvert → **PROBLÈME TOUJOURS PRÉSENT !**
+
+**NOTE PRÉCISÉMENT** ce qui se passe dans ton rapport !
+
+### ⚠️ TEST OBLIGATOIRE - FORMULAIRE MÉDICAMENTS
+
+1. **`browser_click`** sur "Rappels"
+2. **`browser_click`** sur "Ajouter médicament"
+3. Remplis le formulaire complet
+4. **`browser_click`** sur "Enregistrer"
+5. **VÉRIFIE** : Le médicament apparaît-il dans la liste ?
+
+### ⚠️ TEST OBLIGATOIRE - FORMULAIRE PATHOLOGIES
+
+1. **`browser_click`** sur "Pathologies"
+2. **`browser_click`** sur "Ajouter pathologie"
+3. Remplis le formulaire complet
+4. **`browser_click`** sur "Enregistrer"
+5. **VÉRIFIE** : La pathologie apparaît-elle dans la liste ?
+
+---
+
 ## 📊 RAPPORT À GÉNÉRER
 
 ### Structure du Rapport
@@ -614,12 +729,14 @@ Pour tester les endpoints API si nécessaire.
    - Score global (sur 10)
    - Points forts principaux
    - Points faibles principaux
+   - **STATUS FORM SUBMISSION** : ✅ FONCTIONNE ou ❌ ÉCHOUE
    - Recommandations prioritaires
 
 2. **Détail par Module Testé**
    - Score par module (sur 10)
    - Fonctionnalités testées
    - Problèmes détectés (graves 🔴, élevés 🟠, moyens 🟡, mineurs 🟢)
+   - Screenshots des problèmes (si possible avec `browser_take_screenshot`)
    - Recommandations spécifiques
 
 3. **Analyse Visuelle**
@@ -652,17 +769,43 @@ Pour tester les endpoints API si nécessaire.
 
 ---
 
-## 🎯 INSTRUCTIONS FINALES
+## 🎯 INSTRUCTIONS FINALES POUR PERPLEXITY
 
-### Pour Chaque Test
-1. **Décris ce que tu fais** : Explique chaque action que tu effectues
-2. **Note ce que tu observes** : Décris exactement ce que tu vois à l'écran
-3. **Prends des notes** : Note tous les détails (couleurs, textes, espacements, etc.)
-4. **Identifie les problèmes** : Liste tous les problèmes (même mineurs)
-5. **Suggère des améliorations** : Propose des solutions concrètes
+### Workflow Recommandé
+
+1. **Navigation Initiale** :
+   ```
+   browser_navigate: http://localhost:8080
+   browser_snapshot: (pour voir l'état initial)
+   ```
+
+2. **Pour Chaque Module** :
+   ```
+   browser_click: (sur le bouton du module)
+   browser_snapshot: (pour voir l'écran)
+   browser_click: (sur les actions)
+   browser_type: (pour remplir les formulaires)
+   browser_snapshot: (pour voir les résultats)
+   ```
+
+3. **Pour Capturer des Problèmes** :
+   ```
+   browser_take_screenshot: (si problème visuel)
+   browser_snapshot: (pour analyser l'état)
+   ```
+
+4. **Pour Tester les Formulaires** :
+   ```
+   browser_click: (sur "Ajouter")
+   browser_snapshot: (voir le formulaire)
+   browser_type: (remplir chaque champ)
+   browser_click: (sur "Enregistrer")
+   browser_wait_for: (attendre 2-3 secondes)
+   browser_snapshot: (voir le résultat)
+   ```
 
 ### Classification des Problèmes
-- **🔴 GRAVE** : Bloque l'utilisation, crash, perte de données
+- **🔴 GRAVE** : Bloque l'utilisation, crash, perte de données, form submission échoue
 - **🟠 ÉLEVÉ** : Impacte l'expérience utilisateur, fonctionnalité partielle
 - **🟡 MOYEN** : Amélioration UX, petit bug
 - **🟢 MINEUR** : Cosmétique, suggestion
@@ -676,23 +819,68 @@ Pour tester les endpoints API si nécessaire.
 
 ## 🚀 COMMENCE MAINTENANT !
 
-**ÉTAPE 1** : Ouvre Comet  
-**ÉTAPE 2** : Va à `http://localhost:8080` (ou 8081 si occupé)  
-**ÉTAPE 3** : Commence à tester l'application comme un utilisateur réel !  
-**ÉTAPE 4** : Note TOUT ce que tu observes !  
-**ÉTAPE 5** : Génère un rapport complet !
+**ÉTAPE 1** : Utilise `browser_navigate` pour aller à `http://localhost:8080`  
+**ÉTAPE 2** : Utilise `browser_snapshot` pour voir l'état initial  
+**ÉTAPE 3** : Commence à tester l'application avec `browser_click` et `browser_type` !  
+**ÉTAPE 4** : Utilise `browser_snapshot` après chaque action importante !  
+**ÉTAPE 5** : Note TOUT ce que tu observes !  
+**ÉTAPE 6** : Génère un rapport complet avec screenshots si possible !
 
-### ⚠️ IMPORTANT : NE BLOQUE PAS SUR DES DÉTAILS
+### ⚠️ IMPORTANT : TESTE LES FORMULAIRES EN PRIORITÉ
 
-- **Si tu rencontres un problème**, note-le et continue à tester
-- **Ne passe pas 30 minutes sur un seul bug** - teste toute l'app d'abord
-- **Si quelque chose ne fonctionne pas**, essaie de contourner et teste autre chose
-- **L'objectif est d'avoir une vue d'ensemble complète**, pas de résoudre chaque problème individuellement
-- **Teste TOUS les modules** avant de te concentrer sur un problème spécifique
-- **Note les problèmes mais continue** - tu pourras revenir dessus après
+**LE TEST LE PLUS IMPORTANT** : Vérifie que les formulaires (Médecins, Médicaments, Pathologies) fonctionnent maintenant sur le web. C'était le problème critique du rapport d'audit.
 
-**SOIS EXHAUSTIF** : Teste TOUT, observe TOUT, note TOUT !
+**Si les formulaires fonctionnent** → Le problème est corrigé ! ✅  
+**Si les formulaires échouent** → Le problème persiste ! ❌
 
-**MAIS SOIS EFFICACE** : Ne bloque pas sur un seul problème, teste toute l'app !
+### ⚠️ SOIS EXHAUSTIF MAIS EFFICACE
+
+- **Teste TOUT** : Tous les modules, tous les boutons, tous les formulaires
+- **Observe TOUT** : Couleurs, textes, espacements, performances
+- **Note TOUT** : Problèmes, points forts, suggestions
+- **MAIS** : Ne bloque pas sur un seul problème, teste toute l'app d'abord
+- **PRIORITÉ** : Teste les formulaires en premier (c'est le problème critique)
 
 **BONNE CHANCE ! 🎯**
+
+---
+
+## 📝 TEMPLATE DE RAPPORT
+
+Utilise ce template pour structurer ton rapport :
+
+```markdown
+# RAPPORT DE TEST ARKALIA CIA - 23 NOVEMBRE 2025
+
+## Résumé Exécutif
+- Score global : X/10
+- Form Submission : ✅ FONCTIONNE / ❌ ÉCHOUE
+- Points forts : ...
+- Points faibles : ...
+
+## Tests Critiques - Form Submission
+### Médecins
+- Status : ✅ / ❌
+- Détails : ...
+
+### Médicaments
+- Status : ✅ / ❌
+- Détails : ...
+
+### Pathologies
+- Status : ✅ / ❌
+- Détails : ...
+
+## Détail par Module
+[Pour chaque module testé]
+
+## Problèmes Détectés
+### 🔴 Graves
+- ...
+
+### 🟠 Élevés
+- ...
+
+## Recommandations
+- ...
+```
