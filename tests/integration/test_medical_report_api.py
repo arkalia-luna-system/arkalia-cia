@@ -69,14 +69,14 @@ class TestMedicalReportAPI:
         """Test génération rapport basique"""
         db_path, db = temp_db
         # Ajouter quelques documents de test
-        doc1_id = db.add_document(
+        db.add_document(
             name="test_doc1.pdf",
             original_name="test_doc1.pdf",
             file_path="/tmp/test1.pdf",
             file_type="pdf",
             file_size=1000,
         )
-        doc2_id = db.add_document(
+        db.add_document(
             name="test_doc2.pdf",
             original_name="test_doc2.pdf",
             file_path="/tmp/test2.pdf",
