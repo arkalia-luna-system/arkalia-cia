@@ -483,21 +483,89 @@ Le projet utilise **Codecov** pour le suivi automatique de la couverture :
 
 ## 🌐 **Arkalia Luna Ecosystem**
 
+### **🎯 Vision Système**
+
+Arkalia Luna System est un écosystème modulaire de santé personnelle centré sur le patient et sa famille. Chaque composant a un rôle spécifique :
+
+```mermaid
+graph TB
+    subgraph "Esprit & Santé"
+        A[CIA<br/>Assistant Santé Généraliste]
+        B[ARIA<br/>Laboratoire Douleur/Mental]
+    end
+    
+    subgraph "Corps & Expression"
+        C[BBIA<br/>Robot Compagnon Cognitif]
+    end
+    
+    A <--> B
+    A -.-> C
+    B -.-> C
+    
+    A --> D[Documents Médicaux<br/>Rappels<br/>Urgences]
+    B --> E[Suivi Douleur<br/>Patterns Psy<br/>Métriques]
+    C --> F[Émotions Robotiques<br/>Interface Incarnée<br/>Coaching]
+```
+
+**Positionnement** :
+- **CIA** = "Coffre-fort santé" + gestion quotidienne (documents, rappels, contacts urgence)
+- **ARIA** = "Microscope douleur/mental" + recherche personnelle (patterns, corrélations, métriques)
+- **BBIA** = "Corps/visage" qui exprime les états de santé de façon robotique (future vision)
+
+**Flux de données** :
+- **CIA ↔ ARIA** : Documents médicaux (CIA) ↔ Données douleur fine-grain (ARIA)
+- **CIA/ARIA → BBIA** : États santé → Adaptation comportementale robot (Phase 4)
+
 ### **🔗 Related Projects**
 
-| Project | Usage in CIA | Integration |
-|---------|-------------|-------------|
-| **❤️ [Arkalia ARIA](https://github.com/arkalia-luna-system/arkalia-aria)** | Pain tracking & psychological patterns | **Primary integration** - Health laboratory data sync |
-| **📊 [Metrics Collector](https://github.com/arkalia-luna-system/arkalia-metrics-collector)** | App usage analytics | Health monitoring |
-| **🤖 [BBIA-SIM](https://github.com/arkalia-luna-system/bbia-sim)** | Robot cognitive engine | Future: Robot companion integration (Phase 4) |
-| **🔧 [Athalia DevOps](https://github.com/arkalia-luna-system/athalia-dev-setup)** | Automated deployment | CI/CD pipeline |
-| **⚙️ [Base Template](https://github.com/arkalia-luna-system/base-template)** | Backend structure | Python API foundation |
-| **🎮 [Arkalia Quest](https://github.com/arkalia-luna-system/arkalia-quest)** | Educational notifications | Learning reminders |
+| Project | Rôle dans l'Écosystème | Intégration avec CIA | Statut |
+|---------|----------------------|---------------------|--------|
+| **❤️ [Arkalia ARIA](https://github.com/arkalia-luna-system/arkalia-aria)** | Laboratoire personnel douleur/psy | **Intégration principale** - Sync données santé fine-grain | ✅ Opérationnel |
+| **🤖 [BBIA-SIM](https://github.com/arkalia-luna-system/bbia-sim)** | Robot cognitif Reachy Mini | Phase 4 - Robot compagnon avec contexte santé | 📋 Planifié |
+| **📊 [Metrics Collector](https://github.com/arkalia-luna-system/arkalia-metrics-collector)** | Analytics usage app | Monitoring santé et métriques | ✅ Opérationnel |
+| **🔧 [Athalia DevOps](https://github.com/arkalia-luna-system/athalia-dev-setup)** | Infrastructure déploiement | CI/CD pipeline automatisé | ✅ Opérationnel |
+| **⚙️ [Base Template](https://github.com/arkalia-luna-system/base-template)** | Structure backend standard | Fondation API Python | ✅ Opérationnel |
+| **🎮 [Arkalia Quest](https://github.com/arkalia-luna-system/arkalia-quest)** | Notifications éducatives | Rappels apprentissage | ✅ Opérationnel |
 
 ### **💡 Cross-Platform Features**
-- **Document sync** with Arkalia ecosystem
-- **Health metrics** feeding into central analytics
-- **Educational content** from Quest integration
+
+**Synchronisation de données** :
+- **CIA ↔ ARIA** : Documents médicaux (agrégats) ↔ Données douleur (fine-grain)
+- **CIA → Metrics Collector** : Métriques usage et santé
+- **CIA → Quest** : Contenu éducatif santé
+- **Future : CIA/ARIA → BBIA** : États santé → Comportement robot adaptatif
+
+**Vision clinique** :
+- **CIA** prépare les rapports médicaux avec contexte ARIA
+- **ARIA** détecte les patterns pour enrichir les réponses de l'IA conversationnelle CIA
+- **BBIA** (futur) adapte son comportement émotionnel selon l'état santé détecté
+
+### **🏗️ Architecture Écosystème**
+
+```
+┌─────────────────────────────────────────────────────────┐
+│           Arkalia Luna System Ecosystem                 │
+└─────────────────────────────────────────────────────────┘
+                            │
+        ┌───────────────────┼───────────────────┐
+        │                   │                   │
+    ┌───▼───┐          ┌───▼───┐          ┌───▼───┐
+    │  CIA  │◄─────────►│ ARIA  │          │ BBIA  │
+    │       │  Sync    │       │          │       │
+    │ Docs  │  Health  │ Pain  │          │ Robot │
+    │ Remind│  Data    │Pattern│          │Emotion│
+    └───┬───┘          └───┬───┘          └───┬───┘
+        │                   │                   │
+        └───────────────────┼───────────────────┘
+                            │
+                    ┌───────▼────────┐
+                    │ Metrics        │
+                    │ Collector      │
+                    │ Analytics      │
+                    └────────────────┘
+```
+
+**Principe** : Chaque composant est **autonome** mais peut **synchroniser** avec les autres selon les besoins de l'utilisateur.
 
 ---
 
@@ -535,6 +603,7 @@ See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for development guidelines, code sta
 | [Architecture](docs/ARCHITECTURE.md) | Technical architecture and design decisions |
 | [API Reference](docs/API.md) | Service APIs and integration guides |
 | [ARIA Integration](docs/ARIA_INTEGRATION.md) | **Clinical vision and technical integration with Arkalia ARIA** |
+| [Ecosystem Vision](docs/ECOSYSTEM_VISION.md) | **Strategic vision of Arkalia Luna System ecosystem** |
 | [Deployment](docs/DEPLOYMENT.md) | Installation and deployment procedures |
 | [Security](SECURITY.md) | Security policies and vulnerability reporting |
 | [Changelog](docs/CHANGELOG.md) | Version history and release notes |
