@@ -154,10 +154,14 @@ userMessage = ErrorHelper.getUserFriendlyMessage(e);
 - ✅ Gestion d'erreurs robuste
 - ✅ Navigation sécurisée
 - ✅ Code propre et maintenable
+- ✅ **Accessibilité améliorée** : Tous les textes sont maintenant ≥14px (13 corrections appliquées)
+- ✅ **ErrorHelper intégré** : Messages utilisateur cohérents partout
+- ✅ **Feedback visuel amélioré** : Boutons avec indicateurs visuels clairs
 
-**Les 3 améliorations suggérées sont mineures et non bloquantes.** Elles amélioreraient l'accessibilité et l'expérience utilisateur, mais l'application est fonctionnelle et prête pour les tests.
+**Toutes les améliorations suggérées ont été appliquées !** L'application est maintenant optimale pour les seniors et prête pour les tests utilisateurs.
 
 ---
 
 *Dernière mise à jour : 23 novembre 2025*
+*Status : 100% des améliorations appliquées - Accessibilité optimisée pour seniors*
 
