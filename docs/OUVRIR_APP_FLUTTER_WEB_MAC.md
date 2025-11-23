@@ -42,7 +42,7 @@ flutter pub get
 flutter run -d web-server --web-port=8080 --web-hostname=localhost
 ```
 
-Puis **ouvrez Comet** et allez à : `http://localhost:8080`
+Puis **ouvrez Comet** et allez à : `http://localhost:8080` (ou `http://localhost:8081` si le port 8080 est déjà utilisé)
 
 ---
 
@@ -77,6 +77,10 @@ Cela crée les fichiers nécessaires pour le web.
 ```
 http://localhost:8080
 ```
+ou si le port est occupé :
+```
+http://localhost:8081
+```
 **C'est ici que vous verrez l'interface complète !**
 
 ### **API Backend (Documentation)**
@@ -108,7 +112,7 @@ Pour tester les API.
 
 1. Démarrer le backend : `./scripts/start_backend.sh` (dans un terminal)
 2. Démarrer l'app web : `./scripts/start_flutter_web.sh` (dans un autre terminal)
-3. Ouvrir Comet : `http://localhost:8080`
+3. Ouvrir Comet : `http://localhost:8080` (ou `http://localhost:8081` si 8080 est occupé)
 
 **C'est tout !** Vous verrez maintenant l'interface complète de l'application dans Comet ! 🎊
 

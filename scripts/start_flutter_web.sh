@@ -45,10 +45,18 @@ fi
 # Démarrer le serveur web local
 echo ""
 echo -e "${GREEN}🌟 Démarrage du serveur web...${NC}"
-echo -e "${BLUE}📱 Ouvrez Comet et allez à: http://localhost:8080${NC}"
+echo -e "${BLUE}📱 Ouvrez Comet et allez à: http://localhost:8080 (ou 8081 si 8080 est occupé)${NC}"
 echo -e "${YELLOW}💡 Appuyez sur Ctrl+C pour arrêter${NC}"
 echo ""
 
+# Vérifier si le port est libre, sinon utiliser un autre
+PORT=8080
+if lsof -ti:$PORT > /dev/null 2>&1; then
+    echo -e "${YELLOW}⚠️  Port $PORT déjà utilisé, utilisation du port 8081${NC}"
+    PORT=8081
+fi
+
 # Démarrer Flutter en mode web
-flutter run -d web-server --web-port=8080 --web-hostname=localhost
+echo -e "${GREEN}🌟 App accessible sur: http://localhost:$PORT${NC}"
+flutter run -d web-server --web-port=$PORT --web-hostname=localhost
 
