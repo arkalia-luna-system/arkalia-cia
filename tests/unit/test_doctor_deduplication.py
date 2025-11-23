@@ -35,9 +35,7 @@ class TestDoctorDeduplication:
 
     def test_similar_specialty(self):
         """Test détection spécialité similaire"""
-        doctor1_name = "Jean Dupont"
         doctor1_specialty = "Cardiologue"
-        doctor2_name = "Jean Dupont"
         doctor2_specialty = "Cardiologie"  # Variante
         # Devrait être détecté comme similaire
         assert doctor1_specialty.lower() != doctor2_specialty.lower()
