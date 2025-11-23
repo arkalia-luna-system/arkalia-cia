@@ -485,13 +485,12 @@ async def health_check(db: CIADatabase = Depends(get_database)):
             storage_info["status"] = "warning"
         checks = health_status["checks"]
         if isinstance(checks, dict):
-            # Type: ignore pour éviter erreur mypy (dict[str, Any] accepte dict[str, str | float])
-            checks["storage"] = storage_info  # type: ignore[assignment]
+            checks["storage"] = storage_info
     except Exception as e:
         # OPTIMISATION: Toujours créer un dict pour éviter erreurs d'indexation
         checks = health_status["checks"]
         if isinstance(checks, dict):
-            checks["storage"] = {  # type: ignore[assignment]
+            checks["storage"] = {
                 "status": "error",
                 "message": str(e)[:50],
             }
