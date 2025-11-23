@@ -8,7 +8,9 @@ import 'package:open_filex/open_filex.dart';
 import '../services/local_storage_service.dart';
 import '../services/file_storage_service.dart';
 import '../services/category_service.dart';
+import '../services/doctor_service.dart';
 import '../widgets/exam_type_badge.dart';
+import 'add_edit_doctor_screen.dart';
 
 class DocumentsScreen extends StatefulWidget {
   const DocumentsScreen({super.key});
@@ -250,6 +252,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         final uniqueFileName = '${timestamp}_$fileName';
 
         // Copier le fichier vers le répertoire documents dédié
+        // Utiliser FileStorageService pour gérer le stockage des fichiers
         final savedFile = await FileStorageService.copyToDocumentsDirectory(
           sourceFile,
           uniqueFileName,
@@ -277,6 +280,11 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         setState(() {
           isUploading = false;
         });
+
+        // Vérifier si un médecin est détecté dans le document (métadonnées)
+        // Note: L'extraction réelle se fait côté backend, ici on simule pour la démo
+        // En production, les métadonnées viendront de l'API backend
+        await _checkAndShowDoctorDialog(savedFile.path, document);
 
         _showSuccess('Document $fileName ajouté avec succès !');
         _loadDocuments(); // Recharger la liste
@@ -336,7 +344,11 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         
         // Supprimer le fichier physique
         if (fileName != null) {
-          await FileStorageService.deleteDocumentFile(fileName);
+          // Utiliser FileStorageService pour supprimer le fichier
+          final deleted = await FileStorageService.deleteDocumentFile(fileName);
+          if (!deleted) {
+            // Fichier non supprimé, mais on continue
+          }
         }
         
         // Supprimer les métadonnées
@@ -718,6 +730,59 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         ],
       ),
     );
+  }
+
+  /// Vérifie si un médecin est détecté et affiche le dialog
+  Future<void> _checkAndShowDoctorDialog(String filePath, Map<String, dynamic> document) async {
+    // En production, les métadonnées viendront de l'API backend après extraction
+    // Pour l'instant, on vérifie si des métadonnées existent déjà dans le document
+    final metadata = document['metadata'];
+    if (metadata != null && metadata is Map) {
+      final doctorName = metadata['doctor_name'] as String?;
+      if (doctorName != null && doctorName.isNotEmpty) {
+        // Préparer les données détectées
+        final detectedData = {
+          'doctor_name': doctorName,
+          'doctor_specialty': metadata['doctor_specialty'],
+          'phone': metadata['doctor_phone'],
+          'email': metadata['doctor_email'],
+          'address': metadata['doctor_address'],
+        };
+
+        // Afficher le dialog
+        if (!mounted) return;
+        final shouldAdd = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Médecin détecté'),
+            content: Text('Médecin détecté : $doctorName\n\nVoulez-vous l\'ajouter à l\'annuaire ?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Plus tard'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Ajouter'),
+              ),
+            ],
+          ),
+        );
+
+        if (shouldAdd == true && mounted) {
+          // Ouvrir l'écran d'ajout avec les données pré-remplies
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddEditDoctorScreen(detectedData: detectedData),
+            ),
+          );
+          if (result == true) {
+            _showSuccess('Médecin ajouté à l\'annuaire !');
+          }
+        }
+      }
+    }
   }
 
   Future<void> _showManageCategoriesDialog() async {

@@ -3,6 +3,7 @@ import 'package:path/path.dart';
 import 'package:flutter/material.dart';
 import '../models/medication.dart';
 import 'calendar_service.dart';
+import 'notification_service.dart';
 
 /// Service de gestion des médicaments et rappels
 class MedicationService {
@@ -173,6 +174,16 @@ class MedicationService {
               : 'N\'oubliez pas votre médicament',
           reminderDate: firstReminderDate,
           recurrence: 'daily',
+        );
+        
+        // Programmer aussi une notification push pour rappel
+        await NotificationService.scheduleNotification(
+          id: medication.id! * 1000 + time.hour * 60 + time.minute, // ID unique
+          title: '💊 ${medication.name}',
+          body: medication.dosage != null
+              ? 'Dosage: ${medication.dosage}'
+              : 'N\'oubliez pas votre médicament',
+          scheduledDate: firstReminderDate,
         );
       }
 

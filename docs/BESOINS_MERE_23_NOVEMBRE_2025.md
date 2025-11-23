@@ -347,7 +347,7 @@ class PathologyTracking {
 
 3. **Extraction enrichie médecins** 👨‍⚕️ ✅
    - ✅ Patterns adresse, téléphone, email (metadata_extractor.py)
-   - ⚠️ Dialog de complétion automatique (à intégrer dans upload flow)
+   - ✅ Dialog de complétion automatique (implémenté dans documents_screen.dart)
    - ✅ Déduplication intelligente (findSimilarDoctors())
 
 ### Phase 2 : Rappels Intelligents (2-3 semaines) ✅ TERMINÉE

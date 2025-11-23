@@ -58,6 +58,7 @@ class SearchService {
   }
 
   /// Recherche simple avec une requête texte (limité à 20 résultats par catégorie)
+  /// Utilise la recherche sémantique si la requête est suffisamment longue (>3 caractères)
   static Future<Map<String, List<Map<String, dynamic>>>> searchAll(String query) async {
     final results = <String, List<Map<String, dynamic>>>{
       'documents': [],
@@ -66,10 +67,17 @@ class SearchService {
     };
     
     const maxResults = 20; // Limiter les résultats pour économiser la mémoire
+    final useSemantic = query.length > 3; // Utiliser recherche sémantique pour requêtes longues
 
     try {
-      // Recherche dans les documents (limiter à 50 pour la recherche)
-      final documents = await LocalStorageService.getDocuments();
+      // Recherche dans les documents avec recherche sémantique si activée
+      List<Map<String, dynamic>> documents;
+      if (useSemantic) {
+        documents = await _semanticSearch.semanticSearch(query, limit: 50);
+      } else {
+        documents = await LocalStorageService.getDocuments();
+      }
+      
       for (var doc in documents.take(50)) {
         if (results['documents']!.length >= maxResults) break;
         final name = (doc['original_name'] ?? doc['name'] ?? '').toLowerCase();

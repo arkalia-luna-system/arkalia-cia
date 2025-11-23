@@ -17,6 +17,7 @@ import 'patterns_dashboard_screen.dart';
 import 'bbia_integration_screen.dart';
 import 'pathology_list_screen.dart';
 import 'calendar_screen.dart';
+import 'hydration_reminders_screen.dart';
 import '../services/local_storage_service.dart';
 import '../services/calendar_service.dart';
 import '../services/search_service.dart';
@@ -347,6 +348,16 @@ class _HomePageState extends State<HomePage> {
                       color: Colors.blue,
                       onTap: () => _showStats(context),
                     ),
+
+                    // Bouton 12: Hydratation
+                    _buildActionButton(
+                      context,
+                      icon: MdiIcons.water,
+                      title: 'Hydratation',
+                      subtitle: 'Rappels hydratation',
+                      color: Colors.cyan,
+                      onTap: () => _showHydration(context),
+                    ),
                   ],
                 ),
               ),
@@ -542,6 +553,13 @@ class _HomePageState extends State<HomePage> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const PathologyListScreen()),
+    );
+  }
+
+  void _showHydration(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const HydrationRemindersScreen()),
     );
   }
 

@@ -587,4 +587,4 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), ce pr
 
 *Ce changelog est automatiquement mis à jour à chaque release. Pour les changements techniques détaillés, voir notre [historique des commits](https://github.com/arkalia-luna-system/arkalia-cia/commits/main).*
 
-*Dernière mise à jour : 20 novembre 2025*
+*Dernière mise à jour : 23 novembre 2025*

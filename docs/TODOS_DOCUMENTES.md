@@ -57,6 +57,29 @@
 
 ## 🟡 TODOs MOYENS (Améliorations)
 
+### Phase 1 : Codes Couleur et Extraction Enrichie ✅ TERMINÉ
+
+**Fichiers modifiés/créés**:
+- `arkalia_cia/lib/models/doctor.dart` : Méthode getColorForSpecialty()
+- `arkalia_cia/lib/screens/doctors_list_screen.dart` : Badges colorés
+- `arkalia_cia/lib/services/calendar_service.dart` : Couleurs pour événements
+- `arkalia_cia/lib/screens/calendar_screen.dart` : Écran calendrier avec encadrement coloré
+- `arkalia_cia/lib/screens/documents_screen.dart` : Dialog médecin détecté après upload PDF
+- `arkalia_cia/lib/screens/home_page.dart` : Bouton Calendrier
+- `arkalia_cia_python_backend/pdf_parser/metadata_extractor.py` : Extraction enrichie (adresse, téléphone, email)
+- `arkalia_cia/lib/services/doctor_service.dart` : Méthode findSimilarDoctors()
+
+**Tests créés**:
+- `tests/unit/test_doctor_colors.py` : Tests mapping couleur par spécialité
+- `tests/unit/test_doctor_deduplication.py` : Tests détection doublons
+- `tests/unit/test_metadata_extractor_enriched.py` : Tests extraction enrichie
+
+**Statut**:
+- ✅ Dialog médecin détecté implémenté et fonctionnel
+- ✅ Intégration complète dans upload flow
+- ✅ Tous les tests passent
+- ✅ 0 erreur lint
+
 ### Phase 2 : Rappels Médicaments et Hydratation ✅ TERMINÉ
 
 **Fichiers créés**:
@@ -86,6 +109,7 @@
 - ✅ Rappels hydratation toutes les 2h (8h-20h) avec renforcement si objectif non atteint
 - ✅ Écrans avec liste, formulaire, suivi, graphiques
 - ✅ Intégration calendrier avec distinction visuelle (💊 médicaments, 💧 hydratation, 🏥 RDV)
+- ✅ Chargement médicaments et hydratation dans calendar_screen.dart avec icônes distinctives
 - ✅ Tests Python complets pour interactions, validation, logique métier
 - ✅ Documentation mise à jour
 

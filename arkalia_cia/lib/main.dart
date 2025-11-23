@@ -7,11 +7,14 @@ import 'services/theme_service.dart';
 import 'services/auto_sync_service.dart';
 import 'services/auth_api_service.dart';
 import 'services/backend_config_service.dart';
+import 'services/offline_cache_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await LocalStorageService.init();
   await CalendarService.init();
+  // Nettoyer automatiquement les caches expirés au démarrage
+  await OfflineCacheService.clearExpiredCaches();
   runApp(const ArkaliaCIAApp());
 }
 
@@ -46,6 +49,8 @@ class _ArkaliaCIAAppState extends State<ArkaliaCIAApp> with WidgetsBindingObserv
     // Synchroniser quand l'app revient au premier plan
     if (state == AppLifecycleState.resumed) {
       AutoSyncService.syncIfNeeded();
+      // Nettoyer les caches expirés quand l'app revient au premier plan
+      OfflineCacheService.clearExpiredCaches();
     }
   }
 

@@ -82,6 +82,7 @@ class AutoSyncService {
   }
 
   /// Synchronise automatiquement si activé et si nécessaire
+  /// Détecte intelligemment les changements avant de synchroniser
   static Future<void> syncIfNeeded({bool force = false}) async {
     if (_isSyncing) {
       AppLogger.debug('Synchronisation déjà en cours, ignorée');
@@ -118,6 +119,13 @@ class AutoSyncService {
             AppLogger.debug('Synchronisation récente (${diff.inMinutes} min), ignorée');
             return;
           }
+          
+          // Détection intelligente : vérifier s'il y a eu des changements locaux
+          final hasLocalChanges = await _hasLocalChanges(lastSync);
+          if (!hasLocalChanges) {
+            AppLogger.debug('Aucun changement local détecté depuis la dernière sync, ignorée');
+            return;
+          }
         } catch (e) {
           AppLogger.warning('Erreur parsing dernière sync: $e');
         }
@@ -125,6 +133,65 @@ class AutoSyncService {
     }
 
     await _performSync();
+  }
+
+  /// Vérifie s'il y a eu des changements locaux depuis la dernière synchronisation
+  static Future<bool> _hasLocalChanges(DateTime lastSync) async {
+    try {
+      // Vérifier les documents
+      final documents = await LocalStorageService.getDocuments();
+      for (final doc in documents) {
+        final updatedAt = doc['updated_at'] as String? ?? doc['created_at'] as String?;
+        if (updatedAt != null) {
+          try {
+            final docDate = DateTime.parse(updatedAt);
+            if (docDate.isAfter(lastSync)) {
+              return true; // Changement détecté
+            }
+          } catch (e) {
+            // Ignorer erreur parsing
+          }
+        }
+      }
+      
+      // Vérifier les rappels
+      final reminders = await LocalStorageService.getReminders();
+      for (final reminder in reminders) {
+        final updatedAt = reminder['updated_at'] as String? ?? reminder['created_at'] as String?;
+        if (updatedAt != null) {
+          try {
+            final reminderDate = DateTime.parse(updatedAt);
+            if (reminderDate.isAfter(lastSync)) {
+              return true; // Changement détecté
+            }
+          } catch (e) {
+            // Ignorer erreur parsing
+          }
+        }
+      }
+      
+      // Vérifier les contacts d'urgence
+      final contacts = await LocalStorageService.getEmergencyContacts();
+      for (final contact in contacts) {
+        final updatedAt = contact['updated_at'] as String? ?? contact['created_at'] as String?;
+        if (updatedAt != null) {
+          try {
+            final contactDate = DateTime.parse(updatedAt);
+            if (contactDate.isAfter(lastSync)) {
+              return true; // Changement détecté
+            }
+          } catch (e) {
+            // Ignorer erreur parsing
+          }
+        }
+      }
+      
+      return false; // Aucun changement détecté
+    } catch (e) {
+      AppLogger.warning('Erreur détection changements locaux: $e');
+      // En cas d'erreur, autoriser la sync par sécurité
+      return true;
+    }
   }
 
   /// Effectue la synchronisation complète

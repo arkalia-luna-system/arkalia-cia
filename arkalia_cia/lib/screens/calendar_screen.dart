@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../services/calendar_service.dart';
 import '../services/doctor_service.dart';
+import '../services/medication_service.dart';
+import '../services/hydration_service.dart';
 import '../models/doctor.dart'; // Contient aussi Consultation
+import '../models/medication.dart';
 
 /// Écran calendrier avec affichage des rappels médicaments et hydratation
 class CalendarScreen extends StatefulWidget {
@@ -14,6 +17,8 @@ class CalendarScreen extends StatefulWidget {
 
 class _CalendarScreenState extends State<CalendarScreen> {
   final DoctorService _doctorService = DoctorService();
+  final MedicationService _medicationService = MedicationService();
+  final HydrationService _hydrationService = HydrationService();
   DateTime _focusedDay = DateTime.now();
   DateTime _selectedDay = DateTime.now();
   CalendarFormat _calendarFormat = CalendarFormat.month;
@@ -63,6 +68,52 @@ class _CalendarScreenState extends State<CalendarScreen> {
         }
       }
 
+      // Récupérer les médicaments actifs
+      final medications = await _medicationService.getActiveMedications();
+      for (final medication in medications) {
+        for (final time in medication.times) {
+          final reminderDate = DateTime(
+            _focusedDay.year,
+            _focusedDay.month,
+            _focusedDay.day,
+            time.hour,
+            time.minute,
+          );
+          final dateOnly = DateTime(reminderDate.year, reminderDate.month, reminderDate.day);
+
+          if (!eventsMap.containsKey(dateOnly)) {
+            eventsMap[dateOnly] = [];
+          }
+
+          eventsMap[dateOnly]!.add({
+            'type': 'medication',
+            'medication': medication,
+            'time': time,
+            'title': '💊 ${medication.name}',
+            'description': medication.dosage ?? 'Médicament',
+            'color': Colors.blue,
+          });
+        }
+      }
+
+      // Récupérer les rappels d'hydratation (toutes les 2h de 8h à 20h)
+      final now = DateTime.now();
+      for (int hour = 8; hour <= 20; hour += 2) {
+        final reminderDate = DateTime(_focusedDay.year, _focusedDay.month, _focusedDay.day, hour, 0);
+        final dateOnly = DateTime(reminderDate.year, reminderDate.month, reminderDate.day);
+
+        if (!eventsMap.containsKey(dateOnly)) {
+          eventsMap[dateOnly] = [];
+        }
+
+        eventsMap[dateOnly]!.add({
+          'type': 'hydration',
+          'title': '💧 Hydratation',
+          'description': 'N\'oubliez pas de boire de l\'eau !',
+          'color': Colors.cyan,
+        });
+      }
+
       // Récupérer aussi les rappels du calendrier système
       final reminders = await CalendarService.getUpcomingReminders();
       for (final reminder in reminders) {
@@ -76,11 +127,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
               eventsMap[dateOnly] = [];
             }
 
+            // Détecter le type de rappel par le titre
+            final title = reminder['title'] as String? ?? 'Rappel';
+            final isMedication = title.contains('💊');
+            final isHydration = title.contains('💧');
+
             eventsMap[dateOnly]!.add({
-              'type': 'reminder',
-              'title': reminder['title'] as String? ?? 'Rappel',
+              'type': isMedication ? 'medication' : (isHydration ? 'hydration' : 'reminder'),
+              'title': title,
               'description': reminder['description'] as String? ?? '',
-              'color': Colors.orange,
+              'color': isMedication ? Colors.blue : (isHydration ? Colors.cyan : Colors.orange),
             });
           } catch (e) {
             // Ignorer dates invalides
@@ -266,10 +322,26 @@ class _CalendarScreenState extends State<CalendarScreen> {
         vertical: 8,
       ),
       child: ListTile(
-        leading: Container(
-          width: 4,
-          height: double.infinity,
-          color: color,
+        leading: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 4,
+              height: double.infinity,
+              color: color,
+            ),
+            const SizedBox(width: 8),
+            Icon(
+              type == 'consultation'
+                  ? Icons.medical_services
+                  : type == 'medication'
+                      ? Icons.medication
+                      : type == 'hydration'
+                          ? Icons.water_drop
+                          : Icons.notifications,
+              color: color,
+            ),
+          ],
         ),
         title: Text(
           type == 'consultation'

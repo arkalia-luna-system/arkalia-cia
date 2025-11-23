@@ -1,6 +1,6 @@
 # Index de la documentation
 
-**Version** : 1.2.1
+**Version** : 1.3.0
 **Dernière mise à jour** : 23 novembre 2025
 
 Guide de navigation dans la documentation du projet Arkalia CIA.
