@@ -4,17 +4,24 @@ import 'package:path/path.dart';
 import 'package:flutter/foundation.dart';
 import '../models/doctor.dart';
 import '../utils/error_helper.dart';
+import '../utils/storage_helper.dart';
 
 class DoctorService {
   static Database? _database;
+  static const String _doctorsKey = 'doctors_web';
+  static const String _consultationsKey = 'consultations_web';
 
-  Future<Database> get database async {
+  Future<Database?> get database async {
+    if (kIsWeb) return null; // Sur le web, on n'utilise pas SQLite
     if (_database != null) return _database!;
     _database = await _initDatabase();
     return _database!;
   }
 
   Future<Database> _initDatabase() async {
+    if (kIsWeb) {
+      throw UnsupportedError('SQLite non disponible sur le web');
+    }
     try {
       final dbPath = await getDatabasesPath();
       final path = join(dbPath, 'arkalia_cia.db');
@@ -33,11 +40,6 @@ class DoctorService {
       );
     } catch (e) {
       ErrorHelper.logError('DoctorService._initDatabase', e);
-      // Sur le web, sqflite peut ne pas fonctionner
-      // On va utiliser une base en mémoire comme fallback
-      if (kIsWeb) {
-        throw Exception('Base de données non disponible sur le web. Utilisez le mode offline avec SharedPreferences.');
-      }
       rethrow;
     }
   }
@@ -100,13 +102,34 @@ class DoctorService {
 
   // CRUD Médecins
   Future<int> insertDoctor(Doctor doctor) async {
+    if (kIsWeb) {
+      // Utiliser StorageHelper sur le web
+      final doctors = await _getDoctorsFromStorage();
+      final doctorMap = doctor.toMap();
+      // Générer un ID unique si pas présent
+      if (doctorMap['id'] == null) {
+        doctorMap['id'] = DateTime.now().millisecondsSinceEpoch;
+      }
+      doctors.add(doctorMap);
+      await StorageHelper.saveList(_doctorsKey, doctors);
+      return doctorMap['id'] as int;
+    }
     final db = await database;
-    return await db.insert('doctors', doctor.toMap());
+    return await db!.insert('doctors', doctor.toMap());
   }
 
   Future<List<Doctor>> getAllDoctors() async {
+    if (kIsWeb) {
+      final doctors = await _getDoctorsFromStorage();
+      return doctors.map((map) => Doctor.fromMap(_convertWebMapToSqliteMap(map))).toList()
+        ..sort((a, b) {
+          final lastNameCompare = a.lastName.compareTo(b.lastName);
+          if (lastNameCompare != 0) return lastNameCompare;
+          return a.firstName.compareTo(b.firstName);
+        });
+    }
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
+    final List<Map<String, dynamic>> maps = await db!.query(
       'doctors',
       orderBy: 'last_name ASC, first_name ASC',
     );
@@ -114,8 +137,17 @@ class DoctorService {
   }
 
   Future<Doctor?> getDoctorById(int id) async {
+    if (kIsWeb) {
+      final doctors = await _getDoctorsFromStorage();
+      final doctorMap = doctors.firstWhere(
+        (map) => map['id'] == id,
+        orElse: () => <String, dynamic>{},
+      );
+      if (doctorMap.isEmpty) return null;
+      return Doctor.fromMap(_convertWebMapToSqliteMap(doctorMap));
+    }
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
+    final List<Map<String, dynamic>> maps = await db!.query(
       'doctors',
       where: 'id = ?',
       whereArgs: [id],
@@ -127,8 +159,18 @@ class DoctorService {
   }
 
   Future<List<Doctor>> searchDoctors(String query) async {
+    if (kIsWeb) {
+      final doctors = await getAllDoctors();
+      final queryLower = query.toLowerCase();
+      return doctors.where((doctor) {
+        return doctor.lastName.toLowerCase().contains(queryLower) ||
+            doctor.firstName.toLowerCase().contains(queryLower) ||
+            (doctor.specialty?.toLowerCase().contains(queryLower) ?? false);
+      }).toList()
+        ..sort((a, b) => a.lastName.compareTo(b.lastName));
+    }
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
+    final List<Map<String, dynamic>> maps = await db!.query(
       'doctors',
       where: 'last_name LIKE ? OR first_name LIKE ? OR specialty LIKE ?',
       whereArgs: ['%$query%', '%$query%', '%$query%'],
@@ -138,8 +180,13 @@ class DoctorService {
   }
 
   Future<List<Doctor>> getDoctorsBySpecialty(String specialty) async {
+    if (kIsWeb) {
+      final doctors = await getAllDoctors();
+      return doctors.where((doctor) => doctor.specialty == specialty).toList()
+        ..sort((a, b) => a.lastName.compareTo(b.lastName));
+    }
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
+    final List<Map<String, dynamic>> maps = await db!.query(
       'doctors',
       where: 'specialty = ?',
       whereArgs: [specialty],
@@ -149,9 +196,18 @@ class DoctorService {
   }
 
   Future<int> updateDoctor(Doctor doctor) async {
+    if (kIsWeb) {
+      final doctors = await _getDoctorsFromStorage();
+      final index = doctors.indexWhere((map) => map['id'] == doctor.id);
+      if (index == -1) return 0;
+      final updatedDoctor = doctor.copyWith(updatedAt: DateTime.now());
+      doctors[index] = updatedDoctor.toMap();
+      await StorageHelper.saveList(_doctorsKey, doctors);
+      return 1;
+    }
     final db = await database;
     final updatedDoctor = doctor.copyWith(updatedAt: DateTime.now());
-    return await db.update(
+    return await db!.update(
       'doctors',
       updatedDoctor.toMap(),
       where: 'id = ?',
@@ -160,24 +216,73 @@ class DoctorService {
   }
 
   Future<int> deleteDoctor(int id) async {
+    if (kIsWeb) {
+      final doctors = await _getDoctorsFromStorage();
+      doctors.removeWhere((map) => map['id'] == id);
+      await StorageHelper.saveList(_doctorsKey, doctors);
+      // Supprimer aussi les consultations associées
+      final consultations = await _getConsultationsFromStorage();
+      consultations.removeWhere((map) => map['doctor_id'] == id);
+      await StorageHelper.saveList(_consultationsKey, consultations);
+      return 1;
+    }
     final db = await database;
     // Supprimer aussi les consultations associées (CASCADE)
-    return await db.delete(
+    return await db!.delete(
       'doctors',
       where: 'id = ?',
       whereArgs: [id],
     );
   }
 
+  // Méthodes helper pour le stockage web
+  Future<List<Map<String, dynamic>>> _getDoctorsFromStorage() async {
+    return await StorageHelper.getList(_doctorsKey);
+  }
+
+  Future<List<Map<String, dynamic>>> _getConsultationsFromStorage() async {
+    return await StorageHelper.getList(_consultationsKey);
+  }
+
+  // Convertit le format web (id peut être int ou string) vers format SQLite (int)
+  Map<String, dynamic> _convertWebMapToSqliteMap(Map<String, dynamic> map) {
+    final converted = Map<String, dynamic>.from(map);
+    // S'assurer que l'ID est un int
+    if (converted['id'] != null) {
+      converted['id'] = converted['id'] is int 
+          ? converted['id'] 
+          : int.tryParse(converted['id'].toString()) ?? converted['id'];
+    }
+    return converted;
+  }
+
   // CRUD Consultations
   Future<int> insertConsultation(Consultation consultation) async {
+    if (kIsWeb) {
+      final consultations = await _getConsultationsFromStorage();
+      final consultationMap = consultation.toMap();
+      if (consultationMap['id'] == null) {
+        consultationMap['id'] = DateTime.now().millisecondsSinceEpoch;
+      }
+      consultations.add(consultationMap);
+      await StorageHelper.saveList(_consultationsKey, consultations);
+      return consultationMap['id'] as int;
+    }
     final db = await database;
-    return await db.insert('consultations', consultation.toMap());
+    return await db!.insert('consultations', consultation.toMap());
   }
 
   Future<List<Consultation>> getConsultationsByDoctor(int doctorId) async {
+    if (kIsWeb) {
+      final consultations = await _getConsultationsFromStorage();
+      return consultations
+          .where((map) => map['doctor_id'] == doctorId)
+          .map((map) => Consultation.fromMap(_convertWebMapToSqliteMap(map)))
+          .toList()
+        ..sort((a, b) => b.date.compareTo(a.date));
+    }
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
+    final List<Map<String, dynamic>> maps = await db!.query(
       'consultations',
       where: 'doctor_id = ?',
       whereArgs: [doctorId],
@@ -255,10 +360,21 @@ class DoctorService {
   }
 
   Future<Map<String, dynamic>> getDoctorStats(int doctorId) async {
+    if (kIsWeb) {
+      final consultations = await getConsultationsByDoctor(doctorId);
+      DateTime? lastVisit;
+      if (consultations.isNotEmpty) {
+        lastVisit = consultations.first.date;
+      }
+      return {
+        'consultation_count': consultations.length,
+        'last_visit': lastVisit?.toIso8601String(),
+      };
+    }
     final db = await database;
     
     // Nombre consultations
-    final countResult = await db.rawQuery(
+    final countResult = await db!.rawQuery(
       'SELECT COUNT(*) as count FROM consultations WHERE doctor_id = ?',
       [doctorId],
     );

@@ -4,20 +4,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import '../models/medication.dart';
 import '../utils/error_helper.dart';
+import '../utils/storage_helper.dart';
 import 'calendar_service.dart';
 import 'notification_service.dart';
 
 /// Service de gestion des médicaments et rappels
 class MedicationService {
   static Database? _database;
+  static const String _medicationsKey = 'medications_web';
+  static const String _medicationTakenKey = 'medication_taken_web';
 
-  Future<Database> get database async {
+  Future<Database?> get database async {
+    if (kIsWeb) return null; // Sur le web, on n'utilise pas SQLite
     if (_database != null) return _database!;
     _database = await _initDatabase();
     return _database!;
   }
 
   Future<Database> _initDatabase() async {
+    if (kIsWeb) {
+      throw UnsupportedError('SQLite non disponible sur le web');
+    }
     try {
       final dbPath = await getDatabasesPath();
       final path = join(dbPath, 'arkalia_cia.db');
@@ -36,9 +43,6 @@ class MedicationService {
       );
     } catch (e) {
       ErrorHelper.logError('MedicationService._initDatabase', e);
-      if (kIsWeb) {
-        throw Exception('Base de données non disponible sur le web. Utilisez le mode offline avec SharedPreferences.');
-      }
       rethrow;
     }
   }
@@ -91,18 +95,34 @@ class MedicationService {
 
   // CRUD Médicaments
   Future<int> insertMedication(Medication medication) async {
+    if (kIsWeb) {
+      final medications = await _getMedicationsFromStorage();
+      final medicationMap = medication.toMap();
+      if (medicationMap['id'] == null) {
+        medicationMap['id'] = DateTime.now().millisecondsSinceEpoch;
+      }
+      medications.add(medicationMap);
+      await StorageHelper.saveList(_medicationsKey, medications);
+      final id = medicationMap['id'] as int;
+      // Programmer les rappels
+      await scheduleReminders(medication.copyWith(id: id));
+      return id;
+    }
     final db = await database;
-    final id = await db.insert('medications', medication.toMap());
-    
+    final id = await db!.insert('medications', medication.toMap());
     // Programmer les rappels
     await scheduleReminders(medication.copyWith(id: id));
-    
     return id;
   }
 
   Future<List<Medication>> getAllMedications() async {
+    if (kIsWeb) {
+      final medications = await _getMedicationsFromStorage();
+      return medications.map((map) => Medication.fromMap(_convertWebMapToSqliteMap(map))).toList()
+        ..sort((a, b) => a.name.compareTo(b.name));
+    }
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
+    final List<Map<String, dynamic>> maps = await db!.query(
       'medications',
       orderBy: 'name ASC',
     );
@@ -110,9 +130,19 @@ class MedicationService {
   }
 
   Future<List<Medication>> getActiveMedications() async {
+    if (kIsWeb) {
+      final allMedications = await getAllMedications();
+      final now = DateTime.now();
+      return allMedications.where((med) {
+        if (med.startDate.isAfter(now)) return false;
+        if (med.endDate != null && med.endDate!.isBefore(now)) return false;
+        return true;
+      }).toList()
+        ..sort((a, b) => a.name.compareTo(b.name));
+    }
     final db = await database;
     final now = DateTime.now();
-    final List<Map<String, dynamic>> maps = await db.query(
+    final List<Map<String, dynamic>> maps = await db!.query(
       'medications',
       where: 'start_date <= ? AND (end_date IS NULL OR end_date >= ?)',
       whereArgs: [now.toIso8601String(), now.toIso8601String()],
@@ -122,8 +152,17 @@ class MedicationService {
   }
 
   Future<Medication?> getMedicationById(int id) async {
+    if (kIsWeb) {
+      final medications = await _getMedicationsFromStorage();
+      final medicationMap = medications.firstWhere(
+        (map) => map['id'] == id,
+        orElse: () => <String, dynamic>{},
+      );
+      if (medicationMap.isEmpty) return null;
+      return Medication.fromMap(_convertWebMapToSqliteMap(medicationMap));
+    }
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
+    final List<Map<String, dynamic>> maps = await db!.query(
       'medications',
       where: 'id = ?',
       whereArgs: [id],
@@ -135,17 +174,25 @@ class MedicationService {
   }
 
   Future<int> updateMedication(Medication medication) async {
+    if (kIsWeb) {
+      final medications = await _getMedicationsFromStorage();
+      final index = medications.indexWhere((map) => map['id'] == medication.id);
+      if (index == -1) return 0;
+      medications[index] = medication.toMap();
+      await StorageHelper.saveList(_medicationsKey, medications);
+      // Reprogrammer les rappels
+      await scheduleReminders(medication);
+      return 1;
+    }
     final db = await database;
-    final result = await db.update(
+    final result = await db!.update(
       'medications',
       medication.toMap(),
       where: 'id = ?',
       whereArgs: [medication.id],
     );
-    
     // Reprogrammer les rappels
     await scheduleReminders(medication);
-    
     return result;
   }
 
@@ -153,12 +200,42 @@ class MedicationService {
     // Annuler les notifications avant suppression
     await cancelMedicationNotifications(id);
     
+    if (kIsWeb) {
+      final medications = await _getMedicationsFromStorage();
+      medications.removeWhere((map) => map['id'] == id);
+      await StorageHelper.saveList(_medicationsKey, medications);
+      // Supprimer aussi les prises associées
+      final taken = await _getMedicationTakenFromStorage();
+      taken.removeWhere((map) => map['medication_id'] == id);
+      await StorageHelper.saveList(_medicationTakenKey, taken);
+      return 1;
+    }
     final db = await database;
-    return await db.delete(
+    return await db!.delete(
       'medications',
       where: 'id = ?',
       whereArgs: [id],
     );
+  }
+
+  // Méthodes helper pour le stockage web
+  Future<List<Map<String, dynamic>>> _getMedicationsFromStorage() async {
+    return await StorageHelper.getList(_medicationsKey);
+  }
+
+  Future<List<Map<String, dynamic>>> _getMedicationTakenFromStorage() async {
+    return await StorageHelper.getList(_medicationTakenKey);
+  }
+
+  // Convertit le format web vers format SQLite
+  Map<String, dynamic> _convertWebMapToSqliteMap(Map<String, dynamic> map) {
+    final converted = Map<String, dynamic>.from(map);
+    if (converted['id'] != null) {
+      converted['id'] = converted['id'] is int 
+          ? converted['id'] 
+          : int.tryParse(converted['id'].toString()) ?? converted['id'];
+    }
+    return converted;
   }
 
   /// Programme les rappels pour un médicament
@@ -219,12 +296,43 @@ class MedicationService {
 
   /// Marque un médicament comme pris
   Future<void> markAsTaken(int medicationId, DateTime date, TimeOfDay time) async {
+    if (kIsWeb) {
+      final taken = await _getMedicationTakenFromStorage();
+      final dateStr = date.toIso8601String().split('T')[0];
+      final timeStr = '${time.hour}:${time.minute}';
+      
+      final existingIndex = taken.indexWhere(
+        (map) => map['medication_id'] == medicationId && 
+                 map['date'] == dateStr && 
+                 map['time'] == timeStr,
+      );
+      
+      if (existingIndex != -1) {
+        taken[existingIndex]['taken'] = 1;
+        taken[existingIndex]['taken_at'] = DateTime.now().toIso8601String();
+      } else {
+        final entry = MedicationTaken(
+          medicationId: medicationId,
+          date: date,
+          time: time,
+          taken: true,
+          takenAt: DateTime.now(),
+        );
+        final entryMap = entry.toMap();
+        if (entryMap['id'] == null) {
+          entryMap['id'] = DateTime.now().millisecondsSinceEpoch;
+        }
+        taken.add(entryMap);
+      }
+      await StorageHelper.saveList(_medicationTakenKey, taken);
+      return;
+    }
     final db = await database;
     final dateStr = date.toIso8601String().split('T')[0];
     final timeStr = '${time.hour}:${time.minute}';
 
     // Vérifier si l'entrée existe déjà
-    final existing = await db.query(
+    final existing = await db!.query(
       'medication_taken',
       where: 'medication_id = ? AND date = ? AND time = ?',
       whereArgs: [medicationId, dateStr, timeStr],
@@ -256,17 +364,53 @@ class MedicationService {
 
   /// Obtient les médicaments non pris pour une date donnée
   Future<List<Map<String, dynamic>>> getMissedDoses(DateTime date) async {
-    final db = await database;
     final dateStr = date.toIso8601String().split('T')[0];
     final activeMedications = await getActiveMedications();
     final missed = <Map<String, dynamic>>[];
 
+    if (kIsWeb) {
+      final taken = await _getMedicationTakenFromStorage();
+      for (final medication in activeMedications) {
+        if (!medication.isActiveOnDate(date)) continue;
+
+        for (final time in medication.times) {
+          final timeStr = '${time.hour}:${time.minute}';
+          final wasTaken = taken.any(
+            (map) => map['medication_id'] == medication.id &&
+                     map['date'] == dateStr &&
+                     map['time'] == timeStr &&
+                     map['taken'] == 1,
+          );
+
+          if (!wasTaken) {
+            final reminderTime = DateTime(
+              date.year,
+              date.month,
+              date.day,
+              time.hour,
+              time.minute,
+            );
+
+            if (reminderTime.isBefore(DateTime.now())) {
+              missed.add({
+                'medication': medication,
+                'time': time,
+                'reminder_time': reminderTime,
+              });
+            }
+          }
+        }
+      }
+      return missed;
+    }
+
+    final db = await database;
     for (final medication in activeMedications) {
       if (!medication.isActiveOnDate(date)) continue;
 
       for (final time in medication.times) {
         // Vérifier si pris
-        final taken = await db.query(
+        final taken = await db!.query(
           'medication_taken',
           where: 'medication_id = ? AND date = ? AND time = ? AND taken = 1',
           whereArgs: [medication.id, dateStr, '${time.hour}:${time.minute}'],
@@ -333,8 +477,31 @@ class MedicationService {
     DateTime startDate,
     DateTime endDate,
   ) async {
+    if (kIsWeb) {
+      final taken = await _getMedicationTakenFromStorage();
+      final startStr = startDate.toIso8601String().split('T')[0];
+      final endStr = endDate.toIso8601String().split('T')[0];
+      
+      final filtered = taken.where((map) {
+        final date = map['date'] as String?;
+        return map['medication_id'] == medicationId &&
+               date != null &&
+               date >= startStr &&
+               date <= endStr;
+      }).toList();
+
+      final takenCount = filtered.where((m) => m['taken'] == 1).length;
+      final total = filtered.length;
+
+      return {
+        'taken': takenCount,
+        'total': total,
+        'percentage': total > 0 ? (takenCount / total * 100).round() : 0,
+        'entries': filtered.map((m) => MedicationTaken.fromMap(_convertWebMapToSqliteMap(m))).toList(),
+      };
+    }
     final db = await database;
-    final maps = await db.query(
+    final maps = await db!.query(
       'medication_taken',
       where: 'medication_id = ? AND date >= ? AND date <= ?',
       whereArgs: [

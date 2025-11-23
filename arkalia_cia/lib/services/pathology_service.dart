@@ -6,19 +6,26 @@ import 'package:flutter/foundation.dart';
 import '../models/pathology.dart';
 import '../models/pathology_tracking.dart';
 import '../utils/error_helper.dart';
+import '../utils/storage_helper.dart';
 import 'calendar_service.dart';
 
 /// Service de gestion des pathologies et de leur suivi
 class PathologyService {
   static Database? _database;
+  static const String _pathologiesKey = 'pathologies_web';
+  static const String _pathologyTrackingKey = 'pathology_tracking_web';
 
-  Future<Database> get database async {
+  Future<Database?> get database async {
+    if (kIsWeb) return null; // Sur le web, on n'utilise pas SQLite
     if (_database != null) return _database!;
     _database = await _initDatabase();
     return _database!;
   }
 
   Future<Database> _initDatabase() async {
+    if (kIsWeb) {
+      throw UnsupportedError('SQLite non disponible sur le web');
+    }
     try {
       final dbPath = await getDatabasesPath();
       final path = join(dbPath, 'arkalia_cia.db');
@@ -37,9 +44,6 @@ class PathologyService {
       );
     } catch (e) {
       ErrorHelper.logError('PathologyService._initDatabase', e);
-      if (kIsWeb) {
-        throw Exception('Base de données non disponible sur le web. Utilisez le mode offline avec SharedPreferences.');
-      }
       rethrow;
     }
   }
@@ -94,18 +98,55 @@ class PathologyService {
   // === CRUD PATHOLOGIES ===
 
   Future<int> insertPathology(Pathology pathology) async {
+    if (kIsWeb) {
+      final pathologies = await _getPathologiesFromStorage();
+      final remindersJson = jsonEncode(
+        pathology.reminders.map((key, value) => MapEntry(key, value.toMap())),
+      );
+      final map = pathology.toMap();
+      map['reminders'] = remindersJson;
+      if (map['id'] == null) {
+        map['id'] = DateTime.now().millisecondsSinceEpoch;
+      }
+      pathologies.add(map);
+      await StorageHelper.saveList(_pathologiesKey, pathologies);
+      return map['id'] as int;
+    }
     final db = await database;
     final remindersJson = jsonEncode(
       pathology.reminders.map((key, value) => MapEntry(key, value.toMap())),
     );
     final map = pathology.toMap();
     map['reminders'] = remindersJson;
-    return await db.insert('pathologies', map);
+    return await db!.insert('pathologies', map);
   }
 
   Future<List<Pathology>> getAllPathologies() async {
+    if (kIsWeb) {
+      final pathologies = await _getPathologiesFromStorage();
+      return pathologies.map((map) {
+        final converted = _convertWebMapToSqliteMap(map);
+        // Parser les reminders depuis JSON
+        if (converted['reminders'] != null && converted['reminders'] is String) {
+          try {
+            final remindersData = jsonDecode(converted['reminders'] as String) as Map<String, dynamic>;
+            final reminders = <String, ReminderConfig>{};
+            remindersData.forEach((key, value) {
+              reminders[key] = ReminderConfig.fromMap(
+                Map<String, dynamic>.from(value),
+              );
+            });
+            converted['reminders'] = reminders;
+          } catch (e) {
+            converted['reminders'] = <String, ReminderConfig>{};
+          }
+        }
+        return Pathology.fromMap(converted);
+      }).toList()
+        ..sort((a, b) => a.name.compareTo(b.name));
+    }
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
+    final List<Map<String, dynamic>> maps = await db!.query(
       'pathologies',
       orderBy: 'name ASC',
     );
@@ -130,8 +171,33 @@ class PathologyService {
   }
 
   Future<Pathology?> getPathologyById(int id) async {
+    if (kIsWeb) {
+      final pathologies = await _getPathologiesFromStorage();
+      final pathologyMap = pathologies.firstWhere(
+        (map) => map['id'] == id,
+        orElse: () => <String, dynamic>{},
+      );
+      if (pathologyMap.isEmpty) return null;
+      final converted = _convertWebMapToSqliteMap(pathologyMap);
+      // Parser les reminders depuis JSON
+      if (converted['reminders'] != null && converted['reminders'] is String) {
+        try {
+          final remindersData = jsonDecode(converted['reminders'] as String) as Map<String, dynamic>;
+          final reminders = <String, ReminderConfig>{};
+          remindersData.forEach((key, value) {
+            reminders[key] = ReminderConfig.fromMap(
+              Map<String, dynamic>.from(value),
+            );
+          });
+          converted['reminders'] = reminders;
+        } catch (e) {
+          converted['reminders'] = <String, ReminderConfig>{};
+        }
+      }
+      return Pathology.fromMap(converted);
+    }
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
+    final List<Map<String, dynamic>> maps = await db!.query(
       'pathologies',
       where: 'id = ?',
       whereArgs: [id],
@@ -158,6 +224,20 @@ class PathologyService {
   }
 
   Future<int> updatePathology(Pathology pathology) async {
+    if (kIsWeb) {
+      final pathologies = await _getPathologiesFromStorage();
+      final index = pathologies.indexWhere((map) => map['id'] == pathology.id);
+      if (index == -1) return 0;
+      final updatedPathology = pathology.copyWith(updatedAt: DateTime.now());
+      final remindersJson = jsonEncode(
+        updatedPathology.reminders.map((key, value) => MapEntry(key, value.toMap())),
+      );
+      final map = updatedPathology.toMap();
+      map['reminders'] = remindersJson;
+      pathologies[index] = map;
+      await StorageHelper.saveList(_pathologiesKey, pathologies);
+      return 1;
+    }
     final db = await database;
     final updatedPathology = pathology.copyWith(updatedAt: DateTime.now());
     final remindersJson = jsonEncode(
@@ -165,7 +245,7 @@ class PathologyService {
     );
     final map = updatedPathology.toMap();
     map['reminders'] = remindersJson;
-    return await db.update(
+    return await db!.update(
       'pathologies',
       map,
       where: 'id = ?',
@@ -174,21 +254,62 @@ class PathologyService {
   }
 
   Future<int> deletePathology(int id) async {
+    if (kIsWeb) {
+      final pathologies = await _getPathologiesFromStorage();
+      pathologies.removeWhere((map) => map['id'] == id);
+      await StorageHelper.saveList(_pathologiesKey, pathologies);
+      // Supprimer aussi les tracking associés
+      final tracking = await _getPathologyTrackingFromStorage();
+      tracking.removeWhere((map) => map['pathology_id'] == id);
+      await StorageHelper.saveList(_pathologyTrackingKey, tracking);
+      return 1;
+    }
     final db = await database;
-    return await db.delete(
+    return await db!.delete(
       'pathologies',
       where: 'id = ?',
       whereArgs: [id],
     );
   }
 
+  // Méthodes helper pour le stockage web
+  Future<List<Map<String, dynamic>>> _getPathologiesFromStorage() async {
+    return await StorageHelper.getList(_pathologiesKey);
+  }
+
+  Future<List<Map<String, dynamic>>> _getPathologyTrackingFromStorage() async {
+    return await StorageHelper.getList(_pathologyTrackingKey);
+  }
+
+  // Convertit le format web vers format SQLite
+  Map<String, dynamic> _convertWebMapToSqliteMap(Map<String, dynamic> map) {
+    final converted = Map<String, dynamic>.from(map);
+    if (converted['id'] != null) {
+      converted['id'] = converted['id'] is int 
+          ? converted['id'] 
+          : int.tryParse(converted['id'].toString()) ?? converted['id'];
+    }
+    return converted;
+  }
+
   // === CRUD TRACKING ===
 
   Future<int> insertTracking(PathologyTracking tracking) async {
+    if (kIsWeb) {
+      final trackingList = await _getPathologyTrackingFromStorage();
+      final map = tracking.toMap();
+      map['data'] = jsonEncode(tracking.data);
+      if (map['id'] == null) {
+        map['id'] = DateTime.now().millisecondsSinceEpoch;
+      }
+      trackingList.add(map);
+      await StorageHelper.saveList(_pathologyTrackingKey, trackingList);
+      return map['id'] as int;
+    }
     final db = await database;
     final map = tracking.toMap();
     map['data'] = jsonEncode(tracking.data);
-    return await db.insert('pathology_tracking', map);
+    return await db!.insert('pathology_tracking', map);
   }
 
   Future<List<PathologyTracking>> getTrackingByPathology(
@@ -196,6 +317,44 @@ class PathologyService {
     DateTime? startDate,
     DateTime? endDate,
   }) async {
+    if (kIsWeb) {
+      final tracking = await _getPathologyTrackingFromStorage();
+      var filtered = tracking.where((map) => map['pathology_id'] == pathologyId).toList();
+      
+      if (startDate != null) {
+        final startStr = startDate.toIso8601String();
+        filtered = filtered.where((map) {
+          final date = map['date'] as String?;
+          return date != null && date >= startStr;
+        }).toList();
+      }
+      if (endDate != null) {
+        final endStr = endDate.toIso8601String();
+        filtered = filtered.where((map) {
+          final date = map['date'] as String?;
+          return date != null && date <= endStr;
+        }).toList();
+      }
+      
+      filtered.sort((a, b) {
+        final dateA = a['date'] as String? ?? '';
+        final dateB = b['date'] as String? ?? '';
+        return dateB.compareTo(dateA); // DESC
+      });
+      
+      return filtered.map((map) {
+        final converted = _convertWebMapToSqliteMap(map);
+        // Parser data depuis JSON
+        if (converted['data'] != null && converted['data'] is String) {
+          try {
+            converted['data'] = jsonDecode(converted['data'] as String);
+          } catch (e) {
+            converted['data'] = {};
+          }
+        }
+        return PathologyTracking.fromMap(converted);
+      }).toList();
+    }
     final db = await database;
     String where = 'pathology_id = ?';
     List<dynamic> whereArgs = [pathologyId];
@@ -209,7 +368,7 @@ class PathologyService {
       whereArgs.add(endDate.toIso8601String());
     }
 
-    final List<Map<String, dynamic>> maps = await db.query(
+    final List<Map<String, dynamic>> maps = await db!.query(
       'pathology_tracking',
       where: where,
       whereArgs: whereArgs,
@@ -230,8 +389,26 @@ class PathologyService {
   }
 
   Future<PathologyTracking?> getTrackingById(int id) async {
+    if (kIsWeb) {
+      final tracking = await _getPathologyTrackingFromStorage();
+      final trackingMap = tracking.firstWhere(
+        (map) => map['id'] == id,
+        orElse: () => <String, dynamic>{},
+      );
+      if (trackingMap.isEmpty) return null;
+      final converted = _convertWebMapToSqliteMap(trackingMap);
+      // Parser data depuis JSON
+      if (converted['data'] != null && converted['data'] is String) {
+        try {
+          converted['data'] = jsonDecode(converted['data'] as String);
+        } catch (e) {
+          converted['data'] = {};
+        }
+      }
+      return PathologyTracking.fromMap(converted);
+    }
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
+    final List<Map<String, dynamic>> maps = await db!.query(
       'pathology_tracking',
       where: 'id = ?',
       whereArgs: [id],
@@ -251,10 +428,20 @@ class PathologyService {
   }
 
   Future<int> updateTracking(PathologyTracking tracking) async {
+    if (kIsWeb) {
+      final trackingList = await _getPathologyTrackingFromStorage();
+      final index = trackingList.indexWhere((map) => map['id'] == tracking.id);
+      if (index == -1) return 0;
+      final map = tracking.toMap();
+      map['data'] = jsonEncode(tracking.data);
+      trackingList[index] = map;
+      await StorageHelper.saveList(_pathologyTrackingKey, trackingList);
+      return 1;
+    }
     final db = await database;
     final map = tracking.toMap();
     map['data'] = jsonEncode(tracking.data);
-    return await db.update(
+    return await db!.update(
       'pathology_tracking',
       map,
       where: 'id = ?',
@@ -263,8 +450,14 @@ class PathologyService {
   }
 
   Future<int> deleteTracking(int id) async {
+    if (kIsWeb) {
+      final tracking = await _getPathologyTrackingFromStorage();
+      tracking.removeWhere((map) => map['id'] == id);
+      await StorageHelper.saveList(_pathologyTrackingKey, tracking);
+      return 1;
+    }
     final db = await database;
-    return await db.delete(
+    return await db!.delete(
       'pathology_tracking',
       where: 'id = ?',
       whereArgs: [id],

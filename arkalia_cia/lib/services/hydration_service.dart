@@ -3,19 +3,26 @@ import 'package:path/path.dart';
 import 'package:flutter/foundation.dart';
 import '../models/hydration_tracking.dart';
 import '../utils/error_helper.dart';
+import '../utils/storage_helper.dart';
 import 'calendar_service.dart';
 
 /// Service de gestion de l'hydratation et rappels
 class HydrationService {
   static Database? _database;
+  static const String _hydrationEntriesKey = 'hydration_entries_web';
+  static const String _hydrationGoalsKey = 'hydration_goals_web';
 
-  Future<Database> get database async {
+  Future<Database?> get database async {
+    if (kIsWeb) return null; // Sur le web, on n'utilise pas SQLite
     if (_database != null) return _database!;
     _database = await _initDatabase();
     return _database!;
   }
 
   Future<Database> _initDatabase() async {
+    if (kIsWeb) {
+      throw UnsupportedError('SQLite non disponible sur le web');
+    }
     try {
       final dbPath = await getDatabasesPath();
       final path = join(dbPath, 'arkalia_cia.db');
@@ -34,9 +41,6 @@ class HydrationService {
       );
     } catch (e) {
       ErrorHelper.logError('HydrationService._initDatabase', e);
-      if (kIsWeb) {
-        throw Exception('Base de données non disponible sur le web. Utilisez le mode offline avec SharedPreferences.');
-      }
       rethrow;
     }
   }
@@ -76,14 +80,33 @@ class HydrationService {
 
   // CRUD Entrées hydratation
   Future<int> insertHydrationEntry(HydrationEntry entry) async {
+    if (kIsWeb) {
+      final entries = await _getHydrationEntriesFromStorage();
+      final entryMap = entry.toMap();
+      if (entryMap['id'] == null) {
+        entryMap['id'] = DateTime.now().millisecondsSinceEpoch;
+      }
+      entries.add(entryMap);
+      await StorageHelper.saveList(_hydrationEntriesKey, entries);
+      return entryMap['id'] as int;
+    }
     final db = await database;
-    return await db.insert('hydration_entries', entry.toMap());
+    return await db!.insert('hydration_entries', entry.toMap());
   }
 
   Future<List<HydrationEntry>> getHydrationEntries(DateTime date) async {
+    if (kIsWeb) {
+      final entries = await _getHydrationEntriesFromStorage();
+      final dateStr = date.toIso8601String().split('T')[0];
+      return entries
+          .where((map) => map['date'] == dateStr)
+          .map((map) => HydrationEntry.fromMap(_convertWebMapToSqliteMap(map)))
+          .toList()
+        ..sort((a, b) => a.time.compareTo(b.time));
+    }
     final db = await database;
     final dateStr = date.toIso8601String().split('T')[0];
-    final List<Map<String, dynamic>> maps = await db.query(
+    final List<Map<String, dynamic>> maps = await db!.query(
       'hydration_entries',
       where: 'date = ?',
       whereArgs: [dateStr],
@@ -96,10 +119,27 @@ class HydrationService {
     DateTime startDate,
     DateTime endDate,
   ) async {
+    if (kIsWeb) {
+      final entries = await _getHydrationEntriesFromStorage();
+      final startStr = startDate.toIso8601String().split('T')[0];
+      final endStr = endDate.toIso8601String().split('T')[0];
+      return entries
+          .where((map) {
+            final date = map['date'] as String?;
+            return date != null && date >= startStr && date <= endStr;
+          })
+          .map((map) => HydrationEntry.fromMap(_convertWebMapToSqliteMap(map)))
+          .toList()
+        ..sort((a, b) {
+          final dateCompare = a.date.compareTo(b.date);
+          if (dateCompare != 0) return dateCompare;
+          return a.time.compareTo(b.time);
+        });
+    }
     final db = await database;
     final startStr = startDate.toIso8601String().split('T')[0];
     final endStr = endDate.toIso8601String().split('T')[0];
-    final List<Map<String, dynamic>> maps = await db.query(
+    final List<Map<String, dynamic>> maps = await db!.query(
       'hydration_entries',
       where: 'date >= ? AND date <= ?',
       whereArgs: [startStr, endStr],
@@ -109,21 +149,66 @@ class HydrationService {
   }
 
   Future<int> deleteHydrationEntry(int id) async {
+    if (kIsWeb) {
+      final entries = await _getHydrationEntriesFromStorage();
+      entries.removeWhere((map) => map['id'] == id);
+      await StorageHelper.saveList(_hydrationEntriesKey, entries);
+      return 1;
+    }
     final db = await database;
-    return await db.delete(
+    return await db!.delete(
       'hydration_entries',
       where: 'id = ?',
       whereArgs: [id],
     );
   }
 
+  // Méthodes helper pour le stockage web
+  Future<List<Map<String, dynamic>>> _getHydrationEntriesFromStorage() async {
+    return await StorageHelper.getList(_hydrationEntriesKey);
+  }
+
+  Future<List<Map<String, dynamic>>> _getHydrationGoalsFromStorage() async {
+    return await StorageHelper.getList(_hydrationGoalsKey);
+  }
+
+  // Convertit le format web vers format SQLite
+  Map<String, dynamic> _convertWebMapToSqliteMap(Map<String, dynamic> map) {
+    final converted = Map<String, dynamic>.from(map);
+    if (converted['id'] != null) {
+      converted['id'] = converted['id'] is int 
+          ? converted['id'] 
+          : int.tryParse(converted['id'].toString()) ?? converted['id'];
+    }
+    return converted;
+  }
+
   /// Obtient la progression quotidienne
   Future<Map<String, dynamic>> getDailyProgress(DateTime date) async {
-    final db = await database;
     final dateStr = date.toIso8601String().split('T')[0];
     final goal = await getHydrationGoal();
 
-    final result = await db.rawQuery(
+    if (kIsWeb) {
+      final entries = await getHydrationEntries(date);
+      final total = entries.fold<int>(0, (sum, entry) => sum + entry.amount);
+      final percentage = goal.dailyGoal > 0 ? (total / goal.dailyGoal * 100).round() : 0;
+      final remaining = goal.dailyGoal - total;
+      final glasses = (total / 250).round();
+
+      return {
+        'date': date,
+        'total': total,
+        'goal': goal.dailyGoal,
+        'remaining': remaining > 0 ? remaining : 0,
+        'percentage': percentage > 100 ? 100 : percentage,
+        'glasses': glasses,
+        'goal_glasses': goal.glasses,
+        'is_goal_reached': total >= goal.dailyGoal,
+      };
+    }
+
+    final db = await database;
+    final result = await db!.rawQuery(
       'SELECT SUM(amount) as total FROM hydration_entries WHERE date = ?',
       [dateStr],
     );
@@ -198,8 +283,27 @@ class HydrationService {
 
   // CRUD Objectif hydratation
   Future<HydrationGoal> getHydrationGoal() async {
+    if (kIsWeb) {
+      final goals = await _getHydrationGoalsFromStorage();
+      if (goals.isNotEmpty) {
+        // Prendre le plus récent
+        goals.sort((a, b) {
+          final dateA = a['updated_at'] as String? ?? '';
+          final dateB = b['updated_at'] as String? ?? '';
+          return dateB.compareTo(dateA);
+        });
+        return HydrationGoal.fromMap(_convertWebMapToSqliteMap(goals.first));
+      }
+      // Créer objectif par défaut
+      final defaultGoal = HydrationGoal();
+      final goalMap = defaultGoal.toMap();
+      goalMap['id'] = DateTime.now().millisecondsSinceEpoch;
+      goals.add(goalMap);
+      await StorageHelper.saveList(_hydrationGoalsKey, goals);
+      return defaultGoal;
+    }
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
+    final List<Map<String, dynamic>> maps = await db!.query(
       'hydration_goals',
       orderBy: 'updated_at DESC',
       limit: 1,
@@ -214,8 +318,16 @@ class HydrationService {
   }
 
   Future<void> updateHydrationGoal(HydrationGoal goal) async {
+    if (kIsWeb) {
+      final goals = await _getHydrationGoalsFromStorage();
+      final goalMap = goal.toMap();
+      goalMap['id'] = DateTime.now().millisecondsSinceEpoch;
+      goals.add(goalMap);
+      await StorageHelper.saveList(_hydrationGoalsKey, goals);
+      return;
+    }
     final db = await database;
-    await db.insert('hydration_goals', goal.toMap());
+    await db!.insert('hydration_goals', goal.toMap());
   }
 
   /// Obtient les statistiques sur une période
