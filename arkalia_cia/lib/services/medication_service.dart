@@ -510,8 +510,8 @@ class MedicationService {
         final date = map['date'] as String?;
         return map['medication_id'] == medicationId &&
                date != null &&
-               date >= startStr &&
-               date <= endStr;
+               date.compareTo(startStr) >= 0 &&
+               date.compareTo(endStr) <= 0;
       }).toList();
 
       final takenCount = filtered.where((m) => m['taken'] == 1).length;

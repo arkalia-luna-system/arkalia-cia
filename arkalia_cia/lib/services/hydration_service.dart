@@ -91,7 +91,10 @@ class HydrationService {
       return entryMap['id'] as int;
     }
     final db = await database;
-    return await db!.insert('hydration_entries', entry.toMap());
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
+    return await db.insert('hydration_entries', entry.toMap());
   }
 
   Future<List<HydrationEntry>> getHydrationEntries(DateTime date) async {
@@ -105,8 +108,11 @@ class HydrationService {
         ..sort((a, b) => a.time.compareTo(b.time));
     }
     final db = await database;
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
     final dateStr = date.toIso8601String().split('T')[0];
-    final List<Map<String, dynamic>> maps = await db!.query(
+    final List<Map<String, dynamic>> maps = await db.query(
       'hydration_entries',
       where: 'date = ?',
       whereArgs: [dateStr],
@@ -137,9 +143,12 @@ class HydrationService {
         });
     }
     final db = await database;
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
     final startStr = startDate.toIso8601String().split('T')[0];
     final endStr = endDate.toIso8601String().split('T')[0];
-    final List<Map<String, dynamic>> maps = await db!.query(
+    final List<Map<String, dynamic>> maps = await db.query(
       'hydration_entries',
       where: 'date >= ? AND date <= ?',
       whereArgs: [startStr, endStr],
@@ -156,7 +165,10 @@ class HydrationService {
       return 1;
     }
     final db = await database;
-    return await db!.delete(
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
+    return await db.delete(
       'hydration_entries',
       where: 'id = ?',
       whereArgs: [id],
@@ -208,7 +220,10 @@ class HydrationService {
     }
 
     final db = await database;
-    final result = await db!.rawQuery(
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
+    final result = await db.rawQuery(
       'SELECT SUM(amount) as total FROM hydration_entries WHERE date = ?',
       [dateStr],
     );
@@ -303,7 +318,10 @@ class HydrationService {
       return defaultGoal;
     }
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db!.query(
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
+    final List<Map<String, dynamic>> maps = await db.query(
       'hydration_goals',
       orderBy: 'updated_at DESC',
       limit: 1,
@@ -327,7 +345,10 @@ class HydrationService {
       return;
     }
     final db = await database;
-    await db!.insert('hydration_goals', goal.toMap());
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
+    await db.insert('hydration_goals', goal.toMap());
   }
 
   /// Obtient les statistiques sur une période

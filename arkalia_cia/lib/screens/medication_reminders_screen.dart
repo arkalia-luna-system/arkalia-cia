@@ -3,6 +3,8 @@ import '../models/medication.dart';
 import '../services/medication_service.dart';
 import '../widgets/medication_reminder_widget.dart';
 
+// MedicationTaken est défini dans medication.dart
+
 /// Écran de gestion des rappels médicaments
 class MedicationRemindersScreen extends StatefulWidget {
   const MedicationRemindersScreen({super.key});

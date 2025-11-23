@@ -374,6 +374,9 @@ class PathologyService {
       }).toList();
     }
     final db = await database;
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
     String where = 'pathology_id = ?';
     List<dynamic> whereArgs = [pathologyId];
 
@@ -386,7 +389,7 @@ class PathologyService {
       whereArgs.add(endDate.toIso8601String());
     }
 
-    final List<Map<String, dynamic>> maps = await db!.query(
+    final List<Map<String, dynamic>> maps = await db.query(
       'pathology_tracking',
       where: where,
       whereArgs: whereArgs,
@@ -426,7 +429,10 @@ class PathologyService {
       return PathologyTracking.fromMap(converted);
     }
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db!.query(
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
+    final List<Map<String, dynamic>> maps = await db.query(
       'pathology_tracking',
       where: 'id = ?',
       whereArgs: [id],
@@ -457,9 +463,12 @@ class PathologyService {
       return 1;
     }
     final db = await database;
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
     final map = tracking.toMap();
     map['data'] = jsonEncode(tracking.data);
-    return await db!.update(
+    return await db.update(
       'pathology_tracking',
       map,
       where: 'id = ?',
@@ -475,7 +484,10 @@ class PathologyService {
       return 1;
     }
     final db = await database;
-    return await db!.delete(
+    if (db == null) {
+      throw UnsupportedError('Base de données non disponible');
+    }
+    return await db.delete(
       'pathology_tracking',
       where: 'id = ?',
       whereArgs: [id],
