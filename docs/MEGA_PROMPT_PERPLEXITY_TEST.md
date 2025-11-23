@@ -1,8 +1,31 @@
 # 🎯 MÉGA PROMPT POUR PERPLEXITY - TEST COMPLET ARKALIA CIA
 
-**Date** : 23 novembre 2025  
+**Date** : 24 novembre 2025  
 **Version Application** : 1.3.0  
 **Objectif** : **TESTER L'APPLICATION EN DIRECT** dans le navigateur Comet avec les outils browser de Perplexity
+
+## ⚠️ IMPORTANT - ÉVITE LES RÉPÉTITIONS !
+
+**NE REFAIS PAS LES MÊMES TESTS QUE LES AUDITS PRÉCÉDENTS !**
+
+### ✅ CE QUI A DÉJÀ ÉTÉ TESTÉ ET VALIDÉ (v1.3.0) :
+- ✅ **Rappels** : Form submission fonctionne, données persistent (8/10)
+- ✅ **Pathologies** : Type-casting error CORRIGÉ, données persistent maintenant (9/10)
+- ✅ **Médecins** : Fonctionne parfaitement, données persistent (9/10)
+- ✅ **Documents** : Navigation CORRIGÉE, module accessible (8/10)
+- ✅ **Urgences** : Fonctionne avec bonne UI/UX (8/10)
+
+### 🎯 CE QUE TU DOIS TESTER MAINTENANT (NOUVEAU) :
+1. **Modules NON TESTÉS** : Santé, ARIA, Calendrier, Sync, Hydratation, Patterns, Partage Familial, Assistant IA
+2. **Cas limites et edge cases** : Champs vides, valeurs invalides, données corrompues
+3. **Performance** : Temps de chargement, fluidité des animations, réactivité
+4. **Accessibilité** : Contraste, taille des textes, navigation clavier
+5. **Compatibilité cross-platform** : Comportement sur web vs mobile
+6. **Workflows complets** : Scénarios utilisateur end-to-end (créer pathologie → ajouter tracking → voir graphiques)
+7. **Intégrations** : ARIA sync, calendrier natif, contacts ICE
+8. **Gestion erreurs** : Messages d'erreur clairs, récupération après erreur
+9. **UX avancée** : Recherche, filtres, tri, pagination
+10. **Sécurité** : Validation des inputs, protection XSS, gestion tokens
 
 ---
 
@@ -107,6 +130,25 @@ Pour tester les endpoints API si nécessaire.
 
 ## 📋 CHECKLIST COMPLÈTE DE TEST - MODULE PAR MODULE
 
+### ⚠️ STRATÉGIE DE TEST - ÉVITE LES RÉPÉTITIONS
+
+**Avant de commencer chaque module, vérifie :**
+1. **As-tu déjà testé ce module dans un audit précédent ?**
+   - Si OUI → Passe aux tests AVANCÉS (edge cases, performance, workflows)
+   - Si NON → Fais les tests de base PUIS les tests avancés
+
+2. **Pour les modules DÉJÀ TESTÉS, concentre-toi sur :**
+   - ✅ Workflows complets (créer → modifier → supprimer → voir historique)
+   - ✅ Cas limites (données invalides, champs vides, valeurs extrêmes)
+   - ✅ Performance (temps de chargement, fluidité)
+   - ✅ Intégrations (sync avec autres modules)
+   - ✅ Gestion erreurs (messages clairs, récupération)
+
+3. **Pour les modules NON TESTÉS, fais :**
+   - ✅ Tests de base (ouverture, navigation, formulaires)
+   - ✅ Tests fonctionnels (CRUD, recherche, filtres)
+   - ✅ Tests avancés (workflows, edge cases)
+
 ### 🔐 1. PREMIÈRE OUVERTURE & ONBOARDING
 
 #### Actions à Faire avec Browser Tools
@@ -176,12 +218,25 @@ Pour tester les endpoints API si nécessaire.
 
 ---
 
-### 📄 3. GESTION DOCUMENTS
+### 📄 3. GESTION DOCUMENTS ⚠️ DÉJÀ TESTÉ - TESTS AVANCÉS SEULEMENT
+
+**Status précédent** : Navigation CORRIGÉE, module accessible (8/10)
+
+#### Tests AVANCÉS à Faire (pas les tests de base)
+1. **Workflow complet** :
+   - Import PDF → Extraction métadonnées → Détection médecin → Ajout automatique → Recherche
+2. **Cas limites** :
+   - PDF corrompu, PDF très volumineux (>10MB), PDF sans texte (image uniquement)
+3. **Performance** :
+   - Temps d'import, temps d'extraction OCR, temps de recherche
+4. **Intégrations** :
+   - Détection médecin → Ajout à annuaire automatique
+   - Extraction métadonnées → Pré-remplissage formulaire
 
 #### Actions à Faire avec Browser Tools
 1. **`browser_click`** sur le bouton "Documents" (vert)
 2. **`browser_snapshot`** pour voir l'écran Documents
-3. **Importe des PDF** :
+3. **Importe des PDF** (tests avancés) :
    - **`browser_click`** sur le bouton "+" ou "Importer"
    - **`browser_snapshot`** pour voir le dialogue
    - Note si tu peux sélectionner des fichiers

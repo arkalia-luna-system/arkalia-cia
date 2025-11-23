@@ -12,7 +12,7 @@ Guide de navigation dans la documentation du projet Arkalia CIA.
 
 ### Statut et état du projet
 
-- **[STATUT_FINAL_CONSOLIDE.md](./STATUT_FINAL_CONSOLIDE.md)** — Document principal
+- **[STATUT_FINAL_PROJET.md](./STATUT_FINAL_PROJET.md)** — Document principal
   - Statut complet d'exploitation
   - Fonctionnalités implémentées
   - Métriques et conclusion
@@ -129,7 +129,7 @@ Tous les plans sont dans le dossier **[plans/](./plans/)** :
 
 | Sujet | Document principal |
 |-------|-------------------|
-| Statut projet | `STATUT_FINAL_CONSOLIDE.md` |
+| Statut projet | `STATUT_FINAL_PROJET.md` |
 | API | `API_DOCUMENTATION.md` |
 | Architecture | `ARCHITECTURE.md` |
 | Vue d'ensemble | `VUE_ENSEMBLE_PROJET.md` |
@@ -146,7 +146,7 @@ Tous les plans sont dans le dossier **[plans/](./plans/)** :
 ```
 docs/
 ├── INDEX_DOCUMENTATION.md          # Ce fichier
-├── STATUT_FINAL_CONSOLIDE.md      # Statut principal
+├── STATUT_FINAL_PROJET.md         # Statut principal
 ├── ARCHITECTURE.md                 # Architecture système
 ├── VUE_ENSEMBLE_PROJET.md         # Vue d'ensemble visuelle
 ├── API_DOCUMENTATION.md           # Documentation API complète
@@ -166,7 +166,7 @@ docs/
 
 | Type | Documents principaux |
 |------|---------------------|
-| **Statut** | `STATUT_FINAL_CONSOLIDE.md` |
+| **Statut** | `STATUT_FINAL_PROJET.md` |
 | **Architecture** | `ARCHITECTURE.md`, `VUE_ENSEMBLE_PROJET.md` |
 | **API** | `API_DOCUMENTATION.md`, `API.md` |
 | **Sécurité** | `CHECKLIST_FINALE_SECURITE.md`, `audits/AUDIT_SECURITE_SENIOR.md` |
@@ -177,7 +177,7 @@ docs/
 
 | Besoin | Document recommandé |
 |--------|---------------------|
-| Comprendre le projet | `STATUT_FINAL_CONSOLIDE.md` |
+| Comprendre le projet | `STATUT_FINAL_PROJET.md` |
 | Démarrer le développement | `ARCHITECTURE.md`, `CONTRIBUTING.md` |
 | Utiliser l'API | `API_DOCUMENTATION.md` |
 | Déployer | `deployment/DEPLOYMENT.md`, `deployment/BUILD_RELEASE_ANDROID.md` |
@@ -188,7 +188,7 @@ docs/
 
 ## Voir aussi
 
-- [STATUT_FINAL_CONSOLIDE.md](STATUT_FINAL_CONSOLIDE.md) - Statut final consolidé du projet
+- [STATUT_FINAL_PROJET.md](STATUT_FINAL_PROJET.md) - Statut final consolidé du projet
 - [VALIDATION.md](VALIDATION.md) - Checklist de validation
 - [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) - Checklist de release
 
