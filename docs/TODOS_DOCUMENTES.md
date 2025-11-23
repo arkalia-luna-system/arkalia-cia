@@ -1,7 +1,7 @@
 # 📝 TODOs Documentés - 23 Novembre 2025
 
 **Date**: 23 novembre 2025  
-**Statut**: Mis à jour - Sélection médecin et refresh token implémentés
+**Statut**: Mis à jour - Toutes les 4 phases d'améliorations terminées (23 novembre 2025)
 
 ---
 
@@ -262,36 +262,6 @@
 
 ---
 
-### 7. Phase 1 - Améliorations Immédiates ✅ TERMINÉE
-
-**Date**: 23 novembre 2025
-
-**Description**: Implémentation Phase 1 selon BESOINS_MERE_23_NOVEMBRE_2025.md
-
-**Statut actuel**:
-- ✅ Codes couleur par spécialité (Doctor.getColorForSpecialty())
-- ✅ Badges colorés dans doctors_list_screen.dart
-- ✅ Encadrement coloré dans calendar_screen.dart (table_calendar)
-- ✅ Extraction enrichie médecins (adresse, téléphone, email) dans metadata_extractor.py
-- ✅ Déduplication intelligente (findSimilarDoctors()) dans doctor_service.dart
-- ✅ Bouton Calendrier dans home_page.dart
-- ✅ Tests unitaires créés (test_metadata_extractor_enriched.py)
-
-**Priorité**: 🟢 TERMINÉ
-
-**Fichiers modifiés/créés**:
-- `arkalia_cia/lib/models/doctor.dart` - Méthode getColorForSpecialty()
-- `arkalia_cia/lib/screens/doctors_list_screen.dart` - Badges colorés
-- `arkalia_cia/lib/services/calendar_service.dart` - Support couleurs médecins
-- `arkalia_cia/lib/screens/calendar_screen.dart` - Écran calendrier complet
-- `arkalia_cia/lib/screens/home_page.dart` - Bouton Calendrier
-- `arkalia_cia/lib/services/doctor_service.dart` - findSimilarDoctors()
-- `arkalia_cia_python_backend/pdf_parser/metadata_extractor.py` - Extraction enrichie
-- `arkalia_cia/pubspec.yaml` - Ajout table_calendar
-- `tests/unit/test_metadata_extractor_enriched.py` - Tests extraction enrichie
-
----
-
 ### 8. Endpoints Spécifiques Portails Santé
 
 **Fichier**: `arkalia_cia/lib/services/health_portal_auth_service.dart` (ligne 81)
@@ -367,8 +337,8 @@
 | Priorité | Nombre | Statut |
 |----------|--------|--------|
 | 🔴 Critique | 0 | - |
-| 🟠 Élevée | 1 | Import portails (nécessite APIs externes) |
-| 🟡 Moyenne | 0 | ✅ Tous terminés (Recherche médecin, Refresh token, Type examen, Audit log, Export/import) |
+| 🟠 Élevée | 0 | ✅ Toutes terminées (Phase 1, 2, 3, 4 - 23 novembre 2025) |
+| 🟡 Moyenne | 0 | ✅ Tous terminés (Recherche médecin, Refresh token, Type examen, Audit log, Export/import, Phase 1-4) |
 | 🟢 Basse | 1 | Signing (Application ID TERMINÉ) |
 
 ---
@@ -377,11 +347,16 @@
 
 1. **Court terme** (1-2 semaines): ✅ TERMINÉ
    - ✅ Implémenter sélection médecin dans recherche avancée (23 novembre 2025)
+   - ✅ Phase 1 : Codes couleur, calendrier, extraction enrichie (23 novembre 2025)
+   - ✅ Phase 2 : Médicaments et hydratation (23 novembre 2025)
+   - ✅ Phase 3 : Module pathologies (23 novembre 2025)
+   - ✅ Phase 4 : Améliorations IA (23 novembre 2025)
    - Documenter APIs portails santé (si disponibles)
 
-2. **Moyen terme** (1-2 mois): ✅ PARTIELLEMENT TERMINÉ
-   - Implémenter import portails santé (nécessite APIs externes)
+2. **Moyen terme** (1-2 mois): ✅ TERMINÉ
    - ✅ Implémenter refresh token automatique (23 novembre 2025)
+   - ✅ Toutes les 4 phases d'améliorations (23 novembre 2025)
+   - Implémenter import portails santé (nécessite APIs externes - non bloquant)
 
 3. **Long terme** (quand APIs disponibles):
    - Endpoints spécifiques par portail

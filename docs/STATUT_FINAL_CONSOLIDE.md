@@ -124,7 +124,18 @@ Le projet Arkalia CIA exploite maintenant 100% de son potentiel avec toutes les 
 - **Tests** : Tests Python complets pour structure, templates et tracking
 - **Documentation** : Mise à jour BESOINS_MERE_23_NOVEMBRE_2025.md et STATUT_FINAL_CONSOLIDE.md
 
-## Améliorations finales appliquées
+### Phase 4 : Améliorations IA (23 novembre 2025) ✅
+
+- **Reconnaissance améliorée** : Patterns examens enrichis (synonymes, abréviations), score de confiance, flag `needs_verification` si confiance < 0.7, patterns médecins enrichis
+- **Suggestions intelligentes** : `suggest_exam_type()`, `suggest_doctor_completion()`, `detect_duplicates()`, suggestions recherche avec synonymes, pré-remplissage formulaire
+- **IA conversationnelle pathologies** : `answer_pathology_question()`, `suggest_questions_for_appointment()`, détection automatique pathologie, suggestions examens/traitements/rappels
+- **Interface visuelle améliorée** : Widget `ExamTypeBadge`, filtres rapides par type examen, statistiques répartition, badges médecins plus visibles, légende couleurs
+- **Tests** : 16 nouveaux tests Phase 4 (tous passent), 0 erreur lint Python/Flutter
+- **Documentation** : Mise à jour BESOINS_MERE_23_NOVEMBRE_2025.md et STATUT_FINAL_CONSOLIDE.md
+
+---
+
+## Autres améliorations appliquées
 
 ### Import portails santé
 
@@ -199,16 +210,7 @@ Toutes les fonctionnalités critiques et avancées sont :
 
 Le projet est production-ready à 100%.
 
-### Phase 4 : Améliorations IA (23 novembre 2025) ✅
-
-- **Reconnaissance améliorée** : Patterns examens enrichis (synonymes, abréviations), score de confiance, flag `needs_verification` si confiance < 0.7, patterns médecins enrichis
-- **Suggestions intelligentes** : `suggest_exam_type()`, `suggest_doctor_completion()`, `detect_duplicates()`, suggestions recherche avec synonymes, pré-remplissage formulaire
-- **IA conversationnelle pathologies** : `answer_pathology_question()`, `suggest_questions_for_appointment()`, détection automatique pathologie, suggestions examens/traitements/rappels
-- **Interface visuelle améliorée** : Widget `ExamTypeBadge`, filtres rapides par type examen, statistiques répartition, badges médecins plus visibles, légende couleurs
-- **Tests** : 16 nouveaux tests Phase 4 (tous passent), 0 erreur lint Python/Flutter
-- **Documentation** : Mise à jour BESOINS_MERE_23_NOVEMBRE_2025.md et STATUT_FINAL_CONSOLIDE.md
-
-Voir [BESOINS_MERE_23_NOVEMBRE_2025.md](./BESOINS_MERE_23_NOVEMBRE_2025.md) pour détails complets.
+Voir [BESOINS_MERE_23_NOVEMBRE_2025.md](./BESOINS_MERE_23_NOVEMBRE_2025.md) pour détails complets des 4 phases d'améliorations.
 
 ---
 
@@ -223,7 +225,8 @@ Voir [BESOINS_MERE_23_NOVEMBRE_2025.md](./BESOINS_MERE_23_NOVEMBRE_2025.md) pour
 ---
 
 *Dernière mise à jour : 23 novembre 2025*
-*Statut : 100% d'exploitation atteint*
-*Améliorations : Sélection médecin dans recherche avancée, Refresh token portails santé, Filtre type examen, Audit log partage familial, Export/import médecins, Application ID Android, Tests corrigés, Lint zéro erreur*
+*Statut : 100% d'exploitation atteint - Toutes les 4 phases d'améliorations terminées*
+*Version : 1.3.0*
+*Améliorations : Phase 1 (Codes couleur, calendrier, extraction enrichie), Phase 2 (Médicaments, hydratation), Phase 3 (Pathologies), Phase 4 (Améliorations IA), Sélection médecin, Refresh token, Filtre type examen, Audit log, Export/import médecins, Tests corrigés, Lint zéro erreur*
 
 > **📋 NOUVEAUX BESOINS** : Voir **[BESOINS_MERE_23_NOVEMBRE_2025.md](./BESOINS_MERE_23_NOVEMBRE_2025.md)** pour l'analyse complète des besoins exprimés par votre mère (codes couleur médecins, rappels intelligents médicaments/hydratation, module pathologies familiales, etc.)
