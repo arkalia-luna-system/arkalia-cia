@@ -535,6 +535,108 @@ Je t'aime ! ❤️
 
 ---
 
+## 💭 TON ESPACE POUR ÉCRIRE TES IDÉES
+
+Maman, utilise cette section pour noter **tout ce qui te passe par la tête** concernant l'app :
+
+### 📝 Fonctionnalités que tu aimerais avoir
+
+```
+[Écris ici les fonctionnalités que tu aimerais que j'ajoute]
+
+Exemples :
+- Une fonction pour...
+- J'aimerais pouvoir...
+- Ce serait bien si...
+
+
+```
+
+---
+
+### 💡 Tes idées et suggestions
+
+```
+[Écris ici toutes tes idées, même les plus folles !]
+
+Exemples :
+- Une idée pour améliorer...
+- Je me demande si on pourrait...
+- Ce serait pratique si...
+
+
+```
+
+---
+
+### 🎨 Ce que tu aimerais changer ou améliorer
+
+```
+[Écris ici ce que tu voudrais changer dans l'app]
+
+Exemples :
+- Cette fonction est trop compliquée, je préférerais...
+- Les couleurs sont trop claires, je ne vois pas bien...
+- Ce bouton est trop petit...
+
+
+```
+
+---
+
+### ❓ Tes questions
+
+```
+[Écris ici toutes tes questions]
+
+Exemples :
+- Comment je fais pour... ?
+- Est-ce que l'app peut... ?
+- Je ne comprends pas...
+
+
+```
+
+---
+
+### 💬 Tes conseils pour améliorer l'app
+
+```
+[Écris ici tes conseils pour que l'app soit encore mieux]
+
+Exemples :
+- Pour les personnes de mon âge, ce serait mieux si...
+- Je pense que tu devrais ajouter...
+- Attention à ne pas oublier...
+
+
+```
+
+---
+
+### 📋 Autres remarques
+
+```
+[Écris ici tout ce qui te passe par la tête !]
+
+
+
+
+```
+
+---
+
+## 📤 Comment m'envoyer tes idées ?
+
+1. **Par email** : Envoie-moi ce fichier avec tes notes
+2. **Par SMS/WhatsApp** : Envoie-moi une photo de cette page
+3. **En personne** : Montre-moi ce que tu as écrit
+4. **Par téléphone** : Appelle-moi et dis-moi ce que tu as noté
+
+**Chaque fois que je vais implémenter quelque chose de nouveau, je mettrai à jour ce document et tu n'auras qu'à aller voir les nouveautés !** ✨
+
+---
+
 *Dernière mise à jour : 23 novembre 2025*  
 *Version : 1.3.0 (en développement)*  
 *Toutes les fonctionnalités implémentées - En cours de test final ⚠️*
