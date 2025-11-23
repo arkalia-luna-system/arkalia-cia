@@ -6,11 +6,11 @@
 ## 📊 Statistiques Réelles (Vérifiées)
 
 ### Structure Actuelle
-- **Fichiers de test**: 24 fichiers
-- **Tests collectés**: 352 tests
-- **Tests passent**: 352/352 ✅
-- **Classes de test**: 60+ classes
-- **Couverture**: 70.83% (seuil minimum: 15%) ✅
+- **Fichiers de test**: 27 fichiers
+- **Tests collectés**: 379 tests
+- **Tests passent**: 379/379 ✅
+- **Classes de test**: 65+ classes
+- **Couverture**: ~71% (seuil minimum: 15%) ✅
 - **Fixtures**: 40+ fixtures
 - **Erreurs lint**: 0 ✅
 
@@ -20,26 +20,28 @@ tests/
 ├── fixtures/          (2 fichiers)
 │   ├── __init__.py
 │   └── auth_helpers.py
-├── unit/             (22 fichiers)
+├── unit/             (25 fichiers)
 │   ├── test_api.py
 │   ├── test_api_ai_endpoints.py
 │   ├── test_aria_integration.py
-│   ├── test_auth.py ✅ (nouveau)
+│   ├── test_auth.py ✅
 │   ├── test_auto_documenter.py
 │   ├── test_backend_services.py
 │   ├── test_config.py ✅
 │   ├── test_conversational_ai.py
 │   ├── test_database.py
-│   ├── test_dependencies.py ✅ (nouveau)
+│   ├── test_dependencies.py ✅
 │   ├── test_document_service.py
 │   ├── test_exceptions.py
 │   ├── test_filename_validator.py ✅
+│   ├── test_metadata_extractor.py ✅ (nouveau)
+│   ├── test_ocr_integration.py ✅ (nouveau)
+│   ├── test_ocr_processor.py ✅ (nouveau)
 │   ├── test_pattern_analyzer.py (optimisé)
 │   ├── test_pdf_processor.py
 │   ├── test_retry.py ✅
-│   ├── test_search_doctor_filter.py ✅ (amélioré)
 │   ├── test_security_dashboard.py
-│   ├── test_security_utils.py ✅ (nouveau)
+│   ├── test_security_utils.py ✅
 │   ├── test_security_vulnerabilities.py
 │   ├── test_ssrf_validator.py ✅
 │   ├── test_storage.py

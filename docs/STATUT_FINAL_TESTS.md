@@ -10,17 +10,20 @@ Suite complète de tests optimisée, organisée et configurée pour une exécuti
 ## 📈 Statistiques Globales
 
 ### Structure
-- **Fichiers de test**: 24 fichiers
-- **Classes de test**: 60+ classes
-- **Méthodes de test**: 352 tests passent
+- **Fichiers de test**: 27 fichiers
+- **Classes de test**: 65+ classes
+- **Méthodes de test**: 379 tests collectés
 - **Fixtures**: 40+
-- **Tests unitaires**: ~340
-- **Tests d'intégration**: ~12
-- **Coverage**: 70.83% (requis : 15%)
+- **Tests unitaires**: ~363
+- **Tests d'intégration**: ~16
+- **Coverage**: ~71% (requis : 15%)
 - **Tests ajoutés récemment**: 
   - test_security_utils.py (37 tests)
   - test_dependencies.py (6 tests)
-  - test_auth.py (17 tests)
+  - test_auth.py (18 tests)
+  - test_metadata_extractor.py (12 tests)
+  - test_ocr_processor.py (5 tests)
+  - test_ocr_integration.py (7 tests)
 
 ### Organisation
 ```
