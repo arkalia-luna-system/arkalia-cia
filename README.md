@@ -147,6 +147,31 @@ graph TB
 - Medical emergency card
 - Critical health information
 
+#### ❤️ ARIA Integration
+- **Laboratory health integration** with Arkalia ARIA
+- **Pain tracking data** synchronization
+- **Pattern analysis** (psychological, pain triggers, correlations)
+- **Health metrics** (sleep, activity, stress) from ARIA
+- **Conversational AI enhancement** with pain context
+- **Medical export** preparation for healthcare professionals
+
+**Data Flow CIA ↔ ARIA**:
+- **CIA → ARIA**: Documents médicaux, consultations, examens (agrégats)
+- **ARIA → CIA**: Données douleur fine-grain, patterns psychologiques, métriques santé
+- **Clinical Vision**: CIA = "coffre-fort santé généraliste", ARIA = "microscope douleur/mental"
+
+**Example Use Cases**:
+1. **Before medical appointment**: CIA retrieves relevant pain data from ARIA to generate a summary report
+2. **Daily pain tracking**: User notes pain in ARIA → CIA sees aggregated insights for document context
+3. **Pattern detection**: ARIA detects pain patterns → CIA uses this context in conversational AI responses
+4. **Medical export**: User can export combined CIA documents + ARIA pain timeline for healthcare professionals
+
+**Technical Integration**:
+- REST API communication (optional, local-first)
+- Graceful degradation if ARIA unavailable
+- Retry logic with exponential backoff
+- Data privacy: user controls what is shared between systems
+
 ## Live Demo & Screenshots
 
 ### 🎬 **Interactive Demo**
@@ -462,7 +487,9 @@ Le projet utilise **Codecov** pour le suivi automatique de la couverture :
 
 | Project | Usage in CIA | Integration |
 |---------|-------------|-------------|
+| **❤️ [Arkalia ARIA](https://github.com/arkalia-luna-system/arkalia-aria)** | Pain tracking & psychological patterns | **Primary integration** - Health laboratory data sync |
 | **📊 [Metrics Collector](https://github.com/arkalia-luna-system/arkalia-metrics-collector)** | App usage analytics | Health monitoring |
+| **🤖 [BBIA-SIM](https://github.com/arkalia-luna-system/bbia-sim)** | Robot cognitive engine | Future: Robot companion integration (Phase 4) |
 | **🔧 [Athalia DevOps](https://github.com/arkalia-luna-system/athalia-dev-setup)** | Automated deployment | CI/CD pipeline |
 | **⚙️ [Base Template](https://github.com/arkalia-luna-system/base-template)** | Backend structure | Python API foundation |
 | **🎮 [Arkalia Quest](https://github.com/arkalia-luna-system/arkalia-quest)** | Educational notifications | Learning reminders |
@@ -507,6 +534,7 @@ See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for development guidelines, code sta
 |----------|-------------|
 | [Architecture](docs/ARCHITECTURE.md) | Technical architecture and design decisions |
 | [API Reference](docs/API.md) | Service APIs and integration guides |
+| [ARIA Integration](docs/ARIA_INTEGRATION.md) | **Clinical vision and technical integration with Arkalia ARIA** |
 | [Deployment](docs/DEPLOYMENT.md) | Installation and deployment procedures |
 | [Security](SECURITY.md) | Security policies and vulnerability reporting |
 | [Changelog](docs/CHANGELOG.md) | Version history and release notes |
