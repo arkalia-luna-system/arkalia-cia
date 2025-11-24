@@ -9,6 +9,7 @@ import 'package:open_filex/open_filex.dart';
 import '../services/local_storage_service.dart';
 import '../services/file_storage_service.dart';
 import '../services/category_service.dart';
+import '../services/doctor_service.dart';
 import '../widgets/exam_type_badge.dart';
 import 'add_edit_doctor_screen.dart';
 

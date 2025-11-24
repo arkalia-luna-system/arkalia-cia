@@ -5,6 +5,7 @@ import '../services/doctor_service.dart';
 import '../services/medication_service.dart';
 import '../services/hydration_service.dart';
 import '../models/doctor.dart'; // Contient aussi Consultation
+import '../models/medication.dart';
 
 /// Écran calendrier avec affichage des rappels médicaments et hydratation
 class CalendarScreen extends StatefulWidget {
