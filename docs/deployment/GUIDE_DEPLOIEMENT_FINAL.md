@@ -2,10 +2,12 @@
 
 > **Complete production deployment procedures**
 
-**Last Updated**: November 23, 2025  
+**Last Updated**: November 24, 2025  
 **Version**: 1.3.0  
 **Branch**: develop → main  
 **Status**: 🟢 **PRODUCTION READY**
+
+> **📱 Google Play Console** : Compte développeur créé le 24 novembre 2025. Vérification d'identité en cours. Voir [PLAY_STORE_SETUP.md](./PLAY_STORE_SETUP.md) pour l'état actuel et le plan d'action post-validation.
 
 ---
 
@@ -169,14 +171,22 @@ flutter build ios --release
 
 ### Google Play Store
 
-1. **Créer compte développeur** (si pas déjà fait)
-2. **Upload App Bundle** (.aab)
-3. **Remplir métadonnées**:
+**✅ État actuel** : Compte développeur créé le 24 novembre 2025. Vérification d'identité en cours.
+
+**📋 Plan d'action** (voir [PLAY_STORE_SETUP.md](./PLAY_STORE_SETUP.md)) :
+
+1. ✅ **Compte développeur créé** (24 novembre 2025)
+2. ⏳ **Vérification identité** (en cours, 1-3 jours)
+3. ⏸️ **Créer signature release** (après validation)
+4. ⏸️ **Build App Bundle** (après signature)
+5. ⏸️ **Créer fiche app** sur Play Console
+6. ⏸️ **Upload App Bundle** (.aab)
+7. ⏸️ **Remplir métadonnées**:
    - Titre: Arkalia CIA
    - Description: Assistant mobile santé sécurisé
    - Captures d'écran
    - Icône (512x512)
-4. **Soumettre pour review**
+8. ⏸️ **Soumettre pour review** (Internal Testing d'abord)
 
 ### Apple App Store
 

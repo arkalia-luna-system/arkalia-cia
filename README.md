@@ -19,6 +19,7 @@
 **Project Status**: En cours, release Q1 2026 - Passage en stable v1.0  
 **Last Audit**: 23 novembre 2025  
 **Production-Ready**: 100% ✅  
+**Google Play Console**: ✅ Compte créé le 24 novembre 2025 (vérification en cours)  
 **Exploitation**: 100% ✅ (toutes fonctionnalités critiques implémentées)  
 **Bugs Critiques**: Tous corrigés ✅ (13/13 bugs corrigés - 100%)  
 **Tests**: 352 passed ✅ (70.83% coverage)  

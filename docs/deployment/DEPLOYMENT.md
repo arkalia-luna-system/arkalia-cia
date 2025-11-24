@@ -1,8 +1,10 @@
 # Guide de déploiement
 
 **Version** : 1.3.0  
-**Dernière mise à jour** : 23 novembre 2025  
+**Dernière mise à jour** : 24 novembre 2025  
 **Statut** : Production Ready
+
+> **📱 Google Play Console** : Compte développeur créé le 24 novembre 2025. Vérification d'identité en cours. Voir [PLAY_STORE_SETUP.md](./PLAY_STORE_SETUP.md) pour l'état actuel et le plan d'action.
 
 Procédures de déploiement en production et bonnes pratiques pour Arkalia CIA.
 
@@ -82,10 +84,14 @@ graph TB
 
 ### Production Accounts
 
-- **Apple Developer Account** (iOS deployment)
-- **Google Play Console** (Android deployment)
-- **Cloud Provider** (AWS/GCP/Azure for backend)
-- **Domain & SSL** (Custom domain setup)
+- **Apple Developer Account** (iOS deployment) - ⏳ À configurer
+- **Google Play Console** (Android deployment) - ✅ **Compte créé le 24 novembre 2025** (vérification en cours)
+  - Compte développeur : Arkalia Luna System
+  - Application ID : `com.arkalia.cia`
+  - Statut : Vérification d'identité en cours (1-3 jours)
+  - Voir [PLAY_STORE_SETUP.md](./PLAY_STORE_SETUP.md) pour les détails
+- **Cloud Provider** (AWS/GCP/Azure for backend) - ⏳ À configurer
+- **Domain & SSL** (Custom domain setup) - ⏳ À configurer
 
 ## Mobile App Deployment
 
