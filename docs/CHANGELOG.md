@@ -778,4 +778,4 @@ Passer de 6/10 à 10/10 - Zéro défaut, zéro erreur
 
 *Ce changelog est automatiquement mis à jour à chaque release. Pour les changements techniques détaillés, voir notre [historique des commits](https://github.com/arkalia-luna-system/arkalia-cia/commits/main).*
 
-*Dernière mise à jour : 23 novembre 2025*
+*Dernière mise à jour : 24 novembre 2025*

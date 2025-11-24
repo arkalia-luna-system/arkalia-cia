@@ -2,7 +2,7 @@
 
 > **Visual verification guide for Android app installation**
 
-**Last Updated**: November 23, 2025  
+**Last Updated**: November 24, 2025  
 **Version**: 1.3.0  
 **Platform**: Android
 

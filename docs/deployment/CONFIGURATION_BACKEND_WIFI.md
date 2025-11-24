@@ -1,6 +1,6 @@
 # 📡 Configuration Backend WiFi - Arkalia CIA
 
-**Date** : 23 novembre 2025  
+**Date** : 24 novembre 2025  
 **Version** : 1.3.0+1  
 **Plateformes** : iPad, Android (S25)
 

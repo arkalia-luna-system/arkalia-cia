@@ -1,7 +1,7 @@
 # Cas d'Usage - Arkalia CIA
 
 **Version** : 1.0.0  
-**Date** : 23 novembre 2025  
+**Date** : 24 novembre 2025  
 **Statut** : Documentation Utilisateur
 
 ---
@@ -309,6 +309,6 @@ Ce document présente des **cas d'usage concrets** pour différents profils d'ut
 
 ---
 
-**Dernière mise à jour** : 23 novembre 2025  
+**Dernière mise à jour** : 24 novembre 2025  
 **Maintenu par** : Arkalia Luna System
 

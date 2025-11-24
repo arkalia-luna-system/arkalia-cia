@@ -369,7 +369,7 @@ flutter pub get
 
 ---
 
-*Dernière mise à jour : 23 novembre 2025*  
+*Dernière mise à jour : 24 novembre 2025*  
 **Version**: 1.3.0  
 **Statut**: 🟢 **PRÊT POUR PRODUCTION**
 

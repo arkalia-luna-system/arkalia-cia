@@ -213,5 +213,5 @@ L'import automatique depuis les portails OAuth est disponible via :
 
 ---
 
-**Dernière mise à jour** : 23 novembre 2025
+**Dernière mise à jour** : 24 novembre 2025
 
