@@ -250,6 +250,8 @@ logs/
 
 # macOS resource fork files
 **/._*
+**/.!*!._*
+**/.!*
 
 # IDE
 .vscode/
