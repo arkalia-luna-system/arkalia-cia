@@ -24,7 +24,7 @@ passlib[bcrypt]==1.7.4  # Hashing de mots de passe
 PyJWT==2.9.0  # JWT tokens
 python-jose[cryptography]==3.3.0  # Alternative JWT (compatibilité)
 bleach==6.1.0  # Sanitization HTML/XSS protection
-phonenumbers==8.13.27  # Validation téléphone internationale
+phonenumbers==9.0.19  # Validation téléphone internationale
 
 # Utilitaires
 python-dotenv==1.1.1
