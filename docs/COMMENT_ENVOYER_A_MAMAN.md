@@ -211,3 +211,18 @@ python3 convert_to_pdf.py
 
 *Dernière mise à jour : 24 novembre 2025*
 
+---
+
+## 📧 CONTACTS POUR MAMAN
+
+**Email** : siwekathalia@gmail.com  
+**Téléphone** : +32472875694  
+**WhatsApp** : +32472875694
+
+**Maman peut m'envoyer ses idées par :**
+- 📞 Appel téléphonique (le plus simple !)
+- 📧 Email (même mal écrit, je comprendrai)
+- 🎤 Message vocal (WhatsApp/SMS)
+- 📸 Photo de ce qu'elle a écrit
+- 👨‍👩‍👧 Demander à quelqu'un de la famille de l'aider
+

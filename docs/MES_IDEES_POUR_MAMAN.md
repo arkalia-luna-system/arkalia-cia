@@ -64,26 +64,35 @@
 
 ### Option 1 : Par téléphone (LE PLUS SIMPLE !) 📱
 
-1. **Appelle-moi** et dis-moi ce que tu as noté
+1. **Appelle-moi** au **+32472875694** et dis-moi ce que tu as noté
 2. Je noterai tout pour toi
 3. C'est tout ! ✨
 
-### Option 2 : Demande à quelqu'un de t'aider 👨‍👩‍👧
+### Option 2 : Par email (SIMPLE !) 📧
+
+1. **Envoie-moi un email** à : **siwekathalia@gmail.com**
+2. **Écris** ce que tu as noté (même si c'est mal écrit, je comprendrai !)
+3. **OU** envoie une photo de ce fichier rempli
+4. **OU** envoie un message vocal en pièce jointe
+
+### Option 3 : Demande à quelqu'un de t'aider 👨‍👩‍👧
 
 1. Demande à quelqu'un de la famille de t'aider à remplir ce fichier
-2. Ensuite, ils peuvent m'envoyer le fichier par email ou SMS
-3. Ou ils peuvent m'appeler et me dire ce que tu as écrit
+2. Ensuite, ils peuvent :
+   - M'envoyer le fichier par email : **siwekathalia@gmail.com**
+   - M'appeler et me dire ce que tu as écrit
+   - Créer une "issue" sur GitHub (si ils savent comment faire)
 
-### Option 3 : Par message vocal 🎤
+### Option 4 : Par message vocal 🎤
 
 1. Enregistre un message vocal avec tes idées
-2. Envoie-le moi par WhatsApp ou SMS
+2. Envoie-le moi par WhatsApp ou SMS au **+32472875694**
 3. Je l'écouterai et noterai tout !
 
-### Option 4 : Photo du fichier 📸
+### Option 5 : Photo du fichier 📸
 
 1. Prends une photo de ce fichier rempli
-2. Envoie-la moi par WhatsApp ou SMS
+2. Envoie-la moi par WhatsApp, SMS ou email
 3. Je lirai tout ce que tu as écrit !
 
 ---
