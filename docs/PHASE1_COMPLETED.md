@@ -58,7 +58,7 @@ L'application fonctionne en mode local-first, fournissant une base solide pour l
 - **Security**: Input validation and SQL injection protection
 
 ### Development Tools
-- **Testing**: Unit and integration tests (218 tests)
+- **Testing**: Unit and integration tests (308 tests collectés)
 - **Linting**: Ruff for Python, Dart analyzer for Flutter
 - **Formatting**: Black for Python, Dart format for Flutter
 - **Security**: Bandit, Safety, and automated vulnerability scanning
@@ -82,7 +82,7 @@ L'application fonctionne en mode local-first, fournissant une base solide pour l
 ### Automated Testing
 ```bash
 ✅ Flutter Tests: All widget and unit tests passing
-✅ Python Tests: 218 tests, 85% couverture globale (suivi via Codecov)
+✅ Python Tests: 308 tests collectés, 22.09% couverture (suivi via Codecov)
 ✅ Integration Tests: API and service integration verified
 ✅ Security Tests: No vulnerabilities detected
 ```

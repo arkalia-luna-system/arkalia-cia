@@ -55,10 +55,14 @@ echo ""
 
 # 4. FastAPI/uvicorn
 cleanup_processes "uvicorn|fastapi|api\.py" "FastAPI/uvicorn" 3 false && echo "   ✅ FastAPI/uvicorn nettoyé" || echo "   ⚠️  FastAPI/uvicorn partiellement nettoyé"
+# Nettoyer aussi les lock files
+rm -f /tmp/arkalia_backend.lock
 echo ""
 
 # 5. Flutter et boucles infinies de nettoyage
 cleanup_processes "flutter.*run|dart.*flutter|while true.*find build" "Flutter" 3 false && echo "   ✅ Flutter nettoyé" || echo "   ⚠️  Flutter partiellement nettoyé"
+# Nettoyer aussi les lock files
+rm -f /tmp/arkalia_flutter.lock /tmp/arkalia_flutter_web.lock
 echo ""
 
 # 5b. Boucles infinies de nettoyage macOS (très lourd)

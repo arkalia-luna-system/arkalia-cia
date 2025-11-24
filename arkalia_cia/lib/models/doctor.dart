@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class Doctor {
   final int? id;
   final String firstName;
@@ -31,6 +33,47 @@ class Doctor {
        updatedAt = updatedAt ?? DateTime.now();
 
   String get fullName => '$firstName $lastName';
+
+  /// Retourne une couleur selon la spécialité du médecin
+  static Color getColorForSpecialty(String? specialty) {
+    if (specialty == null || specialty.isEmpty) {
+      return Colors.grey;
+    }
+
+    final specialtyLower = specialty.toLowerCase();
+
+    // Mapping spécialité → couleur
+    if (specialtyLower.contains('cardiologue') || specialtyLower.contains('cardio')) {
+      return Colors.red;
+    } else if (specialtyLower.contains('dermatologue') || specialtyLower.contains('dermato')) {
+      return Colors.orange;
+    } else if (specialtyLower.contains('gynécologue') || specialtyLower.contains('gynéco')) {
+      return Colors.pink;
+    } else if (specialtyLower.contains('ophtalmologue') || specialtyLower.contains('ophtalmo')) {
+      return Colors.blue;
+    } else if (specialtyLower.contains('orthopédiste') || specialtyLower.contains('orthopédie')) {
+      return Colors.brown;
+    } else if (specialtyLower.contains('pneumologue') || specialtyLower.contains('pneumo')) {
+      return Colors.cyan;
+    } else if (specialtyLower.contains('rhumatologue') || specialtyLower.contains('rhumato')) {
+      return Colors.purple;
+    } else if (specialtyLower.contains('neurologue') || specialtyLower.contains('neuro')) {
+      return Colors.indigo;
+    } else if (specialtyLower.contains('généraliste') || specialtyLower.contains('médecin général')) {
+      return Colors.green;
+    } else if (specialtyLower.contains('pédiatre') || specialtyLower.contains('pédiatrie')) {
+      return Colors.lightBlue;
+    } else if (specialtyLower.contains('psychiatre') || specialtyLower.contains('psychiatrie')) {
+      return Colors.teal;
+    } else if (specialtyLower.contains('urologue') || specialtyLower.contains('urologie')) {
+      return Colors.deepOrange;
+    } else if (specialtyLower.contains('endocrinologue') || specialtyLower.contains('endocrino')) {
+      return Colors.amber;
+    } else {
+      // Couleur par défaut pour spécialités inconnues
+      return Colors.grey;
+    }
+  }
 
   Map<String, dynamic> toMap() {
     return {

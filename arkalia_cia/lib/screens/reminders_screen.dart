@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import '../services/calendar_service.dart';
 import '../services/local_storage_service.dart';
 
@@ -26,19 +27,27 @@ class _RemindersScreenState extends State<RemindersScreen> {
     });
 
     try {
-      // Charger depuis le stockage local ET le calendrier natif
+      // Charger depuis le stockage local
       final localReminders = await LocalStorageService.getReminders();
-      final calendarEvents = await CalendarService.getUpcomingReminders();
-
-      // Convertir les événements calendrier en format local
-      final calendarReminders = calendarEvents.map((event) => {
-        'id': event['id'] ?? '',
-        'title': (event['title'] ?? '').replaceFirst('[Santé] ', ''),
-        'description': event['description'] ?? '',
-        'reminder_date': event['reminder_date'] ?? '',
-        'is_completed': false,
-        'source': 'calendar',
-      }).toList();
+      
+      // Essayer de charger depuis le calendrier natif (mobile seulement)
+      List<Map<String, dynamic>> calendarReminders = [];
+      if (!kIsWeb) {
+        try {
+          final calendarEvents = await CalendarService.getUpcomingReminders();
+          // Convertir les événements calendrier en format local
+          calendarReminders = calendarEvents.map((event) => {
+            'id': event['id'] ?? '',
+            'title': (event['title'] ?? '').replaceFirst('[Santé] ', ''),
+            'description': event['description'] ?? '',
+            'reminder_date': event['reminder_date'] ?? '',
+            'is_completed': false,
+            'source': 'calendar',
+          }).toList();
+        } catch (e) {
+          // Ignorer les erreurs de calendrier, on a déjà les rappels locaux
+        }
+      }
 
       if (mounted) {
         setState(() {
@@ -119,6 +128,12 @@ class _RemindersScreenState extends State<RemindersScreen> {
                     final time = await showTimePicker(
                       context: context,
                       initialTime: TimeOfDay.fromDateTime(selectedDate),
+                      builder: (context, child) {
+                        return MediaQuery(
+                          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+                          child: child!,
+                        );
+                      },
                     );
                     if (time != null) {
                       setDialogState(() {
@@ -227,31 +242,37 @@ class _RemindersScreenState extends State<RemindersScreen> {
 
   Future<void> _createReminder(Map<String, dynamic> reminderData) async {
     try {
-      // Ajouter au calendrier natif
-      final success = await CalendarService.addReminder(
-        title: reminderData['title'],
-        description: reminderData['description'],
-        reminderDate: DateTime.parse(reminderData['reminder_date']),
-        recurrence: reminderData['recurrence'] as String?,
-      );
+      // Créer le rappel
+      final reminder = {
+        'id': DateTime.now().millisecondsSinceEpoch.toString(),
+        'title': reminderData['title'],
+        'description': reminderData['description'],
+        'reminder_date': reminderData['reminder_date'],
+        'recurrence': reminderData['recurrence'],
+        'is_completed': false,
+        'source': 'local',
+        'created_at': DateTime.now().toIso8601String(),
+      };
 
-      if (success) {
-        // Aussi sauvegarder localement pour la cohérence
-        final reminder = {
-          'id': DateTime.now().millisecondsSinceEpoch,
-          'title': reminderData['title'],
-          'description': reminderData['description'],
-          'reminder_date': reminderData['reminder_date'],
-          'is_completed': false,
-          'source': 'local',
-        };
-
-        await LocalStorageService.saveReminder(reminder);
-        _showSuccess('Rappel créé avec succès !');
-        _loadReminders();
-      } else {
-        _showError('Erreur lors de la création du rappel');
+      // Sauvegarder localement (fonctionne sur web et mobile)
+      await LocalStorageService.saveReminder(reminder);
+      
+      // Essayer d'ajouter au calendrier natif (mobile seulement)
+      if (!kIsWeb) {
+        try {
+          await CalendarService.addReminder(
+            title: reminderData['title'],
+            description: reminderData['description'],
+            reminderDate: DateTime.parse(reminderData['reminder_date']),
+            recurrence: reminderData['recurrence'] as String?,
+          );
+        } catch (e) {
+          // Ignorer les erreurs de calendrier, on a déjà sauvegardé localement
+        }
       }
+
+      _showSuccess('Rappel créé avec succès !');
+      _loadReminders();
     } catch (e) {
       _showError('Erreur: $e');
     }

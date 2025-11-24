@@ -1,6 +1,10 @@
 import 'package:device_calendar/device_calendar.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
+import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import '../models/doctor.dart';
+import 'doctor_service.dart';
 
 /// Service de gestion du calendrier natif pour Arkalia CIA
 /// Intègre le calendrier système et les notifications
@@ -11,6 +15,11 @@ class CalendarService {
 
   /// Initialise le service calendrier
   static Future<void> init() async {
+    // Sur le web, device_calendar et notifications ne sont pas disponibles
+    if (kIsWeb) {
+      return;
+    }
+    
     // Configuration des notifications locales
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -36,7 +45,12 @@ class CalendarService {
     required String description,
     required DateTime reminderDate,
     String? recurrence, // 'daily', 'weekly', 'monthly', ou null
+    int? doctorId, // ID du médecin pour couleur
   }) async {
+    // Sur le web, device_calendar n'est pas disponible
+    if (kIsWeb) {
+      return false;
+    }
     try {
       // Récupérer les calendriers disponibles
       final calendarsResult = await _deviceCalendarPlugin.retrieveCalendars();
@@ -47,6 +61,20 @@ class CalendarService {
       // Utiliser le premier calendrier disponible
       final calendar = calendarsResult.data!.first;
 
+      // Récupérer la couleur du médecin si disponible
+      Color? doctorColor;
+      if (doctorId != null) {
+        try {
+          final doctorService = DoctorService();
+          final doctor = await doctorService.getDoctorById(doctorId);
+          if (doctor != null) {
+            doctorColor = Doctor.getColorForSpecialty(doctor.specialty);
+          }
+        } catch (e) {
+          // Ignorer erreur, utiliser couleur par défaut
+        }
+      }
+
       // Créer le premier événement
       final event = Event(
         calendar.id,
@@ -55,7 +83,23 @@ class CalendarService {
         start: TZDateTime.fromMillisecondsSinceEpoch(tz.local, reminderDate.millisecondsSinceEpoch),
         end: TZDateTime.fromMillisecondsSinceEpoch(tz.local, reminderDate.add(const Duration(hours: 1)).millisecondsSinceEpoch),
         allDay: false,
+        // Note: device_calendar ne supporte pas directement les couleurs
+        // On stocke la couleur dans la description pour récupération ultérieure
+        // Format: [COLOR:#RRGGBB] en début de description si couleur disponible
       );
+      
+      // Ajouter info couleur dans description si disponible
+      if (doctorColor != null) {
+        // Format: #RRGGBB (sans alpha)
+        // Les accesseurs .red, .green, .blue retournent des valeurs entre 0.0 et 1.0
+        final r = (doctorColor.red * 255).round();
+        final g = (doctorColor.green * 255).round();
+        final b = (doctorColor.blue * 255).round();
+        final colorHex = '#${r.toRadixString(16).padLeft(2, '0').toUpperCase()}'
+            '${g.toRadixString(16).padLeft(2, '0').toUpperCase()}'
+            '${b.toRadixString(16).padLeft(2, '0').toUpperCase()}';
+        event.description = '[COLOR:$colorHex] $description';
+      }
 
       // Ajouter l'événement au calendrier
       var result = await _deviceCalendarPlugin.createOrUpdateEvent(event);
@@ -115,6 +159,10 @@ class CalendarService {
 
   /// Récupère les rappels à venir depuis le calendrier
   static Future<List<Map<String, dynamic>>> getUpcomingReminders() async {
+    // Sur le web, device_calendar n'est pas disponible
+    if (kIsWeb) {
+      return [];
+    }
     try {
       final events = await getUpcomingEvents();
       final now = DateTime.now();
@@ -131,12 +179,17 @@ class CalendarService {
               })
           .toList();
     } catch (e) {
-      throw Exception('Erreur lors de la récupération des rappels: $e');
+      // Retourner liste vide plutôt que de planter
+      return [];
     }
   }
 
   /// Récupère les événements à venir
   static Future<List<Event>> getUpcomingEvents() async {
+    // Sur le web, device_calendar n'est pas disponible
+    if (kIsWeb) {
+      return [];
+    }
     try {
       final calendarsResult = await _deviceCalendarPlugin.retrieveCalendars();
       if (!calendarsResult.isSuccess || calendarsResult.data!.isEmpty) {
@@ -250,6 +303,75 @@ class CalendarService {
       return result.isSuccess && (result.data ?? false);
     } catch (e) {
       return false;
+    }
+  }
+
+  /// Ajoute un rappel adaptatif pour médicament non pris (30min après)
+  static Future<void> scheduleAdaptiveMedicationReminder({
+    required String medicationName,
+    required String dosage,
+    required DateTime originalTime,
+  }) async {
+    final reminderTime = originalTime.add(const Duration(minutes: 30));
+    
+    // Ne programmer que si l'heure n'est pas encore passée
+    if (reminderTime.isAfter(DateTime.now())) {
+      await scheduleNotification(
+        title: '💊 Rappel: $medicationName',
+        description: 'Vous n\'avez pas encore pris $medicationName. '
+            'Dosage: $dosage',
+        date: reminderTime,
+      );
+    }
+  }
+
+  /// Récupère les événements avec distinction par type
+  static Future<List<Map<String, dynamic>>> getEventsByType({
+    DateTime? startDate,
+    DateTime? endDate,
+  }) async {
+    try {
+      final events = await getUpcomingEvents();
+      final now = startDate ?? DateTime.now();
+      final end = endDate ?? now.add(const Duration(days: 30));
+
+      return events
+          .where((event) {
+            if (event.start == null) return false;
+            return event.start!.isAfter(now) && event.start!.isBefore(end);
+          })
+          .map((event) {
+            final title = event.title ?? '';
+            final description = event.description ?? '';
+            
+            // Détecter le type d'événement
+            String type = 'other';
+            String icon = '📅';
+            
+            if (title.contains('💊') || description.contains('médicament')) {
+              type = 'medication';
+              icon = '💊';
+            } else if (title.contains('💧') || description.contains('hydratation') || description.contains('eau')) {
+              type = 'hydration';
+              icon = '💧';
+            } else if (title.contains('[Santé]')) {
+              type = 'appointment';
+              icon = '🏥';
+            }
+
+            return {
+              'id': event.eventId,
+              'title': title.replaceAll('[Santé] ', ''),
+              'description': description,
+              'date': event.start?.toIso8601String() ?? '',
+              'type': type,
+              'icon': icon,
+              'is_completed': false,
+            };
+          })
+          .toList();
+    } catch (e) {
+      throw Exception('Erreur lors de la récupération des événements: $e');
     }
   }
 }

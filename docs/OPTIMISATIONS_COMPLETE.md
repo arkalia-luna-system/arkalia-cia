@@ -199,7 +199,7 @@ if (mounted) {         // Avant setState
 - ✅ **Tests rapides** - Suppression gc.collect() inutiles
 - ✅ **Isolation complète** - Chaque test a sa propre DB
 - ✅ **Mock efficace** - Évite scans complets
-- ✅ **Tous passent** - 206/206 (100%)
+- ⚠️ **Tests** - 206 passed, 8 failed, 26 errors (à corriger)
 
 ---
 

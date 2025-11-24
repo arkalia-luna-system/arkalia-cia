@@ -79,9 +79,46 @@ class SharedDocument {
   }
 }
 
+class SharingAuditLog {
+  final int? id;
+  final String documentId;
+  final int memberId;
+  final String action; // 'shared', 'accessed', 'downloaded', 'unshared'
+  final DateTime timestamp;
+
+  SharingAuditLog({
+    this.id,
+    required this.documentId,
+    required this.memberId,
+    required this.action,
+    required this.timestamp,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'document_id': documentId,
+      'member_id': memberId,
+      'action': action,
+      'timestamp': timestamp.toIso8601String(),
+    };
+  }
+
+  factory SharingAuditLog.fromMap(Map<String, dynamic> map) {
+    return SharingAuditLog(
+      id: map['id'],
+      documentId: map['document_id'],
+      memberId: map['member_id'],
+      action: map['action'],
+      timestamp: DateTime.parse(map['timestamp']),
+    );
+  }
+}
+
 class FamilySharingService {
   static const String _membersKey = 'family_members';
   static const String _sharedDocumentsKey = 'shared_documents';
+  static const String _auditLogKey = 'sharing_audit_log';
   static const String _encryptionKeyKey = 'family_sharing_key';
   
   late encrypt.Encrypter _encrypter;
@@ -174,8 +211,11 @@ class FamilySharingService {
     
     // Format: documentId:memberIds:sharedAt:encrypt:permissionLevel
     final permission = permissionLevel ?? 'view';
-    sharedJson.add('$documentId:${memberIds.join(",")}:${sharedDoc.sharedAt.toIso8601String()}:${encrypt}:$permission');
+    sharedJson.add('$documentId:${memberIds.join(",")}:${sharedDoc.sharedAt.toIso8601String()}:$encrypt:$permission');
     await prefs.setStringList(_sharedDocumentsKey, sharedJson);
+    
+    // Enregistrer dans audit log
+    await _addAuditLog(documentId, memberIds, 'shared');
     
     // Envoyer notification si demandé
     if (sendNotification) {
@@ -190,6 +230,89 @@ class FamilySharingService {
         );
       }
     }
+  }
+  
+  /// Ajoute une entrée dans l'audit log
+  Future<void> _addAuditLog(String documentId, List<int> memberIds, String action) async {
+    final prefs = await SharedPreferences.getInstance();
+    final auditJson = prefs.getStringList(_auditLogKey) ?? [];
+    
+    for (final memberId in memberIds) {
+      final logEntry = SharingAuditLog(
+        documentId: documentId,
+        memberId: memberId,
+        action: action,
+        timestamp: DateTime.now(),
+      );
+      // Format: documentId:memberId:action:timestamp
+      auditJson.add('$documentId:$memberId:$action:${logEntry.timestamp.toIso8601String()}');
+    }
+    
+    await prefs.setStringList(_auditLogKey, auditJson);
+  }
+  
+  /// Récupère l'audit log pour un document
+  Future<List<SharingAuditLog>> getAuditLogForDocument(String documentId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final auditJson = prefs.getStringList(_auditLogKey) ?? [];
+    final logs = <SharingAuditLog>[];
+    
+    for (var entry in auditJson) {
+      final parts = entry.split(':');
+      if (parts.length >= 4 && parts[0] == documentId) {
+        try {
+          logs.add(SharingAuditLog(
+            documentId: parts[0],
+            memberId: int.parse(parts[1]),
+            action: parts[2],
+            timestamp: DateTime.parse(parts[3]),
+          ));
+        } catch (e) {
+          // Ignorer entrées invalides
+        }
+      }
+    }
+    
+    // Trier par date décroissante
+    logs.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+    return logs;
+  }
+  
+  /// Récupère l'audit log pour un membre
+  Future<List<SharingAuditLog>> getAuditLogForMember(int memberId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final auditJson = prefs.getStringList(_auditLogKey) ?? [];
+    final logs = <SharingAuditLog>[];
+    
+    for (var entry in auditJson) {
+      final parts = entry.split(':');
+      if (parts.length >= 4 && int.tryParse(parts[1]) == memberId) {
+        try {
+          logs.add(SharingAuditLog(
+            documentId: parts[0],
+            memberId: int.parse(parts[1]),
+            action: parts[2],
+            timestamp: DateTime.parse(parts[3]),
+          ));
+        } catch (e) {
+          // Ignorer entrées invalides
+        }
+      }
+    }
+    
+    // Trier par date décroissante
+    logs.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+    return logs;
+  }
+  
+  /// Enregistre un accès à un document partagé
+  Future<void> logDocumentAccess(String documentId, int memberId) async {
+    await _addAuditLog(documentId, [memberId], 'accessed');
+  }
+  
+  /// Enregistre un téléchargement d'un document partagé
+  Future<void> logDocumentDownload(String documentId, int memberId) async {
+    await _addAuditLog(documentId, [memberId], 'downloaded');
   }
   
   /// Récupère le niveau de permission pour un document partagé avec un membre
@@ -284,6 +407,19 @@ class FamilySharingService {
   Future<void> unshareDocument(String documentId) async {
     final prefs = await SharedPreferences.getInstance();
     final sharedJson = prefs.getStringList(_sharedDocumentsKey) ?? [];
+    
+    // Récupérer les membres avant suppression pour audit log
+    final sharedDocs = await getSharedDocuments();
+    final doc = sharedDocs.firstWhere(
+      (d) => d.documentId == documentId,
+      orElse: () => SharedDocument(documentId: documentId, memberIds: [], sharedAt: DateTime.now()),
+    );
+    
+    // Enregistrer dans audit log
+    if (doc.memberIds.isNotEmpty) {
+      await _addAuditLog(documentId, doc.memberIds, 'unshared');
+    }
+    
     sharedJson.removeWhere((entry) => entry.startsWith('$documentId:'));
     await prefs.setStringList(_sharedDocumentsKey, sharedJson);
   }

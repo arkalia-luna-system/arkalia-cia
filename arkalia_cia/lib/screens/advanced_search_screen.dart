@@ -20,13 +20,27 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
   SearchFilters _filters = SearchFilters();
   List<SearchResult> _results = [];
   bool _isSearching = false;
-  bool _useSemanticSearch = false;
+  bool _useSemanticSearch = true; // Activé par défaut pour meilleure qualité de recherche
   List<String> _suggestions = [];
-  // ignore: unused_field
-  List<Doctor> _doctors = []; // Sera utilisé pour sélection médecin dans filtres
+  List<Doctor> _doctors = [];
   String? _selectedCategory;
+  String? _selectedExamType;
   DateTime? _startDate;
   DateTime? _endDate;
+  int? _selectedDoctorId;
+  
+  // Types d'examens médicaux courants
+  static const List<String> _examTypes = [
+    'Analyse de sang',
+    'Radiographie',
+    'IRM',
+    'Scanner',
+    'Échographie',
+    'ECG',
+    'Biopsie',
+    'Endoscopie',
+    'Autre',
+  ];
 
   @override
   void initState() {
@@ -73,9 +87,10 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
       _filters = SearchFilters(
         query: _searchController.text.isNotEmpty ? _searchController.text : null,
         category: _selectedCategory,
+        examType: _selectedExamType,
         startDate: _startDate,
         endDate: _endDate,
-        doctorId: null, // TODO: Ajouter sélection médecin
+        doctorId: _selectedDoctorId,
       );
     });
 
@@ -198,11 +213,70 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
                     }
                   },
                 ),
+                
+                // Filtre type d'examen
+                FilterChip(
+                  label: Text(_selectedExamType ?? 'Type examen'),
+                  selected: _selectedExamType != null,
+                  onSelected: (selected) {
+                    if (selected) {
+                      _showExamTypeDialog();
+                    } else {
+                      setState(() {
+                        _selectedExamType = null;
+                      });
+                      _performSearch();
+                    }
+                  },
+                ),
+                
+                // Filtre médecin
+                FilterChip(
+                  label: Text(_selectedDoctorId != null && _doctors.isNotEmpty
+                      ? (_doctors.firstWhere(
+                          (d) => d.id == _selectedDoctorId,
+                          orElse: () => _doctors.first,
+                        ).fullName)
+                      : 'Médecin'),
+                  selected: _selectedDoctorId != null,
+                  onSelected: (selected) {
+                    if (selected) {
+                      _showDoctorDialog();
+                    } else {
+                      setState(() {
+                        _selectedDoctorId = null;
+                      });
+                      _performSearch();
+                    }
+                  },
+                ),
               ],
             ),
           ),
 
           const SizedBox(height: 16),
+
+          // Options de recherche
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: CheckboxListTile(
+                    title: const Text('Recherche sémantique'),
+                    subtitle: const Text('Meilleure qualité de résultats'),
+                    value: _useSemanticSearch,
+                    onChanged: (value) {
+                      setState(() {
+                        _useSemanticSearch = value ?? true;
+                      });
+                    },
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ),
+              ],
+            ),
+          ),
 
           // Bouton rechercher
           Padding(
@@ -268,7 +342,7 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
                                     Text(
                                       '${result.date!.day}/${result.date!.month}/${result.date!.year}',
                                       style: TextStyle(
-                                        fontSize: 12,
+                                        fontSize: 14,
                                         color: Colors.grey[600],
                                       ),
                                     ),
@@ -345,6 +419,86 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
       setState(() {
         _startDate = picked.start;
         _endDate = picked.end;
+      });
+      _performSearch();
+    }
+  }
+
+  Future<void> _showExamTypeDialog() async {
+    final selected = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Choisir type d\'examen'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: _examTypes.map((type) {
+            return RadioListTile<String>(
+              title: Text(type),
+              value: type,
+              groupValue: _selectedExamType,
+              onChanged: (value) {
+                Navigator.pop(context, value);
+              },
+            );
+          }).toList(),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Annuler'),
+          ),
+        ],
+      ),
+    );
+    
+    if (selected != null) {
+      setState(() {
+        _selectedExamType = selected;
+      });
+      _performSearch();
+    }
+  }
+
+  Future<void> _showDoctorDialog() async {
+    if (_doctors.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Aucun médecin disponible')),
+        );
+      }
+      return;
+    }
+
+    final selected = await showDialog<int>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Choisir médecin'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: _doctors.length,
+            itemBuilder: (context, index) {
+              final doctor = _doctors[index];
+              if (doctor.id == null) return const SizedBox.shrink();
+              return RadioListTile<int>(
+                title: Text(doctor.fullName),
+                subtitle: doctor.specialty != null ? Text(doctor.specialty!) : null,
+                value: doctor.id!,
+                groupValue: _selectedDoctorId,
+                onChanged: (value) {
+                  Navigator.pop(context, value);
+                },
+              );
+            },
+          ),
+        ),
+      ),
+    );
+    
+    if (selected != null) {
+      setState(() {
+        _selectedDoctorId = selected;
       });
       _performSearch();
     }

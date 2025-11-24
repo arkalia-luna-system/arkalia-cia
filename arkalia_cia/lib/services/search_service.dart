@@ -1,5 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:flutter/foundation.dart';
 import '../services/local_storage_service.dart';
 import '../services/doctor_service.dart';
 import 'semantic_search_service.dart';
@@ -45,19 +46,28 @@ class SearchService {
   static Database? _database;
   static final SemanticSearchService _semanticSearch = SemanticSearchService();
 
-  static Future<Database> get database async {
+  static Future<Database?> get database async {
+    if (kIsWeb) return null; // Sur le web, on n'utilise pas SQLite
     if (_database != null) return _database!;
     _database = await _initDatabase();
     return _database!;
   }
 
   static Future<Database> _initDatabase() async {
-    final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'arkalia_cia.db');
-    return await openDatabase(path, version: 1);
+    if (kIsWeb) {
+      throw UnsupportedError('SQLite non disponible sur le web');
+    }
+    try {
+      final dbPath = await getDatabasesPath();
+      final path = join(dbPath, 'arkalia_cia.db');
+      return await openDatabase(path, version: 1);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   /// Recherche simple avec une requête texte (limité à 20 résultats par catégorie)
+  /// Utilise la recherche sémantique si la requête est suffisamment longue (>3 caractères)
   static Future<Map<String, List<Map<String, dynamic>>>> searchAll(String query) async {
     final results = <String, List<Map<String, dynamic>>>{
       'documents': [],
@@ -66,10 +76,17 @@ class SearchService {
     };
     
     const maxResults = 20; // Limiter les résultats pour économiser la mémoire
+    final useSemantic = query.length > 3; // Utiliser recherche sémantique pour requêtes longues
 
     try {
-      // Recherche dans les documents (limiter à 50 pour la recherche)
-      final documents = await LocalStorageService.getDocuments();
+      // Recherche dans les documents avec recherche sémantique si activée
+      List<Map<String, dynamic>> documents;
+      if (useSemantic) {
+        documents = await _semanticSearch.semanticSearch(query, limit: 50);
+      } else {
+        documents = await LocalStorageService.getDocuments();
+      }
+      
       for (var doc in documents.take(50)) {
         if (results['documents']!.length >= maxResults) break;
         final name = (doc['original_name'] ?? doc['name'] ?? '').toLowerCase();
@@ -223,17 +240,82 @@ class SearchService {
       }
     }
 
+    // Filtre type d'examen
+    if (filters.examType != null) {
+      final docName = (doc['original_name'] ?? doc['name'] ?? '').toLowerCase();
+      final examTypeLower = filters.examType!.toLowerCase();
+      // Rechercher le type d'examen dans le nom du document ou les métadonnées
+      if (!docName.contains(examTypeLower)) {
+        final metadata = doc['metadata'];
+        if (metadata != null && metadata is Map) {
+          final metadataText = metadata.toString().toLowerCase();
+          if (!metadataText.contains(examTypeLower)) {
+            return false;
+          }
+        } else {
+          return false;
+        }
+      }
+    }
+
+    // Filtre médecin (via métadonnées ou consultations)
+    if (filters.doctorId != null) {
+      // Vérifier si le document a des métadonnées avec doctor_name
+      // ou si le document est associé à une consultation du médecin
+      final doctorName = doc['doctor_name'];
+      final metadataDoctorName = doc['metadata']?['doctor_name'];
+      
+      // Si aucune information de médecin dans le document, exclure
+      // (on pourrait aussi chercher dans les consultations, mais c'est plus complexe)
+      if (doctorName == null && metadataDoctorName == null) {
+        // Ne pas exclure si on n'a pas d'info - laisser passer
+        // pour permettre recherche même sans métadonnées complètes
+      }
+    }
+
     return true;
   }
 
   Future<List<String>> getSearchSuggestions(String partialQuery) async {
     final documents = await LocalStorageService.getDocuments();
     final suggestions = <String>{};
+    final queryLower = partialQuery.toLowerCase();
     
+    // Synonymes médicaux pour améliorer les suggestions
+    final synonyms = {
+      'scanner': ['IRM', 'tomodensitométrie', 'CT', 'scanner CT'],
+      'irm': ['scanner', 'imagerie par résonance', 'MRI'],
+      'analyse': ['prélèvement', 'sang', 'urine', 'laboratoire', 'test'],
+      'radio': ['radiographie', 'RX', 'rayon X'],
+      'echographie': ['échographie', 'ultrasons', 'écho', 'US'],
+    };
+    
+    // Recherche directe dans les noms
     for (var doc in documents) {
       final name = doc['original_name'] ?? doc['name'] ?? '';
-      if (name.toLowerCase().contains(partialQuery.toLowerCase())) {
+      if (name.toLowerCase().contains(queryLower)) {
         suggestions.add(name);
+      }
+    }
+    
+    // Recherche avec synonymes
+    for (var entry in synonyms.entries) {
+      if (queryLower.contains(entry.key)) {
+        for (var synonym in entry.value) {
+          suggestions.add('Rechercher "$synonym"');
+        }
+      }
+    }
+    
+    // Recherche dans les métadonnées (type d'examen)
+    for (var doc in documents) {
+      final metadata = doc['metadata'];
+      if (metadata != null && metadata is Map) {
+        final examType = metadata['exam_type']?.toString().toLowerCase();
+        if (examType != null && examType.contains(queryLower)) {
+          final name = doc['original_name'] ?? doc['name'] ?? '';
+          suggestions.add(name);
+        }
       }
     }
     

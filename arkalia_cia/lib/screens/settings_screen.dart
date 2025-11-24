@@ -4,6 +4,8 @@ import '../services/auth_service.dart';
 import '../services/auth_api_service.dart';
 import '../services/auto_sync_service.dart';
 import '../services/backend_config_service.dart';
+import '../services/health_portal_auth_service.dart' show HealthPortalAuthService, HealthPortal;
+import '../services/offline_cache_service.dart';
 import 'auth/login_screen.dart';
 
 /// Écran de paramètres de l'application
@@ -146,8 +148,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () async {
                       final isLoggedIn = await AuthApiService.isLoggedIn();
+                      if (!mounted) return;
                       if (isLoggedIn) {
                         // Afficher dialog de déconnexion
+                        if (!mounted) return;
                         final shouldLogout = await showDialog<bool>(
                           context: context,
                           builder: (context) => AlertDialog(
@@ -172,12 +176,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         
                         if (shouldLogout == true && mounted) {
                           await AuthApiService.logout();
+                          if (!mounted) return;
                           Navigator.of(context).pushAndRemoveUntil(
                             MaterialPageRoute(builder: (context) => const LoginScreen()),
                             (route) => false,
                           );
                         }
                       } else {
+                        if (!mounted) return;
                         // Rediriger vers login
                         Navigator.of(context).push(
                           MaterialPageRoute(builder: (context) => const LoginScreen()),
@@ -314,7 +320,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ListTile(
                   leading: Icon(Icons.info),
                   title: Text('Version'),
-                  subtitle: Text('1.2.0+1'),
+                  subtitle: Text('1.3.0+1'),
                 ),
                 ListTile(
                   leading: Icon(Icons.description),
@@ -324,9 +330,170 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
             ),
           ),
+
+          // Section Portails Santé
+          _buildSectionTitle('Portails Santé'),
+          Card(
+            child: Column(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.health_and_safety),
+                  title: const Text('Configuration Portails'),
+                  subtitle: const Text('Configurer les credentials OAuth'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => _showPortalCredentialsDialog(),
+                ),
+              ],
+            ),
+          ),
+
+          // Section Cache
+          _buildSectionTitle('Cache'),
+          Card(
+            child: Column(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.storage),
+                  title: const Text('Nettoyer le cache'),
+                  subtitle: const Text('Supprimer tous les caches'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => _showClearCacheDialog(),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
+  }
+
+  String _getPortalName(HealthPortal portal) {
+    switch (portal) {
+      case HealthPortal.ehealth:
+        return 'eHealth';
+      case HealthPortal.andaman7:
+        return 'Andaman 7';
+      case HealthPortal.masante:
+        return 'MaSanté';
+    }
+  }
+
+  Future<void> _showPortalCredentialsDialog() async {
+    final portal = await showDialog<HealthPortal>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Choisir un portail'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: const Text('eHealth'),
+              onTap: () => Navigator.pop(context, HealthPortal.ehealth),
+            ),
+            ListTile(
+              title: const Text('Andaman 7'),
+              onTap: () => Navigator.pop(context, HealthPortal.andaman7),
+            ),
+            ListTile(
+              title: const Text('MaSanté'),
+              onTap: () => Navigator.pop(context, HealthPortal.masante),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (portal == null) return;
+
+    final service = HealthPortalAuthService();
+    final credentials = await service.getPortalCredentials(portal);
+    
+    final clientIdController = TextEditingController(text: credentials['client_id'] ?? '');
+    final clientSecretController = TextEditingController(text: credentials['client_secret'] ?? '');
+
+    if (!mounted) return;
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Credentials ${_getPortalName(portal)}'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: clientIdController,
+              decoration: const InputDecoration(
+                labelText: 'Client ID',
+                hintText: 'Entrez le Client ID OAuth',
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: clientSecretController,
+              decoration: const InputDecoration(
+                labelText: 'Client Secret',
+                hintText: 'Entrez le Client Secret OAuth',
+              ),
+              obscureText: true,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Annuler'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Sauvegarder'),
+          ),
+        ],
+      ),
+    );
+
+    if (result == true) {
+      await service.setPortalCredentials(
+        portal,
+        clientIdController.text.trim(),
+        clientSecretController.text.trim(),
+      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Credentials sauvegardés')),
+        );
+      }
+    }
+  }
+
+  Future<void> _showClearCacheDialog() async {
+    if (!mounted) return;
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Nettoyer le cache'),
+        content: const Text(
+          'Voulez-vous supprimer tous les caches ? Cette action ne peut pas être annulée.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Annuler'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Nettoyer'),
+          ),
+        ],
+      ),
+    );
+
+    if (result == true) {
+      await OfflineCacheService.clearAllCaches();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Cache nettoyé avec succès')),
+        );
+      }
+    }
   }
 
   Widget _buildSectionTitle(String title) {

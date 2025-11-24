@@ -18,6 +18,7 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
   bool _isLoading = true;
   String _searchQuery = '';
   String? _selectedSpecialty;
+  Color? _selectedColor; // Filtre par couleur (spécialité)
 
   @override
   void initState() {
@@ -54,7 +55,11 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
         final matchesSpecialty = _selectedSpecialty == null ||
             doctor.specialty == _selectedSpecialty;
         
-        return matchesSearch && matchesSpecialty;
+        // Filtre par couleur (spécialité)
+        final matchesColor = _selectedColor == null ||
+            Doctor.getColorForSpecialty(doctor.specialty) == _selectedColor;
+        
+        return matchesSearch && matchesSpecialty && matchesColor;
       }).toList();
     });
   }
@@ -136,7 +141,7 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                             Icon(
                               Icons.people_outline,
                               size: 64,
-                              color: Colors.grey[400],
+                                color: Colors.grey.shade400,
                             ),
                             const SizedBox(height: 16),
                             Text(
@@ -182,9 +187,24 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                                   style: const TextStyle(color: Colors.white),
                                 ),
                               ),
-                              title: Text(
-                                doctor.fullName,
-                                style: const TextStyle(fontWeight: FontWeight.bold),
+                              title: Row(
+                                children: [
+                                  Text(
+                                    doctor.fullName,
+                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  // Badge coloré selon spécialité (plus visible)
+                                  Container(
+                                    width: 16,
+                                    height: 16,
+                                    decoration: BoxDecoration(
+                                      color: Doctor.getColorForSpecialty(doctor.specialty),
+                                      shape: BoxShape.circle,
+                                      border: Border.all(color: Colors.white, width: 2),
+                                    ),
+                                  ),
+                                ],
                               ),
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,6 +232,9 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                         },
                       ),
           ),
+          
+          // Légende des couleurs
+          _buildColorLegend(),
         ],
       ),
     );
@@ -226,6 +249,86 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
         .toList();
     specialties.sort();
     return specialties;
+  }
+
+  /// Construit la légende des couleurs et filtres
+  Widget _buildColorLegend() {
+    final specialties = _getSpecialties();
+    if (specialties.isEmpty) return const SizedBox.shrink();
+    
+    // Obtenir couleurs uniques
+    final colorSpecialtyMap = <Color, String>{};
+    for (var specialty in specialties) {
+      final color = Doctor.getColorForSpecialty(specialty);
+      if (!colorSpecialtyMap.containsKey(color)) {
+        colorSpecialtyMap[color] = specialty;
+      }
+    }
+    
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.grey[100],
+        border: Border(top: BorderSide(color: Colors.grey[300]!)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Légende des couleurs (spécialités)',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 12,
+            runSpacing: 8,
+            children: colorSpecialtyMap.entries.map((entry) {
+              final isSelected = _selectedColor == entry.key;
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _selectedColor = isSelected ? null : entry.key;
+                  });
+                  _filterDoctors();
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: isSelected ? entry.key.withOpacity( 0.3) : Colors.transparent,
+                    border: Border.all(
+                      color: isSelected ? entry.key : Colors.grey,
+                      width: isSelected ? 2 : 1,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 12,
+                        height: 12,
+                        decoration: BoxDecoration(
+                          color: entry.key,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        entry.value,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
   }
 }
 

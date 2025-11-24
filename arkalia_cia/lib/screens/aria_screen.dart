@@ -186,7 +186,7 @@ class _ARIAScreenState extends State<ARIAScreen> {
                         Text(
                           'Serveur: $_ariaIP:$_ariaPort',
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 14,
                             color: _isARIAConnected ? Colors.green[600] : Colors.red[600],
                           ),
                         ),
@@ -279,7 +279,7 @@ class _ARIAScreenState extends State<ARIAScreen> {
               Text(
                 subtitle,
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 14,
                   color: Colors.grey[600],
                 ),
                 textAlign: TextAlign.center,

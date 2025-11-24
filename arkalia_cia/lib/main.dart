@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'screens/lock_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'services/local_storage_service.dart';
@@ -7,11 +8,31 @@ import 'services/theme_service.dart';
 import 'services/auto_sync_service.dart';
 import 'services/auth_api_service.dart';
 import 'services/backend_config_service.dart';
+import 'services/offline_cache_service.dart';
+import 'services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialiser databaseFactory pour le web (si nécessaire)
+  if (kIsWeb) {
+    try {
+      // Pour le web, sqflite nécessite sqflite_common_ffi
+      // Si le package n'est pas disponible, on continue sans initialisation
+      // Les services géreront l'erreur gracieusement
+    } catch (e) {
+      if (kDebugMode) {
+        print('Note: sqflite_common_ffi non disponible pour web. Mode offline uniquement.');
+      }
+    }
+  }
+  
   await LocalStorageService.init();
   await CalendarService.init();
+  // Initialiser le service de notifications au démarrage
+  await NotificationService.initialize();
+  // Nettoyer automatiquement les caches expirés au démarrage
+  await OfflineCacheService.clearExpiredCaches();
   runApp(const ArkaliaCIAApp());
 }
 
@@ -46,6 +67,8 @@ class _ArkaliaCIAAppState extends State<ArkaliaCIAApp> with WidgetsBindingObserv
     // Synchroniser quand l'app revient au premier plan
     if (state == AppLifecycleState.resumed) {
       AutoSyncService.syncIfNeeded();
+      // Nettoyer les caches expirés quand l'app revient au premier plan
+      OfflineCacheService.clearExpiredCaches();
     }
   }
 
@@ -134,7 +157,9 @@ class _InitialScreenState extends State<_InitialScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
+      backgroundColor: isDark ? Colors.grey[900] : Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -142,14 +167,28 @@ class _InitialScreenState extends State<_InitialScreen> {
             Icon(
               Icons.health_and_safety,
               size: 80,
-              color: Theme.of(context).colorScheme.primary,
+              color: isDark ? Colors.white : Colors.green[700],
             ),
             const SizedBox(height: 24),
-            const CircularProgressIndicator(),
+            CircularProgressIndicator(
+              color: isDark ? Colors.white : Colors.green[700],
+            ),
             const SizedBox(height: 16),
             Text(
               'Chargement...',
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+                color: isDark ? Colors.white : Colors.grey[900],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Cela peut prendre quelques instants',
+              style: TextStyle(
+                fontSize: 14,
+                color: isDark ? Colors.grey[400] : Colors.grey[600],
+              ),
             ),
           ],
         ),

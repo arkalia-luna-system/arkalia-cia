@@ -1,8 +1,10 @@
 # Guide build release Android
 
-**Version** : 1.2.0  
-**Dernière mise à jour** : 19 novembre 2025  
+**Version** : 1.3.0  
+**Dernière mise à jour** : 24 novembre 2025  
 **Cible** : Google Play Store
+
+> **📱 Google Play Console** : Compte développeur créé le 24 novembre 2025. Vérification en cours. Voir [PLAY_STORE_SETUP.md](./PLAY_STORE_SETUP.md) pour l'état actuel.
 
 Guide complet pour construire des releases Android prêtes pour la production.
 
@@ -25,7 +27,7 @@ Guide complet pour construire des releases Android prêtes pour la production.
 Verify version information in `pubspec.yaml`:
 
 ```yaml
-version: 1.2.0+1
+version: 1.3.0+1
 # Format: MAJOR.MINOR.PATCH+BUILD_NUMBER
 ```
 
@@ -57,7 +59,7 @@ android {
 
 ### Pre-Build Verification
 
-- ✅ All tests pass (218/218)
+- ✅ All tests pass (308/308)
 - ✅ Code quality checks pass (Black, Ruff, MyPy, Bandit)
 - ✅ Flutter analyze shows no errors
 - ✅ Critical bugs fixed

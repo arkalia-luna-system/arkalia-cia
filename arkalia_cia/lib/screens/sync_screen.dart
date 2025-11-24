@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -174,7 +175,7 @@ class _SyncScreenState extends State<SyncScreen> {
               Text(
                 '${(_syncProgress * 100).toInt()}%',
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 14,
                   color: Colors.grey[600],
                 ),
               ),
@@ -539,7 +540,7 @@ class _SyncScreenState extends State<SyncScreen> {
       final allData = await LocalStorageService.exportAllData();
       final filteredData = <String, dynamic>{
         'export_date': DateTime.now().toIso8601String(),
-        'version': '1.2.0',
+        'version': '1.3.0',
       };
 
       if (exportOptions['Documents'] == true) {
@@ -600,19 +601,37 @@ class _SyncScreenState extends State<SyncScreen> {
         return; // Utilisateur a annulé
       }
 
-      final filePath = result.files.single.path;
-      if (filePath == null) {
-        _showError('Impossible de lire le fichier sélectionné');
-        return;
-      }
-
       setState(() {
         _syncStatus = 'Import des données...';
       });
 
       // Lire et parser le fichier JSON
-      final file = File(filePath);
-      final jsonString = await file.readAsString();
+      String jsonString;
+      if (kIsWeb) {
+        // Sur le web, utiliser bytes
+        final bytes = result.files.single.bytes;
+        if (bytes == null) {
+          _showError('Impossible de lire le fichier sélectionné');
+          setState(() {
+            _syncStatus = 'Prêt à synchroniser';
+          });
+          return;
+        }
+        jsonString = utf8.decode(bytes);
+      } else {
+        // Sur mobile, utiliser path
+        final filePath = result.files.single.path;
+        if (filePath == null) {
+          _showError('Impossible de lire le fichier sélectionné');
+          setState(() {
+            _syncStatus = 'Prêt à synchroniser';
+          });
+          return;
+        }
+        final file = File(filePath);
+        jsonString = await file.readAsString();
+      }
+      
       final data = jsonDecode(jsonString) as Map<String, dynamic>;
 
       // Valider le format

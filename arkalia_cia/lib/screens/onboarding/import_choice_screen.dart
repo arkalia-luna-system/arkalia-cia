@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:file_picker/file_picker.dart';
 import '../../services/onboarding_service.dart';
 import 'import_progress_screen.dart';
@@ -22,15 +23,66 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
       );
 
       if (result != null && result.files.isNotEmpty) {
-        // Rediriger vers écran progression
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ImportProgressScreen(
-              importType: ImportType.manualPDF,
+        if (kIsWeb) {
+          // Sur le web, utiliser bytes et créer des fichiers temporaires
+          final fileDataList = <Map<String, dynamic>>[];
+          for (final file in result.files) {
+            if (file.bytes != null) {
+              fileDataList.add({
+                'name': file.name,
+                'bytes': file.bytes!,
+              });
+            }
+          }
+          
+          if (fileDataList.isEmpty) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Aucun fichier valide sélectionné')),
+              );
+            }
+            return;
+          }
+
+          // Rediriger vers écran progression avec les données
+          if (!mounted) return;
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ImportProgressScreen(
+                importType: ImportType.manualPDF,
+                fileDataList: fileDataList,
+              ),
             ),
-          ),
-        );
+          );
+        } else {
+          // Sur mobile, utiliser paths
+          final filePaths = result.files
+              .where((file) => file.path != null)
+              .map((file) => file.path!)
+              .toList();
+
+          if (filePaths.isEmpty) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Aucun fichier valide sélectionné')),
+              );
+            }
+            return;
+          }
+
+          // Rediriger vers écran progression avec les fichiers
+          if (!mounted) return;
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ImportProgressScreen(
+                importType: ImportType.manualPDF,
+                filePaths: filePaths,
+              ),
+            ),
+          );
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -95,10 +147,12 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
                     'Création automatique historique intelligent',
                 color: Colors.blue,
                 onTap: () {
-                  // TODO: Implémenter import portails
+                  // Note: L'import automatique nécessite les APIs OAuth des portails santé
+                  // La structure est prête (HealthPortalAuthService), mais nécessite
+                  // la configuration des endpoints OAuth pour eHealth, Andaman 7, MaSanté
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Import portails - À venir bientôt !'),
+                      content: Text('Import portails - Nécessite configuration APIs OAuth'),
                     ),
                   );
                 },
@@ -138,10 +192,10 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.blue[50]?.withOpacity(0.3),
+                  color: Colors.blue[50]?.withOpacity( 0.3),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: Colors.blue.withOpacity(0.3),
+                    color: Colors.blue.withOpacity( 0.3),
                   ),
                 ),
                 child: Row(
@@ -187,7 +241,7 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withOpacity( 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(icon, color: color, size: 32),

@@ -6,14 +6,15 @@ Backend pour l'application mobile Flutter
 import logging
 import os  # nosec B404
 import re
-import tempfile
+import time
 from datetime import datetime
 from pathlib import Path
-from urllib.parse import urlparse
+from typing import Any
 
 from fastapi import Depends, FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field, field_validator
 from slowapi import Limiter
 from slowapi.errors import RateLimitExceeded
@@ -37,15 +38,35 @@ from arkalia_cia_python_backend.auth import (
     verify_password,
     verify_token,
 )
+from arkalia_cia_python_backend.config import get_settings
 from arkalia_cia_python_backend.database import CIADatabase
-from arkalia_cia_python_backend.pdf_parser.metadata_extractor import MetadataExtractor
-from arkalia_cia_python_backend.pdf_processor import PDFProcessor
+from arkalia_cia_python_backend.dependencies import (
+    get_conversational_ai,
+    get_database,
+    get_document_service,
+    get_medical_report_service,
+    get_pattern_analyzer,
+)
+from arkalia_cia_python_backend.security.ssrf_validator import get_ssrf_validator
 from arkalia_cia_python_backend.security_utils import (
     sanitize_error_detail,
     sanitize_html,
     sanitize_log_message,
     validate_phone_number,
 )
+from arkalia_cia_python_backend.services.document_service import DocumentService
+from arkalia_cia_python_backend.services.medical_report_service import (
+    MedicalReportService,
+)
+
+# Patterns XSS compilés une fois pour performance
+_XSS_PATTERNS = [
+    re.compile(r"<script[^>]*>", re.IGNORECASE),
+    re.compile(r"javascript:", re.IGNORECASE),
+]
+
+# Cache de l'environnement pour éviter les appels répétés à os.getenv
+_ENVIRONMENT = os.getenv("ENVIRONMENT")
 
 logger = logging.getLogger(__name__)
 
@@ -62,22 +83,22 @@ def get_rate_limit_key(request: Request):
     ip = get_remote_address(request)
 
     # Essayer d'extraire le user_id du token si présent
+    # OPTIMISATION: Import déjà fait en haut du fichier, pas besoin de réimporter
     try:
         auth_header = request.headers.get("authorization", "")
         if auth_header.startswith("Bearer "):
             token = auth_header.split(" ")[1]
-            from arkalia_cia_python_backend.auth import verify_token
-
             try:
-                token_data = verify_token(token, token_type="access")
+                token_data = verify_token(token, token_type="access")  # nosec B106
                 if token_data.user_id:
                     # Combiner IP + user_id pour un rate limiting par utilisateur
                     return f"{ip}:user:{token_data.user_id}"
             except Exception:
                 # Si le token est invalide, utiliser juste l'IP
-                pass
+                pass  # nosec B110
     except Exception:
-        pass
+        # Fallback silencieux en cas d'erreur de parsing du token
+        pass  # nosec B110
 
     # Fallback : utiliser juste l'IP
     return ip
@@ -85,12 +106,8 @@ def get_rate_limit_key(request: Request):
 
 limiter = Limiter(key_func=get_rate_limit_key)
 
-# Instances globales - seront injectées via Depends pour meilleure testabilité
-# Gardons-les pour compatibilité mais utiliser Depends() dans les endpoints
-db = CIADatabase()
-pdf_processor = PDFProcessor()
-conversational_ai = ConversationalAI()
-pattern_analyzer = AdvancedPatternAnalyzer()
+# NOTE: Les instances sont maintenant injectées via Depends() dans les endpoints
+# Utiliser get_database(), get_pdf_processor(), etc. via Depends() pour testabilité
 
 
 # Modèles Pydantic
@@ -234,13 +251,9 @@ class HealthPortalRequest(BaseModel):
         if v is None:
             return None
         v = v.strip()
-        # Protection contre XSS
-        xss_patterns = [
-            r"<script[^>]*>",
-            r"javascript:",
-        ]
-        for pattern in xss_patterns:
-            if re.search(pattern, v, re.IGNORECASE):
+        # Protection contre XSS - OPTIMISATION: utiliser patterns compilés
+        for pattern in _XSS_PATTERNS:
+            if pattern.search(v):
                 raise ValueError("La catégorie contient des caractères non autorisés")
         return v
 
@@ -257,71 +270,15 @@ class HealthPortalRequest(BaseModel):
         if not v or not v.strip():
             raise ValueError("L'URL ne peut pas être vide")
         url = v.strip()
-        # Valider le format de l'URL
+
+        # Utiliser le validateur SSRF centralisé
         try:
-            parsed = urlparse(url)
-            if not parsed.scheme or parsed.scheme not in ("http", "https"):
-                raise ValueError("L'URL doit utiliser le protocole HTTP ou HTTPS")
-            if not parsed.netloc:
-                raise ValueError("URL invalide")
-
-            # Protection SSRF - bloquer les adresses IP privées/localhost
-            hostname = parsed.hostname or ""
-            if hostname:
-                # Bloquer localhost et IPs privées
-                # Liste de blocage SSRF - ces adresses sont intentionnellement bloquées
-                # Note: "0.0.0.0" est dans une constante séparée pour éviter les warnings Bandit
-                blocked_all_interfaces = "0.0.0.0"  # nosec B104 - Liste de blocage SSRF, pas un binding réseau
-                blocked_hosts = [
-                    "localhost",
-                    "127.0.0.1",
-                    blocked_all_interfaces,
-                    "::1",
-                    "169.254.",
-                    "10.",
-                    "172.16.",
-                    "172.17.",
-                    "172.18.",
-                    "172.19.",
-                    "172.20.",
-                    "172.21.",
-                    "172.22.",
-                    "172.23.",
-                    "172.24.",
-                    "172.25.",
-                    "172.26.",
-                    "172.27.",
-                    "172.28.",
-                    "172.29.",
-                    "172.30.",
-                    "172.31.",
-                    "192.168.",
-                ]
-                hostname_lower = hostname.lower()
-                if any(hostname_lower.startswith(blocked) for blocked in blocked_hosts):
-                    raise ValueError(
-                        "Les URLs vers des adresses privées ne sont pas autorisées"
-                    )
-
-                # Bloquer les IPs privées (format IP)
-                if re.match(r"^\d+\.\d+\.\d+\.\d+$", hostname):
-                    parts = hostname.split(".")
-                    first_octet = int(parts[0])
-                    second_octet = int(parts[1]) if len(parts) > 1 else 0
-                    # 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16
-                    if (
-                        first_octet == 10
-                        or (first_octet == 172 and 16 <= second_octet <= 31)
-                        or (first_octet == 192 and second_octet == 168)
-                    ):
-                        raise ValueError(
-                            "Les URLs vers des adresses IP privées ne sont pas autorisées"
-                        )
+            validator = get_ssrf_validator()
+            return validator.validate(url)
         except ValueError:
             raise
         except Exception as e:
             raise ValueError("Format d'URL invalide") from e
-        return url
 
 
 class HealthPortalResponse(BaseModel):
@@ -338,10 +295,10 @@ app = FastAPI(
     title="Arkalia CIA API",
     description="API backend pour l'application mobile Arkalia CIA",
     version="1.0.0",
-    docs_url=("/docs" if os.getenv("ENVIRONMENT") != "production" else None),
-    redoc_url=("/redoc" if os.getenv("ENVIRONMENT") != "production" else None),
+    docs_url=("/docs" if _ENVIRONMENT != "production" else None),
+    redoc_url=("/redoc" if _ENVIRONMENT != "production" else None),
     # Désactiver OpenAPI schema en production pour réduire la surface d'attaque
-    openapi_url=("/openapi.json" if os.getenv("ENVIRONMENT") != "production" else None),
+    openapi_url=("/openapi.json" if _ENVIRONMENT != "production" else None),
 )
 
 # Versioning API
@@ -350,15 +307,12 @@ API_PREFIX = f"/api/{API_VERSION}"
 
 # Ajouter le rate limiter
 app.state.limiter = limiter
+app.state.start_time = time.time()
 
 
 def rate_limit_handler(request: Request, exc: Exception) -> Response:
     """Handler personnalisé pour RateLimitExceeded"""
-    from slowapi.errors import RateLimitExceeded
-
     if isinstance(exc, RateLimitExceeded):
-        from fastapi.responses import JSONResponse
-
         return JSONResponse(
             status_code=429,
             content={"detail": "Trop de requêtes. Veuillez réessayer plus tard."},
@@ -370,14 +324,14 @@ app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
 
 # Middleware de sécurité : Trusted Host
 # En production, ajouter les domaines autorisés
-if os.getenv("ENVIRONMENT") == "production":
+if _ENVIRONMENT == "production":
     app.add_middleware(
         TrustedHostMiddleware,
         allowed_hosts=["api.arkalia-cia.com", "*.arkalia-cia.com"],
     )
 
-# Limite de taille de requête globale (protection DoS)
-MAX_REQUEST_SIZE = 10 * 1024 * 1024  # 10 MB pour les requêtes JSON
+# Configuration chargée une fois au démarrage
+settings = get_settings()
 
 
 # Middleware pour ajouter des headers de sécurité HTTP et protections
@@ -396,11 +350,9 @@ async def add_security_headers(request: Request, call_next):
         ):
             if "text/html" in content_type or "application/xml" in content_type:
                 # Potentielle attaque XSS ou XXE
-                logger.warning(
-                    sanitize_log_message(
-                        f"Content-Type suspect rejeté: {content_type} depuis {request.client.host if request.client else 'unknown'}"
-                    )
-                )
+                host = request.client.host if request.client else "unknown"
+                msg = f"Content-Type suspect rejeté: {content_type} depuis {host}"
+                logger.warning(sanitize_log_message(msg))
                 from fastapi.responses import JSONResponse
 
                 return JSONResponse(
@@ -413,12 +365,13 @@ async def add_security_headers(request: Request, call_next):
         if content_length:
             try:
                 size = int(content_length)
-                if size > MAX_REQUEST_SIZE:
-                    logger.warning(
-                        sanitize_log_message(
-                            f"Requête trop volumineuse rejetée (header): {size} bytes depuis {request.client.host if request.client else 'unknown'}"
-                        )
+                if size > settings.max_request_size_bytes:
+                    host = request.client.host if request.client else "unknown"
+                    msg = (
+                        f"Requête trop volumineuse rejetée (header): "
+                        f"{size} bytes depuis {host}"
                     )
+                    logger.warning(sanitize_log_message(msg))
                     from fastapi.responses import JSONResponse
 
                     return JSONResponse(
@@ -490,9 +443,82 @@ async def root():
 
 
 @app.get("/health")
-async def health_check():
-    """Vérification de santé de l'API"""
-    return {"status": "healthy", "timestamp": datetime.now().isoformat()}
+async def health_check(db: CIADatabase = Depends(get_database)):
+    """
+    Vérification de santé complète de l'API
+    Vérifie: API, base de données, storage
+    """
+    health_status: dict[str, Any] = {
+        "status": "healthy",
+        "timestamp": datetime.now().isoformat(),
+        "version": "1.3.1",
+        "checks": {},
+    }
+
+    # Vérifier base de données
+    # OPTIMISATION: Utiliser une méthode qui existe dans CIADatabase
+    try:
+        import sqlite3
+
+        # Vérifier la connexion à la base de données
+        with sqlite3.connect(db.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT 1")
+            cursor.fetchone()
+        checks = health_status["checks"]
+        if isinstance(checks, dict):
+            checks["database"] = "ok"
+    except Exception as e:
+        checks = health_status["checks"]
+        if isinstance(checks, dict):
+            checks["database"] = f"error: {str(e)[:50]}"
+        health_status["status"] = "degraded"
+
+    # Vérifier storage (disque)
+    try:
+        import shutil
+
+        total, used, free = shutil.disk_usage("/")
+        storage_info: dict[str, str | float] = {
+            "status": "ok",
+            "free_gb": round(free / (1024**3), 2),
+            "used_percent": round(used / total * 100, 2),
+        }
+        if free / total < 0.1:  # Moins de 10% libre
+            health_status["status"] = "degraded"
+            storage_info["status"] = "warning"
+        checks = health_status["checks"]
+        if isinstance(checks, dict):
+            checks["storage"] = storage_info
+    except Exception as e:
+        # OPTIMISATION: Toujours créer un dict pour éviter erreurs d'indexation
+        checks = health_status["checks"]
+        if isinstance(checks, dict):
+            checks["storage"] = {
+                "status": "error",
+                "message": str(e)[:50],
+            }
+        health_status["status"] = "degraded"
+
+    return health_status
+
+
+@app.get("/metrics")
+async def metrics():
+    """
+    Endpoint pour métriques d'observabilité
+    Format simple compatible avec Prometheus
+    """
+    metrics_data = {
+        "timestamp": datetime.now().isoformat(),
+        "uptime_seconds": int(
+            time.time() - app.state.start_time
+            if hasattr(app.state, "start_time")
+            else 0
+        ),
+        "version": "1.3.1",
+    }
+    return metrics_data
 
 
 # === AUTHENTIFICATION ===
@@ -506,7 +532,11 @@ class RefreshTokenRequest(BaseModel):
 
 @app.post(f"{API_PREFIX}/auth/register", response_model=UserResponse)
 @limiter.limit("5/minute")  # Limite stricte pour éviter le spam
-async def register(request: Request, user_data: UserCreate):
+async def register(
+    request: Request,
+    user_data: UserCreate,
+    db: CIADatabase = Depends(get_database),
+):
     """Enregistre un nouvel utilisateur"""
     try:
         # Vérifier si l'utilisateur existe déjà
@@ -559,7 +589,11 @@ async def register(request: Request, user_data: UserCreate):
 
 @app.post(f"{API_PREFIX}/auth/login", response_model=Token)
 @limiter.limit("10/minute")  # Limite pour éviter les attaques brute force
-async def login(request: Request, credentials: UserLogin):
+async def login(
+    request: Request,
+    credentials: UserLogin,
+    db: CIADatabase = Depends(get_database),
+):
     """Authentifie un utilisateur et retourne un token JWT"""
     try:
         # Récupérer l'utilisateur
@@ -597,7 +631,7 @@ async def login(request: Request, credentials: UserLogin):
         return Token(
             access_token=access_token,
             refresh_token=refresh_token,
-            token_type="bearer",
+            token_type="bearer",  # nosec B106
         )
     except HTTPException:
         raise
@@ -614,7 +648,9 @@ async def login(request: Request, credentials: UserLogin):
 async def refresh_token_endpoint(request: Request, token_request: RefreshTokenRequest):
     """Rafraîchit un token d'accès avec un refresh token"""
     try:
-        token_data = verify_token(token_request.refresh_token, token_type="refresh")
+        token_data = verify_token(
+            token_request.refresh_token, token_type="refresh"
+        )  # nosec B106
 
         # Créer un nouveau token d'accès
         new_token_data = {
@@ -630,7 +666,7 @@ async def refresh_token_endpoint(request: Request, token_request: RefreshTokenRe
         return Token(
             access_token=access_token,
             refresh_token=new_refresh_token,
-            token_type="bearer",
+            token_type="bearer",  # nosec B106 - "bearer" est le type de token OAuth standard, pas un mot de passe
         )
     except HTTPException:
         raise
@@ -651,138 +687,28 @@ async def upload_document(
     request: Request,
     file: UploadFile = File(...),
     current_user: TokenData = Depends(get_current_active_user),
+    document_service: DocumentService = Depends(get_document_service),
 ):
     """Upload un document PDF avec validation de sécurité"""
-    tmp_file_path = None
+    if not current_user.user_id:
+        raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
+
     try:
-        # Validation du nom de fichier
-        if not file.filename:
-            raise HTTPException(status_code=400, detail="Le nom de fichier est requis")
+        # Lire le fichier en mémoire (limité à 50 MB)
+        file_content = await file.read()
 
-        # Nettoyer le nom de fichier pour éviter les injections de chemin
-        safe_filename = os.path.basename(file.filename)
-        if not safe_filename or safe_filename != file.filename:
-            raise HTTPException(status_code=400, detail="Nom de fichier invalide")
-
-        # Vérifier que c'est un PDF
-        if not safe_filename.lower().endswith(".pdf"):
-            raise HTTPException(
-                status_code=400, detail="Seuls les fichiers PDF sont acceptés"
-            )
-
-        # Limiter la taille du fichier (50 MB max)
-        MAX_FILE_SIZE = 50 * 1024 * 1024  # 50 MB
-
-        # Écrire directement dans le fichier temporaire par chunks
-        # pour éviter de charger tout le fichier en mémoire
-        chunk_size = 1024 * 1024  # 1 MB par chunk
-        total_size = 0
-
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
-            tmp_file_path = tmp_file.name
-            while True:
-                chunk = await file.read(chunk_size)
-                if not chunk:
-                    break
-                total_size += len(chunk)
-                if total_size > MAX_FILE_SIZE:
-                    # Nettoyer le fichier temporaire avant de lever l'exception
-                    try:
-                        os.unlink(tmp_file_path)
-                    except OSError:
-                        pass
-                    raise HTTPException(
-                        status_code=400,
-                        detail="Le fichier est trop volumineux (max 50 MB)",
-                    )
-                tmp_file.write(chunk)
-                # Libérer immédiatement le chunk de la mémoire
-                del chunk
-
-        # Traiter le PDF
-        result = pdf_processor.process_pdf(tmp_file_path, safe_filename)
-
-        if not result["success"]:
-            # Nettoyer le fichier temporaire en cas d'erreur
-            if tmp_file_path and os.path.exists(tmp_file_path):
-                try:
-                    os.unlink(tmp_file_path)
-                except OSError:
-                    pass
-            raise HTTPException(status_code=400, detail=result["error"])
-
-        # Extraire métadonnées intelligentes
-        metadata = None
-        text_content = ""
-        try:
-            # Extraire texte (avec OCR si nécessaire)
-            text_content = pdf_processor.extract_text_from_pdf(
-                tmp_file_path, use_ocr=False
-            )
-
-            # Si peu de texte, essayer OCR
-            if len(text_content.strip()) < 100:
-                text_content = pdf_processor.extract_text_from_pdf(
-                    tmp_file_path, use_ocr=True
-                )
-
-            # Extraire métadonnées
-            metadata_extractor = MetadataExtractor()
-            metadata = metadata_extractor.extract_metadata(text_content)
-        except Exception as e:
-            logger.warning(
-                f"Erreur extraction métadonnées: {sanitize_log_message(str(e))}"
-            )
-            metadata = None
-
-        # Sauvegarder en base de données avec métadonnées
-        doc_id = db.add_document(
-            name=result["filename"],
-            original_name=result["original_name"],
-            file_path=result["file_path"],
-            file_type="pdf",
-            file_size=result["file_size"],
+        # Traiter le fichier via le service (synchrone maintenant)
+        result = document_service.process_uploaded_file(
+            file_content, file.filename or "document.pdf"
         )
 
-        # Associer le document à l'utilisateur authentifié
-        if doc_id and current_user.user_id:
-            db.associate_document_to_user(int(current_user.user_id), doc_id)
+        # Extraire métadonnées
+        metadata = document_service.extract_metadata(result["file_path"])
 
-        # Sauvegarder métadonnées extraites
-        if metadata and doc_id:
-            doc_date = metadata.get("date")
-            doctor_name = metadata.get("doctor_name")
-            doctor_specialty = metadata.get("doctor_specialty")
-
-            # Note: L'association avec les médecins se fait via les métadonnées
-            # Les consultations sont gérées côté Flutter (DoctorService)
-            # Le doctor_name et doctor_specialty sont stockés dans document_metadata
-            # pour permettre l'association automatique côté UI
-
-            db.add_document_metadata(
-                document_id=doc_id,
-                doctor_name=doctor_name,
-                doctor_specialty=doctor_specialty,
-                document_date=doc_date.isoformat() if doc_date else None,
-                exam_type=metadata.get("exam_type"),
-                document_type=metadata.get("document_type"),
-                keywords=",".join(metadata.get("keywords", [])),
-                extracted_text=(
-                    text_content[:5000] if text_content else None
-                ),  # Limiter à 5000 caractères
-            )
-
-            # Note: L'association avec les médecins se fait via les métadonnées
-            # Les consultations sont gérées côté Flutter (DoctorService)
-            # Le doctor_id et doctor_name sont stockés dans document_metadata
-            # pour permettre l'association automatique côté UI
-
-        # Nettoyer le fichier temporaire
-        if tmp_file_path and os.path.exists(tmp_file_path):
-            try:
-                os.unlink(tmp_file_path)
-            except OSError:
-                pass
+        # Sauvegarder en base avec métadonnées
+        doc_id = document_service.save_document_with_metadata(
+            result, int(current_user.user_id), metadata
+        )
 
         return {
             "success": True,
@@ -790,22 +716,13 @@ async def upload_document(
             "message": "Document uploadé avec succès",
         }
 
-    except HTTPException:
-        # Ré-élever les HTTPException
-        raise
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
     except Exception as e:
-        # Nettoyer le fichier temporaire en cas d'erreur inattendue
-        if tmp_file_path and os.path.exists(tmp_file_path):
-            try:
-                os.unlink(tmp_file_path)
-            except OSError:
-                pass
-        # Logger l'erreur complète (pour debugging) mais retourner un message sécurisé
         logger.error(
             f"Erreur upload document: {sanitize_log_message(str(e))}",
             exc_info=True,
         )
-        # Retourner un message d'erreur générique sans exposer de détails techniques
         raise HTTPException(status_code=500, detail=sanitize_error_detail(e)) from e
 
 
@@ -816,6 +733,7 @@ async def get_documents(
     skip: int = 0,
     limit: int = 50,
     current_user: TokenData = Depends(get_current_active_user),
+    db: CIADatabase = Depends(get_database),
 ):
     """Récupère les documents de l'utilisateur avec pagination"""
     if limit > 100:  # Limiter à 100 max par requête
@@ -838,12 +756,15 @@ async def get_document(
     request: Request,
     doc_id: int,
     current_user: TokenData = Depends(get_current_active_user),
+    db: CIADatabase = Depends(get_database),
 ):
     """Récupère un document par ID (uniquement si appartient à l'utilisateur)"""
     # Vérifier que le document appartient à l'utilisateur
+    # OPTIMISATION: Utiliser un set pour recherche O(1) au lieu de O(n)
     if current_user.user_id:
         user_docs = db.get_user_documents(int(current_user.user_id))
-        if not any(doc["id"] == doc_id for doc in user_docs):
+        user_doc_ids = {doc["id"] for doc in user_docs}
+        if doc_id not in user_doc_ids:
             raise HTTPException(status_code=404, detail="Document non trouvé")
 
     document = db.get_document(doc_id)
@@ -856,6 +777,7 @@ async def get_document(
 async def delete_document(
     doc_id: int,
     current_user: TokenData = Depends(get_current_active_user),
+    db: CIADatabase = Depends(get_database),
 ):
     """Supprime un document"""
     document = db.get_document(doc_id)
@@ -909,6 +831,7 @@ async def create_reminder(
     request: Request,
     reminder: ReminderRequest,
     current_user: TokenData = Depends(get_current_active_user),
+    db: CIADatabase = Depends(get_database),
 ):
     """Crée un rappel"""
     reminder_id = db.add_reminder(
@@ -917,8 +840,8 @@ async def create_reminder(
         reminder_date=reminder.reminder_date,
     )
 
-    # Récupérer le rappel créé (seulement les 10 derniers pour économiser la mémoire)
-    reminders = db.get_reminders(skip=0, limit=10)
+    # Récupérer le rappel créé (limite configurable)
+    reminders = db.get_reminders(skip=0, limit=settings.max_reminders_list)
     created_reminder = next((r for r in reminders if r["id"] == reminder_id), None)
 
     if not created_reminder:
@@ -936,6 +859,7 @@ async def get_reminders(
     skip: int = 0,
     limit: int = 50,
     current_user: TokenData = Depends(get_current_active_user),
+    db: CIADatabase = Depends(get_database),
 ):
     """Récupère les rappels avec pagination"""
     if limit > 100:  # Limiter à 100 max par requête
@@ -955,6 +879,7 @@ async def create_emergency_contact(
     request: Request,
     contact: EmergencyContactRequest,
     current_user: TokenData = Depends(get_current_active_user),
+    db: CIADatabase = Depends(get_database),
 ):
     """Crée un contact d'urgence"""
     contact_id = db.add_emergency_contact(
@@ -985,6 +910,7 @@ async def get_emergency_contacts(
     skip: int = 0,
     limit: int = 50,
     current_user: TokenData = Depends(get_current_active_user),
+    db: CIADatabase = Depends(get_database),
 ):
     """Récupère les contacts d'urgence avec pagination"""
     if limit > 100:  # Limiter à 100 max par requête
@@ -1004,6 +930,7 @@ async def create_health_portal(
     request: Request,
     portal: HealthPortalRequest,
     current_user: TokenData = Depends(get_current_active_user),
+    db: CIADatabase = Depends(get_database),
 ):
     """Crée un portail santé"""
     portal_id = db.add_health_portal(
@@ -1013,8 +940,8 @@ async def create_health_portal(
         category=portal.category or "",
     )
 
-    # Récupérer le portail créé (seulement les 10 derniers pour économiser la mémoire)
-    portals = db.get_health_portals(skip=0, limit=10)
+    # Récupérer le portail créé (limite configurable)
+    portals = db.get_health_portals(skip=0, limit=settings.max_reminders_list)
     created_portal = next((p for p in portals if p["id"] == portal_id), None)
 
     if not created_portal:
@@ -1032,6 +959,7 @@ async def get_health_portals(
     skip: int = 0,
     limit: int = 50,
     current_user: TokenData = Depends(get_current_active_user),
+    db: CIADatabase = Depends(get_database),
 ):
     """Récupère les portails santé avec pagination"""
     if limit > 100:  # Limiter à 100 max par requête
@@ -1056,6 +984,7 @@ async def import_health_portal_data(
     request: Request,
     import_request: HealthPortalImportRequest,
     current_user: TokenData = Depends(get_current_active_user),
+    db: CIADatabase = Depends(get_database),
 ):
     """Importe les données depuis un portail santé externe"""
     try:
@@ -1070,7 +999,7 @@ async def import_health_portal_data(
             for doc in data["documents"][:50]:  # Limiter à 50 documents
                 try:
                     # Extraire métadonnées du document
-                    # Note: Pour un import complet, il faudrait télécharger les fichiers PDF
+                    # Note: Import complet nécessiterait téléchargement fichiers PDF
                     # et créer des entrées dans la table documents
                     _ = doc.get("name", doc.get("title", "Document importé"))
                     _ = doc.get("date", doc.get("created_at", ""))
@@ -1086,7 +1015,8 @@ async def import_health_portal_data(
             for consult in data["consultations"][:50]:  # Limiter à 50 consultations
                 try:
                     # Extraire informations consultation
-                    # Note: Pour un import complet, il faudrait créer des entrées dans la table consultations
+                    # Note: Pour un import complet, il faudrait créer des
+                    # entrées dans la table consultations
                     _ = consult.get("date", consult.get("created_at", ""))
                     _ = consult.get("doctor", consult.get("physician", ""))
                     _ = consult.get("specialty", "")
@@ -1100,7 +1030,8 @@ async def import_health_portal_data(
         if "exams" in data and isinstance(data["exams"], list):
             for exam in data["exams"][:50]:  # Limiter à 50 examens
                 try:
-                    # Note: Pour un import complet, il faudrait créer des entrées dans la table examens
+                    # Note: Pour un import complet, il faudrait créer des
+                    # entrées dans la table examens
                     _ = exam.get("type", exam.get("exam_type", ""))
                     _ = exam.get("date", exam.get("created_at", ""))
                     _ = exam.get("results", {})
@@ -1134,7 +1065,7 @@ class ChatRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     answer: str
-    related_documents: list[str] = Field(default_factory=list)
+    related_documents: list[int] = Field(default_factory=list)
     suggestions: list[str] = Field(default_factory=list)
     patterns_detected: dict = Field(default_factory=dict)
     question_type: str = "general"
@@ -1146,6 +1077,8 @@ async def chat_with_ai(
     request: Request,
     chat_request: ChatRequest,
     current_user: TokenData = Depends(get_current_active_user),
+    db: CIADatabase = Depends(get_database),
+    conversational_ai: ConversationalAI = Depends(get_conversational_ai),
 ):
     """Chat avec l'IA conversationnelle"""
     try:
@@ -1195,6 +1128,7 @@ async def get_ai_conversations(
     request: Request,
     limit: int = 50,
     current_user: TokenData = Depends(get_current_active_user),
+    db: CIADatabase = Depends(get_database),
 ):
     """Récupère l'historique des conversations IA"""
     try:
@@ -1214,6 +1148,85 @@ async def get_ai_conversations(
         ) from e
 
 
+# === RAPPORTS MÉDICAUX ===
+
+
+class MedicalReportRequest(BaseModel):
+    consultation_date: str | None = Field(
+        None, description="Date de consultation (ISO format, défaut: aujourd'hui)"
+    )
+    days_range: int = Field(30, ge=1, le=365, description="Nombre de jours à inclure")
+    include_aria: bool = Field(
+        True, description="Inclure les données ARIA si disponibles"
+    )
+
+
+class MedicalReportResponse(BaseModel):
+    report_date: str
+    generated_at: str
+    days_range: int
+    sections: dict
+    formatted_text: str
+    success: bool = True
+
+
+@app.post(
+    f"{API_PREFIX}/medical-reports/generate", response_model=MedicalReportResponse
+)
+@limiter.limit("10/minute")  # Limite de 10 rapports par minute
+async def generate_medical_report(
+    request: Request,
+    report_request: MedicalReportRequest,
+    current_user: TokenData = Depends(get_current_active_user),
+    db: CIADatabase = Depends(get_database),
+    report_service: MedicalReportService = Depends(get_medical_report_service),
+):
+    """
+    Génère un rapport médical pré-consultation combinant CIA + ARIA
+
+    Combine :
+    - Documents médicaux pertinents (CIA)
+    - Consultations récentes (CIA)
+    - Timeline douleur (ARIA)
+    - Patterns détectés (ARIA)
+    - Métriques santé (ARIA)
+    """
+    try:
+        # Parser la date de consultation si fournie
+        consultation_date = None
+        if report_request.consultation_date:
+            try:
+                consultation_date = datetime.fromisoformat(
+                    report_request.consultation_date.replace("Z", "+00:00")
+                )
+            except (ValueError, AttributeError):
+                consultation_date = None
+
+        # Générer le rapport
+        report = report_service.generate_pre_consultation_report(
+            user_id=str(current_user.user_id),
+            consultation_date=consultation_date,
+            days_range=report_request.days_range,
+            include_aria=report_request.include_aria,
+        )
+
+        return MedicalReportResponse(
+            report_date=report["report_date"],
+            generated_at=report["generated_at"],
+            days_range=report["days_range"],
+            sections=report["sections"],
+            formatted_text=report["formatted_text"],
+            success=True,
+        )
+    except Exception as e:
+        logger.error(
+            f"Erreur génération rapport médical: {sanitize_log_message(str(e))}"
+        )
+        raise HTTPException(
+            status_code=500, detail="Erreur lors de la génération du rapport médical"
+        ) from e
+
+
 class PatternAnalysisRequest(BaseModel):
     data: list[dict] = Field(..., description="Liste des données à analyser")
 
@@ -1224,6 +1237,7 @@ async def analyze_patterns(
     request: Request,
     pattern_request: PatternAnalysisRequest,
     current_user: TokenData = Depends(get_current_active_user),
+    pattern_analyzer: AdvancedPatternAnalyzer = Depends(get_pattern_analyzer),
 ):
     """Analyse les patterns dans les données"""
     try:
@@ -1258,6 +1272,7 @@ async def predict_future_events(
     request: Request,
     predict_request: PredictEventsRequest,
     current_user: TokenData = Depends(get_current_active_user),
+    pattern_analyzer: AdvancedPatternAnalyzer = Depends(get_pattern_analyzer),
 ):
     """Prédit les événements futurs basés sur les patterns historiques"""
     try:
@@ -1285,6 +1300,7 @@ async def prepare_appointment_questions(
     request: Request,
     appointment_request: PrepareAppointmentRequest,
     current_user: TokenData = Depends(get_current_active_user),
+    conversational_ai: ConversationalAI = Depends(get_conversational_ai),
 ):
     """Prépare questions pour un rendez-vous"""
     try:

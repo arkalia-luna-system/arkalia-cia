@@ -1,113 +1,62 @@
-import 'dart:io';
-import 'dart:async';
-import 'app_logger.dart';
+import 'package:flutter/foundation.dart';
 
-/// Helper pour la gestion centralisée des erreurs réseau
+/// Helper pour gérer les erreurs et afficher des messages utilisateur clairs
 class ErrorHelper {
-  /// Convertit une exception en message utilisateur compréhensible
+  /// Convertit une erreur technique en message utilisateur compréhensible
   static String getUserFriendlyMessage(dynamic error) {
-    if (error is SocketException) {
-      return 'Pas de connexion Internet. Vérifiez votre connexion réseau.';
-    }
-    
-    if (error is HttpException) {
-      return 'Erreur de communication avec le serveur. Veuillez réessayer.';
-    }
-    
-    if (error is FormatException) {
-      return 'Erreur de format de données. Les données peuvent être corrompues.';
-    }
-    
-    if (error is TimeoutException) {
-      return 'La requête a pris trop de temps. Vérifiez votre connexion.';
-    }
-    
     final errorString = error.toString().toLowerCase();
     
-    if (errorString.contains('connection') || errorString.contains('network')) {
-      return 'Problème de connexion réseau. Vérifiez votre connexion Internet.';
+    // Erreurs SQLite
+    if (errorString.contains('databasefactory') || 
+        errorString.contains('database factory') ||
+        errorString.contains('not initialized')) {
+      return 'Erreur de base de données. Veuillez redémarrer l\'application.';
+    }
+    
+    if (errorString.contains('sqlite') || errorString.contains('database')) {
+      return 'Erreur de sauvegarde. Veuillez réessayer.';
+    }
+    
+    // Erreurs réseau
+    if (errorString.contains('failed host lookup') || 
+        errorString.contains('connection refused') ||
+        errorString.contains('network')) {
+      return 'Problème de connexion. Vérifiez votre réseau.';
     }
     
     if (errorString.contains('timeout')) {
-      return 'La connexion a expiré. Veuillez réessayer.';
+      return 'La requête a pris trop de temps. Réessayez.';
     }
     
-    if (errorString.contains('404') || errorString.contains('not found')) {
-      return 'Ressource introuvable sur le serveur.';
+    // Erreurs de permission
+    if (errorString.contains('permission') || errorString.contains('denied')) {
+      return 'Permission refusée. Vérifiez les paramètres de l\'application.';
     }
     
-    if (errorString.contains('401') || errorString.contains('unauthorized')) {
-      return 'Vous n\'êtes pas autorisé à effectuer cette action.';
+    // Erreurs de fichier
+    if (errorString.contains('file') || errorString.contains('path')) {
+      return 'Erreur de fichier. Vérifiez que le fichier existe.';
     }
     
-    if (errorString.contains('403') || errorString.contains('forbidden')) {
-      return 'Accès interdit. Vérifiez vos permissions.';
-    }
-    
-    if (errorString.contains('500') || errorString.contains('server error')) {
-      return 'Erreur serveur. Veuillez réessayer plus tard.';
-    }
-    
-    if (errorString.contains('503') || errorString.contains('service unavailable')) {
-      return 'Service temporairement indisponible. Veuillez réessayer plus tard.';
-    }
-    
-    // Message générique si aucune correspondance
+    // Erreur générique
     return 'Une erreur est survenue. Veuillez réessayer.';
   }
-
-  /// Vérifie si l'erreur est liée au réseau
-  static bool isNetworkError(dynamic error) {
-    return error is SocketException ||
-           error is HttpException ||
-           error is TimeoutException ||
-           error.toString().toLowerCase().contains('connection') ||
-           error.toString().toLowerCase().contains('network') ||
-           error.toString().toLowerCase().contains('timeout');
-  }
-
-  /// Vérifie si l'erreur est récupérable (peut être réessayée)
-  static bool isRetryableError(dynamic error) {
-    if (error is SocketException) return true;
-    if (error is TimeoutException) return true;
-    
-    final errorString = error.toString().toLowerCase();
-    return errorString.contains('timeout') ||
-           errorString.contains('connection') ||
-           errorString.contains('network') ||
-           errorString.contains('500') ||
-           errorString.contains('503') ||
-           errorString.contains('502'); // Bad Gateway
-  }
-
-  /// Obtient le code d'erreur HTTP si disponible
-  static int? getHttpStatusCode(dynamic error) {
-    final errorString = error.toString();
-    
-    // Chercher les codes HTTP courants
-    final codes = [400, 401, 403, 404, 500, 502, 503, 504];
-    for (final code in codes) {
-      if (errorString.contains(code.toString())) {
-        return code;
-      }
+  
+  /// Log l'erreur technique (seulement en mode debug)
+  static void logError(String context, dynamic error) {
+    if (kDebugMode) {
+      print('[$context] Erreur technique: $error');
     }
-    
-    return null;
   }
-
-  /// Log l'erreur avec contexte pour le débogage
-  static void logError(dynamic error, {String? context, StackTrace? stackTrace}) {
-    final message = getUserFriendlyMessage(error);
-    final httpCode = getHttpStatusCode(error);
-    
-    AppLogger.error(
-      '=== ERREUR ${context != null ? "($context)" : ""} ===\n'
-      'Message utilisateur: $message\n'
-      '${httpCode != null ? "Code HTTP: $httpCode\n" : ""}'
-      'Erreur technique: $error',
-      error,
-      stackTrace,
-    );
+  
+  /// Vérifie si une erreur est une erreur réseau
+  static bool isNetworkError(dynamic error) {
+    final errorString = error.toString().toLowerCase();
+    return errorString.contains('failed host lookup') ||
+        errorString.contains('connection refused') ||
+        errorString.contains('network') ||
+        errorString.contains('timeout') ||
+        errorString.contains('socketexception') ||
+        errorString.contains('connection error');
   }
 }
-

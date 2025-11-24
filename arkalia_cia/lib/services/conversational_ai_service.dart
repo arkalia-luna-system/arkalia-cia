@@ -64,8 +64,11 @@ class ConversationalAIService {
       final baseUrl = await BackendConfigService.getBackendURL();
       if (baseUrl.isEmpty) {
         return AIResponse(
-          answer: 'Backend non configuré. Veuillez configurer l\'URL du backend dans les paramètres.',
-          suggestions: [],
+          answer: '⚠️ Backend non configuré.\n\nPour utiliser l\'assistant IA complet, veuillez configurer l\'URL du backend dans les paramètres (⚙️ > Backend API > URL du backend).\n\nExemple : http://localhost:8000 (sur Mac) ou http://192.168.1.100:8000 (sur iPad).',
+          suggestions: [
+            'Configurer le backend dans les paramètres',
+            'Vérifier que le backend est démarré',
+          ],
         );
       }
       
@@ -90,12 +93,36 @@ class ConversationalAIService {
       final data = response as Map<String, dynamic>;
       return AIResponse.fromMap(data);
     } catch (e) {
-      // Mode offline : réponse basique
+      // Mode offline : réponse basique avec message d'erreur clair
+      final errorMessage = e.toString();
+      String userMessage;
+      
+      if (errorMessage.contains('Failed to fetch') || 
+          errorMessage.contains('Failed host lookup') || 
+          errorMessage.contains('Connection refused') ||
+          errorMessage.contains('NetworkError')) {
+        final baseUrl = await BackendConfigService.getBackendURL();
+        userMessage = '⚠️ Erreur de connexion au backend.\n\n'
+            'Détails : Failed to fetch, uri=$baseUrl/api/v1/ai/chat\n\n'
+            'Vérifiez que :\n'
+            '• Le backend est démarré\n'
+            '• L\'URL est correctement configurée dans les paramètres (⚙️ > Backend API)\n'
+            '• Votre connexion réseau fonctionne';
+      } else if (errorMessage.contains('timeout')) {
+        userMessage = '⏱️ Le backend met trop de temps à répondre.\n\n'
+            'Vérifiez que le backend est bien démarré et accessible.';
+      } else {
+        userMessage = '⚠️ Erreur de connexion au backend.\n\n'
+            'Détails : ${errorMessage.contains("Exception:") ? errorMessage.split("Exception:")[1].trim() : errorMessage}\n\n'
+            'Vérifiez la configuration du backend dans les paramètres (⚙️ > Backend API).';
+      }
+      
       return AIResponse(
-        answer: 'Mode hors ligne. Connectez-vous pour utiliser l\'IA complète.',
+        answer: userMessage,
         suggestions: [
-          'Vérifiez votre connexion internet',
-          'Essayez de reformuler votre question',
+          'Vérifier la configuration du backend',
+          'Vérifier que le backend est démarré',
+          'Tester la connexion dans les paramètres',
         ],
       );
     }

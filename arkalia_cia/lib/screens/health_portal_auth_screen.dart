@@ -24,30 +24,75 @@ class _HealthPortalAuthScreenState extends State<HealthPortalAuthScreen> {
     });
 
     try {
-      final success = await _authService.authenticatePortal(widget.portal);
+      final result = await _authService.authenticatePortal(widget.portal);
       
-      if (success) {
-        // Attendre que l'utilisateur revienne de l'authentification
-        // En production, utiliser un callback URL ou deep link
-        await Future.delayed(const Duration(seconds: 2));
-        
-        // Simuler récupération données (à remplacer par vraie implémentation)
-        await _authService.fetchPortalData(widget.portal, 'token');
+      if (result['success'] == true) {
+        // L'authentification OAuth a été lancée dans le navigateur
+        // L'utilisateur sera redirigé vers l'app via deep link avec le code
+        // Note: En production, utiliser un listener de deep link pour capturer le callback
+        // Pour l'instant, afficher un message d'attente
         
         if (mounted) {
-          // Naviguer vers écran progression import
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => ImportProgressScreen(
-                importType: ImportType.portals,
-                portalIds: ['portal_${widget.portal.name}'],
+          // Afficher dialogue d'attente
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => AlertDialog(
+              title: const Text('Authentification en cours'),
+              content: const Text(
+                'Veuillez compléter l\'authentification dans le navigateur.\n'
+                'Vous serez redirigé automatiquement vers l\'application.',
               ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    setState(() {
+                      _isAuthenticating = false;
+                    });
+                  },
+                  child: const Text('Annuler'),
+                ),
+              ],
             ),
           );
         }
+        
+        // Note: En production, le callback OAuth sera géré par un listener de deep link
+        // qui appellera handleOAuthCallback() puis fetchPortalData()
+        // Pour l'instant, simuler avec un délai
+        await Future.delayed(const Duration(seconds: 3));
+        
+        // Vérifier si un token a été sauvegardé (via callback)
+        final token = await _authService.getAccessToken(widget.portal);
+        if (token != null) {
+          // Récupérer les données du portail
+          await _authService.fetchPortalData(widget.portal, token);
+          
+          if (mounted) {
+            Navigator.of(context).pop(); // Fermer dialogue d'attente
+            // Naviguer vers écran progression import
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => ImportProgressScreen(
+                  importType: ImportType.portals,
+                  portalIds: ['portal_${widget.portal.name}'],
+                ),
+              ),
+            );
+          }
+        } else {
+          if (mounted) {
+            Navigator.of(context).pop(); // Fermer dialogue d'attente
+            setState(() {
+              _error = 'Authentification non complétée. Veuillez réessayer.';
+              _isAuthenticating = false;
+            });
+          }
+        }
       } else {
         setState(() {
-          _error = 'Erreur lors de l\'authentification';
+          _error = result['error'] ?? 'Erreur lors de l\'authentification';
           _isAuthenticating = false;
         });
       }

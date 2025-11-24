@@ -11,15 +11,11 @@ from fastapi.testclient import TestClient
 from arkalia_cia_python_backend import api
 from arkalia_cia_python_backend.auth import create_access_token
 from arkalia_cia_python_backend.database import CIADatabase
+from arkalia_cia_python_backend.dependencies import get_database
 
 
 class TestAIChatEndpoint:
     """Tests pour l'endpoint de chat AI"""
-
-    @pytest.fixture
-    def client(self):
-        """Créer un client de test"""
-        return TestClient(api.app)
 
     @pytest.fixture
     def temp_db(self):
@@ -31,21 +27,32 @@ class TestAIChatEndpoint:
         test_db_dir.mkdir(exist_ok=True)
         db_path = str(test_db_dir / f"test_{uuid.uuid4().hex}.db")
 
-        original_db = api.db
-        api.db = CIADatabase(db_path=db_path)
-        yield db_path
-        api.db = original_db
+        # OPTIMISATION: Créer directement une instance de CIADatabase
+        # (api.db n'existe plus)
+        db = CIADatabase(db_path=db_path)
+        db.init_db()
+        yield db_path, db
         if Path(db_path).exists():
             Path(db_path).unlink()
 
     @pytest.fixture
+    def client(self, temp_db):
+        """Créer un client de test avec dépendance override"""
+        db_path, db = temp_db
+        api.app.dependency_overrides[get_database] = lambda: db
+        yield TestClient(api.app)
+        api.app.dependency_overrides.clear()
+
+    @pytest.fixture
     def auth_token(self, temp_db):
         """Créer un utilisateur de test et retourner un token"""
+        # OPTIMISATION: Utiliser l'instance de DB directement (api.db n'existe plus)
+        db_path, db = temp_db
         # Créer un utilisateur de test avec mot de passe court pour éviter problèmes bcrypt
         import bcrypt
 
         password_hash = bcrypt.hashpw(b"test123", bcrypt.gensalt()).decode("utf-8")
-        user_id = api.db.create_user(
+        user_id = db.create_user(
             username="testuser", password_hash=password_hash, email="test@example.com"
         )
         # Créer un token d'accès
@@ -110,11 +117,6 @@ class TestPatternAnalysisEndpoint:
     """Tests pour l'endpoint d'analyse de patterns"""
 
     @pytest.fixture
-    def client(self):
-        """Créer un client de test"""
-        return TestClient(api.app)
-
-    @pytest.fixture
     def temp_db(self):
         """Créer une base de données temporaire"""
         import uuid
@@ -123,22 +125,29 @@ class TestPatternAnalysisEndpoint:
         test_db_dir = Path.cwd() / "test_temp"
         test_db_dir.mkdir(exist_ok=True)
         db_path = str(test_db_dir / f"test_{uuid.uuid4().hex}.db")
-
-        original_db = api.db
-        api.db = CIADatabase(db_path=db_path)
-        yield db_path
-        api.db = original_db
+        db = CIADatabase(db_path=db_path)
+        db.init_db()
+        yield db_path, db
         if Path(db_path).exists():
             Path(db_path).unlink()
+
+    @pytest.fixture
+    def client(self, temp_db):
+        """Créer un client de test avec dépendance override"""
+        db_path, db = temp_db
+        api.app.dependency_overrides[get_database] = lambda: db
+        yield TestClient(api.app)
+        api.app.dependency_overrides.clear()
 
     @pytest.fixture
     def auth_token(self, temp_db):
         """Créer un utilisateur de test et retourner un token"""
         import bcrypt
 
+        db_path, db = temp_db
         # Utiliser bcrypt directement pour éviter problèmes avec passlib
         password_hash = bcrypt.hashpw(b"test123", bcrypt.gensalt()).decode("utf-8")
-        user_id = api.db.create_user(
+        user_id = db.create_user(
             username="testuser", password_hash=password_hash, email="test@example.com"
         )
         token = create_access_token(
@@ -183,34 +192,42 @@ class TestPrepareAppointmentEndpoint:
     """Tests pour l'endpoint de préparation de rendez-vous"""
 
     @pytest.fixture
-    def client(self):
-        """Créer un client de test"""
-        return TestClient(api.app)
-
-    @pytest.fixture
-    def auth_token(self):
-        """Créer un utilisateur de test et retourner un token"""
+    def temp_db(self):
+        """Créer une base de données temporaire"""
         import uuid
-
-        import bcrypt
 
         test_db_dir = Path.cwd() / "test_temp"
         test_db_dir.mkdir(exist_ok=True)
         db_path = str(test_db_dir / f"test_{uuid.uuid4().hex}.db")
-        original_db = api.db
-        api.db = CIADatabase(db_path=db_path)
+        db = CIADatabase(db_path=db_path)
+        db.init_db()
+        yield db_path, db
+        if Path(db_path).exists():
+            Path(db_path).unlink()
+
+    @pytest.fixture
+    def client(self, temp_db):
+        """Créer un client de test avec dépendance override"""
+        db_path, db = temp_db
+        api.app.dependency_overrides[get_database] = lambda: db
+        yield TestClient(api.app)
+        api.app.dependency_overrides.clear()
+
+    @pytest.fixture
+    def auth_token(self, temp_db):
+        """Créer un utilisateur de test et retourner un token"""
+        import bcrypt
+
+        db_path, db = temp_db
         # Utiliser bcrypt directement pour éviter problèmes avec passlib
         password_hash = bcrypt.hashpw(b"test123", bcrypt.gensalt()).decode("utf-8")
-        user_id = api.db.create_user(
+        user_id = db.create_user(
             username="testuser", password_hash=password_hash, email="test@example.com"
         )
         token = create_access_token(
             data={"sub": str(user_id), "username": "testuser", "role": "user"}
         )
-        yield token
-        api.db = original_db
-        if Path(db_path).exists():
-            Path(db_path).unlink()
+        return token
 
     def test_prepare_appointment_basic(self, client, auth_token):
         """Test de préparation de rendez-vous basique"""
@@ -265,37 +282,37 @@ class TestAIConversationsEndpoint:
     """Tests pour l'endpoint de récupération des conversations"""
 
     @pytest.fixture
-    def client(self):
-        """Créer un client de test"""
-        return TestClient(api.app)
-
-    @pytest.fixture
     def temp_db(self):
         """Créer une base de données temporaire"""
         import uuid
         from pathlib import Path
 
-        from arkalia_cia_python_backend.database import CIADatabase
-
         test_db_dir = Path.cwd() / "test_temp"
         test_db_dir.mkdir(exist_ok=True)
         db_path = str(test_db_dir / f"test_{uuid.uuid4().hex}.db")
-
-        original_db = api.db
-        api.db = CIADatabase(db_path=db_path)
-        yield db_path
-        api.db = original_db
+        db = CIADatabase(db_path=db_path)
+        db.init_db()
+        yield db_path, db
         if Path(db_path).exists():
             Path(db_path).unlink()
+
+    @pytest.fixture
+    def client(self, temp_db):
+        """Créer un client de test avec dépendance override"""
+        db_path, db = temp_db
+        api.app.dependency_overrides[get_database] = lambda: db
+        yield TestClient(api.app)
+        api.app.dependency_overrides.clear()
 
     @pytest.fixture
     def auth_token(self, temp_db):
         """Créer un utilisateur de test et retourner un token"""
         import bcrypt
 
+        db_path, db = temp_db
         # Utiliser bcrypt directement pour éviter problèmes avec passlib
         password_hash = bcrypt.hashpw(b"test123", bcrypt.gensalt()).decode("utf-8")
-        user_id = api.db.create_user(
+        user_id = db.create_user(
             username="testuser", password_hash=password_hash, email="test@example.com"
         )
         token = create_access_token(
@@ -324,34 +341,42 @@ class TestPatternPredictEventsEndpoint:
     """Tests pour l'endpoint de prédiction d'événements futurs"""
 
     @pytest.fixture
-    def client(self):
-        """Créer un client de test"""
-        return TestClient(api.app)
-
-    @pytest.fixture
-    def auth_token(self):
-        """Créer un utilisateur de test et retourner un token"""
+    def temp_db(self):
+        """Créer une base de données temporaire"""
         import uuid
-
-        import bcrypt
 
         test_db_dir = Path.cwd() / "test_temp"
         test_db_dir.mkdir(exist_ok=True)
         db_path = str(test_db_dir / f"test_{uuid.uuid4().hex}.db")
-        original_db = api.db
-        api.db = CIADatabase(db_path=db_path)
+        db = CIADatabase(db_path=db_path)
+        db.init_db()
+        yield db_path, db
+        if Path(db_path).exists():
+            Path(db_path).unlink()
+
+    @pytest.fixture
+    def client(self, temp_db):
+        """Créer un client de test avec dépendance override"""
+        db_path, db = temp_db
+        api.app.dependency_overrides[get_database] = lambda: db
+        yield TestClient(api.app)
+        api.app.dependency_overrides.clear()
+
+    @pytest.fixture
+    def auth_token(self, temp_db):
+        """Créer un utilisateur de test et retourner un token"""
+        import bcrypt
+
+        db_path, db = temp_db
         # Utiliser bcrypt directement pour éviter problèmes avec passlib
         password_hash = bcrypt.hashpw(b"test123", bcrypt.gensalt()).decode("utf-8")
-        user_id = api.db.create_user(
+        user_id = db.create_user(
             username="testuser", password_hash=password_hash, email="test@example.com"
         )
         token = create_access_token(
             data={"sub": str(user_id), "username": "testuser", "role": "user"}
         )
-        yield token
-        api.db = original_db
-        if Path(db_path).exists():
-            Path(db_path).unlink()
+        return token
 
     def test_predict_events_basic(self, client, auth_token):
         """Test de prédiction d'événements basique"""
@@ -390,34 +415,49 @@ class TestHealthPortalImportEndpoint:
     """Tests pour l'endpoint d'import portails santé"""
 
     @pytest.fixture
-    def client(self):
-        """Créer un client de test"""
-        return TestClient(api.app)
-
-    @pytest.fixture
-    def auth_token(self):
-        """Créer un utilisateur de test et retourner un token"""
+    def temp_db(self):
+        """Créer une base de données temporaire"""
         import uuid
 
-        import bcrypt
+        from arkalia_cia_python_backend.database import CIADatabase
 
         test_db_dir = Path.cwd() / "test_temp"
         test_db_dir.mkdir(exist_ok=True)
         db_path = str(test_db_dir / f"test_{uuid.uuid4().hex}.db")
-        original_db = api.db
-        api.db = CIADatabase(db_path=db_path)
+        db = CIADatabase(db_path=db_path)
+        db.init_db()
+        yield db_path, db
+        if Path(db_path).exists():
+            Path(db_path).unlink()
+
+    @pytest.fixture
+    def client(self, temp_db):
+        """Créer un client de test avec dépendance override"""
+        from arkalia_cia_python_backend.dependencies import get_database
+
+        db_path, db = temp_db
+
+        # Override la dépendance get_database
+        api.app.dependency_overrides[get_database] = lambda: db
+        yield TestClient(api.app)
+        # Nettoyer après le test
+        api.app.dependency_overrides.clear()
+
+    @pytest.fixture
+    def auth_token(self, temp_db):
+        """Créer un utilisateur de test et retourner un token"""
+        import bcrypt
+
+        db_path, db = temp_db
         # Utiliser bcrypt directement pour éviter problèmes avec passlib
         password_hash = bcrypt.hashpw(b"test123", bcrypt.gensalt()).decode("utf-8")
-        user_id = api.db.create_user(
+        user_id = db.create_user(
             username="testuser", password_hash=password_hash, email="test@example.com"
         )
         token = create_access_token(
             data={"sub": str(user_id), "username": "testuser", "role": "user"}
         )
-        yield token
-        api.db = original_db
-        if Path(db_path).exists():
-            Path(db_path).unlink()
+        return token
 
     def test_import_portal_basic(self, client, auth_token):
         """Test d'import portail basique"""

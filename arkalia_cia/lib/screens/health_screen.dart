@@ -3,6 +3,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../services/api_service.dart';
 import '../services/backend_config_service.dart';
 import '../utils/validation_helper.dart';
+import '../config/health_portals_config.dart';
+import 'medical_report_screen.dart';
 
 class HealthScreen extends StatefulWidget {
   const HealthScreen({super.key});
@@ -18,84 +20,8 @@ class _HealthScreenState extends State<HealthScreen> {
   @override
   void initState() {
     super.initState();
-    // Charger d'abord les portails existants, puis ajouter les portails belges
-    _loadPortals().then((_) {
-      // Ajouter les portails belges après le chargement initial
-      if (mounted) {
-        _addBelgianPortals();
-      }
-    });
-  }
-
-  Future<void> _addBelgianPortals() async {
-    // Ajouter les portails santé belges pré-configurés si pas déjà présents
-    const belgianPortals = [
-      {
-        'name': 'eHealth',
-        'url': 'https://www.ehealth.fgov.be',
-        'description': 'Plateforme eHealth belge - Accès sécurisé aux données de santé',
-        'category': 'Administration',
-      },
-      {
-        'name': 'Inami',
-        'url': 'https://www.inami.fgov.be',
-        'description': 'Institut national d\'assurance maladie-invalidité',
-        'category': 'Administration',
-      },
-      {
-        'name': 'Sciensano',
-        'url': 'https://www.sciensano.be',
-        'description': 'Institut scientifique de santé publique',
-        'category': 'Information',
-      },
-      {
-        'name': 'SPF Santé Publique',
-        'url': 'https://www.health.belgium.be',
-        'description': 'Service public fédéral Santé publique',
-        'category': 'Administration',
-      },
-    ];
-    
-    // Vérifier et ajouter les portails s'ils n'existent pas déjà
-    try {
-      // Vérifier d'abord si le backend est disponible
-      final backendEnabled = await BackendConfigService.isBackendEnabled();
-      if (!backendEnabled) {
-        return; // Backend désactivé, ignorer silencieusement
-      }
-
-      final existingPortals = await ApiService.getHealthPortals();
-      final existingUrls = existingPortals.map((p) => p['url'] as String).toSet();
-      bool hasNewPortals = false;
-      
-      for (final portal in belgianPortals) {
-        if (!existingUrls.contains(portal['url'] as String)) {
-          final result = await ApiService.createHealthPortal(
-            name: portal['name'] as String,
-            url: portal['url'] as String,
-            description: portal['description'] as String,
-            category: portal['category'] as String,
-          );
-          
-          // Ignorer silencieusement si le backend n'est pas disponible
-          if (result['backend_unavailable'] == true || result['backend_disabled'] == true) {
-            break; // Arrêter si le backend n'est pas disponible
-          }
-          
-          if (result['success'] != false) {
-            hasNewPortals = true;
-          }
-        }
-      }
-      
-      // Recharger les portails si de nouveaux ont été ajoutés
-      if (hasNewPortals && mounted) {
-        await _loadPortals();
-      }
-    } catch (e) {
-      // Si le backend n'est pas disponible, ignorer silencieusement
-      // Les portails seront ajoutés lors de la prochaine connexion
-    }
+    // Charger les portails (backend + pré-configurés)
+    _loadPortals();
   }
 
   Future<void> _loadPortals() async {
@@ -104,21 +30,65 @@ class _HealthScreenState extends State<HealthScreen> {
       isLoading = true;
     });
 
+    // Toujours afficher les portails pré-configurés
+    final belgianPortals = BelgianHealthPortals.getPortalsAsMaps();
+    final Set<String> existingUrls = {};
+    List<Map<String, dynamic>> allPortals = [];
+
     try {
-      final ports = await ApiService.getHealthPortals();
-      if (mounted) {
-        setState(() {
-          portals = ports;
-          isLoading = false;
-        });
+      // Essayer de charger depuis le backend si disponible
+      final backendEnabled = await BackendConfigService.isBackendEnabled();
+      if (backendEnabled) {
+        try {
+          final backendPortals = await ApiService.getHealthPortals();
+          existingUrls.addAll(backendPortals.map((p) => p['url'] as String));
+          allPortals.addAll(backendPortals);
+          
+          // Ajouter les portails pré-configurés qui ne sont pas déjà dans le backend
+          for (final portal in belgianPortals) {
+            if (!existingUrls.contains(portal['url'] as String)) {
+              // Essayer d'ajouter au backend (silencieusement)
+              try {
+                final result = await ApiService.createHealthPortal(
+                  name: portal['name'] as String,
+                  url: portal['url'] as String,
+                  description: portal['description'] as String,
+                  category: portal['category'] as String,
+                );
+                
+                if (result['success'] != false && 
+                    result['backend_unavailable'] != true && 
+                    result['backend_disabled'] != true) {
+                  // Ajouter à la liste si créé avec succès
+                  allPortals.add(portal);
+                } else {
+                  // Ajouter quand même à la liste pour affichage
+                  allPortals.add(portal);
+                }
+              } catch (e) {
+                // En cas d'erreur, ajouter quand même pour affichage
+                allPortals.add(portal);
+              }
+            }
+          }
+        } catch (e) {
+          // Si erreur backend, utiliser uniquement les portails pré-configurés
+          allPortals = List.from(belgianPortals);
+        }
+      } else {
+        // Backend désactivé, utiliser uniquement les portails pré-configurés
+        allPortals = List.from(belgianPortals);
       }
     } catch (e) {
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-        _showError('Erreur lors du chargement des portails: $e');
-      }
+      // En cas d'erreur, utiliser les portails pré-configurés
+      allPortals = List.from(belgianPortals);
+    }
+
+    if (mounted) {
+      setState(() {
+        portals = allPortals;
+        isLoading = false;
+      });
     }
   }
 
@@ -304,6 +274,18 @@ class _HealthScreenState extends State<HealthScreen> {
         foregroundColor: Colors.white,
         actions: [
           IconButton(
+            icon: const Icon(Icons.description),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const MedicalReportScreen(),
+                ),
+              );
+            },
+            tooltip: 'Générer rapport médical',
+          ),
+          IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _loadPortals,
           ),
@@ -388,7 +370,7 @@ class _HealthScreenState extends State<HealthScreen> {
                                   category.toUpperCase(),
                                   style: TextStyle(
                                     color: color,
-                                    fontSize: 10,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),

@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart';
 import 'encryption_helper.dart';
 
 /// Utilitaire pour gérer le stockage local avec chiffrement AES-256
 class StorageHelper {
-  static const bool _useEncryption = true; // Activer le chiffrement
+  // Désactiver le chiffrement sur le web (FlutterSecureStorage n'est pas disponible)
+  static bool get _useEncryption => !kIsWeb;
 
   /// Pattern générique pour sauvegarder une liste d'éléments (chiffrée)
   static Future<void> saveList(String key, List<Map<String, dynamic>> items) async {

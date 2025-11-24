@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
@@ -8,6 +9,9 @@ import 'package:open_filex/open_filex.dart';
 import '../services/local_storage_service.dart';
 import '../services/file_storage_service.dart';
 import '../services/category_service.dart';
+import '../services/doctor_service.dart';
+import '../widgets/exam_type_badge.dart';
+import 'add_edit_doctor_screen.dart';
 
 class DocumentsScreen extends StatefulWidget {
   const DocumentsScreen({super.key});
@@ -23,6 +27,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   bool isUploading = false;
   final TextEditingController _searchController = TextEditingController();
   String _selectedCategory = 'Tous';
+  String? _selectedExamType; // Filtre par type d'examen
   Timer? _debounceTimer;
 
   @override
@@ -60,9 +65,138 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         final matchesSearch = name.contains(query);
         final matchesCategory = _selectedCategory == 'Tous' ||
             (doc['category'] ?? 'Non catégorisé') == _selectedCategory;
-        return matchesSearch && matchesCategory;
+        
+        // Filtre par type d'examen
+        bool matchesExamType = true; // Par défaut, pas de filtre
+        if (_selectedExamType != null) {
+          matchesExamType = false; // Si filtre actif, chercher correspondance
+          final metadata = doc['metadata'];
+          if (metadata != null && metadata is Map) {
+            final examType = metadata['exam_type']?.toString().toLowerCase();
+            if (examType == _selectedExamType!.toLowerCase()) {
+              matchesExamType = true;
+            }
+          }
+          // Aussi chercher dans le nom du document
+          if (!matchesExamType) {
+            matchesExamType = name.contains(_selectedExamType!.toLowerCase());
+          }
+        }
+        
+        return matchesSearch && matchesCategory && matchesExamType;
       }).toList();
     });
+  }
+  
+  /// Obtient la répartition des examens par type
+  Map<String, int> _getExamTypeDistribution() {
+    final distribution = <String, int>{};
+    for (var doc in documents) {
+      final metadata = doc['metadata'];
+      if (metadata != null && metadata is Map) {
+        final examType = metadata['exam_type'];
+        if (examType != null) {
+          distribution[examType] = (distribution[examType] ?? 0) + 1;
+        }
+      }
+    }
+    return distribution;
+  }
+
+  /// Construit les filtres rapides par type d'examen
+  Widget _buildExamTypeFilters() {
+    final distribution = _getExamTypeDistribution();
+    if (distribution.isEmpty) return const SizedBox.shrink();
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          FilterChip(
+            label: const Text('Tous'),
+            selected: _selectedExamType == null,
+            onSelected: (selected) {
+              setState(() {
+                _selectedExamType = null;
+              });
+              _filterDocuments();
+            },
+          ),
+          const SizedBox(width: 8),
+          ...distribution.keys.map((examType) => Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: FilterChip(
+                  label: Text('$examType (${distribution[examType]})'),
+                  selected: _selectedExamType == examType,
+                  onSelected: (selected) {
+                    setState(() {
+                      _selectedExamType = selected ? examType : null;
+                    });
+                    _filterDocuments();
+                  },
+                ),
+              )),
+        ],
+      ),
+    );
+  }
+
+  /// Construit les statistiques de répartition des examens
+  Widget _buildExamStatistics() {
+    final distribution = _getExamTypeDistribution();
+    if (distribution.isEmpty) return const SizedBox.shrink();
+
+    final total = distribution.values.fold(0, (sum, count) => sum + count);
+    if (total == 0) return const SizedBox.shrink();
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.grey[100],
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Répartition des examens',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+          ),
+          const SizedBox(height: 8),
+          ...distribution.entries.map((entry) {
+            final percentage = (entry.value / total * 100).round();
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      '${entry.key}: ${entry.value}',
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 100,
+                    child: LinearProgressIndicator(
+                      value: entry.value / total,
+                      backgroundColor: Colors.grey[300],
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Colors.blue[400]!,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '$percentage%',
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
+    );
   }
 
   Future<void> _loadDocuments() async {
@@ -113,31 +247,59 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           isUploading = true;
         });
 
-        File sourceFile = File(result.files.single.path!);
-        final fileName = result.files.single.name;
+        final pickedFile = result.files.single;
+        final fileName = pickedFile.name;
         final timestamp = DateTime.now().millisecondsSinceEpoch;
         final uniqueFileName = '${timestamp}_$fileName';
 
-        // Copier le fichier vers le répertoire documents dédié
-        final savedFile = await FileStorageService.copyToDocumentsDirectory(
-          sourceFile,
-          uniqueFileName,
-        );
+        File? savedFile;
+        if (kIsWeb) {
+          // Sur le web, utiliser bytes et stocker directement dans LocalStorageService
+          if (pickedFile.bytes == null) {
+            _showError('Impossible de lire le fichier sélectionné');
+            setState(() {
+              isUploading = false;
+            });
+            return;
+          }
+          // Sur le web, on ne peut pas utiliser FileStorageService
+          // On stocke directement dans LocalStorageService avec les bytes
+          savedFile = null; // Pas de File sur le web
+        } else {
+          // Sur mobile, utiliser path
+          if (pickedFile.path == null) {
+            _showError('Impossible de lire le fichier sélectionné');
+            setState(() {
+              isUploading = false;
+            });
+            return;
+          }
+          File sourceFile = File(pickedFile.path!);
+          savedFile = await FileStorageService.copyToDocumentsDirectory(
+            sourceFile,
+            uniqueFileName,
+          );
+        }
 
         // Demander la catégorie avant de sauvegarder
         if (!mounted) return;
         final category = await _showCategoryDialog();
         
         // Sauvegarder les métadonnées localement
-        final document = {
+        final document = <String, dynamic>{
           'id': timestamp.toString(), // ID en String pour cohérence
           'name': uniqueFileName,
           'original_name': fileName,
-          'path': savedFile.path,
-          'file_size': await savedFile.length(),
+          'path': kIsWeb ? uniqueFileName : savedFile!.path,
+          'file_size': kIsWeb ? pickedFile.bytes!.length : await savedFile!.length(),
           'category': category ?? 'Autre',
           'created_at': DateTime.now().toIso8601String(),
         };
+
+        // Sur le web, stocker aussi les bytes
+        if (kIsWeb && pickedFile.bytes != null) {
+          document['bytes'] = pickedFile.bytes;
+        }
 
         await LocalStorageService.saveDocument(document);
 
@@ -146,6 +308,12 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         setState(() {
           isUploading = false;
         });
+
+        // Vérifier si un médecin est détecté dans le document (métadonnées)
+        // Note: L'extraction réelle se fait côté backend, ici on simule pour la démo
+        // En production, les métadonnées viendront de l'API backend
+        final filePath = kIsWeb ? uniqueFileName : savedFile!.path;
+        await _checkAndShowDoctorDialog(filePath, document);
 
         _showSuccess('Document $fileName ajouté avec succès !');
         _loadDocuments(); // Recharger la liste
@@ -205,7 +373,11 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         
         // Supprimer le fichier physique
         if (fileName != null) {
-          await FileStorageService.deleteDocumentFile(fileName);
+          // Utiliser FileStorageService pour supprimer le fichier
+          final deleted = await FileStorageService.deleteDocumentFile(fileName);
+          if (!deleted) {
+            // Fichier non supprimé, mais on continue
+          }
         }
         
         // Supprimer les métadonnées
@@ -408,6 +580,12 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                     );
                   },
                 ),
+                const SizedBox(height: 8),
+                // Filtres rapides par type d'examen
+                _buildExamTypeFilters(),
+                const SizedBox(height: 8),
+                // Statistiques répartition examens
+                _buildExamStatistics(),
               ],
             ),
           ),
@@ -416,21 +594,43 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: SizedBox(
               width: double.infinity,
-              child: ElevatedButton.icon(
+              child: ElevatedButton(
                 onPressed: isUploading ? null : _uploadDocument,
-                icon: isUploading
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Icons.upload),
-                label: Text(isUploading ? 'Upload en cours...' : 'Uploader un PDF'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
+                child: isUploading
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          const Text(
+                            'Upload en cours...',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                          ),
+                        ],
+                      )
+                    : const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.upload),
+                          SizedBox(width: 8),
+                          Text(
+                            'Uploader un PDF',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                          ),
+                        ],
+                      ),
               ),
             ),
           ),
@@ -510,6 +710,16 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  // Badge type d'examen si disponible
+                                  if (doc['metadata'] != null && doc['metadata'] is Map)
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom: 4),
+                                      child: ExamTypeBadge(
+                                        examType: doc['metadata']['exam_type'],
+                                        confidence: doc['metadata']['exam_type_confidence']?.toDouble(),
+                                        showConfidence: doc['metadata']['needs_verification'] == true,
+                                      ),
+                                    ),
                                   Text('Taille: ${_formatFileSize(doc['file_size'] ?? 0)}'),
                                   Text('Ajouté: ${doc['created_at'] ?? 'Inconnu'}'),
                                 ],
@@ -571,6 +781,59 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         ],
       ),
     );
+  }
+
+  /// Vérifie si un médecin est détecté et affiche le dialog
+  Future<void> _checkAndShowDoctorDialog(String filePath, Map<String, dynamic> document) async {
+    // En production, les métadonnées viendront de l'API backend après extraction
+    // Pour l'instant, on vérifie si des métadonnées existent déjà dans le document
+    final metadata = document['metadata'];
+    if (metadata != null && metadata is Map) {
+      final doctorName = metadata['doctor_name'] as String?;
+      if (doctorName != null && doctorName.isNotEmpty) {
+        // Préparer les données détectées
+        final detectedData = {
+          'doctor_name': doctorName,
+          'doctor_specialty': metadata['doctor_specialty'],
+          'phone': metadata['doctor_phone'],
+          'email': metadata['doctor_email'],
+          'address': metadata['doctor_address'],
+        };
+
+        // Afficher le dialog
+        if (!mounted) return;
+        final shouldAdd = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Médecin détecté'),
+            content: Text('Médecin détecté : $doctorName\n\nVoulez-vous l\'ajouter à l\'annuaire ?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Plus tard'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Ajouter'),
+              ),
+            ],
+          ),
+        );
+
+        if (shouldAdd == true && mounted) {
+          // Ouvrir l'écran d'ajout avec les données pré-remplies
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddEditDoctorScreen(detectedData: detectedData),
+            ),
+          );
+          if (result == true) {
+            _showSuccess('Médecin ajouté à l\'annuaire !');
+          }
+        }
+      }
+    }
   }
 
   Future<void> _showManageCategoriesDialog() async {

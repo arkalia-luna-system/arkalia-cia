@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/conversational_ai_service.dart';
+import '../utils/error_helper.dart';
 
 class ConversationalAIScreen extends StatefulWidget {
   const ConversationalAIScreen({super.key});
@@ -83,10 +84,33 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
       });
     } catch (e) {
       setState(() {
+        String userMessage;
+        
+        // Utiliser ErrorHelper pour des messages utilisateur cohérents
+        final errorMessage = e.toString();
+        if (errorMessage.contains('Backend non configuré')) {
+          userMessage = '⚠️ Backend non configuré.\n\nVeuillez configurer l\'URL du backend dans les paramètres (⚙️ > Backend API).';
+        } else if (errorMessage.contains('Failed to fetch') || 
+                   errorMessage.contains('Failed host lookup') || 
+                   errorMessage.contains('Connection refused') ||
+                   errorMessage.contains('NetworkError')) {
+          userMessage = '⚠️ Erreur de connexion au backend.\n\n'
+              'Détails : Failed to fetch\n\n'
+              'Vérifiez la configuration du backend dans les paramètres.';
+        } else {
+          // Utiliser ErrorHelper pour un message utilisateur clair
+          userMessage = '⚠️ ${ErrorHelper.getUserFriendlyMessage(e)}';
+        }
+        
         _messages.add(ChatMessage(
-          text: 'Erreur: $e',
+          text: userMessage,
           isUser: false,
           timestamp: DateTime.now(),
+          suggestions: [
+            'Vérifier la configuration du backend',
+            'Vérifier que le backend est démarré',
+            'Tester la connexion dans les paramètres',
+          ],
         ));
         _isLoading = false;
       });
@@ -159,7 +183,7 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
               color: Theme.of(context).colorScheme.surface,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withOpacity( 0.1),
                   blurRadius: 4,
                   offset: const Offset(0, -2),
                 ),

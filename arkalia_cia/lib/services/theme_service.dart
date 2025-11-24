@@ -161,11 +161,11 @@ class ThemeService {
         ),
         
         // ChipTheme : chips douces
-        chipTheme: ChipThemeData(
-          backgroundColor: const Color(0xFF2A2A2A),
-          labelStyle: const TextStyle(color: Color(0xFFE0E0E0)),
-          secondaryLabelStyle: const TextStyle(color: Color(0xFF000000)),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        chipTheme: const ChipThemeData(
+          backgroundColor: Color(0xFF2A2A2A),
+          labelStyle: TextStyle(color: Color(0xFFE0E0E0)),
+          secondaryLabelStyle: TextStyle(color: Color(0xFF000000)),
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         ),
       );
     } else {

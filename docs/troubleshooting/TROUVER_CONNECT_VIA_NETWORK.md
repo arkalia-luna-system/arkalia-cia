@@ -2,8 +2,8 @@
 
 > **Step-by-step guide to enable wireless iOS deployment**
 
-**Last Updated**: November 19, 2025  
-**Version**: 1.2.0  
+**Last Updated**: November 24, 2025  
+**Version**: 1.3.0  
 **Platform**: iOS / Xcode
 
 ---

@@ -38,7 +38,11 @@ class TestARIAIntegration:
     @patch("arkalia_cia_python_backend.aria_integration.api.requests.get")
     def test_aria_status_disconnected(self, mock_get, client):
         """Test du statut ARIA quand déconnecté"""
-        mock_get.side_effect = Exception("Connection error")
+        import requests
+
+        # Le retry_with_backoff ne catch que requests.RequestException
+        # donc on doit lever cette exception spécifique
+        mock_get.side_effect = requests.RequestException("Connection error")
 
         response = client.get("/status")
         assert response.status_code == 200

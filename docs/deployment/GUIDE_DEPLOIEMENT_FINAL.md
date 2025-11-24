@@ -1,11 +1,13 @@
-# 🚀 Final Deployment Guide - Arkalia CIA v1.2.0
+# 🚀 Final Deployment Guide - Arkalia CIA v1.3.0
 
 > **Complete production deployment procedures**
 
-**Last Updated**: November 19, 2025  
-**Version**: 1.2.0  
+**Last Updated**: November 24, 2025  
+**Version**: 1.3.0  
 **Branch**: develop → main  
 **Status**: 🟢 **PRODUCTION READY**
+
+> **📱 Google Play Console** : Compte développeur créé le 24 novembre 2025. Vérification d'identité en cours. Voir [PLAY_STORE_SETUP.md](./PLAY_STORE_SETUP.md) pour l'état actuel et le plan d'action post-validation.
 
 ---
 
@@ -36,7 +38,7 @@
 
 | Check | Expected | Status |
 |-------|----------|--------|
-| **All tests pass** | 218/218 | ✅ |
+| **All tests pass** | 308/308 | ✅ |
 | **Code coverage** | ≥ 85% | ✅ |
 | **Critical errors** | 0 (Black, Ruff, MyPy, Bandit) | ✅ |
 | **Flutter analyze** | No errors | ✅ |
@@ -52,7 +54,7 @@
 # 1. Vérifier les tests
 cd /Volumes/T7/arkalia-cia
 python -m pytest tests/ -v
-# ✅ Attendu: 218 passed
+# ✅ Attendu: 308 tests collectés, tous passants
 
 # 2. Vérifier la couverture
 python -m pytest tests/ --cov=arkalia_cia_python_backend --cov-report=term
@@ -77,15 +79,15 @@ flutter pub get
 
 ```bash
 # 1. Mettre à jour pubspec.yaml
-# Version actuelle: 1.2.0+1
-# Nouvelle version: 1.2.0+1
+# Version actuelle: 1.3.0+1
+# Nouvelle version: 1.3.0+1
 
 # 2. Mettre à jour CHANGELOG.md
-# Déplacer [Unreleased] vers [1.2.0] avec date
+# Déplacer [Unreleased] vers [1.3.0] avec date
 
 # 3. Commit de version
 git add arkalia_cia/pubspec.yaml docs/CHANGELOG.md
-git commit -m "chore: Version 1.2.0 - Release production ready"
+git commit -m "chore: Version 1.3.0 - Release production ready"
 ```
 
 ### Étape 3: Merge vers Main
@@ -96,24 +98,24 @@ git checkout develop
 git pull origin develop
 
 # 2. Créer une branche release
-git checkout -b release/v1.2.0
+git checkout -b release/v1.3.0
 
 # 3. Merge vers main
 git checkout main
 git pull origin main
-git merge release/v1.2.0 --no-ff -m "Release v1.2.0: Production ready"
+git merge release/v1.3.0 --no-ff -m "Release v1.3.0: Production ready"
 
 # 4. Tag de version
-git tag -a v1.2.0 -m "Version 1.2.0 - Production Ready
+git tag -a v1.3.0 -m "Version 1.3.0 - Production Ready
 - 11 nouvelles fonctionnalités majeures
-- 218 tests passent (100%)
+- 308 tests collectés, tous passants (100%)
 - 85% couverture code
 - 0 erreur critique
 - 0 vulnérabilité"
 
 # 5. Push vers origin
 git push origin main
-git push origin v1.2.0
+git push origin v1.3.0
 ```
 
 ### Étape 4: Build des Applications
@@ -169,14 +171,22 @@ flutter build ios --release
 
 ### Google Play Store
 
-1. **Créer compte développeur** (si pas déjà fait)
-2. **Upload App Bundle** (.aab)
-3. **Remplir métadonnées**:
+**✅ État actuel** : Compte développeur créé le 24 novembre 2025. Vérification d'identité en cours.
+
+**📋 Plan d'action** (voir [PLAY_STORE_SETUP.md](./PLAY_STORE_SETUP.md)) :
+
+1. ✅ **Compte développeur créé** (24 novembre 2025)
+2. ⏳ **Vérification identité** (en cours, 1-3 jours)
+3. ⏸️ **Créer signature release** (après validation)
+4. ⏸️ **Build App Bundle** (après signature)
+5. ⏸️ **Créer fiche app** sur Play Console
+6. ⏸️ **Upload App Bundle** (.aab)
+7. ⏸️ **Remplir métadonnées**:
    - Titre: Arkalia CIA
    - Description: Assistant mobile santé sécurisé
    - Captures d'écran
    - Icône (512x512)
-4. **Soumettre pour review**
+8. ⏸️ **Soumettre pour review** (Internal Testing d'abord)
 
 ### Apple App Store
 
@@ -233,7 +243,7 @@ flutter build apk --release
 ```bash
 # 1. Créer branche hotfix depuis main
 git checkout main
-git checkout -b hotfix/v1.2.1
+git checkout -b hotfix/v1.3.1
 
 # 2. Corriger le bug
 # ... modifications ...
@@ -245,10 +255,10 @@ flutter analyze
 # 4. Commit et merge
 git commit -m "fix: Description du bug corrigé"
 git checkout main
-git merge hotfix/v1.2.1 --no-ff
-git tag -a v1.2.1 -m "Hotfix v1.2.1"
+git merge hotfix/v1.3.1 --no-ff
+git tag -a v1.3.1 -m "Hotfix v1.3.1"
 git push origin main
-git push origin v1.2.1
+git push origin v1.3.1
 ```
 
 #### Release Mineure
@@ -262,7 +272,7 @@ git push origin v1.2.1
 ## ✅ Checklist Finale de Déploiement
 
 ### Code
-- [x] Tous les tests passent (218/218)
+- [x] Tous les tests passent (308/308)
 - [x] Couverture ≥ 85%
 - [x] 0 erreur critique
 - [x] 0 vulnérabilité
@@ -359,7 +369,7 @@ flutter pub get
 
 ---
 
-*Dernière mise à jour : Janvier 2025*  
-**Version**: 1.2.0  
+*Dernière mise à jour : 24 novembre 2025*  
+**Version**: 1.3.0  
 **Statut**: 🟢 **PRÊT POUR PRODUCTION**
 

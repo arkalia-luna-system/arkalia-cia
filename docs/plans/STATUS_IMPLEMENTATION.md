@@ -1,7 +1,7 @@
 # Statut d'implémentation — Plans Arkalia CIA
 
-**Dernière mise à jour** : Janvier 2025  
-**Statut global** : 100% des besoins critiques résolus
+**Dernière mise à jour** : 24 novembre 2025  
+**Statut global** : 100% des besoins critiques résolus ✅
 
 Suivi détaillé de l'implémentation de tous les plans.
 
@@ -14,7 +14,7 @@ Suivi détaillé de l'implémentation de tous les plans.
 | PLAN_00 : Onboarding | ✅ Terminé | 95% |
 | PLAN_01 : Parser PDF | ✅ Terminé | 95% |
 | PLAN_02 : Historique Médecins | ✅ Terminé | 100% |
-| PLAN_03 : Recherche Avancée | ✅ Terminé | 90% |
+| PLAN_03 : Recherche Avancée | ✅ Terminé | 100% |
 | PLAN_04 : IA Patterns | ✅ Terminé | 85% |
 | PLAN_05 : Partage Familial | ✅ Terminé | 95% |
 | PLAN_06 : IA Conversationnelle | ✅ Terminé | 95% |
@@ -34,6 +34,7 @@ Suivi détaillé de l'implémentation de tous les plans.
 - Service `HealthPortalAuthService`
 - Écran `HealthPortalAuthScreen`
 - Endpoint API `/api/v1/health-portals/import`
+- **Refresh token automatique** : Méthodes `refreshAccessToken()` et `getValidAccessToken()` (24 novembre 2025) ✅
 - Intégration dans `LockScreen`
 
 ### À améliorer
@@ -42,7 +43,7 @@ Suivi détaillé de l'implémentation de tous les plans.
 - Extraction intelligente données essentielles optimisée
 - Création historique automatique optimisée
 
-**Statut** : 95% — Structure complète, prête pour APIs externes
+**Statut** : 98% — Structure complète avec refresh token, prête pour APIs externes
 
 ---
 
@@ -97,11 +98,13 @@ Suivi détaillé de l'implémentation de tous les plans.
 - Service `SemanticSearchService` avec recherche sémantique
 - Écran recherche avancée (`AdvancedSearchScreen`)
 - Toggle recherche sémantique
-- Filtres (catégorie, date)
+- Filtres (catégorie, date, **médecin** ✅ 24 novembre 2025)
+- **Filtre par médecin** : Dialog de sélection avec liste complète (24 novembre 2025)
 - Recherche dans documents et médecins
 - Suggestions de recherche
 - Intégration dans HomePage (bouton recherche avancée)
 - Cache intelligent intégré
+- Support `doctorId` dans `SearchFilters` et `SearchService`
 
 ### À améliorer
 

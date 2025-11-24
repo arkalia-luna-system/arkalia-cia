@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import '../services/doctor_service.dart';
 import '../models/doctor.dart';
+import '../utils/error_helper.dart';
 
 class AddEditDoctorScreen extends StatefulWidget {
   final Doctor? doctor;
+  final Map<String, dynamic>? detectedData; // Données détectées depuis PDF
 
-  const AddEditDoctorScreen({super.key, this.doctor});
+  const AddEditDoctorScreen({super.key, this.doctor, this.detectedData});
 
   @override
   State<AddEditDoctorScreen> createState() => _AddEditDoctorScreenState();
@@ -40,6 +42,23 @@ class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> {
       _cityController.text = widget.doctor!.city ?? '';
       _postalCodeController.text = widget.doctor!.postalCode ?? '';
       _notesController.text = widget.doctor!.notes ?? '';
+    } else if (widget.detectedData != null) {
+      // Pré-remplir avec données détectées depuis PDF
+      final data = widget.detectedData!;
+      final doctorName = data['doctor_name'] as String?;
+      if (doctorName != null) {
+        final parts = doctorName.split(' ');
+        if (parts.isNotEmpty) {
+          _firstNameController.text = parts[0];
+          if (parts.length > 1) {
+            _lastNameController.text = parts.sublist(1).join(' ');
+          }
+        }
+      }
+      _specialtyController.text = data['doctor_specialty'] ?? '';
+      _phoneController.text = data['phone'] ?? '';
+      _emailController.text = data['email'] ?? '';
+      _addressController.text = data['address'] ?? '';
     }
   }
 
@@ -102,8 +121,14 @@ class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> {
     } catch (e) {
       setState(() => _isSaving = false);
       if (mounted) {
+        ErrorHelper.logError('AddEditDoctorScreen._saveDoctor', e);
+        final userMessage = ErrorHelper.getUserFriendlyMessage(e);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur sauvegarde: $e')),
+          SnackBar(
+            content: Text(userMessage),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 4),
+          ),
         );
       }
     }
@@ -118,12 +143,24 @@ class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> {
           if (_isSaving)
             const Padding(
               padding: EdgeInsets.all(16.0),
-              child: CircularProgressIndicator(),
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                ),
+              ),
             )
           else
             IconButton(
-              icon: const Icon(Icons.check),
-              onPressed: _saveDoctor,
+              icon: Icon(
+                Icons.check,
+                color: _formKey.currentState?.validate() == true
+                    ? Theme.of(context).colorScheme.primary
+                    : Colors.grey,
+              ),
+              onPressed: _formKey.currentState?.validate() == true ? _saveDoctor : null,
+              tooltip: 'Enregistrer',
             ),
         ],
       ),
@@ -254,9 +291,20 @@ class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> {
               onPressed: _isSaving ? null : _saveDoctor,
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 56),
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
               ),
               child: _isSaving
-                  ? const CircularProgressIndicator()
+                  ? SizedBox(
+                      height: 24,
+                      width: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Theme.of(context).colorScheme.onPrimary,
+                        ),
+                      ),
+                    )
                   : Text(widget.doctor == null ? 'Ajouter' : 'Enregistrer'),
             ),
           ],

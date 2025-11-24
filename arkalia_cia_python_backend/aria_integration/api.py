@@ -10,6 +10,8 @@ import requests
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
+from arkalia_cia_python_backend.utils.retry import retry_with_backoff
+
 router = APIRouter()
 
 # Configuration ARIA
@@ -49,17 +51,27 @@ class QuickEntry(BaseModel):
     action: ShortText  # Action immédiate
 
 
+@retry_with_backoff(
+    max_retries=3,
+    backoff_factor=1.5,
+    exceptions=(requests.RequestException, requests.Timeout),
+)
 def _check_aria_connection() -> bool:
-    """Vérifie si ARIA est accessible"""
+    """Vérifie si ARIA est accessible avec retry logic"""
     try:
         response = requests.get(f"{ARIA_BASE_URL}/health", timeout=ARIA_TIMEOUT)
         return bool(response.status_code == 200)
-    except Exception:
+    except requests.RequestException:
         return False
 
 
+@retry_with_backoff(
+    max_retries=3,
+    backoff_factor=1.5,
+    exceptions=(requests.RequestException, requests.Timeout),
+)
 def _make_aria_request(method: str, endpoint: str, **kwargs) -> requests.Response:
-    """Effectue une requête vers ARIA avec gestion d'erreurs améliorée"""
+    """Effectue une requête vers ARIA avec retry logic et gestion d'erreurs"""
     try:
         url = f"{ARIA_BASE_URL}{endpoint}"
         response = requests.request(method, url, timeout=ARIA_TIMEOUT, **kwargs)

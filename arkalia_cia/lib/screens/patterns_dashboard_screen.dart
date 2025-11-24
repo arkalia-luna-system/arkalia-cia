@@ -5,6 +5,8 @@ import '../services/api_service.dart';
 import '../services/backend_config_service.dart';
 import '../services/offline_cache_service.dart';
 import '../services/auth_api_service.dart';
+import '../services/pathology_service.dart';
+import '../services/medication_service.dart';
 
 class PatternsDashboardScreen extends StatefulWidget {
   const PatternsDashboardScreen({super.key});
@@ -42,25 +44,73 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
         return;
       }
 
-      // Récupérer données depuis documents (utilise ApiService qui gère automatiquement le refresh token)
-      final documents = await ApiService.getDocuments();
+      // Récupérer données depuis plusieurs sources
+      final List<Map<String, dynamic>> data = [];
       
-      if (documents.isEmpty) {
+      // 1. Documents
+      final documents = await ApiService.getDocuments();
+      for (final doc in documents) {
+        data.add({
+          'date': doc['created_at'] ?? doc['createdAt'] ?? DateTime.now().toIso8601String(),
+          'type': 'document',
+          'value': 1,
+        });
+      }
+      
+      // 2. Pathologies et leur tracking
+      try {
+        final pathologyService = PathologyService();
+        final pathologies = await pathologyService.getAllPathologies();
+        for (final pathology in pathologies) {
+          // Ajouter la création de la pathologie
+          data.add({
+            'date': pathology.createdAt.toIso8601String(),
+            'type': 'pathologie',
+            'value': 1,
+          });
+          
+          // Ajouter les entrées de tracking
+          final tracking = await pathologyService.getTrackingByPathology(
+            pathology.id!,
+            startDate: DateTime.now().subtract(const Duration(days: 365)),
+          );
+          for (final entry in tracking) {
+            final painLevel = entry.data['painLevel'] ?? entry.data['pain_level'];
+            if (painLevel != null) {
+              data.add({
+                'date': entry.date.toIso8601String(),
+                'type': 'douleur',
+                'value': painLevel is num ? painLevel.toDouble() : 1.0,
+              });
+            }
+          }
+        }
+      } catch (e) {
+        // Ignorer les erreurs de pathologies
+      }
+      
+      // 3. Médicaments
+      try {
+        final medicationService = MedicationService();
+        final medications = await medicationService.getAllMedications();
+        for (final medication in medications) {
+          data.add({
+            'date': medication.startDate.toIso8601String(),
+            'type': 'medicament',
+            'value': 1,
+          });
+        }
+      } catch (e) {
+        // Ignorer les erreurs de médicaments
+      }
+      
+      if (data.isEmpty) {
         setState(() {
-          _error = 'Aucun document disponible pour l\'analyse';
+          _error = 'Aucune donnée disponible pour l\'analyse.\n\nAjoutez des documents, pathologies ou médicaments pour voir des patterns.';
           _isLoading = false;
         });
         return;
       }
-      
-      // Convertir en format pour analyse
-      final data = documents.map((doc) {
-        return {
-          'date': doc['created_at'],
-          'type': doc['category'] ?? 'document',
-          'value': 1,
-        };
-      }).toList();
 
       // Analyser patterns avec authentification et gestion automatique du refresh token
       final url = await BackendConfigService.getBackendURL();
@@ -161,7 +211,7 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.error_outline, size: 64, color: Colors.red),
+                      const Icon(Icons.error_outline, size: 64, color: Colors.red),
                       const SizedBox(height: 16),
                       Text(_error!),
                       const SizedBox(height: 16),

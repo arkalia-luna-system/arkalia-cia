@@ -15,6 +15,9 @@ import 'family_sharing_screen.dart';
 import 'conversational_ai_screen.dart';
 import 'patterns_dashboard_screen.dart';
 import 'bbia_integration_screen.dart';
+import 'pathology_list_screen.dart';
+import 'calendar_screen.dart';
+import 'hydration_reminders_screen.dart';
 import '../services/local_storage_service.dart';
 import '../services/calendar_service.dart';
 import '../services/search_service.dart';
@@ -189,7 +192,8 @@ class _HomePageState extends State<HomePage> {
               Text(
                 'Votre santé au quotidien',
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontStyle: FontStyle.italic,
                 ),
@@ -224,6 +228,16 @@ class _HomePageState extends State<HomePage> {
                       subtitle: 'Portails santé',
                       color: Colors.red,
                       onTap: () => _showHealth(context),
+                    ),
+
+                    // Bouton 2b: Pathologies
+                    _buildActionButton(
+                      context,
+                      icon: MdiIcons.medicalBag,
+                      title: 'Pathologies',
+                      subtitle: 'Suivi pathologies',
+                      color: Colors.purple,
+                      onTap: () => _showPathologies(context),
                     ),
 
                     // Bouton 3: Rappels simples
@@ -276,6 +290,16 @@ class _HomePageState extends State<HomePage> {
                       onTap: () => _showDoctors(context),
                     ),
 
+                    // Bouton Calendrier
+                    _buildActionButton(
+                      context,
+                      icon: MdiIcons.calendar,
+                      title: 'Calendrier',
+                      subtitle: 'RDV et rappels',
+                      color: Colors.blue,
+                      onTap: () => _showCalendar(context),
+                    ),
+
                     // Bouton 8: Partage Familial
                     _buildActionButton(
                       context,
@@ -324,6 +348,16 @@ class _HomePageState extends State<HomePage> {
                       subtitle: 'Statistiques',
                       color: Colors.blue,
                       onTap: () => _showStats(context),
+                    ),
+
+                    // Bouton 12: Hydratation
+                    _buildActionButton(
+                      context,
+                      icon: MdiIcons.water,
+                      title: 'Hydratation',
+                      subtitle: 'Rappels hydratation',
+                      color: Colors.cyan,
+                      onTap: () => _showHydration(context),
                     ),
                   ],
                 ),
@@ -382,7 +416,8 @@ class _HomePageState extends State<HomePage> {
                 Text(
                   subtitle,
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
                     color: subtitleColor,
                   ),
                   textAlign: TextAlign.center,
@@ -439,6 +474,17 @@ class _HomePageState extends State<HomePage> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const DoctorsListScreen()),
+    ).then((_) {
+      if (mounted) {
+        _loadStats();
+      }
+    });
+  }
+
+  void _showCalendar(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const CalendarScreen()),
     );
   }
 
@@ -471,6 +517,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _showEmergency(BuildContext context) {
+    // Navigation directe sans délai
+    if (!mounted) return;
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const EmergencyScreen()),
@@ -506,6 +554,24 @@ class _HomePageState extends State<HomePage> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const StatsScreen()),
+    );
+  }
+
+  void _showPathologies(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const PathologyListScreen()),
+    ).then((_) {
+      if (mounted) {
+        _loadStats();
+      }
+    });
+  }
+
+  void _showHydration(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const HydrationRemindersScreen()),
     );
   }
 
@@ -599,7 +665,7 @@ class _HomePageState extends State<HomePage> {
                 padding: const EdgeInsets.all(8),
                 child: Text(
                   '... et ${items.length - 5} autre(s)',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                  style: TextStyle(color: Colors.grey[600], fontSize: 14),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -610,28 +676,41 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildStatsWidgets() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Row(
       children: [
         Expanded(
           child: Card(
-            color: Colors.green[50],
+            elevation: 2,
+            color: isDark 
+                ? Theme.of(context).colorScheme.surfaceContainerHigh
+                : Colors.green[50],
             child: Padding(
               padding: const EdgeInsets.all(12.0),
               child: Column(
                 children: [
-                  const Icon(Icons.folder, color: Colors.green, size: 32),
+                  Icon(
+                    Icons.folder, 
+                    color: isDark ? Colors.green[300] : Colors.green[700], 
+                    size: 32,
+                  ),
                   const SizedBox(height: 8),
                   Text(
                     '$_documentCount',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.green,
+                      color: isDark ? Colors.green[300] : Colors.green[700],
                     ),
                   ),
-                  const Text(
+                  Text(
                     'Documents',
-                    style: TextStyle(fontSize: 12),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                   ),
                 ],
               ),
@@ -641,24 +720,35 @@ class _HomePageState extends State<HomePage> {
         const SizedBox(width: 12),
         Expanded(
           child: Card(
-            color: Colors.orange[50],
+            elevation: 2,
+            color: isDark 
+                ? Theme.of(context).colorScheme.surfaceContainerHigh
+                : Colors.orange[50],
             child: Padding(
               padding: const EdgeInsets.all(12.0),
               child: Column(
                 children: [
-                  const Icon(Icons.notifications, color: Colors.orange, size: 32),
+                  Icon(
+                    Icons.notifications, 
+                    color: isDark ? Colors.orange[300] : Colors.orange[700], 
+                    size: 32,
+                  ),
                   const SizedBox(height: 8),
                   Text(
                     '$_upcomingRemindersCount',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.orange,
+                      color: isDark ? Colors.orange[300] : Colors.orange[700],
                     ),
                   ),
-                  const Text(
+                  Text(
                     'Rappels',
-                    style: TextStyle(fontSize: 12),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                   ),
                 ],
               ),
