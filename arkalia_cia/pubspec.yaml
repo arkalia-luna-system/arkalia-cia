@@ -14,7 +14,7 @@ dependencies:
   path: ^1.8.3
 
   # Fichiers et PDF
-  file_picker: ^8.1.4
+  file_picker: ">=8.1.4 <11.0.0"
   path_provider: ^2.1.1
 
   # UI
