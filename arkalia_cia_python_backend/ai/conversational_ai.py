@@ -207,11 +207,11 @@ class ConversationalAI:
                             sleep_avg = health_metrics.get("sleep", {}).get("avg_30d")
                             stress_avg = health_metrics.get("stress", {}).get("avg_30d")
 
-                            if sleep_avg and sleep_avg < 6:
-                                answer += (
-                                    f"\nNote : Votre sommeil moyen est de {sleep_avg}h/jour. "
-                                    "Un sommeil insuffisant peut aggraver les douleurs."
-                                )
+                    if sleep_avg and sleep_avg < 6:
+                        answer += (
+                            f"\nNote : Votre sommeil moyen est de {sleep_avg}h/jour. "
+                            "Un sommeil insuffisant peut aggraver les douleurs."
+                        )  # noqa: E501
 
                             if stress_avg and stress_avg > 7:
                                 answer += (
