@@ -2,7 +2,6 @@
 /// 
 /// Ce fichier contient toutes les informations sur les portails de santé
 /// belges et internationaux utilisés dans l'application.
-/// 
 /// Pour ajouter un nouveau portail :
 /// 1. Ajouter l'entrée dans `belgianHealthPortals` ou `internationalHealthPortals`
 /// 2. Si OAuth est supporté, ajouter dans `oauthPortalsConfig`

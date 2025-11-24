@@ -91,10 +91,10 @@ class CalendarService {
       // Ajouter info couleur dans description si disponible
       if (doctorColor != null) {
         // Format: #RRGGBB (sans alpha)
-        // Les accesseurs .r, .g, .b retournent des valeurs entre 0.0 et 1.0
-        final r = (doctorColor.r * 255).round();
-        final g = (doctorColor.g * 255).round();
-        final b = (doctorColor.b * 255).round();
+        // Les accesseurs .red, .green, .blue retournent des valeurs entre 0.0 et 1.0
+        final r = (doctorColor.red * 255).round();
+        final g = (doctorColor.green * 255).round();
+        final b = (doctorColor.blue * 255).round();
         final colorHex = '#${r.toRadixString(16).padLeft(2, '0').toUpperCase()}'
             '${g.toRadixString(16).padLeft(2, '0').toUpperCase()}'
             '${b.toRadixString(16).padLeft(2, '0').toUpperCase()}';

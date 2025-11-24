@@ -67,7 +67,7 @@ class _HealthPortalAuthScreenState extends State<HealthPortalAuthScreen> {
         final token = await _authService.getAccessToken(widget.portal);
         if (token != null) {
           // Récupérer les données du portail
-          final data = await _authService.fetchPortalData(widget.portal, token);
+          await _authService.fetchPortalData(widget.portal, token);
           
           if (mounted) {
             Navigator.of(context).pop(); // Fermer dialogue d'attente
