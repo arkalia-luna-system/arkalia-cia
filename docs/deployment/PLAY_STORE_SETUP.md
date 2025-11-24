@@ -80,9 +80,26 @@ buildTypes {
 }
 ```
 
-### ✅ À Faire : Créer la Signature Release
+### ✅ Configuration Prête (À Compléter avec Keystore)
 
-**Étape 1 : Générer le Keystore**
+**✅ ÉTAPE 1 : Template `key.properties` créé**
+
+Le fichier `arkalia_cia/android/key.properties.template` existe. Pour l'utiliser :
+
+```bash
+cd /Volumes/T7/arkalia-cia/arkalia_cia/android
+cp key.properties.template key.properties
+# Puis éditer key.properties avec tes vrais mots de passe
+```
+
+**✅ ÉTAPE 2 : `build.gradle.kts` configuré**
+
+Le fichier `arkalia_cia/android/app/build.gradle.kts` est déjà configuré pour :
+- Charger automatiquement `key.properties` s'il existe
+- Utiliser la signature release si configurée
+- Revenir sur debug si pas de signature (pour développement)
+
+**⏸️ ÉTAPE 3 : Générer le Keystore (À FAIRE APRÈS VALIDATION GOOGLE)**
 
 ```bash
 cd /Volumes/T7/arkalia-cia/arkalia_cia/android/app
@@ -105,51 +122,16 @@ keytool -genkey -v \
 
 **⚠️ IMPORTANT** : Sauvegarder les mots de passe dans un gestionnaire de mots de passe sécurisé !
 
-**Étape 2 : Créer le fichier `key.properties`**
+**Étape 4 : Compléter `key.properties`**
 
 ```bash
 cd /Volumes/T7/arkalia-cia/arkalia_cia/android
-
-# Créer le fichier key.properties
-cat > key.properties << EOF
-storePassword=TON_MOT_DE_PASSE_STORE
-keyPassword=TON_MOT_DE_PASSE_KEY
-keyAlias=arkalia-cia
-storeFile=app/arkalia-cia-release.jks
-EOF
+# Éditer key.properties et remplacer les valeurs par tes vrais mots de passe
 ```
 
-**⚠️ IMPORTANT** : Ajouter `key.properties` et `*.jks` au `.gitignore` !
+**✅ ÉTAPE 5 : `.gitignore` configuré**
 
-**Étape 3 : Modifier `build.gradle.kts`**
-
-```kotlin
-// Au début du fichier, après les imports
-val keystorePropertiesFile = rootProject.file("key.properties")
-val keystoreProperties = java.util.Properties()
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(java.io.FileInputStream(keystorePropertiesFile))
-}
-
-android {
-    // ... configuration existante ...
-    
-    signingConfigs {
-        create("release") {
-            keyAlias = keystoreProperties["keyAlias"] as String
-            keyPassword = keystoreProperties["keyPassword"] as String
-            storeFile = file(keystoreProperties["storeFile"] as String)
-            storePassword = keystoreProperties["storePassword"] as String
-        }
-    }
-    
-    buildTypes {
-        release {
-            signingConfig = signingConfigs.getByName("release")
-        }
-    }
-}
-```
+Les fichiers `key.properties` et `*.jks` sont déjà dans `.gitignore` - ils ne seront jamais commités.
 
 ---
 
@@ -341,9 +323,9 @@ Version 1.3.0 - Première version publique
 
 - [ ] Vérifier numéro de téléphone
 - [ ] Vérifier appareil Android
-- [ ] Créer signature release (keystore)
-- [ ] Configurer `build.gradle.kts` avec signature
-- [ ] Tester build App Bundle avec signature release
+- [ ] Générer keystore (commande keytool)
+- [ ] Compléter `key.properties` avec vrais mots de passe
+- [ ] Tester build App Bundle avec signature release (✅ build.gradle.kts déjà configuré)
 
 ### Création App sur Play Console
 

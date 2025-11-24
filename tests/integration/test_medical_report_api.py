@@ -201,7 +201,7 @@ class TestMedicalReportAPI:
         # Les 10 premières doivent réussir, la 11ème peut être limitée (429)
         success_count = sum(1 for code in responses if code == 200)
         rate_limited_count = sum(1 for code in responses if code == 429)
-        
+
         # Vérifier que le rate limiting fonctionne
         # Au moins quelques requêtes doivent réussir, et certaines peuvent être limitées
         assert success_count > 0  # Au moins une doit réussir

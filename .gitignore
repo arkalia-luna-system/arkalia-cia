@@ -276,3 +276,10 @@ backups/
 .wifi_adb_ip
 # Scripts de connexion WiFi ADB
 connect_wifi_adb.sh
+
+# Android Keystore (sécurité)
+arkalia_cia/android/key.properties
+arkalia_cia/android/app/*.jks
+arkalia_cia/android/app/*.keystore
+*.jks
+*.keystore

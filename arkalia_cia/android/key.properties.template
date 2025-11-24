@@ -1,0 +1,9 @@
+# Template pour key.properties
+# Copier ce fichier vers key.properties et remplir les valeurs
+# ⚠️ NE JAMAIS COMMITTER key.properties dans Git !
+
+storePassword=TON_MOT_DE_PASSE_STORE
+keyPassword=TON_MOT_DE_PASSE_KEY
+keyAlias=arkalia-cia
+storeFile=app/arkalia-cia-release.jks
+
