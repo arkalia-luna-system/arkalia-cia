@@ -1,21 +1,27 @@
 import java.util.Properties
 
+// Configurer flutter.source AVANT le bloc plugins
+// Le plugin Flutter Gradle lit cette propriété depuis gradle.properties
+// ou depuis project.findProperty("flutter.source")
+val flutterSourceDir = projectDir.parentFile.parentFile
+// Stocker dans project.ext pour que le plugin puisse y accéder
+project.ext.set("flutter.source", flutterSourceDir.absolutePath)
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
+    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    id("dev.flutter.flutter-gradle-plugin")
 }
 
-// Configurer flutter.source AVANT d'appliquer le plugin Flutter
-// Le plugin cherche cette propriété au moment de son application
-val flutterSourceDir = projectDir.parentFile.parentFile
-project.ext.set("flutter.source", flutterSourceDir.absolutePath)
-
-// Appliquer le plugin Flutter APRÈS avoir configuré flutter.source
-apply(plugin = "dev.flutter.flutter-gradle-plugin")
-
-// Configuration Flutter - confirmer le répertoire source
+// Configuration Flutter - Le plugin devrait avoir lu flutter.source depuis project.ext
+// ou depuis gradle.properties, mais on le confirme ici aussi
 flutter {
-    source = project.ext.get("flutter.source") as String
+    // Le plugin lit depuis gradle.properties ou project.ext automatiquement
+    // Si ça ne fonctionne pas, spécifier explicitement
+    source = project.findProperty("flutter.source") as? String 
+        ?: project.ext.get("flutter.source") as? String
+        ?: flutterSourceDir.absolutePath
 }
 
 // Charger les propriétés de signature depuis key.properties (si existe)

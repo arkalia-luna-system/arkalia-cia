@@ -19,6 +19,7 @@ pluginManagement {
 
 // Configurer flutter.source AVANT que les projets ne soient évalués
 // Le plugin Flutter Gradle cherche cette propriété au moment de son application
+// Note: Le plugin lit depuis gradle.properties directement, pas besoin de stocker ici
 val gradleProps = java.util.Properties()
 val gradlePropsFile = file("gradle.properties")
 if (gradlePropsFile.exists()) {
@@ -26,8 +27,6 @@ if (gradlePropsFile.exists()) {
 }
 val flutterSourceFromProps = gradleProps.getProperty("flutter.source")
 if (flutterSourceFromProps != null) {
-    // Stocker dans gradle.ext pour que tous les projets puissent y accéder
-    gradle.ext.set("flutter.source", flutterSourceFromProps)
     println("✅ Flutter source directory configuré depuis gradle.properties: $flutterSourceFromProps")
 }
 
