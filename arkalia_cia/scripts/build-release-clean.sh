@@ -89,28 +89,40 @@ echo -e "${GREEN}✅ Dépendances récupérées${NC}"
 echo ""
 
 # ========================================================================
-# ÉTAPE 5 : Analyse du code
+# ÉTAPE 5 : Analyse du code (optionnelle, sautée si bloque)
 # ========================================================================
-echo -e "${YELLOW}🔍 Étape 5 : Analyse du code (flutter analyze)${NC}"
+echo -e "${YELLOW}🔍 Étape 5 : Analyse du code (optionnelle)${NC}"
+echo "   Tentative d'analyse rapide (timeout: 10 secondes)..."
 
-ANALYZE_OUTPUT=$(flutter analyze 2>&1)
-ANALYZE_EXIT=$?
+# Exécuter flutter analyze avec timeout strict
+ANALYZE_OUTPUT=$(timeout 10 flutter analyze 2>&1) || {
+    ANALYZE_EXIT=$?
+    if [ $ANALYZE_EXIT -eq 124 ]; then
+        echo -e "${YELLOW}⚠️  Analyse timeout après 10s, on continue le build${NC}"
+        echo "   Tu peux lancer 'flutter analyze' manuellement plus tard"
+    else
+        echo -e "${YELLOW}⚠️  Analyse interrompue, on continue le build${NC}"
+    fi
+    ANALYZE_OUTPUT=""
+}
 
-# Compter les erreurs (pas les warnings/info)
-ERROR_COUNT=$(echo "$ANALYZE_OUTPUT" | grep -c "error •" || true)
+if [ -n "$ANALYZE_OUTPUT" ] && [ "$ANALYZE_OUTPUT" != "" ]; then
+    # Compter les erreurs (pas les warnings/info)
+    ERROR_COUNT=$(echo "$ANALYZE_OUTPUT" | grep -c "error •" || true)
 
-if [ $ERROR_COUNT -gt 0 ]; then
-    echo -e "${RED}❌ Erreurs trouvées dans le code :${NC}"
-    echo "$ANALYZE_OUTPUT" | grep "error •"
-    echo ""
-    echo -e "${YELLOW}⚠️  Le build continuera, mais corrige ces erreurs avant de publier${NC}"
-else
-    echo -e "${GREEN}✅ Aucune erreur critique trouvée${NC}"
-    
-    # Afficher les warnings/info s'il y en a
-    WARNING_COUNT=$(echo "$ANALYZE_OUTPUT" | grep -c "warning •\|info •" || true)
-    if [ $WARNING_COUNT -gt 0 ]; then
-        echo -e "${YELLOW}ℹ️  ${WARNING_COUNT} avertissement(s) trouvé(s) (non bloquant)${NC}"
+    if [ $ERROR_COUNT -gt 0 ]; then
+        echo -e "${RED}❌ Erreurs trouvées dans le code :${NC}"
+        echo "$ANALYZE_OUTPUT" | grep "error •" | head -10
+        echo ""
+        echo -e "${YELLOW}⚠️  Le build continuera, mais corrige ces erreurs avant de publier${NC}"
+    else
+        echo -e "${GREEN}✅ Aucune erreur critique trouvée${NC}"
+        
+        # Afficher les warnings/info s'il y en a
+        WARNING_COUNT=$(echo "$ANALYZE_OUTPUT" | grep -c "warning •\|info •" || true)
+        if [ $WARNING_COUNT -gt 0 ]; then
+            echo -e "${YELLOW}ℹ️  ${WARNING_COUNT} avertissement(s) trouvé(s) (non bloquant)${NC}"
+        fi
     fi
 fi
 

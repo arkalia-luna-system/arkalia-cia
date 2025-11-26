@@ -10,7 +10,7 @@ plugins {
 // Configuration Flutter - doit être définie AVANT le bloc android
 // pour que flutter.minSdkVersion, etc. soient disponibles
 flutter {
-    source = file("../..")
+    source = file("${rootProject.projectDir}/..")
 }
 
 // Charger les propriétés de signature depuis key.properties (si existe)

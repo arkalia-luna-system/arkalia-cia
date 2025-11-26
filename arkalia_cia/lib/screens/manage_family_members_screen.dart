@@ -152,7 +152,7 @@ class _AddMemberDialogState extends State<_AddMemberDialog> {
                 keyboardType: TextInputType.phone,
               ),
               DropdownButtonFormField<String>(
-                value: _relationship,
+                initialValue: _relationship,
                 decoration: const InputDecoration(labelText: 'Relation'),
                 items: ['Famille', 'Conjoint', 'Enfant', 'Parent', 'Autre']
                     .map((r) => DropdownMenuItem(value: r, child: Text(r)))
