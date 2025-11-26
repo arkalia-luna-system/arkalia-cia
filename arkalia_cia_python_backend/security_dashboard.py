@@ -3,6 +3,18 @@
 """
 Dashboard de sécurité web pour Athalia
 Interface moderne pour visualiser les rapports de sécurité en temps réel
+
+DÉPENDANCES OPTIONNELLES :
+-------------------------
+Ce module utilise des composants du package `athalia_core` qui sont OPTIONNELS.
+Si `athalia_core` n'est pas installé, le dashboard fonctionne en mode dégradé :
+- Les fonctionnalités avancées (cache, métriques, linting) seront désactivées
+- Les fonctionnalités de base (rapports sécurité, interface web) restent disponibles
+
+Pour installer les dépendances optionnelles :
+    pip install athalia-core
+
+Note : Le code gère gracieusement l'absence de ces dépendances avec des fallbacks.
 """
 
 import logging
@@ -15,8 +27,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-# Import des composants Athalia réels (optionnels)
+# Import des composants Athalia réels (OPTIONNELS)
 # Ces imports sont dans un try/except car les modules peuvent ne pas être disponibles
+# Si athalia_core n'est pas installé, ATHALIA_AVAILABLE sera False et le code utilisera des fallbacks
 if TYPE_CHECKING:
     # Imports uniquement pour le type checking - les stubs sont utilisés
     from athalia_core.core.cache_manager import CacheManager

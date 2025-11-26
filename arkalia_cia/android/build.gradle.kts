@@ -9,6 +9,7 @@ allprojects {
 subprojects {
     afterEvaluate {
         // Forcer Java 17 pour tous les projets Android
+        // Note: La configuration compileSdk pour les plugins Flutter est gérée par init.gradle
         plugins.withId("com.android.library") {
             extensions.findByType<com.android.build.gradle.BaseExtension>()?.apply {
                 compileOptions {

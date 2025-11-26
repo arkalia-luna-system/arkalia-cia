@@ -85,7 +85,12 @@
 - ⚠️ **Sans ce secret** : Le workflow build l'App Bundle mais tu dois l'uploader manuellement
 - ✅ **Avec ce secret** : Push sur `main` → Déploiement automatique complet
 
-**Statut** : ⏳ **À configurer**
+**Statut** : ⏳ **À configurer** (action manuelle requise dans GitHub)
+
+**Note** : Ce secret ne peut pas être créé automatiquement. Tu dois :
+1. Créer le compte de service dans Google Play Console
+2. Télécharger le JSON
+3. L'ajouter manuellement dans GitHub → Settings → Secrets → Actions
 
 ---
 
