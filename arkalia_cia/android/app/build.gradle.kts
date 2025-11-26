@@ -1,5 +1,14 @@
 import java.util.Properties
 
+// Lire flutter.source depuis gradle.properties AVANT l'application du plugin
+// Le plugin Flutter Gradle cherche cette propriété au moment de son application
+val gradleProperties = java.util.Properties()
+val gradlePropertiesFile = rootProject.file("gradle.properties")
+if (gradlePropertiesFile.exists()) {
+    gradlePropertiesFile.inputStream().use { gradleProperties.load(it) }
+}
+val flutterSourceFromProps = gradleProperties.getProperty("flutter.source")
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -10,8 +19,13 @@ plugins {
 // Configuration Flutter - Le plugin détecte automatiquement le répertoire source
 // en cherchant le répertoire parent qui contient pubspec.yaml
 // Si la détection automatique échoue, spécifier explicitement avec un chemin calculé
-// projectDir = android/app/, donc parentFile.parentFile = arkalia_cia/
-val flutterSourceDir = projectDir.parentFile.parentFile
+// Utiliser flutter.source depuis gradle.properties si disponible, sinon calculer
+val flutterSourceDir = if (flutterSourceFromProps != null) {
+    file(flutterSourceFromProps)
+} else {
+    // projectDir = android/app/, donc parentFile.parentFile = arkalia_cia/
+    projectDir.parentFile.parentFile
+}
 flutter {
     source = flutterSourceDir.absolutePath
 }
