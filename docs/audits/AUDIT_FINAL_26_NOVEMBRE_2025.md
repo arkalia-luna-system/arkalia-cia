@@ -165,7 +165,7 @@
 2. **Sécurité** : Chiffrement AES-256, JWT, gestion clés
 3. **Code propre** : Logging professionnel, code mort supprimé
 4. **Documentation** : Architecture documentée, dépendances claires
-5. **Tests** : 352 tests, 70.83% coverage
+5. **Tests** : 508 tests Python (71.98% coverage), 1 test Flutter
 
 ### Points Faibles ❌
 

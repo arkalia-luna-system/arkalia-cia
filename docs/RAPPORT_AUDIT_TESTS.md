@@ -40,7 +40,7 @@ tests/
     └── test_integration.py        ✅ 1 classe de test
 ```
 
-**Total**: 20 fichiers de test, 55+ classes de test, 308 tests collectés
+**Total**: 27 fichiers de test, 65+ classes de test, 508 tests Python collectés
 
 ## 🔧 Corrections Effectuées
 
@@ -178,7 +178,7 @@ pytest tests/ -m security
 
 - **Fichiers de test**: 20
 - **Classes de test**: 55+
-- **Tests collectés**: 308 tests
+- **Tests collectés**: 508 tests Python
 - **Tests unitaires**: ~292
 - **Tests d'intégration**: ~16
 - **Fixtures**: 37+

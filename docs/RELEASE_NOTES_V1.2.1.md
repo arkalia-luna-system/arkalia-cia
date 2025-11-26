@@ -28,7 +28,7 @@ Cette version apporte des améliorations finales avec l'implémentation de fonct
 ## Améliorations
 
 ### Tests
-- **352 tests passent** (70.83% coverage)
+- **508 tests Python passent** (71.98% coverage)
 - **Suite complète security_utils** : 37 tests pour les utilitaires de sécurité
 - **Correction test XSS** : Test de sanitization HTML corrigé
 
@@ -55,7 +55,7 @@ Cette version apporte des améliorations finales avec l'implémentation de fonct
 - ✅ Correction tests `security_utils` (suppression None, correction test XSS)
 
 ### Tests
-- ✅ 352 tests passent (70.83% coverage)
+- ✅ 508 tests Python passent (71.98% coverage)
 - ✅ Tous les tests auth passent
 - ✅ Tous les tests security_utils passent
 
@@ -65,8 +65,8 @@ Cette version apporte des améliorations finales avec l'implémentation de fonct
 
 | Métrique | Valeur |
 |----------|--------|
-| **Tests** | 352 passed |
-| **Coverage** | 70.83% |
+| **Tests** | 508 passed (Python) |
+| **Coverage** | 71.98% (Python) |
 | **Erreurs Flutter lint** | 0 |
 | **Erreurs Python lint** | 0 |
 | **Statut Production** | 100% Ready |

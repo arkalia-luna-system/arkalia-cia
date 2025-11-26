@@ -22,7 +22,7 @@
 **Google Play Console**: ✅ Version 1.3.0 publiée en tests internes (26 novembre 2025)  
 **Exploitation**: 85% ✅ (amélioration +7% depuis audit initial du 26 novembre 2025)  
 **Bugs Critiques**: Tous corrigés ✅ (13/13 bugs corrigés - 100%)  
-**Tests**: 352 passed ✅ (70.83% coverage)  
+**Tests**: 508 passed ✅ (71.98% coverage Python, 1 test Flutter)  
 **Optimisations**: Audit approfondi terminé - Logger conditionnel, 0 log production, code optimisé  
 **Lint**: 0 erreur Flutter, 0 erreur Python ✅  
 **Accessibilité**: Améliorée ✅ (tous textes ≥14px pour seniors)  
@@ -53,7 +53,7 @@
 | **Temps de démarrage** | <2.1s |
 | **Chiffrement** | AES-256 |
 | **Mode hors ligne** | Complet |
-| **Couverture tests** | 70.83% (352 tests) |
+| **Couverture tests** | 71.98% (508 tests Python, 1 test Flutter) |
 | **Plateformes** | iOS + Android |
 | **Utilisateurs cibles** | Seniors et familles |
 | **CI/CD** | Workflows fonctionnels |
@@ -486,7 +486,7 @@ Tests effectués avec 24 utilisateurs seniors (65-82 ans) pour valider l'accessi
 # Run test suite
 pytest tests/ -v --cov=arkalia_cia_python_backend
 
-# Coverage: 22.09% (308 tests collectés, tous passants)
+# Coverage: 71.98% (508 tests Python collectés, tous passants)
 # Integration tests: Multiple scenarios
 # Unit tests: Comprehensive coverage for all modules
 ```

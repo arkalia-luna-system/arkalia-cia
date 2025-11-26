@@ -380,6 +380,7 @@ gradle.beforeProject { project ->
     
     // Créer l'extension android avec flutter AVANT que le plugin Android ne soit appliqué
     // On utilise beforeEvaluate pour s'exécuter AVANT l'évaluation du build.gradle
+    // IMPORTANT: Cette configuration doit se faire AVANT que les plugins ne soient appliqués
     project.beforeEvaluate {
         try {
             // Si android n'existe pas encore, créer une extension factice
@@ -387,10 +388,20 @@ gradle.beforeProject { project ->
                 // Créer une extension android factice avec la propriété flutter
                 project.extensions.create("android", AndroidExtension, flutterConfig)
                 println "✅ Init.gradle (beforeProject): Créé extension android factice pour ${project.name}"
-            } else {
-                // Si android existe déjà, ajouter la propriété flutter via metaClass
+            }
+        } catch (Exception e) {
+            // Ignorer si la configuration échoue
+            println "⚠️  Init.gradle (beforeProject): Erreur création android factice pour ${project.name}: ${e.message}"
+        }
+    }
+    
+    // Configuration APRÈS que le plugin Android soit appliqué pour ajouter flutter
+    project.afterEvaluate {
+        try {
+            if (project.hasProperty("android")) {
                 def android = project.extensions.findByName("android")
                 if (android != null) {
+                    // Utiliser metaClass pour ajouter la propriété flutter
                     android.metaClass.flutter = flutterConfig
                     if (!android.hasProperty("flutter")) {
                         android.ext.flutter = flutterConfig
@@ -400,7 +411,7 @@ gradle.beforeProject { project ->
             }
         } catch (Exception e) {
             // Ignorer si la configuration échoue
-            println "⚠️  Init.gradle (beforeProject): Erreur pour ${project.name}: ${e.message}"
+            println "⚠️  Init.gradle (beforeProject): Erreur ajout flutter à android pour ${project.name}: ${e.message}"
         }
     }
     

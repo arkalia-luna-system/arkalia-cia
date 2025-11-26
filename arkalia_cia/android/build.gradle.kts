@@ -7,6 +7,20 @@ allprojects {
 
 // Configuration Java/Kotlin pour tous les sous-projets
 subprojects {
+    // Configuration AVANT l'évaluation pour créer l'extension flutter
+    // Cela permet aux plugins comme file_picker d'accéder à android.flutter
+    beforeEvaluate {
+        // Créer l'extension flutter factice pour les plugins qui en ont besoin
+        val flutterConfig = mapOf(
+            "minSdkVersion" to 21,
+            "targetSdkVersion" to 36,
+            "compileSdkVersion" to 36,
+            "versionCode" to 1,
+            "versionName" to "1.0.0"
+        )
+        project.extensions.extraProperties.set("flutter", flutterConfig)
+    }
+    
     afterEvaluate {
         // Forcer Java 17 pour tous les projets Android
         // Note: La configuration compileSdk pour les plugins Flutter est gérée par init.gradle

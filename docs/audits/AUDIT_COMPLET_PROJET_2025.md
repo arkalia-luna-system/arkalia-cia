@@ -175,7 +175,7 @@
 1. **Architecture solide** :
    - Séparation claire Flutter/Python
    - Services bien structurés
-   - Tests présents (352 tests, 70.83% coverage)
+   - Tests présents (508 tests Python, 71.98% coverage)
 
 2. **Sécurité** :
    - Chiffrement AES-256
@@ -272,7 +272,7 @@
 - Architecture solide et bien structurée
 - Sécurité bien implémentée
 - Fonctionnalités de base complètes et fonctionnelles
-- Tests présents (70.83% coverage)
+- Tests présents (508 tests Python, 71.98% coverage)
 - Documentation technique présente
 
 ### Points faibles ❌ :
