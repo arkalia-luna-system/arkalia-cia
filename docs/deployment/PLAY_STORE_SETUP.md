@@ -365,11 +365,13 @@ Version 1.3.0 - Première version publique
 
 ---
 
-## 🔄 Automation GitHub Actions (Optionnel)
+## 🔄 Automation GitHub Actions ✅ **CONFIGURÉ**
 
 ### Workflow Automatique
 
-Créer `.github/workflows/play-store-deploy.yml` :
+✅ **Workflow créé** : `.github/workflows/deploy-play-store.yml` (26 novembre 2025)
+
+**Ancien exemple** (maintenant remplacé par le workflow réel) :
 
 ```yaml
 name: Deploy to Google Play Store

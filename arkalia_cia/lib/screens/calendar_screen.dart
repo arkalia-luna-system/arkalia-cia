@@ -3,9 +3,8 @@ import 'package:table_calendar/table_calendar.dart';
 import '../services/calendar_service.dart';
 import '../services/doctor_service.dart';
 import '../services/medication_service.dart';
-import '../services/hydration_service.dart';
+// import '../services/hydration_service.dart'; // Non utilisé actuellement (rappels créés manuellement), mais gardé pour utilisation future
 import '../models/doctor.dart'; // Contient aussi Consultation
-import '../models/medication.dart';
 
 /// Écran calendrier avec affichage des rappels médicaments et hydratation
 class CalendarScreen extends StatefulWidget {
@@ -18,7 +17,6 @@ class CalendarScreen extends StatefulWidget {
 class _CalendarScreenState extends State<CalendarScreen> {
   final DoctorService _doctorService = DoctorService();
   final MedicationService _medicationService = MedicationService();
-  final HydrationService _hydrationService = HydrationService();
   DateTime _focusedDay = DateTime.now();
   DateTime _selectedDay = DateTime.now();
   CalendarFormat _calendarFormat = CalendarFormat.month;
@@ -97,7 +95,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
       }
 
       // Récupérer les rappels d'hydratation (toutes les 2h de 8h à 20h)
-      final now = DateTime.now();
       for (int hour = 8; hour <= 20; hour += 2) {
         final reminderDate = DateTime(_focusedDay.year, _focusedDay.month, _focusedDay.day, hour, 0);
         final dateOnly = DateTime(reminderDate.year, reminderDate.month, reminderDate.day);

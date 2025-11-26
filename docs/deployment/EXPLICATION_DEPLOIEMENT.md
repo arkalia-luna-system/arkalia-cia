@@ -56,22 +56,23 @@
 
 **OUI** ✅ (mais configuration complexe)
 
-**Option 1 : GitHub Actions (Automatique)**
+**Option 1 : GitHub Actions (Automatique)** ✅ **CONFIGURÉ**
 
 Quand tu pushes sur `main` → Build automatique → Upload automatique → Testeurs reçoivent la mise à jour
 
 **Configuration** :
-- Créer un compte de service Google Play
-- Configurer GitHub Actions
-- Ajouter les secrets GitHub
+- ✅ Workflow créé : `.github/workflows/deploy-play-store.yml` (26 novembre 2025)
+- ⏳ Créer un compte de service Google Play (à faire)
+- ⏳ Ajouter le secret `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON` dans GitHub (à faire)
 
 **Avantages** :
 - ✅ Automatique (push = déploiement)
 - ✅ Pas d'intervention manuelle
+- ✅ Workflow prêt et configuré
 
 **Inconvénients** :
-- ❌ Configuration initiale complexe (1-2 heures)
-- ❌ Nécessite un compte de service Google
+- ❌ Configuration initiale complexe (compte de service Google)
+- ⏳ Nécessite le secret GitHub (à configurer)
 
 **Option 2 : Manuel (Actuel - Simple)**
 

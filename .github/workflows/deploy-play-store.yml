@@ -1,0 +1,104 @@
+# Workflow de déploiement automatique vers Google Play Store
+# Déploie automatiquement sur la branche main vers les tests internes
+
+name: Deploy to Play Store (Internal Testing)
+
+on:
+    push:
+        branches: [main]
+        tags:
+            - "v*"
+    workflow_dispatch: # Permet de déclencher manuellement
+
+env:
+    FLUTTER_VERSION: "3.35.3"
+    PACKAGE_NAME: "com.arkalia.cia"
+    TRACK: "internal" # internal, alpha, beta, production
+
+jobs:
+    deploy:
+        name: Build and Deploy to Play Store
+        runs-on: ubuntu-latest
+        timeout-minutes: 30
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v6
+              with:
+                  fetch-depth: 0
+
+            - name: Setup Java
+              uses: actions/setup-java@v4
+              with:
+                  distribution: "temurin"
+                  java-version: "17"
+
+            - name: Setup Flutter
+              uses: subosito/flutter-action@v2
+              with:
+                  flutter-version: ${{ env.FLUTTER_VERSION }}
+                  channel: "stable"
+                  cache: true
+
+            - name: Get Flutter dependencies
+              working-directory: arkalia_cia
+              run: flutter pub get
+
+            - name: Verify Flutter setup
+              working-directory: arkalia_cia
+              run: flutter doctor -v
+
+            - name: Build App Bundle
+              working-directory: arkalia_cia
+              env:
+                  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+              run: |
+                  echo "🔨 Building App Bundle..."
+                  flutter build appbundle --release
+                  echo "✅ Build completed"
+
+            - name: Verify App Bundle exists
+              working-directory: arkalia_cia
+              run: |
+                  if [ ! -f "build/app/outputs/bundle/release/app-release.aab" ]; then
+                    echo "❌ Error: App Bundle not found!"
+                    exit 1
+                  fi
+                  echo "✅ App Bundle found:"
+                  ls -lh build/app/outputs/bundle/release/app-release.aab
+
+            - name: Upload to Play Store
+              if: env.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON != ''
+              uses: r0adkll/upload-google-play@v1
+              with:
+                  serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+                  packageName: ${{ env.PACKAGE_NAME }}
+                  releaseFiles: arkalia_cia/build/app/outputs/bundle/release/app-release.aab
+                  track: ${{ env.TRACK }}
+                  status: completed
+                  changesNotSentForReview: false
+
+            - name: Upload artifact (fallback if no service account)
+              if: env.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON == ''
+              uses: actions/upload-artifact@v4
+              with:
+                  name: app-release
+                  path: arkalia_cia/build/app/outputs/bundle/release/app-release.aab
+                  retention-days: 7
+
+            - name: Deployment summary
+              if: always()
+              run: |
+                  echo "## 📦 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  echo "**Package**: ${{ env.PACKAGE_NAME }}" >> $GITHUB_STEP_SUMMARY
+                  echo "**Track**: ${{ env.TRACK }}" >> $GITHUB_STEP_SUMMARY
+                  echo "**Flutter Version**: ${{ env.FLUTTER_VERSION }}" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  if [ "${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}" != "" ]; then
+                    echo "✅ **Status**: Deployed to Play Store" >> $GITHUB_STEP_SUMMARY
+                  else
+                    echo "⚠️ **Status**: App Bundle built (manual upload required)" >> $GITHUB_STEP_SUMMARY
+                    echo "" >> $GITHUB_STEP_SUMMARY
+                    echo "**Next steps**: Upload the artifact manually to Play Console" >> $GITHUB_STEP_SUMMARY
+                  fi

@@ -84,7 +84,9 @@ git push origin develop
 
 **Configuration** :
 
-Créer `.github/workflows/deploy-play-store.yml` :
+✅ **Workflow créé** : `.github/workflows/deploy-play-store.yml` (26 novembre 2025)
+
+**Ancien exemple** (maintenant remplacé par le workflow réel) :
 
 ```yaml
 name: Deploy to Play Store (Internal Testing)
@@ -138,10 +140,16 @@ jobs:
 - ✅ Automatique (push sur `main` → déploiement)
 - ✅ Pas d'intervention manuelle
 - ✅ Workflow professionnel
+- ✅ Workflow créé et prêt (26 novembre 2025)
 
 **Inconvénients** :
-- ❌ Configuration initiale complexe
-- ❌ Nécessite un compte de service Google
+- ❌ Configuration initiale complexe (compte de service Google)
+- ❌ Nécessite le secret `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON` dans GitHub
+
+**Statut actuel** :
+- ✅ Workflow créé : `.github/workflows/deploy-play-store.yml`
+- ⏳ En attente : Configuration du compte de service Google Play
+- ⏳ En attente : Ajout du secret `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON` dans GitHub
 
 ---
 
