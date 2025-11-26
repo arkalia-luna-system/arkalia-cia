@@ -338,6 +338,19 @@ def cleanAllMacOSFiles(project) {
     return totalCleaned
 }
 
+// ============================================================================
+// CLASSE HELPER : AndroidExtension pour créer une extension android factice
+// ============================================================================
+// Cette classe doit être définie au niveau racine pour être accessible
+// dans tous les blocs du script
+class AndroidExtension {
+    def flutter
+    
+    AndroidExtension(def flutterConfig) {
+        this.flutter = flutterConfig
+    }
+}
+
 // Prevent any volume-based cache creation (proactive prevention)
 gradle.beforeProject { project ->
     def currentUserHome = System.getProperty("org.gradle.user.home")
@@ -494,15 +507,6 @@ gradle.beforeProject { project ->
         } catch (Exception e) {
             // Ignorer si la configuration échoue
             println "⚠️  Init.gradle: Erreur création extension flutter pour ${project.name}: ${e.message}"
-        }
-    }
-    
-    // Classe helper pour créer une extension android factice
-    class AndroidExtension {
-        def flutter
-        
-        AndroidExtension(def flutterConfig) {
-            this.flutter = flutterConfig
         }
     }
     
