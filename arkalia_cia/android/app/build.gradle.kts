@@ -1,6 +1,12 @@
 import java.util.Properties
 
-// Lire flutter.source depuis gradle.properties AVANT l'application du plugin
+plugins {
+    id("com.android.application")
+    id("kotlin-android")
+    // Ne PAS appliquer le plugin Flutter ici - on l'applique après configuration
+}
+
+// Lire flutter.source depuis gradle.properties AVANT l'application du plugin Flutter
 // Le plugin Flutter Gradle cherche cette propriété au moment de son application
 val gradleProperties = java.util.Properties()
 val gradlePropertiesFile = rootProject.file("gradle.properties")
@@ -9,23 +15,28 @@ if (gradlePropertiesFile.exists()) {
 }
 val flutterSourceFromProps = gradleProperties.getProperty("flutter.source")
 
-plugins {
-    id("com.android.application")
-    id("kotlin-android")
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
-    id("dev.flutter.flutter-gradle-plugin")
-}
-
-// Configuration Flutter - Le plugin détecte automatiquement le répertoire source
-// en cherchant le répertoire parent qui contient pubspec.yaml
-// Si la détection automatique échoue, spécifier explicitement avec un chemin calculé
-// Utiliser flutter.source depuis gradle.properties si disponible, sinon calculer
+// Déterminer le répertoire source Flutter
 val flutterSourceDir = if (flutterSourceFromProps != null) {
-    file(flutterSourceFromProps)
+    // Utiliser le chemin depuis gradle.properties (peut être relatif ou absolu)
+    val sourceFile = file(flutterSourceFromProps)
+    if (sourceFile.isAbsolute) {
+        sourceFile
+    } else {
+        // Chemin relatif depuis android/
+        rootProject.file(flutterSourceFromProps)
+    }
 } else {
-    // projectDir = android/app/, donc parentFile.parentFile = arkalia_cia/
+    // Fallback : projectDir = android/app/, donc parentFile.parentFile = arkalia_cia/
     projectDir.parentFile.parentFile
 }
+
+// Stocker dans project.ext pour que le plugin puisse y accéder
+project.ext.set("flutter.source", flutterSourceDir.absolutePath)
+
+// Appliquer le plugin Flutter APRÈS avoir configuré le répertoire source
+apply(plugin = "dev.flutter.flutter-gradle-plugin")
+
+// Configuration Flutter - spécifier explicitement le répertoire source
 flutter {
     source = flutterSourceDir.absolutePath
 }
