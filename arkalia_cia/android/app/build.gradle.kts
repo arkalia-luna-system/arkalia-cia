@@ -1,13 +1,5 @@
 import java.util.Properties
 
-// Configuration Flutter source directory AVANT l'application des plugins
-// Le plugin Flutter Gradle doit connaître le répertoire source avant d'être appliqué
-// projectDir = android/app/, donc parentFile.parentFile = arkalia_cia/
-val flutterSourceDir = projectDir.parentFile.parentFile
-
-// Stocker le chemin source dans les propriétés du projet pour que le plugin puisse y accéder
-project.ext.set("flutter.source", flutterSourceDir.absolutePath)
-
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -17,9 +9,11 @@ plugins {
 
 // Configuration Flutter - Le plugin détecte automatiquement le répertoire source
 // en cherchant le répertoire parent qui contient pubspec.yaml
-// Si la détection automatique échoue, spécifier explicitement avec un chemin calculé
+// Si la détection automatique échoue, spécifier explicitement avec un chemin relatif
+// Depuis android/app/build.gradle.kts, le répertoire Flutter est à ../../
+// Utiliser un chemin relatif simple qui fonctionne en CI et local
 flutter {
-    source = flutterSourceDir.absolutePath
+    source = "../.."
 }
 
 // Charger les propriétés de signature depuis key.properties (si existe)
