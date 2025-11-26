@@ -7,12 +7,13 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-// Configuration Flutter - doit être définie AVANT le bloc android
-// pour que flutter.minSdkVersion, etc. soient disponibles
-// rootProject.projectDir = android/, donc parentFile = arkalia_cia/
-flutter {
-    source = rootProject.projectDir.parentFile.absolutePath
-}
+// Configuration Flutter - Le plugin détecte automatiquement le répertoire source
+// en cherchant le répertoire parent qui contient pubspec.yaml
+// Si la détection automatique échoue en CI/CD avec l'erreur "Must provide Flutter source directory",
+// décommentez le bloc ci-dessous :
+// flutter {
+//     source = rootProject.projectDir.parentFile.absolutePath
+// }
 
 // Charger les propriétés de signature depuis key.properties (si existe)
 val keystorePropertiesFile = rootProject.file("key.properties")
