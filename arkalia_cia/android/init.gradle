@@ -361,6 +361,50 @@ gradle.beforeProject { project ->
     }
     
     // ========================================================================
+    // CONFIGURATION FLUTTER EXTENSION - TRÈS TÔT pour file_picker
+    // ========================================================================
+    // Cette configuration doit se faire AVANT même que les plugins ne soient évalués
+    // pour que file_picker puisse accéder à android.flutter.compileSdkVersion
+    def flutterConfig = [
+        minSdkVersion: 21,
+        targetSdkVersion: 36,
+        compileSdkVersion: 36,
+        versionCode: 1,
+        versionName: "1.0.0"
+    ]
+    
+    // Stocker dans project.ext pour qu'il soit accessible partout
+    if (!project.ext.has("flutter")) {
+        project.ext.flutter = flutterConfig
+    }
+    
+    // Créer l'extension android avec flutter AVANT que le plugin Android ne soit appliqué
+    // On utilise beforeEvaluate pour s'exécuter AVANT l'évaluation du build.gradle
+    project.beforeEvaluate {
+        try {
+            // Si android n'existe pas encore, créer une extension factice
+            if (!project.hasProperty("android")) {
+                // Créer une extension android factice avec la propriété flutter
+                project.extensions.create("android", AndroidExtension, flutterConfig)
+                println "✅ Init.gradle (beforeProject): Créé extension android factice pour ${project.name}"
+            } else {
+                // Si android existe déjà, ajouter la propriété flutter via metaClass
+                def android = project.extensions.findByName("android")
+                if (android != null) {
+                    android.metaClass.flutter = flutterConfig
+                    if (!android.hasProperty("flutter")) {
+                        android.ext.flutter = flutterConfig
+                    }
+                    println "✅ Init.gradle (beforeProject): Ajouté flutter à android pour ${project.name}"
+                }
+            }
+        } catch (Exception e) {
+            // Ignorer si la configuration échoue
+            println "⚠️  Init.gradle (beforeProject): Erreur pour ${project.name}: ${e.message}"
+        }
+    }
+    
+    // ========================================================================
     // NETTOYAGE ULTRA-AGGRESSIF AVANT ET APRÈS CHAQUE TÂCHE
     // ========================================================================
     project.tasks.configureEach { task ->
