@@ -80,11 +80,12 @@ jobs:
       - name: "Flutter Build APK"
         run: |
           cd arkalia_cia
-          # Configurer le chemin Flutter source via propriété Gradle système
-          # Le plugin Flutter Gradle cherche cette propriété avant son application
+          # Configurer le chemin Flutter source dans gradle.properties ET via propriété système
           FLUTTER_SOURCE_DIR=$(pwd)
+          echo "flutter.source=$FLUTTER_SOURCE_DIR" >> android/gradle.properties
           echo "Flutter source directory: $FLUTTER_SOURCE_DIR"
-          flutter build apk --release --dart-define=FLUTTER_SOURCE=$FLUTTER_SOURCE_DIR
+          # Passer aussi via propriété système Gradle
+          flutter build apk --release -Pflutter.source=$FLUTTER_SOURCE_DIR
 
       - name: "Upload Coverage to Codecov"
         if: hashFiles('arkalia_cia/coverage/lcov.info') != ''
