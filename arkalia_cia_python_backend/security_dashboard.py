@@ -2472,6 +2472,7 @@ class SecurityDashboard:
                     try:
                         self._lock_file.touch()
                     except OSError:
+                        # Ignorer les erreurs de mise à jour du verrou (non critique)
                         pass
                     logger.info(f"🌐 Ouverture via fallback: {file_url}")
             except Exception as fallback_error:

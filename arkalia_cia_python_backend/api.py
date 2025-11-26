@@ -379,6 +379,7 @@ async def add_security_headers(request: Request, call_next):
                         content={"detail": "Requête trop volumineuse"},
                     )
             except (ValueError, TypeError):
+                # Ignorer les erreurs de parsing du Content-Length (non critique)
                 pass
 
         # Note: La vérification de la taille réelle du body JSON se fait

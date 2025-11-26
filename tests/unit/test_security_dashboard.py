@@ -325,6 +325,7 @@ class TestSecurityDashboard:
 
                 main()
             except SystemExit:
+                # argparse peut appeler sys.exit, c'est attendu
                 pass
 
     def test_generate_recommendations_various_scores(self):
