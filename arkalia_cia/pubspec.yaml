@@ -29,7 +29,7 @@ dependencies:
 
   # HTTP
   http: ^1.1.0
-  connectivity_plus: ^7.0.0
+  connectivity_plus: ^6.1.5 # Gardé à 6.1.5 pour compatibilité Gradle (7.0.0 incompatible)
 
   # URL Launcher
   url_launcher: ^6.2.1
