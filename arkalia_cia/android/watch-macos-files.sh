@@ -46,6 +46,13 @@ clean_macos_files() {
         fi
     fi
     
+    # Nettoyer spécifiquement dans packaged_res (où l'erreur parseReleaseLocalResources se produit)
+    if [ -d "$PROJECT_DIR/build" ]; then
+        find "$PROJECT_DIR/build" -path "*/packaged_res/*" -type f \( -name "._*" -o -name ".!*!._*" -o -name ".DS_Store" \) -delete 2>/dev/null || true
+        # Nettoyer aussi dans tous les répertoires packageReleaseResources
+        find "$PROJECT_DIR/build" -path "*/packageReleaseResources/*" -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
+    fi
+    
     # Nettoyer aussi dans android/.gradle
     if [ -d "$SCRIPT_DIR/.gradle" ]; then
         find "$SCRIPT_DIR/.gradle" -type f \( -name "._*" -o -name ".DS_Store" \) -delete 2>/dev/null || true

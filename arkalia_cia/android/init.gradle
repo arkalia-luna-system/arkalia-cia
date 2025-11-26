@@ -293,18 +293,39 @@ def cleanAllMacOSFiles(project) {
     // Répertoires intermédiaires Android
     def buildDir = project.buildDir
     if (buildDir != null && buildDir.exists()) {
-        // Nettoyer dans tous les sous-répertoires de build
-        buildDir.eachDir { subDir ->
+        // Nettoyer dans tous les sous-répertoires de build (récursif)
+        buildDir.eachDirRecurse { subDir ->
             dirsToClean.add(subDir)
         }
+        // Nettoyer aussi les fichiers directement dans buildDir
+        dirsToClean.add(buildDir)
     }
     
     // Nettoyer aussi dans le répertoire build global
     def rootBuildDir = project.rootProject.buildDir
     if (rootBuildDir != null && rootBuildDir.exists()) {
-        rootBuildDir.eachDir { subDir ->
+        rootBuildDir.eachDirRecurse { subDir ->
             dirsToClean.add(subDir)
         }
+        dirsToClean.add(rootBuildDir)
+    }
+    
+    // Nettoyer dans les répertoires intermédiaires spécifiques des plugins
+    def intermediatesDir = project.file("${project.buildDir}/intermediates")
+    if (intermediatesDir != null && intermediatesDir.exists()) {
+        intermediatesDir.eachDirRecurse { subDir ->
+            dirsToClean.add(subDir)
+        }
+        dirsToClean.add(intermediatesDir)
+    }
+    
+    // Nettoyer dans packaged_res (où l'erreur se produit)
+    def packagedResDir = project.file("${project.buildDir}/intermediates/packaged_res")
+    if (packagedResDir != null && packagedResDir.exists()) {
+        packagedResDir.eachDirRecurse { subDir ->
+            dirsToClean.add(subDir)
+        }
+        dirsToClean.add(packagedResDir)
     }
     
     // Nettoyer tous les répertoires
@@ -356,10 +377,50 @@ gradle.beforeProject { project ->
         it.name.contains("merge") || 
         it.name.contains("link") ||
         it.name.contains("compile") ||
-        it.name.contains("assemble")
+        it.name.contains("assemble") ||
+        it.name.contains("parse") ||
+        it.name.contains("package") ||
+        it.name.contains("resource")
     }.configureEach { task ->
         task.doFirst {
             // Nettoyage ultra-agressif juste avant ces tâches critiques
+            // Nettoyer aussi dans les répertoires intermédiaires spécifiques
+            def buildDir = project.buildDir
+            if (buildDir != null && buildDir.exists()) {
+                // Nettoyer dans tous les répertoires intermédiaires (récursif)
+                try {
+                    buildDir.eachFileRecurse { file ->
+                        if (file.isFile() && (file.name.startsWith("._") || file.name == ".DS_Store")) {
+                            try {
+                                file.delete()
+                            } catch (Exception e) {
+                                // Ignorer les erreurs
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    // Ignorer les erreurs de parcours
+                }
+            }
+            
+            // Nettoyer spécifiquement dans packaged_res (où l'erreur se produit)
+            def packagedResDir = project.file("${project.buildDir}/intermediates/packaged_res")
+            if (packagedResDir != null && packagedResDir.exists()) {
+                try {
+                    packagedResDir.eachFileRecurse { file ->
+                        if (file.isFile() && (file.name.startsWith("._") || file.name == ".DS_Store")) {
+                            try {
+                                file.delete()
+                            } catch (Exception e) {
+                                // Ignorer les erreurs
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    // Ignorer les erreurs de parcours
+                }
+            }
+            
             int cleaned = cleanAllMacOSFiles(project)
             if (cleaned > 0) {
                 println "🧹 Init.gradle: Nettoyage critique - $cleaned fichiers macOS supprimés avant ${task.name}"

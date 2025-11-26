@@ -48,6 +48,44 @@ jobs:
         working-directory: arkalia_cia
         run: flutter doctor -v
 
+      - name: Check signing keys availability
+        id: check-signing
+        run: |
+          if [ -n "${{ secrets.KEYSTORE_BASE64 }}" ] && [ -n "${{ secrets.KEYSTORE_PASSWORD }}" ] && [ -n "${{ secrets.KEY_PASSWORD }}" ]; then
+            echo "available=true" >> $GITHUB_OUTPUT
+          else
+            echo "available=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup signing keys
+        working-directory: arkalia_cia/android
+        if: steps.check-signing.outputs.available == 'true'
+        run: |
+          echo "🔐 Setting up signing keys..."
+          # Décoder le keystore depuis base64
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > app/arkalia-cia-release.jks
+
+          # Créer le fichier key.properties
+          KEY_ALIAS_VALUE="${{ secrets.KEY_ALIAS }}"
+          if [ -z "$KEY_ALIAS_VALUE" ]; then
+            KEY_ALIAS_VALUE="arkalia-cia"
+          fi
+          cat > key.properties << EOF
+          storePassword=${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword=${{ secrets.KEY_PASSWORD }}
+          keyAlias=$KEY_ALIAS_VALUE
+          storeFile=app/arkalia-cia-release.jks
+          EOF
+
+          echo "✅ Signing keys configured"
+
+      - name: Clean Flutter build
+        working-directory: arkalia_cia
+        run: |
+          echo "🧹 Cleaning previous builds..."
+          flutter clean
+          echo "✅ Clean completed"
+
       - name: Build App Bundle
         working-directory: arkalia_cia
         env:
@@ -57,19 +95,42 @@ jobs:
           flutter build appbundle --release
           echo "✅ Build completed"
 
-            - name: Verify App Bundle exists
-              working-directory: arkalia_cia
-              run: |
-                  BUNDLE_PATH="build/app/outputs/bundle/release/app-release.aab"
-                  if [ ! -f "$BUNDLE_PATH" ]; then
-                    echo "❌ Error: App Bundle not found!"
-                    exit 1
-                  fi
-                  echo "✅ App Bundle found:"
-                  ls -lh "$BUNDLE_PATH"
+      - name: Verify App Bundle exists
+        working-directory: arkalia_cia
+        run: |
+          BUNDLE_PATH="build/app/outputs/bundle/release/app-release.aab"
+          if [ ! -f "$BUNDLE_PATH" ]; then
+            echo "❌ Error: App Bundle not found!"
+            exit 1
+          fi
+          echo "✅ App Bundle found:"
+          ls -lh "$BUNDLE_PATH"
+
+      - name: Verify App Bundle signature
+        working-directory: arkalia_cia
+        if: always()
+        run: |
+          BUNDLE_PATH="build/app/outputs/bundle/release/app-release.aab"
+          if [ -f "$BUNDLE_PATH" ]; then
+            echo "🔍 Verifying App Bundle signature..."
+            if jarsigner -verify -verbose -certs "$BUNDLE_PATH" > /dev/null 2>&1; then
+              echo "✅ App Bundle is properly signed"
+            else
+              echo "⚠️ App Bundle signature verification failed (may be signed with debug key)"
+            fi
+          fi
+
+      - name: Check if service account exists
+        id: check-secret
+        run: |
+          if [ -n "${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Upload to Play Store
-        if: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON != '' }}
+        if: steps.check-secret.outputs.exists == 'true'
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
@@ -81,32 +142,34 @@ jobs:
           changesNotSentForReview: false
 
       - name: Upload artifact (fallback if no service account)
-        if: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON == '' }}
+        if: steps.check-secret.outputs.exists == 'false'
         uses: actions/upload-artifact@v4
         with:
           name: app-release
           path: arkalia_cia/build/app/outputs/bundle/release/app-release.aab
           retention-days: 7
 
-            - name: Deployment summary
-              if: always()
-              run: |
-                  echo "## 📦 Deployment Summary" >> $GITHUB_STEP_SUMMARY
-                  echo "" >> $GITHUB_STEP_SUMMARY
-                  echo "**Package**: ${{ env.PACKAGE_NAME }}" >> \
-                      $GITHUB_STEP_SUMMARY
-                  echo "**Track**: ${{ env.TRACK }}" >> $GITHUB_STEP_SUMMARY
-                  echo "**Flutter Version**: ${{ env.FLUTTER_VERSION }}" >> \
-                      $GITHUB_STEP_SUMMARY
-                  echo "" >> $GITHUB_STEP_SUMMARY
-                  if [ "${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}" \
-                      != "" ]; then
-                    echo "✅ **Status**: Deployed to Play Store" >> \
-                        $GITHUB_STEP_SUMMARY
-                  else
-                    echo "⚠️ **Status**: App Bundle built " \
-                        "(manual upload required)" >> $GITHUB_STEP_SUMMARY
-                    echo "" >> $GITHUB_STEP_SUMMARY
-                    echo "**Next steps**: Upload the artifact manually " \
-                        "to Play Console" >> $GITHUB_STEP_SUMMARY
-                  fi
+      - name: Deployment summary
+        if: always()
+        run: |
+          echo "## 📦 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Package**: ${{ env.PACKAGE_NAME }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Track**: ${{ env.TRACK }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Flutter Version**: ${{ env.FLUTTER_VERSION }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.check-signing.outputs.available }}" == "true" ]; then
+            echo "✅ **Signing**: Release keystore configured" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ **Signing**: Using debug key (not suitable for Play Store)" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**⚠️ Action required**: Configure KEYSTORE_BASE64, KEYSTORE_PASSWORD, KEY_PASSWORD secrets" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.check-secret.outputs.exists }}" == "true" ]; then
+            echo "✅ **Status**: Deployed to Play Store" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ **Status**: App Bundle built (manual upload required)" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Next steps**: Upload the artifact manually to Play Console" >> $GITHUB_STEP_SUMMARY
+          fi

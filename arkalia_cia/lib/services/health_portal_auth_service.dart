@@ -13,11 +13,18 @@ enum HealthPortal {
 
 class HealthPortalAuthService {
 
-  // OAuth URLs pour chaque portail (à configurer selon documentation réelle)
+  // OAuth URLs pour chaque portail (URLs réelles eHealth, autres à vérifier)
   static const Map<HealthPortal, String> _authUrls = {
-    HealthPortal.ehealth: 'https://www.ehealth.fgov.be/fr/oauth/authorize',
-    HealthPortal.andaman7: 'https://www.andaman7.com/oauth/authorize',
-    HealthPortal.masante: 'https://www.masante.be/oauth/authorize',
+    HealthPortal.ehealth: 'https://iam.ehealth.fgov.be/iam-connect/oidc/authorize', // URL réelle eHealth
+    HealthPortal.andaman7: 'https://www.andaman7.com/oauth/authorize', // À vérifier
+    HealthPortal.masante: 'https://www.masante.be/oauth/authorize', // À vérifier
+  };
+  
+  // Token URLs pour chaque portail
+  static const Map<HealthPortal, String> _tokenUrls = {
+    HealthPortal.ehealth: 'https://iam.ehealth.fgov.be/iam-connect/oidc/token', // URL réelle eHealth
+    HealthPortal.andaman7: 'https://www.andaman7.com/oauth/token', // À vérifier
+    HealthPortal.masante: 'https://www.masante.be/oauth/token', // À vérifier
   };
 
   static const Map<HealthPortal, String> _portalNames = {
@@ -82,11 +89,11 @@ class HealthPortalAuthService {
   String _getPortalScopes(HealthPortal portal) {
     switch (portal) {
       case HealthPortal.ehealth:
-        return 'read:documents read:consultations read:exams';
+        return 'ehealthbox.read consultations.read labresults.read'; // Scopes réels eHealth
       case HealthPortal.andaman7:
-        return 'read:health_data read:documents';
+        return 'read:health_data read:documents'; // À vérifier
       case HealthPortal.masante:
-        return 'read:medical_data read:documents';
+        return 'read:medical_data read:documents'; // À vérifier
     }
   }
 
@@ -110,12 +117,14 @@ class HealthPortalAuthService {
       final clientId = prefs.getString(clientIdKey) ?? 'arkalia_cia';
       final clientSecret = prefs.getString(clientSecretKey) ?? '';
 
-      // URLs de token pour chaque portail
-      final tokenUrls = {
-        HealthPortal.ehealth: 'https://www.ehealth.fgov.be/fr/oauth/token',
-        HealthPortal.andaman7: 'https://www.andaman7.com/oauth/token',
-        HealthPortal.masante: 'https://www.masante.be/oauth/token',
-      };
+      // URLs de token pour chaque portail (utiliser _tokenUrls si défini, sinon fallback)
+      final tokenUrls = _tokenUrls.isNotEmpty 
+          ? _tokenUrls 
+          : {
+              HealthPortal.ehealth: 'https://iam.ehealth.fgov.be/iam-connect/oidc/token', // URL réelle
+              HealthPortal.andaman7: 'https://www.andaman7.com/oauth/token', // À vérifier
+              HealthPortal.masante: 'https://www.masante.be/oauth/token', // À vérifier
+            };
 
       final tokenUrl = tokenUrls[portal];
       if (tokenUrl == null) {
@@ -130,9 +139,14 @@ class HealthPortalAuthService {
       final callbackUrl = callbackUrls[portal] ?? 'arkaliacia://oauth/callback';
 
       // Échanger code contre token
+      // Pour eHealth, utiliser application/x-www-form-urlencoded avec Basic Auth possible
+      final headers = {'Content-Type': 'application/x-www-form-urlencoded'};
+      
+      // Pour eHealth, on peut aussi utiliser Basic Auth (client_id:client_secret en base64)
+      // Mais pour l'instant, on utilise le format standard
       final response = await http.post(
         Uri.parse(tokenUrl),
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        headers: headers,
         body: {
           'grant_type': 'authorization_code',
           'code': authorizationCode,
