@@ -9,11 +9,10 @@ plugins {
 
 // Configuration Flutter - Le plugin détecte automatiquement le répertoire source
 // en cherchant le répertoire parent qui contient pubspec.yaml
-// Si la détection automatique échoue en CI/CD avec l'erreur "Must provide Flutter source directory",
-// décommentez le bloc ci-dessous :
-// flutter {
-//     source = rootProject.projectDir.parentFile.absolutePath
-// }
+// Si la détection automatique échoue, spécifier explicitement avec un chemin relatif
+flutter {
+    source = "../.."
+}
 
 // Charger les propriétés de signature depuis key.properties (si existe)
 val keystorePropertiesFile = rootProject.file("key.properties")
@@ -98,21 +97,46 @@ android {
         }
     }
     
-    // Nettoyer les fichiers macOS AVANT processReleaseResources
+    // Nettoyer les fichiers macOS AVANT toutes les tâches de build
     afterEvaluate {
-        tasks.named("processReleaseResources").configure {
-            doFirst {
-                val intermediatesDir = file("${project.buildDir}/intermediates/merged_res/release/mergeReleaseResources")
-                if (intermediatesDir.exists()) {
-                    intermediatesDir.walkTopDown()
-                        .filter { it.isFile && (it.name.startsWith("._") || it.name.contains("._")) }
-                        .forEach { 
-                            try {
-                                it.delete()
-                            } catch (e: Exception) {
-                                // Ignorer les erreurs
+        // Nettoyer dans tous les répertoires de build (app + plugins)
+        val buildTasks = listOf(
+            "processReleaseResources",
+            "processDebugResources",
+            "verifyReleaseResources",
+            "verifyDebugResources"
+        )
+        
+        buildTasks.forEach { taskName ->
+            tasks.named(taskName).configure {
+                doFirst {
+                    // Nettoyer dans le répertoire build de l'app
+                    val appBuildDir = project.buildDir
+                    if (appBuildDir.exists()) {
+                        appBuildDir.walkTopDown()
+                            .filter { it.isFile && (it.name.startsWith("._") || it.name == ".DS_Store" || it.name.contains("._")) }
+                            .forEach { 
+                                try {
+                                    it.delete()
+                                } catch (e: Exception) {
+                                    // Ignorer les erreurs
+                                }
                             }
-                        }
+                    }
+                    
+                    // Nettoyer dans le répertoire build racine (contient les builds des plugins)
+                    val rootBuildDir = rootProject.layout.buildDirectory.asFile.get()
+                    if (rootBuildDir.exists()) {
+                        rootBuildDir.walkTopDown()
+                            .filter { it.isFile && (it.name.startsWith("._") || it.name == ".DS_Store" || it.name.contains("._")) }
+                            .forEach { 
+                                try {
+                                    it.delete()
+                                } catch (e: Exception) {
+                                    // Ignorer les erreurs
+                                }
+                            }
+                    }
                 }
             }
         }
