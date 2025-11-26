@@ -107,7 +107,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
     if (_report == null || _report!['formatted_text'] == null) return;
 
     try {
-      await Share.share(
+      await SharePlus.instance.share(
         _report!['formatted_text'],
         subject: 'Rapport médical - ${widget.doctorName ?? 'Consultation'}',
       );
