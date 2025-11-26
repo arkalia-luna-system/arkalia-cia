@@ -10,9 +10,9 @@ plugins {
 // Configuration Flutter - Le plugin détecte automatiquement le répertoire source
 // en cherchant le répertoire parent qui contient pubspec.yaml
 // Si la détection automatique échoue, spécifier explicitement avec un chemin calculé
-// Depuis android/app/build.gradle.kts, le répertoire Flutter est à ../../
-// Utiliser file() pour résoudre le chemin relatif en absolu (fonctionne en CI et local)
-val flutterSourceDir = file("../..")
+// projectDir = android/app/, donc parentFile.parentFile = arkalia_cia/
+// Utiliser projectDir pour garantir la cohérence en CI et local
+val flutterSourceDir = projectDir.parentFile.parentFile
 flutter {
     source = flutterSourceDir.absolutePath
 }
