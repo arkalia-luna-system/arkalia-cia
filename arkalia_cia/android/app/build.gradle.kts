@@ -3,13 +3,14 @@ import java.util.Properties
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    // Ne PAS appliquer le plugin Flutter ici - on l'applique après configuration
+    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    id("dev.flutter.flutter-gradle-plugin")
 }
 
-// Lire flutter.source depuis gradle.properties OU propriété système -P AVANT l'application du plugin Flutter
-// Le plugin Flutter Gradle cherche cette propriété au moment de son application
+// Lire flutter.source depuis gradle.properties OU propriété système -P
+// Le plugin Flutter Gradle peut lire cette propriété depuis gradle.properties
 val flutterSourceFromSystem = project.findProperty("flutter.source") as String?
-val gradleProperties = java.util.Properties()
+val gradleProperties = Properties()
 val gradlePropertiesFile = rootProject.file("gradle.properties")
 if (gradlePropertiesFile.exists()) {
     gradlePropertiesFile.inputStream().use { gradleProperties.load(it) }
@@ -30,12 +31,6 @@ val flutterSourceDir = if (flutterSourceFromProps != null) {
     // Fallback : projectDir = android/app/, donc parentFile.parentFile = arkalia_cia/
     projectDir.parentFile.parentFile
 }
-
-// Stocker dans project.ext pour que le plugin puisse y accéder
-project.ext.set("flutter.source", flutterSourceDir.absolutePath)
-
-// Appliquer le plugin Flutter APRÈS avoir configuré le répertoire source
-apply(plugin = "dev.flutter.flutter-gradle-plugin")
 
 // Configuration Flutter - spécifier explicitement le répertoire source
 flutter {
