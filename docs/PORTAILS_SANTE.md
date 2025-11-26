@@ -6,7 +6,9 @@ Ce document liste tous les portails de santé configurés dans Arkalia CIA.
 
 **Total de portails** : 6 portails belges pré-configurés
 
-**Portails avec OAuth** : 3 portails (eHealth, Andaman 7, MaSanté)
+**Portails avec OAuth** : 1 portail (eHealth uniquement - accréditation requise)
+
+**Import manuel** : 2 portails (Andaman 7, MaSanté - export PDF/CSV)
 
 **Catégories** : Administration, Information, Application
 
@@ -46,29 +48,26 @@ Ce document liste tous les portails de santé configurés dans Arkalia CIA.
 
 #### 5. Andaman 7
 - **URL** : https://www.andaman7.com
-- **Description** : Application santé belge - Gestion de votre dossier médical
-- **OAuth** : ✅ Supporté
-  - Auth URL : `https://www.andaman7.com/oauth/authorize`
-  - Token URL : `https://www.andaman7.com/oauth/token`
-  - Callback : `arkaliacia://oauth/andaman7`
-  - Scopes : `read:health_data read:documents`
+- **Description** : Application santé belge - Import manuel uniquement (export PDF/CSV depuis l'app)
+- **OAuth** : ❌ Non disponible (pas d'API publique)
+- **Import** : ✅ Export manuel PDF/CSV depuis l'app Andaman 7, puis upload dans Arkalia CIA
+- **Voir** : `INTEGRATION_ANDAMAN7_MASANTE.md` pour guide complet
 
 #### 6. MaSanté
-- **URL** : https://www.masante.be
-- **Description** : Portail santé belge - Accès à vos données médicales
-- **OAuth** : ✅ Supporté
-  - Auth URL : `https://www.masante.be/oauth/authorize`
-  - Token URL : `https://www.masante.be/oauth/token`
-  - Callback : `arkaliacia://oauth/masante`
-  - Scopes : `read:medical_data read:documents`
+- **URL** : https://www.masante.belgique.be
+- **Description** : Portail santé belge - Import manuel uniquement (export PDF depuis le portail)
+- **OAuth** : ❌ Non disponible (pas d'API publique)
+- **Import** : ✅ Export manuel PDF depuis le portail MaSanté, puis upload dans Arkalia CIA
+- **Voir** : `INTEGRATION_ANDAMAN7_MASANTE.md` pour guide complet
 
 ---
 
 ## 📊 Statistiques
 
 - **Total portails belges** : 6
-- **Portails avec OAuth** : 3
-- **Portails sans OAuth** : 3
+- **Portails avec OAuth** : 1 (eHealth uniquement - accréditation requise)
+- **Import manuel** : 2 (Andaman 7, MaSanté)
+- **Portails sans intégration** : 3 (Inami, SPF, Sciensano)
 
 ### Par catégorie
 
@@ -81,8 +80,8 @@ Ce document liste tous les portails de santé configurés dans Arkalia CIA.
   - Sciensano
 
 - **Application** : 2 portails
-  - Andaman 7 (OAuth ✅)
-  - MaSanté (OAuth ✅)
+  - Andaman 7 (Import manuel ✅)
+  - MaSanté (Import manuel ✅)
 
 ---
 
@@ -175,14 +174,18 @@ Les portails sont affichés dans `HealthScreen` :
 - Bouton pour ouvrir chaque portail dans le navigateur
 - Bouton pour ajouter un nouveau portail manuellement
 
-### Import automatique
+### Import depuis portails
 
-L'import automatique depuis les portails OAuth est disponible via :
-- `HealthPortalAuthService.authenticatePortal()`
-- `HealthPortalAuthService.fetchPortalData()`
-- `HealthPortalAuthService.importFromPortal()`
+**eHealth** (si accréditation obtenue) :
+- `HealthPortalAuthService.authenticatePortal()` - OAuth automatique
+- `HealthPortalAuthService.fetchPortalData()` - Récupération données
+- `HealthPortalAuthService.importFromPortal()` - Import automatique
 
-**Note** : L'import automatique nécessite que les APIs OAuth des portails soient configurées et fonctionnelles.
+**Andaman 7 et MaSanté** (import manuel) :
+- Export PDF/CSV depuis l'app/portail
+- Upload dans Arkalia CIA via `import_choice_screen.dart`
+- Parsing automatique backend
+- **Voir** : `STRATEGIE_GRATUITE_PORTAILS_SANTE.md` pour détails
 
 ---
 
@@ -213,5 +216,9 @@ L'import automatique depuis les portails OAuth est disponible via :
 
 ---
 
-**Dernière mise à jour** : 24 novembre 2025
+**Dernière mise à jour** : 26 novembre 2025
+
+**Stratégie** : Import manuel gratuit pour Andaman 7 et MaSanté (voir `STRATEGIE_GRATUITE_PORTAILS_SANTE.md`)
+
+**Statut** : Voir `STATUT_INTEGRATION_PORTAILS_SANTE.md` pour l'état complet
 

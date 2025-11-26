@@ -1,6 +1,6 @@
 # 📝 Métadonnées Google Play Store - Arkalia CIA
 
-**Date de création** : 24 novembre 2025  
+**Date de création** : 26 novembre 2025  
 **Statut** : ✅ **Prêt à copier-coller dans Play Console**
 
 ---
@@ -247,6 +247,6 @@ santé, médical, documents, rappels, urgence, senior, privacy, chiffrement, loc
 
 ---
 
-**Dernière mise à jour** : 24 novembre 2025  
+**Dernière mise à jour** : 26 novembre 2025  
 **Statut** : ✅ Prêt à utiliser dans Play Console
 

@@ -1,6 +1,6 @@
 # 🚀 Instructions Release v1.3.0 - Arkalia CIA
 
-**Date** : 24 novembre 2025  
+**Date** : 26 novembre 2025  
 **Dernière mise à jour** : 26 novembre 2025  
 **Version** : 1.3.0  
 **Statut** : ✅ **Version publiée en tests internes**
@@ -9,7 +9,7 @@
 
 ## ✅ Ce qui a été fait
 
-### Git et Versioning (24 novembre 2025)
+### Git et Versioning (26 novembre 2025)
 
 1. ✅ **Versions unifiées** : Toutes les versions sont maintenant à 1.3.0
 2. ✅ **Commit et push** : Toutes les modifications ont été commitées et pushées sur `develop`

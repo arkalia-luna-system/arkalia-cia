@@ -1,7 +1,7 @@
 # Guide de contribution
 
 **Version** : 1.3.0  
-**Dernière mise à jour** : 24 novembre 2025
+**Dernière mise à jour** : 26 novembre 2025
 
 Guide des contributions et standards de développement pour Arkalia CIA.
 

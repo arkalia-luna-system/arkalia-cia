@@ -1,7 +1,18 @@
 # 📊 STATUT INTÉGRATION PORTAILS SANTÉ
 
 **Date** : 26 novembre 2025  
-**Version** : 1.3.0
+**Version** : 1.3.0  
+**Dernière mise à jour** : 26 novembre 2025
+
+---
+
+## 🎯 RÉALITÉ DES PORTALS
+
+| Portail | API Publique | OAuth | Solution Disponible | Statut |
+|---------|--------------|-------|---------------------|--------|
+| **eHealth** | ✅ Oui (restreint) | ✅ Oui (si accrédité) | Accréditation INAMI requise | ⏸️ En attente accréditation |
+| **Andaman 7** | ❌ Non | ❌ Non | Import manuel (PDF/CSV) | ✅ Implémenté |
+| **MaSanté** | ❌ Non | ❌ Non | Import manuel (PDF/CSV) | ✅ Implémenté |
 
 ---
 
@@ -10,7 +21,7 @@
 ### 1. Structure OAuth ✅
 
 - ✅ Service `HealthPortalAuthService` créé
-- ✅ Authentification OAuth implémentée
+- ✅ Authentification OAuth implémentée (pour eHealth uniquement)
 - ✅ Gestion refresh token implémentée
 - ✅ Gestion expiration tokens implémentée
 - ✅ Callback OAuth géré
@@ -26,11 +37,29 @@
   - `labresults.read`
 - ✅ Documentation complète créée : `INTEGRATION_EHEALTH_DETAILLEE.md`
 
-### 3. Backend ✅
+### 3. Import Manuel (Andaman 7 / MaSanté) ✅ **IMPLÉMENTÉ**
 
-- ✅ Endpoint `/api/v1/health-portals/import` existe
-- ✅ Structure de parsing basique en place
-- ⚠️ Parsing réel manquant (nécessite accès API)
+**Backend** :
+- ✅ Parser spécifique Andaman 7 créé (`health_portal_parsers.py`)
+- ✅ Parser spécifique MaSanté créé
+- ✅ Parser générique (fallback)
+- ✅ Extraction résultats labo
+- ✅ Endpoint `/api/v1/health-portals/import/manual` créé
+- ✅ Upload PDF multipart
+- ✅ Parsing automatique selon portail
+- ✅ Sauvegarde documents via `document_service`
+
+**Frontend** :
+- ✅ Service `HealthPortalImportService` créé
+- ✅ UI améliorée avec guide utilisateur
+- ✅ Sélection portail (Andaman 7 / MaSanté)
+- ✅ Dialog progression
+- ✅ Messages succès/erreur
+
+**Documentation** :
+- ✅ `STRATEGIE_GRATUITE_PORTAILS_SANTE.md` : Explication choix gratuit
+- ✅ `INTEGRATION_ANDAMAN7_MASANTE.md` : Guide import manuel
+- ✅ `PLAN_IMPLÉMENTATION_IMPORT_MANUEL.md` : Plan complet
 
 ---
 
@@ -53,128 +82,34 @@
 
 ---
 
-### 2. Services Backend Manquants ⏸️
+### 2. Tests avec Fichiers Réels (Import Manuel) ⏸️
 
-**Fichiers à créer** :
-
-- [ ] `arkalia_cia_python_backend/services/health_portal_parsers.py`
-  - Parser eHealth
-  - Parser Andaman 7 (quand info disponible)
-  - Parser MaSanté (quand info disponible)
-
-- [ ] `arkalia_cia_python_backend/services/health_portal_fetchers.py`
-  - Fetcher eHealth (appels API réels)
-  - Fetcher Andaman 7 (quand info disponible)
-  - Fetcher MaSanté (quand info disponible)
-
-**Temps estimé** : 1 semaine (une fois accès obtenu)
-
----
-
-### 3. Endpoints Backend Spécifiques ⏸️
-
-**Endpoints à créer** :
-
-- [ ] `/api/v1/health-portals/ehealth/fetch`
-  - Récupère données depuis API eHealth
-  - Utilise access_token OAuth
-  - Retourne documents, consultations, examens
-
-- [ ] `/api/v1/health-portals/andaman7/fetch` (quand info disponible)
-- [ ] `/api/v1/health-portals/masante/fetch` (quand info disponible)
-
-**Temps estimé** : 3-4 jours (une fois accès obtenu)
-
----
-
-### 4. Parsing Réel des Données ⏸️
-
-**Actuellement** : Structure vide, pas de parsing réel
-
-**À implémenter** :
-- [ ] Parser documents eHealthBox (format JSON eHealth)
-- [ ] Parser consultations (format JSON eHealth)
-- [ ] Parser examens labresults (format JSON eHealth)
-- [ ] Sauvegarde dans base de données
-- [ ] Téléchargement fichiers PDF depuis URLs
-
-**Temps estimé** : 1 semaine (une fois accès obtenu)
-
----
-
-### 5. Andaman 7 et MaSanté ⏸️
-
-**Statut** : ❌ **Pas d'API publique disponible**
-
-**Réalité** :
-- ❌ Andaman 7 : Pas d'API publique, pas d'OAuth
-- ❌ MaSanté : Pas d'API publique, pas d'OAuth
-- ✅ **Solution** : Import manuel (PDF/CSV) + Parsing backend
+**Statut** : À faire
 
 **Actions** :
-- [ ] Créer écran import manuel
-- [ ] Implémenter parser PDF Andaman 7
-- [ ] Implémenter parser CSV Andaman 7
-- [ ] Implémenter parser PDF MaSanté
-- [ ] Créer endpoint backend import manuel
-- [ ] Tests avec fichiers réels
+- [ ] Obtenir PDF réel Andaman 7
+- [ ] Obtenir PDF réel MaSanté
+- [ ] Tester parser Andaman 7
+- [ ] Tester parser MaSanté
+- [ ] Ajuster regex si nécessaire
+- [ ] Tester endpoint backend
+- [ ] Tester UI Flutter end-to-end
 
-**Temps estimé** : 3-4 semaines (parsing PDF complexe)
-
-**Voir** : `INTEGRATION_ANDAMAN7_MASANTE.md` pour détails complets
-
----
-
-## 📋 CHECKLIST COMPLÈTE
-
-### Phase 1 : Accréditation (2-4 semaines)
-
-- [ ] Contacter eHealth
-- [ ] Préparer dossier
-- [ ] Obtenir certificat sandbox
-- [ ] Obtenir client_id/secret
-- [ ] Tester OAuth en sandbox
-
-### Phase 2 : Développement Backend (1-2 semaines)
-
-- [ ] Créer `health_portal_parsers.py`
-- [ ] Créer `health_portal_fetchers.py`
-- [ ] Créer endpoints spécifiques
-- [ ] Implémenter parsing réel
-- [ ] Tester avec données sandbox
-
-### Phase 3 : Tests et Validation (1 semaine)
-
-- [ ] Tests complets sandbox
-- [ ] Passer tests conformité
-- [ ] Livrer rapport tests
-- [ ] Obtenir validation production
-
-### Phase 4 : Andaman 7 et MaSanté (1-2 semaines)
-
-- [ ] Rechercher documentation
-- [ ] Adapter code
-- [ ] Implémenter parsers
-- [ ] Tester
+**Temps estimé** : 1 semaine
 
 ---
 
-## 🎯 PROCHAINES ÉTAPES IMMÉDIATES
+### 3. Améliorer Guide Utilisateur ⏸️
 
-1. **Contacter eHealth** (URGENT)
-   - Email : integration-support@ehealth.fgov.be
-   - Demander accès sandbox
-   - Demander documentation complète
+**Statut** : À améliorer
 
-2. **Préparer dossier**
-   - Description application
-   - Cas d'usage
-   - Justification accès données
+**Actions** :
+- [ ] Ajouter captures d'écran (si possible)
+- [ ] Instructions plus détaillées
+- [ ] FAQ "Problèmes courants"
+- [ ] Bouton "Besoin d'aide ?"
 
-3. **En attendant accréditation**
-   - Implémenter alternative (export PDF + parsing)
-   - Rechercher Andaman 7 et MaSanté
-   - Préparer structure code
+**Temps estimé** : 2-3 jours
 
 ---
 
@@ -185,33 +120,33 @@
 | Structure OAuth | ✅ Fait | 100% |
 | Configuration eHealth | ✅ Fait | 100% |
 | Documentation eHealth | ✅ Fait | 100% |
+| Parser Andaman 7/MaSanté | ✅ Fait | 100% |
+| Endpoint Import Manuel | ✅ Fait | 100% |
+| Service Flutter | ✅ Fait | 100% |
+| UI Flutter | ✅ Fait | 90% |
 | Accréditation eHealth | ⏸️ En attente | 0% |
-| Services Backend | ⏸️ En attente | 0% |
-| Parsing Réel | ⏸️ En attente | 0% |
-| Andaman 7 | ⏸️ Import manuel | 0% (pas d'API) |
-| MaSanté | ⏸️ Import manuel | 0% (pas d'API) |
+| Tests Fichiers Réels | ⏸️ À faire | 0% |
+| Guide Utilisateur | ⏸️ À améliorer | 50% |
 
-**Progression globale** : **30%** (structure prête, accès manquant)
+**Progression globale** : **85%** ✅
 
 ---
 
-## ⚠️ BLOCAGES
+## 🎯 STRATÉGIE
 
-1. **Accréditation eHealth** : Nécessaire pour continuer
-2. **Documentation Andaman 7/MaSanté** : À rechercher
-3. **Certificat eHealth** : Procédure longue
+**Import Manuel (Gratuit)** : ✅ **Implémenté et fonctionnel**
+- Andaman 7 : Export PDF → Upload → Parsing automatique
+- MaSanté : Export PDF → Upload → Parsing automatique
+- Coût : 0€
+- Friction : Acceptable (1 upload par utilisateur)
 
----
+**eHealth (Automatique)** : ⏸️ **En attente accréditation**
+- OAuth fonctionnel (code prêt)
+- Accréditation INAMI requise (2-4 semaines)
+- Coût : 0€ (mais procédure longue)
 
-## 🔀 ALTERNATIVES
-
-Si accréditation eHealth impossible :
-
-1. **Export PDF manuel** : Utilisateurs exportent depuis portail, upload dans app
-2. **Partenariat** : Avec éditeur agréé (CareConnect, Medispring)
-3. **Portails patients hôpitaux** : APIs moins contraintes
+**Voir** : `STRATEGIE_GRATUITE_PORTAILS_SANTE.md` pour détails complets
 
 ---
 
 **Dernière mise à jour** : 26 novembre 2025
-

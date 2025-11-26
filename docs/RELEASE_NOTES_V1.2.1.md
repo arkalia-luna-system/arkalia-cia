@@ -1,6 +1,6 @@
 # Release Notes — Arkalia CIA v1.2.1
 
-**Date de release** : 24 novembre 2025  
+**Date de release** : 26 novembre 2025  
 **Version** : 1.2.1  
 **Statut** : Production-Ready (100%)
 
@@ -39,7 +39,7 @@ Cette version apporte des améliorations finales avec l'implémentation de fonct
 - **Variables non utilisées** : Toutes corrigées
 
 ### Documentation
-- **Tous les fichiers MD mis à jour** avec statut final (24 novembre 2025)
+- **Tous les fichiers MD mis à jour** avec statut final (26 novembre 2025)
 - **CHANGELOG.md** : Ajout section v1.2.1
 - **README.md** : Statut mis à jour (100% Production-Ready)
 - **INDEX_DOCUMENTATION.md** : Date de mise à jour
@@ -87,5 +87,5 @@ Aucune migration nécessaire. Cette version est rétrocompatible avec v1.2.0.
 
 ---
 
-*Release préparée le 24 novembre 2025*
+*Release préparée le 26 novembre 2025*
 

@@ -1,6 +1,6 @@
 # 🌐 Guide : Ouvrir l'Application Arkalia CIA
 
-**Date** : 24 novembre 2025  
+**Date** : 26 novembre 2025  
 **Version** : 1.3.0
 
 Guide consolidé pour ouvrir l'application dans différents environnements.
@@ -158,5 +158,5 @@ Vérifiez dans le terminal quel port est utilisé.
 
 ---
 
-*Dernière mise à jour : 24 novembre 2025*
+*Dernière mise à jour : 26 novembre 2025*
 

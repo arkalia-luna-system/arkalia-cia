@@ -1,6 +1,6 @@
 # 🔧 Mise à jour S25 - Guide Corrigé
 
-**Date** : 24 novembre 2025  
+**Date** : 26 novembre 2025  
 **Problème résolu** : L'app ne se mettait pas à jour sur le S25
 
 ---

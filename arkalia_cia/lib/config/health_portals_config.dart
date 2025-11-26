@@ -6,6 +6,7 @@
 /// 1. Ajouter l'entrée dans `belgianHealthPortals` ou `internationalHealthPortals`
 /// 2. Si OAuth est supporté, ajouter dans `oauthPortalsConfig`
 /// 3. Mettre à jour l'enum `HealthPortal` dans `health_portal_auth_service.dart` si nécessaire
+library;
 
 class HealthPortalConfig {
   final String name;

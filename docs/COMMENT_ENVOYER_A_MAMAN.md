@@ -209,7 +209,7 @@ python3 convert_to_pdf.py
 
 ---
 
-*Dernière mise à jour : 24 novembre 2025*
+*Dernière mise à jour : 26 novembre 2025*
 
 ---
 

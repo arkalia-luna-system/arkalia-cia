@@ -1,6 +1,6 @@
 # 📋 Versions Unifiées - Arkalia CIA
 
-**Date de vérification** : 24 novembre 2025  
+**Date de vérification** : 26 novembre 2025  
 **Version actuelle** : **1.3.0** (1.3.0+1 pour Flutter)  
 **Statut** : ✅ **Toutes les versions unifiées**
 
@@ -109,6 +109,6 @@ Avant de faire une release et merge sur main, vérifier :
 
 ---
 
-**Dernière mise à jour** : 24 novembre 2025  
+**Dernière mise à jour** : 26 novembre 2025  
 **Prochaine version prévue** : 1.3.1 (hotfix si nécessaire) ou 1.4.0 (nouvelles fonctionnalités)
 

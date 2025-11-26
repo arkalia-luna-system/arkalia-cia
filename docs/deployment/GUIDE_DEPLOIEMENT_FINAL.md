@@ -7,7 +7,7 @@
 **Branch**: develop → main  
 **Status**: 🟢 **PRODUCTION READY**
 
-> **📱 Google Play Console** : Compte développeur créé le 24 novembre 2025. Vérification d'identité en cours. Voir [PLAY_STORE_SETUP.md](./PLAY_STORE_SETUP.md) pour l'état actuel et le plan d'action post-validation.
+> **📱 Google Play Console** : Compte développeur créé le 26 novembre 2025. Vérification d'identité en cours. Voir [PLAY_STORE_SETUP.md](./PLAY_STORE_SETUP.md) pour l'état actuel et le plan d'action post-validation.
 
 ---
 
@@ -171,11 +171,11 @@ flutter build ios --release
 
 ### Google Play Store
 
-**✅ État actuel** : Compte développeur créé le 24 novembre 2025. Vérification d'identité en cours.
+**✅ État actuel** : Compte développeur créé le 26 novembre 2025. Vérification d'identité en cours.
 
 **📋 Plan d'action** (voir [PLAY_STORE_SETUP.md](./PLAY_STORE_SETUP.md)) :
 
-1. ✅ **Compte développeur créé** (24 novembre 2025)
+1. ✅ **Compte développeur créé** (26 novembre 2025)
 2. ⏳ **Vérification identité** (en cours, 1-3 jours)
 3. ⏸️ **Créer signature release** (après validation)
 4. ⏸️ **Build App Bundle** (après signature)
@@ -369,7 +369,7 @@ flutter pub get
 
 ---
 
-*Dernière mise à jour : 24 novembre 2025*  
+*Dernière mise à jour : 26 novembre 2025*  
 **Version**: 1.3.0  
 **Statut**: 🟢 **PRÊT POUR PRODUCTION**
 

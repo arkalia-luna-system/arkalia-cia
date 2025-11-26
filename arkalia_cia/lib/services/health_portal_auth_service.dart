@@ -6,25 +6,31 @@ import 'backend_config_service.dart';
 import 'auth_api_service.dart';
 
 enum HealthPortal {
-  ehealth,
+  ehealth, // OAuth disponible (accréditation requise)
+  // andaman7 et masante : Pas d'OAuth, import manuel uniquement
+  // Gardés pour compatibilité mais non utilisés pour OAuth
   andaman7,
   masante,
 }
 
 class HealthPortalAuthService {
 
-  // OAuth URLs pour chaque portail (URLs réelles eHealth, autres à vérifier)
+  // OAuth URLs pour chaque portail
+  // NOTE: Andaman 7 et MaSanté n'ont PAS d'API publique OAuth
+  // Stratégie: Import manuel uniquement (voir STRATEGIE_GRATUITE_PORTAILS_SANTE.md)
   static const Map<HealthPortal, String> _authUrls = {
     HealthPortal.ehealth: 'https://iam.ehealth.fgov.be/iam-connect/oidc/authorize', // URL réelle eHealth
-    HealthPortal.andaman7: 'https://www.andaman7.com/oauth/authorize', // À vérifier
-    HealthPortal.masante: 'https://www.masante.be/oauth/authorize', // À vérifier
+    // Andaman 7 et MaSanté : Pas d'OAuth disponible, import manuel uniquement
+    HealthPortal.andaman7: '', // Non utilisé (pas d'API publique)
+    HealthPortal.masante: '', // Non utilisé (pas d'API publique)
   };
   
   // Token URLs pour chaque portail
   static const Map<HealthPortal, String> _tokenUrls = {
     HealthPortal.ehealth: 'https://iam.ehealth.fgov.be/iam-connect/oidc/token', // URL réelle eHealth
-    HealthPortal.andaman7: 'https://www.andaman7.com/oauth/token', // À vérifier
-    HealthPortal.masante: 'https://www.masante.be/oauth/token', // À vérifier
+    // Andaman 7 et MaSanté : Pas d'OAuth disponible
+    HealthPortal.andaman7: '', // Non utilisé
+    HealthPortal.masante: '', // Non utilisé
   };
 
   static const Map<HealthPortal, String> _portalNames = {
@@ -86,14 +92,15 @@ class HealthPortalAuthService {
   }
 
   /// Récupère les scopes OAuth requis pour chaque portail
+  /// NOTE: Andaman 7 et MaSanté n'ont pas d'OAuth, cette méthode ne devrait être appelée que pour eHealth
   String _getPortalScopes(HealthPortal portal) {
     switch (portal) {
       case HealthPortal.ehealth:
         return 'ehealthbox.read consultations.read labresults.read'; // Scopes réels eHealth
       case HealthPortal.andaman7:
-        return 'read:health_data read:documents'; // À vérifier
       case HealthPortal.masante:
-        return 'read:medical_data read:documents'; // À vérifier
+        // Pas d'OAuth disponible pour ces portails (import manuel uniquement)
+        return ''; // Ne devrait jamais être appelé
     }
   }
 
@@ -117,14 +124,9 @@ class HealthPortalAuthService {
       final clientId = prefs.getString(clientIdKey) ?? 'arkalia_cia';
       final clientSecret = prefs.getString(clientSecretKey) ?? '';
 
-      // URLs de token pour chaque portail (utiliser _tokenUrls si défini, sinon fallback)
-      final tokenUrls = _tokenUrls.isNotEmpty 
-          ? _tokenUrls 
-          : {
-              HealthPortal.ehealth: 'https://iam.ehealth.fgov.be/iam-connect/oidc/token', // URL réelle
-              HealthPortal.andaman7: 'https://www.andaman7.com/oauth/token', // À vérifier
-              HealthPortal.masante: 'https://www.masante.be/oauth/token', // À vérifier
-            };
+      // URLs de token pour chaque portail
+      // NOTE: Andaman 7 et MaSanté n'ont pas d'OAuth, cette méthode ne devrait être appelée que pour eHealth
+      final tokenUrls = _tokenUrls;
 
       final tokenUrl = tokenUrls[portal];
       if (tokenUrl == null) {
@@ -228,10 +230,12 @@ class HealthPortalAuthService {
         }
 
         // Endpoints spécifiques pour chaque portail
+        // NOTE: Andaman 7 et MaSanté utilisent import manuel, pas d'endpoint fetch OAuth
         final portalEndpoints = {
           HealthPortal.ehealth: '/api/v1/health-portals/ehealth/fetch',
-          HealthPortal.andaman7: '/api/v1/health-portals/andaman7/fetch',
-          HealthPortal.masante: '/api/v1/health-portals/masante/fetch',
+          // Andaman 7 et MaSanté : Import manuel uniquement (pas d'endpoint fetch)
+          // HealthPortal.andaman7: '/api/v1/health-portals/andaman7/fetch', // Non utilisé
+          // HealthPortal.masante: '/api/v1/health-portals/masante/fetch', // Non utilisé
         };
 
         final endpoint = portalEndpoints[portal];
@@ -372,11 +376,13 @@ class HealthPortalAuthService {
         return null;
       }
 
-      // URLs de refresh pour chaque portail (à configurer selon documentation réelle)
+      // URLs de refresh pour chaque portail
+      // NOTE: Andaman 7 et MaSanté n'ont pas d'OAuth, refresh token non disponible
       final refreshUrls = {
-        HealthPortal.ehealth: 'https://www.ehealth.fgov.be/fr/oauth/token',
-        HealthPortal.andaman7: 'https://www.andaman7.com/oauth/token',
-        HealthPortal.masante: 'https://www.masante.be/oauth/token',
+        HealthPortal.ehealth: 'https://iam.ehealth.fgov.be/iam-connect/oidc/token', // URL réelle
+        // Andaman 7 et MaSanté : Pas d'OAuth, pas de refresh token
+        // HealthPortal.andaman7: '', // Non utilisé
+        // HealthPortal.masante: '', // Non utilisé
       };
 
       final refreshUrl = refreshUrls[portal];

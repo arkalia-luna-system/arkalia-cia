@@ -1,7 +1,7 @@
 # Application iOS indépendante du Mac
 
 **Version** : 1.3.0  
-**Date** : 24 novembre 2025  
+**Date** : 26 novembre 2025  
 **Plateforme** : iOS
 
 ---
