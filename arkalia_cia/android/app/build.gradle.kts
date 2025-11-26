@@ -3,17 +3,19 @@ import java.util.Properties
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
-    id("dev.flutter.flutter-gradle-plugin")
 }
 
-// Configuration Flutter - Le plugin détecte automatiquement le répertoire source
-// en cherchant le répertoire parent qui contient pubspec.yaml
-// Si la détection automatique échoue, spécifier explicitement avec un chemin calculé
-// projectDir = android/app/, donc parentFile.parentFile = arkalia_cia/
+// Configurer flutter.source AVANT d'appliquer le plugin Flutter
+// Le plugin cherche cette propriété au moment de son application
 val flutterSourceDir = projectDir.parentFile.parentFile
+project.ext.set("flutter.source", flutterSourceDir.absolutePath)
+
+// Appliquer le plugin Flutter APRÈS avoir configuré flutter.source
+apply(plugin = "dev.flutter.flutter-gradle-plugin")
+
+// Configuration Flutter - confirmer le répertoire source
 flutter {
-    source = flutterSourceDir.absolutePath
+    source = project.ext.get("flutter.source") as String
 }
 
 // Charger les propriétés de signature depuis key.properties (si existe)
