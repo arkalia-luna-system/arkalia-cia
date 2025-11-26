@@ -9,9 +9,14 @@ plugins {
 
 // Configuration Flutter - Le plugin détecte automatiquement le répertoire source
 // en cherchant le répertoire parent qui contient pubspec.yaml
-// Si la détection automatique échoue, spécifier explicitement avec un chemin relatif
+// Si la détection automatique échoue, spécifier explicitement avec un chemin calculé
+// rootProject.projectDir = android/, donc parentFile = arkalia_cia/
+val flutterSourceDir = rootProject.projectDir.parentFile
+require(flutterSourceDir.resolve("pubspec.yaml").exists()) {
+    "Flutter source directory not found at ${flutterSourceDir.absolutePath}. pubspec.yaml missing."
+}
 flutter {
-    source = "../.."
+    source = flutterSourceDir.absolutePath
 }
 
 // Charger les propriétés de signature depuis key.properties (si existe)
@@ -100,43 +105,38 @@ android {
     // Nettoyer les fichiers macOS AVANT toutes les tâches de build
     afterEvaluate {
         // Nettoyer dans tous les répertoires de build (app + plugins)
-        val buildTasks = listOf(
-            "processReleaseResources",
-            "processDebugResources",
-            "verifyReleaseResources",
-            "verifyDebugResources"
-        )
-        
-        buildTasks.forEach { taskName ->
-            tasks.named(taskName).configure {
-                doFirst {
-                    // Nettoyer dans le répertoire build de l'app
-                    val appBuildDir = project.buildDir
-                    if (appBuildDir.exists()) {
-                        appBuildDir.walkTopDown()
-                            .filter { it.isFile && (it.name.startsWith("._") || it.name == ".DS_Store" || it.name.contains("._")) }
-                            .forEach { 
-                                try {
-                                    it.delete()
-                                } catch (e: Exception) {
-                                    // Ignorer les erreurs
-                                }
+        // Utiliser tasks.matching pour trouver les tâches qui existent
+        tasks.matching { 
+            it.name.contains("process") && it.name.contains("Resources") ||
+            it.name.contains("verify") && it.name.contains("Resources")
+        }.configureEach {
+            doFirst {
+                // Nettoyer dans le répertoire build de l'app
+                val appBuildDir = project.buildDir
+                if (appBuildDir.exists()) {
+                    appBuildDir.walkTopDown()
+                        .filter { it.isFile && (it.name.startsWith("._") || it.name == ".DS_Store" || it.name.contains("._")) }
+                        .forEach { 
+                            try {
+                                it.delete()
+                            } catch (e: Exception) {
+                                // Ignorer les erreurs
                             }
-                    }
-                    
-                    // Nettoyer dans le répertoire build racine (contient les builds des plugins)
-                    val rootBuildDir = rootProject.layout.buildDirectory.asFile.get()
-                    if (rootBuildDir.exists()) {
-                        rootBuildDir.walkTopDown()
-                            .filter { it.isFile && (it.name.startsWith("._") || it.name == ".DS_Store" || it.name.contains("._")) }
-                            .forEach { 
-                                try {
-                                    it.delete()
-                                } catch (e: Exception) {
-                                    // Ignorer les erreurs
-                                }
+                        }
+                }
+                
+                // Nettoyer dans le répertoire build racine (contient les builds des plugins)
+                val rootBuildDir = rootProject.layout.buildDirectory.asFile.get()
+                if (rootBuildDir.exists()) {
+                    rootBuildDir.walkTopDown()
+                        .filter { it.isFile && (it.name.startsWith("._") || it.name == ".DS_Store" || it.name.contains("._")) }
+                        .forEach { 
+                            try {
+                                it.delete()
+                            } catch (e: Exception) {
+                                // Ignorer les erreurs
                             }
-                    }
+                        }
                 }
             }
         }
