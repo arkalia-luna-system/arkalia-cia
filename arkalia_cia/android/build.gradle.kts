@@ -12,6 +12,12 @@ subprojects {
         // Note: La configuration compileSdk pour les plugins Flutter est gérée par init.gradle
         plugins.withId("com.android.library") {
             extensions.findByType<com.android.build.gradle.BaseExtension>()?.apply {
+                // Forcer compileSdk si non défini
+                if (this is com.android.build.gradle.LibraryExtension) {
+                    if (this.compileSdk == null) {
+                        this.compileSdk = 36
+                    }
+                }
                 compileOptions {
                     sourceCompatibility = JavaVersion.VERSION_17
                     targetCompatibility = JavaVersion.VERSION_17

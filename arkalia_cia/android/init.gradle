@@ -448,38 +448,61 @@ gradle.beforeProject { project ->
     // d'accéder à android.flutter avant que le plugin Flutter ne soit appliqué
     
     // Configuration AVANT l'évaluation pour intercepter les accès à android.flutter
+    // IMPORTANT: Cette configuration doit se faire TRÈS TÔT, avant même que les plugins
+    // ne soient évalués, pour que file_picker puisse accéder à android.flutter
+    // On utilise project.beforeEvaluate pour s'exécuter AVANT l'évaluation du build.gradle du plugin
     project.beforeEvaluate {
         // Créer une extension flutter factice si elle n'existe pas
         // Cela permet aux plugins Groovy d'accéder à android.flutter sans erreur
-        if (project.hasProperty("android")) {
-            try {
-                def android = project.extensions.findByName("android")
-                if (android != null) {
-                    // Créer une propriété flutter factice avec les valeurs par défaut
-                    // Utiliser metaClass pour ajouter la propriété flutter
-                    android.metaClass.flutter = [
-                        minSdkVersion: 21,
-                        targetSdkVersion: 36,
-                        compileSdkVersion: 36,
-                        versionCode: 1,
-                        versionName: "1.0.0"
-                    ]
-                    // Aussi définir via ext pour compatibilité
-                    if (!android.hasProperty("flutter")) {
-                        android.ext.flutter = [
-                            minSdkVersion: 21,
-                            targetSdkVersion: 36,
-                            compileSdkVersion: 36,
-                            versionCode: 1,
-                            versionName: "1.0.0"
-                        ]
-                    }
-                    println "✅ Init.gradle: Créé extension flutter factice pour ${project.name}"
-                }
-            } catch (Exception e) {
-                // Ignorer si la configuration échoue
-                println "⚠️  Init.gradle: Erreur création extension flutter pour ${project.name}: ${e.message}"
+        try {
+            def flutterConfig = [
+                minSdkVersion: 21,
+                targetSdkVersion: 36,
+                compileSdkVersion: 36,
+                versionCode: 1,
+                versionName: "1.0.0"
+            ]
+            
+            // Stocker dans project.ext pour qu'il soit accessible partout
+            if (!project.ext.has("flutter")) {
+                project.ext.flutter = flutterConfig
             }
+            
+            // Créer une extension android factice si elle n'existe pas encore
+            // Cela permet à file_picker d'accéder à android.flutter même si android n'est pas encore créé
+            if (!project.hasProperty("android")) {
+                // Créer une extension android factice avec la propriété flutter
+                project.extensions.create("android", AndroidExtension, flutterConfig)
+            } else {
+                // Si android existe déjà, ajouter la propriété flutter via metaClass
+                try {
+                    def android = project.extensions.findByName("android")
+                    if (android != null) {
+                        // Utiliser metaClass pour ajouter la propriété flutter
+                        android.metaClass.flutter = flutterConfig
+                        // Aussi définir via ext pour compatibilité
+                        if (!android.hasProperty("flutter")) {
+                            android.ext.flutter = flutterConfig
+                        }
+                    }
+                } catch (Exception e) {
+                    // Ignorer si android n'est pas encore disponible
+                }
+            }
+            
+            println "✅ Init.gradle: Créé extension flutter factice pour ${project.name}"
+        } catch (Exception e) {
+            // Ignorer si la configuration échoue
+            println "⚠️  Init.gradle: Erreur création extension flutter pour ${project.name}: ${e.message}"
+        }
+    }
+    
+    // Classe helper pour créer une extension android factice
+    class AndroidExtension {
+        def flutter
+        
+        AndroidExtension(def flutterConfig) {
+            this.flutter = flutterConfig
         }
     }
     
