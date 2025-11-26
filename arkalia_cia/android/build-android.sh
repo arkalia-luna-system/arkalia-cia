@@ -77,6 +77,11 @@ fi
 # Nettoyer spécifiquement dans build/ (même s'il n'existe pas encore)
 if [ -d "build" ]; then
     find build -type f \( -name "._*" -o -name ".!*!._*" -o -name ".DS_Store" \) -delete 2>/dev/null || true
+    # Nettoyer spécifiquement le répertoire javac qui cause des problèmes avec ArtProfile
+    if [ -d "build/app/intermediates/javac" ]; then
+        find build/app/intermediates/javac -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
+        echo -e "${GREEN}✅ Répertoire javac nettoyé${NC}"
+    fi
 fi
 
 # Lancer un script de surveillance en arrière-plan pour supprimer les fichiers pendant le build

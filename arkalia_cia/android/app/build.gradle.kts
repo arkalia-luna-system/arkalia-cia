@@ -10,9 +10,13 @@ plugins {
 // Configuration Flutter - Le plugin détecte automatiquement le répertoire source
 // en cherchant le répertoire parent qui contient pubspec.yaml
 // Si la détection automatique échoue, spécifier explicitement avec un chemin calculé
-// rootProject.projectDir = android/, donc parentFile = arkalia_cia/
-// Utiliser rootProject pour garantir la cohérence en CI et local
-val flutterSourceDir = rootProject.projectDir.parentFile
+// projectDir = android/app/, donc parentFile.parentFile = arkalia_cia/
+// Utiliser projectDir pour garantir la cohérence en CI et local
+val flutterSourceDir = projectDir.parentFile.parentFile
+// Vérifier que le répertoire existe et contient pubspec.yaml
+if (!flutterSourceDir.resolve("pubspec.yaml").exists()) {
+    throw GradleException("Flutter source directory not found at ${flutterSourceDir.absolutePath}. pubspec.yaml missing.")
+}
 flutter {
     source = flutterSourceDir.absolutePath
 }
@@ -102,6 +106,94 @@ android {
     
     // Nettoyer les fichiers macOS AVANT toutes les tâches de build
     afterEvaluate {
+        // Fonction de nettoyage réutilisable et agressive
+        fun cleanMacOSFiles() {
+            // Nettoyer dans le répertoire build de l'app
+            val appBuildDir = project.buildDir
+            if (appBuildDir.exists()) {
+                appBuildDir.walkTopDown()
+                    .filter { it.isFile && (it.name.startsWith("._") || it.name == ".DS_Store" || it.name.contains("._")) }
+                    .forEach { 
+                        try {
+                            it.delete()
+                        } catch (e: Exception) {
+                            // Ignorer les erreurs
+                        }
+                    }
+            }
+            
+            // Nettoyer dans le répertoire build racine (contient les builds des plugins)
+            val rootBuildDir = rootProject.layout.buildDirectory.asFile.get()
+            if (rootBuildDir.exists()) {
+                rootBuildDir.walkTopDown()
+                    .filter { it.isFile && (it.name.startsWith("._") || it.name == ".DS_Store" || it.name.contains("._")) }
+                    .forEach { 
+                        try {
+                            it.delete()
+                        } catch (e: Exception) {
+                            // Ignorer les erreurs
+                        }
+                    }
+            }
+            
+            // Nettoyer spécifiquement dans le répertoire javac (où se trouve le problème)
+            val javacDir = project.file("${project.buildDir}/intermediates/javac")
+            if (javacDir.exists()) {
+                javacDir.walkTopDown()
+                    .filter { it.isFile && (it.name.startsWith("._") || it.name == ".DS_Store" || it.name.contains("._")) }
+                    .forEach { 
+                        try {
+                            it.delete()
+                        } catch (e: Exception) {
+                            // Ignorer les erreurs
+                        }
+                    }
+            }
+        }
+        
+        // Nettoyer AVANT la tâche expandReleaseArtProfileWildcards (qui échoue)
+        // Cette tâche lit les fichiers .class et échoue si elle trouve une référence à un fichier ._*
+        tasks.matching { 
+            it.name.contains("expand") && it.name.contains("ArtProfile")
+        }.configureEach {
+            doFirst {
+                // Nettoyer les fichiers macOS
+                cleanMacOSFiles()
+                
+                // Nettoyer aussi les références dans les répertoires de classes
+                val classesDir = project.file("${project.buildDir}/intermediates/javac/release/compileReleaseJavaWithJavac/classes")
+                if (classesDir.exists()) {
+                    classesDir.walkTopDown()
+                        .filter { it.isFile && (it.name.startsWith("._") || it.name.contains("._")) }
+                        .forEach { 
+                            try {
+                                it.delete()
+                            } catch (e: Exception) {
+                                // Ignorer les erreurs
+                            }
+                        }
+                }
+            }
+        }
+        
+        // Nettoyer AVANT les tâches de compilation Java (le plus tôt possible)
+        tasks.matching { 
+            it.name.contains("compile") && it.name.contains("Java")
+        }.configureEach {
+            doFirst {
+                cleanMacOSFiles()
+            }
+        }
+        
+        // Nettoyer AVANT la génération des classes (avant même la compilation)
+        tasks.matching { 
+            it.name.contains("generate") || it.name.contains("transform")
+        }.configureEach {
+            doFirst {
+                cleanMacOSFiles()
+            }
+        }
+        
         // Nettoyer dans tous les répertoires de build (app + plugins)
         // Utiliser tasks.matching pour trouver les tâches qui existent
         tasks.matching { 
@@ -109,33 +201,16 @@ android {
             it.name.contains("verify") && it.name.contains("Resources")
         }.configureEach {
             doFirst {
-                // Nettoyer dans le répertoire build de l'app
-                val appBuildDir = project.buildDir
-                if (appBuildDir.exists()) {
-                    appBuildDir.walkTopDown()
-                        .filter { it.isFile && (it.name.startsWith("._") || it.name == ".DS_Store" || it.name.contains("._")) }
-                        .forEach { 
-                            try {
-                                it.delete()
-                            } catch (e: Exception) {
-                                // Ignorer les erreurs
-                            }
-                        }
-                }
-                
-                // Nettoyer dans le répertoire build racine (contient les builds des plugins)
-                val rootBuildDir = rootProject.layout.buildDirectory.asFile.get()
-                if (rootBuildDir.exists()) {
-                    rootBuildDir.walkTopDown()
-                        .filter { it.isFile && (it.name.startsWith("._") || it.name == ".DS_Store" || it.name.contains("._")) }
-                        .forEach { 
-                            try {
-                                it.delete()
-                            } catch (e: Exception) {
-                                // Ignorer les erreurs
-                            }
-                        }
-                }
+                cleanMacOSFiles()
+            }
+        }
+        
+        // Nettoyer AVANT toutes les tâches de build/release
+        tasks.matching { 
+            it.name.contains("bundle") || it.name.contains("assemble") || it.name.contains("build")
+        }.configureEach {
+            doFirst {
+                cleanMacOSFiles()
             }
         }
     }

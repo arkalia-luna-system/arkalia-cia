@@ -175,12 +175,26 @@ allprojects {
     // ========================================================================
     // NIVEAU 7 : Nettoyage automatique AVANT chaque build
     // ========================================================================
-    tasks.matching { it.group == "build" || it.name.contains("assemble") || it.name.contains("bundle") || it.name.contains("compile") }.configureEach {
+    tasks.matching { it.group == "build" || it.name.contains("assemble") || it.name.contains("bundle") || it.name.contains("compile") || it.name.contains("expand") }.configureEach {
         doFirst {
             // Nettoyer les fichiers macOS dans le répertoire build
             val buildDir = project.layout.buildDirectory.asFile.get()
             if (buildDir.exists()) {
                 buildDir.walkTopDown()
+                    .filter { it.isFile && (it.name.startsWith("._") || it.name == ".DS_Store" || it.name.contains("._")) }
+                    .forEach { 
+                        try {
+                            it.delete()
+                        } catch (e: Exception) {
+                            // Ignorer les erreurs de suppression
+                        }
+                    }
+            }
+            
+            // Nettoyer spécifiquement dans le répertoire javac (où se trouve souvent le problème)
+            val javacDir = project.file("${project.layout.buildDirectory.asFile.get()}/intermediates/javac")
+            if (javacDir.exists()) {
+                javacDir.walkTopDown()
                     .filter { it.isFile && (it.name.startsWith("._") || it.name == ".DS_Store" || it.name.contains("._")) }
                     .forEach { 
                         try {
