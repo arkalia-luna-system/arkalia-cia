@@ -1,9 +1,12 @@
 import java.util.Properties
 
-// Configuration Flutter source directory AVANT l'application du plugin
+// Configuration Flutter source directory AVANT l'application des plugins
 // Le plugin Flutter Gradle doit connaître le répertoire source avant d'être appliqué
 // projectDir = android/app/, donc parentFile.parentFile = arkalia_cia/
 val flutterSourceDir = projectDir.parentFile.parentFile
+
+// Stocker le chemin source dans les propriétés du projet pour que le plugin puisse y accéder
+project.ext.set("flutter.source", flutterSourceDir.absolutePath)
 
 plugins {
     id("com.android.application")
