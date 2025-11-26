@@ -11,12 +11,9 @@ plugins {
 // en cherchant le répertoire parent qui contient pubspec.yaml
 // Si la détection automatique échoue, spécifier explicitement avec un chemin calculé
 // rootProject.projectDir = android/, donc parentFile = arkalia_cia/
-val flutterSourceDir = rootProject.projectDir.parentFile
-require(flutterSourceDir.resolve("pubspec.yaml").exists()) {
-    "Flutter source directory not found at ${flutterSourceDir.absolutePath}. pubspec.yaml missing."
-}
+// Utiliser rootProject pour garantir la cohérence en CI et local
 flutter {
-    source = flutterSourceDir.absolutePath
+    source = rootProject.projectDir.parentFile.absolutePath
 }
 
 // Charger les propriétés de signature depuis key.properties (si existe)
