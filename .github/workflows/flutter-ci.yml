@@ -86,7 +86,9 @@ jobs:
           flutter build apk --release
 
       - name: "Upload Coverage to Codecov"
+        if: hashFiles('arkalia_cia/coverage/lcov.info') != ''
         uses: codecov/codecov-action@v5
+        continue-on-error: true
         with:
           files: arkalia_cia/coverage/lcov.info
           flags: flutter
@@ -94,8 +96,7 @@ jobs:
           verbose: true
           directory: arkalia_cia
         env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        if: hashFiles('arkalia_cia/coverage/lcov.info') != ''
+          CODECOV_TOKEN: ${{ vars.CODECOV_TOKEN || secrets.CODECOV_TOKEN || '' }}
 
       - name: "Upload Build Artifacts"
         uses: actions/upload-artifact@v4
