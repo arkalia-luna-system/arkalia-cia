@@ -7,6 +7,12 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// Configuration Flutter - doit être définie AVANT le bloc android
+// pour que flutter.minSdkVersion, etc. soient disponibles
+flutter {
+    source = "../.."
+}
+
 // Charger les propriétés de signature depuis key.properties (si existe)
 val keystorePropertiesFile = rootProject.file("key.properties")
 val keystoreProperties = Properties()
@@ -127,10 +133,6 @@ android {
             )
         }
     }
-}
-
-flutter {
-    source = "../.."
 }
 
 dependencies {
