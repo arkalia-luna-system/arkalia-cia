@@ -508,18 +508,11 @@ gradle.beforeProject { project ->
     // IMPORTANT: Cette configuration doit se faire TRÈS TÔT, avant même que les plugins
     // ne soient évalués, pour que file_picker puisse accéder à android.flutter
     // On utilise project.beforeEvaluate pour s'exécuter AVANT l'évaluation du build.gradle du plugin
+    // Note: flutterConfig est déjà défini dans le scope parent (gradle.beforeProject)
     project.beforeEvaluate {
         // Créer une extension flutter factice si elle n'existe pas
         // Cela permet aux plugins Groovy d'accéder à android.flutter sans erreur
         try {
-            def flutterConfig = [
-                minSdkVersion: 21,
-                targetSdkVersion: 36,
-                compileSdkVersion: 36,
-                versionCode: 1,
-                versionName: "1.0.0"
-            ]
-            
             // Stocker dans project.ext pour qu'il soit accessible partout
             if (!project.ext.has("flutter")) {
                 project.ext.flutter = flutterConfig
