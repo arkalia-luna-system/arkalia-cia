@@ -497,7 +497,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       }
 
       // Partager le fichier PDF
-      await Share.shareXFiles(
+      await SharePlus.instance.shareXFiles(
         [XFile(filePath, mimeType: 'application/pdf')],
         text: 'Document: ${doc['original_name'] ?? 'Document'}',
         subject: 'Partage de document Arkalia CIA',
