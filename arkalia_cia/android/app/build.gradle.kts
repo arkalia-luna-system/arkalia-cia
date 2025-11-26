@@ -7,32 +7,11 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-// Lire flutter.source depuis gradle.properties OU propriété système -P
-// Le plugin Flutter Gradle peut lire cette propriété depuis gradle.properties
-val flutterSourceFromSystem = project.findProperty("flutter.source") as String?
-val gradleProperties = Properties()
-val gradlePropertiesFile = rootProject.file("gradle.properties")
-if (gradlePropertiesFile.exists()) {
-    gradlePropertiesFile.inputStream().use { gradleProperties.load(it) }
-}
-val flutterSourceFromProps = gradleProperties.getProperty("flutter.source") ?: flutterSourceFromSystem
-
-// Déterminer le répertoire source Flutter
-val flutterSourceDir = if (flutterSourceFromProps != null) {
-    // Utiliser le chemin depuis gradle.properties ou -P (peut être relatif ou absolu)
-    val sourceFile = file(flutterSourceFromProps)
-    if (sourceFile.isAbsolute) {
-        sourceFile
-    } else {
-        // Chemin relatif depuis android/
-        rootProject.file(flutterSourceFromProps)
-    }
-} else {
-    // Fallback : projectDir = android/app/, donc parentFile.parentFile = arkalia_cia/
-    projectDir.parentFile.parentFile
-}
-
-// Configuration Flutter - spécifier explicitement le répertoire source
+// Configuration Flutter - Le plugin détecte automatiquement le répertoire source
+// en cherchant le répertoire parent qui contient pubspec.yaml
+// Si la détection automatique échoue, spécifier explicitement avec un chemin calculé
+// projectDir = android/app/, donc parentFile.parentFile = arkalia_cia/
+val flutterSourceDir = projectDir.parentFile.parentFile
 flutter {
     source = flutterSourceDir.absolutePath
 }
