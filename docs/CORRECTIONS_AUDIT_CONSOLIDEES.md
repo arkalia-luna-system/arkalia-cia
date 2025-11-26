@@ -1,4 +1,4 @@
-# ✅ CORRECTIONS AUDIT CONSOLIDÉES - 23-24 NOVEMBRE 2025
+# ✅ CORRECTIONS AUDIT CONSOLIDÉES - 23-26 novembre 2025
 
 **Date** : 23-26 novembre 2025  
 **Version** : 1.3.0  

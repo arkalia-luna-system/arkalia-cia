@@ -174,7 +174,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                         );
                         
-                        if (shouldLogout == true && mounted) {
+                        if (shouldLogout == true) {
+                          if (!mounted) return;
                           await AuthApiService.logout();
                           if (!mounted) return;
                           Navigator.of(context).pushAndRemoveUntil(

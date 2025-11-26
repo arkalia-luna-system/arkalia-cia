@@ -181,7 +181,7 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
                       }
                     },
                   );
-                }).toList(),
+                }),
                 const SizedBox(height: 16),
                 ListTile(
                   title: const Text('Date de début'),

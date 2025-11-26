@@ -1,4 +1,4 @@
-# ✅ VÉRIFICATION COMPLÈTE - 23-24 NOVEMBRE 2025
+# ✅ VÉRIFICATION COMPLÈTE - 23-26 novembre 2025
 
 **Date** : 26 novembre 2025  
 **Version** : 1.3.0  

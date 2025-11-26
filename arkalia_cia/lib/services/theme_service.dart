@@ -83,13 +83,13 @@ class ThemeService {
         ),
         
         // Cartes : fond doux avec bordure subtile
-        cardTheme: CardThemeData(
-          color: const Color(0xFF242424),
+        cardTheme: const CardThemeData(
+          color: Color(0xFF242424),
           elevation: 2,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.all(Radius.circular(12)),
             side: BorderSide(
-              color: Colors.white.withValues(alpha: 0.05),
+              color: Color(0x0DFFFFFF), // alpha: 0.05
               width: 1,
             ),
           ),
@@ -101,14 +101,14 @@ class ThemeService {
           fillColor: const Color(0xFF242424),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(
-              color: Colors.white.withOpacity(0.1),
+            borderSide: const BorderSide(
+              color: Color(0x1AFFFFFF), // alpha: 0.1
             ),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(
-              color: Colors.white.withOpacity(0.1),
+            borderSide: const BorderSide(
+              color: Color(0x1AFFFFFF), // alpha: 0.1
             ),
           ),
           focusedBorder: OutlineInputBorder(
@@ -121,7 +121,7 @@ class ThemeService {
         ),
         
         // Divider : très subtil
-        dividerColor: Colors.white.withOpacity(0.08),
+        dividerColor: const Color(0x14FFFFFF), // alpha: 0.08
         
         // IconTheme : icônes douces
         iconTheme: const IconThemeData(

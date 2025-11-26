@@ -20,7 +20,7 @@
 **Last Audit**: 26 novembre 2025 (Note: 8.5/10 ✅)  
 **Production-Ready**: 100% ✅  
 **Google Play Console**: ✅ Version 1.3.0 publiée en tests internes (26 novembre 2025)  
-**Exploitation**: 78% ✅ (amélioration +3% depuis audit initial du 26 novembre 2025)  
+**Exploitation**: 85% ✅ (amélioration +7% depuis audit initial du 26 novembre 2025)  
 **Bugs Critiques**: Tous corrigés ✅ (13/13 bugs corrigés - 100%)  
 **Tests**: 352 passed ✅ (70.83% coverage)  
 **Optimisations**: Audit approfondi terminé - Logger conditionnel, 0 log production, code optimisé  
@@ -37,6 +37,10 @@
 - ✅ **Architecture documentée** : ARCHITECTURE_SERVICES.md créé (24 services)
 - ✅ **Code propre** : Logging professionnel, code mort supprimé
 - ✅ **Dépendances documentées** : security_dashboard.py avec documentation complète
+- ✅ **Import manuel portails santé** : Parser Andaman 7/MaSanté, endpoints GET/DELETE documents
+- ✅ **Warnings Flutter corrigés** : withOpacity → withValues, Share → SharePlus
+- ✅ **Fichiers macOS supprimés** : Nettoyage complet, .gitignore mis à jour
+- ✅ **Endpoints portails santé** : GET/DELETE documents implémentés
 
 **Arkalia CIA** est une application mobile développée avec Flutter pour la gestion de documents médicaux, rappels de santé et contacts d'urgence.
 

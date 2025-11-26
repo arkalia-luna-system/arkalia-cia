@@ -737,17 +737,21 @@ async def get_health_portal_documents(
     Récupérer tous les documents importés depuis les portails santé
     """
     try:
-        doc_service = get_document_service()
+        if not current_user.user_id:
+            raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
+
         user_id = int(current_user.user_id)
 
-        # Récupérer tous les documents de l'utilisateur
-        documents = doc_service.get_user_documents(user_id)
+        # Récupérer tous les documents de l'utilisateur via la base de données
+        documents = db.get_user_documents(user_id, skip=0, limit=1000)
 
         return {
             "success": True,
             "documents": documents,
             "count": len(documents),
         }
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(
             f"Erreur récupération documents portail santé: {sanitize_log_message(str(e))}",

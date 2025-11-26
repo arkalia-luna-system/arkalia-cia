@@ -601,10 +601,10 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 child: isUploading
-                    ? Row(
+                    ? const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const SizedBox(
+                          SizedBox(
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(
@@ -612,8 +612,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                               valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                             ),
                           ),
-                          const SizedBox(width: 12),
-                          const Text(
+                          SizedBox(width: 12),
+                          Text(
                             'Upload en cours...',
                             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                           ),

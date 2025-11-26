@@ -106,7 +106,7 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
           Container(
             width: 24,
             height: 24,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Colors.blue,
               shape: BoxShape.circle,
             ),

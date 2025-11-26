@@ -343,7 +343,7 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
                         },
                       ),
                     ),
-                    bottomTitles: AxisTitles(
+                    bottomTitles: const AxisTitles(
                       sideTitles: SideTitles(showTitles: false),
                     ),
                     rightTitles: const AxisTitles(

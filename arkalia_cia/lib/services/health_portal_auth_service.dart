@@ -126,7 +126,7 @@ class HealthPortalAuthService {
 
       // URLs de token pour chaque portail
       // NOTE: Andaman 7 et MaSanté n'ont pas d'OAuth, cette méthode ne devrait être appelée que pour eHealth
-      final tokenUrls = _tokenUrls;
+      const tokenUrls = _tokenUrls;
 
       final tokenUrl = tokenUrls[portal];
       if (tokenUrl == null) {
