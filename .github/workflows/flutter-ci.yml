@@ -92,9 +92,9 @@ jobs:
           flags: flutter
           fail_ci_if_error: false
           verbose: true
-          token: ${{ secrets.CODECOV_TOKEN }}
+          token: ${{ secrets.CODECOV_TOKEN || '' }}
           directory: arkalia_cia
-        if: hashFiles('arkalia_cia/coverage/lcov.info') != ''
+        if: ${{ hashFiles('arkalia_cia/coverage/lcov.info') != '' && secrets.CODECOV_TOKEN != '' }}
 
       - name: "Upload Build Artifacts"
         uses: actions/upload-artifact@v4
