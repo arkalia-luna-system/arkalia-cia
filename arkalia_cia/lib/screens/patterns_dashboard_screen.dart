@@ -149,7 +149,7 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
   }
 
   /// Méthode helper pour faire des requêtes authentifiées avec gestion du refresh token
-  // ignore: unused_element
+  /// Utilisée par _loadPatterns() pour gérer l'authentification automatique
   Future<dynamic> _makeAuthenticatedPatternRequest(
     Future<http.Response> Function() makeRequest,
   ) async {
