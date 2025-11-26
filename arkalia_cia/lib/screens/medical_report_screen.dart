@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:share_plus/share_plus.dart' as share_plus;
+import 'package:share_plus/share_plus.dart';
 import '../services/api_service.dart';
 import '../utils/error_helper.dart';
 
@@ -106,7 +106,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
     if (_report == null || _report!['formatted_text'] == null) return;
 
     try {
-      await share_plus.Share.share(
+      await Share.share(
         _report!['formatted_text'],
         subject: 'Rapport médical - ${widget.doctorName ?? 'Consultation'}',
       );
@@ -276,7 +276,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity( 0.2),
+                  color: Colors.grey.withValues(alpha: 0.2),
                   spreadRadius: 1,
                   blurRadius: 4,
                   offset: const Offset(0, -2),
@@ -352,7 +352,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: color.withOpacity( 0.8),
+            color: color.withValues(alpha: 0.8),
           ),
         ),
         Text(

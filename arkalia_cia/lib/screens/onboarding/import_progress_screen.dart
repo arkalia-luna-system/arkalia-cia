@@ -329,10 +329,10 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.green[50]?.withOpacity( 0.3),
+                    color: Colors.green[50]?.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: Colors.green.withOpacity( 0.3),
+                      color: Colors.green.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Column(

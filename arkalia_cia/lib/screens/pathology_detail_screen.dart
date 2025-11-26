@@ -147,7 +147,7 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
                 children: _pathology!.symptoms.map((symptom) {
                   return Chip(
                     label: Text(symptom),
-                    backgroundColor: _pathology!.color.withOpacity(0.1),
+                    backgroundColor: _pathology!.color.withValues(alpha: 0.1),
                   );
                 }).toList(),
               ),
@@ -163,7 +163,7 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
                 children: _pathology!.treatments.map((treatment) {
                   return Chip(
                     label: Text(treatment),
-                    backgroundColor: Colors.green.withOpacity(0.1),
+                    backgroundColor: Colors.green.withValues(alpha: 0.1),
                   );
                 }).toList(),
               ),
@@ -179,7 +179,7 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
                 children: _pathology!.exams.map((exam) {
                   return Chip(
                     label: Text(exam),
-                    backgroundColor: Colors.blue.withOpacity(0.1),
+                    backgroundColor: Colors.blue.withValues(alpha: 0.1),
                   );
                 }).toList(),
               ),

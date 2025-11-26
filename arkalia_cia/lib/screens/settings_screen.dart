@@ -149,11 +149,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     onTap: () async {
                       final isLoggedIn = await AuthApiService.isLoggedIn();
                       if (!mounted) return;
+                      final currentContext = context; // Stocker context avant les opérations async
                       if (isLoggedIn) {
                         // Afficher dialog de déconnexion
                         if (!mounted) return;
                         final shouldLogout = await showDialog<bool>(
-                          context: context,
+                          context: currentContext,
                           builder: (context) => AlertDialog(
                             title: const Text('Déconnexion'),
                             content: const Text('Voulez-vous vous déconnecter ?'),
@@ -178,7 +179,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           if (!mounted) return;
                           await AuthApiService.logout();
                           if (!mounted) return;
-                          Navigator.of(context).pushAndRemoveUntil(
+                          Navigator.of(currentContext).pushAndRemoveUntil(
                             MaterialPageRoute(builder: (context) => const LoginScreen()),
                             (route) => false,
                           );
@@ -186,7 +187,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       } else {
                         if (!mounted) return;
                         // Rediriger vers login
-                        Navigator.of(context).push(
+                        Navigator.of(currentContext).push(
                           MaterialPageRoute(builder: (context) => const LoginScreen()),
                         );
                       }

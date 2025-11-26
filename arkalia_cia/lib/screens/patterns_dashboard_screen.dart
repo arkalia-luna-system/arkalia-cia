@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:share_plus/share_plus.dart' as share_plus;
+import 'package:share_plus/share_plus.dart';
 import 'dart:convert';
 import '../services/api_service.dart';
 import '../services/backend_config_service.dart';
@@ -198,7 +198,7 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
         buffer.writeln();
       }
       
-      await share_plus.Share.share(
+      await Share.share(
         buffer.toString(),
         subject: 'Analyse Patterns - ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
       );
@@ -546,10 +546,10 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
               style: const TextStyle(fontSize: 16),
             ),
             backgroundColor: direction == 'increasing'
-                ? Colors.green.withOpacity(0.2)
+                ? Colors.green.withValues(alpha: 0.2)
                 : direction == 'decreasing'
-                    ? Colors.red.withOpacity(0.2)
-                    : Colors.grey.withOpacity(0.2),
+                    ? Colors.red.withValues(alpha: 0.2)
+                    : Colors.grey.withValues(alpha: 0.2),
           ),
         ],
       ),

@@ -40,7 +40,9 @@ class ThemeService {
         cardColor: const Color(0xFF242424), // Gris foncé doux
         
         // Fond des dialogs et surfaces élevées
-        dialogBackgroundColor: const Color(0xFF2A2A2A),
+        dialogTheme: const DialogThemeData(
+          backgroundColor: Color(0xFF2A2A2A),
+        ),
         
         // Couleurs primaires moins saturées
         primaryColor: const Color(0xFF64B5F6), // Bleu doux
@@ -83,12 +85,12 @@ class ThemeService {
         ),
         
         // Cartes : fond doux avec bordure subtile
-        cardTheme: const CardThemeData(
-          color: Color(0xFF242424),
+        cardTheme: CardTheme(
+          color: const Color(0xFF242424),
           elevation: 2,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(12)),
-            side: BorderSide(
+            borderRadius: BorderRadius.circular(12),
+            side: const BorderSide(
               color: Color(0x0DFFFFFF), // alpha: 0.05
               width: 1,
             ),
