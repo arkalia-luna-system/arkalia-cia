@@ -6,18 +6,19 @@ plugins {
     // Ne PAS appliquer le plugin Flutter ici - on l'applique après configuration
 }
 
-// Lire flutter.source depuis gradle.properties AVANT l'application du plugin Flutter
+// Lire flutter.source depuis gradle.properties OU propriété système -P AVANT l'application du plugin Flutter
 // Le plugin Flutter Gradle cherche cette propriété au moment de son application
+val flutterSourceFromSystem = project.findProperty("flutter.source") as String?
 val gradleProperties = java.util.Properties()
 val gradlePropertiesFile = rootProject.file("gradle.properties")
 if (gradlePropertiesFile.exists()) {
     gradlePropertiesFile.inputStream().use { gradleProperties.load(it) }
 }
-val flutterSourceFromProps = gradleProperties.getProperty("flutter.source")
+val flutterSourceFromProps = gradleProperties.getProperty("flutter.source") ?: flutterSourceFromSystem
 
 // Déterminer le répertoire source Flutter
 val flutterSourceDir = if (flutterSourceFromProps != null) {
-    // Utiliser le chemin depuis gradle.properties (peut être relatif ou absolu)
+    // Utiliser le chemin depuis gradle.properties ou -P (peut être relatif ou absolu)
     val sourceFile = file(flutterSourceFromProps)
     if (sourceFile.isAbsolute) {
         sourceFile
