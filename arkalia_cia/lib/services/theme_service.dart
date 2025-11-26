@@ -85,7 +85,7 @@ class ThemeService {
         ),
         
         // Cartes : fond doux avec bordure subtile
-        cardTheme: CardTheme(
+        cardTheme: CardThemeData(
           color: const Color(0xFF242424),
           elevation: 2,
           shape: RoundedRectangleBorder(
