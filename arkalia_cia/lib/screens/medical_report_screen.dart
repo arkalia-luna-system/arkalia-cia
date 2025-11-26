@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import '../services/api_service.dart';
-import '../utils/app_logger.dart';
 import '../utils/error_helper.dart';
 
 class MedicalReportScreen extends StatefulWidget {
