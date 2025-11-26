@@ -77,7 +77,9 @@ class TestSQLiteBackend:
 
     def setup_method(self):
         """Configuration avant chaque test"""
-        self.temp_db = tempfile.mktemp(suffix=".db")
+        fd, self.temp_db = tempfile.mkstemp(suffix=".db")
+        import os
+        os.close(fd)
         self.backend = SQLiteBackend(db_path=self.temp_db)
 
     def teardown_method(self):
@@ -209,7 +211,9 @@ class TestStorageManager:
     def test_backup_module(self):
         """Test de sauvegarde d'un module"""
         self.manager.save_state("test_module", {"key": "value"})
-        backup_path = tempfile.mktemp(suffix=".json")
+        fd, backup_path = tempfile.mkstemp(suffix=".json")
+        import os
+        os.close(fd)
         result = self.manager.backup_module("test_module", backup_path)
         assert result is True
         assert Path(backup_path).exists()
@@ -219,7 +223,9 @@ class TestStorageManager:
     def test_restore_module(self):
         """Test de restauration d'un module"""
         self.manager.save_state("test_module", {"key": "value"})
-        backup_path = tempfile.mktemp(suffix=".json")
+        fd, backup_path = tempfile.mkstemp(suffix=".json")
+        import os
+        os.close(fd)
         self.manager.backup_module("test_module", backup_path)
         self.manager.delete_module_data("test_module")
         result = self.manager.restore_module("test_module", backup_path)
@@ -229,7 +235,9 @@ class TestStorageManager:
 
     def test_sqlite_backend(self):
         """Test avec backend SQLite"""
-        temp_db = tempfile.mktemp(suffix=".db")
+        fd, temp_db = tempfile.mkstemp(suffix=".db")
+        import os
+        os.close(fd)
         manager = StorageManager(backend="sqlite", db_path=temp_db)
         result = manager.save_state("test_module", {"key": "value"})
         assert result is True
@@ -273,7 +281,9 @@ class TestStorageFunctions:
 
     def test_sqlite_backend_error_handling(self):
         """Test de gestion d'erreurs SQLite backend"""
-        temp_db = tempfile.mktemp(suffix=".db")
+        fd, temp_db = tempfile.mkstemp(suffix=".db")
+        import os
+        os.close(fd)
         backend = SQLiteBackend(db_path=temp_db)
         # Test avec une clé inexistante
         result = backend.get("nonexistent_key", default="default")

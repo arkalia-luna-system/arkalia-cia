@@ -4,6 +4,7 @@ Tests pour le validateur SSRF
 
 import pytest
 
+from arkalia_cia_python_backend.security import ssrf_validator
 from arkalia_cia_python_backend.security.ssrf_validator import (
     SSRFValidator,
     get_ssrf_validator,
@@ -97,9 +98,7 @@ class TestGetSSRFValidator:
 
     def test_singleton_pattern(self):
         """Test que get_ssrf_validator retourne la même instance"""
-        import arkalia_cia_python_backend.security.ssrf_validator as ssrf_module
-
-        ssrf_module._validator = None
+        ssrf_validator._validator = None
         validator1 = get_ssrf_validator()
         validator2 = get_ssrf_validator()
         assert validator1 is validator2

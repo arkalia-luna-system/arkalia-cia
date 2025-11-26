@@ -91,6 +91,8 @@ class TestHydrationReminders:
 
         should_reinforce = progress_percentage < 25 and current_hour >= 14
         assert should_reinforce is False
+        # Utiliser les variables pour éviter l'avertissement CodeQL
+        assert progress_percentage == 50 and current_hour == 15
 
 
 class TestHydrationStatistics:

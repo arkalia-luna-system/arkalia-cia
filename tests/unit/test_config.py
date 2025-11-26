@@ -4,6 +4,7 @@ Tests pour le module de configuration centralisée
 
 import os
 
+from arkalia_cia_python_backend import config
 from arkalia_cia_python_backend.config import Settings, get_settings
 
 
@@ -32,9 +33,7 @@ class TestSettings:
         try:
             os.environ["MAX_FILE_SIZE_MB"] = "100"
             # Réinitialiser le singleton pour tester
-            import arkalia_cia_python_backend.config as config_module
-
-            config_module._settings = None
+            config._settings = None
             settings = get_settings()
             assert settings.max_file_size_mb == 100
         finally:
@@ -43,9 +42,7 @@ class TestSettings:
             elif "MAX_FILE_SIZE_MB" in os.environ:
                 del os.environ["MAX_FILE_SIZE_MB"]
             # Réinitialiser pour les autres tests
-            import arkalia_cia_python_backend.config as config_module
-
-            config_module._settings = None
+            config._settings = None
 
     def test_file_size_conversion(self):
         """Test conversion MB → bytes"""
@@ -80,18 +77,14 @@ class TestGetSettings:
     def test_singleton_pattern(self):
         """Test que get_settings retourne la même instance"""
         # Réinitialiser le singleton
-        import arkalia_cia_python_backend.config as config_module
-
-        config_module._settings = None
+        config._settings = None
         settings1 = get_settings()
         settings2 = get_settings()
         assert settings1 is settings2
 
     def test_settings_persistence(self):
         """Test que les settings persistent entre appels"""
-        import arkalia_cia_python_backend.config as config_module
-
-        config_module._settings = None
+        config._settings = None
         settings1 = get_settings()
         original_value = settings1.max_file_size_mb
         settings1.max_file_size_mb = (
@@ -100,6 +93,6 @@ class TestGetSettings:
         settings2 = get_settings()
         assert settings2.max_file_size_mb == 999
         # Réinitialiser
-        config_module._settings = None
+        config._settings = None
         settings3 = get_settings()
         assert settings3.max_file_size_mb == original_value

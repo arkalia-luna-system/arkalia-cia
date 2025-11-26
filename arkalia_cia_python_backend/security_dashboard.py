@@ -2396,6 +2396,7 @@ class SecurityDashboard:
                 try:
                     self._lock_file.touch()
                 except OSError:
+                    # Ignorer les erreurs de mise à jour du verrou (non critique)
                     pass
                 logger.info(
                     f"🔄 Dashboard de sécurité ouvert/actualisé "
@@ -2416,6 +2417,7 @@ class SecurityDashboard:
                     try:
                         self._lock_file.touch()
                     except OSError:
+                        # Ignorer les erreurs de mise à jour du verrou (non critique)
                         pass
                     logger.info(
                         f"🌐 Dashboard de sécurité ouvert via 'open': {absolute_path}"
@@ -2431,6 +2433,7 @@ class SecurityDashboard:
                     try:
                         self._lock_file.touch()
                     except OSError:
+                        # Ignorer les erreurs de mise à jour du verrou (non critique)
                         pass
                     logger.info(
                         f"🌐 Dashboard de sécurité ouvert via 'start': {absolute_path}"
@@ -2443,6 +2446,7 @@ class SecurityDashboard:
                     try:
                         self._lock_file.touch()
                     except OSError:
+                        # Ignorer les erreurs de mise à jour du verrou (non critique)
                         pass
                     logger.info(
                         f"🌐 Dashboard de sécurité ouvert "

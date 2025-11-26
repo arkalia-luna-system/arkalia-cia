@@ -18,7 +18,9 @@ class TestCIADatabase:
 
     def setup_method(self):
         """Configuration avant chaque test"""
-        self.test_db_path = tempfile.mktemp(suffix=".db")
+        fd, self.test_db_path = tempfile.mkstemp(suffix=".db")
+        import os
+        os.close(fd)
         self.db = CIADatabase(self.test_db_path)
 
     def teardown_method(self):

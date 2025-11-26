@@ -208,13 +208,18 @@ def sanitize_html(text: str, allowed_tags: list[str] | None = None) -> str:
     else:
         # Fallback : supprimer tous les tags HTML
         # Protection basique contre XSS
+        # Utiliser des regex plus robustes pour éviter les contournements
+        # Supprimer les balises script (y compris avec attributs malformés)
         text = re.sub(
-            r"<script[^>]*>.*?</script>", "", text, flags=re.IGNORECASE | re.DOTALL
+            r"<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>", "", text, flags=re.IGNORECASE | re.DOTALL
         )
+        # Supprimer les balises iframe
         text = re.sub(
-            r"<iframe[^>]*>.*?</iframe>", "", text, flags=re.IGNORECASE | re.DOTALL
+            r"<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>", "", text, flags=re.IGNORECASE | re.DOTALL
         )
-        text = re.sub(r"javascript:", "", text, flags=re.IGNORECASE)
+        # Supprimer les protocoles javascript: (y compris avec variations)
+        text = re.sub(r"javascript\s*:", "", text, flags=re.IGNORECASE)
+        # Supprimer les gestionnaires d'événements inline
         text = re.sub(r"on\w+\s*=", "", text, flags=re.IGNORECASE)
         # Supprimer tous les autres tags HTML
         text = re.sub(r"<[^>]+>", "", text)

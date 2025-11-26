@@ -143,16 +143,12 @@ class MedicalReportService:
         self, user_id: str, start_date: datetime, end_date: datetime
     ) -> list[dict[str, Any]]:
         """Récupère les consultations récentes"""
-        try:
-            # Récupérer consultations depuis la base de données
-            # Note: Structure dépend de l'implémentation réelle
-            consultations: list[dict[str, Any]] = []
-            # TODO: Implémenter récupération consultations depuis DB
-            # Pour l'instant, retourner liste vide
-            return consultations
-        except Exception as e:
-            logger.warning(f"Erreur récupération consultations: {e}")
-            return []
+        # Récupérer consultations depuis la base de données
+        # Note: Structure dépend de l'implémentation réelle
+        consultations: list[dict[str, Any]] = []
+        # TODO: Implémenter récupération consultations depuis DB
+        # Pour l'instant, retourner liste vide
+        return consultations
 
     def _get_aria_data(self, user_id: str, days_range: int) -> dict[str, Any] | None:
         """Récupère les données ARIA (douleur, patterns, métriques)"""
@@ -423,6 +419,4 @@ class MedicalReportService:
         return str(formatted_text) if formatted_text else ""
 
     # TODO: Phase 2 - Export PDF
-    # def export_report_to_pdf(self, report: dict[str, Any]) -> bytes:
-    #     """Exporte le rapport en PDF (à implémenter Phase 2)"""
-    #     pass
+    # La fonction export_report_to_pdf sera implémentée dans une phase ultérieure
