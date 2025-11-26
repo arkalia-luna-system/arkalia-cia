@@ -2395,7 +2395,9 @@ class SecurityDashboard:
                 if system == "Darwin":  # macOS
                     # Utiliser 'open' avec -g pour ne pas amener
                     # la fenêtre au premier plan
-                    subprocess.run(["open", "-g", str(absolute_path)], check=False)  # nosec B607, B603
+                    subprocess.run(
+                        ["open", "-g", str(absolute_path)], check=False
+                    )  # nosec B607, B603
                     self._last_open_time = current_time
                     # Mettre à jour le verrou
                     try:

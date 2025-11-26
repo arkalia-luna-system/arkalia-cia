@@ -69,9 +69,9 @@ class TestRetryWithBackoff:
         # Vérifier que les délais augmentent exponentiellement
         # Avec backoff_factor=1.5: attempt 0 = 1.5^0 = 1.0, attempt 1 = 1.5^1 = 1.5
         assert len(delays) >= 2
-        assert delays[1] > delays[0], (
-            f"Expected delays[1]={delays[1]} > delays[0]={delays[0]}"
-        )
+        assert (
+            delays[1] > delays[0]
+        ), f"Expected delays[1]={delays[1]} > delays[0]={delays[0]}"
 
     def test_specific_exception_type(self):
         """Test retry seulement pour exceptions spécifiques"""

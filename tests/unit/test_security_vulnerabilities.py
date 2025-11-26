@@ -183,9 +183,9 @@ class TestSSRFProtection:
                 # Si rejeté, vérifier que ce n'est pas à cause d'une IP privée
                 try:
                     response_data = response.json()
-                    assert "privées" not in str(response_data), (
-                        f"URL publique {url} rejetée comme IP privée"
-                    )
+                    assert "privées" not in str(
+                        response_data
+                    ), f"URL publique {url} rejetée comme IP privée"
                 except Exception:
                     # Si on ne peut pas parser la réponse, c'est OK
                     pass
