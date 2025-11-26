@@ -9,8 +9,9 @@ plugins {
 
 // Configuration Flutter - doit être définie AVANT le bloc android
 // pour que flutter.minSdkVersion, etc. soient disponibles
+// Chemin relatif depuis android/app/build.gradle.kts vers arkalia_cia/
 flutter {
-    source = file("${rootProject.projectDir}/..")
+    source = "../.."
 }
 
 // Charger les propriétés de signature depuis key.properties (si existe)
