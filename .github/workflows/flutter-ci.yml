@@ -80,9 +80,9 @@ jobs:
       - name: "Flutter Build APK"
         run: |
           cd arkalia_cia
-          # Configurer le chemin Flutter source dans local.properties
-          echo "flutter.source=$(pwd)" >> android/local.properties
-          cat android/local.properties
+          # Configurer le chemin Flutter source dans gradle.properties (le plugin le lit depuis là)
+          echo "flutter.source=$(pwd)" >> android/gradle.properties
+          cat android/gradle.properties | grep flutter.source
           flutter build apk --release
 
       - name: "Upload Coverage to Codecov"
