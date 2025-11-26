@@ -980,6 +980,7 @@ class HealthPortalImportRequest(BaseModel):
 
 class HealthPortalManualImportRequest(BaseModel):
     """Requête pour import manuel depuis portail santé"""
+
     portal: str = Field(..., description="Portail source: 'andaman7' ou 'masante'")
     # Le fichier sera dans le body multipart, pas ici
 
@@ -1003,14 +1004,12 @@ async def import_health_portal_manual(
         if portal_lower not in ["andaman7", "masante"]:
             raise HTTPException(
                 status_code=400,
-                detail="Portail invalide. Utilisez 'andaman7' ou 'masante'"
+                detail="Portail invalide. Utilisez 'andaman7' ou 'masante'",
             )
 
         # Validation fichier
         if file.content_type != "application/pdf":
-            raise HTTPException(
-                status_code=400, detail="Fichier PDF obligatoire"
-            )
+            raise HTTPException(status_code=400, detail="Fichier PDF obligatoire")
 
         # Limite taille (50 MB)
         MAX_SIZE = 50 * 1024 * 1024
@@ -1022,6 +1021,7 @@ async def import_health_portal_manual(
 
         # Sauvegarder temporairement
         import tempfile
+
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
             tmp.write(file_content)
             tmp_path = tmp.name
@@ -1104,6 +1104,7 @@ async def import_health_portal_manual(
         finally:
             # Nettoyer fichier temporaire
             import os
+
             try:
                 os.unlink(tmp_path)
             except Exception:
