@@ -454,19 +454,31 @@ gradle.beforeProject { project ->
         if (project.hasProperty("android")) {
             try {
                 def android = project.extensions.findByName("android")
-                if (android != null && !android.hasProperty("flutter")) {
+                if (android != null) {
                     // Créer une propriété flutter factice avec les valeurs par défaut
-                    android.ext.flutter = [
+                    // Utiliser metaClass pour ajouter la propriété flutter
+                    android.metaClass.flutter = [
                         minSdkVersion: 21,
                         targetSdkVersion: 36,
                         compileSdkVersion: 36,
                         versionCode: 1,
                         versionName: "1.0.0"
                     ]
+                    // Aussi définir via ext pour compatibilité
+                    if (!android.hasProperty("flutter")) {
+                        android.ext.flutter = [
+                            minSdkVersion: 21,
+                            targetSdkVersion: 36,
+                            compileSdkVersion: 36,
+                            versionCode: 1,
+                            versionName: "1.0.0"
+                        ]
+                    }
                     println "✅ Init.gradle: Créé extension flutter factice pour ${project.name}"
                 }
             } catch (Exception e) {
                 // Ignorer si la configuration échoue
+                println "⚠️  Init.gradle: Erreur création extension flutter pour ${project.name}: ${e.message}"
             }
         }
     }
@@ -474,25 +486,43 @@ gradle.beforeProject { project ->
     // Configuration APRÈS l'évaluation pour forcer compileSdkVersion
     project.afterEvaluate {
         if (project.hasProperty("android")) {
-            def android = project.android
-            if (android != null) {
-                // Forcer compileSdkVersion pour les plugins Flutter (compatible Groovy)
-                try {
-                    if (android.compileSdkVersion == null) {
-                        android.compileSdkVersion = 36
-                        println "✅ Init.gradle: Forcé compileSdkVersion=36 pour ${project.name}"
-                    }
-                } catch (Exception e) {
-                    // Si compileSdkVersion n'existe pas, essayer compileSdk (Kotlin DSL)
+            try {
+                def android = project.android
+                if (android != null) {
+                    // Forcer compileSdkVersion pour les plugins Flutter (compatible Groovy)
                     try {
-                        if (android.compileSdk == null) {
-                            android.compileSdk = 36
-                            println "✅ Init.gradle: Forcé compileSdk=36 pour ${project.name}"
+                        // Essayer d'accéder à compileSdkVersion (Groovy)
+                        if (android.metaClass.hasProperty(android, 'compileSdkVersion')) {
+                            def currentSdk = android.compileSdkVersion
+                            if (currentSdk == null) {
+                                android.compileSdkVersion = 36
+                                println "✅ Init.gradle: Forcé compileSdkVersion=36 pour ${project.name}"
+                            }
                         }
-                    } catch (Exception e2) {
-                        // Ignorer si aucune des deux méthodes ne fonctionne
+                    } catch (Exception e) {
+                        // Si compileSdkVersion n'existe pas, essayer compileSdk (Kotlin DSL)
+                        try {
+                            if (android.metaClass.hasProperty(android, 'compileSdk')) {
+                                def currentSdk = android.compileSdk
+                                if (currentSdk == null) {
+                                    android.compileSdk = 36
+                                    println "✅ Init.gradle: Forcé compileSdk=36 pour ${project.name}"
+                                }
+                            }
+                        } catch (Exception e2) {
+                            // Dernière tentative : utiliser setCompileSdkVersion si disponible
+                            try {
+                                android.setCompileSdkVersion(36)
+                                println "✅ Init.gradle: Forcé compileSdkVersion=36 via setter pour ${project.name}"
+                            } catch (Exception e3) {
+                                // Ignorer si aucune méthode ne fonctionne
+                                println "⚠️  Init.gradle: Impossible de forcer compileSdk pour ${project.name}"
+                            }
+                        }
                     }
                 }
+            } catch (Exception e) {
+                println "⚠️  Init.gradle: Erreur configuration compileSdk pour ${project.name}: ${e.message}"
             }
         }
     }

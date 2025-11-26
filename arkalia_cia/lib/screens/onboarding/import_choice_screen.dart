@@ -281,7 +281,7 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
       );
 
       // Upload vers backend
-      final result = await HealthPortalImportService.uploadPortalPDF(
+      final uploadResult = await HealthPortalImportService.uploadPortalPDF(
         file,
         portal: portal,
       );
@@ -293,8 +293,8 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
 
       // Afficher résultat
       if (mounted) {
-        if (result['success'] == true) {
-          final count = result['imported_count'] ?? 0;
+        if (uploadResult['success'] == true) {
+          final count = uploadResult['imported_count'] ?? 0;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('✅ $count document(s) importé(s) avec succès depuis $portal'),
@@ -312,7 +312,7 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
             );
           }
         } else {
-          final error = result['error'] ?? 'Erreur inconnue';
+          final error = uploadResult['error'] ?? 'Erreur inconnue';
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('❌ Erreur: $error'),

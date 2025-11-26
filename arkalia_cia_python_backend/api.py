@@ -726,6 +726,77 @@ async def upload_document(
         raise HTTPException(status_code=500, detail=sanitize_error_detail(e)) from e
 
 
+@app.get(f"{API_PREFIX}/health-portals/documents")
+@limiter.limit("30/minute")
+async def get_health_portal_documents(
+    request: Request,
+    current_user: TokenData = Depends(get_current_active_user),
+    db: CIADatabase = Depends(get_database),
+):
+    """
+    Récupérer tous les documents importés depuis les portails santé
+    """
+    try:
+        doc_service = get_document_service()
+        user_id = int(current_user.user_id)
+
+        # Récupérer tous les documents de l'utilisateur
+        documents = doc_service.get_user_documents(user_id)
+
+        return {
+            "success": True,
+            "documents": documents,
+            "count": len(documents),
+        }
+    except Exception as e:
+        logger.error(
+            f"Erreur récupération documents portail santé: {sanitize_log_message(str(e))}",
+            exc_info=True,
+        )
+        raise HTTPException(status_code=500, detail=sanitize_error_detail(e)) from e
+
+
+@app.delete(f"{API_PREFIX}/health-portals/documents/{{doc_id}}")
+@limiter.limit("10/minute")
+async def delete_health_portal_document(
+    request: Request,
+    doc_id: int,
+    current_user: TokenData = Depends(get_current_active_user),
+    db: CIADatabase = Depends(get_database),
+):
+    """
+    Supprimer un document importé (RGPD)
+    """
+    try:
+        if not current_user.user_id:
+            raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
+
+        user_id = int(current_user.user_id)
+
+        # Vérifier que le document appartient à l'utilisateur
+        user_docs = db.get_user_documents(user_id, skip=0, limit=1000)
+        doc_exists = any(doc.get("id") == doc_id for doc in user_docs)
+
+        if not doc_exists:
+            raise HTTPException(status_code=404, detail="Document non trouvé")
+
+        # Supprimer le document via la base de données
+        db.delete_document(doc_id)
+
+        return {
+            "success": True,
+            "message": "Document supprimé",
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(
+            f"Erreur suppression document portail santé: {sanitize_log_message(str(e))}",
+            exc_info=True,
+        )
+        raise HTTPException(status_code=500, detail=sanitize_error_detail(e)) from e
+
+
 @app.get(f"{API_PREFIX}/documents", response_model=list[DocumentResponse])
 @limiter.limit("60/minute")  # Limite de 60 requêtes par minute
 async def get_documents(

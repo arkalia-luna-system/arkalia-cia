@@ -292,7 +292,7 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                     value: stats['compliance_rate'] / 100,
                     minHeight: 8,
                     borderRadius: BorderRadius.circular(4),
-                    backgroundColor: Colors.grey.withOpacity( 0.2),
+                    backgroundColor: Colors.grey.withOpacity(0.2),
                     valueColor: AlwaysStoppedAnimation<Color>(
                       dialogTheme.colorScheme.primary,
                     ),
@@ -350,11 +350,11 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                           colors: isToday
                               ? [
                                   theme.colorScheme.primary,
-                                  theme.colorScheme.primary.withOpacity( 0.6),
+                                  theme.colorScheme.primary.withOpacity(0.6),
                                 ]
                               : [
-                                  theme.colorScheme.secondary.withOpacity( 0.6),
-                                  theme.colorScheme.secondary.withOpacity( 0.3),
+                                  theme.colorScheme.secondary.withOpacity(0.6),
+                                  theme.colorScheme.secondary.withOpacity(0.3),
                                 ],
                         ),
                         borderRadius: const BorderRadius.vertical(
@@ -415,7 +415,7 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: theme.colorScheme.primary.withOpacity( 0.2),
+                color: theme.colorScheme.primary.withOpacity(0.2),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: theme.colorScheme.primary),

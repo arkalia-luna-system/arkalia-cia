@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:share_plus/share_plus.dart' as SharePlus;
 import '../services/api_service.dart';
 import '../utils/error_helper.dart';
 
@@ -106,7 +106,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
     if (_report == null || _report!['formatted_text'] == null) return;
 
     try {
-      await Share.share(
+      await SharePlus.Share.share(
         _report!['formatted_text'],
         subject: 'Rapport médical - ${widget.doctorName ?? 'Consultation'}',
       );

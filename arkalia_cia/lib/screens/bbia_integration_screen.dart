@@ -44,7 +44,7 @@ class BBIAIntegrationScreen extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
+                      color: Colors.white.withOpacity(0.2),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -70,7 +70,7 @@ class BBIAIntegrationScreen extends StatelessWidget {
                   Text(
                     'Moteur cognitif pour Reachy Mini',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: Colors.white.withValues(alpha: 0.9),
+                          color: Colors.white.withOpacity(0.9),
                         ),
                     textAlign: TextAlign.center,
                   ),

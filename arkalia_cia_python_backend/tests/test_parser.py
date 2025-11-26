@@ -1,0 +1,117 @@
+"""
+Tests du parser avec PDFs générés
+"""
+
+import sys
+import os
+from pathlib import Path
+
+# Ajouter le chemin parent pour les imports
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from services.health_portal_parsers import get_health_portal_parser
+from tests.generate_test_pdfs import generate_test_andaman7_pdf, generate_test_masante_pdf
+
+
+def test_andaman7_parser():
+    """Tester le parser Andaman 7"""
+    print("\n=== TEST PARSER ANDAMAN7 ===")
+    
+    # Générer PDF de test
+    test_file = "test_andaman7.pdf"
+    generate_test_andaman7_pdf(test_file)
+    
+    if not os.path.exists(test_file):
+        print(f"❌ Erreur: {test_file} non créé")
+        return False
+    
+    try:
+        # Parser le PDF
+        parser = get_health_portal_parser()
+        result = parser.parse_portal_pdf(test_file, "andaman7")
+        
+        print(f"\n✅ Documents trouvés: {result.get('total_documents', 0)}")
+        
+        documents = result.get("documents", [])
+        for i, doc in enumerate(documents, 1):
+            print(f"\n  Document {i}:")
+            print(f"    Type: {doc.get('type')}")
+            print(f"    Date: {doc.get('date')}")
+            print(f"    Praticien: {doc.get('practitioner')}")
+            print(f"    Description: {doc.get('description', '')[:80]}...")
+        
+        # Assertions
+        assert len(documents) > 0, "❌ Aucun document trouvé"
+        assert any(d['type'] == 'Ordonnance' for d in documents), "❌ Ordonnance non trouvée"
+        assert any(d['type'] == 'Consultation' for d in documents), "❌ Consultation non trouvée"
+        
+        print("\n✅ Tests Andaman7 PASSÉS")
+        return True
+        
+    except Exception as e:
+        print(f"\n❌ Erreur: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+    finally:
+        # Nettoyer
+        if os.path.exists(test_file):
+            os.unlink(test_file)
+
+
+def test_masante_parser():
+    """Tester le parser MaSanté"""
+    print("\n=== TEST PARSER MASANTE ===")
+    
+    # Générer PDF de test
+    test_file = "test_masante.pdf"
+    generate_test_masante_pdf(test_file)
+    
+    if not os.path.exists(test_file):
+        print(f"❌ Erreur: {test_file} non créé")
+        return False
+    
+    try:
+        # Parser le PDF
+        parser = get_health_portal_parser()
+        result = parser.parse_portal_pdf(test_file, "masante")
+        
+        print(f"\n✅ Documents trouvés: {result.get('total_documents', 0)}")
+        
+        documents = result.get("documents", [])
+        for i, doc in enumerate(documents, 1):
+            print(f"\n  Document {i}:")
+            print(f"    Type: {doc.get('type')}")
+            print(f"    Date: {doc.get('date')}")
+            print(f"    Praticien: {doc.get('practitioner')}")
+        
+        # Assertions
+        assert len(documents) > 0, "❌ Aucun document trouvé"
+        
+        print("\n✅ Tests MaSanté PASSÉS")
+        return True
+        
+    except Exception as e:
+        print(f"\n❌ Erreur: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+    finally:
+        # Nettoyer
+        if os.path.exists(test_file):
+            os.unlink(test_file)
+
+
+if __name__ == "__main__":
+    print("🚀 Démarrage des tests de parser...")
+    
+    success_andaman7 = test_andaman7_parser()
+    success_masante = test_masante_parser()
+    
+    if success_andaman7 and success_masante:
+        print("\n🎉 TOUS LES TESTS SONT PASSÉS !")
+        sys.exit(0)
+    else:
+        print("\n❌ Certains tests ont échoué")
+        sys.exit(1)
+
