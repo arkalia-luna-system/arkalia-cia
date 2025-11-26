@@ -1,12 +1,15 @@
 # 🚀 Instructions Release v1.3.0 - Arkalia CIA
 
 **Date** : 24 novembre 2025  
+**Dernière mise à jour** : 26 novembre 2025  
 **Version** : 1.3.0  
-**Statut** : ✅ **Prêt pour release**
+**Statut** : ✅ **Version publiée en tests internes**
 
 ---
 
 ## ✅ Ce qui a été fait
+
+### Git et Versioning (24 novembre 2025)
 
 1. ✅ **Versions unifiées** : Toutes les versions sont maintenant à 1.3.0
 2. ✅ **Commit et push** : Toutes les modifications ont été commitées et pushées sur `develop`
@@ -14,6 +17,15 @@
 4. ✅ **Merge sur main** : `develop` a été mergé dans `main` avec message détaillé
 5. ✅ **Backup créé** : Branche `backup/v1.3.0` créée et pushée
 6. ✅ **Vérification** : `main` et `backup/v1.3.0` pointent vers le même commit
+
+### Publication Google Play Store (26 novembre 2025)
+
+1. ✅ **Keystore généré** : `arkalia-cia-release.jks` créé et configuré
+2. ✅ **Signature release** : Configuration complète et fonctionnelle
+3. ✅ **App Bundle signé** : Build réussi avec signature release (47.9MB → 10.6MB optimisé)
+4. ✅ **Upload Play Console** : Version 1.3.0 uploadée et publiée
+5. ✅ **Tests internes** : Version disponible pour 4 testeurs
+6. ✅ **Lien de test** : <https://play.google.com/apps/internaltest/4701447837031810861>
 
 ---
 
@@ -49,32 +61,30 @@ flutter test
 make lint
 ```
 
-### 2. Build Release Android
+### 2. Build Release Android ✅ FAIT (26 novembre 2025)
 
 ```bash
 cd /Volumes/T7/arkalia-cia/arkalia_cia
 
 # Build App Bundle pour Google Play Store
-flutter build appbundle --release
+./android/build-android.sh flutter build appbundle --release
 
 # Le fichier sera dans :
 # build/app/outputs/bundle/release/app-release.aab
 ```
 
-**Fichier de sortie** : `build/app/outputs/bundle/release/app-release.aab`
+**Fichier de sortie** : `build/app/outputs/bundle/release/app-release.aab` ✅
 
-### 3. Configuration Google Play Console
+### 3. Configuration Google Play Console ✅ FAIT (26 novembre 2025)
 
-1. **Se connecter** à [Google Play Console](https://play.google.com/console)
-2. **Créer une nouvelle app** (si pas déjà fait)
-   - Nom : Arkalia CIA
-   - Langue par défaut : Français
-   - Type : Application
-   - Gratuit/Payant : Gratuit
-3. **Remplir les métadonnées** depuis `docs/deployment/PLAY_STORE_METADATA.md`
-4. **Uploader l'App Bundle** (`app-release.aab`)
-5. **Ajouter les screenshots** (si disponibles)
-6. **Soumettre pour révision**
+1. ✅ **Application créée** : Arkalia CIA
+2. ✅ **Version 1.3.0 uploadée** : App Bundle signé en release
+3. ✅ **Notes de version ajoutées** : Description complète
+4. ✅ **Tests internes configurés** : Version publiée et active
+5. ✅ **Testeurs ajoutés** : 4 utilisateurs dans la liste "Testeurs internes"
+6. ✅ **Lien de test créé** : https://play.google.com/apps/internaltest/4701447837031810861
+
+**Note** : Les testeurs peuvent devoir attendre 2-4 heures pour voir l'app dans le Play Store (délai de synchronisation normal).
 
 ### 4. Documentation à mettre à jour (Optionnel)
 
@@ -158,14 +168,29 @@ git push origin v1.3.1
 - [x] Merge develop → main
 - [x] Push main sur origin
 - [x] Branche backup/v1.3.0 créée
-- [ ] Tests finaux effectués
-- [ ] Build App Bundle réussi
-- [ ] Upload sur Google Play Console
-- [ ] Métadonnées complétées
-- [ ] Soumission pour révision
+       - [x] Tests finaux effectués ✅
+       - [x] Build App Bundle réussi ✅ (26 novembre 2025)
+       - [x] Upload sur Google Play Console ✅ (26 novembre 2025)
+       - [x] Version publiée en tests internes ✅ (26 novembre 2025)
+       - [x] Testeurs ajoutés ✅ (26 novembre 2025)
+       - [ ] Métadonnées complètes (pour production future)
+       - [ ] Soumission pour production publique (optionnel)
 
 ---
 
-**Dernière mise à jour** : 24 novembre 2025  
+**Dernière mise à jour** : 26 novembre 2025  
+**Statut** : ✅ Version 1.3.0 publiée en tests internes - Disponible pour 4 testeurs
+
+---
+
+## 🎉 Accomplissements du 26 novembre 2025
+
+- ✅ Keystore Android généré et configuré
+- ✅ Signature release fonctionnelle
+- ✅ App Bundle signé et optimisé (10.6MB)
+- ✅ Version 1.3.0 publiée sur Google Play Console
+- ✅ Tests internes actifs avec 4 testeurs
+- ✅ Lien de test disponible : <https://play.google.com/apps/internaltest/4701447837031810861>
+
 **Vous êtes maintenant sur la branche `develop`** ✅
 

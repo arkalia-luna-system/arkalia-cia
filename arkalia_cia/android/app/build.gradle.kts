@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -7,9 +9,9 @@ plugins {
 
 // Charger les propriétés de signature depuis key.properties (si existe)
 val keystorePropertiesFile = rootProject.file("key.properties")
-val keystoreProperties = java.util.Properties()
+val keystoreProperties = Properties()
 if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(java.io.FileInputStream(keystorePropertiesFile))
+    keystoreProperties.load(keystorePropertiesFile.inputStream())
 }
 
 android {
@@ -49,7 +51,12 @@ android {
             create("release") {
                 keyAlias = keystoreProperties["keyAlias"] as String
                 keyPassword = keystoreProperties["keyPassword"] as String
-                storeFile = file(keystoreProperties["storeFile"] as String)
+                val keystorePath = keystoreProperties["storeFile"] as String
+                storeFile = if (keystorePath.startsWith("/")) {
+                    file(keystorePath)
+                } else {
+                    file("${rootProject.projectDir}/${keystorePath}")
+                }
                 storePassword = keystoreProperties["storePassword"] as String
             }
         }
@@ -79,6 +86,26 @@ android {
                 // Exclure tous les patterns macOS
                 // Note: Les exclusions sont gérées par le build.gradle.kts racine
                 // Ici on configure seulement le packaging Android
+            }
+        }
+    }
+    
+    // Nettoyer les fichiers macOS AVANT processReleaseResources
+    afterEvaluate {
+        tasks.named("processReleaseResources").configure {
+            doFirst {
+                val intermediatesDir = file("${project.buildDir}/intermediates/merged_res/release/mergeReleaseResources")
+                if (intermediatesDir.exists()) {
+                    intermediatesDir.walkTopDown()
+                        .filter { it.isFile && (it.name.startsWith("._") || it.name.contains("._")) }
+                        .forEach { 
+                            try {
+                                it.delete()
+                            } catch (e: Exception) {
+                                // Ignorer les erreurs
+                            }
+                        }
+                }
             }
         }
     }

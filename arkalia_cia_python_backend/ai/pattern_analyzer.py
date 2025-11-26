@@ -144,7 +144,9 @@ class AdvancedPatternAnalyzer:
             trends["direction"] = (
                 "increasing"
                 if slope > 0.1
-                else "decreasing" if slope < -0.1 else "stable"
+                else "decreasing"
+                if slope < -0.1
+                else "stable"
             )
 
             # Force de la tendance

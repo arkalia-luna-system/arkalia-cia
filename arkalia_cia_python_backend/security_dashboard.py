@@ -2194,7 +2194,7 @@ class SecurityDashboard:
         <div class="metric-row">
             <span class="metric-label">📊 Total Requests</span>
             <span class="metric-value">{
-                total_requests if total_requests > 0 else hits + misses:,}</span>
+            total_requests if total_requests > 0 else hits + misses:,}</span>
         </div>
         <div class="metric-row">
             <span class="metric-label">⚡ Hit Rate</span>
@@ -2247,8 +2247,10 @@ class SecurityDashboard:
         <div class="metric-row">
             <span class="metric-label">⚡ Athalia Components</span>
             <span class="metric-value">{
-                "✅ Disponibles" if security_data.get("athalia_available")
-                else "❌ Non disponibles"}</span>
+            "✅ Disponibles"
+            if security_data.get("athalia_available")
+            else "❌ Non disponibles"
+        }</span>
         </div>
         """
 
@@ -2393,9 +2395,7 @@ class SecurityDashboard:
                 if system == "Darwin":  # macOS
                     # Utiliser 'open' avec -g pour ne pas amener
                     # la fenêtre au premier plan
-                    subprocess.run(
-                        ["open", "-g", str(absolute_path)], check=False
-                    )  # nosec B607, B603
+                    subprocess.run(["open", "-g", str(absolute_path)], check=False)  # nosec B607, B603
                     self._last_open_time = current_time
                     # Mettre à jour le verrou
                     try:

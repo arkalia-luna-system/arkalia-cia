@@ -648,9 +648,7 @@ async def login(
 async def refresh_token_endpoint(request: Request, token_request: RefreshTokenRequest):
     """Rafraîchit un token d'accès avec un refresh token"""
     try:
-        token_data = verify_token(
-            token_request.refresh_token, token_type="refresh"
-        )  # nosec B106
+        token_data = verify_token(token_request.refresh_token, token_type="refresh")  # nosec B106
 
         # Créer un nouveau token d'accès
         new_token_data = {

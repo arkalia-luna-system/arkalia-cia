@@ -209,9 +209,9 @@ class TestPathologyTemplates:
 
         for template in templates:
             for field in required_fields:
-                assert (
-                    field in template
-                ), f"Champ {field} manquant dans {template['name']}"
+                assert field in template, (
+                    f"Champ {field} manquant dans {template['name']}"
+                )
 
     def test_reminder_frequencies(self):
         """Test que les fréquences de rappels sont valides"""

@@ -739,8 +739,7 @@ class ConversationalAI:
                                 {
                                     "type": "sleep_pain",
                                     "description": (
-                                        "Corrélation entre manque de sommeil "
-                                        "et douleur"
+                                        "Corrélation entre manque de sommeil et douleur"
                                     ),
                                     "confidence": 0.65,
                                     "severity": "medium",

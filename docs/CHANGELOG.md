@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.3.0] - 2025-11-26
+
+### 🎉 Publication Google Play Store
+
+#### Configuration et Publication
+- ✅ Keystore Android généré et configuré (26 novembre 2025)
+- ✅ Signature release fonctionnelle (certificat Arkalia Luna System, valide jusqu'en 2053)
+- ✅ App Bundle signé en release (47.9MB → 10.6MB optimisé)
+- ✅ Version 1.3.0 uploadée sur Google Play Console (26 novembre 2025)
+- ✅ Version publiée en tests internes (26 novembre 2025)
+- ✅ Testeurs ajoutés (4 utilisateurs)
+- ✅ Lien de test créé : https://play.google.com/apps/internaltest/4701447837031810861
+
+#### Scripts et Configuration
+- ✅ Scripts de nettoyage macOS améliorés pour build Android
+- ✅ Configuration Gradle optimisée pour signature automatique
+- ✅ Script `build-android.sh` amélioré avec surveillance fichiers macOS
+
+---
+
 ## [1.3.0] - 2025-11-23
 
 ### Phase 1 : Améliorations Immédiates — TERMINÉE

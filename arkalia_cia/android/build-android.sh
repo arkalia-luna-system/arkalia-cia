@@ -16,10 +16,16 @@ echo -e "${GREEN}🔧 Configuration Gradle pour build Android${NC}"
 export GRADLE_USER_HOME="$HOME/.gradle"
 export GRADLE_OPTS="-Dorg.gradle.user.home=$HOME/.gradle -Duser.home=$HOME"
 
+# Obtenir le répertoire du script (android/)
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
 # Arrêter tous les daemons Gradle existants
 echo -e "${YELLOW}🛑 Arrêt des daemons Gradle existants...${NC}"
-cd "$(dirname "$0")"
-./gradlew --stop 2>/dev/null || true
+if [ -f "$SCRIPT_DIR/gradlew" ]; then
+    cd "$SCRIPT_DIR"
+    ./gradlew --stop 2>/dev/null || true
+    cd - > /dev/null
+fi
 
 # Attendre un peu pour que les daemons se terminent
 sleep 2
@@ -36,9 +42,6 @@ echo "   GRADLE_USER_HOME=$GRADLE_USER_HOME"
 echo "   GRADLE_OPTS=$GRADLE_OPTS"
 echo "   HOME=$HOME"
 
-# Obtenir le répertoire du script (android/)
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-
 # Retourner au répertoire du projet Flutter (arkalia_cia/)
 # Le script est dans arkalia_cia/android/, donc on remonte d'un niveau
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
@@ -52,7 +55,10 @@ if [ ! -f "$PROJECT_DIR/pubspec.yaml" ]; then
 fi
 
 # Aller dans le répertoire du projet Flutter
-cd "$PROJECT_DIR"
+cd "$PROJECT_DIR" || {
+    echo -e "${RED}❌ Erreur: Impossible d'accéder au répertoire $PROJECT_DIR${NC}"
+    exit 1
+}
 
 # Nettoyer les fichiers macOS cachés juste avant le build
 echo -e "${YELLOW}🧹 Nettoyage des fichiers macOS avant build...${NC}"
@@ -63,10 +69,14 @@ if [ -f "$PREVENT_SCRIPT" ]; then
     chmod +x "$PREVENT_SCRIPT"
     "$PREVENT_SCRIPT" || true
 else
-    # Fallback : nettoyage manuel
-    find . -name "._*" -type f ! -path "./.git/*" -delete 2>/dev/null || true
-    find . -name ".DS_Store" -type f ! -path "./.git/*" -delete 2>/dev/null || true
-    find . -name ".AppleDouble" -type d ! -path "./.git/*" -exec rm -rf {} + 2>/dev/null || true
+    # Fallback : nettoyage manuel ultra-agressif
+    find . -type f \( -name "._*" -o -name ".!*!._*" -o -name ".DS_Store" \) ! -path "./.git/*" ! -path "./.dart_tool/*" -delete 2>/dev/null || true
+    find . -type d \( -name ".AppleDouble" -o -name ".Spotlight-V100" -o -name ".Trashes" \) ! -path "./.git/*" -exec rm -rf {} + 2>/dev/null || true
+fi
+
+# Nettoyer spécifiquement dans build/ (même s'il n'existe pas encore)
+if [ -d "build" ]; then
+    find build -type f \( -name "._*" -o -name ".!*!._*" -o -name ".DS_Store" \) -delete 2>/dev/null || true
 fi
 
 # Lancer un script de surveillance en arrière-plan pour supprimer les fichiers pendant le build
@@ -77,7 +87,18 @@ if [ -f "$WATCH_SCRIPT" ]; then
     WATCH_PID=$!
     echo -e "${GREEN}✅ Surveillance des fichiers macOS activée (PID: $WATCH_PID)${NC}"
     # Tuer le processus de surveillance à la fin
-    trap "kill $WATCH_PID 2>/dev/null" EXIT
+    trap "kill $WATCH_PID 2>/dev/null || true" EXIT
+else
+    # Fallback : surveillance simple en arrière-plan
+    (
+        while true; do
+            sleep 2
+            find build -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
+        done
+    ) &
+    WATCH_PID=$!
+    echo -e "${GREEN}✅ Surveillance simple activée (PID: $WATCH_PID)${NC}"
+    trap "kill $WATCH_PID 2>/dev/null || true" EXIT
 fi
 
 # Exécuter la commande Flutter passée en argument
@@ -86,7 +107,10 @@ echo ""
 
 # Exécuter la commande Flutter avec les variables d'environnement forcées
 # S'assurer que nous sommes dans le bon répertoire
-cd "$PROJECT_DIR"
+cd "$PROJECT_DIR" || {
+    echo -e "${RED}❌ Erreur: Impossible d'accéder au répertoire $PROJECT_DIR${NC}"
+    exit 1
+}
 
 # Exécuter la commande passée en argument (ex: "flutter build apk --debug")
 # avec les variables d'environnement forcées
