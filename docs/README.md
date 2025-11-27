@@ -35,15 +35,18 @@ Index de navigation pour toute la documentation du projet Arkalia CIA.
 ### 🚀 Déploiement
 
 - **[deployment/GUIDE_DEPLOIEMENT_FINAL.md](./deployment/GUIDE_DEPLOIEMENT_FINAL.md)** — Guide complet de déploiement
+- **[deployment/DEPLOYMENT.md](./deployment/DEPLOYMENT.md)** — Guide de déploiement détaillé
 - **[deployment/PLAY_STORE_SETUP.md](./deployment/PLAY_STORE_SETUP.md)** — Configuration Google Play Store
 - **[deployment/BUILD_RELEASE_ANDROID.md](./deployment/BUILD_RELEASE_ANDROID.md)** — Build Android release
 - **[deployment/INSTRUCTIONS_RELEASE_V1.3.1.md](./deployment/INSTRUCTIONS_RELEASE_V1.3.1.md)** — Instructions release 1.3.1
+- **[deployment/WORKFLOW_DEPLOIEMENT_AUTOMATIQUE.md](./deployment/WORKFLOW_DEPLOIEMENT_AUTOMATIQUE.md)** — Workflow déploiement automatique
 
 ### 🔍 Audits et Analyses
 
 - **[audits/AUDIT_COMPLET_27_NOVEMBRE_2025.md](./audits/AUDIT_COMPLET_27_NOVEMBRE_2025.md)** — Audit complet consolidé (27 novembre 2025)
 - **[audits/AUDITS_CONSOLIDES.md](./audits/AUDITS_CONSOLIDES.md)** — Audits consolidés historiques
 - **[audits/ANALYSES_CONSOLIDEES.md](./audits/ANALYSES_CONSOLIDEES.md)** — Analyses consolidées
+- **[audits/RAPPORT_AUDIT_TESTS.md](./audits/RAPPORT_AUDIT_TESTS.md)** — Rapport audit tests
 - **[CORRECTIONS_AUDIT_CONSOLIDEES.md](./CORRECTIONS_AUDIT_CONSOLIDEES.md)** — Corrections d'audit consolidées
 - **[analysis/ANALYSE_COMPLETE_BESOINS_MERE.md](./analysis/ANALYSE_COMPLETE_BESOINS_MERE.md)** — Analyse complète des besoins
 - **[analysis/BESOINS_MERE_23_NOVEMBRE_2025.md](./analysis/BESOINS_MERE_23_NOVEMBRE_2025.md)** — Besoins mère 23 novembre
