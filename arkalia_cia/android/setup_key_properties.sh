@@ -5,13 +5,18 @@ set -e
 
 cd "$(dirname "$0")"
 
-if [ ! -f "arkalia-cia-release.jks" ]; then
+# Vérifier si les fichiers sont des liens symboliques ou des fichiers réels
+KEYSTORE_PATH="arkalia-cia-release.jks"
+if [ -L "$KEYSTORE_PATH" ]; then
+    KEYSTORE_REAL=$(readlink -f "$KEYSTORE_PATH")
+    echo "ℹ️  Keystore est un lien symbolique vers: $KEYSTORE_REAL"
+elif [ ! -f "$KEYSTORE_PATH" ]; then
     echo "❌ Erreur : Le keystore n'existe pas !"
     echo "   Exécutez d'abord : ./generate_keystore.sh"
     exit 1
 fi
 
-if [ -f "key.properties" ]; then
+if [ -f "key.properties" ] || [ -L "key.properties" ]; then
     echo "⚠️  key.properties existe déjà"
     read -p "Voulez-vous le recréer ? (o/N) " -n 1 -r
     echo
