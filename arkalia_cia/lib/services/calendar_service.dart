@@ -94,7 +94,7 @@ class CalendarService {
         // Les accesseurs .red, .green, .blue retournent des valeurs entre 0 et 255
         final r = doctorColor.red & 0xff;
         final g = doctorColor.green & 0xff;
-        final b = (doctorColor.toARGB32() >> 0) & 0xff; // Utiliser toARGB32() au lieu de .blue
+        final b = (doctorColor.value >> 0) & 0xff; // Extraire le composant bleu depuis value
         final colorHex = '#${r.toRadixString(16).padLeft(2, '0').toUpperCase()}'
             '${g.toRadixString(16).padLeft(2, '0').toUpperCase()}'
             '${b.toRadixString(16).padLeft(2, '0').toUpperCase()}';
