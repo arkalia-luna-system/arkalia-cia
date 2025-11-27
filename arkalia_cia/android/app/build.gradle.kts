@@ -1,11 +1,7 @@
 import java.util.Properties
 
-// Configurer flutter.source AVANT le bloc plugins
-// Le plugin Flutter Gradle lit cette propriété depuis gradle.properties
-// ou depuis project.findProperty("flutter.source")
+// Définir le répertoire source Flutter par défaut (fallback)
 val flutterSourceDir = projectDir.parentFile.parentFile
-// Stocker dans project.ext pour que le plugin puisse y accéder
-project.ext.set("flutter.source", flutterSourceDir.absolutePath)
 
 plugins {
     id("com.android.application")
@@ -14,13 +10,12 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-// Configuration Flutter - Le plugin devrait avoir lu flutter.source depuis project.ext
-// ou depuis gradle.properties, mais on le confirme ici aussi
+// Configuration Flutter - Le plugin lit flutter.source depuis gradle.properties ou -P
+// Si ce n'est pas défini, utiliser le fallback
 flutter {
-    // Le plugin lit depuis gradle.properties ou project.ext automatiquement
-    // Si ça ne fonctionne pas, spécifier explicitement
+    // Le plugin lit depuis gradle.properties ou -Pflutter.source automatiquement
+    // Si ça ne fonctionne pas, utiliser le fallback
     source = project.findProperty("flutter.source") as? String 
-        ?: project.ext.get("flutter.source") as? String
         ?: flutterSourceDir.absolutePath
 }
 

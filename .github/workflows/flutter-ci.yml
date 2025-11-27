@@ -77,18 +77,16 @@ jobs:
             echo "❌ index.html missing, but continuing..."
           fi
 
-      - name: "Flutter Build APK"
-        run: |
-          cd arkalia_cia
-          # Configurer le chemin Flutter source dans local.properties (le plugin le lit depuis là)
-          FLUTTER_SOURCE_DIR=$(pwd)
-          echo "flutter.source=$FLUTTER_SOURCE_DIR" >> android/local.properties
-          echo "flutter.source.dir=$FLUTTER_SOURCE_DIR" >> android/local.properties
-          # Aussi dans gradle.properties
-          echo "flutter.source=$FLUTTER_SOURCE_DIR" >> android/gradle.properties
-          echo "Flutter source directory: $FLUTTER_SOURCE_DIR"
-          cat android/local.properties | grep flutter
-          flutter build apk --release
+            - name: "Flutter Build APK"
+              run: |
+                cd arkalia_cia
+                # Configurer le chemin Flutter source dans gradle.properties ET via -P
+                FLUTTER_SOURCE_DIR=$(pwd)
+                echo "flutter.source=$FLUTTER_SOURCE_DIR" >> android/gradle.properties
+                echo "Flutter source directory: $FLUTTER_SOURCE_DIR"
+                cat android/gradle.properties | grep flutter.source
+                # Passer aussi via -P pour que le plugin le trouve au moment de son application
+                flutter build apk --release -Pflutter.source=$FLUTTER_SOURCE_DIR
 
       - name: "Upload Coverage to Codecov"
         if: hashFiles('arkalia_cia/coverage/lcov.info') != ''
