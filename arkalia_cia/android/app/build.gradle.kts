@@ -1,7 +1,42 @@
 import java.util.Properties
 
-// Définir le répertoire source Flutter par défaut (fallback)
-val flutterSourceDir = projectDir.parentFile.parentFile
+// Configurer flutter.source AVANT le bloc plugins
+// Le plugin Flutter Gradle lit cette propriété au moment de son application
+// Il lit depuis gradle.properties, -Pflutter.source, ou project.findProperty("flutter.source")
+val flutterSourceFromSystem = project.findProperty("flutter.source") as? String
+val flutterSourceFromGradleProps = gradle.startParameter.projectProperties["flutter.source"] as? String
+
+// Lire aussi depuis gradle.properties
+val gradleProps = Properties()
+val gradlePropsFile = rootProject.file("gradle.properties")
+if (gradlePropsFile.exists()) {
+    gradlePropsFile.inputStream().use { gradleProps.load(it) }
+}
+val flutterSourceFromProps = gradleProps.getProperty("flutter.source")
+
+// Déterminer le répertoire source Flutter (priorité: -P > gradle.properties > fallback)
+val flutterSourceDir = if (flutterSourceFromGradleProps != null) {
+    // Chemin absolu depuis -P
+    file(flutterSourceFromGradleProps)
+} else if (flutterSourceFromSystem != null) {
+    // Chemin depuis project.findProperty
+    file(flutterSourceFromSystem)
+} else if (flutterSourceFromProps != null) {
+    // Chemin depuis gradle.properties (peut être relatif ou absolu)
+    val sourceFile = file(flutterSourceFromProps)
+    if (sourceFile.isAbsolute) {
+        sourceFile
+    } else {
+        // Chemin relatif depuis android/app/ vers arkalia_cia/
+        rootProject.file(flutterSourceFromProps)
+    }
+} else {
+    // Fallback : projectDir = android/app/, donc parentFile.parentFile = arkalia_cia/
+    projectDir.parentFile.parentFile
+}
+
+// Stocker dans project.ext pour que le plugin puisse y accéder
+project.ext.set("flutter.source", flutterSourceDir.absolutePath)
 
 plugins {
     id("com.android.application")
@@ -10,13 +45,10 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-// Configuration Flutter - Le plugin lit flutter.source depuis gradle.properties ou -P
-// Si ce n'est pas défini, utiliser le fallback
+// Configuration Flutter - Le plugin devrait avoir lu flutter.source depuis project.ext
+// ou depuis gradle.properties, mais on le confirme ici aussi
 flutter {
-    // Le plugin lit depuis gradle.properties ou -Pflutter.source automatiquement
-    // Si ça ne fonctionne pas, utiliser le fallback
-    source = project.findProperty("flutter.source") as? String 
-        ?: flutterSourceDir.absolutePath
+    source = flutterSourceDir.absolutePath
 }
 
 // Charger les propriétés de signature depuis key.properties (si existe)
