@@ -175,8 +175,24 @@ jobs:
           # 4. local.properties (fallback)
           # 5. init.gradle s'exécute automatiquement s'il est dans android/init.gradle
           #    et configure aussi dans gradle.startParameter.projectProperties
+
+          # CRITIQUE: Le plugin Flutter Gradle lit flutter.source au moment de son application
+          # Il faut que la propriété soit disponible AVANT que le plugin ne soit chargé
+          # On utilise GRADLE_OPTS pour passer la propriété au niveau JVM
           export GRADLE_OPTS="-Dorg.gradle.project.flutter.source=$FLUTTER_SOURCE_DIR"
-          
+
+          # Vérifier que gradle.properties contient bien flutter.source
+          if ! grep -q "^flutter.source=" android/gradle.properties; then
+            echo "❌ ERREUR: flutter.source manquant dans gradle.properties après configuration"
+            exit 1
+          fi
+
+          # Vérifier que local.properties contient bien flutter.source
+          if ! grep -q "^flutter.source=" android/local.properties; then
+            echo "❌ ERREUR: flutter.source manquant dans local.properties après configuration"
+            exit 1
+          fi
+
           # Build avec -P pour garantir la priorité maximale
           # init.gradle sera chargé automatiquement par Gradle depuis android/init.gradle
           flutter build apk --release -Pflutter.source="$FLUTTER_SOURCE_DIR"

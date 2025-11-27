@@ -385,6 +385,7 @@ if (flutterSourceFromSystem == null) {
 
 // Si toujours pas défini, utiliser le fallback
 if (flutterSourceFromSystem == null) {
+    // settingsDir = android/, donc parent = arkalia_cia/
     def fallbackFile = new File(settingsDir, "..")
     flutterSourceFromSystem = fallbackFile.absolutePath
     
