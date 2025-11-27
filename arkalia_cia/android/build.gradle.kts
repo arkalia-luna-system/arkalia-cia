@@ -78,6 +78,48 @@ subprojects {
     project.evaluationDependsOn(":app")
 }
 
+// Nettoyer les fichiers macOS dans TOUS les projets (y compris plugins Flutter)
+// Utiliser gradle.projectsEvaluated pour éviter l'erreur "already evaluated"
+gradle.projectsEvaluated {
+    allprojects {
+        // Fonction de nettoyage agressive pour tous les projets
+        fun cleanMacOSFilesInProject(project: Project) {
+            val projectBuildDir = project.buildDir
+            if (projectBuildDir.exists()) {
+                projectBuildDir.walkTopDown()
+                    .filter { it.isFile && (it.name.startsWith("._") || it.name == ".DS_Store" || it.name.contains("._")) }
+                    .forEach {
+                        try {
+                            it.delete()
+                        } catch (e: Exception) {
+                            // Ignorer les erreurs
+                        }
+                    }
+            }
+        }
+        
+        // Nettoyer AVANT les tâches de vérification des ressources (où se trouve le problème)
+        tasks.matching {
+            it.name.contains("verify") && it.name.contains("Resources")
+        }.configureEach {
+            doFirst {
+                cleanMacOSFilesInProject(project)
+            }
+        }
+        
+        // Nettoyer AVANT toutes les tâches de build
+        tasks.matching {
+            (it.name.contains("process") && it.name.contains("Resources")) ||
+            it.name.contains("compile") ||
+            it.name.contains("merge")
+        }.configureEach {
+            doFirst {
+                cleanMacOSFilesInProject(project)
+            }
+        }
+    }
+}
+
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
