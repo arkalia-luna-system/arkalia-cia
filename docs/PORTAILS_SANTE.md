@@ -216,7 +216,7 @@ Les portails sont affichés dans `HealthScreen` :
 
 ---
 
-**Dernière mise à jour** : 26 novembre 2025
+**Dernière mise à jour** : 27 novembre 2025
 
 **Stratégie** : Import manuel gratuit pour Andaman 7 et MaSanté (voir `STRATEGIE_GRATUITE_PORTAILS_SANTE.md`)
 

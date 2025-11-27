@@ -1,6 +1,6 @@
 # 🔥 Solution Surchauffe RAM
 
-**Date** : 26 novembre 2025  
+**Date** : 27 novembre 2025  
 **Problème** : RAM surchauffe, Mac lent
 
 ---
@@ -134,5 +134,5 @@ Si Cursor consomme toujours trop après redémarrage :
 
 ---
 
-*Dernière mise à jour : 26 novembre 2025*
+*Dernière mise à jour : 27 novembre 2025*
 

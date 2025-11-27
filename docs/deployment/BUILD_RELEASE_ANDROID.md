@@ -1,10 +1,10 @@
 # Guide build release Android
 
 **Version** : 1.3.0  
-**Dernière mise à jour** : 26 novembre 2025  
+**Dernière mise à jour** : 27 novembre 2025  
 **Cible** : Google Play Store
 
-> **📱 Google Play Console** : Compte développeur créé le 26 novembre 2025. Vérification en cours. Voir [PLAY_STORE_SETUP.md](./PLAY_STORE_SETUP.md) pour l'état actuel.
+> **📱 Google Play Console** : Compte développeur créé le 27 novembre 2025. Vérification en cours. Voir [PLAY_STORE_SETUP.md](./PLAY_STORE_SETUP.md) pour l'état actuel.
 
 Guide complet pour construire des releases Android prêtes pour la production.
 

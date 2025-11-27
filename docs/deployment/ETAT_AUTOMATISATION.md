@@ -1,6 +1,6 @@
 # 📊 État de l'Automatisation - Arkalia CIA
 
-**Date** : 26 novembre 2025  
+**Date** : 27 novembre 2025  
 **Version actuelle** : 1.3.0+1  
 **Statut** : ⚠️ **Workflow prêt, configuration manquante**
 
@@ -42,7 +42,7 @@
 - ✅ Java 17 configuré
 - ✅ Timeout : 30 minutes
 
-**Statut** : ✅ **Workflow créé et prêt** (26 novembre 2025)
+**Statut** : ✅ **Workflow créé et prêt** (27 novembre 2025)
 
 ---
 
@@ -244,6 +244,6 @@ git push origin main
 
 ---
 
-**Dernière mise à jour** : 26 novembre 2025  
+**Dernière mise à jour** : 27 novembre 2025  
 **Prochaine action** : Configurer le secret GitHub
 

@@ -1,6 +1,6 @@
 # 🎯 STRATÉGIE GRATUITE - PORTAILS SANTÉ
 
-**Date** : 26 novembre 2025  
+**Date** : 27 novembre 2025  
 **Version** : 1.3.0  
 **Décision** : **Import manuel uniquement (gratuit, zéro coût)**
 
@@ -221,7 +221,7 @@ def parse_masante_pdf(file_path):
 
 ---
 
-**Dernière mise à jour** : 26 novembre 2025
+**Dernière mise à jour** : 27 novembre 2025
 
 **Voir aussi** :
 - `STATUT_INTEGRATION_PORTAILS_SANTE.md` : Statut complet

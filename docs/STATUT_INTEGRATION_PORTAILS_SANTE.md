@@ -1,8 +1,8 @@
 # 📊 STATUT INTÉGRATION PORTAILS SANTÉ
 
-**Date** : 26 novembre 2025  
+**Date** : 27 novembre 2025  
 **Version** : 1.3.0  
-**Dernière mise à jour** : 26 novembre 2025
+**Dernière mise à jour** : 27 novembre 2025
 
 ---
 
@@ -149,4 +149,4 @@
 
 ---
 
-**Dernière mise à jour** : 26 novembre 2025
+**Dernière mise à jour** : 27 novembre 2025

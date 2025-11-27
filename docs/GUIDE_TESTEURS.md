@@ -1,6 +1,6 @@
 # 📋 Guide pour Testeurs - Arkalia CIA
 
-**Date de création** : 26 novembre 2025  
+**Date de création** : 27 novembre 2025  
 **Version** : 1.3.0  
 **Pour** : Testeurs internes (famille et amis)
 
@@ -239,5 +239,5 @@ Merci de prendre le temps de tester l'application ! Tes retours sont très impor
 
 **Questions ?** Contacte ta fille directement ou envoie un message.
 
-**Dernière mise à jour** : 26 novembre 2025
+**Dernière mise à jour** : 27 novembre 2025
 

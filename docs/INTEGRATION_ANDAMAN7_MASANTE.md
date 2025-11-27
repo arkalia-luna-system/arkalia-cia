@@ -1,6 +1,6 @@
 # 📱 INTÉGRATION ANDAMAN 7 ET MASANTÉ - GUIDE COMPLET
 
-**Date** : 26 novembre 2025  
+**Date** : 27 novembre 2025  
 **Statut** : Import manuel uniquement (pas d'API publique)
 
 ---
@@ -254,5 +254,5 @@ def parse_andaman7_csv(file_path):
 
 ---
 
-**Dernière mise à jour** : 26 novembre 2025
+**Dernière mise à jour** : 27 novembre 2025
 

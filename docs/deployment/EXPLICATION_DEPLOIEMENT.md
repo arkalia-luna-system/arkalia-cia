@@ -1,6 +1,6 @@
 # 📱 Explication Simple : Comment Fonctionne le Déploiement
 
-**Date** : 26 novembre 2025  
+**Date** : 27 novembre 2025  
 **Pour** : Comprendre comment l'app arrive sur le téléphone de ta mère
 
 ---
@@ -61,7 +61,7 @@
 Quand tu pushes sur `main` → Build automatique → Upload automatique → Testeurs reçoivent la mise à jour
 
 **Configuration** :
-- ✅ Workflow créé : `.github/workflows/deploy-play-store.yml` (26 novembre 2025)
+- ✅ Workflow créé : `.github/workflows/deploy-play-store.yml` (27 novembre 2025)
 - ⏳ Créer un compte de service Google Play (à faire)
 - ⏳ Ajouter le secret `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON` dans GitHub (à faire)
 
@@ -147,5 +147,5 @@ git push origin develop
 
 ---
 
-**Dernière mise à jour** : 26 novembre 2025
+**Dernière mise à jour** : 27 novembre 2025
 

@@ -1,6 +1,6 @@
 # 🚀 Workflow de Déploiement Automatique - Arkalia CIA
 
-**Date de création** : 26 novembre 2025  
+**Date de création** : 27 novembre 2025  
 **Version** : 1.3.0
 
 ---
@@ -84,7 +84,7 @@ git push origin develop
 
 **Configuration** :
 
-✅ **Workflow créé** : `.github/workflows/deploy-play-store.yml` (26 novembre 2025)
+✅ **Workflow créé** : `.github/workflows/deploy-play-store.yml` (27 novembre 2025)
 
 **Ancien exemple** (maintenant remplacé par le workflow réel) :
 
@@ -140,7 +140,7 @@ jobs:
 - ✅ Automatique (push sur `main` → déploiement)
 - ✅ Pas d'intervention manuelle
 - ✅ Workflow professionnel
-- ✅ Workflow créé et prêt (26 novembre 2025)
+- ✅ Workflow créé et prêt (27 novembre 2025)
 
 **Inconvénients** :
 - ❌ Configuration initiale complexe (compte de service Google)
@@ -257,5 +257,5 @@ git push origin feature/nouvelle-fonctionnalite
 
 ---
 
-**Dernière mise à jour** : 26 novembre 2025
+**Dernière mise à jour** : 27 novembre 2025
 

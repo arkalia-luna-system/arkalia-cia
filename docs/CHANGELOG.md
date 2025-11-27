@@ -2,7 +2,7 @@
 
 ## [1.3.0] - 2025-11-26
 
-### Corrections Audit Projet (26 novembre 2025)
+### Corrections Audit Projet (27 novembre 2025)
 
 - ✅ **Logging vérifié** : Tous les fichiers utilisent `AppLogger` (pas de `print()` en production)
 - ✅ **Code mort nettoyé** : Commentaires obsolètes corrigés dans `reminders_screen.dart` et `patterns_dashboard_screen.dart`
@@ -13,11 +13,11 @@
 ### 🎉 Publication Google Play Store
 
 #### Configuration et Publication
-- ✅ Keystore Android généré et configuré (26 novembre 2025)
+- ✅ Keystore Android généré et configuré (27 novembre 2025)
 - ✅ Signature release fonctionnelle (certificat Arkalia Luna System, valide jusqu'en 2053)
 - ✅ App Bundle signé en release (47.9MB → 10.6MB optimisé)
-- ✅ Version 1.3.0 uploadée sur Google Play Console (26 novembre 2025)
-- ✅ Version publiée en tests internes (26 novembre 2025)
+- ✅ Version 1.3.0 uploadée sur Google Play Console (27 novembre 2025)
+- ✅ Version publiée en tests internes (27 novembre 2025)
 - ✅ Testeurs ajoutés (4 utilisateurs)
 - ✅ Lien de test créé : https://play.google.com/apps/internaltest/4701447837031810861
 
@@ -161,7 +161,7 @@
 
 ---
 
-**Dernière mise à jour** : 26 novembre 2025
+**Dernière mise à jour** : 27 novembre 2025
 
 Format basé sur [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), ce projet suit [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
@@ -806,4 +806,4 @@ Passer de 6/10 à 10/10 - Zéro défaut, zéro erreur
 
 *Ce changelog est automatiquement mis à jour à chaque release. Pour les changements techniques détaillés, voir notre [historique des commits](https://github.com/arkalia-luna-system/arkalia-cia/commits/main).*
 
-*Dernière mise à jour : 26 novembre 2025*
+*Dernière mise à jour : 27 novembre 2025*

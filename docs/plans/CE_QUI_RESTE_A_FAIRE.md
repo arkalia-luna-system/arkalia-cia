@@ -261,12 +261,12 @@ L'app est **déjà utilisable** avec :
 
 **Toutes les fonctionnalités critiques ET avancées sont implémentées !** ✅
 
-### ✅ **Dernières Améliorations (26 novembre 2025)**
+### ✅ **Dernières Améliorations (27 novembre 2025)**
 
-- ✅ **Sélection Médecin Recherche Avancée** - Filtre par médecin avec dialog de sélection (26 novembre 2025)
-- ✅ **Refresh Token Portails Santé** - Gestion automatique du rafraîchissement des tokens OAuth (26 novembre 2025)
-- ✅ **Tests Security Utils** - Suite complète de tests pour les utilitaires de sécurité (26 novembre 2025)
-- ✅ **Corrections Lint** - 0 erreur Flutter, 0 erreur Python (26 novembre 2025)
+- ✅ **Sélection Médecin Recherche Avancée** - Filtre par médecin avec dialog de sélection (27 novembre 2025)
+- ✅ **Refresh Token Portails Santé** - Gestion automatique du rafraîchissement des tokens OAuth (27 novembre 2025)
+- ✅ **Tests Security Utils** - Suite complète de tests pour les utilitaires de sécurité (27 novembre 2025)
+- ✅ **Corrections Lint** - 0 erreur Flutter, 0 erreur Python (27 novembre 2025)
 - ✅ **Import Portails Santé** - Endpoint `/api/health-portals/import` avec parsing données
 - ✅ **Prédictions Événements** - Endpoint `/api/patterns/predict-events` avec Prophet
 - ✅ **Analyse Croisée Avancée** - Corrélations stress-douleur, sommeil-douleur, patterns ARIA

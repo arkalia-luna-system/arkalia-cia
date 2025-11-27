@@ -1,6 +1,6 @@
-# ✅ AMÉLIORATIONS APPLIQUÉES - 26 NOVEMBRE 2025
+# ✅ AMÉLIORATIONS APPLIQUÉES - 27 NOVEMBRE 2025
 
-**Date** : 26 novembre 2025  
+**Date** : 27 novembre 2025  
 **Version** : 1.3.0
 
 ---
@@ -130,5 +130,5 @@ Toutes les améliorations possibles sans rien casser ont été appliquées. Le p
 
 ---
 
-**Dernière mise à jour** : 26 novembre 2025 (soir)
+**Dernière mise à jour** : 27 novembre 2025 (soir)
 

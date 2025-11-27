@@ -1,6 +1,6 @@
 # 🔐 Guide Complet : Secrets GitHub pour Arkalia CIA
 
-**Date** : 26 novembre 2025  
+**Date** : 27 novembre 2025  
 **Statut** : ⏳ **À configurer**
 
 ---
@@ -225,6 +225,6 @@ Publication automatique en "tests internes" ✅
 
 ---
 
-**Dernière mise à jour** : 26 novembre 2025  
+**Dernière mise à jour** : 27 novembre 2025  
 **Prochaine action** : Configurer le secret `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON`
 

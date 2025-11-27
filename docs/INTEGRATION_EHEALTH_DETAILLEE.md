@@ -1,6 +1,6 @@
 # 🔐 INTÉGRATION EHEALTH BELGIQUE - GUIDE COMPLET
 
-**Date** : 26 novembre 2025  
+**Date** : 27 novembre 2025  
 **Statut** : Documentation complète - En attente d'accréditation
 
 ---
@@ -308,5 +308,5 @@ print(response.json())
 
 ---
 
-**Dernière mise à jour** : 26 novembre 2025
+**Dernière mise à jour** : 27 novembre 2025
 

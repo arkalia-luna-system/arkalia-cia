@@ -1,6 +1,6 @@
 # Solution aux Problèmes Play Console
 
-**Date** : 26 novembre 2025
+**Date** : 27 novembre 2025
 
 ---
 
@@ -178,5 +178,5 @@ Si Google Play refuse l'URL GitHub :
 
 ---
 
-**Dernière mise à jour** : 26 novembre 2025
+**Dernière mise à jour** : 27 novembre 2025
 

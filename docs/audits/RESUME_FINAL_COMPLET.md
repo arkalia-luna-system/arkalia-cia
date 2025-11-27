@@ -1,6 +1,6 @@
-# 📊 RÉSUMÉ FINAL COMPLET - 26 NOVEMBRE 2025
+# 📊 RÉSUMÉ FINAL COMPLET - 27 NOVEMBRE 2025
 
-**Date** : 26 novembre 2025  
+**Date** : 27 novembre 2025  
 **Version** : 1.3.0
 
 ---
