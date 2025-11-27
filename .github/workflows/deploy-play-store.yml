@@ -74,10 +74,7 @@ jobs:
             app/arkalia-cia-release.jks
 
           # Créer le fichier key.properties
-          KEY_ALIAS_VALUE="${{ secrets.KEY_ALIAS }}"
-          if [ -z "$KEY_ALIAS_VALUE" ]; then
-            KEY_ALIAS_VALUE="arkalia-cia"
-          fi
+          KEY_ALIAS_VALUE="${{ secrets.KEY_ALIAS || 'arkalia-cia' }}"
           cat > key.properties << EOF
           storePassword=${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword=${{ secrets.KEY_PASSWORD }}
