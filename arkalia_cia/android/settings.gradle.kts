@@ -40,14 +40,11 @@ if (flutterSourcePath == null) {
     }
 }
 
-// S'assurer que la propriété est disponible via les propriétés système ET local.properties
+// S'assurer que la propriété est disponible via local.properties
 // Le plugin Flutter Gradle lit depuis local.properties en priorité
+// NOTE: gradle.startParameter.projectProperties est en lecture seule, on ne peut pas le modifier ici
 if (flutterSourcePath != null) {
-    // FORCER la propriété dans gradle.startParameter.projectProperties
-    // Le plugin Flutter Gradle lit cette propriété au moment de son application
-    gradle.startParameter.projectProperties["flutter.source"] = flutterSourcePath
-    
-    // Aussi dans local.properties qui est lu très tôt par Gradle
+    // Configurer dans local.properties qui est lu très tôt par Gradle
     val localPropsFile = file("local.properties")
     if (localPropsFile.exists()) {
         val localProps = java.util.Properties()
