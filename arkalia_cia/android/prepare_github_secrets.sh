@@ -17,15 +17,22 @@ echo ""
 
 cd "$(dirname "$0")"
 
-# Vérifier que le keystore existe
-if [ ! -f "arkalia-cia-release.jks" ]; then
+# Vérifier que le keystore existe (fichier réel ou lien symbolique)
+KEYSTORE_FILE="arkalia-cia-release.jks"
+if [ -L "$KEYSTORE_FILE" ]; then
+    KEYSTORE_REAL=$(readlink -f "$KEYSTORE_FILE")
+    echo -e "${YELLOW}ℹ️  Keystore est un lien symbolique vers: $KEYSTORE_REAL${NC}"
+elif [ ! -f "$KEYSTORE_FILE" ]; then
     echo -e "${RED}❌ Erreur : Le keystore n'existe pas !${NC}"
     echo "   Exécutez d'abord : ./generate_keystore.sh"
     exit 1
 fi
 
-# Vérifier que key.properties existe
-if [ ! -f "key.properties" ]; then
+# Vérifier que key.properties existe (fichier réel ou lien symbolique)
+if [ -L "key.properties" ]; then
+    KEY_PROP_REAL=$(readlink -f "key.properties")
+    echo -e "${YELLOW}ℹ️  key.properties est un lien symbolique vers: $KEY_PROP_REAL${NC}"
+elif [ ! -f "key.properties" ]; then
     echo -e "${RED}❌ Erreur : key.properties n'existe pas !${NC}"
     echo "   Exécutez d'abord : ./setup_key_properties.sh"
     exit 1
@@ -51,9 +58,14 @@ echo "   Store Password: ${STORE_PASSWORD:0:3}*** (masqué)"
 echo "   Key Password: ${KEY_PASSWORD:0:3}*** (masqué)"
 echo ""
 
-# Encoder le keystore en base64
+# Encoder le keystore en base64 (suivre le lien symbolique si nécessaire)
 echo -e "${YELLOW}🔐 Encodage du keystore en base64...${NC}"
-KEYSTORE_BASE64=$(base64 -i arkalia-cia-release.jks)
+if [ -L "$KEYSTORE_FILE" ]; then
+    KEYSTORE_REAL=$(readlink -f "$KEYSTORE_FILE")
+    KEYSTORE_BASE64=$(base64 -i "$KEYSTORE_REAL")
+else
+    KEYSTORE_BASE64=$(base64 -i "$KEYSTORE_FILE")
+fi
 
 if [ -z "$KEYSTORE_BASE64" ]; then
     echo -e "${RED}❌ Erreur : Impossible d'encoder le keystore${NC}"

@@ -135,8 +135,14 @@ jobs:
         run: |
           if [ -n "${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}" ]; then
             echo "exists=true" >> $GITHUB_OUTPUT
+            echo "✅ Service account JSON trouvé"
           else
             echo "exists=false" >> $GITHUB_OUTPUT
+            echo "⚠️ Service account JSON manquant"
+            echo "   Pour activer le téléversement automatique:"
+            echo "   1. Créer un compte de service dans Google Play Console"
+            echo "   2. Télécharger le fichier JSON"
+            echo "   3. Ajouter le secret GOOGLE_PLAY_SERVICE_ACCOUNT_JSON dans GitHub"
           fi
 
       - name: Upload to Play Store
@@ -158,36 +164,52 @@ jobs:
         with:
           name: app-release
           path: arkalia_cia/build/app/outputs/bundle/release/app-release.aab
-          retention-days: 7
+          retention-days: 30
+          if-no-files-found: error
 
       - name: Deployment summary
         if: always()
         run: |
-          echo "## 📦 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "## 📦 Résumé du déploiement" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Package**: ${{ env.PACKAGE_NAME }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Track**: ${{ env.TRACK }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Flutter Version**: ${{ env.FLUTTER_VERSION }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Paquet** : ${{ env.PACKAGE_NAME }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Piste** : ${{ env.TRACK }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Version de Flutter** : ${{ env.FLUTTER_VERSION }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           if [ "${{ steps.check-signing.outputs.available }}" == "true" ]; then
-            echo "✅ **Signing**: Release keystore configured" \
+            echo "✅ **Signature** : Libération du magasin de clés configuré" \
               >> $GITHUB_STEP_SUMMARY
           else
-            echo "⚠️ **Signing**: Using debug key" \
-              "(not suitable for Play Store)" >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ **Signature** : Clé de débogage utilisée" \
+              "(non adaptée pour Play Store)" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "**⚠️ Action required**: Configure KEYSTORE_BASE64," \
-              "KEYSTORE_PASSWORD, KEY_PASSWORD secrets" \
+            echo "**⚠️ Action requise** : Configurer les secrets" \
+              "KEYSTORE_BASE64, KEYSTORE_PASSWORD, KEY_PASSWORD" \
               >> $GITHUB_STEP_SUMMARY
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
           if [ "${{ steps.check-secret.outputs.exists }}" == "true" ]; then
-            echo "✅ **Status**: Deployed to Play Store" \
+            echo "✅ **Statut** : Déployé sur Play Store" \
+              >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Étapes suivantes** : Aucune - Déploiement automatique réussi !" \
               >> $GITHUB_STEP_SUMMARY
           else
-            echo "⚠️ **Status**: App Bundle built" \
-              "(manual upload required)" >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ **Statut** : Pack d'application créé" \
+              "(téléchargement manuel requis)" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "**Next steps**: Upload the artifact manually" \
-              "to Play Console" >> $GITHUB_STEP_SUMMARY
+            echo "**Étapes suivantes** : Téléverser manuellement l'artefact" \
+              "sur la Play Console" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Pour activer le téléversement automatique** :" \
+              >> $GITHUB_STEP_SUMMARY
+            echo "1. Créer un compte de service dans Google Play Console" \
+              >> $GITHUB_STEP_SUMMARY
+            echo "2. Télécharger le fichier JSON du compte de service" \
+              >> $GITHUB_STEP_SUMMARY
+            echo "3. Ajouter le secret \`GOOGLE_PLAY_SERVICE_ACCOUNT_JSON\`" \
+              "dans GitHub Settings → Secrets → Actions" \
+              >> $GITHUB_STEP_SUMMARY
+            echo "4. Coller le contenu complet du fichier JSON" \
+              >> $GITHUB_STEP_SUMMARY
           fi
