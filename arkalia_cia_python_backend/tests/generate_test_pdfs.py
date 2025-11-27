@@ -2,10 +2,9 @@
 Générateur de PDFs de test pour valider les parsers Andaman 7 et MaSanté
 """
 
+
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
-from datetime import datetime, timedelta
-import random
 
 
 def generate_test_andaman7_pdf(filename="test_andaman7.pdf"):
@@ -23,11 +22,11 @@ def generate_test_andaman7_pdf(filename="test_andaman7.pdf"):
     c.drawString(50, y, "Ordonnance")
     y -= 20
     c.setFont("Helvetica", 10)
-    c.drawString(50, y, f"Date: 25/11/2025")
+    c.drawString(50, y, "Date: 25/11/2025")
     y -= 15
-    c.drawString(50, y, f"Médecin: Dr. Jean Dupont")
+    c.drawString(50, y, "Médecin: Dr. Jean Dupont")
     y -= 15
-    c.drawString(50, y, f"Prescriptions:")
+    c.drawString(50, y, "Prescriptions:")
     y -= 12
     c.drawString(70, y, "- Amoxicilline 500mg, 3x par jour pendant 7 jours")
     y -= 12
@@ -38,26 +37,26 @@ def generate_test_andaman7_pdf(filename="test_andaman7.pdf"):
     c.drawString(50, y, "Consultation")
     y -= 20
     c.setFont("Helvetica", 10)
-    c.drawString(50, y, f"Date: 20/11/2025")
+    c.drawString(50, y, "Date: 20/11/2025")
     y -= 15
-    c.drawString(50, y, f"Médecin: Dr. Marie Martin")
+    c.drawString(50, y, "Médecin: Dr. Marie Martin")
     y -= 15
-    c.drawString(50, y, f"Motif: Suivi diabète de type 2")
+    c.drawString(50, y, "Motif: Suivi diabète de type 2")
     y -= 12
-    c.drawString(50, y, f"Observations: Tension bien contrôlée, glucose stable")
+    c.drawString(50, y, "Observations: Tension bien contrôlée, glucose stable")
 
     y -= 25
     c.setFont("Helvetica-Bold", 11)
     c.drawString(50, y, "Résultats")
     y -= 20
     c.setFont("Helvetica", 10)
-    c.drawString(50, y, f"Date: 15/11/2025")
+    c.drawString(50, y, "Date: 15/11/2025")
     y -= 15
-    c.drawString(50, y, f"Glucose: 1.15 mmol/L")
+    c.drawString(50, y, "Glucose: 1.15 mmol/L")
     y -= 12
-    c.drawString(50, y, f"Hémoglobine: 7.8 g/dL")
+    c.drawString(50, y, "Hémoglobine: 7.8 g/dL")
     y -= 12
-    c.drawString(50, y, f"Créatinine: 0.9 mg/dL")
+    c.drawString(50, y, "Créatinine: 0.9 mg/dL")
 
     c.save()
     print(f"✅ PDF test créé: {filename}")
