@@ -1,27 +1,49 @@
 // Configurer flutter.source AVANT pluginManagement pour que le plugin puisse le lire
-// Le plugin Flutter Gradle lit cette propriété depuis gradle.properties
+// Le plugin Flutter Gradle lit cette propriété depuis gradle.properties ou -P
 // On s'assure que gradle.properties contient le bon chemin (absolu en CI, relatif en local)
 val gradlePropsFile = file("gradle.properties")
-if (gradlePropsFile.exists()) {
+var flutterSourcePath: String? = null
+
+// Lire depuis -P (priorité maximale)
+flutterSourcePath = gradle.startParameter.projectProperties["flutter.source"] as? String
+
+// Si pas dans -P, lire depuis gradle.properties
+if (flutterSourcePath == null && gradlePropsFile.exists()) {
     val gradleProps = java.util.Properties()
     gradlePropsFile.inputStream().use { gradleProps.load(it) }
     val flutterSourceFromProps = gradleProps.getProperty("flutter.source")
     
-    // Si flutter.source est défini mais est relatif, on le convertit en absolu
     if (flutterSourceFromProps != null) {
         val sourceFile = file(flutterSourceFromProps)
-        if (!sourceFile.isAbsolute) {
-            // Convertir le chemin relatif en absolu et mettre à jour gradle.properties
-            val absolutePath = sourceFile.absoluteFile.absolutePath
-            gradleProps.setProperty("flutter.source", absolutePath)
-            gradlePropsFile.outputStream().use { gradleProps.store(it, null) }
+        // Toujours convertir en absolu pour être sûr
+        flutterSourcePath = if (sourceFile.isAbsolute) {
+            sourceFile.absolutePath
+        } else {
+            sourceFile.absoluteFile.absolutePath
         }
-    } else {
-        // Si flutter.source n'est pas défini, utiliser le fallback et l'ajouter à gradle.properties
-        val fallbackPath = file("..").absoluteFile.absolutePath
-        gradleProps.setProperty("flutter.source", fallbackPath)
+        
+        // Mettre à jour gradle.properties avec le chemin absolu
+        gradleProps.setProperty("flutter.source", flutterSourcePath)
         gradlePropsFile.outputStream().use { gradleProps.store(it, null) }
     }
+}
+
+// Si toujours pas défini, utiliser le fallback
+if (flutterSourcePath == null) {
+    flutterSourcePath = file("..").absoluteFile.absolutePath
+    // Ajouter à gradle.properties
+    if (gradlePropsFile.exists()) {
+        val gradleProps = java.util.Properties()
+        gradlePropsFile.inputStream().use { gradleProps.load(it) }
+        gradleProps.setProperty("flutter.source", flutterSourcePath)
+        gradlePropsFile.outputStream().use { gradleProps.store(it, null) }
+    }
+}
+
+// S'assurer que la propriété est disponible via les propriétés système
+if (flutterSourcePath != null && !gradle.startParameter.projectProperties.containsKey("flutter.source")) {
+    gradle.startParameter.projectProperties["flutter.source"] = flutterSourcePath
+    println("✅ Flutter source directory configuré: $flutterSourcePath")
 }
 
 pluginManagement {
