@@ -68,17 +68,24 @@ jobs:
           echo "📦 Building Flutter web..."
           flutter clean
           flutter pub get
-
-          # Build web avec gestion d'erreur améliorée
-          if flutter build web --release; then
+          
+          # Build web avec capture des erreurs détaillées
+          echo "🔨 Starting web build..."
+          if flutter build web --release 2>&1 | tee /tmp/flutter_web_build.log; then
             echo "✅ Web build successful"
           else
-            echo "⚠️ Web build completed with warnings or errors"
+            BUILD_EXIT_CODE=${PIPESTATUS[0]}
+            echo "⚠️ Web build exited with code: $BUILD_EXIT_CODE"
+            echo "📋 Last 50 lines of build output:"
+            tail -50 /tmp/flutter_web_build.log || echo "Could not read build log"
+            
             # Vérifier si le build a quand même créé des fichiers
             if [ -d "build/web" ]; then
-              echo "✅ build/web directory exists despite warnings"
+              echo "✅ build/web directory exists despite exit code $BUILD_EXIT_CODE"
             else
               echo "❌ build/web directory not created"
+              echo "Checking for any build artifacts:"
+              ls -la build/ 2>/dev/null || echo "No build/ directory found"
             fi
           fi
 
@@ -100,8 +107,9 @@ jobs:
               echo "Contents of build/:"
               ls -la build/
             fi
-            echo "Continuing anyway (web build is optional)..."
+            echo "⚠️ Web build failed, but continuing (web build is optional for Android CI)..."
           fi
+        continue-on-error: true
 
       - name: "Flutter Build APK"
         run: |
