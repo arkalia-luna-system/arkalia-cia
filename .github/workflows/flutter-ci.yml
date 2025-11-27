@@ -97,6 +97,7 @@ jobs:
           echo "Flutter source directory: $FLUTTER_SOURCE_DIR"
 
           # Modifier gradle.properties AVANT le build (remplacer la ligne existante si elle existe)
+          # Utiliser un chemin absolu pour garantir que le plugin le trouve
           if grep -q "^flutter.source=" android/gradle.properties; then
             # Remplacer la ligne existante
             sed -i "s|^flutter.source=.*|flutter.source=$FLUTTER_SOURCE_DIR|" android/gradle.properties
@@ -107,10 +108,22 @@ jobs:
 
           # Vérifier que la configuration est correcte
           echo "Configuration flutter.source dans gradle.properties:"
-          grep flutter.source android/gradle.properties
+          grep flutter.source android/gradle.properties || echo "⚠️ flutter.source not found in gradle.properties"
 
-          # Passer aussi via -P pour garantir que le plugin le trouve
-          flutter build apk --release -Pflutter.source=$FLUTTER_SOURCE_DIR
+          # Vérifier que le répertoire existe
+          if [ ! -d "$FLUTTER_SOURCE_DIR" ]; then
+            echo "❌ Flutter source directory does not exist: $FLUTTER_SOURCE_DIR"
+            exit 1
+          fi
+
+          # Vérifier que pubspec.yaml existe dans le répertoire source
+          if [ ! -f "$FLUTTER_SOURCE_DIR/pubspec.yaml" ]; then
+            echo "❌ pubspec.yaml not found in Flutter source directory: $FLUTTER_SOURCE_DIR"
+            exit 1
+          fi
+
+          # Build avec la propriété système pour garantir que le plugin la trouve
+          flutter build apk --release
 
       - name: "Upload Coverage to Codecov"
         if: hashFiles('arkalia_cia/coverage/lcov.info') != ''
