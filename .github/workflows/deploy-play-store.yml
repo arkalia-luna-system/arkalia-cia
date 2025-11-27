@@ -148,9 +148,11 @@ jobs:
           fi
 
       - name: Upload to Play Store
+        id: upload-play-store
         if: steps.check-secret.outputs.exists == 'true'
         env:
           SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+        continue-on-error: true
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ env.SERVICE_ACCOUNT_JSON }}
@@ -160,6 +162,17 @@ jobs:
           track: ${{ env.TRACK }}
           status: completed
           changesNotSentForReview: false
+
+      - name: Check upload result
+        if: steps.check-secret.outputs.exists == 'true'
+        run: |
+          if [ "${{ steps.upload-play-store.outcome }}" != "success" ]; then
+            echo "⚠️ Upload échoué - Vérifier les erreurs ci-dessus"
+            echo "::error::L'upload a échoué. Vérifier que l'API Google Play Android Developer est activée."
+            exit 1
+          else
+            echo "✅ Upload réussi"
+          fi
 
       - name: Upload artifact (fallback if no service account)
         if: steps.check-secret.outputs.exists == 'false'
@@ -192,11 +205,26 @@ jobs:
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
           if [ "${{ steps.check-secret.outputs.exists }}" == "true" ]; then
-            echo "✅ **Statut** : Déployé sur Play Store" \
-              >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "**Étapes suivantes** : Aucune - Déploiement automatique réussi !" \
-              >> $GITHUB_STEP_SUMMARY
+            if [ "${{ steps.upload-play-store.outcome }}" == "success" ]; then
+              echo "✅ **Statut** : Déployé sur Play Store" \
+                >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "**Étapes suivantes** : Aucune - Déploiement automatique réussi !" \
+                >> $GITHUB_STEP_SUMMARY
+            else
+              echo "⚠️ **Statut** : Upload échoué" \
+                >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "**Erreur détectée** : L'API Google Play Android Developer" \
+                "n'est peut-être pas activée" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "**Étapes suivantes** :" >> $GITHUB_STEP_SUMMARY
+              echo "1. Activer l'API Google Play Android Developer :" >> $GITHUB_STEP_SUMMARY
+              echo "   https://console.developers.google.com/apis/api/androidpublisher.googleapis.com/overview" \
+                >> $GITHUB_STEP_SUMMARY
+              echo "2. Attendre quelques minutes pour la propagation" >> $GITHUB_STEP_SUMMARY
+              echo "3. Relancer le workflow ou faire un nouveau push" >> $GITHUB_STEP_SUMMARY
+            fi
           else
             echo "⚠️ **Statut** : Pack d'application créé" \
               "(téléchargement manuel requis)" >> $GITHUB_STEP_SUMMARY
