@@ -1,6 +1,6 @@
 # Guide de mise à jour Flutter — Authentification JWT
 
-**Version** : 1.3.0  
+**Version** : 1.3.1  
 **Date** : Janvier 2025
 
 ---

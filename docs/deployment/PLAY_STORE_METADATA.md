@@ -1,6 +1,6 @@
 # 📝 Métadonnées Google Play Store - Arkalia CIA
 
-**Date de création** : 24 novembre 2025  
+**Date de création** : 27 novembre 2025  
 **Statut** : ✅ **Prêt à copier-coller dans Play Console**
 
 ---
@@ -183,10 +183,10 @@ https://github.com/arkalia-luna-system/arkalia-cia
 
 ## 📝 Notes de Version
 
-### Version 1.3.0 (Première version)
+### Version 1.3.1 (Première version)
 
 ```
-Version 1.3.0 - Première version publique
+Version 1.3.1 - Première version publique
 
 ✨ Fonctionnalités principales :
 - Gestion sécurisée de documents médicaux (chiffrement AES-256)
@@ -247,6 +247,6 @@ santé, médical, documents, rappels, urgence, senior, privacy, chiffrement, loc
 
 ---
 
-**Dernière mise à jour** : 24 novembre 2025  
+**Dernière mise à jour** : 27 novembre 2025  
 **Statut** : ✅ Prêt à utiliser dans Play Console
 

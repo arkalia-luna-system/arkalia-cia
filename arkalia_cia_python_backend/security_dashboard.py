@@ -3,6 +3,18 @@
 """
 Dashboard de sécurité web pour Athalia
 Interface moderne pour visualiser les rapports de sécurité en temps réel
+
+DÉPENDANCES OPTIONNELLES :
+-------------------------
+Ce module utilise des composants du package `athalia_core` qui sont OPTIONNELS.
+Si `athalia_core` n'est pas installé, le dashboard fonctionne en mode dégradé :
+- Les fonctionnalités avancées (cache, métriques, linting) seront désactivées
+- Les fonctionnalités de base (rapports sécurité, interface web) restent disponibles
+
+Pour installer les dépendances optionnelles :
+    pip install athalia-core
+
+Note : Le code gère gracieusement l'absence de ces dépendances avec des fallbacks.
 """
 
 import logging
@@ -15,8 +27,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-# Import des composants Athalia réels (optionnels)
+# Import des composants Athalia réels (OPTIONNELS)
 # Ces imports sont dans un try/except car les modules peuvent ne pas être disponibles
+# Si athalia_core n'est pas installé, ATHALIA_AVAILABLE sera False et le code utilisera des fallbacks
 if TYPE_CHECKING:
     # Imports uniquement pour le type checking - les stubs sont utilisés
     from athalia_core.core.cache_manager import CacheManager
@@ -2194,7 +2207,7 @@ class SecurityDashboard:
         <div class="metric-row">
             <span class="metric-label">📊 Total Requests</span>
             <span class="metric-value">{
-                total_requests if total_requests > 0 else hits + misses:,}</span>
+            total_requests if total_requests > 0 else hits + misses:,}</span>
         </div>
         <div class="metric-row">
             <span class="metric-label">⚡ Hit Rate</span>
@@ -2247,8 +2260,10 @@ class SecurityDashboard:
         <div class="metric-row">
             <span class="metric-label">⚡ Athalia Components</span>
             <span class="metric-value">{
-                "✅ Disponibles" if security_data.get("athalia_available")
-                else "❌ Non disponibles"}</span>
+            "✅ Disponibles"
+            if security_data.get("athalia_available")
+            else "❌ Non disponibles"
+        }</span>
         </div>
         """
 
@@ -2381,6 +2396,7 @@ class SecurityDashboard:
                 try:
                     self._lock_file.touch()
                 except OSError:
+                    # Ignorer les erreurs de mise à jour du verrou (non critique)
                     pass
                 logger.info(
                     f"🔄 Dashboard de sécurité ouvert/actualisé "
@@ -2401,6 +2417,7 @@ class SecurityDashboard:
                     try:
                         self._lock_file.touch()
                     except OSError:
+                        # Ignorer les erreurs de mise à jour du verrou (non critique)
                         pass
                     logger.info(
                         f"🌐 Dashboard de sécurité ouvert via 'open': {absolute_path}"
@@ -2416,6 +2433,7 @@ class SecurityDashboard:
                     try:
                         self._lock_file.touch()
                     except OSError:
+                        # Ignorer les erreurs de mise à jour du verrou (non critique)
                         pass
                     logger.info(
                         f"🌐 Dashboard de sécurité ouvert via 'start': {absolute_path}"
@@ -2428,6 +2446,7 @@ class SecurityDashboard:
                     try:
                         self._lock_file.touch()
                     except OSError:
+                        # Ignorer les erreurs de mise à jour du verrou (non critique)
                         pass
                     logger.info(
                         f"🌐 Dashboard de sécurité ouvert "
@@ -2453,6 +2472,7 @@ class SecurityDashboard:
                     try:
                         self._lock_file.touch()
                     except OSError:
+                        # Ignorer les erreurs de mise à jour du verrou (non critique)
                         pass
                     logger.info(f"🌐 Ouverture via fallback: {file_url}")
             except Exception as fallback_error:

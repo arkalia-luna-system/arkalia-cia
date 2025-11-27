@@ -1,7 +1,7 @@
 # Vue d'ensemble du projet — Arkalia CIA
 
-**Version** : 1.3.0
-**Dernière mise à jour** : 24 novembre 2025
+**Version** : 1.3.1
+**Dernière mise à jour** : 27 novembre 2025
 
 Document de synthèse visuelle présentant l'écosystème complet Arkalia CIA.
 
@@ -320,7 +320,7 @@ sequenceDiagram
 - **Frontend Flutter** : 28 écrans, 22 services, 6 utils
 - **Tests** : 352 passed (70.83% couverture)
 - **Documentation** : 94 fichiers MD organisés
-- **Phases d'améliorations** : 4 phases terminées (24 novembre 2025)
+- **Phases d'améliorations** : 4 phases terminées (27 novembre 2025)
 
 ### Fonctionnalités
 
@@ -358,11 +358,11 @@ sequenceDiagram
 
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture technique détaillée
 - **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** — Documentation complète de l'API
-- **[STATUT_FINAL_CONSOLIDE.md](./STATUT_FINAL_CONSOLIDE.md)** — Statut final consolidé du projet
-- **[ANALYSE_COMPLETE_BESOINS_MERE.md](./ANALYSE_COMPLETE_BESOINS_MERE.md)** — Analyse complète des besoins
+- **[status/STATUT_FINAL_PROJET.md](./status/STATUT_FINAL_PROJET.md)** — Statut final consolidé du projet
+- **[analysis/ANALYSE_COMPLETE_BESOINS_MERE.md](./analysis/ANALYSE_COMPLETE_BESOINS_MERE.md)** — Analyse complète des besoins
 - **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
 
 ---
 
-*Dernière mise à jour : 24 novembre 2025*
-*Version : 1.3.0 - Toutes les 4 phases d'améliorations terminées*
+*Dernière mise à jour : 27 novembre 2025*
+*Version : 1.3.1 - Toutes les 4 phases d'améliorations terminées*

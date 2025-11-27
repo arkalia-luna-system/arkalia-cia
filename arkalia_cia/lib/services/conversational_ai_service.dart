@@ -4,6 +4,7 @@ import '../services/local_storage_service.dart';
 import '../services/doctor_service.dart';
 import '../services/backend_config_service.dart';
 import '../utils/app_logger.dart';
+import '../utils/error_helper.dart';
 import 'auth_api_service.dart';
 
 class ConversationalAIService {
@@ -94,6 +95,7 @@ class ConversationalAIService {
       return AIResponse.fromMap(data);
     } catch (e) {
       // Mode offline : réponse basique avec message d'erreur clair
+      ErrorHelper.logError('ConversationalAIService.askQuestion', e);
       final errorMessage = e.toString();
       String userMessage;
       

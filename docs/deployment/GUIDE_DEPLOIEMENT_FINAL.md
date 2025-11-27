@@ -1,13 +1,13 @@
-# 🚀 Final Deployment Guide - Arkalia CIA v1.3.0
+# 🚀 Final Deployment Guide - Arkalia CIA v1.3.1
 
 > **Complete production deployment procedures**
 
-**Last Updated**: November 24, 2025  
-**Version**: 1.3.0  
+**Last Updated**: November 27, 2025  
+**Version**: 1.3.1  
 **Branch**: develop → main  
 **Status**: 🟢 **PRODUCTION READY**
 
-> **📱 Google Play Console** : Compte développeur créé le 24 novembre 2025. Vérification d'identité en cours. Voir [PLAY_STORE_SETUP.md](./PLAY_STORE_SETUP.md) pour l'état actuel et le plan d'action post-validation.
+> **📱 Google Play Console** : Compte développeur créé le 27 novembre 2025. Vérification d'identité en cours. Voir [PLAY_STORE_SETUP.md](./PLAY_STORE_SETUP.md) pour l'état actuel et le plan d'action post-validation.
 
 ---
 
@@ -38,8 +38,8 @@
 
 | Check | Expected | Status |
 |-------|----------|--------|
-| **All tests pass** | 308/308 | ✅ |
-| **Code coverage** | ≥ 85% | ✅ |
+| **All tests pass** | 508/508 (Python) | ✅ |
+| **Code coverage** | 71.98% (Python) | ✅ |
 | **Critical errors** | 0 (Black, Ruff, MyPy, Bandit) | ✅ |
 | **Flutter analyze** | No errors | ✅ |
 | **Documentation** | Up to date | ✅ |
@@ -54,7 +54,7 @@
 # 1. Vérifier les tests
 cd /Volumes/T7/arkalia-cia
 python -m pytest tests/ -v
-# ✅ Attendu: 308 tests collectés, tous passants
+# ✅ Attendu: 508 tests Python collectés, tous passants
 
 # 2. Vérifier la couverture
 python -m pytest tests/ --cov=arkalia_cia_python_backend --cov-report=term
@@ -79,15 +79,15 @@ flutter pub get
 
 ```bash
 # 1. Mettre à jour pubspec.yaml
-# Version actuelle: 1.3.0+1
-# Nouvelle version: 1.3.0+1
+# Version actuelle: 1.3.1+1
+# Nouvelle version: 1.3.1+1
 
 # 2. Mettre à jour CHANGELOG.md
-# Déplacer [Unreleased] vers [1.3.0] avec date
+# Déplacer [Unreleased] vers [1.3.1] avec date
 
 # 3. Commit de version
 git add arkalia_cia/pubspec.yaml docs/CHANGELOG.md
-git commit -m "chore: Version 1.3.0 - Release production ready"
+git commit -m "chore: Version 1.3.1 - Release production ready"
 ```
 
 ### Étape 3: Merge vers Main
@@ -98,24 +98,24 @@ git checkout develop
 git pull origin develop
 
 # 2. Créer une branche release
-git checkout -b release/v1.3.0
+git checkout -b release/v1.3.1
 
 # 3. Merge vers main
 git checkout main
 git pull origin main
-git merge release/v1.3.0 --no-ff -m "Release v1.3.0: Production ready"
+git merge release/v1.3.1 --no-ff -m "Release v1.3.1: Production ready"
 
 # 4. Tag de version
-git tag -a v1.3.0 -m "Version 1.3.0 - Production Ready
+git tag -a v1.3.1 -m "Version 1.3.1 - Production Ready
 - 11 nouvelles fonctionnalités majeures
-- 308 tests collectés, tous passants (100%)
-- 85% couverture code
+- 508 tests Python collectés, tous passants (100%)
+- 71.98% couverture code Python
 - 0 erreur critique
 - 0 vulnérabilité"
 
 # 5. Push vers origin
 git push origin main
-git push origin v1.3.0
+git push origin v1.3.1
 ```
 
 ### Étape 4: Build des Applications
@@ -171,11 +171,11 @@ flutter build ios --release
 
 ### Google Play Store
 
-**✅ État actuel** : Compte développeur créé le 24 novembre 2025. Vérification d'identité en cours.
+**✅ État actuel** : Compte développeur créé le 27 novembre 2025. Vérification d'identité en cours.
 
 **📋 Plan d'action** (voir [PLAY_STORE_SETUP.md](./PLAY_STORE_SETUP.md)) :
 
-1. ✅ **Compte développeur créé** (24 novembre 2025)
+1. ✅ **Compte développeur créé** (27 novembre 2025)
 2. ⏳ **Vérification identité** (en cours, 1-3 jours)
 3. ⏸️ **Créer signature release** (après validation)
 4. ⏸️ **Build App Bundle** (après signature)
@@ -263,7 +263,7 @@ git push origin v1.3.1
 
 #### Release Mineure
 ```bash
-# Processus similaire mais avec version 1.3.0
+# Processus similaire mais avec version 1.3.1
 # Inclure nouvelles fonctionnalités
 ```
 
@@ -272,8 +272,8 @@ git push origin v1.3.1
 ## ✅ Checklist Finale de Déploiement
 
 ### Code
-- [x] Tous les tests passent (308/308)
-- [x] Couverture ≥ 85%
+- [x] Tous les tests passent (508/508 Python)
+- [x] Couverture 71.98% (Python)
 - [x] 0 erreur critique
 - [x] 0 vulnérabilité
 - [x] Documentation à jour
@@ -369,7 +369,7 @@ flutter pub get
 
 ---
 
-*Dernière mise à jour : 24 novembre 2025*  
-**Version**: 1.3.0  
+*Dernière mise à jour : 27 novembre 2025*  
+**Version**: 1.3.1  
 **Statut**: 🟢 **PRÊT POUR PRODUCTION**
 

@@ -147,13 +147,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () async {
+                      if (!mounted) return;
                       final isLoggedIn = await AuthApiService.isLoggedIn();
                       if (!mounted) return;
                       if (isLoggedIn) {
                         // Afficher dialog de déconnexion
                         if (!mounted) return;
+                        final dialogContext = context;
+                        if (!mounted) return;
+                        // ignore: use_build_context_synchronously - mounted vérifié juste avant
                         final shouldLogout = await showDialog<bool>(
-                          context: context,
+                          context: dialogContext, // ignore: use_build_context_synchronously
                           builder: (context) => AlertDialog(
                             title: const Text('Déconnexion'),
                             content: const Text('Voulez-vous vous déconnecter ?'),
@@ -174,20 +178,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                         );
                         
-                        if (shouldLogout == true && mounted) {
+                        if (shouldLogout == true) {
+                          if (!mounted) return;
                           await AuthApiService.logout();
                           if (!mounted) return;
-                          Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(builder: (context) => const LoginScreen()),
-                            (route) => false,
-                          );
+                          final navContext = context; // Capturer context après await
+                          if (navContext.mounted) {
+                            Navigator.of(navContext).pushAndRemoveUntil(
+                              MaterialPageRoute(builder: (context) => const LoginScreen()),
+                              (route) => false,
+                            );
+                          }
                         }
                       } else {
                         if (!mounted) return;
                         // Rediriger vers login
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => const LoginScreen()),
-                        );
+                        final navContext = context; // Capturer context après await
+                        if (navContext.mounted) {
+                          Navigator.of(navContext).push(
+                            MaterialPageRoute(builder: (context) => const LoginScreen()),
+                          );
+                        }
                       }
                     },
                   ),
@@ -320,7 +331,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ListTile(
                   leading: Icon(Icons.info),
                   title: Text('Version'),
-                  subtitle: Text('1.3.0+1'),
+                  subtitle: Text('1.3.1+1'),
                 ),
                 ListTile(
                   leading: Icon(Icons.description),

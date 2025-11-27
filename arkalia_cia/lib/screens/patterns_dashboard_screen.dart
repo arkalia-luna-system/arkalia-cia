@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:share_plus/share_plus.dart';
 import 'dart:convert';
 import '../services/api_service.dart';
 import '../services/backend_config_service.dart';
@@ -7,6 +8,7 @@ import '../services/offline_cache_service.dart';
 import '../services/auth_api_service.dart';
 import '../services/pathology_service.dart';
 import '../services/medication_service.dart';
+import '../utils/error_helper.dart';
 
 class PatternsDashboardScreen extends StatefulWidget {
   const PatternsDashboardScreen({super.key});
@@ -141,15 +143,82 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
         duration: const Duration(hours: 6),
       );
     } catch (e) {
+      ErrorHelper.logError('PatternsDashboardScreen._loadPatterns', e);
       setState(() {
-        _error = 'Erreur: $e';
+        _error = ErrorHelper.getUserFriendlyMessage(e);
         _isLoading = false;
       });
     }
   }
 
+  Future<void> _sharePatterns() async {
+    if (_patterns == null) return;
+    
+    try {
+      // Formater les patterns en texte lisible
+      final buffer = StringBuffer();
+      buffer.writeln('ANALYSE PATTERNS - ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}');
+      buffer.writeln('=' * 50);
+      buffer.writeln();
+      
+      // Patterns récurrents
+      final recurring = _patterns!['recurring_patterns'] as List?;
+      if (recurring != null && recurring.isNotEmpty) {
+        buffer.writeln('PATTERNS RÉCURRENTS:');
+        for (var pattern in recurring) {
+          buffer.writeln('• ${pattern['type'] ?? 'Inconnu'}: Tous les ${pattern['frequency_days'] ?? '?'} jours (Confiance: ${((pattern['confidence'] ?? 0) * 100).toStringAsFixed(0)}%)');
+        }
+        buffer.writeln();
+      }
+      
+      // Tendances
+      final trends = _patterns!['trends'] as Map?;
+      if (trends != null && trends.isNotEmpty) {
+        buffer.writeln('TENDANCES:');
+        buffer.writeln('• Direction: ${trends['direction'] ?? 'stable'}');
+        buffer.writeln('• Force: ${trends['strength']?.toStringAsFixed(2) ?? '0'}');
+        buffer.writeln();
+      }
+      
+      // Saisonnalité
+      final seasonality = _patterns!['seasonality'] as Map?;
+      if (seasonality != null && seasonality.isNotEmpty) {
+        buffer.writeln('SAISONNALITÉ:');
+        buffer.writeln('• Période: ${seasonality['period'] ?? '?'} jours');
+        buffer.writeln('• Amplitude: ${seasonality['amplitude']?.toStringAsFixed(2) ?? '0'}');
+        buffer.writeln();
+      }
+      
+      // Prédictions
+      final predictions = _patterns!['predictions'] as Map?;
+      if (predictions != null && predictions.isNotEmpty) {
+        buffer.writeln('PRÉDICTIONS:');
+        buffer.writeln('• Prochaine valeur estimée: ${predictions['next_value']?.toStringAsFixed(2) ?? '?'}');
+        buffer.writeln('• Date: ${predictions['next_date'] ?? '?'}');
+        buffer.writeln();
+      }
+      
+      await SharePlus.instance.share(
+        ShareParams(
+          text: buffer.toString(),
+        ),
+      );
+    } catch (e) {
+      ErrorHelper.logError('PatternsDashboardScreen._sharePatterns', e);
+      if (mounted) {
+        final userMessage = ErrorHelper.getUserFriendlyMessage(e);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erreur lors du partage: $userMessage'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   /// Méthode helper pour faire des requêtes authentifiées avec gestion du refresh token
-  // ignore: unused_element
+  /// Utilisée par _loadPatterns() pour gérer l'authentification automatique
   Future<dynamic> _makeAuthenticatedPatternRequest(
     Future<http.Response> Function() makeRequest,
   ) async {
@@ -198,28 +267,43 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
       appBar: AppBar(
         title: const Text('Analyse Patterns'),
         actions: [
+          if (_patterns != null)
+            IconButton(
+              icon: const Icon(Icons.share),
+              tooltip: 'Partager les patterns',
+              onPressed: _sharePatterns,
+            ),
           IconButton(
             icon: const Icon(Icons.refresh),
+            tooltip: 'Actualiser les patterns',
             onPressed: _loadPatterns,
           ),
         ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : _error != null
+              : _error != null
               ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.error_outline, size: 64, color: Colors.red),
-                      const SizedBox(height: 16),
-                      Text(_error!),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: _loadPatterns,
-                        child: const Text('Réessayer'),
-                      ),
-                    ],
+                  child: Padding(
+                    padding: const EdgeInsets.all(32.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                        const SizedBox(height: 16),
+                        Text(
+                          _error!,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton.icon(
+                          onPressed: _loadPatterns,
+                          icon: const Icon(Icons.refresh),
+                          label: const Text('Réessayer'),
+                        ),
+                      ],
+                    ),
                   ),
                 )
               : _patterns == null
@@ -463,10 +547,10 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
               style: const TextStyle(fontSize: 16),
             ),
             backgroundColor: direction == 'increasing'
-                ? Colors.green.withOpacity(0.2)
+                ? Colors.green.withOpacity( 0.2)
                 : direction == 'decreasing'
-                    ? Colors.red.withOpacity(0.2)
-                    : Colors.grey.withOpacity(0.2),
+                    ? Colors.red.withOpacity( 0.2)
+                    : Colors.grey.withOpacity( 0.2),
           ),
         ],
       ),

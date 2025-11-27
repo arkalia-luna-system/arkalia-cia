@@ -43,7 +43,7 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
 
   Future<void> _showAddPathologyDialog() async {
     final templates = PathologyService.getAllTemplates();
-    final customOption = 'Personnalisée';
+    const customOption = 'Personnalisée';
 
     final selected = await showDialog<String>(
       context: context,
@@ -73,7 +73,7 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
               const Divider(),
               ListTile(
                 leading: const Icon(Icons.add_circle_outline),
-                title: Text(customOption),
+                title: const Text(customOption),
                 onTap: () => Navigator.pop(context, customOption),
               ),
             ],
@@ -82,7 +82,7 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
       ),
     );
 
-    if (selected == null) return;
+    if (selected == null || !mounted) return;
 
     Pathology? newPathology;
     if (selected == customOption) {
@@ -90,6 +90,7 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
       final nameController = TextEditingController();
       final descriptionController = TextEditingController();
 
+      if (!mounted) return;
       final result = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(

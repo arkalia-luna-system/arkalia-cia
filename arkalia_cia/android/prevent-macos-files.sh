@@ -14,7 +14,9 @@ echo -e "${YELLOW}🛡️  Prévention des fichiers macOS cachés${NC}"
 
 # Obtenir le répertoire du script
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+# Le script est dans arkalia_cia/android/, donc PROJECT_DIR est arkalia_cia/
+PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+PROJECT_ROOT="$(cd "$PROJECT_DIR/.." && pwd)"
 
 # 1. Désactiver la création de fichiers ._* sur ce volume (si possible)
 echo -e "${YELLOW}📋 Configuration du système...${NC}"
@@ -23,14 +25,14 @@ echo -e "${YELLOW}📋 Configuration du système...${NC}"
 # Note: Cela fonctionne seulement si le volume le supporte
 if command -v xattr &> /dev/null; then
     # Marquer le répertoire pour ne pas créer de fichiers AppleDouble
-    cd "$PROJECT_ROOT"
+    cd "$PROJECT_DIR"
     find . -type d -maxdepth 3 -exec xattr -w com.apple.FinderInfo "0000000000000000040000000000000000000000000000000000000000000000" {} \; 2>/dev/null || true
 fi
 
 # 2. Supprimer TOUS les fichiers macOS cachés de manière agressive
 echo -e "${YELLOW}🧹 Suppression agressive des fichiers macOS cachés...${NC}"
 
-cd "$PROJECT_ROOT"
+cd "$PROJECT_DIR"
 
 # Compter avant suppression (inclure .gradle dans le nettoyage)
 BEFORE_COUNT=$(find . -type f \( -name "._*" -o -name ".DS_Store" \) ! -path "./.git/*" 2>/dev/null | wc -l | tr -d ' ')
@@ -52,9 +54,9 @@ if [ "$BEFORE_COUNT" -gt 0 ]; then
         fi
     done
     
-    # Nettoyer aussi dans arkalia_cia/android/.gradle si on est à la racine
-    if [ -d "arkalia_cia/android/.gradle" ]; then
-        find "arkalia_cia/android/.gradle" -type f \( -name "._*" -o -name ".DS_Store" \) -delete 2>/dev/null || true
+    # Nettoyer aussi dans android/.gradle
+    if [ -d "android/.gradle" ]; then
+        find "android/.gradle" -type f \( -name "._*" -o -name ".DS_Store" \) -delete 2>/dev/null || true
     fi
     
     # Vérifier après suppression
@@ -70,7 +72,7 @@ else
 fi
 
 # 3. Créer un fichier .gitattributes pour empêcher Git de créer ces fichiers
-GITATTRIBUTES="$PROJECT_ROOT/.gitattributes"
+GITATTRIBUTES="$PROJECT_DIR/.gitattributes"
 if [ ! -f "$GITATTRIBUTES" ] || ! grep -q "._*" "$GITATTRIBUTES"; then
     echo -e "${YELLOW}📝 Création/mise à jour de .gitattributes...${NC}"
     cat >> "$GITATTRIBUTES" << 'EOF'

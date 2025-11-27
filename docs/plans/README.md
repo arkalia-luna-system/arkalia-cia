@@ -135,16 +135,16 @@ Suivi en temps réel de l'implémentation :
 - 📋 Prochaines étapes
 - 🐛 Problèmes rencontrés
 
-**État actuel** : Voir **[STATUT_FINAL_CONSOLIDE.md](../STATUT_FINAL_CONSOLIDE.md)** pour le statut complet à 100% d'exploitation.
+**État actuel** : Voir **[../status/STATUT_FINAL_PROJET.md](../status/STATUT_FINAL_PROJET.md)** pour le statut complet à 100% d'exploitation.
 
 ---
 
 ## Voir aussi
 
-- **[ANALYSE_COMPLETE_BESOINS_MERE.md](../ANALYSE_COMPLETE_BESOINS_MERE.md)** — Analyse complète des besoins
+- **[../analysis/ANALYSE_COMPLETE_BESOINS_MERE.md](../analysis/ANALYSE_COMPLETE_BESOINS_MERE.md)** — Analyse complète des besoins
 - **[ARCHITECTURE.md](../ARCHITECTURE.md)** — Architecture générale CIA
 - **[API_DOCUMENTATION.md](../API_DOCUMENTATION.md)** — Documentation API backend complète
-- **[STATUT_FINAL_CONSOLIDE.md](../STATUT_FINAL_CONSOLIDE.md)** — Statut final consolidé (100% exploitation)
+- **[../status/STATUT_FINAL_PROJET.md](../status/STATUT_FINAL_PROJET.md)** — Statut final consolidé (100% exploitation)
 - **[GUIDE_TEST_VISUEL_LIVE.md](./GUIDE_TEST_VISUEL_LIVE.md)** — Guide test visuel en live
 - **[STATUS_IMPLEMENTATION.md](./STATUS_IMPLEMENTATION.md)** — Statut implémentation détaillé
 - **[INDEX_DOCUMENTATION.md](../INDEX_DOCUMENTATION.md)** — Index complet de la documentation
@@ -153,7 +153,7 @@ Suivi en temps réel de l'implémentation :
 
 ## Voir aussi
 
-- **[STATUT_FINAL_CONSOLIDE.md](../STATUT_FINAL_CONSOLIDE.md)** — Statut complet du projet
+- **[../status/STATUT_FINAL_PROJET.md](../status/STATUT_FINAL_PROJET.md)** — Statut complet du projet
 - **[INDEX_DOCUMENTATION.md](../INDEX_DOCUMENTATION.md)** — Index complet de la documentation
 - **[ARCHITECTURE.md](../ARCHITECTURE.md)** — Architecture système
 

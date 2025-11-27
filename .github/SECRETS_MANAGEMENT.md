@@ -6,6 +6,7 @@
 - `CODECOV_TOKEN` : Token pour Codecov (coverage)
 - `SECURITY_EMAIL` : Email pour les alertes de sécurité
 - `GPG_PRIVATE_KEY` : Clé privée GPG pour la signature
+- `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON` : ⏳ **À configurer** - Compte de service Google Play pour déploiement automatique
 
 ### Variables d'environnement
 - `PYTHON_VERSION` : Version Python (3.11)

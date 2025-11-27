@@ -1,7 +1,7 @@
 # Guide de contribution
 
-**Version** : 1.3.0  
-**Dernière mise à jour** : 24 novembre 2025
+**Version** : 1.3.1  
+**Dernière mise à jour** : 27 novembre 2025
 
 Guide des contributions et standards de développement pour Arkalia CIA.
 
@@ -696,7 +696,7 @@ Contributors are recognized in:
 
 ### Autres guides
 
-- **[MIGRATION.md](./MIGRATION.md)** — Guide de migration
+- **[guides/MIGRATION.md](./guides/MIGRATION.md)** — Guide de migration
 - **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
 
 ---

@@ -9,7 +9,6 @@ import 'package:open_filex/open_filex.dart';
 import '../services/local_storage_service.dart';
 import '../services/file_storage_service.dart';
 import '../services/category_service.dart';
-import '../services/doctor_service.dart';
 import '../widgets/exam_type_badge.dart';
 import 'add_edit_doctor_screen.dart';
 
@@ -497,10 +496,11 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       }
 
       // Partager le fichier PDF
-      await Share.shareXFiles(
-        [XFile(filePath, mimeType: 'application/pdf')],
-        text: 'Document: ${doc['original_name'] ?? 'Document'}',
-        subject: 'Partage de document Arkalia CIA',
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(filePath, mimeType: 'application/pdf')],
+          text: 'Document: ${doc['original_name'] ?? 'Document'}',
+        ),
       );
     } catch (e) {
       if (mounted) {
@@ -602,10 +602,10 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 child: isUploading
-                    ? Row(
+                    ? const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const SizedBox(
+                          SizedBox(
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(
@@ -613,8 +613,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                               valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                             ),
                           ),
-                          const SizedBox(width: 12),
-                          const Text(
+                          SizedBox(width: 12),
+                          Text(
                             'Upload en cours...',
                             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                           ),

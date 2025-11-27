@@ -374,7 +374,7 @@ class TestDatabaseSecurity:
         # Note: /etc/passwd passe maintenant la validation mais SQLite échouera
         # car ce n'est pas un fichier DB valide - c'est OK pour la sécurité
         try:
-            db = CIADatabase("/etc/passwd")
+            _db = CIADatabase("/etc/passwd")
             # Si ça passe, vérifier que SQLite échoue (ce n'est pas une DB)
             # Le test vérifie que la validation de sécurité fonctionne
             assert True  # La validation passe maintenant pour compatibilité tests

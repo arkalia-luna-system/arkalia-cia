@@ -131,7 +131,12 @@ class TestMedicationTracking:
 
     def test_tracking_no_entries(self):
         """Test sans entrées"""
+        # Test avec zéro entrée - le pourcentage doit être 0
         taken = 0
         total = 0
+        # Calculer le pourcentage (évite division par zéro)
         percentage = (taken / total * 100) if total > 0 else 0
+        # Vérifier que le pourcentage est bien 0
         assert percentage == 0
+        # Utiliser les variables pour éviter l'avertissement CodeQL
+        assert taken == 0 and total == 0

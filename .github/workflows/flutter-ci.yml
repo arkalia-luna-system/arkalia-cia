@@ -68,30 +68,83 @@ jobs:
           echo "📦 Building Flutter web..."
           flutter clean
           flutter pub get
-          flutter build web --release || echo "⚠️ Web build completed with warnings"
 
-          # Vérifier que index.html existe
-          if [ -f "build/web/index.html" ]; then
-            echo "✅ index.html created successfully"
+          # Build web avec capture des erreurs détaillées
+          echo "🔨 Starting web build..."
+          if flutter build web --release 2>&1 | tee /tmp/flutter_web_build.log; then
+            echo "✅ Web build successful"
           else
-            echo "❌ index.html missing, but continuing..."
+            BUILD_EXIT_CODE=${PIPESTATUS[0]}
+            echo "⚠️ Web build exited with code: $BUILD_EXIT_CODE"
+            echo "📋 Last 50 lines of build output:"
+            tail -50 /tmp/flutter_web_build.log || echo "Could not read build log"
+            
+            # Vérifier si le build a quand même créé des fichiers
+            if [ -d "build/web" ]; then
+              echo "✅ build/web directory exists despite exit code $BUILD_EXIT_CODE"
+            else
+              echo "❌ build/web directory not created"
+              echo "Checking for any build artifacts:"
+              ls -la build/ 2>/dev/null || echo "No build/ directory found"
+            fi
           fi
 
-      - name: "Flutter Build APK"
+          # Vérifier que index.html existe (avec plusieurs chemins possibles)
+          if [ -f "build/web/index.html" ]; then
+            echo "✅ index.html created successfully"
+            ls -lh build/web/index.html
+            echo "📊 Build web contents:"
+            ls -la build/web/ | head -20
+          elif [ -f "arkalia_cia/build/web/index.html" ]; then
+            echo "✅ index.html found at arkalia_cia/build/web/index.html"
+            ls -lh arkalia_cia/build/web/index.html
+          else
+            echo "❌ index.html missing"
+            echo "Current directory: $(pwd)"
+            echo "Checking for build directory:"
+            ls -la build/ 2>/dev/null || echo "build/ directory not found"
+            if [ -d "build" ]; then
+              echo "Contents of build/:"
+              ls -la build/
+            fi
+            echo "⚠️ Web build failed, but continuing (web build is optional for Android CI)..."
+          fi
+        continue-on-error: true
+
+      - name: "Phase 1: Configuration flutter.source"
         run: |
           cd arkalia_cia
-          flutter build apk --release
+          chmod +x scripts/ci-phase1-configure-flutter-source.sh
+          ./scripts/ci-phase1-configure-flutter-source.sh
+
+      - name: "Phase 2: Nettoyage fichiers macOS"
+        run: |
+          cd arkalia_cia
+          chmod +x scripts/ci-phase2-clean-macos-files.sh
+          ./scripts/ci-phase2-clean-macos-files.sh
+
+      - name: "Phase 3: Build APK"
+        run: |
+          cd arkalia_cia
+          chmod +x scripts/ci-phase3-build-apk.sh
+          # S'assurer que gradlew a les permissions d'exécution (pour le fallback)
+          if [ -f "android/gradlew" ]; then
+            chmod +x android/gradlew
+          fi
+          ./scripts/ci-phase3-build-apk.sh
 
       - name: "Upload Coverage to Codecov"
+        if: hashFiles('arkalia_cia/coverage/lcov.info') != ''
         uses: codecov/codecov-action@v5
+        continue-on-error: true
         with:
           files: arkalia_cia/coverage/lcov.info
           flags: flutter
           fail_ci_if_error: false
           verbose: true
-          token: ${{ secrets.CODECOV_TOKEN }}
           directory: arkalia_cia
-        if: hashFiles('arkalia_cia/coverage/lcov.info') != ''
+        env:
+          CODECOV_TOKEN: ${{ vars.CODECOV_TOKEN || secrets.CODECOV_TOKEN || '' }}
 
       - name: "Upload Build Artifacts"
         uses: actions/upload-artifact@v4

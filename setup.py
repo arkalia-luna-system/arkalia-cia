@@ -1,13 +1,22 @@
 #!/usr/bin/env python3
 """Setup script for Arkalia CIA Python backend."""
 
+from pathlib import Path
+
 from setuptools import find_packages, setup  # type: ignore
+
+# Lire README.md de manière sécurisée avec context manager
+readme_path = Path("README.md")
+long_description = ""
+if readme_path.exists():
+    with open(readme_path, encoding="utf-8") as f:
+        long_description = f.read()
 
 setup(
     name="arkalia-cia",
     version="1.3.0",
     description="Arkalia CIA - Assistant Mobile Santé",
-    long_description=open("README.md", encoding="utf-8").read(),
+    long_description=long_description,
     long_description_content_type="text/markdown",
     author="Arkalia Luna System",
     author_email="arkalia.luna.system@gmail.com",

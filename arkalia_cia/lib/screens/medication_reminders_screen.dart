@@ -181,7 +181,7 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
                       }
                     },
                   );
-                }).toList(),
+                }),
                 const SizedBox(height: 16),
                 ListTile(
                   title: const Text('Date de début'),
@@ -445,20 +445,6 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
                                 subtitle: Text(
                                   medication.dosage ?? 'Sans dosage spécifié',
                                 ),
-                                children: medication.times.map((time) {
-                                  return FutureBuilder<bool>(
-                                    future: _isMedicationTaken(medication.id!, DateTime.now(), time),
-                                    builder: (context, snapshot) {
-                                      return MedicationReminderWidget(
-                                        medication: medication,
-                                        time: time,
-                                        isTaken: snapshot.data ?? false,
-                                        onTaken: () => _markAsTaken(medication, time),
-                                        onIgnore: () {},
-                                      );
-                                    },
-                                  );
-                                }).toList(),
                                 trailing: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -508,6 +494,20 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
                                     ),
                                   ],
                                 ),
+                                children: medication.times.map((time) {
+                                  return FutureBuilder<bool>(
+                                    future: _isMedicationTaken(medication.id!, DateTime.now(), time),
+                                    builder: (context, snapshot) {
+                                      return MedicationReminderWidget(
+                                        medication: medication,
+                                        time: time,
+                                        isTaken: snapshot.data ?? false,
+                                        onTaken: () => _markAsTaken(medication, time),
+                                        onIgnore: () {},
+                                      );
+                                    },
+                                  );
+                                }).toList(),
                               ),
                             );
                           },

@@ -540,7 +540,7 @@ class _SyncScreenState extends State<SyncScreen> {
       final allData = await LocalStorageService.exportAllData();
       final filteredData = <String, dynamic>{
         'export_date': DateTime.now().toIso8601String(),
-        'version': '1.3.0',
+        'version': '1.3.1',
       };
 
       if (exportOptions['Documents'] == true) {
@@ -568,10 +568,11 @@ class _SyncScreenState extends State<SyncScreen> {
       await file.writeAsString(jsonString);
       
       // Partager le fichier
-      await Share.shareXFiles(
-        [XFile(file.path, mimeType: 'application/json')],
-        text: 'Sauvegarde Arkalia CIA - $timestamp',
-        subject: 'Export de données Arkalia CIA',
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(file.path, mimeType: 'application/json')],
+          text: 'Sauvegarde Arkalia CIA - $timestamp',
+        ),
       );
       
       if (!mounted) return;

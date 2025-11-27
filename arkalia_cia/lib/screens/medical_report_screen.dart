@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import '../services/api_service.dart';
-import '../utils/app_logger.dart';
+import '../utils/error_helper.dart';
 
 class MedicalReportScreen extends StatefulWidget {
   final String? consultationDate;
@@ -85,15 +85,14 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
         });
       }
     } catch (e) {
-      AppLogger.error('Erreur génération rapport', e);
-      String errorMessage = 'Erreur lors de la génération du rapport';
+      ErrorHelper.logError('MedicalReportScreen._generateReport', e);
+      String errorMessage;
       final errorStr = e.toString();
       if (errorStr.contains('Backend non configuré')) {
         errorMessage = 'Backend non configuré.\n\nVeuillez configurer l\'URL du backend dans les paramètres.';
-      } else if (errorStr.contains('Connection') || errorStr.contains('Failed')) {
-        errorMessage = 'Impossible de se connecter au backend.\n\nVérifiez que le backend est démarré et que l\'URL est correcte.';
       } else {
-        errorMessage = 'Erreur: $errorStr';
+        // Utiliser ErrorHelper pour les messages génériques
+        errorMessage = ErrorHelper.getUserFriendlyMessage(e);
       }
       
       setState(() {
@@ -107,14 +106,20 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
     if (_report == null || _report!['formatted_text'] == null) return;
 
     try {
-      await Share.share(
-        _report!['formatted_text'],
-        subject: 'Rapport médical - ${widget.doctorName ?? 'Consultation'}',
+      await SharePlus.instance.share(
+        ShareParams(
+          text: _report!['formatted_text'],
+        ),
       );
     } catch (e) {
       if (mounted) {
+        ErrorHelper.logError('MedicalReportScreen._shareReport', e);
+        final userMessage = ErrorHelper.getUserFriendlyMessage(e);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur lors du partage: $e')),
+          SnackBar(
+            content: Text('Erreur lors du partage: $userMessage'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     }
@@ -272,7 +277,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity( 0.2),
+                  color: Colors.grey.withOpacity(0.2),
                   spreadRadius: 1,
                   blurRadius: 4,
                   offset: const Offset(0, -2),
@@ -348,7 +353,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: color.withOpacity( 0.8),
+            color: color.withOpacity(0.8),
           ),
         ),
         Text(

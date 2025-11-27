@@ -1,7 +1,7 @@
 # 📊 Analyses Consolidées — Arkalia CIA
 
-**Date de consolidation** : 24 novembre 2025  
-**Version** : 1.3.0  
+**Date de consolidation** : 27 novembre 2025  
+**Version** : 1.3.1  
 **Statut** : ✅ Toutes les analyses consolidées
 
 Document consolidé regroupant toutes les analyses effectuées sur le projet Arkalia CIA, organisées par type d'analyse.
@@ -20,7 +20,7 @@ Document consolidé regroupant toutes les analyses effectuées sur le projet Ark
 ## Analyse d'Exploitation du Projet
 
 **Date d'analyse** : Janvier 2025  
-**Version analysée** : 1.3.0  
+**Version analysée** : 1.3.1  
 **Dernière mise à jour** : Janvier 2025 (audit complet basé sur code réel)
 
 ### Résumé Exécutif
@@ -224,7 +224,7 @@ Tous les tests sont **rapides et optimisés**. Aucun test ne cause de surcharge 
 
 - **Tests unitaires**: ~0.2-0.5s pour tous les tests unitaires
 - **Tests d'intégration**: ~0.3s pour 30 tests
-- **Total**: ~3.5 secondes pour tous les 308 tests collectés
+- **Total**: ~107 secondes pour tous les 508 tests Python collectés
 
 ### Analyse par Catégorie
 
@@ -302,8 +302,8 @@ D'après l'analyse avec `--durations`, les tests les plus lents sont :
 
 | Métrique | Valeur | Statut |
 |----------|--------|--------|
-| **Tests totaux** | 308 | ✅ |
-| **Temps total** | ~3.5s | ✅ Excellent |
+| **Tests totaux** | 508 (Python) | ✅ |
+| **Temps total** | ~107s | ✅ Excellent |
 | **Temps moyen par test** | <0.1s | ✅ Très rapide |
 | **Test le plus lent** | <0.01s | ✅ Excellent |
 | **Tests avec timeout** | 0 | ✅ Aucun problème |
@@ -322,7 +322,7 @@ Tous les tests sont déjà optimisés et rapides. Cependant, pour maintenir cett
 
 ### Conclusion
 
-**Tous les tests sont optimisés et rapides.** Aucun test ne cause de surcharge significative. Le temps d'exécution total de ~3.5 secondes pour 308 tests collectés est excellent.
+**Tous les tests sont optimisés et rapides.** Aucun test ne cause de surcharge significative. Le temps d'exécution total de ~107 secondes pour 508 tests Python collectés est excellent.
 
 **Recommandation**: Continuer à maintenir cette qualité en suivant les bonnes pratiques déjà en place.
 
@@ -525,7 +525,7 @@ La clé `NSFaceIDUsageDescription` est **présente** dans le fichier Info.plist.
 | Analyse | Date | Statut | Résultat Principal |
 |---------|------|--------|-------------------|
 | **Exploitation Projet** | Janvier 2025 | ✅ Complète | **100% d'exploitation** - Toutes les fonctionnalités critiques implémentées |
-| **Performance Tests** | 19 nov 2025 | ✅ Optimisée | **~3.5s pour 308 tests** - Tous rapides et optimisés |
+| **Performance Tests** | 27 nov 2025 | ✅ Optimisée | **~107s pour 508 tests Python** - Tous rapides et optimisés |
 | **Authentification Biométrique** | 19 nov 2025 | ✅ Fonctionnelle | **Prêt pour production** - Code complet, permissions configurées |
 
 ### Points Forts Identifiés
@@ -561,6 +561,6 @@ Tous les systèmes analysés sont :
 
 ---
 
-**Dernière mise à jour** : 24 novembre 2025  
+**Dernière mise à jour** : 27 novembre 2025  
 **Statut** : ✅ Toutes les analyses consolidées et documentées
 

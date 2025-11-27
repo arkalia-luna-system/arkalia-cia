@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'app_logger.dart';
 
 /// Helper pour gérer les erreurs et afficher des messages utilisateur clairs
 class ErrorHelper {
@@ -44,9 +44,7 @@ class ErrorHelper {
   
   /// Log l'erreur technique (seulement en mode debug)
   static void logError(String context, dynamic error) {
-    if (kDebugMode) {
-      print('[$context] Erreur technique: $error');
-    }
+    AppLogger.error('[$context] Erreur technique: $error');
   }
   
   /// Vérifie si une erreur est une erreur réseau

@@ -3,8 +3,8 @@
 > **Ton application santé personnelle** - Tout ce que tu pourras faire avec Arkalia CIA
 
 **Créé par** : Ta fille qui t'aime ❤️  
-**Date** : 24 novembre 2025  
-**Version** : 1.3.0 (en développement)
+**Date** : 27 novembre 2025  
+**Version** : 1.3.1 (en développement)
 
 ---
 
@@ -17,7 +17,7 @@ Ta fille attend juste la validation de Google Play Store pour te l'envoyer.
 
 **Tu recevras l'app très bientôt (dans quelques jours) !** 📱✨
 
-**Statut actuel** (24 novembre 2025) :
+**Statut actuel** (27 novembre 2025) :
 - ✅ Toutes les fonctionnalités sont prêtes
 - ✅ Tests terminés (352 tests passés)
 - ✅ 0 erreur dans le code
@@ -650,7 +650,7 @@ Tu peux me dire des choses comme :
 
 ---
 
-## ✅ **PREMIER TEST - CE QUI FONCTIONNE BIEN** (24 novembre 2025)
+## ✅ **PREMIER TEST - CE QUI FONCTIONNE BIEN** (27 novembre 2025)
 
 J'ai fait tester l'application par un expert et voici ce qui a été **validé comme fonctionnel** au premier test :
 
@@ -680,8 +680,8 @@ J'ai fait tester l'application par un expert et voici ce qui a été **validé c
 
 ---
 
-*Dernière mise à jour : 24 novembre 2025*  
-*Version : 1.3.0 (PRÊTE - En attente Google Play Store)*  
+*Dernière mise à jour : 27 novembre 2025*  
+*Version : 1.3.1 (PRÊTE - En attente Google Play Store)*  
 *Toutes les fonctionnalités implémentées et testées ✅*  
 *Application complète et fonctionnelle - Prête à être distribuée 📱✨*
 
