@@ -70,11 +70,17 @@ jobs:
           flutter pub get
           flutter build web --release || echo "⚠️ Web build completed with warnings"
 
-          # Vérifier que index.html existe
+          # Vérifier que index.html existe (avec plusieurs chemins possibles)
           if [ -f "build/web/index.html" ]; then
             echo "✅ index.html created successfully"
+            ls -lh build/web/index.html
+          elif [ -f "arkalia_cia/build/web/index.html" ]; then
+            echo "✅ index.html found at arkalia_cia/build/web/index.html"
+            ls -lh arkalia_cia/build/web/index.html
           else
-            echo "❌ index.html missing, but continuing..."
+            echo "❌ index.html missing, listing build/web contents:"
+            ls -la build/web/ 2>/dev/null || echo "build/web directory not found"
+            echo "Continuing anyway..."
           fi
 
       - name: "Flutter Build APK"
@@ -84,12 +90,12 @@ jobs:
           echo "🧹 Nettoyage des fichiers macOS cachés..."
           find build -name "._*" -type f -delete 2>/dev/null || true
           find build -name ".DS_Store" -type f -delete 2>/dev/null || true
-          
+
           # Configurer le chemin Flutter source AVANT le build
           # Le plugin Flutter Gradle lit cette propriété très tôt, donc on doit la configurer avant
           FLUTTER_SOURCE_DIR=$(pwd)
           echo "Flutter source directory: $FLUTTER_SOURCE_DIR"
-          
+
           # Modifier gradle.properties AVANT le build (remplacer la ligne existante si elle existe)
           if grep -q "^flutter.source=" android/gradle.properties; then
             # Remplacer la ligne existante
@@ -98,11 +104,11 @@ jobs:
             # Ajouter la ligne si elle n'existe pas
             echo "flutter.source=$FLUTTER_SOURCE_DIR" >> android/gradle.properties
           fi
-          
+
           # Vérifier que la configuration est correcte
           echo "Configuration flutter.source dans gradle.properties:"
           grep flutter.source android/gradle.properties
-          
+
           # Passer aussi via -P pour garantir que le plugin le trouve
           flutter build apk --release -Pflutter.source=$FLUTTER_SOURCE_DIR
 

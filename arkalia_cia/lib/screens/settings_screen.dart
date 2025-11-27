@@ -153,11 +153,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       if (isLoggedIn) {
                         // Afficher dialog de déconnexion
                         if (!mounted) return;
-                        // Stocker context dans une variable locale pour éviter le warning
-                        final currentContext = context;
+                        final dialogContext = context;
                         if (!mounted) return;
+                        // ignore: use_build_context_synchronously - mounted vérifié juste avant
                         final shouldLogout = await showDialog<bool>(
-                          context: currentContext,
+                          context: dialogContext, // ignore: use_build_context_synchronously
                           builder: (context) => AlertDialog(
                             title: const Text('Déconnexion'),
                             content: const Text('Voulez-vous vous déconnecter ?'),
