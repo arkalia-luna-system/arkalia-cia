@@ -139,14 +139,15 @@ jobs:
           fi
 
           # Configurer flutter.source dans local.properties (lu très tôt par Gradle)
+          # IMPORTANT: S'assurer qu'il y a un saut de ligne avant flutter.source
           if [ -f "android/local.properties" ]; then
-            if grep -q "^flutter.source=" android/local.properties; then
-              sed -i "s|^flutter.source=.*|flutter.source=$FLUTTER_SOURCE_DIR|" android/local.properties
-            else
-              echo "flutter.source=$FLUTTER_SOURCE_DIR" >> android/local.properties
-            fi
+            # Supprimer la ligne flutter.source existante si elle existe (même sans saut de ligne)
+            sed -i '/flutter\.source=/d' android/local.properties
+            # Ajouter flutter.source à la fin avec un saut de ligne
+            echo "" >> android/local.properties
+            echo "flutter.source=$FLUTTER_SOURCE_DIR" >> android/local.properties
           else
-            # Créer local.properties si il n'existe pas
+            # Créer local.properties si il n'existe pas (normalement créé par Flutter)
             echo "flutter.source=$FLUTTER_SOURCE_DIR" >> android/local.properties
           fi
 
@@ -187,14 +188,14 @@ jobs:
             cat android/gradle.properties
             exit 1
           fi
-          
+
           # Vérifier que local.properties contient bien flutter.source (avec ou sans saut de ligne)
           if ! grep -q "flutter\.source=" android/local.properties; then
             echo "❌ ERREUR: flutter.source manquant dans local.properties après configuration"
             cat android/local.properties
             exit 1
           fi
-          
+
           # Afficher la configuration finale pour debug
           echo "✅ Configuration finale vérifiée:"
           echo "   gradle.properties: $(grep 'flutter\.source=' android/gradle.properties)"
