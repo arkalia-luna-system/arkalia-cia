@@ -169,12 +169,14 @@ jobs:
           echo "📋 Contenu de gradle.properties:"
           cat android/gradle.properties | grep -E "(flutter.source|org.gradle)" || echo "Aucune propriété flutter.source trouvée"
 
-          # Build avec la propriété système -P ET init.gradle
+          # Build avec la propriété système -P
           # Le plugin Flutter Gradle lit flutter.source depuis -P en priorité
-          # init.gradle s'exécute AVANT settings.gradle.kts et configure flutter.source
+          # init.gradle s'exécute automatiquement s'il est dans android/init.gradle
+          # Mais on force aussi via GRADLE_OPTS pour être sûr
           echo "🔨 Building APK avec flutter.source=$FLUTTER_SOURCE_DIR"
-          # Utiliser --init-script pour s'assurer que init.gradle est chargé
-          flutter build apk --release -Pflutter.source="$FLUTTER_SOURCE_DIR" --init-script android/init.gradle
+          # Passer via -P ET GRADLE_OPTS pour garantir que le plugin le trouve
+          export GRADLE_OPTS="-Dorg.gradle.project.flutter.source=$FLUTTER_SOURCE_DIR -I android/init.gradle"
+          flutter build apk --release -Pflutter.source="$FLUTTER_SOURCE_DIR"
 
       - name: "Upload Coverage to Codecov"
         if: hashFiles('arkalia_cia/coverage/lcov.info') != ''
