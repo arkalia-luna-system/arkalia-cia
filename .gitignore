@@ -170,6 +170,10 @@ connect_wifi_adb.sh
 cover/
 coverage.xml
 coverage/
+# Rapports de build/tests (garder structure mais ignorer contenu)
+reports/*.json
+reports/*.xml
+reports/*.txt
 cython_debug/
 db.sqlite3
 db.sqlite3-journal

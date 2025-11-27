@@ -1,6 +1,6 @@
 # Index de la documentation
 
-**Version** : 1.3.0
+**Version** : 1.3.1
 **Dernière mise à jour** : 27 novembre 2025
 **Status** : 100% Production-Ready - 100% bugs corrigés - Accessibilité optimisée
 
@@ -12,7 +12,7 @@ Guide de navigation dans la documentation du projet Arkalia CIA.
 
 ### Statut et état du projet
 
-- **[STATUT_FINAL_PROJET.md](./STATUT_FINAL_PROJET.md)** — Document principal
+- **[status/STATUT_FINAL_PROJET.md](./status/STATUT_FINAL_PROJET.md)** — Document principal
   - Statut complet d'exploitation
   - Fonctionnalités implémentées
   - Métriques et conclusion
@@ -81,7 +81,7 @@ Tous les plans sont dans le dossier **[plans/](./plans/)** :
 - **[deployment/CONFIGURATION_BACKEND_WIFI.md](./deployment/CONFIGURATION_BACKEND_WIFI.md)** — Configuration backend WiFi
 - **[deployment/CONNECTER_S25_ANDROID.md](./deployment/CONNECTER_S25_ANDROID.md)** — Connexion Android
 - **[deployment/DEPLOIEMENT_WIFI_IOS.md](./deployment/DEPLOIEMENT_WIFI_IOS.md)** — Déploiement WiFi iOS
-- **[RELEASE_NOTES_V1.2.0.md](./RELEASE_NOTES_V1.2.0.md)** — Notes de release
+- **[releases/RELEASE_NOTES_V1.2.0.md](./releases/RELEASE_NOTES_V1.2.0.md)** — Notes de release
 
 ---
 
@@ -129,7 +129,7 @@ Tous les plans sont dans le dossier **[plans/](./plans/)** :
 
 | Sujet | Document principal |
 |-------|-------------------|
-| Statut projet | `STATUT_FINAL_PROJET.md` |
+| Statut projet | `status/STATUT_FINAL_PROJET.md` |
 | API | `API_DOCUMENTATION.md` |
 | Architecture | `ARCHITECTURE.md` |
 | Vue d'ensemble | `VUE_ENSEMBLE_PROJET.md` |
@@ -146,7 +146,7 @@ Tous les plans sont dans le dossier **[plans/](./plans/)** :
 ```
 docs/
 ├── INDEX_DOCUMENTATION.md          # Ce fichier
-├── STATUT_FINAL_PROJET.md         # Statut principal
+├── status/STATUT_FINAL_PROJET.md         # Statut principal
 ├── ARCHITECTURE.md                 # Architecture système
 ├── VUE_ENSEMBLE_PROJET.md         # Vue d'ensemble visuelle
 ├── API_DOCUMENTATION.md           # Documentation API complète
@@ -166,18 +166,18 @@ docs/
 
 | Type | Documents principaux |
 |------|---------------------|
-| **Statut** | `STATUT_FINAL_PROJET.md` |
+| **Statut** | `status/STATUT_FINAL_PROJET.md` |
 | **Architecture** | `ARCHITECTURE.md`, `VUE_ENSEMBLE_PROJET.md` |
 | **API** | `API_DOCUMENTATION.md`, `API.md` |
 | **Sécurité** | `CHECKLIST_FINALE_SECURITE.md`, `audits/AUDIT_SECURITE_SENIOR.md` |
-| **Release** | `deployment/CHECKLIST_RELEASE_CONSOLIDEE.md`, `RELEASE_NOTES_V1.2.0.md` |
+| **Release** | `deployment/CHECKLIST_RELEASE_CONSOLIDEE.md`, `releases/RELEASE_NOTES_V1.2.0.md` |
 | **Guides** | `guides/GUIDE_UTILISATION_MERE.md`, `guides/GUIDE_MISE_A_JOUR_FLUTTER.md` |
 
 ### Par besoin
 
 | Besoin | Document recommandé |
 |--------|---------------------|
-| Comprendre le projet | `STATUT_FINAL_PROJET.md` |
+| Comprendre le projet | `status/STATUT_FINAL_PROJET.md` |
 | Démarrer le développement | `ARCHITECTURE.md`, `CONTRIBUTING.md` |
 | Utiliser l'API | `API_DOCUMENTATION.md` |
 | Déployer | `deployment/DEPLOYMENT.md`, `deployment/BUILD_RELEASE_ANDROID.md` |
@@ -188,7 +188,7 @@ docs/
 
 ## Voir aussi
 
-- [STATUT_FINAL_PROJET.md](STATUT_FINAL_PROJET.md) - Statut final consolidé du projet
+- [status/STATUT_FINAL_PROJET.md](status/STATUT_FINAL_PROJET.md) - Statut final consolidé du projet
 - [VALIDATION.md](VALIDATION.md) - Checklist de validation
 - [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) - Checklist de release
 

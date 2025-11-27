@@ -1,7 +1,7 @@
 # 📋 Guide pour Testeurs - Arkalia CIA
 
 **Date de création** : 27 novembre 2025  
-**Version** : 1.3.0  
+**Version** : 1.3.1  
 **Pour** : Testeurs internes (famille et amis)
 
 ---
@@ -33,7 +33,7 @@
 
 - **Nom** : _________________________
 - **Date du test** : _________________________
-- **Version testée** : 1.3.0
+- **Version testée** : 1.3.1
 - **Téléphone** : _________________________
 
 ---

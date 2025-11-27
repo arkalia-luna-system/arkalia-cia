@@ -38,7 +38,7 @@
 3. Aller dans **Tests internes** (ou **Production** si tu as publié là)
 4. Vérifier :
    - ✅ **Statut** : Doit être "Publié" (pas "Brouillon")
-   - ✅ **Version** : Doit être "1.3.0" (code: 1)
+   - ✅ **Version** : Doit être "1.3.1" (code: 1)
    - ✅ **Testeurs** : Vérifier que ton email est dans la liste
 
 ### 2. Vérifier sur l'Appareil
@@ -69,7 +69,7 @@ Si tu dois refaire un upload :
 cd /Volumes/T7/arkalia-cia/arkalia_cia
 
 # 1. Incrémenter la version dans pubspec.yaml
-# Éditer : version: 1.3.0+2  (au lieu de +1)
+# Éditer : version: 1.3.1+2  (au lieu de +1)
 
 # 2. Build propre
 ./scripts/build-release-clean.sh

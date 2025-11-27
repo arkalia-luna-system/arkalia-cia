@@ -1,7 +1,7 @@
 # 📊 Analyses Consolidées — Arkalia CIA
 
 **Date de consolidation** : 27 novembre 2025  
-**Version** : 1.3.0  
+**Version** : 1.3.1  
 **Statut** : ✅ Toutes les analyses consolidées
 
 Document consolidé regroupant toutes les analyses effectuées sur le projet Arkalia CIA, organisées par type d'analyse.
@@ -20,7 +20,7 @@ Document consolidé regroupant toutes les analyses effectuées sur le projet Ark
 ## Analyse d'Exploitation du Projet
 
 **Date d'analyse** : Janvier 2025  
-**Version analysée** : 1.3.0  
+**Version analysée** : 1.3.1  
 **Dernière mise à jour** : Janvier 2025 (audit complet basé sur code réel)
 
 ### Résumé Exécutif

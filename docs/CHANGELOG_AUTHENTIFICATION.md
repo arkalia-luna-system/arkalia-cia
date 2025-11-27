@@ -1,6 +1,6 @@
 # Changelog — Authentification JWT
 
-**Version** : 1.3.0 → 1.3.1  
+**Version** : 1.3.1 → 1.3.1  
 **Date** : Janvier 2025
 
 ---

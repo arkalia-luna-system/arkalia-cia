@@ -8,10 +8,10 @@
 ## ✅ **PROBLÈMES IDENTIFIÉS ET CORRIGÉS**
 
 ### 1. **Versions obsolètes dans le code**
-- ✅ `check_updates.sh` : Version attendue `1.3.0+1` (actuelle)
-- ✅ `settings_screen.dart` : Version affichée `1.3.0+1` (actuelle)
-- ✅ `sync_screen.dart` : Version export `1.3.0` (actuelle)
-- ✅ **Corrigé** : Toutes mises à jour vers `1.3.0+1`
+- ✅ `check_updates.sh` : Version attendue `1.3.1+1` (actuelle)
+- ✅ `settings_screen.dart` : Version affichée `1.3.1+1` (actuelle)
+- ✅ `sync_screen.dart` : Version export `1.3.1` (actuelle)
+- ✅ **Corrigé** : Toutes mises à jour vers `1.3.1+1`
 
 ### 2. **Script de mise à jour amélioré**
 - ✅ Script `update_s25.sh` créé (mise à jour simplifiée)
@@ -74,7 +74,7 @@ export PATH="$HOME/Library/Android/sdk/platform-tools:$PATH"
 adb -s 192.168.129.46:5555 shell "dumpsys package com.example.arkalia_cia | grep versionName"
 ```
 
-**Résultat attendu** : `versionName=1.3.0`
+**Résultat attendu** : `versionName=1.3.1`
 
 ### Vérifier la connexion :
 

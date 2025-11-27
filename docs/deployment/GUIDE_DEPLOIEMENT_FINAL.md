@@ -1,9 +1,9 @@
-# 🚀 Final Deployment Guide - Arkalia CIA v1.3.0
+# 🚀 Final Deployment Guide - Arkalia CIA v1.3.1
 
 > **Complete production deployment procedures**
 
 **Last Updated**: November 27, 2025  
-**Version**: 1.3.0  
+**Version**: 1.3.1  
 **Branch**: develop → main  
 **Status**: 🟢 **PRODUCTION READY**
 
@@ -79,15 +79,15 @@ flutter pub get
 
 ```bash
 # 1. Mettre à jour pubspec.yaml
-# Version actuelle: 1.3.0+1
-# Nouvelle version: 1.3.0+1
+# Version actuelle: 1.3.1+1
+# Nouvelle version: 1.3.1+1
 
 # 2. Mettre à jour CHANGELOG.md
-# Déplacer [Unreleased] vers [1.3.0] avec date
+# Déplacer [Unreleased] vers [1.3.1] avec date
 
 # 3. Commit de version
 git add arkalia_cia/pubspec.yaml docs/CHANGELOG.md
-git commit -m "chore: Version 1.3.0 - Release production ready"
+git commit -m "chore: Version 1.3.1 - Release production ready"
 ```
 
 ### Étape 3: Merge vers Main
@@ -98,15 +98,15 @@ git checkout develop
 git pull origin develop
 
 # 2. Créer une branche release
-git checkout -b release/v1.3.0
+git checkout -b release/v1.3.1
 
 # 3. Merge vers main
 git checkout main
 git pull origin main
-git merge release/v1.3.0 --no-ff -m "Release v1.3.0: Production ready"
+git merge release/v1.3.1 --no-ff -m "Release v1.3.1: Production ready"
 
 # 4. Tag de version
-git tag -a v1.3.0 -m "Version 1.3.0 - Production Ready
+git tag -a v1.3.1 -m "Version 1.3.1 - Production Ready
 - 11 nouvelles fonctionnalités majeures
 - 508 tests Python collectés, tous passants (100%)
 - 71.98% couverture code Python
@@ -115,7 +115,7 @@ git tag -a v1.3.0 -m "Version 1.3.0 - Production Ready
 
 # 5. Push vers origin
 git push origin main
-git push origin v1.3.0
+git push origin v1.3.1
 ```
 
 ### Étape 4: Build des Applications
@@ -263,7 +263,7 @@ git push origin v1.3.1
 
 #### Release Mineure
 ```bash
-# Processus similaire mais avec version 1.3.0
+# Processus similaire mais avec version 1.3.1
 # Inclure nouvelles fonctionnalités
 ```
 
@@ -370,6 +370,6 @@ flutter pub get
 ---
 
 *Dernière mise à jour : 27 novembre 2025*  
-**Version**: 1.3.0  
+**Version**: 1.3.1  
 **Statut**: 🟢 **PRÊT POUR PRODUCTION**
 

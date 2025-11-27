@@ -1,7 +1,7 @@
 # Guide : Gérer les Versions sur Google Play Console
 
 **Date** : 27 novembre 2025  
-**Version app** : 1.3.0+1
+**Version app** : 1.3.1+1
 
 ---
 
@@ -26,8 +26,8 @@ cd /Volumes/T7/arkalia-cia/arkalia_cia
 cat pubspec.yaml | grep version
 ```
 
-**Attendu** : `version: 1.3.0+1`
-- `1.3.0` = versionName (affichée aux utilisateurs)
+**Attendu** : `version: 1.3.1+1`
+- `1.3.1` = versionName (affichée aux utilisateurs)
 - `1` = versionCode (numéro de build, doit être incrémenté à chaque upload)
 
 ### Vérifier le build.gradle.kts
@@ -36,7 +36,7 @@ Le fichier `android/app/build.gradle.kts` doit utiliser les valeurs de Flutter :
 
 ```kotlin
 versionCode = flutter.versionCode  // Doit être 1
-versionName = flutter.versionName  // Doit être "1.3.0"
+versionName = flutter.versionName  // Doit être "1.3.1"
 ```
 
 **⚠️ IMPORTANT** : Le fichier `init.gradle` contient des valeurs par défaut (`versionCode: 1, versionName: "1.0.0"`), mais elles ne sont utilisées que si Flutter ne fournit pas les valeurs. Normalement, Flutter les écrase avec celles de `pubspec.yaml`.
@@ -51,7 +51,7 @@ versionName = flutter.versionName  // Doit être "1.3.0"
 2. Sélectionner l'app **Arkalia CIA**
 3. Aller dans **Production** → **Versions** (ou **Tests internes** → **Versions**)
 4. Vérifier la version affichée :
-   - **Version** : Doit être `1.3.0`
+   - **Version** : Doit être `1.3.1`
    - **Code de version** : Doit être `1`
 
 ### Étape 2 : Vérifier le Statut
@@ -81,7 +81,7 @@ Vérifier dans quel **track** l'app est publiée :
 
 ### Option 1 : Incrémenter la Version (Recommandé)
 
-Si tu as déjà uploadé la version 1.3.0+1, tu dois incrémenter pour uploader une nouvelle version :
+Si tu as déjà uploadé la version 1.3.1+1, tu dois incrémenter pour uploader une nouvelle version :
 
 ```bash
 cd /Volumes/T7/arkalia-cia/arkalia_cia
@@ -89,7 +89,7 @@ cd /Volumes/T7/arkalia-cia/arkalia_cia
 
 1. **Modifier `pubspec.yaml`** :
    ```yaml
-   version: 1.3.0+2  # Incrémenter le build number (+1 devient +2)
+   version: 1.3.1+2  # Incrémenter le build number (+1 devient +2)
    ```
 
 2. **Rebuild l'App Bundle** :
@@ -196,7 +196,7 @@ cd /Volumes/T7/arkalia-cia/arkalia_cia
 flutter clean
 
 # 2. Incrémenter la version dans pubspec.yaml
-# (Éditer manuellement : version: 1.3.0+2)
+# (Éditer manuellement : version: 1.3.1+2)
 
 # 3. Récupérer les dépendances
 flutter pub get

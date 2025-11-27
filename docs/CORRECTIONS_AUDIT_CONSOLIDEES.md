@@ -1,7 +1,8 @@
 # ✅ CORRECTIONS AUDIT CONSOLIDÉES - 23-27 novembre 2025
 
 **Date** : 23-27 novembre 2025  
-**Version** : 1.3.0  
+**Version** : 1.3.1  
+**Dernière mise à jour** : 27 novembre 2025  
 **Status** : ✅ **TOUS LES PROBLÈMES CRITIQUES CORRIGÉS**
 
 ---
@@ -225,6 +226,6 @@ static bool get _useEncryption => !kIsWeb;
 ---
 
 **Date** : 27 novembre 2025  
-**Version** : 1.3.0  
+**Version** : 1.3.1  
 **Status** : ✅ **TOUS LES PROBLÈMES CRITIQUES CORRIGÉS**
 

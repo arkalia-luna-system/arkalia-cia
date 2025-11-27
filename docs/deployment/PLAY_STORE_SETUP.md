@@ -2,8 +2,8 @@
 
 **Date de création** : 27 novembre 2025  
 **Dernière mise à jour** : 27 novembre 2025  
-**Statut** : ✅ **Version 1.3.0 publiée en tests internes**  
-**Version** : 1.3.0+1
+**Statut** : ✅ **Version 1.3.1 publiée en tests internes**  
+**Version** : 1.3.1+1
 
 ---
 
@@ -38,7 +38,7 @@
 - **27 novembre 2025** : 
   - ✅ Keystore généré et configuré
   - ✅ App Bundle signé en release (47.9MB → 10.6MB optimisé)
-  - ✅ Version 1.3.0 uploadée sur Play Console
+  - ✅ Version 1.3.1 uploadée sur Play Console
   - ✅ Version publiée en tests internes
   - ✅ Testeurs ajoutés (4 utilisateurs)
   - ✅ Lien de test créé : https://play.google.com/apps/internaltest/4701447837031810861
@@ -58,13 +58,13 @@ com.arkalia.cia
 ### Version Actuelle
 
 ```
-1.3.0+1
+1.3.1+1
 ```
 
 **Fichier** : `arkalia_cia/pubspec.yaml` (ligne 3)
 
 **Format** : `MAJOR.MINOR.PATCH+BUILD_NUMBER`
-- **1.3.0** = Version de l'application
+- **1.3.1** = Version de l'application
 - **+1** = Numéro de build
 
 ---
@@ -250,9 +250,9 @@ flutter build appbundle --release
 
 #### Étape 2 : Notes de Version
 
-**Première version (1.3.0)** :
+**Première version (1.3.1)** :
 ```
-Version 1.3.0 - Première version publique
+Version 1.3.1 - Première version publique
 
 ✨ Fonctionnalités principales :
 - Gestion sécurisée de documents médicaux (chiffrement AES-256)
@@ -339,7 +339,7 @@ Version 1.3.0 - Première version publique
 ### Création App sur Play Console
 
 - [x] ✅ Application créée : Arkalia CIA (27 novembre 2025)
-- [x] ✅ Version 1.3.0 uploadée (27 novembre 2025)
+- [x] ✅ Version 1.3.1 uploadée (27 novembre 2025)
 - [x] ✅ Notes de version ajoutées (27 novembre 2025)
 - [x] ✅ Tests internes configurés (27 novembre 2025)
 - [x] ✅ Testeurs ajoutés : 4 utilisateurs (27 novembre 2025)
@@ -432,7 +432,7 @@ jobs:
 ---
 
 **Dernière mise à jour** : 27 novembre 2025  
-**Statut** : ✅ Version 1.3.0 publiée en tests internes - Disponible pour 4 testeurs
+**Statut** : ✅ Version 1.3.1 publiée en tests internes - Disponible pour 4 testeurs
 
 ---
 
@@ -448,7 +448,7 @@ jobs:
 ### ✅ Build et Publication
 
 - App Bundle signé en release (47.9MB → 10.6MB optimisé)
-- Version 1.3.0 uploadée sur Play Console
+- Version 1.3.1 uploadée sur Play Console
 - Notes de version complètes ajoutées
 - Version publiée et active en tests internes
 

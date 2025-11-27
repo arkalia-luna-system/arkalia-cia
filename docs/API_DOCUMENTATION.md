@@ -1,6 +1,6 @@
 # Documentation API — Arkalia CIA
 
-**Version** : 1.3.0
+**Version** : 1.3.1
 **Date** : 27 novembre 2025
 **Base URL** : `http://localhost:8000` (développement) ou configurée via `BackendConfigService`
 **Version API** : `/api/v1/`

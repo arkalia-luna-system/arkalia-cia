@@ -4,7 +4,7 @@
 
 **Créé par** : Ta fille qui t'aime ❤️  
 **Date** : 27 novembre 2025  
-**Version** : 1.3.0 (en développement)
+**Version** : 1.3.1 (en développement)
 
 ---
 
@@ -681,7 +681,7 @@ J'ai fait tester l'application par un expert et voici ce qui a été **validé c
 ---
 
 *Dernière mise à jour : 27 novembre 2025*  
-*Version : 1.3.0 (PRÊTE - En attente Google Play Store)*  
+*Version : 1.3.1 (PRÊTE - En attente Google Play Store)*  
 *Toutes les fonctionnalités implémentées et testées ✅*  
 *Application complète et fonctionnelle - Prête à être distribuée 📱✨*
 

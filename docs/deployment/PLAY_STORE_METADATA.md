@@ -183,10 +183,10 @@ https://github.com/arkalia-luna-system/arkalia-cia
 
 ## 📝 Notes de Version
 
-### Version 1.3.0 (Première version)
+### Version 1.3.1 (Première version)
 
 ```
-Version 1.3.0 - Première version publique
+Version 1.3.1 - Première version publique
 
 ✨ Fonctionnalités principales :
 - Gestion sécurisée de documents médicaux (chiffrement AES-256)

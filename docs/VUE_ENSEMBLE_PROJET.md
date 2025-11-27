@@ -1,6 +1,6 @@
 # Vue d'ensemble du projet — Arkalia CIA
 
-**Version** : 1.3.0
+**Version** : 1.3.1
 **Dernière mise à jour** : 27 novembre 2025
 
 Document de synthèse visuelle présentant l'écosystème complet Arkalia CIA.
@@ -365,4 +365,4 @@ sequenceDiagram
 ---
 
 *Dernière mise à jour : 27 novembre 2025*
-*Version : 1.3.0 - Toutes les 4 phases d'améliorations terminées*
+*Version : 1.3.1 - Toutes les 4 phases d'améliorations terminées*

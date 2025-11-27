@@ -1,7 +1,7 @@
 # 📋 Versions Unifiées - Arkalia CIA
 
 **Date de vérification** : 27 novembre 2025  
-**Version actuelle** : **1.3.0** (1.3.0+1 pour Flutter)  
+**Version actuelle** : **1.3.1** (1.3.1+1 pour Flutter)  
 **Statut** : ✅ **Toutes les versions unifiées**
 
 ---
@@ -10,9 +10,9 @@
 
 | Fichier | Version | Statut |
 |---------|---------|--------|
-| `arkalia_cia/pubspec.yaml` | `1.3.0+1` | ✅ Correct |
-| `setup.py` | `1.3.0` | ✅ Correct |
-| `pyproject.toml` | `1.3.0` | ✅ Correct |
+| `arkalia_cia/pubspec.yaml` | `1.3.1+1` | ✅ Correct |
+| `setup.py` | `1.3.1` | ✅ Correct |
+| `pyproject.toml` | `1.3.1` | ✅ Correct |
 
 **Note** : Le `+1` dans `pubspec.yaml` est le build number Flutter (normal).
 
@@ -22,17 +22,17 @@
 
 | Fichier | Ancienne Version | Nouvelle Version | Statut |
 |---------|------------------|------------------|--------|
-| `lib/screens/settings_screen.dart` | `1.2.0+1` | `1.3.0+1` | ✅ Mis à jour |
-| `lib/screens/sync_screen.dart` | `1.2.0` | `1.3.0` | ✅ Mis à jour |
-| `check_updates.sh` | `1.2.0+1` | `1.3.0+1` | ✅ Mis à jour |
+| `lib/screens/settings_screen.dart` | `1.2.0+1` | `1.3.1+1` | ✅ Mis à jour |
+| `lib/screens/sync_screen.dart` | `1.2.0` | `1.3.1` | ✅ Mis à jour |
+| `check_updates.sh` | `1.2.0+1` | `1.3.1+1` | ✅ Mis à jour |
 
 ---
 
 ## ✅ Documentation Mis à Jour
 
 ### Fichiers de documentation actuels mis à jour :
-- ✅ `docs/MISE_A_JOUR_S25_CORRIGEE.md` - Versions mises à jour vers 1.3.0
-- ✅ `docs/deployment/GUIDE_DEPLOIEMENT_FINAL.md` - Exemples de processus mis à jour vers 1.3.0
+- ✅ `docs/MISE_A_JOUR_S25_CORRIGEE.md` - Versions mises à jour vers 1.3.1
+- ✅ `docs/deployment/GUIDE_DEPLOIEMENT_FINAL.md` - Exemples de processus mis à jour vers 1.3.1
 
 ### Documents historiques (non modifiés - correct) :
 - 📄 `docs/RELEASE_NOTES_V1.2.0.md` - Document historique v1.2.0
@@ -49,16 +49,16 @@
 
 ### Flutter (pubspec.yaml)
 ```
-version: 1.3.0+1
+version: 1.3.1+1
 ```
-- `1.3.0` = Version de l'application (MAJOR.MINOR.PATCH)
+- `1.3.1` = Version de l'application (MAJOR.MINOR.PATCH)
 - `+1` = Build number (incrémenté à chaque build)
 
 ### Python (setup.py, pyproject.toml)
 ```
-version = "1.3.0"
+version = "1.3.1"
 ```
-- `1.3.0` = Version de l'application (MAJOR.MINOR.PATCH)
+- `1.3.1` = Version de l'application (MAJOR.MINOR.PATCH)
 - Format Semantic Versioning standard
 
 ---
@@ -89,12 +89,12 @@ grep "EXPECTED_VERSION" arkalia_cia/check_updates.sh
 
 Avant de faire une release et merge sur main, vérifier :
 
-- [x] `pubspec.yaml` : Version `1.3.0+1` ✅
-- [x] `setup.py` : Version `1.3.0` ✅
-- [x] `pyproject.toml` : Version `1.3.0` ✅
-- [x] `settings_screen.dart` : Affiche `1.3.0+1` ✅
-- [x] `sync_screen.dart` : Export version `1.3.0` ✅
-- [x] `check_updates.sh` : EXPECTED_VERSION `1.3.0+1` ✅
+- [x] `pubspec.yaml` : Version `1.3.1+1` ✅
+- [x] `setup.py` : Version `1.3.1` ✅
+- [x] `pyproject.toml` : Version `1.3.1` ✅
+- [x] `settings_screen.dart` : Affiche `1.3.1+1` ✅
+- [x] `sync_screen.dart` : Export version `1.3.1` ✅
+- [x] `check_updates.sh` : EXPECTED_VERSION `1.3.1+1` ✅
 - [x] Documentation actuelle : Toutes à jour ✅
 - [x] Documents historiques : Non modifiés (correct) ✅
 

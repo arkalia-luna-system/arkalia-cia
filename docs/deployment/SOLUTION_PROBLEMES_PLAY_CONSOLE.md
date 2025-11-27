@@ -14,8 +14,8 @@ Le code de version 1 a déjà été utilisé. Veuillez essayer un autre code de 
 ### ✅ Solution Appliquée
 
 La version a été incrémentée dans `pubspec.yaml` :
-- **Avant** : `version: 1.3.0+1`
-- **Après** : `version: 1.3.0+2`
+- **Avant** : `version: 1.3.1+1`
+- **Après** : `version: 1.3.1+2`
 
 ### Prochaines Étapes
 
@@ -160,7 +160,7 @@ git push origin main
 
 ## ✅ Checklist Finale
 
-- [ ] Version incrémentée dans `pubspec.yaml` (1.3.0+2) ✅
+- [ ] Version incrémentée dans `pubspec.yaml` (1.3.1+2) ✅
 - [ ] Rebuild App Bundle avec nouvelle version
 - [ ] Héberger la politique de confidentialité (GitHub Pages ou autre)
 - [ ] Ajouter l'URL dans Play Console → Politique

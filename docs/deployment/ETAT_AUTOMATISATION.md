@@ -1,7 +1,7 @@
 # 📊 État de l'Automatisation - Arkalia CIA
 
 **Date** : 27 novembre 2025  
-**Version actuelle** : 1.3.0+1  
+**Version actuelle** : 1.3.1+1  
 **Statut** : ⚠️ **Workflow prêt, configuration manquante**
 
 ---
@@ -12,14 +12,14 @@
 
 | Fichier | Version | Statut |
 |---------|---------|--------|
-| `pubspec.yaml` | 1.3.0+1 | ✅ |
-| `setup.py` | 1.3.0 | ✅ |
-| `pyproject.toml` | 1.3.0 | ✅ |
-| `settings_screen.dart` | 1.3.0+1 | ✅ |
-| `sync_screen.dart` | 1.3.0 | ✅ |
-| Documentation | 1.3.0 | ✅ |
+| `pubspec.yaml` | 1.3.1+1 | ✅ |
+| `setup.py` | 1.3.1 | ✅ |
+| `pyproject.toml` | 1.3.1 | ✅ |
+| `settings_screen.dart` | 1.3.1+1 | ✅ |
+| `sync_screen.dart` | 1.3.1 | ✅ |
+| Documentation | 1.3.1 | ✅ |
 
-**Résultat** : ✅ Toutes les versions sont unifiées à **1.3.0**
+**Résultat** : ✅ Toutes les versions sont unifiées à **1.3.1**
 
 ---
 
@@ -227,7 +227,7 @@ git push origin main
 
 | Élément | Statut | Détails |
 |---------|--------|---------|
-| **Version unifiée** | ✅ | 1.3.0+1 partout |
+| **Version unifiée** | ✅ | 1.3.1+1 partout |
 | **Workflow GitHub Actions** | ✅ | Créé et prêt |
 | **Documentation** | ✅ | Complète |
 | **Secret GitHub** | ⏳ | **À configurer** |
