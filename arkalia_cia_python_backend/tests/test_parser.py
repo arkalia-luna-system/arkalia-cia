@@ -106,16 +106,50 @@ def test_masante_parser():
             os.unlink(test_file)
 
 
+def test_parser_integration():
+    """Test d'intégration complet des parsers"""
+    print("\n=== TEST INTÉGRATION PARSERS ===")
+    
+    results = {
+        'andaman7': False,
+        'masante': False,
+    }
+    
+    try:
+        results['andaman7'] = test_andaman7_parser()
+        results['masante'] = test_masante_parser()
+        
+        total_tests = len(results)
+        passed_tests = sum(1 for v in results.values() if v)
+        
+        print(f"\n📊 Résultats: {passed_tests}/{total_tests} tests passés")
+        
+        return all(results.values())
+    except Exception as e:
+        print(f"\n❌ Erreur dans test d'intégration: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+
+
 if __name__ == "__main__":
     print("🚀 Démarrage des tests de parser...")
+    print("=" * 60)
 
     success_andaman7 = test_andaman7_parser()
     success_masante = test_masante_parser()
+    
+    # Test d'intégration
+    success_integration = test_parser_integration()
 
-    if success_andaman7 and success_masante:
-        print("\n🎉 TOUS LES TESTS SONT PASSÉS !")
+    if success_andaman7 and success_masante and success_integration:
+        print("\n" + "=" * 60)
+        print("🎉 TOUS LES TESTS SONT PASSÉS !")
+        print("=" * 60)
         sys.exit(0)
     else:
-        print("\n❌ Certains tests ont échoué")
+        print("\n" + "=" * 60)
+        print("❌ Certains tests ont échoué")
+        print("=" * 60)
         sys.exit(1)
 
