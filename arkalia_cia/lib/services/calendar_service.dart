@@ -92,9 +92,11 @@ class CalendarService {
       if (doctorColor != null) {
         // Format: #RRGGBB (sans alpha)
         // Les accesseurs .red, .green, .blue retournent des valeurs entre 0 et 255
+        // Note: .blue est deprecated mais fonctionne encore dans Flutter 3.35.3
         final r = doctorColor.red & 0xff;
         final g = doctorColor.green & 0xff;
-        final b = (doctorColor.value >> 0) & 0xff; // Extraire le composant bleu depuis value
+        // ignore: deprecated_member_use
+        final b = doctorColor.blue & 0xff; // Utiliser .blue (deprecated mais fonctionne)
         final colorHex = '#${r.toRadixString(16).padLeft(2, '0').toUpperCase()}'
             '${g.toRadixString(16).padLeft(2, '0').toUpperCase()}'
             '${b.toRadixString(16).padLeft(2, '0').toUpperCase()}';
