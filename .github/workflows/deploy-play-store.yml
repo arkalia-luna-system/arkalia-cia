@@ -191,7 +191,7 @@ jobs:
           releaseFiles: >-
             arkalia_cia/build/app/outputs/bundle/release/app-release.aab
           track: ${{ env.TRACK }}
-          status: completed
+          status: draft
           changesNotSentForReview: false
 
       - name: Check upload result
