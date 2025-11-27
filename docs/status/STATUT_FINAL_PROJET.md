@@ -121,7 +121,7 @@ Le projet Arkalia CIA exploite maintenant 100% de son potentiel avec toutes les 
 - **Extraction enrichie médecins** : Méthodes `_extract_address()`, `_extract_phone()`, `_extract_email()` dans `metadata_extractor.py` avec patterns belges
 - **Déduplication intelligente** : Méthode `findSimilarDoctors()` avec scoring de similarité (>80% nom ou >60% nom + spécialité)
 - **Tests** : Tests extraction enrichie, déduplication, codes couleur
-- **Documentation** : Mise à jour BESOINS_MERE_23_NOVEMBRE_2025.md et STATUT_FINAL_CONSOLIDE.md
+- **Documentation** : Mise à jour BESOINS_MERE_23_NOVEMBRE_2025.md et STATUT_FINAL_PROJET.md
 
 ### Phase 2 : Rappels Médicaments et Hydratation (27 novembre 2025) ✅
 
@@ -132,7 +132,7 @@ Le projet Arkalia CIA exploite maintenant 100% de son potentiel avec toutes les 
 - **Intégration calendrier** : `CalendarService` étendu avec méthodes pour médicaments et hydratation, `CalendarScreen` avec filtres et distinction visuelle
 - **Rappels intelligents** : Rappels adaptatifs (30min après si non pris), rappels hydratation toutes les 2h (8h-20h), renforcement si objectif non atteint
 - **Tests** : Tests Python complets pour interactions médicamenteuses, validation, logique métier
-- **Documentation** : Mise à jour BESOINS_MERE_23_NOVEMBRE_2025.md et STATUT_FINAL_CONSOLIDE.md
+- **Documentation** : Mise à jour BESOINS_MERE_23_NOVEMBRE_2025.md et STATUT_FINAL_PROJET.md
 
 ### Phase 3 : Module Pathologies (27 novembre 2025) ✅
 
@@ -142,7 +142,7 @@ Le projet Arkalia CIA exploite maintenant 100% de son potentiel avec toutes les 
 - **Écrans** : Liste, détail avec graphiques, formulaire de tracking adaptatif
 - **Intégration** : Calendrier avec rappels colorés par pathologie, bouton dans home_page
 - **Tests** : Tests Python complets pour structure, templates et tracking
-- **Documentation** : Mise à jour BESOINS_MERE_23_NOVEMBRE_2025.md et STATUT_FINAL_CONSOLIDE.md
+- **Documentation** : Mise à jour BESOINS_MERE_23_NOVEMBRE_2025.md et STATUT_FINAL_PROJET.md
 
 ### Phase 4 : Améliorations IA (27 novembre 2025) ✅
 
@@ -151,7 +151,7 @@ Le projet Arkalia CIA exploite maintenant 100% de son potentiel avec toutes les 
 - **IA conversationnelle pathologies** : `answer_pathology_question()`, `suggest_questions_for_appointment()`, détection automatique pathologie, suggestions examens/traitements/rappels
 - **Interface visuelle améliorée** : Widget `ExamTypeBadge`, filtres rapides par type examen, statistiques répartition, badges médecins plus visibles, légende couleurs
 - **Tests** : 16 nouveaux tests Phase 4 (tous passent), 0 erreur lint Python/Flutter
-- **Documentation** : Mise à jour BESOINS_MERE_23_NOVEMBRE_2025.md et STATUT_FINAL_CONSOLIDE.md
+- **Documentation** : Mise à jour BESOINS_MERE_23_NOVEMBRE_2025.md et STATUT_FINAL_PROJET.md
 
 ---
 

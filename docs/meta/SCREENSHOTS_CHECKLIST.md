@@ -159,7 +159,7 @@ screenshots/
 
 ## Voir aussi
 
-- **[SCREENSHOTS_GUIDE.md](./SCREENSHOTS_GUIDE.md)** — Guide détaillé des screenshots
+- **[../guides/SCREENSHOTS_GUIDE.md](../guides/SCREENSHOTS_GUIDE.md)** — Guide détaillé des screenshots
 - **[deployment/BUILD_RELEASE_ANDROID.md](./deployment/BUILD_RELEASE_ANDROID.md)** — Guide build Android
 - **[deployment/IOS_DEPLOYMENT_GUIDE.md](./deployment/IOS_DEPLOYMENT_GUIDE.md)** — Guide déploiement iOS
 - **[RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md)** — Checklist release

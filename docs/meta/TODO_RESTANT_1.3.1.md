@@ -30,7 +30,7 @@
   - ✅ Créé `audits/AUDIT_COMPLET_27_NOVEMBRE_2025.md` (fusionné)
   - ✅ Anciens fichiers archivés
 - [ ] Fusionner les corrections (optionnel)
-  - `CORRECTIONS_AUDIT_CONSOLIDEES.md` existe déjà (complet)
+  - `audits/CORRECTIONS_AUDIT_CONSOLIDEES.md` existe déjà (complet)
   - `CORRECTIONS_CONSOLIDEES.md` est dans archive/ (ancien)
 - [x] Organiser en dossiers ✅
   - ✅ Guides dans `guides/`

@@ -454,7 +454,7 @@ Pour votre cas d'usage (tester sur votre iPad Pro), le compte gratuit est parfai
 
 - **[deployment/DEPLOYMENT.md](./DEPLOYMENT.md)** — Guide de déploiement général
 - **[deployment/BUILD_RELEASE_ANDROID.md](./BUILD_RELEASE_ANDROID.md)** — Guide build Android
-- **[SCREENSHOTS_GUIDE.md](../SCREENSHOTS_GUIDE.md)** — Guide des screenshots
+- **[../guides/SCREENSHOTS_GUIDE.md](../guides/SCREENSHOTS_GUIDE.md)** — Guide des screenshots
 - **[RELEASE_CHECKLIST.md](../RELEASE_CHECKLIST.md)** — Checklist release
 - **[INDEX_DOCUMENTATION.md](../INDEX_DOCUMENTATION.md)** — Index complet de la documentation
 

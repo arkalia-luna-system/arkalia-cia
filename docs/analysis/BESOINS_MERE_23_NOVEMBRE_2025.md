@@ -330,7 +330,7 @@ class PathologyTracking {
 
 ## 🚀 PLAN D'IMPLÉMENTATION PRIORISÉ
 
-> **📋 PROMPTS DÉTAILLÉS** : Voir **[PROMPTS_IMPLEMENTATION_4_PHASES.md](./PROMPTS_IMPLEMENTATION_4_PHASES.md)** pour les prompts complets et détaillés de chaque phase, prêts à être utilisés par une IA.
+> **📋 PROMPTS DÉTAILLÉS** : Voir **[../plans/PROMPTS_IMPLEMENTATION_4_PHASES.md](../plans/PROMPTS_IMPLEMENTATION_4_PHASES.md)** pour les prompts complets et détaillés de chaque phase, prêts à être utilisés par une IA.
 
 ### Phase 1 : Améliorations Immédiates (1-2 semaines) ✅ TERMINÉE
 1. **Codes couleur par spécialité** 🎨 ✅
@@ -418,7 +418,7 @@ class PathologyTracking {
 
 ### Documentation Existante
 - **[ANALYSE_COMPLETE_BESOINS_MERE.md](./ANALYSE_COMPLETE_BESOINS_MERE.md)** — Analyse complète des besoins
-- **[STATUT_FINAL_CONSOLIDE.md](./STATUT_FINAL_CONSOLIDE.md)** — État actuel du projet
+- **[../status/STATUT_FINAL_PROJET.md](../status/STATUT_FINAL_PROJET.md)** — État actuel du projet
 - **[PLAN_02_HISTORIQUE_MEDECINS.md](./plans/PLAN_02_HISTORIQUE_MEDECINS.md)** — Plan médecins
 - **[PLAN_01_PARSER_PDF_MEDICAUX.md](./plans/PLAN_01_PARSER_PDF_MEDICAUX.md)** — Plan extraction PDF
 

@@ -304,7 +304,7 @@ Ce document présente des **cas d'usage concrets** pour différents profils d'ut
 
 - **[POUR_MAMAN.md](./POUR_MAMAN.md)** — Guide simplifié pour utilisateurs seniors
 - **[ARIA_INTEGRATION.md](./ARIA_INTEGRATION.md)** — Détails intégration CIA ↔ ARIA
-- **[ECOSYSTEM_VISION.md](./ECOSYSTEM_VISION.md)** — Vision écosystème Arkalia
+- **[../integrations/ECOSYSTEM_VISION.md](../integrations/ECOSYSTEM_VISION.md)** — Vision écosystème Arkalia
 - **[README.md](../README.md)** — Vue d'ensemble du projet
 
 ---

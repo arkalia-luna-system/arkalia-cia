@@ -203,7 +203,7 @@ Once the app is launched, you can:
 - **[deployment/BUILD_RELEASE_ANDROID.md](./deployment/BUILD_RELEASE_ANDROID.md)** — Guide build Android
 - **[TESTER_ET_METTRE_A_JOUR.md](./TESTER_ET_METTRE_A_JOUR.md)** — Guide de test et mise à jour
 - **[deployment/CONNECTER_S25_ANDROID.md](./deployment/CONNECTER_S25_ANDROID.md)** — Connexion Android
-- **[SCREENSHOTS_GUIDE.md](./SCREENSHOTS_GUIDE.md)** — Guide des screenshots
+- **[SCREENSHOTS_GUIDE.md](../guides/SCREENSHOTS_GUIDE.md)** — Guide des screenshots
 - **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
 
 ---

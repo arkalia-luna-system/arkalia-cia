@@ -419,7 +419,7 @@ jobs:
 - **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Guide de déploiement général
 - **[BUILD_RELEASE_ANDROID.md](./BUILD_RELEASE_ANDROID.md)** - Guide build Android
 - **[PLAY_STORE_METADATA.md](./PLAY_STORE_METADATA.md)** - Métadonnées prêtes à copier-coller
-- **[SCREENSHOTS_GUIDE.md](../SCREENSHOTS_GUIDE.md)** - Guide des screenshots
+- **[../guides/SCREENSHOTS_GUIDE.md](../guides/SCREENSHOTS_GUIDE.md)** - Guide des screenshots
 - **[RELEASE_CHECKLIST.md](../RELEASE_CHECKLIST.md)** - Checklist release complète
 
 ---

@@ -31,6 +31,9 @@ Index de navigation pour toute la documentation du projet Arkalia CIA.
 - **[guides/COMMENT_ENVOYER_A_MAMAN.md](./guides/COMMENT_ENVOYER_A_MAMAN.md)** — Comment envoyer l'app à maman
 - **[guides/CE_QUE_VOUS_DEVRIEZ_VOIR.md](./guides/CE_QUE_VOUS_DEVRIEZ_VOIR.md)** — Ce que vous devriez voir
 - **[guides/GUIDE_OUVRIR_APP.md](./guides/GUIDE_OUVRIR_APP.md)** — Guide ouvrir l'app
+- **[guides/APP_INDEPENDANTE_MAC.md](./guides/APP_INDEPENDANTE_MAC.md)** — App indépendante Mac
+- **[guides/MIGRATION.md](./guides/MIGRATION.md)** — Guide de migration
+- **[guides/SCREENSHOTS_GUIDE.md](./guides/SCREENSHOTS_GUIDE.md)** — Guide screenshots
 
 ### 🚀 Déploiement
 
@@ -47,20 +50,27 @@ Index de navigation pour toute la documentation du projet Arkalia CIA.
 - **[audits/AUDITS_CONSOLIDES.md](./audits/AUDITS_CONSOLIDES.md)** — Audits consolidés historiques
 - **[audits/ANALYSES_CONSOLIDEES.md](./audits/ANALYSES_CONSOLIDEES.md)** — Analyses consolidées
 - **[audits/RAPPORT_AUDIT_TESTS.md](./audits/RAPPORT_AUDIT_TESTS.md)** — Rapport audit tests
-- **[CORRECTIONS_AUDIT_CONSOLIDEES.md](./CORRECTIONS_AUDIT_CONSOLIDEES.md)** — Corrections d'audit consolidées
+- **[audits/CORRECTIONS_AUDIT_CONSOLIDEES.md](./audits/CORRECTIONS_AUDIT_CONSOLIDEES.md)** — Corrections d'audit consolidées
+- **[audits/CHECKLIST_FINALE_SECURITE.md](./audits/CHECKLIST_FINALE_SECURITE.md)** — Checklist sécurité complète
+- **[audits/TESTS_MANQUANTS_SECURITE.md](./audits/TESTS_MANQUANTS_SECURITE.md)** — Tests manquants sécurité
 - **[analysis/ANALYSE_COMPLETE_BESOINS_MERE.md](./analysis/ANALYSE_COMPLETE_BESOINS_MERE.md)** — Analyse complète des besoins
 - **[analysis/BESOINS_MERE_23_NOVEMBRE_2025.md](./analysis/BESOINS_MERE_23_NOVEMBRE_2025.md)** — Besoins mère 23 novembre
+- **[analysis/IMPORTS_ANALYSIS.md](./analysis/IMPORTS_ANALYSIS.md)** — Analyse des imports
+- **[analysis/USE_CASES.md](./analysis/USE_CASES.md)** — Cas d'utilisation
 
 ### 📊 Statut du Projet
 
 - **[status/STATUT_FINAL_PROJET.md](./status/STATUT_FINAL_PROJET.md)** — Statut final du projet
 - **[status/VERSIONS_UNIFIEES.md](./status/VERSIONS_UNIFIEES.md)** — Versions unifiées
+- **[status/RELEASE_READINESS_REPORT.txt](./status/RELEASE_READINESS_REPORT.txt)** — Rapport préparation release
 
 ### 🔗 Intégrations
 
-- **[ARIA_IMPLEMENTATION_GUIDE.md](./ARIA_IMPLEMENTATION_GUIDE.md)** — Guide d'implémentation ARIA
-- **[ECOSYSTEM_VISION.md](./ECOSYSTEM_VISION.md)** — Vision de l'écosystème Arkalia Luna
+- **[integrations/ARIA_IMPLEMENTATION_GUIDE.md](./integrations/ARIA_IMPLEMENTATION_GUIDE.md)** — Guide d'implémentation ARIA
+- **[integrations/ECOSYSTEM_VISION.md](./integrations/ECOSYSTEM_VISION.md)** — Vision de l'écosystème Arkalia Luna
 - **[integrations/ARIA_INTEGRATION.md](./integrations/ARIA_INTEGRATION.md)** — Intégration avec Arkalia ARIA
+- **[integrations/ARKALIA_ARIA_PROJECT.md](./integrations/ARKALIA_ARIA_PROJECT.md)** — Projet Arkalia ARIA
+- **[integrations/ARKALIA_ARIA_SUMMARY.md](./integrations/ARKALIA_ARIA_SUMMARY.md)** — Résumé Arkalia ARIA
 - **[integrations/PORTAILS_SANTE.md](./integrations/PORTAILS_SANTE.md)** — Portails santé
 - **[integrations/STRATEGIE_GRATUITE_PORTAILS_SANTE.md](./integrations/STRATEGIE_GRATUITE_PORTAILS_SANTE.md)** — Stratégie portails santé
 - **[integrations/INTEGRATION_ANDAMAN7_MASANTE.md](./integrations/INTEGRATION_ANDAMAN7_MASANTE.md)** — Intégration Andaman 7 / MaSanté
@@ -89,6 +99,7 @@ Index de navigation pour toute la documentation du projet Arkalia CIA.
 - **[plans/PLAN_05_PARTAGE_FAMILIAL.md](./plans/PLAN_05_PARTAGE_FAMILIAL.md)** — Plan partage familial
 - **[plans/PLAN_06_IA_CONVERSATIONNELLE.md](./plans/PLAN_06_IA_CONVERSATIONNELLE.md)** — Plan IA conversationnelle
 - **[plans/PLAN_IMPLEMENTATION_IMPORT_MANUEL.md](./plans/PLAN_IMPLEMENTATION_IMPORT_MANUEL.md)** — Plan import manuel
+- **[plans/PROMPTS_IMPLEMENTATION_4_PHASES.md](./plans/PROMPTS_IMPLEMENTATION_4_PHASES.md)** — Prompts implémentation 4 phases
 - **[plans/GUIDE_TEST_VISUEL_LIVE.md](./plans/GUIDE_TEST_VISUEL_LIVE.md)** — Guide test visuel live
 
 ### ⚡ Optimisations
@@ -104,6 +115,7 @@ Index de navigation pour toute la documentation du projet Arkalia CIA.
 - **[meta/QUALITE_VALIDATION.md](./meta/QUALITE_VALIDATION.md)** — Qualité et validation
 - **[meta/TESTS_DOCUMENTATION_COMPLETE.md](./meta/TESTS_DOCUMENTATION_COMPLETE.md)** — Documentation tests complète
 - **[meta/VERIFICATION_COMPLETE.md](./meta/VERIFICATION_COMPLETE.md)** — Vérification complète
+- **[meta/SCREENSHOTS_CHECKLIST.md](./meta/SCREENSHOTS_CHECKLIST.md)** — Checklist screenshots
 
 ---
 
@@ -126,8 +138,8 @@ Les fichiers obsolètes ou redondants sont archivés dans :
 
 - **Architecture** : `ARCHITECTURE.md`, `ARCHITECTURE_SERVICES.md`
 - **API** : `API_DOCUMENTATION.md`
-- **Sécurité** : `CHECKLIST_FINALE_SECURITE.md`
-- **Tests** : `TESTS_DOCUMENTATION_COMPLETE.md`, `audits/RAPPORT_AUDIT_TESTS.md`
+- **Sécurité** : `audits/CHECKLIST_FINALE_SECURITE.md`, `audits/TESTS_MANQUANTS_SECURITE.md`
+- **Tests** : `meta/TESTS_DOCUMENTATION_COMPLETE.md`, `audits/RAPPORT_AUDIT_TESTS.md`
 - **Déploiement** : `deployment/` (tous les guides)
 - **Troubleshooting** : `troubleshooting/` (tous les guides)
 - **Intégrations** : `integrations/` (portails santé, eHealth)

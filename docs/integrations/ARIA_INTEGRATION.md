@@ -404,7 +404,7 @@ final response = await conversationalAI.ask(
 - **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** — Documentation API complète
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture système
 - **[ECOSYSTEM_VISION.md](./ECOSYSTEM_VISION.md)** — Vision stratégique écosystème Arkalia Luna
-- **[USE_CASES.md](./USE_CASES.md)** — Cas d'usage concrets par profils utilisateurs
+- **[../analysis/USE_CASES.md](../analysis/USE_CASES.md)** — Cas d'usage concrets par profils utilisateurs
 
 ### Documentation ARIA
 - **[README ARIA](https://github.com/arkalia-luna-system/arkalia-aria/blob/main/README.md)** — Vue d'ensemble du projet ARIA

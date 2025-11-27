@@ -819,7 +819,7 @@ Passer de 6/10 à 10/10 - Zéro défaut, zéro erreur
 ## Voir aussi
 
 - **[RELEASE_NOTES_V1.2.0.md](./RELEASE_NOTES_V1.2.0.md)** — Notes de release détaillées
-- **[CHANGELOG_AUTHENTIFICATION.md](./CHANGELOG_AUTHENTIFICATION.md)** — Changelog spécifique à l'authentification
+- **[archive/CHANGELOG_AUTHENTIFICATION.md](./archive/CHANGELOG_AUTHENTIFICATION.md)** — Changelog spécifique à l'authentification (archivé, contenu intégré dans ce fichier)
 - **[STATUT_FINAL_PROJET.md](./STATUT_FINAL_PROJET.md)** — Statut final consolidé du projet
 - **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
 

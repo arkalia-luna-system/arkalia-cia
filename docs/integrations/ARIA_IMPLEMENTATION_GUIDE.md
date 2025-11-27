@@ -22,7 +22,7 @@ Guide pratique pour implémenter l'intégration ARIA étape par étape avec tous
 
 ## Voir aussi
 
-- **[ARIA_IMPLEMENTATION_GUIDE.md](./ARIA_IMPLEMENTATION_GUIDE.md)** — Guide complet d'intégration ARIA
+- **[ARIA_INTEGRATION.md](./ARIA_INTEGRATION.md)** — Guide complet d'intégration ARIA
 - **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** — Documentation API complète
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture système
 - **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
@@ -1042,7 +1042,7 @@ echo "📊 Laboratoire personnel opérationnel"
 ## Voir aussi (fin)
 
 - **[VUE_ENSEMBLE_PROJET.md](./VUE_ENSEMBLE_PROJET.md)** — Vue d'ensemble de l'écosystème Arkalia
-- **[ANALYSE_COMPLETE_BESOINS_MERE.md](./ANALYSE_COMPLETE_BESOINS_MERE.md)** — Analyse des besoins
+- **[../analysis/ANALYSE_COMPLETE_BESOINS_MERE.md](../analysis/ANALYSE_COMPLETE_BESOINS_MERE.md)** — Analyse des besoins
 - **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** — Documentation API complète
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture système
 - **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation

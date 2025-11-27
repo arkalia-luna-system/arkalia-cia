@@ -259,7 +259,7 @@ adb install build/app/outputs/flutter-apk/app-release.apk
 - **[RELEASE_CHECKLIST.md](../RELEASE_CHECKLIST.md)** — Checklist release complète
 - **[deployment/DEPLOYMENT.md](./DEPLOYMENT.md)** — Guide de déploiement général
 - **[deployment/IOS_DEPLOYMENT_GUIDE.md](./IOS_DEPLOYMENT_GUIDE.md)** — Guide déploiement iOS
-- **[SCREENSHOTS_GUIDE.md](../SCREENSHOTS_GUIDE.md)** — Guide des screenshots
+- **[../guides/SCREENSHOTS_GUIDE.md](../guides/SCREENSHOTS_GUIDE.md)** — Guide des screenshots
 - **[INDEX_DOCUMENTATION.md](../INDEX_DOCUMENTATION.md)** — Index complet de la documentation
 
 ---

@@ -264,7 +264,7 @@ ARIAIntegrationSettings(
 ### Documentation CIA
 - **[README.md](../README.md)** — Vue d'ensemble du projet CIA
 - **[ARIA_INTEGRATION.md](./ARIA_INTEGRATION.md)** — Détails intégration CIA ↔ ARIA
-- **[USE_CASES.md](./USE_CASES.md)** — Cas d'usage concrets par profils utilisateurs
+- **[../analysis/USE_CASES.md](../analysis/USE_CASES.md)** — Cas d'usage concrets par profils utilisateurs
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture technique
 - **[VUE_ENSEMBLE_PROJET.md](./VUE_ENSEMBLE_PROJET.md)** — Vue d'ensemble visuelle
 

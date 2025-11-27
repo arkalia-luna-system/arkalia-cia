@@ -280,7 +280,7 @@ Si vous voulez documenter la couverture de code :
 
 ## Voir aussi
 
-- **[SCREENSHOTS_CHECKLIST.md](./SCREENSHOTS_CHECKLIST.md)** — Checklist des screenshots
+- **[../meta/SCREENSHOTS_CHECKLIST.md](../meta/SCREENSHOTS_CHECKLIST.md)** — Checklist des screenshots
 - **[deployment/BUILD_RELEASE_ANDROID.md](./deployment/BUILD_RELEASE_ANDROID.md)** — Guide build Android
 - **[deployment/IOS_DEPLOYMENT_GUIDE.md](./deployment/IOS_DEPLOYMENT_GUIDE.md)** — Guide déploiement iOS
 - **[RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md)** — Checklist release
