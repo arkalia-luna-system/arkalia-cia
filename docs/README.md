@@ -75,6 +75,9 @@ Index de navigation pour toute la documentation du projet Arkalia CIA.
 
 ### 📋 Plans d'Implémentation
 
+- **[plans/README.md](./plans/README.md)** — Index des plans d'implémentation
+- **[plans/STATUS_IMPLEMENTATION.md](./plans/STATUS_IMPLEMENTATION.md)** — Statut d'implémentation des plans
+- **[plans/CE_QUI_RESTE_A_FAIRE.md](./plans/CE_QUI_RESTE_A_FAIRE.md)** — Ce qui reste à faire
 - **[plans/PLAN_00_ONBOARDING_INTELLIGENT.md](./plans/PLAN_00_ONBOARDING_INTELLIGENT.md)** — Plan onboarding
 - **[plans/PLAN_01_PARSER_PDF_MEDICAUX.md](./plans/PLAN_01_PARSER_PDF_MEDICAUX.md)** — Plan parser PDF
 - **[plans/PLAN_02_HISTORIQUE_MEDECINS.md](./plans/PLAN_02_HISTORIQUE_MEDECINS.md)** — Plan historique médecins
@@ -83,6 +86,7 @@ Index de navigation pour toute la documentation du projet Arkalia CIA.
 - **[plans/PLAN_05_PARTAGE_FAMILIAL.md](./plans/PLAN_05_PARTAGE_FAMILIAL.md)** — Plan partage familial
 - **[plans/PLAN_06_IA_CONVERSATIONNELLE.md](./plans/PLAN_06_IA_CONVERSATIONNELLE.md)** — Plan IA conversationnelle
 - **[plans/PLAN_IMPLEMENTATION_IMPORT_MANUEL.md](./plans/PLAN_IMPLEMENTATION_IMPORT_MANUEL.md)** — Plan import manuel
+- **[plans/GUIDE_TEST_VISUEL_LIVE.md](./plans/GUIDE_TEST_VISUEL_LIVE.md)** — Guide test visuel live
 
 ### ⚡ Optimisations
 
