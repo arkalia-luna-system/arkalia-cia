@@ -68,19 +68,39 @@ jobs:
           echo "📦 Building Flutter web..."
           flutter clean
           flutter pub get
-          flutter build web --release || echo "⚠️ Web build completed with warnings"
+
+          # Build web avec gestion d'erreur améliorée
+          if flutter build web --release; then
+            echo "✅ Web build successful"
+          else
+            echo "⚠️ Web build completed with warnings or errors"
+            # Vérifier si le build a quand même créé des fichiers
+            if [ -d "build/web" ]; then
+              echo "✅ build/web directory exists despite warnings"
+            else
+              echo "❌ build/web directory not created"
+            fi
+          fi
 
           # Vérifier que index.html existe (avec plusieurs chemins possibles)
           if [ -f "build/web/index.html" ]; then
             echo "✅ index.html created successfully"
             ls -lh build/web/index.html
+            echo "📊 Build web contents:"
+            ls -la build/web/ | head -20
           elif [ -f "arkalia_cia/build/web/index.html" ]; then
             echo "✅ index.html found at arkalia_cia/build/web/index.html"
             ls -lh arkalia_cia/build/web/index.html
           else
-            echo "❌ index.html missing, listing build/web contents:"
-            ls -la build/web/ 2>/dev/null || echo "build/web directory not found"
-            echo "Continuing anyway..."
+            echo "❌ index.html missing"
+            echo "Current directory: $(pwd)"
+            echo "Checking for build directory:"
+            ls -la build/ 2>/dev/null || echo "build/ directory not found"
+            if [ -d "build" ]; then
+              echo "Contents of build/:"
+              ls -la build/
+            fi
+            echo "Continuing anyway (web build is optional)..."
           fi
 
       - name: "Flutter Build APK"
