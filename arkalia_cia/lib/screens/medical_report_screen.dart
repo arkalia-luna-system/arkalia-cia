@@ -107,8 +107,9 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
 
     try {
       await SharePlus.instance.share(
-        _report!['formatted_text'],
-        subject: 'Rapport médical - ${widget.doctorName ?? 'Consultation'}',
+        ShareParams(
+          text: _report!['formatted_text'],
+        ),
       );
     } catch (e) {
       if (mounted) {

@@ -199,8 +199,9 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
       }
       
       await SharePlus.instance.share(
-        buffer.toString(),
-        subject: 'Analyse Patterns - ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
+        ShareParams(
+          text: buffer.toString(),
+        ),
       );
     } catch (e) {
       ErrorHelper.logError('PatternsDashboardScreen._sharePatterns', e);

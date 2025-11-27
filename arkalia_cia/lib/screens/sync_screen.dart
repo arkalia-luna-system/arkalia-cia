@@ -568,10 +568,11 @@ class _SyncScreenState extends State<SyncScreen> {
       await file.writeAsString(jsonString);
       
       // Partager le fichier
-      await SharePlus.instance.shareXFiles(
-        [XFile(file.path, mimeType: 'application/json')],
-        text: 'Sauvegarde Arkalia CIA - $timestamp',
-        subject: 'Export de données Arkalia CIA',
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(file.path, mimeType: 'application/json')],
+          text: 'Sauvegarde Arkalia CIA - $timestamp',
+        ),
       );
       
       if (!mounted) return;
