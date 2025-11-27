@@ -161,25 +161,32 @@
 
 ## ✅ FICHIERS SENSIBLES - GESTION SÉCURISÉE
 
-### Fichier local `key.properties`
-- ✅ **Existe localement** : `arkalia_cia/android/key.properties` (pour build local)
-- ✅ **Sauvegarde sécurisée** : `~/Desktop/cle/arkalia-cia/key.properties` (hors projet)
-- ✅ **N'est PAS dans Git** : Protégé par .gitignore (seul le template est dans Git)
-- ✅ **N'est PAS dans l'app publiée** : Utilisé uniquement PENDANT le build pour signer
-- ✅ **Double sauvegarde** : Local (pour build) + Bureau/cle (sauvegarde sécurisée)
+### 📍 Organisation Actuelle (27 novembre 2025)
 
-### Keystore local
-- ✅ **Existe localement** : `arkalia_cia/android/arkalia-cia-release.jks` (pour build local)
-- ✅ **Sauvegarde sécurisée** : `~/Desktop/cle/arkalia-cia/arkalia-cia-release.jks` (hors projet)
-- ✅ **N'est PAS dans Git** : Protégé par .gitignore
-- ✅ **N'est PAS dans l'app publiée** : Utilisé uniquement PENDANT le build pour signer
-- ✅ **Double sauvegarde** : Local (pour build) + Bureau/cle (sauvegarde sécurisée)
+**Les fichiers sensibles sont stockés HORS du projet** dans `~/Desktop/cle/arkalia-cia/` :
+
+#### Fichiers Réels (Hors Projet)
+- ✅ **`~/Desktop/cle/arkalia-cia/key.properties`** : Fichier réel avec mots de passe
+- ✅ **`~/Desktop/cle/arkalia-cia/arkalia-cia-release.jks`** : Keystore réel
+- ✅ **Hors projet Git** : Aucun risque d'exposition
+
+#### Liens Symboliques (Dans le Projet)
+- 🔗 **`arkalia_cia/android/key.properties`** → Lien vers `~/Desktop/cle/arkalia-cia/key.properties`
+- 🔗 **`arkalia_cia/android/arkalia-cia-release.jks`** → Lien vers `~/Desktop/cle/arkalia-cia/arkalia-cia-release.jks`
+- ✅ **Ignorés par Git** : Les liens symboliques sont dans `.gitignore`
+- ✅ **Build fonctionne** : Gradle suit les liens symboliques automatiquement
+
+### ✅ Avantages de cette Organisation
+- ✅ **Fichiers réels HORS projet** : Aucun risque d'exposition accidentelle
+- ✅ **Build fonctionne toujours** : Les liens symboliques sont transparents pour Gradle
+- ✅ **Git ignore les liens** : Aucun fichier sensible dans le dépôt
+- ✅ **Sécurité maximale** : Les fichiers réels sont sur le bureau local uniquement
 
 ### ⚠️ IMPORTANT
-- Les fichiers dans `arkalia_cia/android/` sont nécessaires pour les builds locaux
-- Les copies dans `~/Desktop/cle/arkalia-cia/` sont des sauvegardes sécurisées (hors projet)
-- **Ne jamais** commiter ces fichiers dans Git
-- **Ne jamais** partager ces fichiers publiquement
+- Les fichiers réels sont dans `~/Desktop/cle/arkalia-cia/` (hors projet)
+- Les liens symboliques dans `arkalia_cia/android/` permettent le build
+- **Ne jamais** commiter les fichiers réels dans Git
+- **Ne jamais** partager les fichiers réels publiquement
 
 ---
 
