@@ -170,13 +170,15 @@ jobs:
 
           # Configuration multi-niveaux pour garantir que le plugin trouve flutter.source:
           # 1. -P (propriété système Gradle, priorité maximale)
-          # 2. GRADLE_OPTS avec -I pour charger init.gradle (qui configure aussi flutter.source)
+          # 2. GRADLE_OPTS avec propriété système (fallback)
           # 3. gradle.properties (fallback)
           # 4. local.properties (fallback)
-          # 5. init.gradle configure aussi dans gradle.startParameter.projectProperties
-          export GRADLE_OPTS="-Dorg.gradle.project.flutter.source=$FLUTTER_SOURCE_DIR -I android/init.gradle"
-
+          # 5. init.gradle s'exécute automatiquement s'il est dans android/init.gradle
+          #    et configure aussi dans gradle.startParameter.projectProperties
+          export GRADLE_OPTS="-Dorg.gradle.project.flutter.source=$FLUTTER_SOURCE_DIR"
+          
           # Build avec -P pour garantir la priorité maximale
+          # init.gradle sera chargé automatiquement par Gradle depuis android/init.gradle
           flutter build apk --release -Pflutter.source="$FLUTTER_SOURCE_DIR"
 
       - name: "Upload Coverage to Codecov"
