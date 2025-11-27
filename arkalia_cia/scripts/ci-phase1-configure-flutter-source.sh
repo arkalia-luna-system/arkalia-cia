@@ -30,8 +30,14 @@ fi
 
 # Configurer flutter.source dans gradle.properties (chemin absolu pour fallback)
 # Le plugin Flutter Gradle lit depuis gradle.properties si pas dans local.properties
+# Utiliser sed compatible macOS et Linux
 if grep -q "^flutter.source=" android/gradle.properties; then
-    sed -i "s|^flutter.source=.*|flutter.source=$FLUTTER_SOURCE_DIR|" android/gradle.properties
+    # macOS nécessite une extension pour sed -i, Linux non
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        sed -i '' "s|^flutter.source=.*|flutter.source=$FLUTTER_SOURCE_DIR|" android/gradle.properties
+    else
+        sed -i "s|^flutter.source=.*|flutter.source=$FLUTTER_SOURCE_DIR|" android/gradle.properties
+    fi
 else
     echo "flutter.source=$FLUTTER_SOURCE_DIR" >> android/gradle.properties
 fi
@@ -41,8 +47,12 @@ fi
 # Il faut utiliser un chemin relatif depuis android/ vers arkalia_cia/
 # Chemin relatif: depuis android/ vers .. (arkalia_cia/)
 if [ -f "android/local.properties" ]; then
-    # Supprimer la ligne flutter.source existante
-    sed -i '/flutter\.source=/d' android/local.properties
+    # Supprimer la ligne flutter.source existante (compatible macOS et Linux)
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        sed -i '' '/flutter\.source=/d' android/local.properties
+    else
+        sed -i '/flutter\.source=/d' android/local.properties
+    fi
     # Ajouter flutter.source avec chemin relatif (depuis android/ vers ..)
     echo "" >> android/local.properties
     echo "flutter.source=.." >> android/local.properties
