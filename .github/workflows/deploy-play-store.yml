@@ -127,16 +127,18 @@ jobs:
             fi
           fi
 
-      - name: Check if service account exists
+      - name: Vérifier si le compte de service existe
         id: check-secret
+        env:
+          SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
         run: |
-          if [ -n "${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}" ]; then
+          if [ -n "$SERVICE_ACCOUNT_JSON" ]; then
             echo "exists=true" >> $GITHUB_OUTPUT
-            echo "✅ Service account JSON trouvé"
+            echo "✅ Compte de service JSON trouvé"
           else
             echo "exists=false" >> $GITHUB_OUTPUT
-            echo "⚠️ Service account JSON manquant"
-            echo "   Pour activer le téléversement automatique:"
+            echo "⚠️ Compte de service JSON manquant"
+            echo "   Pour activer le téléversement automatique :"
             echo "   1. Créer un compte de service dans Google Play Console"
             echo "   2. Télécharger le fichier JSON"
             echo "   3. Ajouter le secret GOOGLE_PLAY_SERVICE_ACCOUNT_JSON dans GitHub"
