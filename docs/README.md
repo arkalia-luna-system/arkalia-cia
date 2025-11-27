@@ -94,6 +94,9 @@ Index de navigation pour toute la documentation du projet Arkalia CIA.
 
 - **[meta/TODO_RESTANT_1.3.1.md](./meta/TODO_RESTANT_1.3.1.md)** — TODOs restants version 1.3.1
 - **[meta/TODOS_DOCUMENTES.md](./meta/TODOS_DOCUMENTES.md)** — TODOs documentés
+- **[meta/QUALITE_VALIDATION.md](./meta/QUALITE_VALIDATION.md)** — Qualité et validation
+- **[meta/TESTS_DOCUMENTATION_COMPLETE.md](./meta/TESTS_DOCUMENTATION_COMPLETE.md)** — Documentation tests complète
+- **[meta/VERIFICATION_COMPLETE.md](./meta/VERIFICATION_COMPLETE.md)** — Vérification complète
 
 ---
 
