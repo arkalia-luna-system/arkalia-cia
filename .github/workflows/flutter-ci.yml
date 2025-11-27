@@ -68,7 +68,7 @@ jobs:
           echo "📦 Building Flutter web..."
           flutter clean
           flutter pub get
-          
+
           # Build web avec capture des erreurs détaillées
           echo "🔨 Starting web build..."
           if flutter build web --release 2>&1 | tee /tmp/flutter_web_build.log; then
@@ -124,14 +124,29 @@ jobs:
           FLUTTER_SOURCE_DIR=$(pwd)
           echo "Flutter source directory: $FLUTTER_SOURCE_DIR"
 
-          # Modifier gradle.properties AVANT le build (remplacer la ligne existante si elle existe)
+          # Modifier gradle.properties ET local.properties AVANT le build
+          # Le plugin Flutter Gradle lit depuis local.properties en priorité, puis gradle.properties
           # Utiliser un chemin absolu pour garantir que le plugin le trouve
+          
+          # Dans gradle.properties
           if grep -q "^flutter.source=" android/gradle.properties; then
             # Remplacer la ligne existante
             sed -i "s|^flutter.source=.*|flutter.source=$FLUTTER_SOURCE_DIR|" android/gradle.properties
           else
             # Ajouter la ligne si elle n'existe pas
             echo "flutter.source=$FLUTTER_SOURCE_DIR" >> android/gradle.properties
+          fi
+          
+          # Dans local.properties aussi (lu très tôt par Gradle)
+          if [ -f "android/local.properties" ]; then
+            if grep -q "^flutter.source=" android/local.properties; then
+              sed -i "s|^flutter.source=.*|flutter.source=$FLUTTER_SOURCE_DIR|" android/local.properties
+            else
+              echo "flutter.source=$FLUTTER_SOURCE_DIR" >> android/local.properties
+            fi
+          else
+            # Créer local.properties si il n'existe pas (normalement créé par Flutter)
+            echo "flutter.source=$FLUTTER_SOURCE_DIR" >> android/local.properties
           fi
 
           # Vérifier que la configuration est correcte
