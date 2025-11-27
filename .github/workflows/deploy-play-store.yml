@@ -67,6 +67,8 @@ jobs:
       - name: Setup signing keys
         working-directory: arkalia_cia/android
         if: steps.check-signing.outputs.available == 'true'
+        env:
+          KEY_ALIAS_ENV: ${{ secrets.KEY_ALIAS }}
         run: |
           echo "🔐 Setting up signing keys..."
           # Décoder le keystore depuis base64
@@ -75,7 +77,7 @@ jobs:
 
           # Créer le fichier key.properties
           # Utiliser valeur par défaut si secret non défini
-          KEY_ALIAS_VALUE="${KEY_ALIAS:-arkalia-cia}"
+          KEY_ALIAS_VALUE="${KEY_ALIAS_ENV:-arkalia-cia}"
           cat > key.properties << EOF
           storePassword=${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword=${{ secrets.KEY_PASSWORD }}
