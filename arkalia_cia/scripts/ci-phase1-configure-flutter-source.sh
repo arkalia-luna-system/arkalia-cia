@@ -36,22 +36,19 @@ else
     echo "flutter.source=$FLUTTER_SOURCE_DIR" >> android/gradle.properties
 fi
 
-          # Configurer flutter.source dans local.properties
-          # IMPORTANT: Le plugin Flutter Gradle lit depuis local.properties
-          # Il faut utiliser un chemin relatif depuis android/ vers arkalia_cia/
-          # Chemin relatif: depuis android/ vers .. (arkalia_cia/)
-          if [ -f "android/local.properties" ]; then
-            # Supprimer la ligne flutter.source existante
-            sed -i '/flutter\.source=/d' android/local.properties
-            # Ajouter flutter.source avec chemin relatif (depuis android/ vers ..)
-            echo "" >> android/local.properties
-            echo "flutter.source=.." >> android/local.properties
-          else
-            echo "flutter.source=.." >> android/local.properties
-          fi
-          
-          # Aussi dans gradle.properties avec chemin absolu (pour fallback)
-          # Mais local.properties utilise chemin relatif (priorité)
+# Configurer flutter.source dans local.properties
+# IMPORTANT: Le plugin Flutter Gradle lit depuis local.properties en priorité
+# Il faut utiliser un chemin relatif depuis android/ vers arkalia_cia/
+# Chemin relatif: depuis android/ vers .. (arkalia_cia/)
+if [ -f "android/local.properties" ]; then
+    # Supprimer la ligne flutter.source existante
+    sed -i '/flutter\.source=/d' android/local.properties
+    # Ajouter flutter.source avec chemin relatif (depuis android/ vers ..)
+    echo "" >> android/local.properties
+    echo "flutter.source=.." >> android/local.properties
+else
+    echo "flutter.source=.." >> android/local.properties
+fi
 
 # Vérification finale
 echo ""
