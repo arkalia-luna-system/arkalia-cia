@@ -167,18 +167,15 @@ jobs:
         if: steps.check-secret.outputs.exists == 'true'
         run: |
           if [ "${{ steps.upload-play-store.outcome }}" != "success" ]; then
-            echo "⚠️ Upload échoué - Vérifier les erreurs ci-dessus"
-            # Détecter le type d'erreur
-            if grep -q "privacy policy" "${{ github.workspace }}/.github/workflows/deploy-play-store.yml" 2>/dev/null || \
-               echo "${{ steps.upload-play-store.outcome }}" | grep -qi "privacy\|policy"; then
-              echo "::error::L'upload a échoué. Une politique de confidentialité est requise pour les permissions utilisées."
-              echo "::warning::Solution: Ajouter une politique de confidentialité dans Google Play Console → Politique de confidentialité"
-            elif echo "${{ steps.upload-play-store.outcome }}" | grep -qi "API.*not.*used\|API.*disabled"; then
-              echo "::error::L'upload a échoué. L'API Google Play Android Developer n'est pas activée."
-              echo "::warning::Solution: Activer l'API sur https://console.developers.google.com/apis/api/androidpublisher.googleapis.com/overview"
-            else
-              echo "::error::L'upload a échoué. Vérifier les erreurs ci-dessus pour plus de détails."
-            fi
+            echo "⚠️ Upload échoué - Vérifier les logs détaillés ci-dessus"
+            echo "::error::L'upload a échoué. Vérifier les logs de l'action 'Upload to Play Store' pour identifier le problème exact."
+            echo "::warning::Les erreurs courantes incluent:"
+            echo "  - Politique de confidentialité manquante (déjà configurée ✅)"
+            echo "  - API Google Play non activée"
+            echo "  - Problèmes de permissions ou de configuration"
+            echo "  - VersionCode déjà utilisé"
+            echo ""
+            echo "Consulter les logs complets de l'étape 'Upload to Play Store' pour plus de détails."
             exit 1
           else
             echo "✅ Upload réussi"
@@ -225,24 +222,29 @@ jobs:
               echo "⚠️ **Statut** : Upload échoué" \
                 >> $GITHUB_STEP_SUMMARY
               echo "" >> $GITHUB_STEP_SUMMARY
-              echo "**Erreur détectée** : Vérifier les logs ci-dessus pour identifier" \
-                "le problème exact" >> $GITHUB_STEP_SUMMARY
+              echo "**Erreur détectée** : Vérifier les logs détaillés de l'étape" \
+                "'Upload to Play Store' ci-dessus pour identifier le problème exact" \
+                >> $GITHUB_STEP_SUMMARY
               echo "" >> $GITHUB_STEP_SUMMARY
               echo "**Problèmes courants et solutions** :" >> $GITHUB_STEP_SUMMARY
               echo "" >> $GITHUB_STEP_SUMMARY
-              echo "1. **Politique de confidentialité requise** :" >> $GITHUB_STEP_SUMMARY
-              echo "   - Erreur: 'permissions that require a privacy policy'" >> $GITHUB_STEP_SUMMARY
-              echo "   - Solution: Ajouter une politique de confidentialité dans" >> $GITHUB_STEP_SUMMARY
-              echo "     Google Play Console → Paramètres de l'app → Politique de confidentialité" >> $GITHUB_STEP_SUMMARY
+              echo "1. **Politique de confidentialité** :" >> $GITHUB_STEP_SUMMARY
+              echo "   - ✅ Déjà configurée dans Play Console" >> $GITHUB_STEP_SUMMARY
+              echo "   - Si erreur persiste: Vérifier que l'URL est accessible" >> $GITHUB_STEP_SUMMARY
+              echo "     et que la page est bien formatée" >> $GITHUB_STEP_SUMMARY
               echo "" >> $GITHUB_STEP_SUMMARY
               echo "2. **API non activée** :" >> $GITHUB_STEP_SUMMARY
               echo "   - Erreur: 'API has not been used... or it is disabled'" >> $GITHUB_STEP_SUMMARY
               echo "   - Solution: Activer l'API Google Play Android Developer :" >> $GITHUB_STEP_SUMMARY
               echo "     https://console.developers.google.com/apis/api/androidpublisher.googleapis.com/overview" >> $GITHUB_STEP_SUMMARY
               echo "" >> $GITHUB_STEP_SUMMARY
-              echo "3. **Autres erreurs** :" >> $GITHUB_STEP_SUMMARY
-              echo "   - Vérifier les logs détaillés ci-dessus" >> $GITHUB_STEP_SUMMARY
-              echo "   - Consulter la documentation Google Play Console" >> $GITHUB_STEP_SUMMARY
+              echo "3. **VersionCode déjà utilisé** :" >> $GITHUB_STEP_SUMMARY
+              echo "   - Erreur: 'Version code X has already been used'" >> $GITHUB_STEP_SUMMARY
+              echo "   - Solution: Incrémenter versionCode dans pubspec.yaml" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "4. **Autres erreurs** :" >> $GITHUB_STEP_SUMMARY
+              echo "   - Consulter les logs détaillés de l'étape 'Upload to Play Store'" >> $GITHUB_STEP_SUMMARY
+              echo "   - Vérifier la documentation Google Play Console" >> $GITHUB_STEP_SUMMARY
             fi
           else
             echo "⚠️ **Statut** : Pack d'application créé" \
