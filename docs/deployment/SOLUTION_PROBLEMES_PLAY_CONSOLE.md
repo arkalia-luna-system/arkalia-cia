@@ -160,12 +160,16 @@ git push origin main
 
 ## ✅ Checklist Finale
 
-- [ ] Version incrémentée dans `pubspec.yaml` (1.3.1+2) ✅
-- [ ] Rebuild App Bundle avec nouvelle version
-- [ ] Héberger la politique de confidentialité (GitHub Pages ou autre)
-- [ ] Ajouter l'URL dans Play Console → Politique
-- [ ] Uploader la nouvelle version (versionCode 2)
-- [ ] Vérifier que les deux problèmes sont résolus
+- [x] Version incrémentée dans `pubspec.yaml` (1.3.1+2) ✅
+- [x] Rebuild App Bundle avec nouvelle version ✅
+- [x] Héberger la politique de confidentialité (GitHub Pages ou autre) ✅
+  - Fichier HTML créé : `privacy-policy.html`
+  - URL GitHub Raw : `https://raw.githubusercontent.com/arkalia-luna-system/arkalia-cia/main/privacy-policy.html`
+- [x] Ajouter l'URL dans Play Console → Politique ✅ (27 novembre 2025)
+- [x] Questionnaire d'évaluation du contenu complété ✅ (27 novembre 2025)
+- [x] Déclaration publicitaire mise à jour ✅ (27 novembre 2025)
+- [x] Uploader la nouvelle version (versionCode 2) ✅
+- [x] Vérifier que les deux problèmes sont résolus ✅
 
 ---
 

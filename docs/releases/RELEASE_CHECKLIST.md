@@ -277,13 +277,16 @@ Checklist complète de validation avant release.
 
 ### Politique de confidentialité
 - ✅ **Privacy Policy créée**: `PRIVACY_POLICY.txt` (November 19, 2025)
+- ✅ **Privacy Policy HTML**: `privacy-policy.html` (November 27, 2025)
 - ✅ **RGPD compliant**: Conforme aux réglementations européennes
 - ✅ **Données expliquées**: Aucune collecte, stockage local uniquement
 - ✅ **Permissions expliquées**: Toutes les permissions documentées
-- ⚠️ **Hébergement web**: À mettre en ligne pour App Store/Play Store
+- ✅ **Hébergement web**: GitHub Raw (27 novembre 2025)
+- ✅ **Configurée dans Play Console**: URL ajoutée (27 novembre 2025)
 
 **Action requise**:
-- [ ] Mettre en ligne Privacy Policy (hébergement web)
+- [x] Mettre en ligne Privacy Policy (hébergement web) ✅
+- [x] Ajouter URL dans Play Console ✅
 - [ ] Ajouter lien dans l'app (écran Settings/About)
 
 ### Terms of Service
