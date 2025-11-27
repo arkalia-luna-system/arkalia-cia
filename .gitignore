@@ -24,6 +24,7 @@
 #  project, it is recommended to include the following files:
 # .python-version
 # Android
+arkalia_cia/android/local.properties
 # Android Keystore (sécurité)
 # Archive
 # Byte-compiled / optimized / DLL files

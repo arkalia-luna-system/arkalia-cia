@@ -127,6 +127,10 @@ jobs:
         run: |
           cd arkalia_cia
           chmod +x scripts/ci-phase3-build-apk.sh
+          # S'assurer que gradlew a les permissions d'exécution (pour le fallback)
+          if [ -f "android/gradlew" ]; then
+            chmod +x android/gradlew
+          fi
           ./scripts/ci-phase3-build-apk.sh
 
       - name: "Upload Coverage to Codecov"

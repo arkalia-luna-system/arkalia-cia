@@ -36,6 +36,16 @@ else
     # Méthode alternative: utiliser gradlew directement
     cd android
     echo "🔨 Tentative 2: ./gradlew assembleRelease avec -Pflutter.source"
+    
+    # S'assurer que gradlew a les permissions d'exécution
+    if [ -f "gradlew" ]; then
+        chmod +x gradlew
+        echo "✅ Permissions gradlew vérifiées"
+    else
+        echo -e "${RED}❌ gradlew introuvable dans android/${NC}"
+        exit 1
+    fi
+    
     ./gradlew assembleRelease -Pflutter.source="$FLUTTER_SOURCE_DIR" || {
         echo -e "${RED}❌ Les deux méthodes ont échoué${NC}"
         echo "📋 Dernières lignes du log:"
