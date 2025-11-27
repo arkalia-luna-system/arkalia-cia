@@ -149,10 +149,11 @@ jobs:
 
       - name: Upload to Play Store
         if: steps.check-secret.outputs.exists == 'true'
+        env:
+          SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
         uses: r0adkll/upload-google-play@v1
         with:
-          serviceAccountJsonPlainText: \
-            ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          serviceAccountJsonPlainText: ${{ env.SERVICE_ACCOUNT_JSON }}
           packageName: ${{ env.PACKAGE_NAME }}
           releaseFiles: >-
             arkalia_cia/build/app/outputs/bundle/release/app-release.aab
