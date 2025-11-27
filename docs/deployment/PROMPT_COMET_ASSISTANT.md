@@ -222,50 +222,55 @@ Note médicale importante : Arkalia CIA est un outil d'organisation et ne rempla
 ```
 
 #### 4.4. Icône de l'application
-**Où trouver le fichier** : 
-- `arkalia_cia/android/app/src/main/res/mipmap-*/ic_launcher.png`
-- Ou `arkalia_cia/web/icons/Icon-512.png`
+**Fichier généré par** : [Arkalia-luna-logo](https://github.com/arkalia-luna-system/Arkalia-luna-logo)
+
+**Fichier à utiliser** :
+- `/Volumes/T7/logo/arkalia-luna-logo/playstore-assets/icon-512-red.png`
 
 **Spécifications** :
 - Taille : 512x512 pixels
 - Format : PNG
-- Fond : Transparent ou couleur unie
+- Logo : Ultimate Serenity rouge
+- Poids : 192 KB
+- Statut : ✅ Prêt
 
 #### 4.5. Feature Graphic (Bannière)
+**Fichier généré par** : [Arkalia-luna-logo](https://github.com/arkalia-luna-system/Arkalia-luna-logo)
+
+**Fichier à utiliser** :
+- `/Volumes/T7/logo/arkalia-luna-logo/playstore-assets/feature-graphic.png`
+
 **Spécifications** :
 - Taille : 1024x500 pixels
-- Format : PNG ou JPG
-
-**Contenu suggéré** :
-- Logo Arkalia CIA (centré)
-- Texte : "Assistant Santé Personnel"
-- Couleurs : Bleu (#0175C2) et blanc
-- Design simple et professionnel
-
-**Statut** : ⏸️ À créer si pas encore fait
+- Format : PNG
+- Contenu : Logo rouge + texte "Assistant Santé Personnel"
+- Poids : 117 KB
+- Statut : ✅ Prêt
 
 #### 4.6. Captures d'écran (OBLIGATOIRE - Minimum 2)
 
-**Où trouver les guides** : `docs/guides/SCREENSHOTS_GUIDE.md`
+**Fichiers générés par** : [Arkalia-luna-logo](https://github.com/arkalia-luna-system/Arkalia-luna-logo)
+
+**Fichiers à utiliser** :
+- `/Volumes/T7/logo/arkalia-luna-logo/playstore-assets/playstore-*.jpeg`
+- 8 fichiers disponibles
 
 **Spécifications** :
-- Taille minimum : 1080 x 1920 pixels
-- Format : PNG ou JPG
-- Minimum requis : 2 captures d'écran
+- Taille : 885 x 1920 pixels
+- Format : JPEG
+- Minimum requis : 2 captures d'écran (8 disponibles ✅)
 
-**Écrans à capturer** (dans l'ordre recommandé) :
-1. **Page d'accueil** (Home) - Montre la grille de boutons
-2. **Écran Documents** - Montre la liste des documents
-3. **Écran Rappels** - Montre les rappels actifs
-4. **Écran Urgence** - Montre les contacts ICE
-5. **Écran Calendrier** - Montre l'intégration calendrier
+**Écrans disponibles** :
+1. Page d'accueil (Home)
+2. Écran Documents
+3. Écran Rappels
+4. Écran Urgence
+5. Écran Calendrier
+6. Écran ARIA
+7. Écran Santé
+8. Écran Sync
 
-**Comment capturer** :
-- Sur Android : Utiliser l'outil de capture d'écran natif
-- Sur émulateur : Utiliser les outils de développement
-- Vérifier que les textes sont lisibles (≥14px)
-
-**Statut** : ⏸️ À capturer si pas encore fait
+**Statut** : ✅ Prêts pour Play Console
 
 ---
 

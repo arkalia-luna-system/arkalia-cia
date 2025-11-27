@@ -434,6 +434,16 @@ jobs:
 **Dernière mise à jour** : 27 novembre 2025  
 **Statut** : ✅ Version 1.3.1 publiée en tests internes - Disponible pour 4 testeurs
 
+### ✅ Assets Graphiques (27 novembre 2025)
+
+**Générés par** : [Arkalia-luna-logo](https://github.com/arkalia-luna-system/Arkalia-luna-logo) - Générateur de logos SVG techno-mystiques
+
+- ✅ **Icône 512x512** : `icon-512-red.png` (Logo Ultimate Serenity rouge)
+- ✅ **Feature Graphic 1024x500** : `feature-graphic.png` (Logo rouge + texte)
+- ✅ **Screenshots téléphone** : 8 fichiers `playstore-*.jpeg` (885x1920 pixels)
+
+**Emplacement** : `/Volumes/T7/logo/arkalia-luna-logo/playstore-assets/`
+
 ### ✅ Configuration Play Console Complétée (27 novembre 2025)
 
 - ✅ **Politique de confidentialité** : URL configurée dans Play Console
