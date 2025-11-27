@@ -114,30 +114,31 @@ jobs:
       - name: "Flutter Build APK"
         run: |
           cd arkalia_cia
-          # Nettoyer les fichiers macOS AVANT le build
-          echo "🧹 Nettoyage des fichiers macOS cachés..."
-          find build -name "._*" -type f -delete 2>/dev/null || true
-          find build -name ".DS_Store" -type f -delete 2>/dev/null || true
 
-          # Configurer le chemin Flutter source AVANT le build
-          # Le plugin Flutter Gradle lit cette propriété très tôt, donc on doit la configurer avant
+          # ========================================================================
+          # ÉTAPE 1 : Configuration flutter.source (CRITIQUE)
+          # ========================================================================
           FLUTTER_SOURCE_DIR=$(pwd)
-          echo "Flutter source directory: $FLUTTER_SOURCE_DIR"
+          echo "📁 Flutter source directory: $FLUTTER_SOURCE_DIR"
 
-          # Modifier gradle.properties ET local.properties AVANT le build
-          # Le plugin Flutter Gradle lit depuis local.properties en priorité, puis gradle.properties
-          # Utiliser un chemin absolu pour garantir que le plugin le trouve
+          # Vérifier que le répertoire existe et contient pubspec.yaml
+          if [ ! -d "$FLUTTER_SOURCE_DIR" ]; then
+            echo "❌ Flutter source directory does not exist: $FLUTTER_SOURCE_DIR"
+            exit 1
+          fi
+          if [ ! -f "$FLUTTER_SOURCE_DIR/pubspec.yaml" ]; then
+            echo "❌ pubspec.yaml not found in Flutter source directory: $FLUTTER_SOURCE_DIR"
+            exit 1
+          fi
 
-          # Dans gradle.properties
+          # Configurer flutter.source dans gradle.properties (chemin absolu)
           if grep -q "^flutter.source=" android/gradle.properties; then
-            # Remplacer la ligne existante
             sed -i "s|^flutter.source=.*|flutter.source=$FLUTTER_SOURCE_DIR|" android/gradle.properties
           else
-            # Ajouter la ligne si elle n'existe pas
             echo "flutter.source=$FLUTTER_SOURCE_DIR" >> android/gradle.properties
           fi
 
-          # Dans local.properties aussi (lu très tôt par Gradle)
+          # Configurer flutter.source dans local.properties (lu très tôt par Gradle)
           if [ -f "android/local.properties" ]; then
             if grep -q "^flutter.source=" android/local.properties; then
               sed -i "s|^flutter.source=.*|flutter.source=$FLUTTER_SOURCE_DIR|" android/local.properties
@@ -145,37 +146,37 @@ jobs:
               echo "flutter.source=$FLUTTER_SOURCE_DIR" >> android/local.properties
             fi
           else
-            # Créer local.properties si il n'existe pas (normalement créé par Flutter)
+            # Créer local.properties si il n'existe pas
             echo "flutter.source=$FLUTTER_SOURCE_DIR" >> android/local.properties
           fi
 
-          # Vérifier que la configuration est correcte
-          echo "Configuration flutter.source dans gradle.properties:"
-          grep flutter.source android/gradle.properties || echo "⚠️ flutter.source not found in gradle.properties"
+          # Vérification
+          echo "✅ Configuration flutter.source:"
+          echo "   gradle.properties: $(grep flutter.source android/gradle.properties)"
+          echo "   local.properties: $(grep flutter.source android/local.properties)"
 
-          # Vérifier que le répertoire existe
-          if [ ! -d "$FLUTTER_SOURCE_DIR" ]; then
-            echo "❌ Flutter source directory does not exist: $FLUTTER_SOURCE_DIR"
-            exit 1
-          fi
+          # ========================================================================
+          # ÉTAPE 2 : Nettoyage fichiers macOS (CRITIQUE)
+          # ========================================================================
+          echo "🧹 Nettoyage des fichiers macOS cachés..."
+          find build -name "._*" -type f -delete 2>/dev/null || true
+          find build -name ".DS_Store" -type f -delete 2>/dev/null || true
+          find . -type f \( -name "._*" -o -name ".DS_Store" \) ! -path "./.git/*" ! -path "./.dart_tool/*" -delete 2>/dev/null || true
 
-          # Vérifier que pubspec.yaml existe dans le répertoire source
-          if [ ! -f "$FLUTTER_SOURCE_DIR/pubspec.yaml" ]; then
-            echo "❌ pubspec.yaml not found in Flutter source directory: $FLUTTER_SOURCE_DIR"
-            exit 1
-          fi
-
-          # Afficher le contenu de gradle.properties pour debug
-          echo "📋 Contenu de gradle.properties:"
-          cat android/gradle.properties | grep -E "(flutter.source|org.gradle)" || echo "Aucune propriété flutter.source trouvée"
-
-          # Build avec la propriété système -P
-          # Le plugin Flutter Gradle lit flutter.source depuis -P en priorité
-          # init.gradle s'exécute automatiquement s'il est dans android/init.gradle
-          # Mais on force aussi via GRADLE_OPTS pour être sûr
+          # ========================================================================
+          # ÉTAPE 3 : Build APK avec toutes les garanties
+          # ========================================================================
           echo "🔨 Building APK avec flutter.source=$FLUTTER_SOURCE_DIR"
-          # Passer via -P ET GRADLE_OPTS pour garantir que le plugin le trouve
+
+          # Configuration multi-niveaux pour garantir que le plugin trouve flutter.source:
+          # 1. -P (propriété système Gradle, priorité maximale)
+          # 2. GRADLE_OPTS avec -I pour charger init.gradle (qui configure aussi flutter.source)
+          # 3. gradle.properties (fallback)
+          # 4. local.properties (fallback)
+          # 5. init.gradle configure aussi dans gradle.startParameter.projectProperties
           export GRADLE_OPTS="-Dorg.gradle.project.flutter.source=$FLUTTER_SOURCE_DIR -I android/init.gradle"
+
+          # Build avec -P pour garantir la priorité maximale
           flutter build apk --release -Pflutter.source="$FLUTTER_SOURCE_DIR"
 
       - name: "Upload Coverage to Codecov"
