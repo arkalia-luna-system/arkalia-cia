@@ -351,6 +351,71 @@ class AndroidExtension {
     }
 }
 
+// ========================================================================
+// CONFIGURATION FLUTTER.SOURCE - TRÈS TÔT AVANT TOUT
+// ========================================================================
+// Le plugin Flutter Gradle lit flutter.source au moment où il est chargé
+// via includeBuild dans pluginManagement. On doit le configurer AVANT.
+// init.gradle s'exécute AVANT settings.gradle.kts, donc c'est le bon endroit.
+
+// Lire depuis -P (priorité maximale)
+def flutterSourceFromSystem = gradle.startParameter.projectProperties["flutter.source"]
+
+// Si pas dans -P, lire depuis gradle.properties
+if (flutterSourceFromSystem == null) {
+    def gradlePropsFile = new File(settingsDir, "gradle.properties")
+    if (gradlePropsFile.exists()) {
+        def gradleProps = new Properties()
+        gradlePropsFile.withInputStream { gradleProps.load(it) }
+        def flutterSourceFromProps = gradleProps.getProperty("flutter.source")
+        
+        if (flutterSourceFromProps != null) {
+            def sourceFile = new File(flutterSourceFromProps)
+            // Toujours convertir en absolu
+            flutterSourceFromSystem = sourceFile.isAbsolute() ? 
+                sourceFile.absolutePath : 
+                sourceFile.absoluteFile.absolutePath
+            
+            // Mettre à jour gradle.properties avec le chemin absolu
+            gradleProps.setProperty("flutter.source", flutterSourceFromSystem)
+            gradlePropsFile.withOutputStream { gradleProps.store(it, null) }
+        }
+    }
+}
+
+// Si toujours pas défini, utiliser le fallback
+if (flutterSourceFromSystem == null) {
+    def fallbackFile = new File(settingsDir, "..")
+    flutterSourceFromSystem = fallbackFile.absolutePath
+    
+    // Ajouter à gradle.properties
+    def gradlePropsFile = new File(settingsDir, "gradle.properties")
+    if (gradlePropsFile.exists()) {
+        def gradleProps = new Properties()
+        gradlePropsFile.withInputStream { gradleProps.load(it) }
+        gradleProps.setProperty("flutter.source", flutterSourceFromSystem)
+        gradlePropsFile.withOutputStream { gradleProps.store(it, null) }
+    }
+}
+
+// Configurer dans les propriétés système Gradle AVANT que le plugin ne soit chargé
+if (flutterSourceFromSystem != null) {
+    if (!gradle.startParameter.projectProperties.containsKey("flutter.source")) {
+        gradle.startParameter.projectProperties["flutter.source"] = flutterSourceFromSystem
+    }
+    
+    // Aussi dans local.properties qui est lu très tôt
+    def localPropsFile = new File(settingsDir, "local.properties")
+    if (localPropsFile.exists()) {
+        def localProps = new Properties()
+        localPropsFile.withInputStream { localProps.load(it) }
+        localProps.setProperty("flutter.source", flutterSourceFromSystem)
+        localPropsFile.withOutputStream { localProps.store(it, null) }
+    }
+    
+    println "✅ Init.gradle: Flutter source directory configuré: $flutterSourceFromSystem"
+}
+
 // Prevent any volume-based cache creation (proactive prevention)
 gradle.beforeProject { project ->
     def currentUserHome = System.getProperty("org.gradle.user.home")

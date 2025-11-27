@@ -127,7 +127,7 @@ jobs:
           # Modifier gradle.properties ET local.properties AVANT le build
           # Le plugin Flutter Gradle lit depuis local.properties en priorité, puis gradle.properties
           # Utiliser un chemin absolu pour garantir que le plugin le trouve
-          
+
           # Dans gradle.properties
           if grep -q "^flutter.source=" android/gradle.properties; then
             # Remplacer la ligne existante
@@ -136,7 +136,7 @@ jobs:
             # Ajouter la ligne si elle n'existe pas
             echo "flutter.source=$FLUTTER_SOURCE_DIR" >> android/gradle.properties
           fi
-          
+
           # Dans local.properties aussi (lu très tôt par Gradle)
           if [ -f "android/local.properties" ]; then
             if grep -q "^flutter.source=" android/local.properties; then
@@ -169,10 +169,12 @@ jobs:
           echo "📋 Contenu de gradle.properties:"
           cat android/gradle.properties | grep -E "(flutter.source|org.gradle)" || echo "Aucune propriété flutter.source trouvée"
 
-          # Build avec la propriété système -P pour garantir que le plugin la trouve
+          # Build avec la propriété système -P ET init.gradle
           # Le plugin Flutter Gradle lit flutter.source depuis -P en priorité
+          # init.gradle s'exécute AVANT settings.gradle.kts et configure flutter.source
           echo "🔨 Building APK avec flutter.source=$FLUTTER_SOURCE_DIR"
-          flutter build apk --release -Pflutter.source="$FLUTTER_SOURCE_DIR"
+          # Utiliser --init-script pour s'assurer que init.gradle est chargé
+          flutter build apk --release -Pflutter.source="$FLUTTER_SOURCE_DIR" --init-script android/init.gradle
 
       - name: "Upload Coverage to Codecov"
         if: hashFiles('arkalia_cia/coverage/lcov.info') != ''
