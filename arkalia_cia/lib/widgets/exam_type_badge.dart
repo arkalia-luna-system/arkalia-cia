@@ -125,6 +125,7 @@ class ExamTypeBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
+        // ignore: deprecated_member_use
         color: color.withOpacity(0.2), // withOpacity est deprecated mais fonctionne encore
         border: Border.all(color: color, width: 1),
         borderRadius: BorderRadius.circular(12),
@@ -148,6 +149,7 @@ class ExamTypeBadge extends StatelessWidget {
               '(${(confidence! * 100).toInt()}%)',
               style: TextStyle(
                 fontSize: 10,
+                // ignore: deprecated_member_use
                 color: color.withOpacity(0.7), // withOpacity est deprecated mais fonctionne encore
               ),
             ),
