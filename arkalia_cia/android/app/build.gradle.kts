@@ -35,8 +35,15 @@ val flutterSourceDir = if (flutterSourceFromGradleProps != null) {
     projectDir.parentFile.parentFile
 }
 
-// Stocker dans project.ext pour que le plugin puisse y accéder
-project.ext.set("flutter.source", flutterSourceDir.absolutePath)
+// Stocker dans project.ext ET dans les propriétés système pour que le plugin puisse y accéder
+// Le plugin Flutter Gradle lit depuis -P, gradle.properties, ou project.findProperty
+val flutterSourceAbsolutePath = flutterSourceDir.absolutePath
+project.ext.set("flutter.source", flutterSourceAbsolutePath)
+
+// Aussi définir comme propriété système si elle n'existe pas déjà
+if (!gradle.startParameter.projectProperties.containsKey("flutter.source")) {
+    gradle.startParameter.projectProperties["flutter.source"] = flutterSourceAbsolutePath
+}
 
 plugins {
     id("com.android.application")
@@ -45,10 +52,10 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-// Configuration Flutter - Le plugin devrait avoir lu flutter.source depuis project.ext
-// ou depuis gradle.properties, mais on le confirme ici aussi
+// Configuration Flutter - Le plugin devrait avoir lu flutter.source depuis -P, gradle.properties, ou project.ext
+// On le confirme ici aussi pour être sûr
 flutter {
-    source = flutterSourceDir.absolutePath
+    source = flutterSourceAbsolutePath
 }
 
 // Charger les propriétés de signature depuis key.properties (si existe)

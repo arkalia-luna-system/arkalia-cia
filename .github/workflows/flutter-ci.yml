@@ -142,8 +142,14 @@ jobs:
             exit 1
           fi
 
-          # Build avec la propriété système pour garantir que le plugin la trouve
-          flutter build apk --release
+          # Afficher le contenu de gradle.properties pour debug
+          echo "📋 Contenu de gradle.properties:"
+          cat android/gradle.properties | grep -E "(flutter.source|org.gradle)" || echo "Aucune propriété flutter.source trouvée"
+
+          # Build avec la propriété système -P pour garantir que le plugin la trouve
+          # Le plugin Flutter Gradle lit flutter.source depuis -P en priorité
+          echo "🔨 Building APK avec flutter.source=$FLUTTER_SOURCE_DIR"
+          flutter build apk --release -Pflutter.source="$FLUTTER_SOURCE_DIR"
 
       - name: "Upload Coverage to Codecov"
         if: hashFiles('arkalia_cia/coverage/lcov.info') != ''
