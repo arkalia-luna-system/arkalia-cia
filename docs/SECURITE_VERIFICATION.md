@@ -159,19 +159,27 @@
 
 ---
 
-## ⚠️ POINTS D'ATTENTION
+## ✅ FICHIERS SENSIBLES - GESTION SÉCURISÉE
 
 ### Fichier local `key.properties`
-- ⚠️ **Existe localement** avec le mot de passe en clair
-- ✅ **N'est PAS dans Git** (protégé par .gitignore)
-- ✅ **N'est PAS dans l'app publiée** (utilisé uniquement pour signer)
-- 💡 **Recommandation** : Garder ce fichier dans le dossier "cle" sur le bureau (hors projet)
+- ✅ **Existe localement** : `arkalia_cia/android/key.properties` (pour build local)
+- ✅ **Sauvegarde sécurisée** : `~/Desktop/cle/arkalia-cia/key.properties` (hors projet)
+- ✅ **N'est PAS dans Git** : Protégé par .gitignore (seul le template est dans Git)
+- ✅ **N'est PAS dans l'app publiée** : Utilisé uniquement PENDANT le build pour signer
+- ✅ **Double sauvegarde** : Local (pour build) + Bureau/cle (sauvegarde sécurisée)
 
 ### Keystore local
-- ⚠️ **Existe localement** (`arkalia-cia-release.jks`)
-- ✅ **N'est PAS dans Git** (protégé par .gitignore)
-- ✅ **N'est PAS dans l'app publiée** (utilisé uniquement pour signer)
-- 💡 **Recommandation** : Sauvegarder dans le dossier "cle" sur le bureau
+- ✅ **Existe localement** : `arkalia_cia/android/arkalia-cia-release.jks` (pour build local)
+- ✅ **Sauvegarde sécurisée** : `~/Desktop/cle/arkalia-cia/arkalia-cia-release.jks` (hors projet)
+- ✅ **N'est PAS dans Git** : Protégé par .gitignore
+- ✅ **N'est PAS dans l'app publiée** : Utilisé uniquement PENDANT le build pour signer
+- ✅ **Double sauvegarde** : Local (pour build) + Bureau/cle (sauvegarde sécurisée)
+
+### ⚠️ IMPORTANT
+- Les fichiers dans `arkalia_cia/android/` sont nécessaires pour les builds locaux
+- Les copies dans `~/Desktop/cle/arkalia-cia/` sont des sauvegardes sécurisées (hors projet)
+- **Ne jamais** commiter ces fichiers dans Git
+- **Ne jamais** partager ces fichiers publiquement
 
 ---
 
