@@ -45,6 +45,37 @@ jobs:
         working-directory: arkalia_cia
         run: flutter pub get
 
+      - name: Auto-increment version code
+        working-directory: arkalia_cia
+        run: |
+          echo "🔢 Auto-incrémentation du versionCode..."
+          # Lire la version actuelle
+          CURRENT_VERSION=$(grep "^version:" pubspec.yaml | sed 's/version: //' | tr -d ' ')
+          echo "Version actuelle: $CURRENT_VERSION"
+
+          # Extraire versionName et versionCode
+          VERSION_NAME=$(echo $CURRENT_VERSION | cut -d'+' -f1)
+          VERSION_CODE=$(echo $CURRENT_VERSION | cut -d'+' -f2)
+
+          # Incrémenter le versionCode
+          NEW_VERSION_CODE=$((VERSION_CODE + 1))
+          NEW_VERSION="$VERSION_NAME+$NEW_VERSION_CODE"
+
+          echo "Nouvelle version: $NEW_VERSION (versionCode: $NEW_VERSION_CODE)"
+
+          # Mettre à jour pubspec.yaml
+          if [[ "$OSTYPE" == "darwin"* ]]; then
+            # macOS
+            sed -i '' "s/^version: .*/version: $NEW_VERSION/" pubspec.yaml
+          else
+            # Linux
+            sed -i "s/^version: .*/version: $NEW_VERSION/" pubspec.yaml
+          fi
+
+          echo "✅ Version mise à jour: $CURRENT_VERSION → $NEW_VERSION"
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          echo "NEW_VERSION_CODE=$NEW_VERSION_CODE" >> $GITHUB_ENV
+
       - name: Verify Flutter setup
         working-directory: arkalia_cia
         run: flutter doctor -v
@@ -198,6 +229,10 @@ jobs:
           echo "**Paquet** : ${{ env.PACKAGE_NAME }}" >> $GITHUB_STEP_SUMMARY
           echo "**Piste** : ${{ env.TRACK }}" >> $GITHUB_STEP_SUMMARY
           echo "**Version de Flutter** : ${{ env.FLUTTER_VERSION }}" >> $GITHUB_STEP_SUMMARY
+          if [ -n "${{ env.NEW_VERSION }}" ]; then
+            echo "**Version de l'app** : ${{ env.NEW_VERSION }}" >> $GITHUB_STEP_SUMMARY
+            echo "**Version Code** : ${{ env.NEW_VERSION_CODE }}" >> $GITHUB_STEP_SUMMARY
+          fi
           echo "" >> $GITHUB_STEP_SUMMARY
           if [ "${{ steps.check-signing.outputs.available }}" == "true" ]; then
             echo "✅ **Signature** : Libération du magasin de clés configuré" \
