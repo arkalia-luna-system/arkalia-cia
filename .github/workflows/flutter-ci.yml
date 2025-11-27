@@ -182,16 +182,23 @@ jobs:
           export GRADLE_OPTS="-Dorg.gradle.project.flutter.source=$FLUTTER_SOURCE_DIR"
 
           # Vérifier que gradle.properties contient bien flutter.source
-          if ! grep -q "^flutter.source=" android/gradle.properties; then
+          if ! grep -q "flutter\.source=" android/gradle.properties; then
             echo "❌ ERREUR: flutter.source manquant dans gradle.properties après configuration"
+            cat android/gradle.properties
             exit 1
           fi
-
-          # Vérifier que local.properties contient bien flutter.source
-          if ! grep -q "^flutter.source=" android/local.properties; then
+          
+          # Vérifier que local.properties contient bien flutter.source (avec ou sans saut de ligne)
+          if ! grep -q "flutter\.source=" android/local.properties; then
             echo "❌ ERREUR: flutter.source manquant dans local.properties après configuration"
+            cat android/local.properties
             exit 1
           fi
+          
+          # Afficher la configuration finale pour debug
+          echo "✅ Configuration finale vérifiée:"
+          echo "   gradle.properties: $(grep 'flutter\.source=' android/gradle.properties)"
+          echo "   local.properties: $(grep 'flutter\.source=' android/local.properties)"
 
           # Build avec -P pour garantir la priorité maximale
           # init.gradle sera chargé automatiquement par Gradle depuis android/init.gradle
