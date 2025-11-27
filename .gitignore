@@ -159,6 +159,10 @@ arkalia_cia.db
 arkalia_cia/android/app/*.jks
 arkalia_cia/android/app/*.keystore
 arkalia_cia/android/key.properties
+# Fichiers de sécurité (hors Git)
+SECURITE_MOTS_DE_PASSE.md
+*_MOTS_DE_PASSE.md
+*_SECRETS.md
 arkalia_cia_venv/
 arkalia_cia_venv/lib/
 backups/
