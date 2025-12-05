@@ -238,17 +238,23 @@ jobs:
             echo "     - Administrateur de version"
             echo "     - Administrateur de release"
             echo ""
-            echo "💡 L'App Bundle a été créé avec succès et est disponible en artefact."
-            echo "   Vous pouvez le téléverser manuellement dans Play Console si nécessaire."
+            echo ""
+            echo "💡 SOLUTION : L'App Bundle a été créé avec succès !"
+            echo "   1. Télécharge l'artefact 'app-release-${{ github.run_number }}' depuis GitHub Actions"
+            echo "   2. Va sur https://play.google.com/console"
+            echo "   3. Tests internes → Créer une nouvelle version → Upload le fichier .aab"
+            echo "   4. Publie la version"
+            echo ""
+            echo "   L'artefact est disponible pendant 30 jours dans les Actions GitHub."
           else
             echo "✅ Upload réussi sur Play Store"
           fi
 
-      - name: Upload artifact (fallback if no service account or upload failed)
-        if: steps.check-secret.outputs.exists == 'false' || (steps.check-secret.outputs.exists == 'true' && steps.upload-play-store.outcome != 'success')
+      - name: Upload artifact (always available for manual upload)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: app-release
+          name: app-release-${{ github.run_number }}
           path: arkalia_cia/build/app/outputs/bundle/release/app-release.aab
           retention-days: 30
           if-no-files-found: error
