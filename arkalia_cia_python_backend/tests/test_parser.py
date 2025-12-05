@@ -9,9 +9,10 @@ from pathlib import Path
 # Ajouter le chemin parent pour les imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from services.health_portal_parsers import get_health_portal_parser
-
-from tests.generate_test_pdfs import (
+from arkalia_cia_python_backend.services.health_portal_parsers import (
+    get_health_portal_parser,
+)
+from arkalia_cia_python_backend.tests.generate_test_pdfs import (
     generate_test_andaman7_pdf,
     generate_test_masante_pdf,
 )
@@ -109,21 +110,21 @@ def test_masante_parser():
 def test_parser_integration():
     """Test d'intégration complet des parsers"""
     print("\n=== TEST INTÉGRATION PARSERS ===")
-    
+
     results = {
         'andaman7': False,
         'masante': False,
     }
-    
+
     try:
         results['andaman7'] = test_andaman7_parser()
         results['masante'] = test_masante_parser()
-        
+
         total_tests = len(results)
         passed_tests = sum(1 for v in results.values() if v)
-        
+
         print(f"\n📊 Résultats: {passed_tests}/{total_tests} tests passés")
-        
+
         return all(results.values())
     except Exception as e:
         print(f"\n❌ Erreur dans test d'intégration: {e}")
@@ -138,7 +139,7 @@ if __name__ == "__main__":
 
     success_andaman7 = test_andaman7_parser()
     success_masante = test_masante_parser()
-    
+
     # Test d'intégration
     success_integration = test_parser_integration()
 
