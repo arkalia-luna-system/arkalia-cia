@@ -6,6 +6,11 @@
 - `CODECOV_TOKEN` : Token pour Codecov (coverage)
 - `SECURITY_EMAIL` : Email pour les alertes de sécurité
 - `GPG_PRIVATE_KEY` : Clé privée GPG pour la signature
+- `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON` : ✅ **Configuré** (27 novembre 2025) - Compte de service Google Play pour déploiement automatique
+- `KEYSTORE_BASE64` : ✅ **Configuré** (27 novembre 2025) - Keystore Android encodé en base64
+- `KEYSTORE_PASSWORD` : ✅ **Configuré** (27 novembre 2025) - Mot de passe du keystore
+- `KEY_PASSWORD` : ✅ **Configuré** (27 novembre 2025) - Mot de passe de la clé
+- `KEY_ALIAS` : ✅ **Configuré** (27 novembre 2025) - Alias de la clé (optionnel)
 
 ### Variables d'environnement
 - `PYTHON_VERSION` : Version Python (3.11)

@@ -224,7 +224,6 @@ class TestSecurityDashboard:
 
             # Nettoyer immédiatement
             dashboard.athalia_components.clear()
-            del dashboard
 
     def test_generate_recommendations_empty(self):
         """Test de génération de recommandations avec données vides"""
@@ -326,6 +325,7 @@ class TestSecurityDashboard:
 
                 main()
             except SystemExit:
+                # argparse peut appeler sys.exit, c'est attendu
                 pass
 
     def test_generate_recommendations_various_scores(self):

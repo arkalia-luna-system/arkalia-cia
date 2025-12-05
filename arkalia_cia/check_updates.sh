@@ -12,7 +12,7 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 PROJECT_DIR="/Volumes/T7/arkalia-cia/arkalia_cia"
-EXPECTED_VERSION="1.3.0+1"
+EXPECTED_VERSION="1.3.1+1"
 
 log_info() {
     echo -e "${BLUE}ℹ️  $1${NC}"

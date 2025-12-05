@@ -11,7 +11,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from fastapi import Depends, FastAPI, File, HTTPException, UploadFile
+from fastapi import Depends, FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
@@ -379,6 +379,7 @@ async def add_security_headers(request: Request, call_next):
                         content={"detail": "Requête trop volumineuse"},
                     )
             except (ValueError, TypeError):
+                # Ignorer les erreurs de parsing du Content-Length (non critique)
                 pass
 
         # Note: La vérification de la taille réelle du body JSON se fait
@@ -726,6 +727,81 @@ async def upload_document(
         raise HTTPException(status_code=500, detail=sanitize_error_detail(e)) from e
 
 
+@app.get(f"{API_PREFIX}/health-portals/documents")
+@limiter.limit("30/minute")
+async def get_health_portal_documents(
+    request: Request,
+    current_user: TokenData = Depends(get_current_active_user),
+    db: CIADatabase = Depends(get_database),
+):
+    """
+    Récupérer tous les documents importés depuis les portails santé
+    """
+    try:
+        if not current_user.user_id:
+            raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
+
+        user_id = int(current_user.user_id)
+
+        # Récupérer tous les documents de l'utilisateur via la base de données
+        documents = db.get_user_documents(user_id, skip=0, limit=1000)
+
+        return {
+            "success": True,
+            "documents": documents,
+            "count": len(documents),
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(
+            f"Erreur récupération documents portail santé: {sanitize_log_message(str(e))}",
+            exc_info=True,
+        )
+        raise HTTPException(status_code=500, detail=sanitize_error_detail(e)) from e
+
+
+@app.delete(f"{API_PREFIX}/health-portals/documents/{{doc_id}}")
+@limiter.limit("10/minute")
+async def delete_health_portal_document(
+    request: Request,
+    doc_id: int,
+    current_user: TokenData = Depends(get_current_active_user),
+    db: CIADatabase = Depends(get_database),
+):
+    """
+    Supprimer un document importé (RGPD)
+    """
+    try:
+        if not current_user.user_id:
+            raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
+
+        user_id = int(current_user.user_id)
+
+        # Vérifier que le document appartient à l'utilisateur
+        user_docs = db.get_user_documents(user_id, skip=0, limit=1000)
+        doc_exists = any(doc.get("id") == doc_id for doc in user_docs)
+
+        if not doc_exists:
+            raise HTTPException(status_code=404, detail="Document non trouvé")
+
+        # Supprimer le document via la base de données
+        db.delete_document(doc_id)
+
+        return {
+            "success": True,
+            "message": "Document supprimé",
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(
+            f"Erreur suppression document portail santé: {sanitize_log_message(str(e))}",
+            exc_info=True,
+        )
+        raise HTTPException(status_code=500, detail=sanitize_error_detail(e)) from e
+
+
 @app.get(f"{API_PREFIX}/documents", response_model=list[DocumentResponse])
 @limiter.limit("60/minute")  # Limite de 60 requêtes par minute
 async def get_documents(
@@ -978,15 +1054,163 @@ class HealthPortalImportRequest(BaseModel):
     )
 
 
-@app.post(f"{API_PREFIX}/health-portals/import")
+class HealthPortalManualImportRequest(BaseModel):
+    """Requête pour import manuel depuis portail santé"""
+
+    portal: str = Field(..., description="Portail source: 'andaman7' ou 'masante'")
+    # Le fichier sera dans le body multipart, pas ici
+
+
+@app.post(f"{API_PREFIX}/health-portals/import/manual")
 @limiter.limit("10/minute")  # Limite stricte pour éviter abus
+async def import_health_portal_manual(
+    request: Request,
+    file: UploadFile = File(...),
+    portal: str = Form(...),  # Portail: 'andaman7' ou 'masante'
+    current_user: TokenData = Depends(get_current_active_user),
+    db: CIADatabase = Depends(get_database),
+):
+    """
+    Importe un PDF depuis un portail santé (Andaman 7 ou MaSanté)
+    Stratégie gratuite : Import manuel (utilisateur exporte PDF depuis portail)
+    """
+    try:
+        # Validation portail
+        portal_lower = portal.lower()
+        if portal_lower not in ["andaman7", "masante"]:
+            raise HTTPException(
+                status_code=400,
+                detail="Portail invalide. Utilisez 'andaman7' ou 'masante'",
+            )
+
+        # Validation fichier
+        if file.content_type != "application/pdf":
+            raise HTTPException(status_code=400, detail="Fichier PDF obligatoire")
+
+        # Limite taille (50 MB)
+        MAX_SIZE = 50 * 1024 * 1024
+        file_content = await file.read()
+        if len(file_content) > MAX_SIZE:
+            raise HTTPException(
+                status_code=413, detail="Fichier trop volumineux (max 50MB)"
+            )
+
+        # Sauvegarder temporairement
+        import tempfile
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
+            tmp.write(file_content)
+            tmp_path = tmp.name
+
+        try:
+            # Parser le PDF selon le portail
+            from arkalia_cia_python_backend.services.health_portal_parsers import (
+                get_health_portal_parser,
+            )
+
+            parser = get_health_portal_parser()
+            result = parser.parse_portal_pdf(tmp_path, portal_lower)
+
+            # Sauvegarder les documents dans la base
+            imported_count = 0
+            errors: list[str] = []
+
+            # Validation user_id
+            if not current_user.user_id:
+                raise HTTPException(
+                    status_code=401, detail="Utilisateur non authentifié"
+                )
+
+            # Sauvegarder le fichier PDF via document_service
+            doc_service = get_document_service()
+
+            # Traiter le fichier uploadé
+            process_result = doc_service.process_uploaded_file(
+                file_content, file.filename or "document_importe.pdf"
+            )
+
+            # Convertir métadonnées parsées en format DocumentMetadataDict
+            parsed_metadata = result.get("metadata", {})
+            from arkalia_cia_python_backend.app_types import DocumentMetadataDict
+
+            # Extraire métadonnées structurées
+            document_metadata: DocumentMetadataDict = {
+                "doctor_name": parsed_metadata.get("doctor_name"),
+                "doctor_specialty": parsed_metadata.get("doctor_specialty"),
+                "document_date": (
+                    parsed_metadata["date"].isoformat()
+                    if isinstance(parsed_metadata.get("date"), datetime)
+                    else parsed_metadata.get("date")
+                ),
+                "exam_type": parsed_metadata.get("exam_type"),
+                "document_type": parsed_metadata.get("document_type"),
+                "keywords": parsed_metadata.get("keywords", []),
+                "extracted_text": (
+                    str(result.get("documents", [{}])[0].get("description", ""))[:500]
+                    if result.get("documents")
+                    else ""
+                ),
+            }
+
+            # Sauvegarder document principal avec métadonnées parsées
+            doc_id = doc_service.save_document_with_metadata(
+                process_result,
+                int(current_user.user_id),
+                document_metadata,
+            )
+
+            imported_count = 1  # Un fichier PDF = 1 document principal
+
+            # Note: Les documents individuels parsés (ordonnances, consultations, etc.)
+            # sont dans result["documents"] et peuvent être utilisés pour créer
+            # des entrées séparées si nécessaire. Pour l'instant, on sauvegarde
+            # le PDF principal avec toutes les métadonnées extraites.
+
+            return {
+                "success": True,
+                "imported_count": imported_count,
+                "document_id": doc_id,  # Utiliser doc_id dans la réponse
+                "portal": portal_lower,
+                "total_documents_found": result.get("total_documents", 0),
+                "errors": errors[:10],  # Limiter à 10 erreurs
+                "message": f"{imported_count} document(s) importé(s) depuis {portal_lower}",
+                "metadata": result.get("metadata", {}),
+            }
+
+        finally:
+            # Nettoyer fichier temporaire
+            import os
+
+            try:
+                os.unlink(tmp_path)
+            except Exception:
+                pass
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(
+            f"Erreur import portail santé manuel: {sanitize_log_message(str(e))}",
+            exc_info=True,
+        )
+        raise HTTPException(
+            status_code=500, detail="Erreur lors de l'import du fichier portail"
+        ) from e
+
+
+# Garder l'ancien endpoint pour compatibilité (mais il est obsolète)
+@app.post(f"{API_PREFIX}/health-portals/import")
+@limiter.limit("10/minute")
 async def import_health_portal_data(
     request: Request,
     import_request: HealthPortalImportRequest,
     current_user: TokenData = Depends(get_current_active_user),
     db: CIADatabase = Depends(get_database),
 ):
-    """Importe les données depuis un portail santé externe"""
+    """
+    Importe les données depuis un portail santé externe (OBSOLÈTE)
+    Utiliser /import/manual pour import manuel PDF
+    """
     try:
         portal_name = import_request.portal.lower()
         data = import_request.data
@@ -996,11 +1220,8 @@ async def import_health_portal_data(
 
         # Parser documents médicaux
         if "documents" in data and isinstance(data["documents"], list):
-            for doc in data["documents"][:50]:  # Limiter à 50 documents
+            for doc in data["documents"][:50]:
                 try:
-                    # Extraire métadonnées du document
-                    # Note: Import complet nécessiterait téléchargement fichiers PDF
-                    # et créer des entrées dans la table documents
                     _ = doc.get("name", doc.get("title", "Document importé"))
                     _ = doc.get("date", doc.get("created_at", ""))
                     _ = doc.get("type", doc.get("category", "document"))
@@ -1010,42 +1231,11 @@ async def import_health_portal_data(
                         f"Erreur import document: {sanitize_log_message(str(e))}"
                     )
 
-        # Parser consultations
-        if "consultations" in data and isinstance(data["consultations"], list):
-            for consult in data["consultations"][:50]:  # Limiter à 50 consultations
-                try:
-                    # Extraire informations consultation
-                    # Note: Pour un import complet, il faudrait créer des
-                    # entrées dans la table consultations
-                    _ = consult.get("date", consult.get("created_at", ""))
-                    _ = consult.get("doctor", consult.get("physician", ""))
-                    _ = consult.get("specialty", "")
-                    imported_count += 1
-                except Exception as e:
-                    errors.append(
-                        f"Erreur import consultation: {sanitize_log_message(str(e))}"
-                    )
-
-        # Parser examens
-        if "exams" in data and isinstance(data["exams"], list):
-            for exam in data["exams"][:50]:  # Limiter à 50 examens
-                try:
-                    # Note: Pour un import complet, il faudrait créer des
-                    # entrées dans la table examens
-                    _ = exam.get("type", exam.get("exam_type", ""))
-                    _ = exam.get("date", exam.get("created_at", ""))
-                    _ = exam.get("results", {})
-                    imported_count += 1
-                except Exception as e:
-                    errors.append(
-                        f"Erreur import examen: {sanitize_log_message(str(e))}"
-                    )
-
         return {
             "success": True,
             "imported_count": imported_count,
             "portal": portal_name,
-            "errors": errors[:10],  # Limiter à 10 erreurs
+            "errors": errors[:10],
             "message": f"{imported_count} élément(s) importé(s) depuis {portal_name}",
         }
     except Exception as e:

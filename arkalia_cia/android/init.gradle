@@ -293,18 +293,39 @@ def cleanAllMacOSFiles(project) {
     // Répertoires intermédiaires Android
     def buildDir = project.buildDir
     if (buildDir != null && buildDir.exists()) {
-        // Nettoyer dans tous les sous-répertoires de build
-        buildDir.eachDir { subDir ->
+        // Nettoyer dans tous les sous-répertoires de build (récursif)
+        buildDir.eachDirRecurse { subDir ->
             dirsToClean.add(subDir)
         }
+        // Nettoyer aussi les fichiers directement dans buildDir
+        dirsToClean.add(buildDir)
     }
     
     // Nettoyer aussi dans le répertoire build global
     def rootBuildDir = project.rootProject.buildDir
     if (rootBuildDir != null && rootBuildDir.exists()) {
-        rootBuildDir.eachDir { subDir ->
+        rootBuildDir.eachDirRecurse { subDir ->
             dirsToClean.add(subDir)
         }
+        dirsToClean.add(rootBuildDir)
+    }
+    
+    // Nettoyer dans les répertoires intermédiaires spécifiques des plugins
+    def intermediatesDir = project.file("${project.buildDir}/intermediates")
+    if (intermediatesDir != null && intermediatesDir.exists()) {
+        intermediatesDir.eachDirRecurse { subDir ->
+            dirsToClean.add(subDir)
+        }
+        dirsToClean.add(intermediatesDir)
+    }
+    
+    // Nettoyer dans packaged_res (où l'erreur se produit)
+    def packagedResDir = project.file("${project.buildDir}/intermediates/packaged_res")
+    if (packagedResDir != null && packagedResDir.exists()) {
+        packagedResDir.eachDirRecurse { subDir ->
+            dirsToClean.add(subDir)
+        }
+        dirsToClean.add(packagedResDir)
     }
     
     // Nettoyer tous les répertoires
@@ -317,6 +338,85 @@ def cleanAllMacOSFiles(project) {
     return totalCleaned
 }
 
+// ============================================================================
+// CLASSE HELPER : AndroidExtension pour créer une extension android factice
+// ============================================================================
+// Cette classe doit être définie au niveau racine pour être accessible
+// dans tous les blocs du script
+class AndroidExtension {
+    def flutter
+    
+    AndroidExtension(def flutterConfig) {
+        this.flutter = flutterConfig
+    }
+}
+
+// ========================================================================
+// CONFIGURATION FLUTTER.SOURCE - TRÈS TÔT AVANT TOUT
+// ========================================================================
+// Le plugin Flutter Gradle lit flutter.source au moment où il est chargé
+// via includeBuild dans pluginManagement. On doit le configurer AVANT.
+// init.gradle s'exécute AVANT settings.gradle.kts, donc c'est le bon endroit.
+
+// Lire depuis -P (priorité maximale)
+def flutterSourceFromSystem = gradle.startParameter.projectProperties["flutter.source"]
+
+// Si pas dans -P, lire depuis gradle.properties
+if (flutterSourceFromSystem == null) {
+    def gradlePropsFile = new File(settingsDir, "gradle.properties")
+    if (gradlePropsFile.exists()) {
+        def gradleProps = new Properties()
+        gradlePropsFile.withInputStream { gradleProps.load(it) }
+        def flutterSourceFromProps = gradleProps.getProperty("flutter.source")
+        
+        if (flutterSourceFromProps != null) {
+            def sourceFile = new File(flutterSourceFromProps)
+            // Toujours convertir en absolu
+            flutterSourceFromSystem = sourceFile.isAbsolute() ? 
+                sourceFile.absolutePath : 
+                sourceFile.absoluteFile.absolutePath
+            
+            // Mettre à jour gradle.properties avec le chemin absolu
+            gradleProps.setProperty("flutter.source", flutterSourceFromSystem)
+            gradlePropsFile.withOutputStream { gradleProps.store(it, null) }
+        }
+    }
+}
+
+// Si toujours pas défini, utiliser le fallback
+if (flutterSourceFromSystem == null) {
+    // settingsDir = android/, donc parent = arkalia_cia/
+    def fallbackFile = new File(settingsDir, "..")
+    flutterSourceFromSystem = fallbackFile.absolutePath
+    
+    // Ajouter à gradle.properties
+    def gradlePropsFile = new File(settingsDir, "gradle.properties")
+    if (gradlePropsFile.exists()) {
+        def gradleProps = new Properties()
+        gradlePropsFile.withInputStream { gradleProps.load(it) }
+        gradleProps.setProperty("flutter.source", flutterSourceFromSystem)
+        gradlePropsFile.withOutputStream { gradleProps.store(it, null) }
+    }
+}
+
+// Configurer dans les propriétés système Gradle AVANT que le plugin ne soit chargé
+if (flutterSourceFromSystem != null) {
+    if (!gradle.startParameter.projectProperties.containsKey("flutter.source")) {
+        gradle.startParameter.projectProperties["flutter.source"] = flutterSourceFromSystem
+    }
+    
+    // Aussi dans local.properties qui est lu très tôt
+    def localPropsFile = new File(settingsDir, "local.properties")
+    if (localPropsFile.exists()) {
+        def localProps = new Properties()
+        localPropsFile.withInputStream { localProps.load(it) }
+        localProps.setProperty("flutter.source", flutterSourceFromSystem)
+        localPropsFile.withOutputStream { localProps.store(it, null) }
+    }
+    
+    println "✅ Init.gradle: Flutter source directory configuré: $flutterSourceFromSystem"
+}
+
 // Prevent any volume-based cache creation (proactive prevention)
 gradle.beforeProject { project ->
     def currentUserHome = System.getProperty("org.gradle.user.home")
@@ -324,6 +424,61 @@ gradle.beforeProject { project ->
         def correctHome = new File(getFallbackHome(), ".gradle")
         setGradleUserHome(correctHome)
         println "✅ Init.gradle (beforeProject): Corrected volume-based path to: ${correctHome.absolutePath}"
+    }
+    
+    // ========================================================================
+    // CONFIGURATION FLUTTER EXTENSION - TRÈS TÔT pour file_picker
+    // ========================================================================
+    // Cette configuration doit se faire AVANT même que les plugins ne soient évalués
+    // pour que file_picker puisse accéder à android.flutter.compileSdkVersion
+    def flutterConfig = [
+        minSdkVersion: 21,
+        targetSdkVersion: 36,
+        compileSdkVersion: 36,
+        versionCode: 1,
+        versionName: "1.0.0"
+    ]
+    
+    // Stocker dans project.ext pour qu'il soit accessible partout
+    if (!project.ext.has("flutter")) {
+        project.ext.flutter = flutterConfig
+    }
+    
+    // Créer l'extension android avec flutter AVANT que le plugin Android ne soit appliqué
+    // On utilise beforeEvaluate pour s'exécuter AVANT l'évaluation du build.gradle
+    // IMPORTANT: Cette configuration doit se faire AVANT que les plugins ne soient appliqués
+    project.beforeEvaluate {
+        try {
+            // Si android n'existe pas encore, créer une extension factice
+            if (!project.hasProperty("android")) {
+                // Créer une extension android factice avec la propriété flutter
+                project.extensions.create("android", AndroidExtension, flutterConfig)
+                println "✅ Init.gradle (beforeProject): Créé extension android factice pour ${project.name}"
+            }
+        } catch (Exception e) {
+            // Ignorer si la configuration échoue
+            println "⚠️  Init.gradle (beforeProject): Erreur création android factice pour ${project.name}: ${e.message}"
+        }
+    }
+    
+    // Configuration APRÈS que le plugin Android soit appliqué pour ajouter flutter
+    project.afterEvaluate {
+        try {
+            if (project.hasProperty("android")) {
+                def android = project.extensions.findByName("android")
+                if (android != null) {
+                    // Utiliser metaClass pour ajouter la propriété flutter
+                    android.metaClass.flutter = flutterConfig
+                    if (!android.hasProperty("flutter")) {
+                        android.ext.flutter = flutterConfig
+                    }
+                    println "✅ Init.gradle (beforeProject): Ajouté flutter à android pour ${project.name}"
+                }
+            }
+        } catch (Exception e) {
+            // Ignorer si la configuration échoue
+            println "⚠️  Init.gradle (beforeProject): Erreur ajout flutter à android pour ${project.name}: ${e.message}"
+        }
     }
     
     // ========================================================================
@@ -356,10 +511,50 @@ gradle.beforeProject { project ->
         it.name.contains("merge") || 
         it.name.contains("link") ||
         it.name.contains("compile") ||
-        it.name.contains("assemble")
+        it.name.contains("assemble") ||
+        it.name.contains("parse") ||
+        it.name.contains("package") ||
+        it.name.contains("resource")
     }.configureEach { task ->
         task.doFirst {
             // Nettoyage ultra-agressif juste avant ces tâches critiques
+            // Nettoyer aussi dans les répertoires intermédiaires spécifiques
+            def buildDir = project.buildDir
+            if (buildDir != null && buildDir.exists()) {
+                // Nettoyer dans tous les répertoires intermédiaires (récursif)
+                try {
+                    buildDir.eachFileRecurse { file ->
+                        if (file.isFile() && (file.name.startsWith("._") || file.name == ".DS_Store")) {
+                            try {
+                                file.delete()
+                            } catch (Exception e) {
+                                // Ignorer les erreurs
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    // Ignorer les erreurs de parcours
+                }
+            }
+            
+            // Nettoyer spécifiquement dans packaged_res (où l'erreur se produit)
+            def packagedResDir = project.file("${project.buildDir}/intermediates/packaged_res")
+            if (packagedResDir != null && packagedResDir.exists()) {
+                try {
+                    packagedResDir.eachFileRecurse { file ->
+                        if (file.isFile() && (file.name.startsWith("._") || file.name == ".DS_Store")) {
+                            try {
+                                file.delete()
+                            } catch (Exception e) {
+                                // Ignorer les erreurs
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    // Ignorer les erreurs de parcours
+                }
+            }
+            
             int cleaned = cleanAllMacOSFiles(project)
             if (cleaned > 0) {
                 println "🧹 Init.gradle: Nettoyage critique - $cleaned fichiers macOS supprimés avant ${task.name}"
@@ -379,4 +574,97 @@ gradle.beforeProject { project ->
         "**/.AppleDouble",
         "**/.AppleDouble/**"
     ])
+    
+    // ========================================================================
+    // CONFIGURATION POUR PLUGINS FLUTTER : Forcer compileSdkVersion
+    // ========================================================================
+    // Corrige le problème avec file_picker et autres plugins qui essaient
+    // d'accéder à android.flutter avant que le plugin Flutter ne soit appliqué
+    
+    // Configuration AVANT l'évaluation pour intercepter les accès à android.flutter
+    // IMPORTANT: Cette configuration doit se faire TRÈS TÔT, avant même que les plugins
+    // ne soient évalués, pour que file_picker puisse accéder à android.flutter
+    // On utilise project.beforeEvaluate pour s'exécuter AVANT l'évaluation du build.gradle du plugin
+    // Note: flutterConfig est déjà défini dans le scope parent (gradle.beforeProject)
+    project.beforeEvaluate {
+        // Créer une extension flutter factice si elle n'existe pas
+        // Cela permet aux plugins Groovy d'accéder à android.flutter sans erreur
+        try {
+            // Stocker dans project.ext pour qu'il soit accessible partout
+            if (!project.ext.has("flutter")) {
+                project.ext.flutter = flutterConfig
+            }
+            
+            // Créer une extension android factice si elle n'existe pas encore
+            // Cela permet à file_picker d'accéder à android.flutter même si android n'est pas encore créé
+            if (!project.hasProperty("android")) {
+                // Créer une extension android factice avec la propriété flutter
+                project.extensions.create("android", AndroidExtension, flutterConfig)
+            } else {
+                // Si android existe déjà, ajouter la propriété flutter via metaClass
+                try {
+                    def android = project.extensions.findByName("android")
+                    if (android != null) {
+                        // Utiliser metaClass pour ajouter la propriété flutter
+                        android.metaClass.flutter = flutterConfig
+                        // Aussi définir via ext pour compatibilité
+                        if (!android.hasProperty("flutter")) {
+                            android.ext.flutter = flutterConfig
+                        }
+                    }
+                } catch (Exception e) {
+                    // Ignorer si android n'est pas encore disponible
+                }
+            }
+            
+            println "✅ Init.gradle: Créé extension flutter factice pour ${project.name}"
+        } catch (Exception e) {
+            // Ignorer si la configuration échoue
+            println "⚠️  Init.gradle: Erreur création extension flutter pour ${project.name}: ${e.message}"
+        }
+    }
+    
+    // Configuration APRÈS l'évaluation pour forcer compileSdkVersion
+    project.afterEvaluate {
+        if (project.hasProperty("android")) {
+            try {
+                def android = project.android
+                if (android != null) {
+                    // Forcer compileSdkVersion pour les plugins Flutter (compatible Groovy)
+                    try {
+                        // Essayer d'accéder à compileSdkVersion (Groovy)
+                        if (android.metaClass.hasProperty(android, 'compileSdkVersion')) {
+                            def currentSdk = android.compileSdkVersion
+                            if (currentSdk == null) {
+                                android.compileSdkVersion = 36
+                                println "✅ Init.gradle: Forcé compileSdkVersion=36 pour ${project.name}"
+                            }
+                        }
+                    } catch (Exception e) {
+                        // Si compileSdkVersion n'existe pas, essayer compileSdk (Kotlin DSL)
+                        try {
+                            if (android.metaClass.hasProperty(android, 'compileSdk')) {
+                                def currentSdk = android.compileSdk
+                                if (currentSdk == null) {
+                                    android.compileSdk = 36
+                                    println "✅ Init.gradle: Forcé compileSdk=36 pour ${project.name}"
+                                }
+                            }
+                        } catch (Exception e2) {
+                            // Dernière tentative : utiliser setCompileSdkVersion si disponible
+                            try {
+                                android.setCompileSdkVersion(36)
+                                println "✅ Init.gradle: Forcé compileSdkVersion=36 via setter pour ${project.name}"
+                            } catch (Exception e3) {
+                                // Ignorer si aucune méthode ne fonctionne
+                                println "⚠️  Init.gradle: Impossible de forcer compileSdk pour ${project.name}"
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                println "⚠️  Init.gradle: Erreur configuration compileSdk pour ${project.name}: ${e.message}"
+            }
+        }
+    }
 }

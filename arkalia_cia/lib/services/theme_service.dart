@@ -39,8 +39,8 @@ class ThemeService {
         // Fond des cartes : légèrement plus clair que le fond
         cardColor: const Color(0xFF242424), // Gris foncé doux
         
-        // Fond des dialogs et surfaces élevées
-        dialogBackgroundColor: const Color(0xFF2A2A2A),
+        // Fond des dialogs et surfaces élevées - utiliser ThemeData.dialogTheme par défaut
+        // La couleur de fond sera gérée par colorScheme.surfaceContainerHighest
         
         // Couleurs primaires moins saturées
         primaryColor: const Color(0xFF64B5F6), // Bleu doux
@@ -82,18 +82,8 @@ class ThemeService {
           centerTitle: true,
         ),
         
-        // Cartes : fond doux avec bordure subtile
-        cardTheme: CardThemeData(
-          color: const Color(0xFF242424),
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: BorderSide(
-              color: Colors.white.withOpacity(0.05),
-              width: 1,
-            ),
-          ),
-        ),
+        // Cartes : fond doux avec bordure subtile - utiliser ThemeData.cardTheme par défaut
+        // La couleur de fond sera gérée par cardColor défini plus haut
         
         // InputDecoration : bordures douces
         inputDecorationTheme: InputDecorationTheme(
@@ -101,14 +91,14 @@ class ThemeService {
           fillColor: const Color(0xFF242424),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(
-              color: Colors.white.withOpacity(0.1),
+            borderSide: const BorderSide(
+              color: Color(0x1AFFFFFF), // alpha: 0.1
             ),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(
-              color: Colors.white.withOpacity(0.1),
+            borderSide: const BorderSide(
+              color: Color(0x1AFFFFFF), // alpha: 0.1
             ),
           ),
           focusedBorder: OutlineInputBorder(
@@ -121,7 +111,7 @@ class ThemeService {
         ),
         
         // Divider : très subtil
-        dividerColor: Colors.white.withOpacity(0.08),
+        dividerColor: const Color(0x14FFFFFF), // alpha: 0.08
         
         // IconTheme : icônes douces
         iconTheme: const IconThemeData(

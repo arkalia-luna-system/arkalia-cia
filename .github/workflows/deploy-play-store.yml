@@ -1,0 +1,302 @@
+---
+# Workflow de déploiement automatique vers Google Play Store
+# Déploie automatiquement sur la branche main vers les tests internes
+
+name: Deploy to Play Store (Internal Testing)
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - "v*"
+  workflow_dispatch: # Permet de déclencher manuellement
+
+env:
+  FLUTTER_VERSION: "3.35.3"
+  PACKAGE_NAME: "com.arkalia.cia"
+  TRACK: "internal" # internal, alpha, beta, production
+
+jobs:
+  deploy:
+    name: Build and Deploy to Play Store
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: "stable"
+          cache: true
+
+      - name: Get Flutter dependencies
+        working-directory: arkalia_cia
+        run: flutter pub get
+
+      - name: Auto-increment version code
+        working-directory: arkalia_cia
+        run: |
+          echo "🔢 Auto-incrémentation du versionCode..."
+          # Lire la version actuelle
+          CURRENT_VERSION=$(grep "^version:" pubspec.yaml | sed 's/version: //' | tr -d ' ')
+          echo "Version actuelle: $CURRENT_VERSION"
+
+          # Extraire versionName et versionCode
+          VERSION_NAME=$(echo $CURRENT_VERSION | cut -d'+' -f1)
+          VERSION_CODE=$(echo $CURRENT_VERSION | cut -d'+' -f2)
+
+          # Incrémenter le versionCode
+          NEW_VERSION_CODE=$((VERSION_CODE + 1))
+          NEW_VERSION="$VERSION_NAME+$NEW_VERSION_CODE"
+
+          echo "Nouvelle version: $NEW_VERSION (versionCode: $NEW_VERSION_CODE)"
+
+          # Mettre à jour pubspec.yaml
+          if [[ "$OSTYPE" == "darwin"* ]]; then
+            # macOS
+            sed -i '' "s/^version: .*/version: $NEW_VERSION/" pubspec.yaml
+          else
+            # Linux
+            sed -i "s/^version: .*/version: $NEW_VERSION/" pubspec.yaml
+          fi
+
+          echo "✅ Version mise à jour: $CURRENT_VERSION → $NEW_VERSION"
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          echo "NEW_VERSION_CODE=$NEW_VERSION_CODE" >> $GITHUB_ENV
+
+      - name: Verify Flutter setup
+        working-directory: arkalia_cia
+        run: flutter doctor -v
+
+      - name: Phase 1 - Configure flutter.source
+        working-directory: arkalia_cia
+        run: |
+          chmod +x scripts/ci-phase1-configure-flutter-source.sh
+          ./scripts/ci-phase1-configure-flutter-source.sh
+
+      - name: Check signing keys availability
+        id: check-signing
+        run: |
+          if [ -n "${{ secrets.KEYSTORE_BASE64 }}" ] && [ -n "${{ secrets.KEYSTORE_PASSWORD }}" ] && [ -n "${{ secrets.KEY_PASSWORD }}" ]; then
+            echo "available=true" >> $GITHUB_OUTPUT
+          else
+            echo "available=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup signing keys
+        working-directory: arkalia_cia/android
+        if: steps.check-signing.outputs.available == 'true'
+        env:
+          KEY_ALIAS_ENV: ${{ secrets.KEY_ALIAS }}
+        run: |
+          echo "🔐 Setting up signing keys..."
+          # Décoder le keystore depuis base64
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > \
+            app/arkalia-cia-release.jks
+
+          # Créer le fichier key.properties
+          # Utiliser valeur par défaut si secret non défini
+          KEY_ALIAS_VALUE="${KEY_ALIAS_ENV:-arkalia-cia}"
+          cat > key.properties << EOF
+          storePassword=${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword=${{ secrets.KEY_PASSWORD }}
+          keyAlias=$KEY_ALIAS_VALUE
+          storeFile=app/arkalia-cia-release.jks
+          EOF
+
+          echo "✅ Signing keys configured"
+
+      - name: Clean Flutter build
+        working-directory: arkalia_cia
+        run: |
+          echo "🧹 Cleaning previous builds..."
+          flutter clean
+          echo "✅ Clean completed"
+
+      - name: Build App Bundle
+        working-directory: arkalia_cia
+        env:
+          GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+        run: |
+          echo "🔨 Building App Bundle..."
+          flutter build appbundle --release
+          echo "✅ Build completed"
+
+      - name: Verify App Bundle exists
+        working-directory: arkalia_cia
+        run: |
+          BUNDLE_PATH="build/app/outputs/bundle/release/app-release.aab"
+          if [ ! -f "$BUNDLE_PATH" ]; then
+            echo "❌ Error: App Bundle not found!"
+            exit 1
+          fi
+          echo "✅ App Bundle found:"
+          ls -lh "$BUNDLE_PATH"
+
+      - name: Verify App Bundle signature
+        working-directory: arkalia_cia
+        if: always()
+        run: |
+          BUNDLE_PATH="build/app/outputs/bundle/release/app-release.aab"
+          if [ -f "$BUNDLE_PATH" ]; then
+            echo "🔍 Verifying App Bundle signature..."
+            if jarsigner -verify -verbose -certs "$BUNDLE_PATH" \
+              > /dev/null 2>&1; then
+              echo "✅ App Bundle is properly signed"
+            else
+              echo "⚠️ App Bundle signature verification failed" \
+                "(may be signed with debug key)"
+            fi
+          fi
+
+      - name: Vérifier si le compte de service existe
+        id: check-secret
+        env:
+          SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          if [ -n "$SERVICE_ACCOUNT_JSON" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "✅ Compte de service JSON trouvé"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "⚠️ Compte de service JSON manquant"
+            echo "   Pour activer le téléversement automatique :"
+            echo "   1. Créer un compte de service dans Google Play Console"
+            echo "   2. Télécharger le fichier JSON"
+            echo "   3. Ajouter le secret GOOGLE_PLAY_SERVICE_ACCOUNT_JSON dans GitHub"
+          fi
+
+      - name: Upload to Play Store
+        id: upload-play-store
+        if: steps.check-secret.outputs.exists == 'true'
+        env:
+          SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+        continue-on-error: true
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ env.SERVICE_ACCOUNT_JSON }}
+          packageName: ${{ env.PACKAGE_NAME }}
+          releaseFiles: >-
+            arkalia_cia/build/app/outputs/bundle/release/app-release.aab
+          track: ${{ env.TRACK }}
+          status: completed
+          changesNotSentForReview: false
+
+      - name: Check upload result
+        if: steps.check-secret.outputs.exists == 'true'
+        run: |
+          if [ "${{ steps.upload-play-store.outcome }}" != "success" ]; then
+            echo "⚠️ Upload échoué - Vérifier les logs détaillés ci-dessus"
+            echo "::error::L'upload a échoué. Vérifier les logs de l'action 'Upload to Play Store' pour identifier le problème exact."
+            echo "::warning::Les erreurs courantes incluent:"
+            echo "  - Politique de confidentialité manquante (déjà configurée ✅)"
+            echo "  - API Google Play non activée"
+            echo "  - Problèmes de permissions ou de configuration"
+            echo "  - VersionCode déjà utilisé"
+            echo ""
+            echo "Consulter les logs complets de l'étape 'Upload to Play Store' pour plus de détails."
+            exit 1
+          else
+            echo "✅ Upload réussi"
+          fi
+
+      - name: Upload artifact (fallback if no service account)
+        if: steps.check-secret.outputs.exists == 'false'
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release
+          path: arkalia_cia/build/app/outputs/bundle/release/app-release.aab
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Deployment summary
+        if: always()
+        run: |
+          echo "## 📦 Résumé du déploiement" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Paquet** : ${{ env.PACKAGE_NAME }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Piste** : ${{ env.TRACK }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Version de Flutter** : ${{ env.FLUTTER_VERSION }}" >> $GITHUB_STEP_SUMMARY
+          if [ -n "${{ env.NEW_VERSION }}" ]; then
+            echo "**Version de l'app** : ${{ env.NEW_VERSION }}" >> $GITHUB_STEP_SUMMARY
+            echo "**Version Code** : ${{ env.NEW_VERSION_CODE }}" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.check-signing.outputs.available }}" == "true" ]; then
+            echo "✅ **Signature** : Libération du magasin de clés configuré" \
+              >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ **Signature** : Clé de débogage utilisée" \
+              "(non adaptée pour Play Store)" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**⚠️ Action requise** : Configurer les secrets" \
+              "KEYSTORE_BASE64, KEYSTORE_PASSWORD, KEY_PASSWORD" \
+              >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.check-secret.outputs.exists }}" == "true" ]; then
+            if [ "${{ steps.upload-play-store.outcome }}" == "success" ]; then
+              echo "✅ **Statut** : Déployé sur Play Store" \
+                >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "**Étapes suivantes** : Aucune - Déploiement automatique réussi !" \
+                >> $GITHUB_STEP_SUMMARY
+            else
+              echo "⚠️ **Statut** : Upload échoué" \
+                >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "**Erreur détectée** : Vérifier les logs détaillés de l'étape" \
+                "'Upload to Play Store' ci-dessus pour identifier le problème exact" \
+                >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "**Problèmes courants et solutions** :" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "1. **Politique de confidentialité** :" >> $GITHUB_STEP_SUMMARY
+              echo "   - ✅ Déjà configurée dans Play Console" >> $GITHUB_STEP_SUMMARY
+              echo "   - Si erreur persiste: Vérifier que l'URL est accessible" >> $GITHUB_STEP_SUMMARY
+              echo "     et que la page est bien formatée" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "2. **API non activée** :" >> $GITHUB_STEP_SUMMARY
+              echo "   - Erreur: 'API has not been used... or it is disabled'" >> $GITHUB_STEP_SUMMARY
+              echo "   - Solution: Activer l'API Google Play Android Developer :" >> $GITHUB_STEP_SUMMARY
+              echo "     https://console.developers.google.com/apis/api/androidpublisher.googleapis.com/overview" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "3. **VersionCode déjà utilisé** :" >> $GITHUB_STEP_SUMMARY
+              echo "   - Erreur: 'Version code X has already been used'" >> $GITHUB_STEP_SUMMARY
+              echo "   - Solution: Incrémenter versionCode dans pubspec.yaml" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "4. **Autres erreurs** :" >> $GITHUB_STEP_SUMMARY
+              echo "   - Consulter les logs détaillés de l'étape 'Upload to Play Store'" >> $GITHUB_STEP_SUMMARY
+              echo "   - Vérifier la documentation Google Play Console" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "⚠️ **Statut** : Pack d'application créé" \
+              "(téléchargement manuel requis)" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Étapes suivantes** : Téléverser manuellement l'artefact" \
+              "sur la Play Console" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Pour activer le téléversement automatique** :" \
+              >> $GITHUB_STEP_SUMMARY
+            echo "1. Créer un compte de service dans Google Play Console" \
+              >> $GITHUB_STEP_SUMMARY
+            echo "2. Télécharger le fichier JSON du compte de service" \
+              >> $GITHUB_STEP_SUMMARY
+            echo "3. Ajouter le secret \`GOOGLE_PLAY_SERVICE_ACCOUNT_JSON\`" \
+              "dans GitHub Settings → Secrets → Actions" \
+              >> $GITHUB_STEP_SUMMARY
+            echo "4. Coller le contenu complet du fichier JSON" \
+              >> $GITHUB_STEP_SUMMARY
+          fi

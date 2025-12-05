@@ -7,10 +7,31 @@ allprojects {
 
 // Configuration Java/Kotlin pour tous les sous-projets
 subprojects {
+    // Configuration AVANT l'évaluation pour créer l'extension flutter
+    // Cela permet aux plugins comme file_picker d'accéder à android.flutter
+    beforeEvaluate {
+        // Créer l'extension flutter factice pour les plugins qui en ont besoin
+        val flutterConfig = mapOf(
+            "minSdkVersion" to 21,
+            "targetSdkVersion" to 36,
+            "compileSdkVersion" to 36,
+            "versionCode" to 1,
+            "versionName" to "1.0.0"
+        )
+        project.extensions.extraProperties.set("flutter", flutterConfig)
+    }
+    
     afterEvaluate {
         // Forcer Java 17 pour tous les projets Android
+        // Note: La configuration compileSdk pour les plugins Flutter est gérée par init.gradle
         plugins.withId("com.android.library") {
             extensions.findByType<com.android.build.gradle.BaseExtension>()?.apply {
+                // Forcer compileSdk si non défini
+                if (this is com.android.build.gradle.LibraryExtension) {
+                    if (this.compileSdk == null) {
+                        this.compileSdk = 36
+                    }
+                }
                 compileOptions {
                     sourceCompatibility = JavaVersion.VERSION_17
                     targetCompatibility = JavaVersion.VERSION_17
@@ -55,6 +76,48 @@ subprojects {
 }
 subprojects {
     project.evaluationDependsOn(":app")
+}
+
+// Nettoyer les fichiers macOS dans TOUS les projets (y compris plugins Flutter)
+// Utiliser gradle.projectsEvaluated pour éviter l'erreur "already evaluated"
+gradle.projectsEvaluated {
+    allprojects {
+        // Fonction de nettoyage agressive pour tous les projets
+        fun cleanMacOSFilesInProject(project: Project) {
+            val projectBuildDir = project.buildDir
+            if (projectBuildDir.exists()) {
+                projectBuildDir.walkTopDown()
+                    .filter { it.isFile && (it.name.startsWith("._") || it.name == ".DS_Store" || it.name.contains("._")) }
+                    .forEach {
+                        try {
+                            it.delete()
+                        } catch (e: Exception) {
+                            // Ignorer les erreurs
+                        }
+                    }
+            }
+        }
+        
+        // Nettoyer AVANT les tâches de vérification des ressources (où se trouve le problème)
+        tasks.matching {
+            it.name.contains("verify") && it.name.contains("Resources")
+        }.configureEach {
+            doFirst {
+                cleanMacOSFilesInProject(project)
+            }
+        }
+        
+        // Nettoyer AVANT toutes les tâches de build
+        tasks.matching {
+            (it.name.contains("process") && it.name.contains("Resources")) ||
+            it.name.contains("compile") ||
+            it.name.contains("merge")
+        }.configureEach {
+            doFirst {
+                cleanMacOSFilesInProject(project)
+            }
+        }
+    }
 }
 
 tasks.register<Delete>("clean") {
@@ -154,12 +217,26 @@ allprojects {
     // ========================================================================
     // NIVEAU 7 : Nettoyage automatique AVANT chaque build
     // ========================================================================
-    tasks.matching { it.group == "build" || it.name.contains("assemble") || it.name.contains("bundle") || it.name.contains("compile") }.configureEach {
+    tasks.matching { it.group == "build" || it.name.contains("assemble") || it.name.contains("bundle") || it.name.contains("compile") || it.name.contains("expand") }.configureEach {
         doFirst {
             // Nettoyer les fichiers macOS dans le répertoire build
             val buildDir = project.layout.buildDirectory.asFile.get()
             if (buildDir.exists()) {
                 buildDir.walkTopDown()
+                    .filter { it.isFile && (it.name.startsWith("._") || it.name == ".DS_Store" || it.name.contains("._")) }
+                    .forEach { 
+                        try {
+                            it.delete()
+                        } catch (e: Exception) {
+                            // Ignorer les erreurs de suppression
+                        }
+                    }
+            }
+            
+            // Nettoyer spécifiquement dans le répertoire javac (où se trouve souvent le problème)
+            val javacDir = project.file("${project.layout.buildDirectory.asFile.get()}/intermediates/javac")
+            if (javacDir.exists()) {
+                javacDir.walkTopDown()
                     .filter { it.isFile && (it.name.startsWith("._") || it.name == ".DS_Store" || it.name.contains("._")) }
                     .forEach { 
                         try {

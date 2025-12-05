@@ -6,6 +6,7 @@
 /// 1. Ajouter l'entrée dans `belgianHealthPortals` ou `internationalHealthPortals`
 /// 2. Si OAuth est supporté, ajouter dans `oauthPortalsConfig`
 /// 3. Mettre à jour l'enum `HealthPortal` dans `health_portal_auth_service.dart` si nécessaire
+library;
 
 class HealthPortalConfig {
   final String name;
@@ -47,13 +48,13 @@ class BelgianHealthPortals {
     HealthPortalConfig(
       name: 'eHealth',
       url: 'https://www.ehealth.fgov.be',
-      description: 'Plateforme eHealth belge - Accès sécurisé aux données de santé',
+      description: 'Plateforme eHealth belge - Accès sécurisé aux données de santé (Accréditation requise)',
       category: 'Administration',
       supportsOAuth: true,
-      oauthAuthUrl: 'https://www.ehealth.fgov.be/fr/oauth/authorize',
-      oauthTokenUrl: 'https://www.ehealth.fgov.be/fr/oauth/token',
+      oauthAuthUrl: 'https://iam.ehealth.fgov.be/iam-connect/oidc/authorize', // URL réelle
+      oauthTokenUrl: 'https://iam.ehealth.fgov.be/iam-connect/oidc/token', // URL réelle
       oauthCallbackUrl: 'arkaliacia://oauth/ehealth',
-      oauthScopes: 'read:documents read:consultations read:exams',
+      oauthScopes: 'ehealthbox.read consultations.read labresults.read', // Scopes réels eHealth
     ),
     HealthPortalConfig(
       name: 'Inami',
@@ -83,24 +84,24 @@ class BelgianHealthPortals {
     HealthPortalConfig(
       name: 'Andaman 7',
       url: 'https://www.andaman7.com',
-      description: 'Application santé belge - Gestion de votre dossier médical',
+      description: 'Application santé belge - Import manuel uniquement (export PDF/CSV depuis l\'app)',
       category: 'Application',
-      supportsOAuth: true,
-      oauthAuthUrl: 'https://www.andaman7.com/oauth/authorize',
-      oauthTokenUrl: 'https://www.andaman7.com/oauth/token',
-      oauthCallbackUrl: 'arkaliacia://oauth/andaman7',
-      oauthScopes: 'read:health_data read:documents',
+      supportsOAuth: false, // Pas d'API publique
+      // oauthAuthUrl: null, // Pas d'OAuth disponible
+      // oauthTokenUrl: null,
+      // oauthCallbackUrl: null,
+      // oauthScopes: null,
     ),
     HealthPortalConfig(
       name: 'MaSanté',
-      url: 'https://www.masante.be',
-      description: 'Portail santé belge - Accès à vos données médicales',
+      url: 'https://www.masante.belgique.be',
+      description: 'Portail santé belge - Import manuel uniquement (export PDF depuis le portail)',
       category: 'Application',
-      supportsOAuth: true,
-      oauthAuthUrl: 'https://www.masante.be/oauth/authorize',
-      oauthTokenUrl: 'https://www.masante.be/oauth/token',
-      oauthCallbackUrl: 'arkaliacia://oauth/masante',
-      oauthScopes: 'read:medical_data read:documents',
+      supportsOAuth: false, // Pas d'API publique
+      // oauthAuthUrl: null, // Pas d'OAuth disponible
+      // oauthTokenUrl: null,
+      // oauthCallbackUrl: null,
+      // oauthScopes: null,
     ),
   ];
 
@@ -170,23 +171,15 @@ class OAuthPortalsConfig {
   /// Mapping des noms de portails vers leurs URLs OAuth
   static const Map<String, OAuthConfig> configs = {
     'eHealth': OAuthConfig(
-      authUrl: 'https://www.ehealth.fgov.be/fr/oauth/authorize',
-      tokenUrl: 'https://www.ehealth.fgov.be/fr/oauth/token',
+      authUrl: 'https://iam.ehealth.fgov.be/iam-connect/oidc/authorize', // URL réelle
+      tokenUrl: 'https://iam.ehealth.fgov.be/iam-connect/oidc/token', // URL réelle
       callbackUrl: 'arkaliacia://oauth/ehealth',
-      scopes: 'read:documents read:consultations read:exams',
+      scopes: 'ehealthbox.read consultations.read labresults.read', // Scopes réels
     ),
-    'Andaman 7': OAuthConfig(
-      authUrl: 'https://www.andaman7.com/oauth/authorize',
-      tokenUrl: 'https://www.andaman7.com/oauth/token',
-      callbackUrl: 'arkaliacia://oauth/andaman7',
-      scopes: 'read:health_data read:documents',
-    ),
-    'MaSanté': OAuthConfig(
-      authUrl: 'https://www.masante.be/oauth/authorize',
-      tokenUrl: 'https://www.masante.be/oauth/token',
-      callbackUrl: 'arkaliacia://oauth/masante',
-      scopes: 'read:medical_data read:documents',
-    ),
+    // Andaman 7 et MaSanté n'ont pas d'API publique OAuth
+    // Import manuel uniquement (PDF/CSV)
+    // 'Andaman 7': OAuthConfig(...), // Pas disponible
+    // 'MaSanté': OAuthConfig(...), // Pas disponible
   };
 
   /// Récupère la configuration OAuth pour un portail

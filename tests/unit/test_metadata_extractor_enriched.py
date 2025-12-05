@@ -56,7 +56,8 @@ class TestMetadataExtractorEnriched:
         email = extractor._extract_email(text)
         assert email is not None
         assert "@" in email
-        assert "example.com" in email
+        # Vérifier que c'est bien un email complet, pas juste une sous-chaîne
+        assert email == "dr.martin@example.com" or email.endswith("@example.com")
 
     def test_extract_email_lowercase(self):
         """Test que l'email est en minuscules"""

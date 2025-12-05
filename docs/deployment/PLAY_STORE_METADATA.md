@@ -1,6 +1,6 @@
 # 📝 Métadonnées Google Play Store - Arkalia CIA
 
-**Date de création** : 24 novembre 2025  
+**Date de création** : 27 novembre 2025  
 **Statut** : ✅ **Prêt à copier-coller dans Play Console**
 
 ---
@@ -85,42 +85,61 @@ Note médicale importante : Arkalia CIA est un outil d'organisation et ne rempla
 
 ## 🎨 Icônes et Graphiques
 
+**Générés par** : [Arkalia-luna-logo](https://github.com/arkalia-luna-system/Arkalia-luna-logo) - Générateur de logos SVG techno-mystiques
+
 ### Icône Application
 
 **Taille requise** : 512x512 pixels  
 **Format** : PNG  
-**Fichier** : `arkalia_cia/web/icons/Icon-512.png` (existe ✅)
+**Fichier** : `/Volumes/T7/logo/arkalia-luna-logo/playstore-assets/icon-512-red.png` ✅
 
-**À faire** : Vérifier que l'icône Android (`arkalia_cia/android/app/src/main/res/mipmap-*/ic_launcher.png`) est à jour
+**Détails** :
+- Logo : Ultimate Serenity rouge
+- Taille : 512x512 pixels
+- Poids : 192 KB
+- Généré par : Arkalia-luna-logo (variante rouge)
 
 ### Feature Graphic
 
 **Taille requise** : 1024x500 pixels  
-**Format** : PNG ou JPG  
-**Statut** : ⏸️ À créer
+**Format** : PNG  
+**Fichier** : `/Volumes/T7/logo/arkalia-luna-logo/playstore-assets/feature-graphic.png` ✅
 
-**Contenu suggéré** :
-- Logo Arkalia CIA
-- Texte : "Assistant Santé Personnel"
-- Couleurs : Bleu (#0175C2) et blanc
+**Détails** :
+- Contenu : Logo rouge + texte "Assistant Santé Personnel"
+- Taille : 1024x500 pixels
+- Poids : 117 KB
+- Généré par : Arkalia-luna-logo
 
 ---
 
 ## 📸 Screenshots Requis
 
+**Générés par** : [Arkalia-luna-logo](https://github.com/arkalia-luna-system/Arkalia-luna-logo)
+
 ### Téléphone (Minimum 2 requis)
 
-**Taille** : 1080 x 1920 pixels minimum  
-**Format** : PNG ou JPG
+**Taille** : 885 x 1920 pixels  
+**Format** : JPEG  
+**Fichiers** : `/Volumes/T7/logo/arkalia-luna-logo/playstore-assets/playstore-*.jpeg` ✅
 
-**Écrans à capturer** (voir `docs/SCREENSHOTS_GUIDE.md`) :
+**Détails** :
+- 8 fichiers disponibles
+- Format : JPEG
+- Taille : 885x1920 pixels chacun
+- Générés par : Arkalia-luna-logo
+
+**Écrans disponibles** :
 1. Page d'accueil (Home)
 2. Écran Documents
 3. Écran Rappels
 4. Écran Urgence
 5. Écran Calendrier
+6. Écran ARIA
+7. Écran Santé
+8. Écran Sync
 
-**Statut** : ⏸️ À capturer après validation Google
+**Statut** : ✅ Prêts pour Play Console
 
 ### Tablette 7 pouces (Optionnel)
 
@@ -183,10 +202,10 @@ https://github.com/arkalia-luna-system/arkalia-cia
 
 ## 📝 Notes de Version
 
-### Version 1.3.0 (Première version)
+### Version 1.3.1 (Première version)
 
 ```
-Version 1.3.0 - Première version publique
+Version 1.3.1 - Première version publique
 
 ✨ Fonctionnalités principales :
 - Gestion sécurisée de documents médicaux (chiffrement AES-256)
@@ -228,9 +247,11 @@ santé, médical, documents, rappels, urgence, senior, privacy, chiffrement, loc
    - [ ] Copier le titre
    - [ ] Copier la description courte
    - [ ] Copier la description complète
-   - [ ] Uploader l'icône 512x512
-   - [ ] Uploader feature graphic 1024x500
-   - [ ] Uploader screenshots téléphone (min 2)
+   - [x] Uploader l'icône 512x512 ✅ (`icon-512-red.png`)
+   - [x] Uploader feature graphic 1024x500 ✅ (`feature-graphic.png`)
+   - [x] Uploader screenshots téléphone (min 2) ✅ (8 fichiers disponibles)
+
+**Note** : Tous les assets graphiques ont été générés par le projet [Arkalia-luna-logo](https://github.com/arkalia-luna-system/Arkalia-luna-logo)
 
 2. **Classification** :
    - [ ] Sélectionner "Santé et bien-être"
@@ -247,6 +268,6 @@ santé, médical, documents, rappels, urgence, senior, privacy, chiffrement, loc
 
 ---
 
-**Dernière mise à jour** : 24 novembre 2025  
+**Dernière mise à jour** : 27 novembre 2025  
 **Statut** : ✅ Prêt à utiliser dans Play Console
 

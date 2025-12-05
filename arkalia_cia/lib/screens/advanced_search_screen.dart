@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/search_service.dart';
 import '../services/doctor_service.dart';
 import '../models/doctor.dart';
+import '../utils/error_helper.dart';
 import 'documents_screen.dart';
 import 'doctor_detail_screen.dart';
 
@@ -103,8 +104,14 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
     } catch (e) {
       setState(() => _isSearching = false);
       if (mounted) {
+        ErrorHelper.logError('AdvancedSearchScreen._performSearch', e);
+        final userMessage = ErrorHelper.getUserFriendlyMessage(e);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur recherche: $e')),
+          SnackBar(
+            content: Text('Erreur recherche: $userMessage'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 4),
+          ),
         );
       }
     }
@@ -126,7 +133,7 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
                 TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
-                    hintText: 'Rechercher...',
+                    hintText: 'Ex: "analyse sang", "Dr Martin", "ordonnance"',
                     prefixIcon: const Icon(Icons.search),
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(
@@ -139,10 +146,18 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
                               });
                             },
                           )
-                        : null,
+                        : IconButton(
+                            icon: const Icon(Icons.help_outline),
+                            tooltip: 'Exemples de recherche:\n• "analyse sang" - Trouve les analyses de sang\n• "Dr Martin" - Trouve le médecin\n• "ordonnance" - Trouve les ordonnances\n• "2024" - Documents de 2024',
+                            onPressed: () {
+                              _showSearchExamples();
+                            },
+                          ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
+                    helperText: 'Astuce: Utilisez plusieurs mots pour une recherche plus précise',
+                    helperMaxLines: 2,
                   ),
                   onSubmitted: (_) => _performSearch(),
                 ),
@@ -180,75 +195,87 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
               runSpacing: 8,
               children: [
                 // Filtre catégorie
-                FilterChip(
-                  label: Text(_selectedCategory ?? 'Catégorie'),
-                  selected: _selectedCategory != null,
-                  onSelected: (selected) {
-                    if (selected) {
-                      _showCategoryDialog();
-                    } else {
-                      setState(() {
-                        _selectedCategory = null;
-                      });
-                      _performSearch();
-                    }
-                  },
+                Tooltip(
+                  message: 'Filtrer par catégorie de document (Ordonnance, Résultat, etc.)',
+                  child: FilterChip(
+                    label: Text(_selectedCategory ?? 'Catégorie'),
+                    selected: _selectedCategory != null,
+                    onSelected: (selected) {
+                      if (selected) {
+                        _showCategoryDialog();
+                      } else {
+                        setState(() {
+                          _selectedCategory = null;
+                        });
+                        _performSearch();
+                      }
+                    },
+                  ),
                 ),
                 
                 // Filtre date
-                FilterChip(
-                  label: Text(_startDate != null || _endDate != null 
-                      ? 'Date sélectionnée' 
-                      : 'Date'),
-                  selected: _startDate != null || _endDate != null,
-                  onSelected: (selected) {
-                    if (selected) {
-                      _showDateRangePicker();
-                    } else {
-                      setState(() {
-                        _startDate = null;
-                        _endDate = null;
-                      });
-                      _performSearch();
-                    }
-                  },
+                Tooltip(
+                  message: 'Filtrer par période (date de début et fin)',
+                  child: FilterChip(
+                    label: Text(_startDate != null || _endDate != null 
+                        ? 'Date sélectionnée' 
+                        : 'Date'),
+                    selected: _startDate != null || _endDate != null,
+                    onSelected: (selected) {
+                      if (selected) {
+                        _showDateRangePicker();
+                      } else {
+                        setState(() {
+                          _startDate = null;
+                          _endDate = null;
+                        });
+                        _performSearch();
+                      }
+                    },
+                  ),
                 ),
                 
                 // Filtre type d'examen
-                FilterChip(
-                  label: Text(_selectedExamType ?? 'Type examen'),
-                  selected: _selectedExamType != null,
-                  onSelected: (selected) {
-                    if (selected) {
-                      _showExamTypeDialog();
-                    } else {
-                      setState(() {
-                        _selectedExamType = null;
-                      });
-                      _performSearch();
-                    }
-                  },
+                Tooltip(
+                  message: 'Filtrer par type d\'examen (IRM, Scanner, Analyse, etc.)',
+                  child: FilterChip(
+                    label: Text(_selectedExamType ?? 'Type examen'),
+                    selected: _selectedExamType != null,
+                    onSelected: (selected) {
+                      if (selected) {
+                        _showExamTypeDialog();
+                      } else {
+                        setState(() {
+                          _selectedExamType = null;
+                        });
+                        _performSearch();
+                      }
+                    },
+                  ),
                 ),
                 
                 // Filtre médecin
-                FilterChip(
-                  label: Text(_selectedDoctorId != null && _doctors.isNotEmpty
-                      ? (_doctors.firstWhere(
-                          (d) => d.id == _selectedDoctorId,
-                          orElse: () => _doctors.first,
-                        ).fullName)
-                      : 'Médecin'),
-                  selected: _selectedDoctorId != null,
-                  onSelected: (selected) {
-                    if (selected) {
-                      _showDoctorDialog();
-                    } else {
-                      setState(() {
-                        _selectedDoctorId = null;
-                      });
-                      _performSearch();
-                    }
-                  },
+                Tooltip(
+                  message: 'Filtrer par médecin prescripteur',
+                  child: FilterChip(
+                    label: Text(_selectedDoctorId != null && _doctors.isNotEmpty
+                        ? (_doctors.firstWhere(
+                            (d) => d.id == _selectedDoctorId,
+                            orElse: () => _doctors.first,
+                          ).fullName)
+                        : 'Médecin'),
+                    selected: _selectedDoctorId != null,
+                    onSelected: (selected) {
+                      if (selected) {
+                        _showDoctorDialog();
+                      } else {
+                        setState(() {
+                          _selectedDoctorId = null;
+                        });
+                        _performSearch();
+                      }
+                    },
+                  ),
                 ),
               ],
             ),
@@ -262,16 +289,19 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
             child: Row(
               children: [
                 Expanded(
-                  child: CheckboxListTile(
-                    title: const Text('Recherche sémantique'),
-                    subtitle: const Text('Meilleure qualité de résultats'),
-                    value: _useSemanticSearch,
-                    onChanged: (value) {
-                      setState(() {
-                        _useSemanticSearch = value ?? true;
-                      });
-                    },
-                    contentPadding: EdgeInsets.zero,
+                  child: Tooltip(
+                    message: 'La recherche sémantique comprend le sens des mots et trouve des résultats même avec des synonymes',
+                    child: CheckboxListTile(
+                      title: const Text('Recherche sémantique'),
+                      subtitle: const Text('Meilleure qualité de résultats'),
+                      value: _useSemanticSearch,
+                      onChanged: (value) {
+                        setState(() {
+                          _useSemanticSearch = value ?? true;
+                        });
+                      },
+                      contentPadding: EdgeInsets.zero,
+                    ),
                   ),
                 ),
               ],
@@ -302,16 +332,36 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
                 ? const Center(child: CircularProgressIndicator())
                 : _results.isEmpty
                     ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.search_off, size: 64, color: Colors.grey[400]),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Aucun résultat',
-                              style: TextStyle(color: Colors.grey[600]),
-                            ),
-                          ],
+                        child: Padding(
+                          padding: const EdgeInsets.all(32.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.search_off, size: 64, color: Colors.grey[400]),
+                              const SizedBox(height: 16),
+                              Text(
+                                'Aucun résultat trouvé',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Essayez de :',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              _buildSearchTip('Utiliser des mots-clés différents'),
+                              _buildSearchTip('Vérifier l\'orthographe'),
+                              _buildSearchTip('Réduire le nombre de filtres'),
+                              _buildSearchTip('Utiliser la recherche sémantique'),
+                            ],
+                          ),
                         ),
                       )
                     : ListView.builder(
@@ -457,6 +507,73 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
       });
       _performSearch();
     }
+  }
+
+  void _showSearchExamples() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Exemples de recherche'),
+        content: const SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Recherches simples :',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 8),
+              Text('• "analyse sang" - Trouve les analyses de sang'),
+              Text('• "Dr Martin" - Trouve le médecin Dr Martin'),
+              Text('• "ordonnance" - Trouve les ordonnances'),
+              SizedBox(height: 16),
+              Text(
+                'Recherches par date :',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 8),
+              Text('• Utilisez le filtre Date pour rechercher par période'),
+              SizedBox(height: 16),
+              Text(
+                'Recherches combinées :',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 8),
+              Text('• Combinez plusieurs filtres pour une recherche précise'),
+              Text('• Ex: "IRM" + Médecin + Date = IRM d\'un médecin à une date'),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Compris'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSearchTip(String tip) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        children: [
+          Icon(Icons.lightbulb_outline, size: 16, color: Colors.orange[700]),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              tip,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[700],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _showDoctorDialog() async {

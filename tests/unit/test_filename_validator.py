@@ -4,6 +4,7 @@ Tests pour le validateur de noms de fichiers
 
 import pytest
 
+from arkalia_cia_python_backend.utils import filename_validator
 from arkalia_cia_python_backend.utils.filename_validator import (
     FilenameValidator,
     get_filename_validator,
@@ -129,9 +130,7 @@ class TestGetFilenameValidator:
 
     def test_singleton_pattern(self):
         """Test que get_filename_validator retourne la même instance"""
-        import arkalia_cia_python_backend.utils.filename_validator as validator_module
-
-        validator_module._validator = None
+        filename_validator._validator = None
         validator1 = get_filename_validator()
         validator2 = get_filename_validator()
         assert validator1 is validator2

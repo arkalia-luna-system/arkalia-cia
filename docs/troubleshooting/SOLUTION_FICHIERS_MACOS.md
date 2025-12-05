@@ -3,7 +3,7 @@
 > **Resolving AAPT errors caused by macOS hidden files on external drives**
 
 **Last Updated**: November 24, 2025  
-**Version**: 1.3.0  
+**Version**: 1.3.1  
 **Status**: ✅ **RESOLVED**
 
 ---

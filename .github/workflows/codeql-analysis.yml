@@ -66,11 +66,3 @@ jobs:
         uses: github/codeql-action/analyze@v4
         with:
           category: "/language:${{matrix.language}}"
-
-      - name: Upload CodeQL results
-        uses: github/codeql-action/upload-sarif@v4
-        if: always()
-        with:
-          sarif_file: ../results/${{ matrix.language }}.sarif
-          category: "${{ matrix.language }}-analysis"
-        continue-on-error: true

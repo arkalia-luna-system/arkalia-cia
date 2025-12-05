@@ -1,10 +1,10 @@
 # Guide build release Android
 
-**Version** : 1.3.0  
-**Dernière mise à jour** : 24 novembre 2025  
+**Version** : 1.3.1  
+**Dernière mise à jour** : 27 novembre 2025  
 **Cible** : Google Play Store
 
-> **📱 Google Play Console** : Compte développeur créé le 24 novembre 2025. Vérification en cours. Voir [PLAY_STORE_SETUP.md](./PLAY_STORE_SETUP.md) pour l'état actuel.
+> **📱 Google Play Console** : Compte développeur créé le 27 novembre 2025. Vérification en cours. Voir [PLAY_STORE_SETUP.md](./PLAY_STORE_SETUP.md) pour l'état actuel.
 
 Guide complet pour construire des releases Android prêtes pour la production.
 
@@ -27,7 +27,7 @@ Guide complet pour construire des releases Android prêtes pour la production.
 Verify version information in `pubspec.yaml`:
 
 ```yaml
-version: 1.3.0+1
+version: 1.3.1+1
 # Format: MAJOR.MINOR.PATCH+BUILD_NUMBER
 ```
 
@@ -59,7 +59,7 @@ android {
 
 ### Pre-Build Verification
 
-- ✅ All tests pass (308/308)
+- ✅ All tests pass (508/508 Python)
 - ✅ Code quality checks pass (Black, Ruff, MyPy, Bandit)
 - ✅ Flutter analyze shows no errors
 - ✅ Critical bugs fixed
@@ -259,7 +259,7 @@ adb install build/app/outputs/flutter-apk/app-release.apk
 - **[RELEASE_CHECKLIST.md](../RELEASE_CHECKLIST.md)** — Checklist release complète
 - **[deployment/DEPLOYMENT.md](./DEPLOYMENT.md)** — Guide de déploiement général
 - **[deployment/IOS_DEPLOYMENT_GUIDE.md](./IOS_DEPLOYMENT_GUIDE.md)** — Guide déploiement iOS
-- **[SCREENSHOTS_GUIDE.md](../SCREENSHOTS_GUIDE.md)** — Guide des screenshots
+- **[../guides/SCREENSHOTS_GUIDE.md](../guides/SCREENSHOTS_GUIDE.md)** — Guide des screenshots
 - **[INDEX_DOCUMENTATION.md](../INDEX_DOCUMENTATION.md)** — Index complet de la documentation
 
 ---

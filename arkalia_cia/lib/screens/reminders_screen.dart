@@ -149,8 +149,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
                   },
                 ),
                 const SizedBox(height: 16),
-                // Utiliser un MenuButton au lieu de DropdownButtonFormField pour éviter le warning
-                // sur value deprecated
+                // Utiliser MenuAnchor au lieu de DropdownButtonFormField (API moderne Flutter)
                 MenuAnchor(
                   builder: (context, controller, child) {
                     return ListTile(

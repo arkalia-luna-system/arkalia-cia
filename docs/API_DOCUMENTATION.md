@@ -1,7 +1,7 @@
 # Documentation API — Arkalia CIA
 
-**Version** : 1.3.0
-**Date** : 24 novembre 2025
+**Version** : 1.3.1
+**Date** : 27 novembre 2025
 **Base URL** : `http://localhost:8000` (développement) ou configurée via `BackendConfigService`
 **Version API** : `/api/v1/`
 
@@ -695,7 +695,7 @@ graph TB
 - **[API.md](./API.md)** — Documentation API (version simplifiée)
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture système détaillée
 - **[guides/GUIDE_MISE_A_JOUR_FLUTTER.md](./guides/GUIDE_MISE_A_JOUR_FLUTTER.md)** — Guide mise à jour Flutter
-- **[CHECKLIST_FINALE_SECURITE.md](./CHECKLIST_FINALE_SECURITE.md)** — Checklist sécurité
+- **[audits/CHECKLIST_FINALE_SECURITE.md](./audits/CHECKLIST_FINALE_SECURITE.md)** — Checklist sécurité
 - **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
 
 ---

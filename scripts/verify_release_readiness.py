@@ -150,7 +150,7 @@ def check_build_exists() -> dict[str, Any]:
             "apk_exists": False,
             "aab_exists": False,
             "message": (
-                "Build APK n'existe pas - " "À créer avec: flutter build apk --release"
+                "Build APK n'existe pas - À créer avec: flutter build apk --release"
             ),
         }
 

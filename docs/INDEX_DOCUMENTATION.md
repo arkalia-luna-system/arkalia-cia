@@ -1,7 +1,7 @@
 # Index de la documentation
 
-**Version** : 1.3.0
-**Dernière mise à jour** : 24 novembre 2025
+**Version** : 1.3.1
+**Dernière mise à jour** : 27 novembre 2025
 **Status** : 100% Production-Ready - 100% bugs corrigés - Accessibilité optimisée
 
 Guide de navigation dans la documentation du projet Arkalia CIA.
@@ -12,16 +12,16 @@ Guide de navigation dans la documentation du projet Arkalia CIA.
 
 ### Statut et état du projet
 
-- **[STATUT_FINAL_PROJET.md](./STATUT_FINAL_PROJET.md)** — Document principal
+- **[status/STATUT_FINAL_PROJET.md](./status/STATUT_FINAL_PROJET.md)** — Document principal
   - Statut complet d'exploitation
   - Fonctionnalités implémentées
   - Métriques et conclusion
-- **[BESOINS_MERE_23_NOVEMBRE_2025.md](./BESOINS_MERE_23_NOVEMBRE_2025.md)** — Analyse complète des nouveaux besoins
+- **[analysis/BESOINS_MERE_23_NOVEMBRE_2025.md](./analysis/BESOINS_MERE_23_NOVEMBRE_2025.md)** — Analyse complète des nouveaux besoins
   - Besoins exprimés par votre mère
   - Ce qui existe déjà vs ce qui manque
   - Plan d'implémentation détaillé
   - Pathologies familiales et besoins spécifiques
-- **[PROMPTS_IMPLEMENTATION_4_PHASES.md](./PROMPTS_IMPLEMENTATION_4_PHASES.md)** — Prompts détaillés pour implémentation
+- **[plans/PROMPTS_IMPLEMENTATION_4_PHASES.md](./plans/PROMPTS_IMPLEMENTATION_4_PHASES.md)** — Prompts détaillés pour implémentation
   - 4 prompts complets, un par phase
   - Instructions détaillées pour chaque tâche
   - Tests à créer, vérifications, documentation
@@ -31,13 +31,13 @@ Guide de navigation dans la documentation du projet Arkalia CIA.
 
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture générale avec schémas Mermaid
 - **[VUE_ENSEMBLE_PROJET.md](./VUE_ENSEMBLE_PROJET.md)** — Vue d'ensemble visuelle complète
-- **[ANALYSE_COMPLETE_BESOINS_MERE.md](./ANALYSE_COMPLETE_BESOINS_MERE.md)** — Analyse des besoins utilisateur
+- **[analysis/ANALYSE_COMPLETE_BESOINS_MERE.md](./analysis/ANALYSE_COMPLETE_BESOINS_MERE.md)** — Analyse des besoins utilisateur
 
 ### API et intégration
 
 - **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** — Documentation API complète (18 endpoints)
 - **[API.md](./API.md)** — Documentation API (version simplifiée)
-- **[ARIA_IMPLEMENTATION_GUIDE.md](./ARIA_IMPLEMENTATION_GUIDE.md)** — Guide d'intégration ARIA
+- **[integrations/ARIA_IMPLEMENTATION_GUIDE.md](./integrations/ARIA_IMPLEMENTATION_GUIDE.md)** — Guide d'intégration ARIA
 
 ---
 
@@ -52,7 +52,7 @@ Guide de navigation dans la documentation du projet Arkalia CIA.
 
 - **[guides/GUIDE_MISE_A_JOUR_FLUTTER.md](./guides/GUIDE_MISE_A_JOUR_FLUTTER.md)** — Guide mise à jour Flutter (Authentification JWT)
 - **[CONTRIBUTING.md](./CONTRIBUTING.md)** — Guide contributeur
-- **[MIGRATION.md](./MIGRATION.md)** — Guide migration
+- **[guides/MIGRATION.md](./guides/MIGRATION.md)** — Guide migration
 
 ---
 
@@ -81,13 +81,13 @@ Tous les plans sont dans le dossier **[plans/](./plans/)** :
 - **[deployment/CONFIGURATION_BACKEND_WIFI.md](./deployment/CONFIGURATION_BACKEND_WIFI.md)** — Configuration backend WiFi
 - **[deployment/CONNECTER_S25_ANDROID.md](./deployment/CONNECTER_S25_ANDROID.md)** — Connexion Android
 - **[deployment/DEPLOIEMENT_WIFI_IOS.md](./deployment/DEPLOIEMENT_WIFI_IOS.md)** — Déploiement WiFi iOS
-- **[RELEASE_NOTES_V1.2.0.md](./RELEASE_NOTES_V1.2.0.md)** — Notes de release
+- **[releases/RELEASE_NOTES_V1.2.0.md](./releases/RELEASE_NOTES_V1.2.0.md)** — Notes de release
 
 ---
 
 ## Sécurité et audits
 
-- **[CHECKLIST_FINALE_SECURITE.md](./CHECKLIST_FINALE_SECURITE.md)** — Checklist sécurité complète
+- **[audits/CHECKLIST_FINALE_SECURITE.md](./audits/CHECKLIST_FINALE_SECURITE.md)** — Checklist sécurité complète
 - **[CORRECTIONS_SECURITE_EFFECTUEES.md](./CORRECTIONS_SECURITE_EFFECTUEES.md)** — Détails des corrections sécurité
 - **[audits/AUDIT_SECURITE_SENIOR.md](./audits/AUDIT_SECURITE_SENIOR.md)** — Audit sécurité
 - **[audits/AUDIT_POST_CORRECTIONS.md](./audits/AUDIT_POST_CORRECTIONS.md)** — Audit après corrections
@@ -121,7 +121,6 @@ Tous les plans sont dans le dossier **[plans/](./plans/)** :
 ## Changelog et historique
 
 - **[CHANGELOG.md](./CHANGELOG.md)** — Historique des changements
-- **[CHANGELOG_AUTHENTIFICATION.md](./CHANGELOG_AUTHENTIFICATION.md)** — Changelog authentification JWT
 
 ---
 
@@ -129,11 +128,11 @@ Tous les plans sont dans le dossier **[plans/](./plans/)** :
 
 | Sujet | Document principal |
 |-------|-------------------|
-| Statut projet | `STATUT_FINAL_PROJET.md` |
+| Statut projet | `status/STATUT_FINAL_PROJET.md` |
 | API | `API_DOCUMENTATION.md` |
 | Architecture | `ARCHITECTURE.md` |
 | Vue d'ensemble | `VUE_ENSEMBLE_PROJET.md` |
-| Sécurité | `CHECKLIST_FINALE_SECURITE.md` |
+| Sécurité | `audits/CHECKLIST_FINALE_SECURITE.md` |
 | Release | `deployment/CHECKLIST_RELEASE_CONSOLIDEE.md` |
 | Plans | `plans/README.md` |
 | Guide utilisateur | `guides/GUIDE_UTILISATION_MERE.md` |
@@ -146,7 +145,7 @@ Tous les plans sont dans le dossier **[plans/](./plans/)** :
 ```
 docs/
 ├── INDEX_DOCUMENTATION.md          # Ce fichier
-├── STATUT_FINAL_PROJET.md         # Statut principal
+├── status/STATUT_FINAL_PROJET.md         # Statut principal
 ├── ARCHITECTURE.md                 # Architecture système
 ├── VUE_ENSEMBLE_PROJET.md         # Vue d'ensemble visuelle
 ├── API_DOCUMENTATION.md           # Documentation API complète
@@ -166,32 +165,32 @@ docs/
 
 | Type | Documents principaux |
 |------|---------------------|
-| **Statut** | `STATUT_FINAL_PROJET.md` |
+| **Statut** | `status/STATUT_FINAL_PROJET.md` |
 | **Architecture** | `ARCHITECTURE.md`, `VUE_ENSEMBLE_PROJET.md` |
 | **API** | `API_DOCUMENTATION.md`, `API.md` |
-| **Sécurité** | `CHECKLIST_FINALE_SECURITE.md`, `audits/AUDIT_SECURITE_SENIOR.md` |
-| **Release** | `deployment/CHECKLIST_RELEASE_CONSOLIDEE.md`, `RELEASE_NOTES_V1.2.0.md` |
+| **Sécurité** | `audits/CHECKLIST_FINALE_SECURITE.md`, `audits/AUDIT_SECURITE_SENIOR.md` |
+| **Release** | `deployment/CHECKLIST_RELEASE_CONSOLIDEE.md`, `releases/RELEASE_NOTES_V1.2.0.md` |
 | **Guides** | `guides/GUIDE_UTILISATION_MERE.md`, `guides/GUIDE_MISE_A_JOUR_FLUTTER.md` |
 
 ### Par besoin
 
 | Besoin | Document recommandé |
 |--------|---------------------|
-| Comprendre le projet | `STATUT_FINAL_PROJET.md` |
+| Comprendre le projet | `status/STATUT_FINAL_PROJET.md` |
 | Démarrer le développement | `ARCHITECTURE.md`, `CONTRIBUTING.md` |
 | Utiliser l'API | `API_DOCUMENTATION.md` |
 | Déployer | `deployment/DEPLOYMENT.md`, `deployment/BUILD_RELEASE_ANDROID.md` |
-| Comprendre la sécurité | `CHECKLIST_FINALE_SECURITE.md` |
+| Comprendre la sécurité | `audits/CHECKLIST_FINALE_SECURITE.md` |
 | Utiliser l'application | `guides/GUIDE_UTILISATION_MERE.md` |
 
 ---
 
 ## Voir aussi
 
-- [STATUT_FINAL_PROJET.md](STATUT_FINAL_PROJET.md) - Statut final consolidé du projet
+- [status/STATUT_FINAL_PROJET.md](status/STATUT_FINAL_PROJET.md) - Statut final consolidé du projet
 - [VALIDATION.md](VALIDATION.md) - Checklist de validation
 - [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) - Checklist de release
 
 ---
 
-*Dernière mise à jour : 24 novembre 2025*
+*Dernière mise à jour : 27 novembre 2025*

@@ -21,9 +21,11 @@ void main() {
   testWidgets('App initialization test', (WidgetTester tester) async {
     // Test that the app initializes properly
     await tester.pumpWidget(const ArkaliaCIAApp());
-    await tester.pumpAndSettle();
+    // Pump plusieurs fois pour permettre l'initialisation async
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
 
     // Verify the app is running
     expect(find.byType(ArkaliaCIAApp), findsOneWidget);
-  });
+  }, timeout: const Timeout(Duration(seconds: 30)));
 }

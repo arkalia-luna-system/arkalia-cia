@@ -10,6 +10,7 @@ import 'services/auth_api_service.dart';
 import 'services/backend_config_service.dart';
 import 'services/offline_cache_service.dart';
 import 'services/notification_service.dart';
+import 'utils/app_logger.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,9 +22,7 @@ void main() async {
       // Si le package n'est pas disponible, on continue sans initialisation
       // Les services géreront l'erreur gracieusement
     } catch (e) {
-      if (kDebugMode) {
-        print('Note: sqflite_common_ffi non disponible pour web. Mode offline uniquement.');
-      }
+      AppLogger.debug('Note: sqflite_common_ffi non disponible pour web. Mode offline uniquement.');
     }
   }
   
