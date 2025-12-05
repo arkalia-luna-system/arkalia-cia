@@ -15,6 +15,7 @@ env:
   FLUTTER_VERSION: "3.35.3"
   PACKAGE_NAME: "com.arkalia.cia"
   TRACK: "internal" # internal, alpha, beta, production
+  PYTHON_VERSION: "3.11"
 
 jobs:
   deploy:
@@ -45,23 +46,49 @@ jobs:
         working-directory: arkalia_cia
         run: flutter pub get
 
-      - name: Auto-increment version code
+      - name: Auto-increment version code intelligemment
         working-directory: arkalia_cia
         run: |
-          echo "🔢 Auto-incrémentation du versionCode..."
+          echo "🔢 Auto-incrémentation intelligente du versionCode..."
+
           # Lire la version actuelle
           CURRENT_VERSION=$(grep "^version:" pubspec.yaml | sed 's/version: //' | tr -d ' ')
           echo "Version actuelle: $CURRENT_VERSION"
 
           # Extraire versionName et versionCode
           VERSION_NAME=$(echo $CURRENT_VERSION | cut -d'+' -f1)
-          VERSION_CODE=$(echo $CURRENT_VERSION | cut -d'+' -f2)
+          CURRENT_VERSION_CODE=$(echo $CURRENT_VERSION | cut -d'+' -f2)
 
-          # Incrémenter le versionCode
-          NEW_VERSION_CODE=$((VERSION_CODE + 1))
+          # Utiliser un timestamp pour générer un version code unique
+          # Format: YYYYMMDDHH (ex: 2025120522 = 5 décembre 2025, 22h)
+          # Cela garantit un version code toujours croissant et unique
+          TIMESTAMP_CODE=$(date +%Y%m%d%H | sed 's/^20//' | sed 's/^0*//')
+
+          # Si le timestamp est trop petit ou invalide, utiliser une incrémentation agressive
+          if [ -z "$TIMESTAMP_CODE" ] || [ "$TIMESTAMP_CODE" -lt "$CURRENT_VERSION_CODE" ]; then
+            # Incrémentation agressive : +20 pour éviter les conflits
+            NEW_VERSION_CODE=$((CURRENT_VERSION_CODE + 20))
+            echo "⚠️  Timestamp invalide, utilisation d'une incrémentation agressive (+20)"
+          else
+            # Utiliser le timestamp comme version code (garantit l'unicité)
+            NEW_VERSION_CODE=$TIMESTAMP_CODE
+            echo "✅ Utilisation du timestamp comme version code (garantit l'unicité)"
+          fi
+
+          # S'assurer que le nouveau version code est supérieur à l'actuel
+          if [ "$NEW_VERSION_CODE" -le "$CURRENT_VERSION_CODE" ]; then
+            NEW_VERSION_CODE=$((CURRENT_VERSION_CODE + 20))
+            echo "⚠️  Ajustement: version code trop petit, utilisation de +20"
+          fi
+
           NEW_VERSION="$VERSION_NAME+$NEW_VERSION_CODE"
 
-          echo "Nouvelle version: $NEW_VERSION (versionCode: $NEW_VERSION_CODE)"
+          echo "📊 Calcul du nouveau version code:"
+          echo "   - Version actuelle: $CURRENT_VERSION (code: $CURRENT_VERSION_CODE)"
+          echo "   - Nouveau version code: $NEW_VERSION_CODE"
+          echo "   - Nouvelle version: $NEW_VERSION"
+          echo ""
+          echo "💡 Cette méthode garantit un version code unique et toujours croissant"
 
           # Mettre à jour pubspec.yaml
           if [[ "$OSTYPE" == "darwin"* ]]; then
