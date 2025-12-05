@@ -244,8 +244,8 @@ jobs:
             echo "✅ Upload réussi sur Play Store"
           fi
 
-      - name: Upload artifact (fallback if no service account)
-        if: steps.check-secret.outputs.exists == 'false'
+      - name: Upload artifact (fallback if no service account or upload failed)
+        if: steps.check-secret.outputs.exists == 'false' || (steps.check-secret.outputs.exists == 'true' && steps.upload-play-store.outcome != 'success')
         uses: actions/upload-artifact@v4
         with:
           name: app-release
