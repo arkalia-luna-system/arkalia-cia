@@ -191,8 +191,31 @@ jobs:
           releaseFiles: >-
             arkalia_cia/build/app/outputs/bundle/release/app-release.aab
           track: ${{ env.TRACK }}
-          status: completed
-          changesNotSentForReview: false
+          status: draft
+          changesNotSentForReview: true
+
+      - name: Debug upload information
+        if: steps.check-secret.outputs.exists == 'true' && steps.upload-play-store.outcome != 'success'
+        run: |
+          echo "🔍 Informations de débogage:"
+          echo "  - Outcome: ${{ steps.upload-play-store.outcome }}"
+          echo "  - Package: ${{ env.PACKAGE_NAME }}"
+          echo "  - Track: ${{ env.TRACK }}"
+          if [ -n "${{ env.NEW_VERSION }}" ]; then
+            echo "  - Version: ${{ env.NEW_VERSION }}"
+          fi
+          if [ -n "${{ env.NEW_VERSION_CODE }}" ]; then
+            echo "  - Version Code: ${{ env.NEW_VERSION_CODE }}"
+          fi
+          echo ""
+          echo "📋 Vérifications à faire:"
+          echo "  1. Vérifier que l'API Google Play Android Developer est activée:"
+          echo "     https://console.developers.google.com/apis/api/androidpublisher.googleapis.com/overview"
+          echo "  2. Vérifier les permissions du compte de service dans Play Console"
+          if [ -n "${{ env.NEW_VERSION_CODE }}" ]; then
+            echo "  3. Vérifier que le versionCode ${{ env.NEW_VERSION_CODE }} n'est pas déjà utilisé"
+          fi
+          echo "  4. Vérifier que la politique de confidentialité est configurée"
 
       - name: Check upload result
         if: steps.check-secret.outputs.exists == 'true'
@@ -207,6 +230,9 @@ jobs:
             echo "  - VersionCode déjà utilisé"
             echo ""
             echo "Consulter les logs complets de l'étape 'Upload to Play Store' pour plus de détails."
+            echo ""
+            echo "💡 Solution temporaire: Utiliser status: 'draft' au lieu de 'completed'"
+            echo "   Cela permet d'uploader même si certains prérequis ne sont pas remplis."
             exit 1
           else
             echo "✅ Upload réussi"
