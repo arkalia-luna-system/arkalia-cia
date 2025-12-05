@@ -208,19 +208,31 @@ echo -e "${BLUE}═════════════════════�
 echo -e "${GREEN}✅ Build terminé avec succès !${NC}"
 echo -e "${BLUE}═══════════════════════════════════════════════════════════${NC}"
 echo ""
+# Afficher le chemin absolu
+ABSOLUTE_BUNDLE_PATH="$(cd "$(dirname "$BUNDLE_PATH")" && pwd)/$(basename "$BUNDLE_PATH")"
+
 echo -e "${YELLOW}📦 Fichier à uploader :${NC}"
-echo "   ${BUNDLE_PATH}"
+echo "   Chemin relatif : ${BUNDLE_PATH}"
+echo "   Chemin absolu  : ${ABSOLUTE_BUNDLE_PATH}"
 echo ""
 echo -e "${YELLOW}📱 Prochaines étapes :${NC}"
-echo "   1. Aller sur Google Play Console"
-echo "   2. Production → Créer une version (ou Tests internes)"
-echo "   3. Uploader le fichier : ${BUNDLE_PATH}"
-echo "   4. Vérifier que la version est : ${VERSION_NAME} (code: ${VERSION_CODE})"
-echo "   5. Ajouter les notes de version"
-echo "   6. Publier"
+echo "   1. Aller sur Google Play Console : https://play.google.com/console"
+echo "   2. Sélectionner 'Arkalia CIA'"
+echo "   3. Tests internes → Créer une nouvelle version"
+echo "   4. Uploader le fichier : ${ABSOLUTE_BUNDLE_PATH}"
+echo "   5. Vérifier que la version est : ${VERSION_NAME} (code: ${VERSION_CODE})"
+echo "   6. Ajouter les notes de version"
+echo "   7. Publier"
 echo ""
 echo -e "${YELLOW}📚 Documentation :${NC}"
 echo "   - Guide Play Console : docs/deployment/GUIDE_PLAY_CONSOLE_VERSION.md"
 echo "   - Setup Play Store  : docs/deployment/PLAY_STORE_SETUP.md"
+echo ""
+
+# Ouvrir le Finder sur macOS
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    echo -e "${YELLOW}🔍 Ouverture du Finder...${NC}"
+    open -R "$ABSOLUTE_BUNDLE_PATH"
+fi
 echo ""
 
