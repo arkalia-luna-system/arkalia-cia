@@ -5,12 +5,12 @@ name: "Security Scan"
 
 on:
   push:
-    branches: [ "main", "develop" ]
+    branches: ["main", "develop"]
   pull_request:
-    branches: [ "main", "develop" ]
+    branches: ["main", "develop"]
   schedule:
     # Scan quotidien à 3h00 UTC (5h00 Paris)
-    - cron: '0 3 * * *'
+    - cron: "0 3 * * *"
   workflow_dispatch:
 
 permissions:
@@ -27,144 +27,147 @@ jobs:
     timeout-minutes: 30
 
     steps:
-    - name: "Checkout Code"
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      - name: "Checkout Code"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: "Setup Python"
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.11"
-        cache: pip
+      - name: "Setup Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
 
-    - name: "Install Security Tools"
-      run: |
-        pip install --upgrade pip
-        pip install bandit safety pip-audit semgrep
-        pip install -r requirements.txt
+      - name: "Install Security Tools"
+        run: |
+          pip install --upgrade pip
+          pip install bandit safety pip-audit
+          pip install -r requirements.txt
 
-    - name: "Bandit Security Scan"
-      run: |
-        echo "🔍 Bandit Security Scan"
-        bandit -r arkalia_cia_python_backend/ \
-          -f json -o bandit-report.json \
-          -f txt -o bandit-report.txt \
-          --severity-level medium \
-          --confidence-level medium || echo "WARNING: Bandit scan completed with issues"
+      - name: "Bandit Security Scan"
+        run: |
+          echo "🔍 Bandit Security Scan"
+          bandit -r arkalia_cia_python_backend/ \
+            -f json -o bandit-report.json \
+            -f txt -o bandit-report.txt \
+            --severity-level medium \
+            --confidence-level medium || echo "WARNING: Bandit scan completed with issues"
 
-    - name: "Safety Check"
-      run: |
-        echo "🔍 Safety Check"
-        safety scan -r requirements.txt \
-          --json --output safety-report.json || echo "WARNING: Safety scan completed with issues"
-        safety scan -r requirements.txt \
-          --output safety-report.txt || echo "WARNING: Safety scan completed with issues"
+      - name: "Safety Check"
+        run: |
+          echo "🔍 Safety Check"
+          safety scan -r requirements.txt \
+            --json --output safety-report.json || echo "WARNING: Safety scan completed with issues"
+          safety scan -r requirements.txt \
+            --output safety-report.txt || echo "WARNING: Safety scan completed with issues"
 
-    - name: "Pip Audit"
-      run: |
-        echo "🔍 Pip Audit"
-        pip-audit -r requirements.txt \
-          --format=json --output=pip-audit.json || echo "WARNING: Pip audit completed with issues"
+      - name: "Pip Audit"
+        run: |
+          echo "🔍 Pip Audit"
+          pip-audit -r requirements.txt \
+            --format=json --output=pip-audit.json || echo "WARNING: Pip audit completed with issues"
 
-    - name: "Semgrep Security Scan"
-      run: |
-        echo "🔍 Semgrep Security Scan"
-        semgrep --config=auto \
-          --json --output=semgrep-report.json \
-          arkalia_cia_python_backend/ || echo "WARNING: Semgrep scan completed with issues"
+      - name: "Semgrep Security Scan"
+        run: |
+          echo "🔍 Semgrep Security Scan"
+          # Install semgrep via official installer (handles semgrep-core automatically)
+          curl -L https://semgrep.dev/install | sh
+          export PATH="$PATH:$HOME/.local/bin"
+          semgrep --config=auto \
+            --json --output=semgrep-report.json \
+            arkalia_cia_python_backend/ || echo "WARNING: Semgrep scan completed with issues"
 
-    - name: "Flutter Security Check"
-      run: |
-        echo "🔍 Flutter Security Check"
-        # Setup Flutter
-        curl -o flutter.tar.xz https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.24.0-stable.tar.xz
-        tar xf flutter.tar.xz
-        export PATH="$PATH:$PWD/flutter/bin"
-        cd arkalia_cia
-        flutter pub deps --json > ../flutter-deps.json || echo "WARNING: Flutter deps check failed"
-        flutter analyze --no-fatal-infos > ../flutter-analyze.txt || echo "WARNING: Flutter analyze completed with issues"
+      - name: "Flutter Security Check"
+        run: |
+          echo "🔍 Flutter Security Check"
+          # Setup Flutter
+          curl -o flutter.tar.xz https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.24.0-stable.tar.xz
+          tar xf flutter.tar.xz
+          export PATH="$PATH:$PWD/flutter/bin"
+          cd arkalia_cia
+          flutter pub deps --json > ../flutter-deps.json || echo "WARNING: Flutter deps check failed"
+          flutter analyze --no-fatal-infos > ../flutter-analyze.txt || echo "WARNING: Flutter analyze completed with issues"
 
-    - name: "Upload Security Reports"
-      uses: actions/upload-artifact@v4
-      with:
-        name: security-reports-${{ github.run_number }}
-        path: |
-          *-report.json
-          flutter-deps.json
-          flutter-analyze.txt
-        retention-days: 90
+      - name: "Upload Security Reports"
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-reports-${{ github.run_number }}
+          path: |
+            *-report.json
+            flutter-deps.json
+            flutter-analyze.txt
+          retention-days: 90
 
-    - name: "Security Summary"
-      run: |
-        echo "🛡️ SECURITY SCAN SUMMARY"
-        echo "========================="
+      - name: "Security Summary"
+        run: |
+          echo "🛡️ SECURITY SCAN SUMMARY"
+          echo "========================="
 
-        # Bandit summary
-        if [ -f bandit-report.json ]; then
-          echo "Bandit: $(jq '.results | length' bandit-report.json) issues found"
-        else
-          echo "Bandit: No report generated"
-        fi
+          # Bandit summary
+          if [ -f bandit-report.json ]; then
+            echo "Bandit: $(jq '.results | length' bandit-report.json) issues found"
+          else
+            echo "Bandit: No report generated"
+          fi
 
-        # Safety summary
-        if [ -f safety-report.json ]; then
-          echo "Safety: $(jq '.vulnerabilities | length' safety-report.json) vulnerabilities found"
-        else
-          echo "Safety: No report generated"
-        fi
+          # Safety summary
+          if [ -f safety-report.json ]; then
+            echo "Safety: $(jq '.vulnerabilities | length' safety-report.json) vulnerabilities found"
+          else
+            echo "Safety: No report generated"
+          fi
 
-        # Pip audit summary
-        if [ -f pip-audit.json ]; then
-          echo "Pip Audit: $(jq '.vulnerabilities | length' pip-audit.json) vulnerabilities found"
-        else
-          echo "Pip Audit: No report generated"
-        fi
+          # Pip audit summary
+          if [ -f pip-audit.json ]; then
+            echo "Pip Audit: $(jq '.vulnerabilities | length' pip-audit.json) vulnerabilities found"
+          else
+            echo "Pip Audit: No report generated"
+          fi
 
-        # Semgrep summary
-        if [ -f semgrep-report.json ]; then
-          echo "Semgrep: $(jq '.results | length' semgrep-report.json) findings"
-        else
-          echo "Semgrep: No report generated"
-        fi
+          # Semgrep summary
+          if [ -f semgrep-report.json ]; then
+            echo "Semgrep: $(jq '.results | length' semgrep-report.json) findings"
+          else
+            echo "Semgrep: No report generated"
+          fi
 
-        echo "========================="
-        echo "Reports uploaded as artifacts"
+          echo "========================="
+          echo "Reports uploaded as artifacts"
 
-    - name: "Comment PR with Security Results"
-      if: github.event_name == 'pull_request'
-      uses: actions/github-script@v7
-      with:
-        script: |
-          const fs = require('fs');
+      - name: "Comment PR with Security Results"
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
 
-          let comment = '## 🛡️ Security Scan Results\n\n';
+            let comment = '## 🛡️ Security Scan Results\n\n';
 
-          // Bandit results
-          if (fs.existsSync('bandit-report.json')) {
-            try {
-              const bandit = JSON.parse(fs.readFileSync('bandit-report.json', 'utf8'));
-              comment += `**Bandit**: ${bandit.results.length} security issues found\n`;
-            } catch (e) {
-              comment += `**Bandit**: Error parsing report\n`;
+            // Bandit results
+            if (fs.existsSync('bandit-report.json')) {
+              try {
+                const bandit = JSON.parse(fs.readFileSync('bandit-report.json', 'utf8'));
+                comment += `**Bandit**: ${bandit.results.length} security issues found\n`;
+              } catch (e) {
+                comment += `**Bandit**: Error parsing report\n`;
+              }
             }
-          }
 
-          // Safety results
-          if (fs.existsSync('safety-report.json')) {
-            try {
-              const safety = JSON.parse(fs.readFileSync('safety-report.json', 'utf8'));
-              comment += `**Safety**: ${safety.vulnerabilities.length} vulnerabilities found\n`;
-            } catch (e) {
-              comment += `**Safety**: Error parsing report\n`;
+            // Safety results
+            if (fs.existsSync('safety-report.json')) {
+              try {
+                const safety = JSON.parse(fs.readFileSync('safety-report.json', 'utf8'));
+                comment += `**Safety**: ${safety.vulnerabilities.length} vulnerabilities found\n`;
+              } catch (e) {
+                comment += `**Safety**: Error parsing report\n`;
+              }
             }
-          }
 
-          comment += '\n📊 Detailed reports available in artifacts';
+            comment += '\n📊 Detailed reports available in artifacts';
 
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: comment
-          });
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
