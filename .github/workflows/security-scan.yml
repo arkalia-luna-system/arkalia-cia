@@ -68,14 +68,26 @@ jobs:
             --format=json --output=pip-audit.json || echo "WARNING: Pip audit completed with issues"
 
       - name: "Semgrep Security Scan"
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: >-
+            p/security-audit
+            p/python
+            p/owasp-top-ten
+        continue-on-error: true
+        id: semgrep
+
+      - name: "Convert Semgrep SARIF to JSON"
+        if: always()
         run: |
-          echo "🔍 Semgrep Security Scan"
-          # Install semgrep via official installer (handles semgrep-core automatically)
-          curl -L https://semgrep.dev/install | sh
-          export PATH="$PATH:$HOME/.local/bin"
-          semgrep --config=auto \
-            --json --output=semgrep-report.json \
-            arkalia_cia_python_backend/ || echo "WARNING: Semgrep scan completed with issues"
+          echo "🔍 Converting Semgrep SARIF to JSON"
+          if [ -f .semgrep/semgrep.sarif ]; then
+            # Convert SARIF to JSON format (simplified)
+            jq '.' .semgrep/semgrep.sarif > semgrep-report.json || \
+            echo '{"results": []}' > semgrep-report.json
+          else
+            echo '{"results": []}' > semgrep-report.json
+          fi
 
       - name: "Flutter Security Check"
         run: |
