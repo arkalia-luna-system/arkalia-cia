@@ -28,23 +28,70 @@ fi
 cd "$PROJECT_DIR"
 
 # ========================================================================
-# ÉTAPE 1 : Vérification de la version
+# ÉTAPE 1 : Auto-incrémentation intelligente du version code
 # ========================================================================
-echo -e "${YELLOW}📋 Étape 1 : Vérification de la version${NC}"
+echo -e "${YELLOW}📋 Étape 1 : Auto-incrémentation intelligente du version code${NC}"
 
-VERSION=$(grep "^version:" pubspec.yaml | sed 's/version: //' | tr -d ' ')
-if [ -z "$VERSION" ]; then
+CURRENT_VERSION=$(grep "^version:" pubspec.yaml | sed 's/version: //' | tr -d ' ')
+if [ -z "$CURRENT_VERSION" ]; then
     echo -e "${RED}❌ Erreur: Impossible de lire la version dans pubspec.yaml${NC}"
     exit 1
 fi
 
-echo -e "${GREEN}✅ Version trouvée : ${VERSION}${NC}"
-VERSION_NAME=$(echo $VERSION | cut -d'+' -f1)
-VERSION_CODE=$(echo $VERSION | cut -d'+' -f2)
+echo "Version actuelle: ${CURRENT_VERSION}"
 
-echo "   Version Name (affichée) : ${VERSION_NAME}"
-echo "   Version Code (build)     : ${VERSION_CODE}"
+# Extraire versionName et versionCode
+VERSION_NAME=$(echo $CURRENT_VERSION | cut -d'+' -f1)
+CURRENT_VERSION_CODE=$(echo $CURRENT_VERSION | cut -d'+' -f2)
+
+# Utiliser un timestamp pour générer un version code unique
+# Format: YYMMDDHH (ex: 25120522 = 5 décembre 2025, 22h)
+# Cela garantit un version code toujours croissant et unique
+TIMESTAMP_CODE=$(date +%y%m%d%H)
+
+# Si le timestamp est trop petit ou invalide, utiliser une incrémentation agressive
+if [ -z "$TIMESTAMP_CODE" ] || [ "$TIMESTAMP_CODE" -lt "$CURRENT_VERSION_CODE" ] 2>/dev/null; then
+    # Incrémentation agressive : +20 pour éviter les conflits
+    NEW_VERSION_CODE=$((CURRENT_VERSION_CODE + 20))
+    echo -e "${YELLOW}⚠️  Timestamp invalide, utilisation d'une incrémentation agressive (+20)${NC}"
+else
+    # Utiliser le timestamp comme version code (garantit l'unicité)
+    NEW_VERSION_CODE=$TIMESTAMP_CODE
+    echo -e "${GREEN}✅ Utilisation du timestamp comme version code (garantit l'unicité)${NC}"
+fi
+
+# S'assurer que le nouveau version code est supérieur à l'actuel
+if [ "$NEW_VERSION_CODE" -le "$CURRENT_VERSION_CODE" ] 2>/dev/null; then
+    NEW_VERSION_CODE=$((CURRENT_VERSION_CODE + 20))
+    echo -e "${YELLOW}⚠️  Ajustement: version code trop petit, utilisation de +20${NC}"
+fi
+
+NEW_VERSION="$VERSION_NAME+$NEW_VERSION_CODE"
+
 echo ""
+echo -e "${BLUE}📊 Calcul du nouveau version code:${NC}"
+echo "   - Version actuelle: ${CURRENT_VERSION} (code: ${CURRENT_VERSION_CODE})"
+echo "   - Nouveau version code: ${NEW_VERSION_CODE}"
+echo "   - Nouvelle version: ${NEW_VERSION}"
+echo ""
+echo -e "${GREEN}💡 Cette méthode garantit un version code unique et toujours croissant${NC}"
+echo ""
+
+# Mettre à jour pubspec.yaml
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS
+    sed -i '' "s/^version: .*/version: ${NEW_VERSION}/" pubspec.yaml
+else
+    # Linux
+    sed -i "s/^version: .*/version: ${NEW_VERSION}/" pubspec.yaml
+fi
+
+echo -e "${GREEN}✅ Version mise à jour: ${CURRENT_VERSION} → ${NEW_VERSION}${NC}"
+echo ""
+
+# Utiliser les nouvelles valeurs pour la suite
+VERSION=$NEW_VERSION
+VERSION_CODE=$NEW_VERSION_CODE
 
 # ========================================================================
 # ÉTAPE 2 : Vérification Flutter
