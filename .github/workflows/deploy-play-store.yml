@@ -60,9 +60,10 @@ jobs:
           CURRENT_VERSION_CODE=$(echo $CURRENT_VERSION | cut -d'+' -f2)
 
           # Utiliser un timestamp pour générer un version code unique
-          # Format: YYYYMMDDHH (ex: 2025120522 = 5 décembre 2025, 22h)
+          # Format: YYMMDDHH (ex: 25120522 = 5 décembre 2025, 22h)
           # Cela garantit un version code toujours croissant et unique
-          TIMESTAMP_CODE=$(date +%Y%m%d%H | sed 's/^20//' | sed 's/^0*//')
+          # Utilise l'année sur 2 chiffres pour rester dans les limites d'un int32
+          TIMESTAMP_CODE=$(date +%y%m%d%H)
 
           # Si le timestamp est trop petit ou invalide, utiliser une incrémentation agressive
           if [ -z "$TIMESTAMP_CODE" ] || [ "$TIMESTAMP_CODE" -lt "$CURRENT_VERSION_CODE" ]; then
