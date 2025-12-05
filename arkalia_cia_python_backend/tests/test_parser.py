@@ -9,9 +9,10 @@ from pathlib import Path
 # Ajouter le chemin parent pour les imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from services.health_portal_parsers import get_health_portal_parser
-
-from tests.generate_test_pdfs import (
+from arkalia_cia_python_backend.services.health_portal_parsers import (
+    get_health_portal_parser,
+)
+from arkalia_cia_python_backend.tests.generate_test_pdfs import (
     generate_test_andaman7_pdf,
     generate_test_masante_pdf,
 )
