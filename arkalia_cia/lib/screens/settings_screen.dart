@@ -325,18 +325,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
           // Section À propos
           _buildSectionTitle('À propos'),
-          const Card(
+          Card(
             child: Column(
               children: [
-                ListTile(
+                const ListTile(
                   leading: Icon(Icons.info),
                   title: Text('Version'),
                   subtitle: Text('1.3.1+1'),
                 ),
-                ListTile(
+                const ListTile(
                   leading: Icon(Icons.description),
                   title: Text('Licence'),
                   subtitle: Text('MIT'),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.medical_services),
+                  title: const Text('Avertissement médical'),
+                  subtitle: const Text('Voir les mentions légales'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => _showMedicalDisclaimer(),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.privacy_tip),
+                  title: const Text('Politique de confidentialité'),
+                  subtitle: const Text('Voir les informations'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => _showPrivacyInfo(),
                 ),
               ],
             ),
@@ -682,6 +696,117 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       );
     }
+  }
+
+  void _showMedicalDisclaimer() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.medical_services, color: Colors.red),
+            SizedBox(width: 8),
+            Text('Avertissement Médical'),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'IMPORTANT : Arkalia CIA n\'est PAS un dispositif médical ou un outil de diagnostic.',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: Colors.red,
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'L\'application :',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              const Text('❌ Ne fournit PAS de conseils médicaux, de diagnostics ou de traitements'),
+              const SizedBox(height: 8),
+              const Text('❌ Ne remplace PAS les conseils de professionnels de santé'),
+              const SizedBox(height: 8),
+              const Text('✅ Est un outil d\'organisation pour gérer vos documents et rappels'),
+              const SizedBox(height: 16),
+              const Text(
+                'Toujours consulter un professionnel de santé qualifié pour toute décision médicale.',
+                style: TextStyle(
+                  fontStyle: FontStyle.italic,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Nous ne sommes pas responsables des décisions médicales prises sur la base d\'informations stockées dans l\'application.',
+                style: TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('J\'ai compris'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showPrivacyInfo() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.privacy_tip, color: Colors.blue),
+            SizedBox(width: 8),
+            Text('Politique de Confidentialité'),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Arkalia CIA respecte votre vie privée :',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              const Text('✅ Aucune collecte de données'),
+              const Text('   Toutes vos données restent sur votre appareil'),
+              const SizedBox(height: 8),
+              const Text('✅ Aucune transmission'),
+              const Text('   Vos données ne quittent jamais votre téléphone'),
+              const SizedBox(height: 8),
+              const Text('✅ Chiffrement AES-256'),
+              const Text('   Tous vos documents sont chiffrés localement'),
+              const SizedBox(height: 8),
+              const Text('✅ Stockage 100% local'),
+              const Text('   Aucun cloud, aucun serveur externe'),
+              const SizedBox(height: 16),
+              const Text(
+                'Vous avez le contrôle total sur vos données. Vous pouvez les exporter ou les supprimer à tout moment.',
+                style: TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 }
 
