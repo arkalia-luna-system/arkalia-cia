@@ -102,39 +102,62 @@ android {
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        versionCode = try {
+        // versionCode sera défini dans afterEvaluate pour éviter qu'il soit écrasé par le plugin Flutter
+        versionName = flutter.versionName
+    }
+    
+    // Définir versionCode APRÈS l'évaluation complète pour éviter qu'il soit écrasé
+    afterEvaluate {
+        val extractedVersionCode = try {
             // Lire directement depuis pubspec.yaml (plus fiable que flutter.versionCode)
             // Utiliser flutterSourceDir qui pointe vers le répertoire racine Flutter
             val pubspecFile = file("${flutterSourceDir}/pubspec.yaml")
-            println("🔍 Recherche pubspec.yaml dans: ${pubspecFile.absolutePath}")
+            println("🔍 [afterEvaluate] Recherche pubspec.yaml dans: ${pubspecFile.absolutePath}")
             if (pubspecFile.exists()) {
                 val pubspecContent = pubspecFile.readText()
+                println("📄 [afterEvaluate] Contenu pubspec.yaml lu (${pubspecContent.length} caractères)")
                 // Extraire le version code depuis "version: X.Y.Z+CODE"
                 val versionMatch = Regex("version:\\s*[^+]+\\+(\\d+)").find(pubspecContent)
-                val versionCodeStr = versionMatch?.groupValues?.get(1) ?: "1"
-                val codeInt = versionCodeStr.toIntOrNull() ?: 1
-                println("🔢 Version Code extrait depuis pubspec.yaml: $codeInt")
-                codeInt
+                if (versionMatch != null) {
+                    val versionCodeStr = versionMatch.groupValues[1]
+                    val codeInt = versionCodeStr.toIntOrNull() ?: 1
+                    println("🔢 [afterEvaluate] Version Code extrait depuis pubspec.yaml: $codeInt")
+                    codeInt
+                } else {
+                    println("⚠️ [afterEvaluate] Aucun version code trouvé dans pubspec.yaml, utilisation de 1")
+                    1
+                }
             } else {
-                println("⚠️ pubspec.yaml introuvable à ${pubspecFile.absolutePath}, utilisation de version code 1")
+                println("⚠️ [afterEvaluate] pubspec.yaml introuvable à ${pubspecFile.absolutePath}")
                 // Fallback: essayer avec un chemin relatif depuis projectDir
                 val fallbackPubspec = file("${project.projectDir}/../../pubspec.yaml")
+                println("🔍 [afterEvaluate] Essai fallback: ${fallbackPubspec.absolutePath}")
                 if (fallbackPubspec.exists()) {
                     val pubspecContent = fallbackPubspec.readText()
                     val versionMatch = Regex("version:\\s*[^+]+\\+(\\d+)").find(pubspecContent)
-                    val versionCodeStr = versionMatch?.groupValues?.get(1) ?: "1"
-                    val codeInt = versionCodeStr.toIntOrNull() ?: 1
-                    println("🔢 Version Code extrait depuis pubspec.yaml (fallback): $codeInt")
-                    codeInt
+                    if (versionMatch != null) {
+                        val versionCodeStr = versionMatch.groupValues[1]
+                        val codeInt = versionCodeStr.toIntOrNull() ?: 1
+                        println("🔢 [afterEvaluate] Version Code extrait depuis pubspec.yaml (fallback): $codeInt")
+                        codeInt
+                    } else {
+                        println("⚠️ [afterEvaluate] Aucun version code trouvé dans pubspec.yaml (fallback), utilisation de 1")
+                        1
+                    }
                 } else {
+                    println("⚠️ [afterEvaluate] pubspec.yaml introuvable (fallback aussi), utilisation de 1")
                     1
                 }
             }
         } catch (e: Exception) {
-            println("⚠️ Erreur lors de l'extraction du versionCode depuis pubspec.yaml: ${e.message}, utilisation de 1")
+            println("⚠️ [afterEvaluate] Erreur lors de l'extraction du versionCode: ${e.message}")
+            e.printStackTrace()
             1
         }
-        versionName = flutter.versionName
+        
+        // Forcer le versionCode dans defaultConfig
+        defaultConfig.versionCode = extractedVersionCode
+        println("✅ [afterEvaluate] versionCode défini à: ${defaultConfig.versionCode}")
     }
 
     signingConfigs {
