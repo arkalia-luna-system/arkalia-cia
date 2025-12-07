@@ -103,9 +103,23 @@ android {
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = try {
-            val codeStr = flutter.versionCode.toString()
-            codeStr.toIntOrNull() ?: 1
+            // Extraire directement depuis pubspec.yaml si flutter.versionCode n'est pas disponible
+            val pubspecFile = file("${project.projectDir}/../pubspec.yaml")
+            val versionCodeFromFlutter = flutter.versionCode?.toString() ?: run {
+                // Fallback: lire directement depuis pubspec.yaml
+                if (pubspecFile.exists()) {
+                    val pubspecContent = pubspecFile.readText()
+                    val versionMatch = Regex("version:\\s*[^+]+\\+(\\d+)").find(pubspecContent)
+                    versionMatch?.groupValues?.get(1) ?: "1"
+                } else {
+                    "1"
+                }
+            }
+            val codeInt = versionCodeFromFlutter.toIntOrNull() ?: 1
+            println("🔢 Version Code utilisé: $codeInt (depuis: ${if (flutter.versionCode != null) "flutter.versionCode" else "pubspec.yaml"})")
+            codeInt
         } catch (e: Exception) {
+            println("⚠️ Erreur lors de l'extraction du versionCode: ${e.message}, utilisation de 1")
             1
         }
         versionName = flutter.versionName
