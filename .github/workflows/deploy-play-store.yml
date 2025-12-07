@@ -64,7 +64,12 @@ jobs:
           # Cela garantit un version code toujours croissant et unique
           # Utilise l'année sur 2 chiffres + minutes pour rester dans les limites d'un int32
           # Max: 9912312359 = ~99 milliards (limite int32: 2,147,483,647)
-          TIMESTAMP_CODE=$(date +%y%m%d%H%M)
+          # S'assurer que c'est un entier (enlever les zéros en tête si nécessaire)
+          TIMESTAMP_CODE=$(date +%y%m%d%H%M | sed 's/^0*//')
+          # Si le résultat est vide (tous des zéros), utiliser 1
+          if [ -z "$TIMESTAMP_CODE" ]; then
+            TIMESTAMP_CODE=1
+          fi
 
           # Si le timestamp est trop petit, invalide, ou égal au version code actuel, utiliser une incrémentation
           if [ -z "$TIMESTAMP_CODE" ] || [ "$TIMESTAMP_CODE" -lt "$CURRENT_VERSION_CODE" ] 2>/dev/null; then
