@@ -26,7 +26,15 @@ class AuthService {
     }
   }
 
-  /// Authentifie l'utilisateur avec biométrie
+  /// Authentifie l'utilisateur avec biométrie ou code PIN système
+  /// 
+  /// Avec biometricOnly: false, le système propose :
+  /// 1. D'abord la biométrie (empreinte/visage) si disponible
+  /// 2. Si la biométrie échoue ou n'est pas disponible, le système propose
+  ///    automatiquement le code PIN/mot de passe de déverrouillage du téléphone
+  /// 
+  /// L'utilisateur n'a pas besoin de créer un PIN séparé pour l'app,
+  /// il utilise le même PIN que celui de son téléphone.
   static Future<bool> authenticate({
     String reason = 'Authentification requise pour accéder à Arkalia CIA',
     bool useErrorDialogs = true,
@@ -38,7 +46,7 @@ class AuthService {
         options: AuthenticationOptions(
           useErrorDialogs: useErrorDialogs,
           stickyAuth: stickyAuth,
-          biometricOnly: false,
+          biometricOnly: false, // false = permet biométrie OU PIN système du téléphone
         ),
       );
       return didAuthenticate;

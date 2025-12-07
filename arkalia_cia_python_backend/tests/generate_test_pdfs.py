@@ -2,7 +2,6 @@
 Générateur de PDFs de test pour valider les parsers Andaman 7 et MaSanté
 """
 
-
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 
@@ -106,4 +105,3 @@ def generate_test_masante_pdf(filename="test_masante.pdf"):
 if __name__ == "__main__":
     generate_test_andaman7_pdf()
     generate_test_masante_pdf()
-

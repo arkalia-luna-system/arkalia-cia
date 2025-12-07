@@ -47,8 +47,12 @@ def test_andaman7_parser():
 
         # Assertions
         assert len(documents) > 0, "❌ Aucun document trouvé"
-        assert any(d['type'] == 'Ordonnance' for d in documents), "❌ Ordonnance non trouvée"
-        assert any(d['type'] == 'Consultation' for d in documents), "❌ Consultation non trouvée"
+        assert any(
+            d["type"] == "Ordonnance" for d in documents
+        ), "❌ Ordonnance non trouvée"
+        assert any(
+            d["type"] == "Consultation" for d in documents
+        ), "❌ Consultation non trouvée"
 
         print("\n✅ Tests Andaman7 PASSÉS")
         return True
@@ -56,6 +60,7 @@ def test_andaman7_parser():
     except Exception as e:
         print(f"\n❌ Erreur: {e}")
         import traceback
+
         traceback.print_exc()
         return False
     finally:
@@ -99,6 +104,7 @@ def test_masante_parser():
     except Exception as e:
         print(f"\n❌ Erreur: {e}")
         import traceback
+
         traceback.print_exc()
         return False
     finally:
@@ -112,13 +118,13 @@ def test_parser_integration():
     print("\n=== TEST INTÉGRATION PARSERS ===")
 
     results = {
-        'andaman7': False,
-        'masante': False,
+        "andaman7": False,
+        "masante": False,
     }
 
     try:
-        results['andaman7'] = test_andaman7_parser()
-        results['masante'] = test_masante_parser()
+        results["andaman7"] = test_andaman7_parser()
+        results["masante"] = test_masante_parser()
 
         total_tests = len(results)
         passed_tests = sum(1 for v in results.values() if v)
@@ -129,6 +135,7 @@ def test_parser_integration():
     except Exception as e:
         print(f"\n❌ Erreur dans test d'intégration: {e}")
         import traceback
+
         traceback.print_exc()
         return False
 
@@ -153,4 +160,3 @@ if __name__ == "__main__":
         print("❌ Certains tests ont échoué")
         print("=" * 60)
         sys.exit(1)
-

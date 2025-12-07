@@ -267,21 +267,27 @@ class MetadataExtractor:
                 address = matches[0].strip()
                 # Chercher le code postal à proximité (dans les 50 caractères suivants)
                 address_pos = text.find(address)
-                if address_pos != -1:
-                    following_text = text[address_pos : address_pos + 100]
-                    postal_match = re.search(self.postal_code_pattern, following_text)
-                    if postal_match:
-                        # Chercher la ville après le code postal
-                        city_match = re.search(
-                            r"\d{4}\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)",
-                            following_text,
-                        )
-                        if city_match:
-                            return str(
-                                f"{address}, {postal_match.group()} {city_match.group(1)}"
-                            )
-                        return str(f"{address}, {postal_match.group()}")
-                return str(address)
+                if address_pos == -1:
+                    # Pas de position trouvée, continuer avec la prochaine adresse
+                    continue
+
+                following_text = text[address_pos : address_pos + 100]
+                postal_match = re.search(self.postal_code_pattern, following_text)
+                if not postal_match:
+                    # Pas de code postal trouvé, retourner juste l'adresse
+                    return str(address)  # type: ignore[unreachable]
+
+                # Chercher la ville après le code postal
+                city_match = re.search(
+                    r"\d{4}\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)",
+                    following_text,
+                )
+                if city_match:
+                    return str(
+                        f"{address}, {postal_match.group()} {city_match.group(1)}"
+                    )
+                # Pas de ville trouvée, retourner avec code postal seulement
+                return str(f"{address}, {postal_match.group()}")  # type: ignore[unreachable]
         return None
 
     def _extract_phone(self, text: str) -> str | None:

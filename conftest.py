@@ -2,6 +2,7 @@
 Configuration pytest globale pour Arkalia CIA
 Protection contre les lancements multiples et optimisation des performances
 """
+
 import os
 import subprocess
 import sys
@@ -16,15 +17,12 @@ def pytest_configure(config):
     try:
         # Compter les processus pytest (exclure celui-ci)
         result = subprocess.run(
-            ["pgrep", "-f", "pytest"],
-            capture_output=True,
-            text=True,
-            timeout=2
+            ["pgrep", "-f", "pytest"], capture_output=True, text=True, timeout=2
         )
 
         if result.returncode == 0:
             # Il y a des processus pytest
-            pids = result.stdout.strip().split('\n')
+            pids = result.stdout.strip().split("\n")
             current_pid = str(os.getpid())
 
             # Filtrer le PID actuel
@@ -44,10 +42,8 @@ def pytest_configure(config):
                 # En mode non-interactif (CI), on continue quand même
                 # En mode interactif, on peut demander confirmation
                 if sys.stdin.isatty():
-                    response = input(
-                        "   Continuer quand même? (o/N): "
-                    ).strip().lower()
-                    if response not in ('o', 'oui', 'y', 'yes'):
+                    response = input("   Continuer quand même? (o/N): ").strip().lower()
+                    if response not in ("o", "oui", "y", "yes"):
                         print("   Arrêt pour éviter la surcharge CPU.", file=sys.stderr)
                         sys.exit(1)
     except (subprocess.TimeoutExpired, FileNotFoundError, subprocess.SubprocessError):
@@ -65,4 +61,3 @@ def pytest_collection_modifyitems(config, items):
     # if max_tests > 0 and len(items) > max_tests:
     #     items[:] = items[:max_tests]
     pass
-

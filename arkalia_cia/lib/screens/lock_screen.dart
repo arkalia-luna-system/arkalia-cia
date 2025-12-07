@@ -152,8 +152,8 @@ class _LockScreenState extends State<LockScreen> {
                   // Message
                   Text(
                     _isBiometricAvailable
-                        ? 'Authentification biométrique requise'
-                        : 'App verrouillée',
+                        ? 'Authentification requise\n(Empreinte ou code PIN de votre téléphone)'
+                        : 'Authentification requise\n(Code PIN de votre téléphone)',
                     style: const TextStyle(
                       fontSize: 18,
                       color: Colors.white70,
@@ -179,53 +179,40 @@ class _LockScreenState extends State<LockScreen> {
                     ),
                   
                   // Bouton d'authentification
-                  if (_isBiometricAvailable)
-                    ElevatedButton.icon(
-                      onPressed: _isAuthenticating ? null : _authenticate,
-                      icon: _isAuthenticating
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                              ),
-                            )
-                          : const Icon(Icons.fingerprint),
-                      label: Text(
-                        _isAuthenticating
-                            ? 'Authentification...'
-                            : 'S\'authentifier',
-                        style: const TextStyle(fontSize: 18),
+                  // Toujours afficher le bouton, même si la biométrie n'est pas disponible
+                  // Le système proposera automatiquement le PIN du téléphone
+                  ElevatedButton.icon(
+                    onPressed: _isAuthenticating ? null : _authenticate,
+                    icon: _isAuthenticating
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          )
+                        : Icon(_isBiometricAvailable ? Icons.fingerprint : Icons.lock),
+                    label: Text(
+                      _isAuthenticating
+                          ? 'Authentification...'
+                          : _isBiometricAvailable
+                              ? 'S\'authentifier (empreinte ou PIN)'
+                              : 'S\'authentifier (code PIN)',
+                      style: const TextStyle(fontSize: 18),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.blue[800],
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 32,
+                        vertical: 16,
                       ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.blue[800],
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 32,
-                          vertical: 16,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
-                    )
-                  else
-                    ElevatedButton(
-                      onPressed: _unlockApp,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.blue[800],
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 32,
-                          vertical: 16,
-                        ),
-                      ),
-                      child: const Text(
-                        'Accéder sans biométrie',
-                        style: TextStyle(fontSize: 18),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
                       ),
                     ),
+                  ),
                 ],
               ),
             ),

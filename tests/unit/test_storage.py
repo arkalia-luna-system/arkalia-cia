@@ -79,6 +79,7 @@ class TestSQLiteBackend:
         """Configuration avant chaque test"""
         fd, self.temp_db = tempfile.mkstemp(suffix=".db")
         import os
+
         os.close(fd)
         self.backend = SQLiteBackend(db_path=self.temp_db)
 
@@ -213,6 +214,7 @@ class TestStorageManager:
         self.manager.save_state("test_module", {"key": "value"})
         fd, backup_path = tempfile.mkstemp(suffix=".json")
         import os
+
         os.close(fd)
         result = self.manager.backup_module("test_module", backup_path)
         assert result is True
@@ -225,6 +227,7 @@ class TestStorageManager:
         self.manager.save_state("test_module", {"key": "value"})
         fd, backup_path = tempfile.mkstemp(suffix=".json")
         import os
+
         os.close(fd)
         self.manager.backup_module("test_module", backup_path)
         self.manager.delete_module_data("test_module")
@@ -237,6 +240,7 @@ class TestStorageManager:
         """Test avec backend SQLite"""
         fd, temp_db = tempfile.mkstemp(suffix=".db")
         import os
+
         os.close(fd)
         manager = StorageManager(backend="sqlite", db_path=temp_db)
         result = manager.save_state("test_module", {"key": "value"})
@@ -283,6 +287,7 @@ class TestStorageFunctions:
         """Test de gestion d'erreurs SQLite backend"""
         fd, temp_db = tempfile.mkstemp(suffix=".db")
         import os
+
         os.close(fd)
         backend = SQLiteBackend(db_path=temp_db)
         # Test avec une clé inexistante

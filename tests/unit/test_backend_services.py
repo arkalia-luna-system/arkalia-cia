@@ -20,6 +20,7 @@ class TestCIADatabase:
         """Configuration avant chaque test"""
         fd, self.test_db_path = tempfile.mkstemp(suffix=".db")
         import os
+
         os.close(fd)
         self.db = CIADatabase(self.test_db_path)
 

@@ -211,11 +211,17 @@ def sanitize_html(text: str, allowed_tags: list[str] | None = None) -> str:
         # Utiliser des regex plus robustes pour éviter les contournements
         # Supprimer les balises script (y compris avec attributs malformés)
         text = re.sub(
-            r"<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>", "", text, flags=re.IGNORECASE | re.DOTALL
+            r"<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>",
+            "",
+            text,
+            flags=re.IGNORECASE | re.DOTALL,
         )
         # Supprimer les balises iframe
         text = re.sub(
-            r"<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>", "", text, flags=re.IGNORECASE | re.DOTALL
+            r"<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>",
+            "",
+            text,
+            flags=re.IGNORECASE | re.DOTALL,
         )
         # Supprimer les protocoles javascript: (y compris avec variations)
         text = re.sub(r"javascript\s*:", "", text, flags=re.IGNORECASE)
@@ -251,10 +257,10 @@ def validate_phone_number(phone: str, default_region: str = "BE") -> tuple[bool,
         except NumberParseException:
             # Si le parsing échoue, essayer avec le format nettoyé
             return False, cleaned
-    else:
-        # Fallback : validation basique
-        # Format belge ou international
-        if re.match(r"^(?:\+32|0)?4[0-9]{8}$|^\+\d{8,15}$", cleaned):
-            return True, cleaned
-        else:
-            return False, cleaned
+
+    # Fallback : validation basique (si phonenumbers n'est pas disponible)
+    # Format belge ou international
+    if re.match(r"^(?:\+32|0)?4[0-9]{8}$|^\+\d{8,15}$", cleaned):
+        return True, cleaned
+    # Format non reconnu
+    return False, cleaned  # type: ignore[unreachable]
