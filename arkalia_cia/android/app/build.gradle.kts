@@ -90,20 +90,22 @@ fun extractVersionCodeFromPubspec(): Int {
                 val versionLine = pubspecContent.lines().find { it.trim().startsWith("version:") }
                 println("📝 Ligne version trouvée: $versionLine")
                 if (versionLine != null) {
-                    // Extraire le nombre après le +
-                    val versionMatch = Regex("version:\\s*[^+]+\\+(\\d+)").find(versionLine)
-                    if (versionMatch != null) {
-                        val versionCodeStr = versionMatch.groupValues[1]
+                    // Extraire le nombre après le + (regex simple et robuste)
+                    // Format: "version: 1.3.1+2512070137" ou "version:1.3.1+2512070137"
+                    val simpleMatch = Regex("\\+(\\d+)").find(versionLine)
+                    if (simpleMatch != null) {
+                        val versionCodeStr = simpleMatch.groupValues[1]
                         val codeInt = versionCodeStr.toIntOrNull() ?: 1
-                        println("🔢 Version Code extrait depuis pubspec.yaml: $codeInt")
+                        println("🔢 Version Code extrait depuis pubspec.yaml: $codeInt (depuis: $versionLine)")
                         codeInt
                     } else {
-                        println("⚠️ Regex ne trouve pas le match dans: $versionLine")
-                        // Essayer une regex plus simple
-                        val simpleMatch = Regex("\\+(\\d+)").find(versionLine)
-                        if (simpleMatch != null) {
-                            val codeInt = simpleMatch.groupValues[1].toIntOrNull() ?: 1
-                            println("🔢 Version Code extrait (regex simple): $codeInt")
+                        println("⚠️ Aucun version code trouvé après '+' dans: $versionLine")
+                        // Essayer une autre approche : split par +
+                        val parts = versionLine.split("+")
+                        if (parts.size > 1) {
+                            val codeStr = parts[1].trim()
+                            val codeInt = codeStr.toIntOrNull() ?: 1
+                            println("🔢 Version Code extrait (split): $codeInt")
                             codeInt
                         } else {
                             println("⚠️ Aucun version code trouvé dans pubspec.yaml, utilisation de 1")
@@ -176,11 +178,10 @@ android {
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         // Le plugin Flutter lit directement depuis pubspec.yaml
-        // On doit utiliser flutter.versionCode mais s'assurer qu'il lit le bon fichier
         // Extraire manuellement pour forcer la valeur
         val extractedVersionCode = extractVersionCodeFromPubspec()
         println("🔢 [defaultConfig] Version Code extrait: $extractedVersionCode")
-        println("🔢 [defaultConfig] flutter.versionCode: ${flutter.versionCode}")
+        // Ne pas accéder à flutter.versionCode directement (cause une erreur de validation)
         // Utiliser la valeur extraite manuellement
         versionCode = extractedVersionCode
         versionName = flutter.versionName
@@ -192,19 +193,7 @@ android {
         val extractedVersionCode = extractVersionCodeFromPubspec()
         println("🔢 [afterEvaluate] Version Code extrait: $extractedVersionCode")
         println("🔢 [afterEvaluate] defaultConfig.versionCode actuel: ${defaultConfig.versionCode}")
-        println("🔢 [afterEvaluate] flutter.versionCode: ${flutter.versionCode}")
-        
-        // Forcer le versionCode dans tous les variants
-        applicationVariants.all {
-            println("🔧 [afterEvaluate] Modification variant: ${this.name}")
-            this.outputs.all {
-                // Utiliser l'API correcte pour modifier le versionCode
-                (this as? com.android.build.gradle.internal.api.BaseVariantOutputImpl)?.let { output ->
-                    // La propriété versionCodeOverride n'existe pas, on doit utiliser une autre méthode
-                    println("⚠️ [afterEvaluate] Impossible de modifier versionCode dans output directement")
-                }
-            }
-        }
+        // Ne pas accéder à flutter.versionCode directement (cause une erreur de validation)
         
         // Forcer directement dans defaultConfig (même si c'est tard)
         try {
