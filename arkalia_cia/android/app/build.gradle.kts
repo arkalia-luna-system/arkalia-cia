@@ -90,22 +90,22 @@ fun extractVersionCodeFromPubspec(): Int {
                 val versionLine = pubspecContent.lines().find { it.trim().startsWith("version:") }
                 println("📝 Ligne version trouvée: $versionLine")
                 if (versionLine != null) {
-                    // Extraire le nombre après le + (regex simple et robuste)
-                    // Format: "version: 1.3.1+2512070137" ou "version:1.3.1+2512070137"
-                    val simpleMatch = Regex("\\+(\\d+)").find(versionLine)
-                    if (simpleMatch != null) {
-                        val versionCodeStr = simpleMatch.groupValues[1]
-                        val codeInt = versionCodeStr.toIntOrNull() ?: 1
-                        println("🔢 Version Code extrait depuis pubspec.yaml: $codeInt (depuis: $versionLine)")
+                    // Extraire le nombre après le + (utiliser split qui est plus fiable)
+                    // Format: "version: 1.3.1+2512070141" ou "version:1.3.1+2512070141"
+                    val parts = versionLine.split("+")
+                    if (parts.size > 1) {
+                        val codeStr = parts[1].trim()
+                        val codeInt = codeStr.toIntOrNull() ?: 1
+                        println("🔢 Version Code extrait depuis pubspec.yaml: $codeInt (depuis: $versionLine, split: '$codeStr')")
                         codeInt
                     } else {
-                        println("⚠️ Aucun version code trouvé après '+' dans: $versionLine")
-                        // Essayer une autre approche : split par +
-                        val parts = versionLine.split("+")
-                        if (parts.size > 1) {
-                            val codeStr = parts[1].trim()
-                            val codeInt = codeStr.toIntOrNull() ?: 1
-                            println("🔢 Version Code extrait (split): $codeInt")
+                        println("⚠️ Aucun '+' trouvé dans: $versionLine")
+                        // Essayer avec regex en dernier recours
+                        val regexMatch = Regex("\\+(\\d+)").findAll(versionLine).lastOrNull()
+                        if (regexMatch != null) {
+                            val versionCodeStr = regexMatch.groupValues[1]
+                            val codeInt = versionCodeStr.toIntOrNull() ?: 1
+                            println("🔢 Version Code extrait (regex fallback): $codeInt (groupe: '$versionCodeStr')")
                             codeInt
                         } else {
                             println("⚠️ Aucun version code trouvé dans pubspec.yaml, utilisation de 1")
