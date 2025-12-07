@@ -258,7 +258,7 @@ def validate_phone_number(phone: str, default_region: str = "BE") -> tuple[bool,
             # Si le parsing échoue, essayer avec le format nettoyé
             return False, cleaned
 
-    # Fallback : validation basique (si phonenumbers n'est pas disponible)
+        # Fallback : validation basique (si phonenumbers n'est pas disponible)
         # Format belge ou international
         if re.match(r"^(?:\+32|0)?4[0-9]{8}$|^\+\d{8,15}$", cleaned):
             return True, cleaned

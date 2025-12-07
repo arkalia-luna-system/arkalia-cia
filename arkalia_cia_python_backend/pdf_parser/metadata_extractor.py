@@ -275,7 +275,7 @@ class MetadataExtractor:
                 postal_match = re.search(self.postal_code_pattern, following_text)
                 if not postal_match:
                     # Pas de code postal trouvé, retourner juste l'adresse
-                    return str(address)
+                    return str(address)  # type: ignore[unreachable]  # noqa: F841
 
                 # Chercher la ville après le code postal
                 city_match = re.search(
@@ -287,7 +287,7 @@ class MetadataExtractor:
                         f"{address}, {postal_match.group()} {city_match.group(1)}"
                     )
                 # Pas de ville trouvée, retourner avec code postal seulement
-                return str(f"{address}, {postal_match.group()}")
+                return str(f"{address}, {postal_match.group()}")  # type: ignore[unreachable]  # noqa: F841
         return None
 
     def _extract_phone(self, text: str) -> str | None:
