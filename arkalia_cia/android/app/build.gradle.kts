@@ -125,10 +125,12 @@ fun extractVersionCodeFromPubspec(): Int {
                     val pubspecContent = fallbackPubspec.readText()
                     val versionLine = pubspecContent.lines().find { it.trim().startsWith("version:") }
                     if (versionLine != null) {
-                        val simpleMatch = Regex("\\+(\\d+)").find(versionLine)
-                        if (simpleMatch != null) {
-                            val codeInt = simpleMatch.groupValues[1].toIntOrNull() ?: 1
-                            println("🔢 Version Code extrait depuis pubspec.yaml (fallback): $codeInt")
+                        // Utiliser split comme méthode principale (cohérent avec le code principal)
+                        val parts = versionLine.split("+")
+                        if (parts.size > 1) {
+                            val codeStr = parts[1].trim()
+                            val codeInt = codeStr.toIntOrNull() ?: 1
+                            println("🔢 Version Code extrait depuis pubspec.yaml (fallback): $codeInt (split: '$codeStr')")
                             codeInt
                         } else {
                             println("⚠️ Aucun version code trouvé dans pubspec.yaml (fallback), utilisation de 1")
