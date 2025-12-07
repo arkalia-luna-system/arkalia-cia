@@ -102,15 +102,15 @@ android {
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        versionCode = run {
-            val code = flutter.versionCode
-            val result: Int = when {
-                code is String -> code.toIntOrNull() ?: 1
-                code is Int -> code
-                code is Number -> code.toInt()
+        versionCode = try {
+            when (val code = flutter.versionCode) {
+                is String -> code.toIntOrNull() ?: 1
+                is Int -> code
+                is Number -> code.toInt()
                 else -> code.toString().toIntOrNull() ?: 1
             }
-            result
+        } catch (e: Exception) {
+            1
         }
         versionName = flutter.versionName
     }
