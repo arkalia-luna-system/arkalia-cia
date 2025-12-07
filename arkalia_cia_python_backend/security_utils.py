@@ -263,4 +263,4 @@ def validate_phone_number(phone: str, default_region: str = "BE") -> tuple[bool,
     if re.match(r"^(?:\+32|0)?4[0-9]{8}$|^\+\d{8,15}$", cleaned):
         return True, cleaned
     # Format non reconnu
-    return False, cleaned  # type: ignore[unreachable]
+    return False, cleaned
