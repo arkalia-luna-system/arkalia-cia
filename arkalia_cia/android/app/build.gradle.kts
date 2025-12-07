@@ -75,28 +75,8 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(keystorePropertiesFile.inputStream())
 }
 
-android {
-    namespace = "com.example.arkalia_cia"
-    compileSdk = 36
-    ndkVersion = "27.0.12077973"
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-        isCoreLibraryDesugaringEnabled = true
-    }
-    
-    // Supprimer les warnings Java obsolètes
-    tasks.withType<JavaCompile> {
-        options.compilerArgs.add("-Xlint:-options")
-    }
-
-    kotlinOptions {
-        jvmTarget = "17" // Aligné avec la version Kotlin du plugin
-    }
-
-    // Fonction pour extraire le version code depuis pubspec.yaml
-    fun extractVersionCodeFromPubspec(): Int {
+// Fonction pour extraire le version code depuis pubspec.yaml (définie AVANT android {})
+fun extractVersionCodeFromPubspec(): Int {
         return try {
             // Lire directement depuis pubspec.yaml (plus fiable que flutter.versionCode)
             // Utiliser flutterSourceDir qui pointe vers le répertoire racine Flutter
@@ -167,6 +147,26 @@ android {
             1
         }
     }
+
+android {
+    namespace = "com.example.arkalia_cia"
+    compileSdk = 36
+    ndkVersion = "27.0.12077973"
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+        isCoreLibraryDesugaringEnabled = true
+    }
+    
+    // Supprimer les warnings Java obsolètes
+    tasks.withType<JavaCompile> {
+        options.compilerArgs.add("-Xlint:-options")
+    }
+
+    kotlinOptions {
+        jvmTarget = "17" // Aligné avec la version Kotlin du plugin
+    }
     
     defaultConfig {
         // Application ID unique pour Arkalia CIA
@@ -175,10 +175,19 @@ android {
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        // Extraire le version code depuis pubspec.yaml
-        // On le définit directement ici, le plugin Flutter ne devrait pas l'écraser si on le fait AVANT
-        versionCode = extractVersionCodeFromPubspec()
+        // Extraire le version code depuis pubspec.yaml et forcer dans l'extension flutter
+        val extractedVersionCode = extractVersionCodeFromPubspec()
+        // Modifier l'extension flutter AVANT qu'elle ne soit utilisée
+        if (project.extensions.findByName("flutter") != null) {
+            val flutterExt = project.extensions.findByName("flutter") as? Map<*, *>
+            if (flutterExt != null) {
+                (flutterExt as MutableMap<String, Any>)["versionCode"] = extractedVersionCode
+                println("✅ Extension flutter modifiée: versionCode = $extractedVersionCode")
+            }
+        }
+        versionCode = extractedVersionCode
         versionName = flutter.versionName
+        println("✅ defaultConfig: versionCode = $extractedVersionCode, versionName = ${flutter.versionName}")
     }
 
     signingConfigs {
