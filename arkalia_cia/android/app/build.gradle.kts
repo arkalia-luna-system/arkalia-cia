@@ -103,23 +103,22 @@ android {
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = try {
-            // Extraire directement depuis pubspec.yaml si flutter.versionCode n'est pas disponible
+            // Lire directement depuis pubspec.yaml (plus fiable que flutter.versionCode)
             val pubspecFile = file("${project.projectDir}/../pubspec.yaml")
-            val versionCodeFromFlutter = flutter.versionCode?.toString() ?: run {
-                // Fallback: lire directement depuis pubspec.yaml
-                if (pubspecFile.exists()) {
-                    val pubspecContent = pubspecFile.readText()
-                    val versionMatch = Regex("version:\\s*[^+]+\\+(\\d+)").find(pubspecContent)
-                    versionMatch?.groupValues?.get(1) ?: "1"
-                } else {
-                    "1"
-                }
+            if (pubspecFile.exists()) {
+                val pubspecContent = pubspecFile.readText()
+                // Extraire le version code depuis "version: X.Y.Z+CODE"
+                val versionMatch = Regex("version:\\s*[^+]+\\+(\\d+)").find(pubspecContent)
+                val versionCodeStr = versionMatch?.groupValues?.get(1) ?: "1"
+                val codeInt = versionCodeStr.toIntOrNull() ?: 1
+                println("🔢 Version Code extrait depuis pubspec.yaml: $codeInt")
+                codeInt
+            } else {
+                println("⚠️ pubspec.yaml introuvable, utilisation de version code 1")
+                1
             }
-            val codeInt = versionCodeFromFlutter.toIntOrNull() ?: 1
-            println("🔢 Version Code utilisé: $codeInt (depuis: ${if (flutter.versionCode != null) "flutter.versionCode" else "pubspec.yaml"})")
-            codeInt
         } catch (e: Exception) {
-            println("⚠️ Erreur lors de l'extraction du versionCode: ${e.message}, utilisation de 1")
+            println("⚠️ Erreur lors de l'extraction du versionCode depuis pubspec.yaml: ${e.message}, utilisation de 1")
             1
         }
         versionName = flutter.versionName
