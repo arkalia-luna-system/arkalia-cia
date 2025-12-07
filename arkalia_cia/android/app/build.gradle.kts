@@ -175,20 +175,10 @@ android {
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        // Extraire le version code depuis pubspec.yaml AVANT que le plugin Flutter ne l'écrase
+        // Extraire le version code depuis pubspec.yaml
+        // On le définit directement ici, le plugin Flutter ne devrait pas l'écraser si on le fait AVANT
         versionCode = extractVersionCodeFromPubspec()
         versionName = flutter.versionName
-    }
-    
-    // Utiliser l'API des variants pour forcer le versionCode après l'évaluation
-    applicationVariants.all {
-        val extractedVersionCode = extractVersionCodeFromPubspec()
-        outputs.all {
-            if (this is com.android.build.gradle.internal.api.BaseVariantOutputImpl) {
-                versionCodeOverride = extractedVersionCode
-                println("✅ [variant] versionCode défini à: $extractedVersionCode pour variant ${this.name}")
-            }
-        }
     }
 
     signingConfigs {
