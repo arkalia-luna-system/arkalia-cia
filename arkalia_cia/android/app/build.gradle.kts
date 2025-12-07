@@ -104,7 +104,9 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = try {
             // Lire directement depuis pubspec.yaml (plus fiable que flutter.versionCode)
-            val pubspecFile = file("${project.projectDir}/../pubspec.yaml")
+            // Utiliser flutterSourceDir qui pointe vers le répertoire racine Flutter
+            val pubspecFile = file("${flutterSourceDir}/pubspec.yaml")
+            println("🔍 Recherche pubspec.yaml dans: ${pubspecFile.absolutePath}")
             if (pubspecFile.exists()) {
                 val pubspecContent = pubspecFile.readText()
                 // Extraire le version code depuis "version: X.Y.Z+CODE"
@@ -114,8 +116,19 @@ android {
                 println("🔢 Version Code extrait depuis pubspec.yaml: $codeInt")
                 codeInt
             } else {
-                println("⚠️ pubspec.yaml introuvable, utilisation de version code 1")
-                1
+                println("⚠️ pubspec.yaml introuvable à ${pubspecFile.absolutePath}, utilisation de version code 1")
+                // Fallback: essayer avec un chemin relatif depuis projectDir
+                val fallbackPubspec = file("${project.projectDir}/../../pubspec.yaml")
+                if (fallbackPubspec.exists()) {
+                    val pubspecContent = fallbackPubspec.readText()
+                    val versionMatch = Regex("version:\\s*[^+]+\\+(\\d+)").find(pubspecContent)
+                    val versionCodeStr = versionMatch?.groupValues?.get(1) ?: "1"
+                    val codeInt = versionCodeStr.toIntOrNull() ?: 1
+                    println("🔢 Version Code extrait depuis pubspec.yaml (fallback): $codeInt")
+                    codeInt
+                } else {
+                    1
+                }
             }
         } catch (e: Exception) {
             println("⚠️ Erreur lors de l'extraction du versionCode depuis pubspec.yaml: ${e.message}, utilisation de 1")
