@@ -178,7 +178,7 @@ La cause est que Android XR (réalité étendue) est incorrectement activé dans
 - **Identifiant du package** : com.arkalia.cia
 - **Nom de l'application** : Arkalia CIA
 - **Type d'application** : Application mobile Android standard (PAS XR/VR)
-- **Catégorie** : Santé et forme physique
+- **Catégorie** : Productivité (changée depuis "Santé et forme physique" le 7 décembre 2025)
 - **Appareils cibles** : Téléphones et tablettes Android uniquement
 - **Aucune fonctionnalité XR/VR** : Le code de l'application ne contient aucune fonctionnalité XR/VR
 
@@ -234,7 +234,7 @@ Pour confirmer que mon application N'EST PAS une application XR, vous pouvez vé
 
 1. **AndroidManifest.xml** : Aucune permission ou fonctionnalité XR/VR déclarée
 2. **Contenu de l'App Bundle** : Aucune bibliothèque ou dépendance XR
-3. **Catégorie de l'application** : Santé et forme physique (pas Jeux ou VR)
+3. **Catégorie de l'application** : Productivité (changée depuis "Santé et forme physique" le 7 décembre 2025)
 4. **SDK cible** : SDK Android standard (pas SDK XR)
 
 ---

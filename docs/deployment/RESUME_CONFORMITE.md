@@ -20,7 +20,7 @@
 ### ✅ Configuration Play Console
 - ✅ Politique de confidentialité : Configurée
 - ✅ Évaluation du contenu : Complétée
-- ✅ Catégorie : "Santé et bien-être" sélectionnée
+- ✅ Catégorie : "Productivité" sélectionnée (changée le 7 décembre 2025)
 - ✅ Public cible : Défini
 - ✅ Store listing : Descriptions en français
 

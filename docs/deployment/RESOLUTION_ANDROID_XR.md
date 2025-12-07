@@ -43,7 +43,7 @@ Le problème est que Android XR (Extended Reality) est activé dans les facteurs
 Mon application :
 - Package ID : com.arkalia.cia
 - Type : Application mobile standard (Android)
-- Catégorie : Santé et forme physique
+- Catégorie : Productivité (changée depuis "Santé et forme physique" le 7 décembre 2025)
 - Aucune fonctionnalité XR/VR dans le code
 
 Je demande que Android XR soit retiré des facteurs de forme de mon application, car :
@@ -98,7 +98,7 @@ Si le support ne répond pas ou ne peut pas aider, tu peux essayer de créer une
 Une fois Android XR désactivé, vérifie que :
 
 1. ✅ **Facteurs de forme** : Seulement "Téléphone" et "Tablette" sont activés
-2. ✅ **Catégorie** : "Santé et forme physique" (pas "Médical")
+2. ✅ **Catégorie** : "Productivité" (changée depuis "Santé et forme physique" le 7 décembre 2025)
 3. ✅ **Fonctionnalités santé** : Aucune case cochée pour "Clinical decision support" ou "Medical device apps"
 4. ✅ **Soumission** : L'application peut être soumise sans erreur
 

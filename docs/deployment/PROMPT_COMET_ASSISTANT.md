@@ -11,7 +11,7 @@
 **Nom de l'app** : Arkalia CIA  
 **Type** : Application mobile santé (Flutter)  
 **Public cible principal** : Seniors (65+ ans), mais accessible à tous  
-**Catégorie** : Santé et bien-être  
+**Catégorie** : Productivité (changée depuis "Santé et bien-être" le 7 décembre 2025)  
 **Email contact** : arkalia.luna.system@gmail.com  
 **Site web** : https://github.com/arkalia-luna-system/arkalia-cia  
 **Politique de confidentialité** : https://raw.githubusercontent.com/arkalia-luna-system/arkalia-cia/main/privacy-policy.html
@@ -134,8 +134,8 @@ CONFORMITÉ :
 **Réponses à donner** :
 
 #### 3.1. Catégorie d'application
-- **Catégorie principale** : **"Santé et bien-être"**
-- **Sous-catégorie** : "Gestion de santé" ou "Bien-être" (selon les options disponibles)
+- **Catégorie principale** : **"Productivité"** (changée le 7 décembre 2025)
+- **Raison** : Évite les exigences strictes PlayStation/Android XR de la catégorie Santé
 
 #### 3.2. Coordonnées
 - **Email de contact** : `arkalia.luna.system@gmail.com`
@@ -148,7 +148,7 @@ CONFORMITÉ :
 
 **Texte à copier-coller** :
 ```
-Catégorie : Santé et bien-être
+Catégorie : Productivité (changée le 7 décembre 2025)
 Email : arkalia.luna.system@gmail.com
 Site web : https://github.com/arkalia-luna-system/arkalia-cia
 ```
@@ -332,7 +332,7 @@ un professionnel de santé pour tout diagnostic ou traitement.
 ### Sections Obligatoires
 - [ ] **Public cible** - Définir l'âge (Tous les âges / 13+)
 - [ ] **Sécurité des données** - Déclarer "Aucune collecte" + types de données traitées localement
-- [ ] **Catégorie et coordonnées** - Santé et bien-être + email
+- [ ] **Catégorie et coordonnées** - Productivité + email
 - [ ] **Fiche produit** - Nom, descriptions, icône, screenshots
 
 ### Sections Optionnelles (si demandées)
@@ -354,7 +354,7 @@ un professionnel de santé pour tout diagnostic ou traitement.
 **Informations clés à retenir** :
 1. L'app est pour les **seniors** mais accessible à **tous les âges**
 2. L'app **ne collecte AUCUNE donnée** (100% local)
-3. L'app est dans la catégorie **"Santé et bien-être"**
+3. L'app est dans la catégorie **"Productivité"** (changée le 7 décembre 2025)
 4. L'app est un **outil d'organisation**, pas un dispositif médical
 5. Email : `arkalia.luna.system@gmail.com`
 

@@ -158,13 +158,13 @@ Note médicale importante : Arkalia CIA est un outil d'organisation et ne rempla
 ### Catégorie Principale
 
 ```
-Santé et bien-être
+Productivité
 ```
 
 ### Classification de Contenu
 
 - **Type d'app** : Application
-- **Catégorie** : Santé et bien-être
+- **Catégorie** : Productivité (changée depuis "Santé et bien-être" le 7 décembre 2025)
 - **Public cible** : Tout le monde
 - **Contenu médical** : Oui (outil d'organisation santé)
 
@@ -254,7 +254,7 @@ santé, médical, documents, rappels, urgence, senior, privacy, chiffrement, loc
 **Note** : Tous les assets graphiques ont été générés par le projet [Arkalia-luna-logo](https://github.com/arkalia-luna-system/Arkalia-luna-logo)
 
 2. **Classification** :
-   - [ ] Sélectionner "Santé et bien-être"
+   - [ ] Sélectionner "Productivité" (changée le 7 décembre 2025)
    - [ ] Remplir questionnaire contenu médical
 
 3. **Politique** :
