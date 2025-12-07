@@ -1,6 +1,6 @@
 # Solution aux Problèmes Play Console
 
-**Date** : 27 novembre 2025
+**Date** : 7 décembre 2025
 
 ---
 
@@ -11,21 +11,25 @@
 Le code de version 1 a déjà été utilisé. Veuillez essayer un autre code de version.
 ```
 
-### ✅ Solution Appliquée
+### ✅ Solution Appliquée (Automatique depuis le 7 décembre 2025)
 
-La version a été incrémentée dans `pubspec.yaml` :
-- **Avant** : `version: 1.3.1+1`
-- **Après** : `version: 1.3.1+2`
+**Le version code est maintenant auto-incrémenté automatiquement !**
+
+Le script `build-release-clean.sh` et le workflow GitHub Actions :
+- ✅ Génèrent automatiquement un version code unique avec timestamp (YYMMDDHHMM)
+- ✅ Détectent si le timestamp est déjà utilisé (même minute) → incrémentent de +1
+- ✅ Garantissent toujours un version code supérieur au précédent
+- ✅ Plus besoin d'incrémenter manuellement !
 
 ### Prochaines Étapes
 
-1. **Rebuilder l'App Bundle** :
+1. **Rebuilder l'App Bundle** (version code auto-incrémenté) :
 ```bash
 cd /Volumes/T7/arkalia-cia/arkalia_cia
 ./scripts/build-release-clean.sh
 ```
 
-2. **Uploader la nouvelle version** sur Play Console (versionCode sera maintenant 2)
+2. **Uploader la nouvelle version** sur Play Console (version code unique généré automatiquement)
 
 ---
 
@@ -182,5 +186,5 @@ Si Google Play refuse l'URL GitHub :
 
 ---
 
-**Dernière mise à jour** : 27 novembre 2025
+**Dernière mise à jour** : 7 décembre 2025
 

@@ -1,8 +1,8 @@
 # 📋 Versions Unifiées - Arkalia CIA
 
-**Date de vérification** : 27 novembre 2025  
-**Version actuelle** : **1.3.1** (1.3.1+1 pour Flutter)  
-**Statut** : ✅ **Toutes les versions unifiées**
+**Date de vérification** : 7 décembre 2025  
+**Version actuelle** : **1.3.1** (version code auto-incrémenté avec timestamp)  
+**Statut** : ✅ **Toutes les versions unifiées + Auto-incrémentation activée**
 
 ---
 
@@ -10,11 +10,11 @@
 
 | Fichier | Version | Statut |
 |---------|---------|--------|
-| `arkalia_cia/pubspec.yaml` | `1.3.1+1` | ✅ Correct |
+| `arkalia_cia/pubspec.yaml` | `1.3.1+XXXXX` | ✅ Correct (auto-incrémenté) |
 | `setup.py` | `1.3.1` | ✅ Correct |
 | `pyproject.toml` | `1.3.1` | ✅ Correct |
 
-**Note** : Le `+1` dans `pubspec.yaml` est le build number Flutter (normal).
+**Note** : Le `+XXXXX` dans `pubspec.yaml` est le build number Flutter, auto-incrémenté avec un timestamp (YYMMDDHHMM) pour garantir l'unicité.
 
 ---
 
@@ -49,10 +49,11 @@
 
 ### Flutter (pubspec.yaml)
 ```
-version: 1.3.1+1
+version: 1.3.1+2512070124
 ```
 - `1.3.1` = Version de l'application (MAJOR.MINOR.PATCH)
-- `+1` = Build number (incrémenté à chaque build)
+- `+2512070124` = Build number (auto-incrémenté avec timestamp YYMMDDHHMM)
+- Format : YYMMDDHHMM (ex: 2512070124 = 7 décembre 2025, 01h24)
 
 ### Python (setup.py, pyproject.toml)
 ```
@@ -89,12 +90,12 @@ grep "EXPECTED_VERSION" arkalia_cia/check_updates.sh
 
 Avant de faire une release et merge sur main, vérifier :
 
-- [x] `pubspec.yaml` : Version `1.3.1+1` ✅
+- [x] `pubspec.yaml` : Version `1.3.1+XXXXX` (auto-incrémenté) ✅
 - [x] `setup.py` : Version `1.3.1` ✅
 - [x] `pyproject.toml` : Version `1.3.1` ✅
 - [x] `settings_screen.dart` : Affiche `1.3.1+1` ✅
 - [x] `sync_screen.dart` : Export version `1.3.1` ✅
-- [x] `check_updates.sh` : EXPECTED_VERSION `1.3.1+1` ✅
+- [x] `check_updates.sh` : EXPECTED_VERSION `1.3.1+XXXXX` (auto-incrémenté) ✅
 - [x] Documentation actuelle : Toutes à jour ✅
 - [x] Documents historiques : Non modifiés (correct) ✅
 
@@ -109,6 +110,7 @@ Avant de faire une release et merge sur main, vérifier :
 
 ---
 
-**Dernière mise à jour** : 27 novembre 2025  
-**Prochaine version prévue** : 1.3.1 (hotfix si nécessaire) ou 1.4.0 (nouvelles fonctionnalités)
+**Dernière mise à jour** : 7 décembre 2025  
+**Prochaine version prévue** : 1.3.1 (hotfix si nécessaire) ou 1.4.0 (nouvelles fonctionnalités)  
+**Auto-incrémentation** : ✅ Activée (timestamp YYMMDDHHMM)
 

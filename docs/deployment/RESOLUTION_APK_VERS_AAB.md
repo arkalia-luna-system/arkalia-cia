@@ -1,6 +1,6 @@
 # 🔧 Résolution : Erreur APK vers App Bundle
 
-**Date** : 5 décembre 2025  
+**Date** : 7 décembre 2025  
 **Problème** : "Vous ne pouvez pas déployer cette version car elle ne permet pas aux utilisateurs existants de passer aux nouveaux packs d'applications ajoutés."
 
 ---
@@ -120,5 +120,5 @@ cd /Volumes/T7/arkalia-cia/arkalia_cia
 
 ---
 
-**Dernière mise à jour** : 5 décembre 2025
+**Dernière mise à jour** : 7 décembre 2025
 

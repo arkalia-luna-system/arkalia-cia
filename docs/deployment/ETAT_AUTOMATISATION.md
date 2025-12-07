@@ -1,8 +1,8 @@
 # 📊 État de l'Automatisation - Arkalia CIA
 
-**Date** : 27 novembre 2025  
-**Version actuelle** : 1.3.1+1  
-**Statut** : ⚠️ **Workflow prêt, configuration manquante**
+**Date** : 7 décembre 2025  
+**Version actuelle** : 1.3.1 (version code auto-incrémenté)  
+**Statut** : ✅ **Workflow prêt + Auto-incrémentation activée**
 
 ---
 
@@ -12,7 +12,7 @@
 
 | Fichier | Version | Statut |
 |---------|---------|--------|
-| `pubspec.yaml` | 1.3.1+1 | ✅ |
+| `pubspec.yaml` | 1.3.1+XXXXX | ✅ (auto-incrémenté) |
 | `setup.py` | 1.3.1 | ✅ |
 | `pyproject.toml` | 1.3.1 | ✅ |
 | `settings_screen.dart` | 1.3.1+1 | ✅ |
@@ -31,6 +31,7 @@
 - ✅ Déclenchement automatique sur push `main`
 - ✅ Déclenchement automatique sur tags `v*`
 - ✅ Déclenchement manuel (`workflow_dispatch`)
+- ✅ **Auto-incrémentation intelligente du version code** (timestamp YYMMDDHHMM)
 - ✅ Build App Bundle automatique
 - ✅ Upload Play Store automatique (si secret configuré)
 - ✅ Fallback : Upload artifact si secret manquant
@@ -42,7 +43,7 @@
 - ✅ Java 17 configuré
 - ✅ Timeout : 30 minutes
 
-**Statut** : ✅ **Workflow créé et prêt** (27 novembre 2025)
+**Statut** : ✅ **Workflow créé et prêt + Auto-incrémentation activée** (7 décembre 2025)
 
 ---
 
@@ -227,7 +228,8 @@ git push origin main
 
 | Élément | Statut | Détails |
 |---------|--------|---------|
-| **Version unifiée** | ✅ | 1.3.1+1 partout |
+| **Version unifiée** | ✅ | 1.3.1 partout (version code auto-incrémenté) |
+| **Auto-incrémentation** | ✅ | Timestamp YYMMDDHHMM (activée le 7 déc 2025) |
 | **Workflow GitHub Actions** | ✅ | Créé et prêt |
 | **Documentation** | ✅ | Complète |
 | **Secret GitHub** | ⏳ | **À configurer** |
@@ -244,6 +246,6 @@ git push origin main
 
 ---
 
-**Dernière mise à jour** : 27 novembre 2025  
-**Prochaine action** : Configurer le secret GitHub
+**Dernière mise à jour** : 7 décembre 2025  
+**Prochaine action** : Configurer le secret GitHub (optionnel pour upload automatique)
 

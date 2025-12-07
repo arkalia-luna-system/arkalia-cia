@@ -1,7 +1,7 @@
 # Guide : Gérer les Versions sur Google Play Console
 
-**Date** : 27 novembre 2025  
-**Version app** : 1.3.1+1
+**Date** : 7 décembre 2025  
+**Version app** : 1.3.1 (version code auto-incrémenté)
 
 ---
 
@@ -26,9 +26,9 @@ cd /Volumes/T7/arkalia-cia/arkalia_cia
 cat pubspec.yaml | grep version
 ```
 
-**Attendu** : `version: 1.3.1+1`
+**Attendu** : `version: 1.3.1+XXXXX` (où XXXXX est un timestamp)
 - `1.3.1` = versionName (affichée aux utilisateurs)
-- `1` = versionCode (numéro de build, doit être incrémenté à chaque upload)
+- `XXXXX` = versionCode (auto-incrémenté avec timestamp YYMMDDHHMM)
 
 ### Vérifier le build.gradle.kts
 
@@ -79,27 +79,22 @@ Vérifier dans quel **track** l'app est publiée :
 
 ## 🔧 Correction : Si la Version est Incorrecte
 
-### Option 1 : Incrémenter la Version (Recommandé)
+### Option 1 : Build Automatique (Recommandé) ✅
 
-Si tu as déjà uploadé la version 1.3.1+1, tu dois incrémenter pour uploader une nouvelle version :
+**Le version code est maintenant auto-incrémenté automatiquement !**
 
 ```bash
 cd /Volumes/T7/arkalia-cia/arkalia_cia
+./scripts/build-release-clean.sh
 ```
 
-1. **Modifier `pubspec.yaml`** :
-   ```yaml
-   version: 1.3.1+2  # Incrémenter le build number (+1 devient +2)
-   ```
+Le script va :
+1. ✅ Auto-incrémenter le version code avec un timestamp unique (YYMMDDHHMM)
+2. ✅ Mettre à jour `pubspec.yaml` automatiquement
+3. ✅ Builder l'App Bundle avec la nouvelle version
+4. ✅ Garantir un version code toujours supérieur et unique
 
-2. **Rebuild l'App Bundle** :
-   ```bash
-   flutter clean
-   flutter pub get
-   ./android/build-android.sh flutter build appbundle --release
-   ```
-
-3. **Uploader la nouvelle version** sur Play Console
+**Plus besoin de modifier manuellement le version code !**
 
 ### Option 2 : Changer la Version Name
 
@@ -153,8 +148,9 @@ version: 1.3.1+2  # Nouvelle version + nouveau build number
 ### Problème 2 : "Erreur : versionCode déjà utilisé"
 
 **Solution** :
-- Incrémenter le `versionCode` dans `pubspec.yaml` (le nombre après `+`)
-- Rebuild et re-uploader
+- ✅ **Automatique** : Utiliser `./scripts/build-release-clean.sh` qui auto-incrémente le version code
+- Le script détecte automatiquement les conflits et génère un version code unique
+- Si deux builds sont faits dans la même minute, le script incrémente de +1 automatiquement
 
 ### Problème 3 : "L'app est rejetée"
 
@@ -191,28 +187,24 @@ version: 1.3.1+2  # Nouvelle version + nouveau build number
 Si tu dois refaire un upload avec une nouvelle version :
 
 ```bash
-# 1. Nettoyer
+# 1. Build automatique (version code auto-incrémenté)
 cd /Volumes/T7/arkalia-cia/arkalia_cia
-flutter clean
+./scripts/build-release-clean.sh
 
-# 2. Incrémenter la version dans pubspec.yaml
-# (Éditer manuellement : version: 1.3.1+2)
+# Le script fait tout automatiquement :
+# - Auto-incrémente le version code (timestamp YYMMDDHHMM)
+# - Met à jour pubspec.yaml
+# - Nettoie et build l'App Bundle
+# - Vérifie la signature
 
-# 3. Récupérer les dépendances
-flutter pub get
-
-# 4. Vérifier qu'il n'y a pas d'erreurs
-flutter analyze
-
-# 5. Build App Bundle
-./android/build-android.sh flutter build appbundle --release
-
-# 6. Vérifier que le fichier existe
+# 2. Vérifier que le fichier existe
 ls -lh build/app/outputs/bundle/release/app-release.aab
 
-# 7. Uploader sur Play Console
-# (Via l'interface web : Production → Créer une version)
+# 3. Uploader sur Play Console
+# (Via l'interface web : Tests internes → Créer une version)
 ```
+
+**Note** : Le version code est maintenant géré automatiquement, plus besoin de l'incrémenter manuellement !
 
 ---
 
@@ -225,5 +217,5 @@ Si le problème persiste après 24 heures :
 
 ---
 
-**Dernière mise à jour** : 27 novembre 2025
+**Dernière mise à jour** : 7 décembre 2025
 
