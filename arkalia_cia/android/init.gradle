@@ -431,12 +431,34 @@ gradle.beforeProject { project ->
     // ========================================================================
     // Cette configuration doit se faire AVANT même que les plugins ne soient évalués
     // pour que file_picker puisse accéder à android.flutter.compileSdkVersion
+    // Lire le versionCode depuis pubspec.yaml au lieu d'utiliser 1
+    def versionCodeFromPubspec = 1
+    def versionNameFromPubspec = "1.0.0"
+    try {
+        def pubspecFile = new File(project.projectDir.parentFile.parentFile, "pubspec.yaml")
+        if (pubspecFile.exists()) {
+            def pubspecContent = pubspecFile.text
+            def versionLine = pubspecContent.readLines().find { it.trim().startsWith("version:") }
+            if (versionLine != null) {
+                def parts = versionLine.split("\\+")
+                if (parts.size() > 1) {
+                    def codeStr = parts[1].trim()
+                    versionCodeFromPubspec = codeStr.toInteger()
+                    versionNameFromPubspec = parts[0].replace("version:", "").trim()
+                    println("✅ [init.gradle] Version lue depuis pubspec.yaml: $versionNameFromPubspec+$versionCodeFromPubspec")
+                }
+            }
+        }
+    } catch (Exception e) {
+        println("⚠️ [init.gradle] Erreur lecture pubspec.yaml: ${e.message}, utilisation valeurs par défaut")
+    }
+    
     def flutterConfig = [
         minSdkVersion: 21,
         targetSdkVersion: 36,
         compileSdkVersion: 36,
-        versionCode: 1,
-        versionName: "1.0.0"
+        versionCode: versionCodeFromPubspec,
+        versionName: versionNameFromPubspec
     ]
     
     // Stocker dans project.ext pour qu'il soit accessible partout

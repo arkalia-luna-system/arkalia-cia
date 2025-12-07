@@ -93,9 +93,25 @@ fun extractVersionCodeFromPubspec(): Int {
                     // Extraire le nombre après le + (utiliser split qui est plus fiable)
                     // Format: "version: 1.3.1+2512070141" ou "version:1.3.1+2512070141"
                     val parts = versionLine.split("+")
+                    println("🔍 [DEBUG] parts.size: ${parts.size}, parts: $parts")
                     if (parts.size > 1) {
                         val codeStr = parts[1].trim()
-                        val codeInt = codeStr.toIntOrNull() ?: 1
+                        println("🔍 [DEBUG] codeStr: '$codeStr', length: ${codeStr.length}, toIntOrNull(): ${codeStr.toIntOrNull()}")
+                        val codeInt = codeStr.toIntOrNull()
+                        if (codeInt == null) {
+                            println("❌ [DEBUG] toIntOrNull() a retourné null pour '$codeStr'")
+                            println("❌ [DEBUG] Tentative avec toLongOrNull(): ${codeStr.toLongOrNull()}")
+                            // Essayer avec toLong puis convertir en Int
+                            val codeLong = codeStr.toLongOrNull()
+                            if (codeLong != null && codeLong <= Int.MAX_VALUE) {
+                                val finalCode = codeLong.toInt()
+                                println("✅ [DEBUG] Conversion réussie via Long: $finalCode")
+                                return@extractVersionCodeFromPubspec finalCode
+                            } else {
+                                println("❌ [DEBUG] Impossible de convertir '$codeStr' en nombre")
+                                return@extractVersionCodeFromPubspec 1
+                            }
+                        }
                         println("🔢 Version Code extrait depuis pubspec.yaml: $codeInt (depuis: $versionLine, split: '$codeStr')")
                         codeInt
                     } else {

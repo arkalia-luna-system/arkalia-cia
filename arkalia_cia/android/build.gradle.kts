@@ -11,12 +11,34 @@ subprojects {
     // Cela permet aux plugins comme file_picker d'accéder à android.flutter
     beforeEvaluate {
         // Créer l'extension flutter factice pour les plugins qui en ont besoin
+        // Lire le versionCode depuis pubspec.yaml au lieu d'utiliser 1
+        var versionCodeFromPubspec = 1
+        var versionNameFromPubspec = "1.0.0"
+        try {
+            val pubspecFile = file("${project.projectDir.parentFile.parentFile}/pubspec.yaml")
+            if (pubspecFile.exists()) {
+                val pubspecContent = pubspecFile.readText()
+                val versionLine = pubspecContent.lines().find { it.trim().startsWith("version:") }
+                if (versionLine != null) {
+                    val parts = versionLine.split("+")
+                    if (parts.size > 1) {
+                        val codeStr = parts[1].trim()
+                        versionCodeFromPubspec = codeStr.toIntOrNull() ?: 1
+                        versionNameFromPubspec = parts[0].replace("version:", "").trim()
+                        println("✅ [build.gradle.kts] Version lue depuis pubspec.yaml: $versionNameFromPubspec+$versionCodeFromPubspec")
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            println("⚠️ [build.gradle.kts] Erreur lecture pubspec.yaml: ${e.message}, utilisation valeurs par défaut")
+        }
+        
         val flutterConfig = mapOf(
             "minSdkVersion" to 21,
             "targetSdkVersion" to 36,
             "compileSdkVersion" to 36,
-            "versionCode" to 1,
-            "versionName" to "1.0.0"
+            "versionCode" to versionCodeFromPubspec,
+            "versionName" to versionNameFromPubspec
         )
         project.extensions.extraProperties.set("flutter", flutterConfig)
     }
