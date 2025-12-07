@@ -175,19 +175,46 @@ android {
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        // Extraire le version code depuis pubspec.yaml et forcer dans l'extension flutter
+        // Le plugin Flutter lit directement depuis pubspec.yaml
+        // On doit utiliser flutter.versionCode mais s'assurer qu'il lit le bon fichier
+        // Extraire manuellement pour forcer la valeur
         val extractedVersionCode = extractVersionCodeFromPubspec()
-        // Modifier l'extension flutter AVANT qu'elle ne soit utilisée
-        if (project.extensions.findByName("flutter") != null) {
-            val flutterExt = project.extensions.findByName("flutter") as? Map<*, *>
-            if (flutterExt != null) {
-                (flutterExt as MutableMap<String, Any>)["versionCode"] = extractedVersionCode
-                println("✅ Extension flutter modifiée: versionCode = $extractedVersionCode")
-            }
-        }
+        println("🔢 [defaultConfig] Version Code extrait: $extractedVersionCode")
+        println("🔢 [defaultConfig] flutter.versionCode: ${flutter.versionCode}")
+        // Utiliser la valeur extraite manuellement
         versionCode = extractedVersionCode
         versionName = flutter.versionName
-        println("✅ defaultConfig: versionCode = $extractedVersionCode, versionName = ${flutter.versionName}")
+        println("✅ [defaultConfig] versionCode défini à: $versionCode, versionName: $versionName")
+    }
+    
+    // Forcer le versionCode APRÈS que le plugin Flutter ait configuré ses valeurs
+    afterEvaluate {
+        val extractedVersionCode = extractVersionCodeFromPubspec()
+        println("🔢 [afterEvaluate] Version Code extrait: $extractedVersionCode")
+        println("🔢 [afterEvaluate] defaultConfig.versionCode actuel: ${defaultConfig.versionCode}")
+        println("🔢 [afterEvaluate] flutter.versionCode: ${flutter.versionCode}")
+        
+        // Forcer le versionCode dans tous les variants
+        applicationVariants.all {
+            println("🔧 [afterEvaluate] Modification variant: ${this.name}")
+            this.outputs.all {
+                // Utiliser l'API correcte pour modifier le versionCode
+                (this as? com.android.build.gradle.internal.api.BaseVariantOutputImpl)?.let { output ->
+                    // La propriété versionCodeOverride n'existe pas, on doit utiliser une autre méthode
+                    println("⚠️ [afterEvaluate] Impossible de modifier versionCode dans output directement")
+                }
+            }
+        }
+        
+        // Forcer directement dans defaultConfig (même si c'est tard)
+        try {
+            val defaultConfigField = defaultConfig.javaClass.getDeclaredField("versionCode")
+            defaultConfigField.isAccessible = true
+            defaultConfigField.set(defaultConfig, extractedVersionCode)
+            println("✅ [afterEvaluate] versionCode forcé via réflexion: $extractedVersionCode")
+        } catch (e: Exception) {
+            println("⚠️ [afterEvaluate] Impossible de forcer versionCode via réflexion: ${e.message}")
+        }
     }
 
     signingConfigs {
