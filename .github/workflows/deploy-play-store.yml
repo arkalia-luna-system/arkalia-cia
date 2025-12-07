@@ -59,13 +59,25 @@ jobs:
           VERSION_NAME=$(echo $CURRENT_VERSION | cut -d'+' -f1)
           CURRENT_VERSION_CODE=$(echo $CURRENT_VERSION | cut -d'+' -f2)
 
-          # SOLUTION SIMPLE : Incrémentation basique
-          # Si versionCode existe, incrémenter de 1, sinon commencer à 1
+          # Utiliser la date et l'heure du push (format simple YYMMDDHH)
+          # Format: YYMMDDHH (ex: 25120701 = 7 décembre 2025, 01h)
+          # Ce format reste toujours sous Int.MAX_VALUE (2,147,483,647)
+          TIMESTAMP_CODE=$(date +%y%m%d%H | sed 's/^0*//')
+          # Si le résultat est vide (tous des zéros), utiliser 1
+          if [ -z "$TIMESTAMP_CODE" ]; then
+            TIMESTAMP_CODE=1
+          fi
+
+          # Si le timestamp est plus grand que le version code actuel, l'utiliser
+          # Sinon, incrémenter le version code actuel
           if [ -z "$CURRENT_VERSION_CODE" ] || [ "$CURRENT_VERSION_CODE" = "0" ]; then
-            NEW_VERSION_CODE=1
-            echo "✅ Premier build, version code: 1"
+            NEW_VERSION_CODE=$TIMESTAMP_CODE
+            echo "✅ Premier build, version code basé sur date/heure: $NEW_VERSION_CODE"
+          elif [ "$TIMESTAMP_CODE" -gt "$CURRENT_VERSION_CODE" ] 2>/dev/null; then
+            NEW_VERSION_CODE=$TIMESTAMP_CODE
+            echo "✅ Version code basé sur date/heure: $NEW_VERSION_CODE"
           else
-            # Incrémenter simplement de 1
+            # Si le timestamp est plus petit (rare), incrémenter de 1
             NEW_VERSION_CODE=$((CURRENT_VERSION_CODE + 1))
             echo "✅ Version code incrémenté: $CURRENT_VERSION_CODE → $NEW_VERSION_CODE"
           fi
