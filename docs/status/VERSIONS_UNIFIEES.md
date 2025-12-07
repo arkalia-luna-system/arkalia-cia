@@ -14,7 +14,7 @@
 | `setup.py` | `1.3.1` | ✅ Correct |
 | `pyproject.toml` | `1.3.1` | ✅ Correct |
 
-**Note** : Le `+XXXXX` dans `pubspec.yaml` est le build number Flutter, auto-incrémenté avec un timestamp (YYMMDDHHMM) pour garantir l'unicité.
+**Note** : Le `+XXXXX` dans `pubspec.yaml` est le build number Flutter, auto-incrémenté avec format YYMMDDHH (date/heure du push) pour garantir l'unicité.
 
 ---
 
@@ -49,11 +49,11 @@
 
 ### Flutter (pubspec.yaml)
 ```
-version: 1.3.1+2512070124
+version: 1.3.1+25120701
 ```
 - `1.3.1` = Version de l'application (MAJOR.MINOR.PATCH)
-- `+2512070124` = Build number (auto-incrémenté avec timestamp YYMMDDHHMM)
-- Format : YYMMDDHHMM (ex: 2512070124 = 7 décembre 2025, 01h24)
+- `+25120701` = Build number (auto-incrémenté avec format YYMMDDHH)
+- Format : YYMMDDHH (ex: 25120701 = 7 décembre 2025, 01h)
 
 ### Python (setup.py, pyproject.toml)
 ```
@@ -112,5 +112,5 @@ Avant de faire une release et merge sur main, vérifier :
 
 **Dernière mise à jour** : 7 décembre 2025  
 **Prochaine version prévue** : 1.3.1 (hotfix si nécessaire) ou 1.4.0 (nouvelles fonctionnalités)  
-**Auto-incrémentation** : ✅ Activée (timestamp YYMMDDHHMM)
+**Auto-incrémentation** : ✅ Activée (format YYMMDDHH basé sur date/heure du push)
 

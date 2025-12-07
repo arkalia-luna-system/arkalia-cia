@@ -1,9 +1,9 @@
 # 🚀 Configuration Google Play Store - Arkalia CIA
 
 **Date de création** : 27 novembre 2025  
-**Dernière mise à jour** : 27 novembre 2025  
+**Dernière mise à jour** : 7 décembre 2025  
 **Statut** : ✅ **Version 1.3.1 publiée en tests internes**  
-**Version** : 1.3.1+1
+**Version** : 1.3.1 (version code auto-incrémenté avec format YYMMDDHH)
 
 ---
 
@@ -222,7 +222,7 @@ jarsigner -verify -verbose -certs build/app/outputs/bundle/release/app-release.a
 - [ ] Icône : 512x512 pixels
 - [ ] Feature graphic : 1024x500 pixels
 - [ ] Screenshots téléphone : Minimum 2 (1080x1920 pixels)
-- [ ] Catégorie : Santé et bien-être
+- [ ] Catégorie : **Productivité** ✅ (changée le 7 décembre 2025 pour éviter exigences PlayStation)
 - [ ] Contact email : arkalia.luna.system@gmail.com
 - [ ] Site web : https://github.com/arkalia-luna-system/arkalia-cia
 - [ ] Politique de confidentialité : (URL à héberger)

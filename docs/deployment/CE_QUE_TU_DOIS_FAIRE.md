@@ -317,6 +317,7 @@ Ticket number: 5-0876000039201
 
 ---
 
-**Dernière mise à jour** : 5 décembre 2025  
+**Dernière mise à jour** : 7 décembre 2025  
+**Catégorie** : Productivité (changée depuis "Santé" pour éviter les exigences PlayStation)  
 **Tout est dans ce fichier, pas besoin d'aller ailleurs !** ✅
 

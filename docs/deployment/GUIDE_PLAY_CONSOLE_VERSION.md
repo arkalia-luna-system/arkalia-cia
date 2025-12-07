@@ -26,20 +26,20 @@ cd /Volumes/T7/arkalia-cia/arkalia_cia
 cat pubspec.yaml | grep version
 ```
 
-**Attendu** : `version: 1.3.1+XXXXX` (où XXXXX est un timestamp)
+**Attendu** : `version: 1.3.1+XXXXX` (où XXXXX est basé sur date/heure du push)
 - `1.3.1` = versionName (affichée aux utilisateurs)
-- `XXXXX` = versionCode (auto-incrémenté avec timestamp YYMMDDHHMM)
+- `XXXXX` = versionCode (format YYMMDDHH, ex: 25120701 = 7 décembre 2025, 01h)
 
 ### Vérifier le build.gradle.kts
 
 Le fichier `android/app/build.gradle.kts` doit utiliser les valeurs de Flutter :
 
 ```kotlin
-versionCode = flutter.versionCode  // Doit être 1
+versionCode = flutter.versionCode  // Lit automatiquement depuis pubspec.yaml
 versionName = flutter.versionName  // Doit être "1.3.1"
 ```
 
-**⚠️ IMPORTANT** : Le fichier `init.gradle` contient des valeurs par défaut (`versionCode: 1, versionName: "1.0.0"`), mais elles ne sont utilisées que si Flutter ne fournit pas les valeurs. Normalement, Flutter les écrase avec celles de `pubspec.yaml`.
+**✅ IMPORTANT** : Le plugin Flutter lit automatiquement depuis `pubspec.yaml`. Les fichiers `init.gradle` et `build.gradle.kts` lisent aussi depuis `pubspec.yaml` pour garantir la cohérence.
 
 ---
 
@@ -89,7 +89,7 @@ cd /Volumes/T7/arkalia-cia/arkalia_cia
 ```
 
 Le script va :
-1. ✅ Auto-incrémenter le version code avec un timestamp unique (YYMMDDHHMM)
+1. ✅ Auto-incrémenter le version code avec format YYMMDDHH (date/heure du push)
 2. ✅ Mettre à jour `pubspec.yaml` automatiquement
 3. ✅ Builder l'App Bundle avec la nouvelle version
 4. ✅ Garantir un version code toujours supérieur et unique
@@ -192,7 +192,7 @@ cd /Volumes/T7/arkalia-cia/arkalia_cia
 ./scripts/build-release-clean.sh
 
 # Le script fait tout automatiquement :
-# - Auto-incrémente le version code (timestamp YYMMDDHHMM)
+# - Auto-incrémente le version code (format YYMMDDHH basé sur date/heure)
 # - Met à jour pubspec.yaml
 # - Nettoie et build l'App Bundle
 # - Vérifie la signature

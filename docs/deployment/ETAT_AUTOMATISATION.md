@@ -31,7 +31,7 @@
 - ✅ Déclenchement automatique sur push `main`
 - ✅ Déclenchement automatique sur tags `v*`
 - ✅ Déclenchement manuel (`workflow_dispatch`)
-- ✅ **Auto-incrémentation intelligente du version code** (timestamp YYMMDDHHMM)
+- ✅ **Auto-incrémentation intelligente du version code** (format YYMMDDHH basé sur date/heure du push)
 - ✅ Build App Bundle automatique
 - ✅ Upload Play Store automatique (si secret configuré)
 - ✅ Fallback : Upload artifact si secret manquant
@@ -229,7 +229,7 @@ git push origin main
 | Élément | Statut | Détails |
 |---------|--------|---------|
 | **Version unifiée** | ✅ | 1.3.1 partout (version code auto-incrémenté) |
-| **Auto-incrémentation** | ✅ | Timestamp YYMMDDHHMM (activée le 7 déc 2025) |
+| **Auto-incrémentation** | ✅ | Format YYMMDDHH basé sur date/heure du push (activée le 7 déc 2025) |
 | **Workflow GitHub Actions** | ✅ | Créé et prêt |
 | **Documentation** | ✅ | Complète |
 | **Secret GitHub** | ⏳ | **À configurer** |

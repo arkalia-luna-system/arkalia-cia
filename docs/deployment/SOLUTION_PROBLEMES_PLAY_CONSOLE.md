@@ -16,8 +16,8 @@ Le code de version 1 a déjà été utilisé. Veuillez essayer un autre code de 
 **Le version code est maintenant auto-incrémenté automatiquement !**
 
 Le script `build-release-clean.sh` et le workflow GitHub Actions :
-- ✅ Génèrent automatiquement un version code unique avec timestamp (YYMMDDHHMM)
-- ✅ Détectent si le timestamp est déjà utilisé (même minute) → incrémentent de +1
+- ✅ Génèrent automatiquement un version code unique avec format YYMMDDHH (date/heure du push)
+- ✅ Si le timestamp est plus petit que le version code actuel → incrémentent de +1
 - ✅ Garantissent toujours un version code supérieur au précédent
 - ✅ Plus besoin d'incrémenter manuellement !
 
