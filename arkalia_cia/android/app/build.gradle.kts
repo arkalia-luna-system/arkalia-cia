@@ -205,34 +205,26 @@ android {
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        // Le plugin Flutter lit directement depuis pubspec.yaml
-        // Extraire manuellement pour forcer la valeur
-        val extractedVersionCode = extractVersionCodeFromPubspec()
-        println("🔢 [defaultConfig] Version Code extrait: $extractedVersionCode")
-        // Ne pas accéder à flutter.versionCode directement (cause une erreur de validation)
-        // Utiliser la valeur extraite manuellement
-        versionCode = extractedVersionCode
+        // SOLUTION SIMPLE : Utiliser directement flutter.versionCode
+        // Le plugin Flutter lit déjà depuis pubspec.yaml et le convertit correctement
+        // Si le versionCode dépasse Int.MAX_VALUE, le plugin Flutter le gère automatiquement
+        versionCode = try {
+            val code = flutter.versionCode
+            // Convertir en Int de manière sûre
+            when (code) {
+                is Int -> code
+                is Number -> code.toInt().coerceIn(1, Int.MAX_VALUE)
+                else -> code.toString().toIntOrNull()?.coerceIn(1, Int.MAX_VALUE) ?: 1
+            }
+        } catch (e: Exception) {
+            println("⚠️ Erreur conversion flutter.versionCode: ${e.message}, utilisation de 1")
+            1
+        }
         versionName = flutter.versionName
-        println("✅ [defaultConfig] versionCode défini à: $versionCode, versionName: $versionName")
+        println("✅ versionCode: $versionCode, versionName: $versionName")
     }
     
-    // Forcer le versionCode APRÈS que le plugin Flutter ait configuré ses valeurs
-    afterEvaluate {
-        val extractedVersionCode = extractVersionCodeFromPubspec()
-        println("🔢 [afterEvaluate] Version Code extrait: $extractedVersionCode")
-        println("🔢 [afterEvaluate] defaultConfig.versionCode actuel: ${defaultConfig.versionCode}")
-        // Ne pas accéder à flutter.versionCode directement (cause une erreur de validation)
-        
-        // Forcer directement dans defaultConfig (même si c'est tard)
-        try {
-            val defaultConfigField = defaultConfig.javaClass.getDeclaredField("versionCode")
-            defaultConfigField.isAccessible = true
-            defaultConfigField.set(defaultConfig, extractedVersionCode)
-            println("✅ [afterEvaluate] versionCode forcé via réflexion: $extractedVersionCode")
-        } catch (e: Exception) {
-            println("⚠️ [afterEvaluate] Impossible de forcer versionCode via réflexion: ${e.message}")
-        }
-    }
+    // Plus besoin de afterEvaluate - on utilise directement flutter.versionCode
 
     signingConfigs {
         // Configuration de signature release (si key.properties existe)
