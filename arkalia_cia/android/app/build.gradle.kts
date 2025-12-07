@@ -104,14 +104,18 @@ fun extractVersionCodeFromPubspec(): Int {
                             // Essayer avec toLong puis convertir en Int
                             val codeLong = codeStr.toLongOrNull()
                             if (codeLong != null) {
-                                println("🔍 [DEBUG] codeLong: $codeLong, Int.MAX_VALUE: ${Int.MAX_VALUE}, comparaison: ${codeLong <= Int.MAX_VALUE}")
+                                println("🔍 [DEBUG] codeLong: $codeLong, Int.MAX_VALUE: ${Int.MAX_VALUE}, comparaison: ${codeLong <= Int.MAX_VALUE.toLong()}")
                                 if (codeLong <= Int.MAX_VALUE.toLong()) {
                                     val finalCode = codeLong.toInt()
                                     println("✅ [DEBUG] Conversion réussie via Long: $finalCode")
                                     return@extractVersionCodeFromPubspec finalCode
                                 } else {
-                                    println("❌ [DEBUG] $codeLong dépasse Int.MAX_VALUE (${Int.MAX_VALUE})")
-                                    return@extractVersionCodeFromPubspec 1
+                                    println("⚠️ [DEBUG] $codeLong dépasse Int.MAX_VALUE (${Int.MAX_VALUE})")
+                                    println("⚠️ [DEBUG] Utilisation d'un modulo pour rester dans les limites: ${codeLong % Int.MAX_VALUE}")
+                                    // Si le version code dépasse Int.MAX_VALUE, utiliser un modulo
+                                    val finalCode = (codeLong % Int.MAX_VALUE).toInt()
+                                    println("✅ [DEBUG] Version code ajusté: $finalCode")
+                                    return@extractVersionCodeFromPubspec finalCode
                                 }
                             } else {
                                 println("❌ [DEBUG] Impossible de convertir '$codeStr' en Long")
