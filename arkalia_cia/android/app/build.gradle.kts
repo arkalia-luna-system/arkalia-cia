@@ -104,12 +104,13 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = run {
             val code = flutter.versionCode
-            when {
+            val result: Int = when {
                 code is String -> code.toIntOrNull() ?: 1
                 code is Int -> code
                 code is Number -> code.toInt()
                 else -> code.toString().toIntOrNull() ?: 1
             }
+            result
         }
         versionName = flutter.versionName
     }
