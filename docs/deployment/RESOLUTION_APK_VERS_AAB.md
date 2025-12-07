@@ -1,6 +1,7 @@
 # 🔧 Résolution : Erreur APK vers App Bundle
 
 **Date** : 7 décembre 2025  
+**Note** : Le version code est maintenant auto-incrémenté avec format YYMMDDHH (date/heure du push)  
 **Problème** : "Vous ne pouvez pas déployer cette version car elle ne permet pas aux utilisateurs existants de passer aux nouveaux packs d'applications ajoutés."
 
 ---

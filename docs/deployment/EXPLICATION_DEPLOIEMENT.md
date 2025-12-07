@@ -1,7 +1,8 @@
 # 📱 Explication Simple : Comment Fonctionne le Déploiement
 
-**Date** : 27 novembre 2025  
-**Pour** : Comprendre comment l'app arrive sur le téléphone de ta mère
+**Date** : 7 décembre 2025  
+**Pour** : Comprendre comment l'app arrive sur le téléphone de ta mère  
+**Note** : Le version code est maintenant auto-incrémenté automatiquement par le workflow CI/CD
 
 ---
 

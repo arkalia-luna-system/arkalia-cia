@@ -1,7 +1,9 @@
 # 🚀 Workflow de Déploiement Automatique - Arkalia CIA
 
 **Date de création** : 27 novembre 2025  
-**Version** : 1.3.1
+**Dernière mise à jour** : 7 décembre 2025  
+**Version** : 1.3.1  
+**Version Code** : Auto-incrémenté avec format YYMMDDHH (date/heure du push)
 
 ---
 

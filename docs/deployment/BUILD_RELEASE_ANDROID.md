@@ -1,7 +1,7 @@
 # Guide build release Android
 
 **Version** : 1.3.1  
-**Dernière mise à jour** : 27 novembre 2025  
+**Dernière mise à jour** : 7 décembre 2025  
 **Cible** : Google Play Store
 
 > **📱 Google Play Console** : Compte développeur créé le 27 novembre 2025. Vérification en cours. Voir [PLAY_STORE_SETUP.md](./PLAY_STORE_SETUP.md) pour l'état actuel.
@@ -27,16 +27,19 @@ Guide complet pour construire des releases Android prêtes pour la production.
 Verify version information in `pubspec.yaml`:
 
 ```yaml
-version: 1.3.1+1
+version: 1.3.1+25120701
 # Format: MAJOR.MINOR.PATCH+BUILD_NUMBER
+# BUILD_NUMBER est auto-incrémenté avec format YYMMDDHH (date/heure du push)
 ```
 
 | Field | Description | Example |
 |-------|-------------|---------|
 | **MAJOR** | Major version number | `1` |
-| **MINOR** | Minor version number | `2` |
-| **PATCH** | Patch version number | `0` |
-| **BUILD_NUMBER** | Build increment | `1` |
+| **MINOR** | Minor version number | `3` |
+| **PATCH** | Patch version number | `1` |
+| **BUILD_NUMBER** | Format YYMMDDHH (auto) | `25120701` (7 déc 2025, 01h) |
+
+**Note** : Le version code est maintenant **auto-incrémenté automatiquement** par le workflow CI/CD. Plus besoin de le modifier manuellement !
 
 ### Signing Configuration
 

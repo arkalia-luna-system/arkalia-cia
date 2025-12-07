@@ -2,10 +2,12 @@
 
 > **Complete production deployment procedures**
 
-**Last Updated**: November 27, 2025  
+**Last Updated**: December 7, 2025  
 **Version**: 1.3.1  
 **Branch**: develop → main  
-**Status**: 🟢 **PRODUCTION READY**
+**Status**: 🟢 **PRODUCTION READY**  
+**Category**: Productivity (changed from Health on Dec 7, 2025)  
+**Version Code**: Auto-incremented with YYMMDDHH format (push date/time)
 
 > **📱 Google Play Console** : Compte développeur créé le 27 novembre 2025. Vérification d'identité en cours. Voir [PLAY_STORE_SETUP.md](./PLAY_STORE_SETUP.md) pour l'état actuel et le plan d'action post-validation.
 

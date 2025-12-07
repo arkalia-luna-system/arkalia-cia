@@ -1,9 +1,11 @@
 # 🚀 Instructions Release v1.3.1 - Arkalia CIA
 
 **Date** : 27 novembre 2025  
-**Dernière mise à jour** : 27 novembre 2025  
+**Dernière mise à jour** : 7 décembre 2025  
 **Version** : 1.3.1  
-**Statut** : ✅ **Version publiée en tests internes**
+**Statut** : ✅ **Version publiée en tests internes**  
+**Catégorie** : Productivité (changée le 7 décembre 2025)  
+**Version Code** : Auto-incrémenté avec format YYMMDDHH
 
 ---
 
