@@ -103,12 +103,8 @@ android {
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = try {
-            when (val code = flutter.versionCode) {
-                is String -> code.toIntOrNull() ?: 1
-                is Int -> code
-                is Number -> code.toInt()
-                else -> code.toString().toIntOrNull() ?: 1
-            }
+            val codeStr = flutter.versionCode.toString()
+            codeStr.toIntOrNull() ?: 1
         } catch (e: Exception) {
             1
         }
