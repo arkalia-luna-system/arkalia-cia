@@ -20,8 +20,15 @@ class _LockScreenState extends State<LockScreen> {
   @override
   void initState() {
     super.initState();
-    _checkBiometricAvailability();
-    _authenticateOnStartup();
+    _initializeAuth();
+  }
+
+  /// Initialise l'authentification : vérifie d'abord la disponibilité, puis lance l'auth
+  Future<void> _initializeAuth() async {
+    // D'abord, vérifier la disponibilité biométrique
+    await _checkBiometricAvailability();
+    // Ensuite, lancer l'authentification au démarrage
+    await _authenticateOnStartup();
   }
 
   Future<void> _checkBiometricAvailability() async {
@@ -47,13 +54,9 @@ class _LockScreenState extends State<LockScreen> {
       return;
     }
     
-    // Si la biométrie n'est pas disponible, permettre l'accès direct
-    if (!_isBiometricAvailable) {
-      _unlockApp();
-      return;
-    }
-    
-    // Authentification requise et disponible
+    // Authentification requise : lancer l'authentification
+    // Même si la biométrie n'est pas disponible, le système proposera un code PIN
+    // (biometricOnly: false dans AuthService.authenticate)
     await Future.delayed(const Duration(milliseconds: 500));
     await _authenticate();
   }
