@@ -51,21 +51,25 @@ CURRENT_VERSION_CODE=$(echo $CURRENT_VERSION | cut -d'+' -f2)
 # Max: 9912312359 = ~99 milliards (limite int32: 2,147,483,647)
 TIMESTAMP_CODE=$(date +%y%m%d%H%M)
 
-# Si le timestamp est trop petit ou invalide, utiliser une incrémentation agressive
+# Si le timestamp est trop petit, invalide, ou égal au version code actuel, utiliser une incrémentation
 if [ -z "$TIMESTAMP_CODE" ] || [ "$TIMESTAMP_CODE" -lt "$CURRENT_VERSION_CODE" ] 2>/dev/null; then
     # Incrémentation agressive : +20 pour éviter les conflits
     NEW_VERSION_CODE=$((CURRENT_VERSION_CODE + 20))
-    echo -e "${YELLOW}⚠️  Timestamp invalide, utilisation d'une incrémentation agressive (+20)${NC}"
+    echo -e "${YELLOW}⚠️  Timestamp invalide ou trop petit, utilisation d'une incrémentation agressive (+20)${NC}"
+elif [ "$TIMESTAMP_CODE" -eq "$CURRENT_VERSION_CODE" ] 2>/dev/null; then
+    # Même minute : incrémenter de +1 pour éviter le conflit
+    NEW_VERSION_CODE=$((CURRENT_VERSION_CODE + 1))
+    echo -e "${YELLOW}⚠️  Même timestamp détecté (build dans la même minute), incrémentation de +1${NC}"
 else
     # Utiliser le timestamp comme version code (garantit l'unicité)
     NEW_VERSION_CODE=$TIMESTAMP_CODE
     echo -e "${GREEN}✅ Utilisation du timestamp comme version code (garantit l'unicité)${NC}"
 fi
 
-# S'assurer que le nouveau version code est supérieur à l'actuel
+# Double vérification : s'assurer que le nouveau version code est strictement supérieur à l'actuel
 if [ "$NEW_VERSION_CODE" -le "$CURRENT_VERSION_CODE" ] 2>/dev/null; then
     NEW_VERSION_CODE=$((CURRENT_VERSION_CODE + 20))
-    echo -e "${YELLOW}⚠️  Ajustement: version code trop petit, utilisation de +20${NC}"
+    echo -e "${YELLOW}⚠️  Ajustement final: version code trop petit, utilisation de +20${NC}"
 fi
 
 NEW_VERSION="$VERSION_NAME+$NEW_VERSION_CODE"
