@@ -103,12 +103,18 @@ fun extractVersionCodeFromPubspec(): Int {
                             println("❌ [DEBUG] Tentative avec toLongOrNull(): ${codeStr.toLongOrNull()}")
                             // Essayer avec toLong puis convertir en Int
                             val codeLong = codeStr.toLongOrNull()
-                            if (codeLong != null && codeLong <= Int.MAX_VALUE) {
-                                val finalCode = codeLong.toInt()
-                                println("✅ [DEBUG] Conversion réussie via Long: $finalCode")
-                                return@extractVersionCodeFromPubspec finalCode
+                            if (codeLong != null) {
+                                println("🔍 [DEBUG] codeLong: $codeLong, Int.MAX_VALUE: ${Int.MAX_VALUE}, comparaison: ${codeLong <= Int.MAX_VALUE}")
+                                if (codeLong <= Int.MAX_VALUE.toLong()) {
+                                    val finalCode = codeLong.toInt()
+                                    println("✅ [DEBUG] Conversion réussie via Long: $finalCode")
+                                    return@extractVersionCodeFromPubspec finalCode
+                                } else {
+                                    println("❌ [DEBUG] $codeLong dépasse Int.MAX_VALUE (${Int.MAX_VALUE})")
+                                    return@extractVersionCodeFromPubspec 1
+                                }
                             } else {
-                                println("❌ [DEBUG] Impossible de convertir '$codeStr' en nombre")
+                                println("❌ [DEBUG] Impossible de convertir '$codeStr' en Long")
                                 return@extractVersionCodeFromPubspec 1
                             }
                         }
