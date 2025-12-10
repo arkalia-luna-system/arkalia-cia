@@ -22,13 +22,15 @@ Tu peux installer l'app directement depuis ton navigateur (Comet, Safari, Chrome
 
 ## 💻 INSTALLATION SUR MAC (Comet, Safari, Chrome)
 
+> **URL de l'app** : `https://arkalia-luna-system.github.io/arkalia-cia`
+
 ### Option 1 : Comet (Ton navigateur) ⭐
 
 #### Étape 1 : Ouvrir l'URL
 
 1. Ouvrir **Comet** sur ton Mac
 2. Dans la barre d'adresse, taper :
-   ```
+   ```text
    https://arkalia-luna-system.github.io/arkalia-cia
    ```
 3. Appuyer sur Entrée
@@ -64,7 +66,7 @@ Tu peux installer l'app directement depuis ton navigateur (Comet, Safari, Chrome
 
 1. Ouvrir **Safari** sur ton Mac
 2. Dans la barre d'adresse, taper :
-   ```
+   ```text
    https://arkalia-luna-system.github.io/arkalia-cia
    ```
 3. Appuyer sur Entrée
@@ -96,7 +98,7 @@ Tu peux installer l'app directement depuis ton navigateur (Comet, Safari, Chrome
 
 1. Ouvrir **Chrome** sur ton ordinateur
 2. Dans la barre d'adresse, taper :
-   ```
+   ```text
    https://arkalia-luna-system.github.io/arkalia-cia
    ```
 3. Appuyer sur Entrée
@@ -181,7 +183,7 @@ Quand ta fille met à jour l'app :
 
 ---
 
-## 🎉 C'EST PRÊT !
+## 🎉 C'est prêt
 
 Une fois installée, tu peux utiliser Arkalia CIA comme une app normale :
 
