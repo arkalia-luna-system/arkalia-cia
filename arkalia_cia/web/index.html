@@ -40,7 +40,9 @@
     // Enregistrer le Service Worker
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
+        // Utiliser le chemin relatif pour compatibilité GitHub Pages
+        const swPath = './sw.js';
+        navigator.serviceWorker.register(swPath)
           .then((registration) => {
             console.log('Service Worker enregistré avec succès:', registration.scope);
           })

@@ -4,14 +4,14 @@
 
 const CACHE_NAME = 'arkalia-cia-v1.3.1';
 const urlsToCache = [
-    '/',
-    '/index.html',
-    '/manifest.json',
-    '/icons/Icon-192.png',
-    '/icons/Icon-512.png',
-    '/icons/Icon-maskable-192.png',
-    '/icons/Icon-maskable-512.png',
-    '/favicon.png',
+    './',
+    './index.html',
+    './manifest.json',
+    './icons/Icon-192.png',
+    './icons/Icon-512.png',
+    './icons/Icon-maskable-192.png',
+    './icons/Icon-maskable-512.png',
+    './favicon.png',
 ];
 
 // Installation du Service Worker
@@ -76,7 +76,7 @@ self.addEventListener('fetch', (event) => {
                         }
                         // Si pas de cache, retourner une page offline basique
                         if (event.request.destination === 'document' || event.request.mode === 'navigate') {
-                            return caches.match('/index.html');
+                            return caches.match('./index.html');
                         }
                     });
             })
