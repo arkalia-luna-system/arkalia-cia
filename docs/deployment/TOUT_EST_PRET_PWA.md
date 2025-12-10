@@ -32,8 +32,8 @@
 - ✅ `ANALYSE_REJET_METADONNEES.md` - Analyse rejet Play Store
 - ✅ `RESUME_CONFIGURATION_PWA.md` - Résumé configuration
 - ✅ `STATUT_PWA_FINAL.md` - Statut final
-- ✅ `RESUME_FINAL_COMPLET.md` - Résumé complet
-- ✅ `RESUME_FINAL_DEPLOIEMENT.md` - Résumé déploiement
+- ✅ `RESUME_FINAL_COMPLET.md` - Résumé complet (archivé dans `docs/archive/deployment_resumes/`)
+- ✅ `RESUME_FINAL_DEPLOIEMENT.md` - Résumé déploiement (archivé dans `docs/archive/deployment_resumes/`)
 - ✅ `VERIFICATION_FINALE_PWA.md` - Vérification finale
 - ✅ Tous les MD à jour (10 décembre 2025)
 

@@ -40,7 +40,7 @@ Si le navigateur ne propose pas de s'enregistrer mais propose directement un cod
 ### 3. Documentation ✅
 
 - ✅ **SECURITY_WEB_AUTH.md** créé
-- ✅ **RESUME_FINAL_AUTHENTIFICATION_WEB.md** créé
+- ✅ **RESUME_FINAL_AUTHENTIFICATION_WEB.md** créé (archivé dans `docs/archive/deployment_resumes/`)
 - ✅ **TOUT_EST_PARFAIT_AUTH_WEB.md** (ce document)
 
 ### 4. Git ✅
