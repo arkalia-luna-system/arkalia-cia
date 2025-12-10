@@ -839,6 +839,8 @@ async def upload_document(
         metadata = document_service.extract_metadata(result["file_path"])
 
         # Sauvegarder en base avec métadonnées
+        if not current_user.user_id:
+            raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
         doc_id = document_service.save_document_with_metadata(
             result, int(current_user.user_id), metadata
         )
@@ -1376,6 +1378,8 @@ async def import_health_portal_manual(
             }
 
             # Sauvegarder document principal avec métadonnées parsées
+            if not current_user.user_id:
+                raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
             doc_id = doc_service.save_document_with_metadata(
                 process_result,
                 int(current_user.user_id),
