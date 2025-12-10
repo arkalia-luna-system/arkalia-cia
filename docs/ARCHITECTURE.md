@@ -26,7 +26,7 @@ Arkalia CIA implémente une **architecture local-first** privilégiant la simpli
 
 ```mermaid
 graph TB
-    subgraph "Couche Présentation"
+    subgraph UI["📱 Interface Flutter"]
         A[Flutter UI] --> B[HomePage]
         A --> C[DocumentsScreen]
         A --> D[DoctorsListScreen]
@@ -35,32 +35,32 @@ graph TB
         A --> G[FamilySharingScreen]
     end
 
-    subgraph "Couche Services"
-        H[LocalStorageService] --> I[(SQLite Local)]
+    subgraph Services["⚙️ Services Locaux"]
+        H[LocalStorageService] --> I[(SQLite)]
         J[ApiService] --> K[Backend API]
         L[DoctorService] --> I
         M[SearchService] --> I
         N[ConversationalAIService] --> K
         O[FamilySharingService] --> I
-        P[CalendarService] --> Q[Calendrier Système]
-        R[ContactsService] --> S[Contacts Système]
+        P[CalendarService] --> Q[Calendrier]
+        R[ContactsService] --> S[Contacts]
     end
 
-    subgraph "Backend Python"
+    subgraph Backend["🐍 Backend Python"]
         K --> T[FastAPI]
-        T --> U[api.py<br/>20+ endpoints]
+        T --> U["api.py<br/>20+ endpoints"]
         T --> V[PDFProcessor]
         T --> W[ConversationalAI]
         T --> X[PatternAnalyzer]
         T --> Y[ARIAIntegration]
-        U --> Z[(PostgreSQL/SQLite)]
+        U --> Z[(SQLite/PostgreSQL)]
     end
 
-    subgraph "Sécurité"
-        AA[AES-256 Encryption]
-        AB[Keychain/Keystore]
-        AC[JWT Authentication]
-        AD[Biometric Auth]
+    subgraph Security["🔒 Sécurité"]
+        AA[AES-256]
+        AB[Keychain]
+        AC[JWT]
+        AD[Biométrie]
     end
 
     B --> H
@@ -74,6 +74,11 @@ graph TB
     AA --> AB
     K --> AC
     A --> AD
+
+    style UI fill:#e1f5ff
+    style Services fill:#fff4e1
+    style Backend fill:#ffe1f5
+    style Security fill:#e1ffe1
 ```
 
 ---
@@ -143,12 +148,13 @@ arkalia_cia_python_backend/
 
 ```mermaid
 sequenceDiagram
-    participant U as Utilisateur
-    participant UI as Flutter UI
-    participant API as ApiService
-    participant BE as Backend API
-    participant PDF as PDFProcessor
-    participant DB as Database
+    autonumber
+    participant U as 👤 Utilisateur
+    participant UI as 📱 Flutter UI
+    participant API as 🔌 ApiService
+    participant BE as 🐍 Backend API
+    participant PDF as 📄 PDFProcessor
+    participant DB as 💾 Database
 
     U->>UI: Sélectionne PDF
     UI->>API: uploadDocument(file)
@@ -157,21 +163,22 @@ sequenceDiagram
     PDF->>PDF: extractMetadata()
     PDF->>DB: saveDocument()
     DB-->>BE: document_id
-    BE-->>API: success + document_id
+    BE-->>API: ✅ success + document_id
     API-->>UI: Document uploadé
-    UI-->>U: Confirmation
+    UI-->>U: ✅ Confirmation
 ```
 
 ### Recherche avancée
 
 ```mermaid
 sequenceDiagram
-    participant U as Utilisateur
-    participant UI as AdvancedSearchScreen
-    participant SS as SearchService
-    participant SC as SemanticSearchService
-    participant LS as LocalStorageService
-    participant BE as Backend API
+    autonumber
+    participant U as 👤 Utilisateur
+    participant UI as 🔍 AdvancedSearchScreen
+    participant SS as 🔎 SearchService
+    participant SC as 🧠 SemanticSearchService
+    participant LS as 💾 LocalStorageService
+    participant BE as 🐍 Backend API
 
     U->>UI: Saisit requête
     UI->>SS: performSearch(query, filters)
@@ -182,7 +189,7 @@ sequenceDiagram
     SS->>BE: GET /api/v1/documents?query=...
     BE-->>SS: résultats API
     SS-->>UI: résultats combinés
-    UI-->>U: Affiche résultats
+    UI-->>U: ✅ Affiche résultats
 ```
 
 ### IA conversationnelle
@@ -253,50 +260,50 @@ graph TB
 
 ```mermaid
 erDiagram
-    users ||--o{ documents : owns
-    users ||--o{ reminders : owns
-    users ||--o{ emergency_contacts : owns
-    users ||--o{ doctors : owns
-    users ||--o{ consultations : owns
-    documents ||--o{ document_metadata : has
-    documents ||--o{ shared_documents : shares
-    doctors ||--o{ consultations : has
-    ai_conversations }o--|| users : belongs_to
+    users ||--o{ documents : "possède"
+    users ||--o{ reminders : "possède"
+    users ||--o{ emergency_contacts : "possède"
+    users ||--o{ doctors : "possède"
+    users ||--o{ consultations : "possède"
+    documents ||--o{ document_metadata : "contient"
+    documents ||--o{ shared_documents : "partage"
+    doctors ||--o{ consultations : "a"
+    ai_conversations }o--|| users : "appartient à"
 
     users {
-        int id PK
-        string username
-        string email
-        string password_hash
-        datetime created_at
+        int id PK "Identifiant"
+        string username "Nom utilisateur"
+        string email "Email"
+        string password_hash "Hash mot de passe"
+        datetime created_at "Date création"
     }
     documents {
-        int id PK
-        int user_id FK
-        string original_name
-        string file_path
-        string category
-        datetime created_at
+        int id PK "Identifiant"
+        int user_id FK "Propriétaire"
+        string original_name "Nom original"
+        string file_path "Chemin fichier"
+        string category "Catégorie"
+        datetime created_at "Date création"
     }
     document_metadata {
-        int id PK
-        int document_id FK
-        string doctor_name
-        string document_date
-        string exam_type
-        text extracted_text
+        int id PK "Identifiant"
+        int document_id FK "Document"
+        string doctor_name "Médecin"
+        string document_date "Date document"
+        string exam_type "Type examen"
+        text extracted_text "Texte extrait"
     }
     doctors {
-        int id PK
-        int user_id FK
-        string first_name
-        string last_name
-        string specialty
-        string phone
-        string email
+        int id PK "Identifiant"
+        int user_id FK "Propriétaire"
+        string first_name "Prénom"
+        string last_name "Nom"
+        string specialty "Spécialité"
+        string phone "Téléphone"
+        string email "Email"
     }
     consultations {
-        int id PK
+        int id PK "Identifiant"
         int doctor_id FK
         datetime date
         string reason

@@ -1,23 +1,31 @@
 # 📚 Documentation Arkalia CIA
 
-**Version** : 1.3.1+5  
-**Dernière mise à jour** : 10 décembre 2025  
-**Statut** : ✅ Production-Ready - Documentation complète et organisée
+<div align="center">
+
+**Version** : 1.3.1+5 | **Dernière mise à jour** : 10 décembre 2025  
+**Statut** : ✅ Production-Ready
+
+[![Documentation](https://img.shields.io/badge/docs-169%20fichiers-blue)](./)
+[![Statut](https://img.shields.io/badge/statut-production--ready-success)](./status/STATUT_FINAL_PROJET.md)
+[![Sécurité](https://img.shields.io/badge/sécurité-10%2F10-brightgreen)](./audits/AUDIT_SECURITE_PERFECTION_DECEMBRE_2025.md)
+
+</div>
 
 ---
 
 ## 🎯 Navigation Rapide
 
-| Besoin | Document |
-|--------|----------|
-| **Commencer** | [INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md) |
-| **Statut projet** | [status/STATUT_FINAL_PROJET.md](./status/STATUT_FINAL_PROJET.md) |
-| **Architecture** | [ARCHITECTURE.md](./ARCHITECTURE.md) |
-| **API** | [API_DOCUMENTATION.md](./API_DOCUMENTATION.md) |
-| **Corrections** | [deployment/CORRECTIONS_NAVIGATION_AUTH_10_DEC.md](./deployment/CORRECTIONS_NAVIGATION_AUTH_10_DEC.md) |
-| **Audits** | [audits/AUDIT_SECURITE_PERFECTION_DECEMBRE_2025.md](./audits/AUDIT_SECURITE_PERFECTION_DECEMBRE_2025.md) |
-| **Sécurité** | [../SECURITY.md](../SECURITY.md) |
-| **Contribuer** | [CONTRIBUTING.md](./CONTRIBUTING.md) |
+<div align="center">
+
+| 📖 **Commencer** | 📊 **Statut** | 🏗️ **Architecture** | 🔌 **API** |
+|:---:|:---:|:---:|:---:|
+| [Index](./INDEX_DOCUMENTATION.md) | [Statut Final](./status/STATUT_FINAL_PROJET.md) | [Architecture](./ARCHITECTURE.md) | [API Docs](./API_DOCUMENTATION.md) |
+
+| ✅ **Corrections** | 🔍 **Audits** | 🔒 **Sécurité** | 🤝 **Contribuer** |
+|:---:|:---:|:---:|:---:|
+| [Toutes Corrections](./deployment/CORRECTIONS_NAVIGATION_AUTH_10_DEC.md) | [Audit 10/10](./audits/AUDIT_SECURITE_PERFECTION_DECEMBRE_2025.md) | [Sécurité](../SECURITY.md) | [Guide](./CONTRIBUTING.md) |
+
+</div>
 
 ---
 

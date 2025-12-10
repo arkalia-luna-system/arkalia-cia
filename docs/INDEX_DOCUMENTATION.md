@@ -1,8 +1,11 @@
-# Index de la documentation
+# 📑 Index de la Documentation
 
-**Version** : 1.3.1
-**Dernière mise à jour** : 27 novembre 2025
-**Status** : 100% Production-Ready - 100% bugs corrigés - Accessibilité optimisée
+<div align="center">
+
+**Version** : 1.3.1 | **Dernière mise à jour** : 10 décembre 2025  
+**Statut** : ✅ Production-Ready
+
+</div>
 
 Guide de navigation dans la documentation du projet Arkalia CIA.
 
