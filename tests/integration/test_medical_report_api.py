@@ -206,3 +206,48 @@ class TestMedicalReportAPI:
         assert success_count > 0  # Au moins une doit réussir
         # Si rate limiting actif, certaines requêtes doivent être limitées
         # (peut varier selon la configuration de slowapi)
+
+    def test_export_report_pdf(self, client, temp_db, auth_headers):
+        """Test export rapport en PDF"""
+        db_path, db = temp_db
+        # Ajouter quelques documents de test
+        db.add_document(
+            name="test_doc1.pdf",
+            original_name="test_doc1.pdf",
+            file_path="/tmp/test1.pdf",
+            file_type="pdf",
+            file_size=1000,
+        )
+
+        # Exporter en PDF
+        response = client.post(
+            "/api/v1/medical-reports/export-pdf",
+            headers=auth_headers,
+            json={
+                "days_range": 30,
+                "include_aria": False,
+            },
+        )
+
+        # Vérifier la réponse
+        if response.status_code == 503:
+            # reportlab non disponible, skip le test
+            pytest.skip("reportlab non disponible pour export PDF")
+        else:
+            assert response.status_code == 200
+            assert response.headers["content-type"] == "application/pdf"
+            assert "attachment" in response.headers.get("content-disposition", "")
+            # Vérifier que le contenu est un PDF (commence par %PDF)
+            assert response.content.startswith(b"%PDF")
+
+    def test_export_report_pdf_unauthorized(self, client):
+        """Test export PDF sans authentification"""
+        response = client.post(
+            "/api/v1/medical-reports/export-pdf",
+            json={
+                "days_range": 30,
+            },
+        )
+
+        # Peut être 401 (Unauthorized) ou 403 (Forbidden) selon la configuration
+        assert response.status_code in (401, 403)

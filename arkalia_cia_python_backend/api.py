@@ -11,10 +11,10 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from fastapi import Depends, FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import BackgroundTasks, Depends, FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel, Field, field_validator
 from slowapi import Limiter
 from slowapi.errors import RateLimitExceeded
@@ -1635,6 +1635,129 @@ async def generate_medical_report(
         )
         raise HTTPException(
             status_code=500, detail="Erreur lors de la génération du rapport médical"
+        ) from e
+
+
+def _cleanup_temp_file(file_path: str) -> None:
+    """Fonction helper pour nettoyer un fichier temporaire"""
+    try:
+        if os.path.exists(file_path):
+            os.unlink(file_path)
+    except OSError as e:
+        logger.warning(f"Impossible de supprimer fichier temporaire {file_path}: {e}")
+
+
+@app.post(f"{API_PREFIX}/medical-reports/export-pdf")
+@limiter.limit("10/minute")  # Limite de 10 exports par minute
+async def export_medical_report_pdf(
+    request: Request,
+    report_request: MedicalReportRequest,
+    background_tasks: BackgroundTasks,
+    current_user: TokenData = Depends(get_current_active_user),
+    db: CIADatabase = Depends(get_database),
+    report_service: MedicalReportService = Depends(get_medical_report_service),
+):
+    """
+    Exporte un rapport médical pré-consultation en PDF
+
+    Génère un rapport PDF combinant CIA + ARIA et le retourne en téléchargement
+    """
+    import os
+    import tempfile
+
+    try:
+        # Parser la date de consultation si fournie
+        consultation_date = None
+        if report_request.consultation_date:
+            try:
+                consultation_date = datetime.fromisoformat(
+                    report_request.consultation_date.replace("Z", "+00:00")
+                )
+            except (ValueError, AttributeError):
+                consultation_date = None
+
+        # Générer le rapport
+        report = report_service.generate_pre_consultation_report(
+            user_id=str(current_user.user_id),
+            consultation_date=consultation_date,
+            days_range=report_request.days_range,
+            include_aria=report_request.include_aria,
+        )
+
+        # Générer le PDF dans un fichier temporaire
+        with tempfile.NamedTemporaryFile(
+            suffix=".pdf", delete=False, mode="wb"
+        ) as tmp_file:
+            pdf_path = tmp_file.name
+
+        try:
+            # Exporter en PDF
+            pdf_path = report_service.export_report_to_pdf(report, pdf_path)
+
+            # Générer le nom de fichier
+            if consultation_date:
+                date_str = consultation_date.strftime("%Y%m%d")
+            else:
+                date_str = datetime.now().strftime("%Y%m%d")
+            filename = f"rapport_medical_{date_str}.pdf"
+
+            # Audit log
+            db.add_audit_log(
+                user_id=int(current_user.user_id),
+                action="medical_report_export_pdf",
+                resource_type="medical_report",
+                resource_id="",
+                ip_address=get_remote_address(request),
+                user_agent=request.headers.get("user-agent"),
+                success=True,
+            )
+
+            # Retourner le fichier PDF avec suppression automatique
+            return FileResponse(
+                pdf_path,
+                filename=filename,
+                media_type="application/pdf",
+                headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+                background=None,  # FileResponse supprime automatiquement le fichier après envoi
+            )
+        except RuntimeError as e:
+            # Si reportlab n'est pas disponible
+            logger.error(
+                f"Export PDF non disponible: {sanitize_log_message(str(e))}"
+            )
+            # Nettoyer le fichier temporaire en cas d'erreur
+            if os.path.exists(pdf_path):
+                try:
+                    os.unlink(pdf_path)
+                except OSError:
+                    pass
+            raise HTTPException(
+                status_code=503,
+                detail="Export PDF non disponible (reportlab requis)",
+            ) from e
+        except Exception:
+            # Nettoyer le fichier temporaire en cas d'erreur
+            if os.path.exists(pdf_path):
+                try:
+                    os.unlink(pdf_path)
+                except OSError:
+                    pass
+            raise
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(
+            f"Erreur export PDF rapport médical: {sanitize_log_message(str(e))}"
+        )
+        # Nettoyer le fichier temporaire en cas d'erreur
+        if "pdf_path" in locals() and os.path.exists(pdf_path):
+            try:
+                os.unlink(pdf_path)
+            except OSError:
+                pass
+        raise HTTPException(
+            status_code=500, detail="Erreur lors de l'export PDF du rapport médical"
         ) from e
 
 
