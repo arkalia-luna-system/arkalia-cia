@@ -86,9 +86,9 @@
 
 ---
 
-### 4. Hardware Security Modules (HSM) ⚠️ **🔄 EN COURS**
+### 4. Hardware Security Modules (HSM) ✅ **TERMINÉ**
 
-**Statut**: 🔄 Non implémenté  
+**Statut**: ✅ Implémenté via FlutterSecureStorage  
 **Référence**: `SECURITY.md` ligne 147
 
 **Problème**:
