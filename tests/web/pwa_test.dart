@@ -8,9 +8,26 @@ import 'dart:convert';
 void main() {
   group('PWA Configuration Tests', () {
     test('manifest.json existe et est valide', () {
-      final manifestFile = File('arkalia_cia/web/manifest.json');
-      expect(manifestFile.existsSync(), isTrue, 
-        reason: 'manifest.json doit exister');
+      // Chercher le fichier depuis différents chemins possibles
+      File? manifestFile;
+      final paths = [
+        'arkalia_cia/web/manifest.json',
+        '../arkalia_cia/web/manifest.json',
+        '../../arkalia_cia/web/manifest.json',
+      ];
+      
+      for (final path in paths) {
+        final file = File(path);
+        if (file.existsSync()) {
+          manifestFile = file;
+          break;
+        }
+      }
+      
+      expect(manifestFile, isNotNull, 
+        reason: 'manifest.json doit exister dans arkalia_cia/web/');
+      
+      final manifestContent = manifestFile!.readAsStringSync();
 
       final manifestContent = manifestFile.readAsStringSync();
       final manifest = jsonDecode(manifestContent) as Map<String, dynamic>;
@@ -34,11 +51,25 @@ void main() {
     });
 
     test('index.html existe et référence manifest.json', () {
-      final indexFile = File('arkalia_cia/web/index.html');
-      expect(indexFile.existsSync(), isTrue, 
-        reason: 'index.html doit exister');
+      File? indexFile;
+      final paths = [
+        'arkalia_cia/web/index.html',
+        '../arkalia_cia/web/index.html',
+        '../../arkalia_cia/web/index.html',
+      ];
+      
+      for (final path in paths) {
+        final file = File(path);
+        if (file.existsSync()) {
+          indexFile = file;
+          break;
+        }
+      }
+      
+      expect(indexFile, isNotNull, 
+        reason: 'index.html doit exister dans arkalia_cia/web/');
 
-      final indexContent = indexFile.readAsStringSync();
+      final indexContent = indexFile!.readAsStringSync();
       
       // Vérifier que manifest.json est référencé
       expect(indexContent.contains('manifest.json'), isTrue, 
@@ -50,36 +81,93 @@ void main() {
     });
 
     test('Service Worker existe', () {
-      final swFile = File('arkalia_cia/web/sw.js');
-      expect(swFile.existsSync(), isTrue, 
-        reason: 'sw.js doit exister');
+      File? swFile;
+      final paths = [
+        'arkalia_cia/web/sw.js',
+        '../arkalia_cia/web/sw.js',
+        '../../arkalia_cia/web/sw.js',
+      ];
+      
+      for (final path in paths) {
+        final file = File(path);
+        if (file.existsSync()) {
+          swFile = file;
+          break;
+        }
+      }
+      
+      expect(swFile, isNotNull, 
+        reason: 'sw.js doit exister dans arkalia_cia/web/');
     });
 
     test('Icônes PWA existent', () {
-      final icon192 = File('arkalia_cia/web/icons/Icon-192.png');
-      final icon512 = File('arkalia_cia/web/icons/Icon-512.png');
-      final iconMaskable192 = File('arkalia_cia/web/icons/Icon-maskable-192.png');
-      final iconMaskable512 = File('arkalia_cia/web/icons/Icon-maskable-512.png');
+      final basePaths = [
+        'arkalia_cia/web/icons/',
+        '../arkalia_cia/web/icons/',
+        '../../arkalia_cia/web/icons/',
+      ];
       
-      expect(icon192.existsSync(), isTrue, 
+      String? basePath;
+      for (final path in basePaths) {
+        if (File('$path/Icon-192.png').existsSync()) {
+          basePath = path;
+          break;
+        }
+      }
+      
+      expect(basePath, isNotNull, 
+        reason: 'Dossier icons/ doit exister dans arkalia_cia/web/');
+      
+      expect(File('$basePath/Icon-192.png').existsSync(), isTrue, 
         reason: 'Icon-192.png doit exister');
-      expect(icon512.existsSync(), isTrue, 
+      expect(File('$basePath/Icon-512.png').existsSync(), isTrue, 
         reason: 'Icon-512.png doit exister');
-      expect(iconMaskable192.existsSync(), isTrue, 
+      expect(File('$basePath/Icon-maskable-192.png').existsSync(), isTrue, 
         reason: 'Icon-maskable-192.png doit exister');
-      expect(iconMaskable512.existsSync(), isTrue, 
+      expect(File('$basePath/Icon-maskable-512.png').existsSync(), isTrue, 
         reason: 'Icon-maskable-512.png doit exister');
     });
 
     test('Favicon existe', () {
-      final faviconFile = File('arkalia_cia/web/favicon.png');
-      expect(faviconFile.existsSync(), isTrue, 
-        reason: 'favicon.png doit exister');
+      File? faviconFile;
+      final paths = [
+        'arkalia_cia/web/favicon.png',
+        '../arkalia_cia/web/favicon.png',
+        '../../arkalia_cia/web/favicon.png',
+      ];
+      
+      for (final path in paths) {
+        final file = File(path);
+        if (file.existsSync()) {
+          faviconFile = file;
+          break;
+        }
+      }
+      
+      expect(faviconFile, isNotNull, 
+        reason: 'favicon.png doit exister dans arkalia_cia/web/');
     });
 
     test('manifest.json contient les bonnes valeurs', () {
-      final manifestFile = File('arkalia_cia/web/manifest.json');
-      final manifestContent = manifestFile.readAsStringSync();
+      File? manifestFile;
+      final paths = [
+        'arkalia_cia/web/manifest.json',
+        '../arkalia_cia/web/manifest.json',
+        '../../arkalia_cia/web/manifest.json',
+      ];
+      
+      for (final path in paths) {
+        final file = File(path);
+        if (file.existsSync()) {
+          manifestFile = file;
+          break;
+        }
+      }
+      
+      expect(manifestFile, isNotNull, 
+        reason: 'manifest.json doit exister dans arkalia_cia/web/');
+      
+      final manifestContent = manifestFile!.readAsStringSync();
       final manifest = jsonDecode(manifestContent) as Map<String, dynamic>;
 
       // Vérifier le nom

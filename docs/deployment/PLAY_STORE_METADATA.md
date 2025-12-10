@@ -1,6 +1,7 @@
 # 📝 Métadonnées Google Play Store - Arkalia CIA
 
 **Date de création** : 27 novembre 2025  
+**Dernière mise à jour** : 10 décembre 2025  
 **Statut** : ✅ **Prêt à copier-coller dans Play Console**
 
 ---

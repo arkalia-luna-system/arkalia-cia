@@ -1,7 +1,7 @@
 # 🚀 Configuration Google Play Store - Arkalia CIA
 
 **Date de création** : 27 novembre 2025  
-**Dernière mise à jour** : 7 décembre 2025  
+**Dernière mise à jour** : 10 décembre 2025  
 **Statut** : ✅ **Version 1.3.1 publiée en tests internes**  
 **Version** : 1.3.1 (version code auto-incrémenté avec format YYMMDDHH)
 
@@ -431,7 +431,7 @@ jobs:
 
 ---
 
-**Dernière mise à jour** : 27 novembre 2025  
+**Dernière mise à jour** : 10 décembre 2025  
 **Statut** : ✅ Version 1.3.1 publiée en tests internes - Disponible pour 4 testeurs
 
 ### ✅ Assets Graphiques (27 novembre 2025)
