@@ -60,8 +60,8 @@ class TestMedicalReportService:
 
     def test_export_report_to_pdf(self, report_service):
         """Test export rapport en PDF"""
-        import tempfile
         import os
+        import tempfile
 
         try:
             report = {
