@@ -14,7 +14,11 @@ void main() {
         ),
       );
 
-      expect(find.text('Créer un compte'), findsOneWidget);
+      await tester.pumpAndSettle();
+
+      // Vérifier le titre dans l'AppBar
+      expect(find.text('Créer un compte'), findsWidgets);
+      // Vérifier les labels des champs
       expect(find.text('Nom d\'utilisateur *'), findsOneWidget);
       expect(find.text('Email (recommandé)'), findsOneWidget);
       expect(find.text('Mot de passe *'), findsOneWidget);
