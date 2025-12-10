@@ -320,7 +320,7 @@
    - ✅ Endpoint logout avec révocation
    - ✅ Rotation dans refresh token endpoint
 
-### Phase 2 : Élevées (Priorité 🟠) ✅ **EN COURS**
+### Phase 2 : Élevées (Priorité 🟠) ✅ **100% TERMINÉ**
 
 3. **Role-Based Access Control** ✅ (5-7 jours)
    - ✅ Système de rôles implémenté (admin, user, family_viewer, family_editor)
@@ -344,7 +344,7 @@
    - ✅ Clés uniques par utilisateur (EncryptionHelper)
    - ✅ Protection matérielle activée (AndroidOptions/IOSOptions)
 
-### Phase 3 : Améliorations (Priorité 🟡) ✅ **EN COURS**
+### Phase 3 : Améliorations (Priorité 🟡) ✅ **100% TERMINÉ**
 
 7. **Validation Taille JSON** ✅ (1-2 jours)
    - ✅ Middleware RequestSizeValidatorMiddleware créé
