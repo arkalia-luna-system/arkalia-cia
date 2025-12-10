@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import '../services/auth_service.dart';
+import '../services/pin_auth_service.dart';
 import '../services/onboarding_service.dart';
 import 'home_page.dart';
 import 'onboarding/welcome_screen.dart';
+import 'pin_entry_screen.dart';
+import 'pin_setup_screen.dart';
 
 /// Écran de verrouillage avec authentification biométrique
 class LockScreen extends StatefulWidget {
@@ -39,6 +43,49 @@ class _LockScreenState extends State<LockScreen> {
   }
 
   Future<void> _authenticateOnStartup() async {
+    // Sur web, gérer l'authentification PIN
+    if (kIsWeb) {
+      final pinConfigured = await PinAuthService.isPinConfigured();
+      final shouldAuth = await AuthService.shouldAuthenticateOnStartup();
+      final authEnabled = await AuthService.isAuthEnabled();
+      
+      // Si l'authentification est désactivée, permettre l'accès direct
+      if (!authEnabled) {
+        _unlockApp();
+        return;
+      }
+      
+      // Si l'authentification au démarrage est désactivée, permettre l'accès direct
+      if (!shouldAuth) {
+        _unlockApp();
+        return;
+      }
+      
+      // Si aucun PIN n'est configuré, proposer la configuration
+      if (!pinConfigured) {
+        await Future.delayed(const Duration(milliseconds: 500));
+        if (mounted) {
+          final result = await Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const PinSetupScreen()),
+          );
+          if (result == true) {
+            // PIN configuré, maintenant demander l'authentification
+            await _authenticate();
+          } else {
+            // Configuration annulée, permettre l'accès direct
+            _unlockApp();
+          }
+        }
+        return;
+      }
+      
+      // PIN configuré, demander l'authentification
+      await Future.delayed(const Duration(milliseconds: 500));
+      await _authenticate();
+      return;
+    }
+    
+    // Sur mobile, utiliser l'authentification biométrique
     final shouldAuth = await AuthService.shouldAuthenticateOnStartup();
     final authEnabled = await AuthService.isAuthEnabled();
     
@@ -64,6 +111,26 @@ class _LockScreenState extends State<LockScreen> {
   Future<void> _authenticate() async {
     if (_isAuthenticating) return;
 
+    // Sur web, utiliser l'écran de saisie PIN
+    if (kIsWeb) {
+      if (mounted) {
+        final result = await Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const PinEntryScreen()),
+        );
+        if (result == true) {
+          // PIN correct, déverrouiller l'app
+          _unlockApp();
+        } else {
+          // PIN incorrect ou annulé
+          setState(() {
+            _errorMessage = 'Authentification échouée. Réessayez.';
+          });
+        }
+      }
+      return;
+    }
+
+    // Sur mobile, utiliser l'authentification biométrique
     setState(() {
       _isAuthenticating = true;
       _errorMessage = '';
@@ -151,9 +218,11 @@ class _LockScreenState extends State<LockScreen> {
                   
                   // Message
                   Text(
-                    _isBiometricAvailable
-                        ? 'Authentification requise\n(Empreinte ou code PIN de votre téléphone)'
-                        : 'Authentification requise\n(Code PIN de votre téléphone)',
+                    kIsWeb
+                        ? 'Authentification requise\n(Code PIN)'
+                        : _isBiometricAvailable
+                            ? 'Authentification requise\n(Empreinte ou code PIN de votre téléphone)'
+                            : 'Authentification requise\n(Code PIN de votre téléphone)',
                     style: const TextStyle(
                       fontSize: 18,
                       color: Colors.white70,
@@ -196,9 +265,11 @@ class _LockScreenState extends State<LockScreen> {
                     label: Text(
                       _isAuthenticating
                           ? 'Authentification...'
-                          : _isBiometricAvailable
-                              ? 'S\'authentifier (empreinte ou PIN)'
-                              : 'S\'authentifier (code PIN)',
+                          : kIsWeb
+                              ? 'S\'authentifier (code PIN)'
+                              : _isBiometricAvailable
+                                  ? 'S\'authentifier (empreinte ou PIN)'
+                                  : 'S\'authentifier (code PIN)',
                       style: const TextStyle(fontSize: 18),
                     ),
                     style: ElevatedButton.styleFrom(
