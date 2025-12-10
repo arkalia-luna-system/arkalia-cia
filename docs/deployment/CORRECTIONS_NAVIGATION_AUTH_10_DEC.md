@@ -278,12 +278,12 @@
 
 ### 🟠 ÉLEVÉ
 
-1. **Export PDF Rapports Médicaux (GRATUIT)**
-   - **Fichier** : `medical_report_service.py` ligne 421
-   - **Statut** : TODO Phase 2 - Export PDF
-   - **Impact** : Fonctionnalité promise mais non implémentée
+1. **Export PDF Rapports Médicaux (GRATUIT)** ✅ **IMPLÉMENTÉ**
+   - **Fichier** : `medical_report_service.py` ligne 438
+   - **Statut** : ✅ Implémenté avec reportlab (gratuit)
+   - **Fonctionnalité** : `export_report_to_pdf()` créée
    - **Coût** : 0€ (reportlab gratuit)
-   - **Effort** : 2-3 jours
+   - **Tests** : ✅ Test créé
 
 2. **Tests avec Fichiers Réels (Import Manuel)**
    - **Statut** : Code prêt, tests manquants

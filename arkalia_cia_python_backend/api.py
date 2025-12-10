@@ -14,17 +14,12 @@ from typing import Any
 from fastapi import Depends, FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
-
-from arkalia_cia_python_backend.middleware.request_size_validator import (
-    RequestSizeValidatorMiddleware,
-)
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field, field_validator
 from slowapi import Limiter
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 from starlette.requests import Request
-from starlette.responses import Response
 
 from arkalia_cia_python_backend.ai.conversational_ai import ConversationalAI
 from arkalia_cia_python_backend.ai.pattern_analyzer import AdvancedPatternAnalyzer
@@ -52,6 +47,9 @@ from arkalia_cia_python_backend.dependencies import (
     get_document_service,
     get_medical_report_service,
     get_pattern_analyzer,
+)
+from arkalia_cia_python_backend.middleware.request_size_validator import (
+    RequestSizeValidatorMiddleware,
 )
 from arkalia_cia_python_backend.security.ssrf_validator import get_ssrf_validator
 from arkalia_cia_python_backend.security_utils import (
@@ -318,7 +316,7 @@ app.state.limiter = limiter
 app.state.start_time = time.time()
 
 
-def rate_limit_handler(request: Request, exc: Exception) -> Response:
+def rate_limit_handler(request: Request, exc: Exception) -> JSONResponse:
     """Handler personnalisé pour RateLimitExceeded"""
     if isinstance(exc, RateLimitExceeded):
         return JSONResponse(
@@ -693,14 +691,15 @@ async def refresh_token_endpoint(
         )  # nosec B106
 
         # Extraire le JTI de l'ancien refresh token pour le blacklister
-        import jwt
         from datetime import datetime
+
+        import jwt
         old_payload = jwt.decode(
             token_request.refresh_token, SECRET_KEY, algorithms=[ALGORITHM]
         )
         old_jti = old_payload.get("jti")
         old_exp = old_payload.get("exp")
-        
+
         # Blacklister l'ancien refresh token (rotation)
         if old_jti and old_exp:
             expires_at = datetime.fromtimestamp(old_exp)
@@ -761,13 +760,14 @@ async def logout(
         auth_header = request.headers.get("authorization", "")
         if auth_header.startswith("Bearer "):
             token = auth_header.split(" ")[1]
-            import jwt
             from datetime import datetime
+
+            import jwt
             try:
                 payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
                 jti = payload.get("jti")
                 exp = payload.get("exp")
-                
+
                 if jti and exp:
                     expires_at = datetime.fromtimestamp(exp)
                     db.add_token_to_blacklist(
@@ -988,7 +988,7 @@ async def get_document(
     document = db.get_document(doc_id)
     if not document:
         raise HTTPException(status_code=404, detail="Document non trouvé")
-    
+
     # Audit log
     db.add_audit_log(
         user_id=int(current_user.user_id),
@@ -999,7 +999,7 @@ async def get_document(
         user_agent=request.headers.get("user-agent"),
         success=True,
     )
-    
+
     return DocumentResponse(**document)
 
 

@@ -48,6 +48,55 @@ class TestMedicalReportService:
         assert "formatted_text" in report
         assert "documents" in report["sections"]
 
+    def test_export_report_to_text(self, report_service):
+        """Test export rapport en texte"""
+        report = {
+            "report_date": datetime.now().isoformat(),
+            "generated_at": datetime.now().isoformat(),
+            "formatted_text": "Test rapport",
+        }
+        text = report_service.export_report_to_text(report)
+        assert text == "Test rapport"
+
+    def test_export_report_to_pdf(self, report_service):
+        """Test export rapport en PDF"""
+        import tempfile
+        import os
+
+        try:
+            report = {
+                "report_date": datetime.now().isoformat(),
+                "generated_at": datetime.now().isoformat(),
+                "sections": {
+                    "documents": {
+                        "title": "Documents récents",
+                        "items": [
+                            {
+                                "name": "Test document",
+                                "type": "Consultation",
+                                "date": datetime.now().isoformat(),
+                            }
+                        ],
+                    }
+                },
+                "formatted_text": "Test rapport",
+            }
+
+            # Générer PDF
+            with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
+                output_path = tmp.name
+
+            try:
+                pdf_path = report_service.export_report_to_pdf(report, output_path)
+                assert os.path.exists(pdf_path)
+                assert pdf_path.endswith(".pdf")
+            finally:
+                if os.path.exists(output_path):
+                    os.unlink(output_path)
+        except RuntimeError as e:
+            # Si reportlab n'est pas disponible, skip le test
+            pytest.skip(f"reportlab non disponible: {e}")
+
     def test_generate_report_with_aria_unavailable(self, report_service):
         """Test génération rapport avec ARIA non disponible (graceful degradation)"""
         report = report_service.generate_pre_consultation_report(
