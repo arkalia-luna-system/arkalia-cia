@@ -12,6 +12,7 @@ Une PWA (Progressive Web App) fonctionne aussi sur ordinateur !
 Tu peux installer l'app directement depuis ton navigateur (Comet, Safari, Chrome, etc.) et l'utiliser comme une application native.
 
 **Avantages** :
+
 - ✅ Fonctionne comme une app native
 - ✅ Icône dans le dock/barre des tâches
 - ✅ Fenêtre séparée (sans barre navigateur)
@@ -30,9 +31,11 @@ Tu peux installer l'app directement depuis ton navigateur (Comet, Safari, Chrome
 
 1. Ouvrir **Comet** sur ton Mac
 2. Dans la barre d'adresse, taper :
+
    ```text
    https://arkalia-luna-system.github.io/arkalia-cia
    ```
+
 3. Appuyer sur Entrée
 4. Attendre que la page se charge
 
@@ -66,9 +69,11 @@ Tu peux installer l'app directement depuis ton navigateur (Comet, Safari, Chrome
 
 1. Ouvrir **Safari** sur ton Mac
 2. Dans la barre d'adresse, taper :
+
    ```text
    https://arkalia-luna-system.github.io/arkalia-cia
    ```
+
 3. Appuyer sur Entrée
 
 #### Étape 2 : Installer l'app
@@ -98,9 +103,11 @@ Tu peux installer l'app directement depuis ton navigateur (Comet, Safari, Chrome
 
 1. Ouvrir **Chrome** sur ton ordinateur
 2. Dans la barre d'adresse, taper :
+
    ```text
    https://arkalia-luna-system.github.io/arkalia-cia
    ```
+
 3. Appuyer sur Entrée
 
 #### Étape 2 : Installer l'app
