@@ -709,7 +709,7 @@ async def refresh_token_endpoint(
         old_exp = old_payload.get("exp")
 
         # Blacklister l'ancien refresh token (rotation)
-        if old_jti and old_exp:
+        if old_jti and old_exp and token_data.user_id:
             expires_at = datetime.fromtimestamp(old_exp)
             db.add_token_to_blacklist(
                 token_jti=old_jti,
@@ -731,10 +731,11 @@ async def refresh_token_endpoint(
         new_refresh_token = create_refresh_token(new_token_data)
 
         # Audit log
-        db.add_audit_log(
-            user_id=int(token_data.user_id),
-            action="token_refresh",
-            resource_type="auth",
+        if token_data.user_id:
+            db.add_audit_log(
+                user_id=int(token_data.user_id),
+                action="token_refresh",
+                resource_type="auth",
             ip_address=get_remote_address(request),
             user_agent=request.headers.get("user-agent"),
             success=True,
@@ -885,7 +886,9 @@ async def get_health_portal_documents(
         if not current_user.user_id:
             raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
 
-        user_id = int(current_user.user_id)
+        if not current_user.user_id:
+        raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
+    user_id = int(current_user.user_id)
 
         # Récupérer tous les documents de l'utilisateur via la base de données
         documents = db.get_user_documents(user_id, skip=0, limit=1000)
@@ -920,7 +923,9 @@ async def delete_health_portal_document(
         if not current_user.user_id:
             raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
 
-        user_id = int(current_user.user_id)
+        if not current_user.user_id:
+        raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
+    user_id = int(current_user.user_id)
 
         # Vérifier que le document appartient à l'utilisateur
         user_docs = db.get_user_documents(user_id, skip=0, limit=1000)
@@ -1057,15 +1062,17 @@ async def delete_document(
                 )
             )
 
+    if not current_user.user_id:
+        raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
+    
     # Supprimer de la base de données
     success = db.delete_document(doc_id)
     if not success:
         raise HTTPException(status_code=500, detail="Erreur lors de la suppression")
 
     # Audit log
-    if current_user.user_id:
-        db.add_audit_log(
-            user_id=int(current_user.user_id),
+    db.add_audit_log(
+        user_id=int(current_user.user_id),
             action="document_delete",
             resource_type="document",
             resource_id=str(doc_id),
@@ -1089,6 +1096,9 @@ async def create_reminder(
     db: CIADatabase = Depends(get_database),
 ):
     """Crée un rappel"""
+    if not current_user.user_id:
+        raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
+    
     reminder_id = db.add_reminder(
         title=reminder.title,
         description=reminder.description or "",
@@ -1096,9 +1106,8 @@ async def create_reminder(
     )
 
     # Audit log
-    if current_user.user_id:
-        db.add_audit_log(
-            user_id=int(current_user.user_id),
+    db.add_audit_log(
+        user_id=int(current_user.user_id),
             action="reminder_create",
             resource_type="reminder",
             resource_id=str(reminder_id),
@@ -1618,6 +1627,9 @@ async def generate_medical_report(
             except (ValueError, AttributeError):
                 consultation_date = None
 
+        if not current_user.user_id:
+            raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
+        
         # Générer le rapport
         report = report_service.generate_pre_consultation_report(
             user_id=str(current_user.user_id),
@@ -1693,6 +1705,9 @@ async def export_medical_report_pdf(
             except (ValueError, AttributeError):
                 consultation_date = None
 
+        if not current_user.user_id:
+            raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
+        
         # Générer le rapport
         report = report_service.generate_pre_consultation_report(
             user_id=str(current_user.user_id),
