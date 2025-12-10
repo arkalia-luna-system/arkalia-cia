@@ -1,151 +1,222 @@
 # 📚 Documentation Arkalia CIA
 
-**Version** : 1.3.1  
-**Dernière mise à jour** : 27 novembre 2025
+**Version** : 1.3.1+5  
+**Dernière mise à jour** : 10 décembre 2025  
+**Statut** : ✅ Production-Ready - Documentation complète et organisée
 
-Index de navigation pour toute la documentation du projet Arkalia CIA.
+---
+
+## 🎯 Navigation Rapide
+
+| Besoin | Document |
+|--------|----------|
+| **Commencer** | [INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md) |
+| **Statut projet** | [status/STATUT_FINAL_PROJET.md](./status/STATUT_FINAL_PROJET.md) |
+| **Architecture** | [ARCHITECTURE.md](./ARCHITECTURE.md) |
+| **API** | [API_DOCUMENTATION.md](./API_DOCUMENTATION.md) |
+| **Corrections** | [deployment/CORRECTIONS_NAVIGATION_AUTH_10_DEC.md](./deployment/CORRECTIONS_NAVIGATION_AUTH_10_DEC.md) |
+| **Audits** | [audits/AUDIT_SECURITE_PERFECTION_DECEMBRE_2025.md](./audits/AUDIT_SECURITE_PERFECTION_DECEMBRE_2025.md) |
+| **Sécurité** | [../SECURITY.md](../SECURITY.md) |
+| **Contribuer** | [CONTRIBUTING.md](./CONTRIBUTING.md) |
 
 ---
 
 ## 📖 Documents Essentiels
 
-### Documentation Principale
+### 🎯 Vue d'Ensemble
 
-- **[CHANGELOG.md](./CHANGELOG.md)** — Historique complet des versions et changements
-- **[CONTRIBUTING.md](./CONTRIBUTING.md)** — Guide de contribution
-- **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture technique avec diagrammes
+- **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de toute la documentation
+- **[VUE_ENSEMBLE_PROJET.md](./VUE_ENSEMBLE_PROJET.md)** — Vue d'ensemble visuelle du projet
+- **[status/STATUT_FINAL_PROJET.md](./status/STATUT_FINAL_PROJET.md)** — Statut final consolidé du projet
+- **[CHANGELOG.md](./CHANGELOG.md)** — Historique complet des versions
+
+### 🏗️ Architecture & Technique
+
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture générale avec diagrammes Mermaid
 - **[ARCHITECTURE_SERVICES.md](./ARCHITECTURE_SERVICES.md)** — Architecture des 24 services
-- **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** — Documentation API complète (18 endpoints)
-- **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index détaillé de la documentation
+- **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** — Documentation API complète (18+ endpoints)
+
+### ✅ Corrections & Audits
+
+- **[deployment/CORRECTIONS_NAVIGATION_AUTH_10_DEC.md](./deployment/CORRECTIONS_NAVIGATION_AUTH_10_DEC.md)** — Toutes les corrections (novembre-décembre 2025)
+- **[audits/AUDIT_SECURITE_PERFECTION_DECEMBRE_2025.md](./audits/AUDIT_SECURITE_PERFECTION_DECEMBRE_2025.md)** — Audit sécurité & perfection (10/10)
+- **[audits/AUDIT_COMPLET_27_NOVEMBRE_2025.md](./audits/AUDIT_COMPLET_27_NOVEMBRE_2025.md)** — Audit complet consolidé (8.5/10)
+- **[audits/CORRECTIONS_AUDIT_CONSOLIDEES.md](./audits/CORRECTIONS_AUDIT_CONSOLIDEES.md)** — Corrections d'audit (novembre 2025)
+
+### 🔒 Sécurité & Politiques
+
+- **[../SECURITY.md](../SECURITY.md)** — Documentation sécurité complète
+- **[POLITIQUE_CONFIDENTIALITE.md](./POLITIQUE_CONFIDENTIALITE.md)** — Politique de confidentialité RGPD
+- **[POLITIQUE_GRATUITE_100_PERCENT.md](./POLITIQUE_GRATUITE_100_PERCENT.md)** — Politique gratuité à vie
 
 ---
 
-## 📁 Organisation par Thème
+## 📁 Organisation par Dossiers
 
-### 🎯 Guides Utilisateur
+### 📊 `analysis/` — Analyses
+
+- **[ANALYSE_COMPLETE_BESOINS_MERE.md](./analysis/ANALYSE_COMPLETE_BESOINS_MERE.md)** — Analyse complète des besoins utilisateur
+- **[BESOINS_MERE_23_NOVEMBRE_2025.md](./analysis/BESOINS_MERE_23_NOVEMBRE_2025.md)** — Besoins exprimés par la mère
+- **[USE_CASES.md](./analysis/USE_CASES.md)** — Cas d'utilisation
+- **[IMPORTS_ANALYSIS.md](./analysis/IMPORTS_ANALYSIS.md)** — Analyse des imports
+
+### 🔍 `audits/` — Audits & Analyses
+
+- **[AUDIT_SECURITE_PERFECTION_DECEMBRE_2025.md](./audits/AUDIT_SECURITE_PERFECTION_DECEMBRE_2025.md)** — Audit sécurité & perfection (10/10) ⭐ **PRINCIPAL**
+- **[AUDIT_COMPLET_27_NOVEMBRE_2025.md](./audits/AUDIT_COMPLET_27_NOVEMBRE_2025.md)** — Audit complet consolidé (8.5/10)
+- **[AUDITS_CONSOLIDES.md](./audits/AUDITS_CONSOLIDES.md)** — Audits historiques consolidés
+- **[BILAN_FINAL_10_DECEMBRE_2025.md](./audits/BILAN_FINAL_10_DECEMBRE_2025.md)** — Bilan final décembre 2025
+- **[CORRECTIONS_AUDIT_CONSOLIDEES.md](./audits/CORRECTIONS_AUDIT_CONSOLIDEES.md)** — Corrections d'audit (novembre)
+- **[CHECKLIST_FINALE_SECURITE.md](./audits/CHECKLIST_FINALE_SECURITE.md)** — Checklist sécurité complète
+- **[RAPPORT_AUDIT_TESTS.md](./audits/RAPPORT_AUDIT_TESTS.md)** — Rapport audit tests
+- **[TESTS_MANQUANTS_SECURITE.md](./audits/TESTS_MANQUANTS_SECURITE.md)** — Tests manquants sécurité
+
+### 🚀 `deployment/` — Déploiement
+
+- **[CORRECTIONS_NAVIGATION_AUTH_10_DEC.md](./deployment/CORRECTIONS_NAVIGATION_AUTH_10_DEC.md)** — Toutes les corrections ⭐ **PRINCIPAL**
+- **[STATUT_DEPLOIEMENT_FINAL.md](./deployment/STATUT_DEPLOIEMENT_FINAL.md)** — Statut déploiement final
+- **[STATUT_PWA_FINAL.md](./deployment/STATUT_PWA_FINAL.md)** — Statut PWA final
+- **[CHECKLIST_RELEASE_CONSOLIDEE.md](./deployment/CHECKLIST_RELEASE_CONSOLIDEE.md)** — Checklist release complète
+- **[BUILD_RELEASE_ANDROID.md](./deployment/BUILD_RELEASE_ANDROID.md)** — Guide build Android
+- **[PLAY_STORE_METADATA.md](./deployment/PLAY_STORE_METADATA.md)** — Métadonnées Play Store
+- **[GUIDE_DEPLOIEMENT_FINAL.md](./deployment/GUIDE_DEPLOIEMENT_FINAL.md)** — Guide déploiement complet
+- **[WORKFLOW_DEPLOIEMENT_AUTOMATIQUE.md](./deployment/WORKFLOW_DEPLOIEMENT_AUTOMATIQUE.md)** — Workflow déploiement
+
+### 📖 `guides/` — Guides Utilisateur & Développeur
+
+- **[GUIDE_UTILISATION_MERE.md](./guides/GUIDE_UTILISATION_MERE.md)** — Guide utilisateur complet
+- **[COMMENT_ENVOYER_A_MAMAN.md](./guides/COMMENT_ENVOYER_A_MAMAN.md)** — Comment envoyer l'app à maman
+- **[GUIDE_MISE_A_JOUR_FLUTTER.md](./guides/GUIDE_MISE_A_JOUR_FLUTTER.md)** — Guide mise à jour Flutter
+- **[GUIDE_TESTEURS.md](./guides/GUIDE_TESTEURS.md)** — Guide pour les testeurs
+- **[MIGRATION.md](./guides/MIGRATION.md)** — Guide de migration
+
+### 🔗 `integrations/` — Intégrations
+
+- **[ARIA_INTEGRATION.md](./integrations/ARIA_INTEGRATION.md)** — Intégration avec Arkalia ARIA
+- **[ARIA_IMPLEMENTATION_GUIDE.md](./integrations/ARIA_IMPLEMENTATION_GUIDE.md)** — Guide d'implémentation ARIA
+- **[ECOSYSTEM_VISION.md](./integrations/ECOSYSTEM_VISION.md)** — Vision de l'écosystème Arkalia Luna
+- **[STRATEGIE_GRATUITE_PORTAILS_SANTE.md](./integrations/STRATEGIE_GRATUITE_PORTAILS_SANTE.md)** — Stratégie portails santé (100% gratuit)
+- **[INTEGRATION_ANDAMAN7_MASANTE.md](./integrations/INTEGRATION_ANDAMAN7_MASANTE.md)** — Intégration Andaman 7 / MaSanté
+- **[STATUT_INTEGRATION_PORTAILS_SANTE.md](./integrations/STATUT_INTEGRATION_PORTAILS_SANTE.md)** — Statut intégration portails
+
+### 📋 `plans/` — Plans d'Implémentation
+
+- **[README.md](./plans/README.md)** — Index des plans
+- **[STATUS_IMPLEMENTATION.md](./plans/STATUS_IMPLEMENTATION.md)** — Statut d'implémentation
+- **[CE_QUI_RESTE_A_FAIRE.md](./plans/CE_QUI_RESTE_A_FAIRE.md)** — Ce qui reste à faire
+- **[PLAN_00_ONBOARDING_INTELLIGENT.md](./plans/PLAN_00_ONBOARDING_INTELLIGENT.md)** — Plan onboarding
+- **[PLAN_01_PARSER_PDF_MEDICAUX.md](./plans/PLAN_01_PARSER_PDF_MEDICAUX.md)** — Plan parser PDF
+- **[PLAN_02_HISTORIQUE_MEDECINS.md](./plans/PLAN_02_HISTORIQUE_MEDECINS.md)** — Plan historique médecins
+- **[PLAN_03_RECHERCHE_AVANCEE.md](./plans/PLAN_03_RECHERCHE_AVANCEE.md)** — Plan recherche avancée
+- **[PLAN_04_IA_PATTERNS.md](./plans/PLAN_04_IA_PATTERNS.md)** — Plan IA patterns
+- **[PLAN_05_PARTAGE_FAMILIAL.md](./plans/PLAN_05_PARTAGE_FAMILIAL.md)** — Plan partage familial
+- **[PLAN_06_IA_CONVERSATIONNELLE.md](./plans/PLAN_06_IA_CONVERSATIONNELLE.md)** — Plan IA conversationnelle
+
+### ⚡ `optimizations/` — Optimisations
+
+- **[OPTIMISATIONS_COMPLETE.md](./optimizations/OPTIMISATIONS_COMPLETE.md)** — Optimisations complètes
+- **[OPTIMISATIONS_TESTS.md](./optimizations/OPTIMISATIONS_TESTS.md)** — Optimisations tests
+- **[OPTIMISATION_SCRIPTS.md](./optimizations/OPTIMISATION_SCRIPTS.md)** — Optimisation scripts
+
+### 📊 `status/` — Statuts
+
+- **[STATUT_FINAL_PROJET.md](./status/STATUT_FINAL_PROJET.md)** — Statut final consolidé ⭐ **PRINCIPAL**
+- **[VERSIONS_UNIFIEES.md](./status/VERSIONS_UNIFIEES.md)** — Versions unifiées
+
+### 🛠️ `troubleshooting/` — Dépannage
+
+- **[GRADLE_FIX_GUIDE.md](./troubleshooting/GRADLE_FIX_GUIDE.md)** — Guide correction Gradle
+- **[SOLUTION_FICHIERS_MACOS.md](./troubleshooting/SOLUTION_FICHIERS_MACOS.md)** — Solution fichiers macOS
+- **[CORRECTION_SQFLITE_IOS.md](./troubleshooting/CORRECTION_SQFLITE_IOS.md)** — Correction SQFLite iOS
+- **[NETTOYAGE_AUTOMATIQUE.md](./troubleshooting/NETTOYAGE_AUTOMATIQUE.md)** — Nettoyage automatique
+- **[TESTS_PROBLEMATIQUES.md](./troubleshooting/TESTS_PROBLEMATIQUES.md)** — Problèmes tests
+
+### 📦 `meta/` — Métadonnées Projet
+
+- **[TODO_RESTANT_1.3.1.md](./meta/TODO_RESTANT_1.3.1.md)** — TODOs restants version 1.3.1
+- **[TODOS_DOCUMENTES.md](./meta/TODOS_DOCUMENTES.md)** — TODOs documentés
+- **[QUALITE_VALIDATION.md](./meta/QUALITE_VALIDATION.md)** — Qualité et validation
+- **[TESTS_DOCUMENTATION_COMPLETE.md](./meta/TESTS_DOCUMENTATION_COMPLETE.md)** — Documentation tests
+- **[VERIFICATION_COMPLETE.md](./meta/VERIFICATION_COMPLETE.md)** — Vérification complète
+
+### 📝 `releases/` — Releases
+
+- **[RELEASE_NOTES_V1.3.1.md](./releases/RELEASE_NOTES_V1.3.1.md)** — Notes de release 1.3.1
+- **[RELEASE_NOTES_V1.2.1.md](./releases/RELEASE_NOTES_V1.2.1.md)** — Notes de release 1.2.1
+- **[RELEASE_NOTES_V1.2.0.md](./releases/RELEASE_NOTES_V1.2.0.md)** — Notes de release 1.2.0
+- **[RELEASE_CHECKLIST.md](./releases/RELEASE_CHECKLIST.md)** — Checklist release
+
+---
+
+## 📂 Fichiers à la Racine
 
 - **[POUR_MAMAN.md](./POUR_MAMAN.md)** — Guide utilisateur pour votre mère
-- **[guides/GUIDE_TESTEURS.md](./guides/GUIDE_TESTEURS.md)** — Guide pour les testeurs
-- **[guides/QUESTIONNAIRE_TESTEURS.md](./guides/QUESTIONNAIRE_TESTEURS.md)** — Questionnaire testeurs
-- **[guides/GUIDE_UTILISATION_MERE.md](./guides/GUIDE_UTILISATION_MERE.md)** — Guide d'utilisation détaillé
-- **[guides/COMMENT_ENVOYER_A_MAMAN.md](./guides/COMMENT_ENVOYER_A_MAMAN.md)** — Comment envoyer l'app à maman
-- **[guides/CE_QUE_VOUS_DEVRIEZ_VOIR.md](./guides/CE_QUE_VOUS_DEVRIEZ_VOIR.md)** — Ce que vous devriez voir
-- **[guides/GUIDE_OUVRIR_APP.md](./guides/GUIDE_OUVRIR_APP.md)** — Guide ouvrir l'app
-- **[guides/APP_INDEPENDANTE_MAC.md](./guides/APP_INDEPENDANTE_MAC.md)** — App indépendante Mac
-- **[guides/MIGRATION.md](./guides/MIGRATION.md)** — Guide de migration
-- **[guides/SCREENSHOTS_GUIDE.md](./guides/SCREENSHOTS_GUIDE.md)** — Guide screenshots
-
-### 🚀 Déploiement
-
-- **[deployment/GUIDE_DEPLOIEMENT_FINAL.md](./deployment/GUIDE_DEPLOIEMENT_FINAL.md)** — Guide complet de déploiement
-- **[deployment/DEPLOYMENT.md](./deployment/DEPLOYMENT.md)** — Guide de déploiement détaillé
-- **[deployment/PLAY_STORE_SETUP.md](./deployment/PLAY_STORE_SETUP.md)** — Configuration Google Play Store
-- **[deployment/BUILD_RELEASE_ANDROID.md](./deployment/BUILD_RELEASE_ANDROID.md)** — Build Android release
-- **[deployment/INSTRUCTIONS_RELEASE_V1.3.1.md](./deployment/INSTRUCTIONS_RELEASE_V1.3.1.md)** — Instructions release 1.3.1
-- **[deployment/WORKFLOW_DEPLOIEMENT_AUTOMATIQUE.md](./deployment/WORKFLOW_DEPLOIEMENT_AUTOMATIQUE.md)** — Workflow déploiement automatique
-
-### 🔍 Audits et Analyses
-
-- **[audits/AUDIT_COMPLET_27_NOVEMBRE_2025.md](./audits/AUDIT_COMPLET_27_NOVEMBRE_2025.md)** — Audit complet consolidé (27 novembre 2025)
-- **[audits/AUDITS_CONSOLIDES.md](./audits/AUDITS_CONSOLIDES.md)** — Audits consolidés historiques
-- **[audits/ANALYSES_CONSOLIDEES.md](./audits/ANALYSES_CONSOLIDEES.md)** — Analyses consolidées
-- **[audits/RAPPORT_AUDIT_TESTS.md](./audits/RAPPORT_AUDIT_TESTS.md)** — Rapport audit tests
-- **[audits/CORRECTIONS_AUDIT_CONSOLIDEES.md](./audits/CORRECTIONS_AUDIT_CONSOLIDEES.md)** — Corrections d'audit consolidées
-- **[audits/CHECKLIST_FINALE_SECURITE.md](./audits/CHECKLIST_FINALE_SECURITE.md)** — Checklist sécurité complète
-- **[audits/TESTS_MANQUANTS_SECURITE.md](./audits/TESTS_MANQUANTS_SECURITE.md)** — Tests manquants sécurité
-- **[analysis/ANALYSE_COMPLETE_BESOINS_MERE.md](./analysis/ANALYSE_COMPLETE_BESOINS_MERE.md)** — Analyse complète des besoins
-- **[analysis/BESOINS_MERE_23_NOVEMBRE_2025.md](./analysis/BESOINS_MERE_23_NOVEMBRE_2025.md)** — Besoins mère 23 novembre
-- **[analysis/IMPORTS_ANALYSIS.md](./analysis/IMPORTS_ANALYSIS.md)** — Analyse des imports
-- **[analysis/USE_CASES.md](./analysis/USE_CASES.md)** — Cas d'utilisation
-
-### 📊 Statut du Projet
-
-- **[status/STATUT_FINAL_PROJET.md](./status/STATUT_FINAL_PROJET.md)** — Statut final du projet
-- **[status/VERSIONS_UNIFIEES.md](./status/VERSIONS_UNIFIEES.md)** — Versions unifiées
-- **[status/RELEASE_READINESS_REPORT.txt](./status/RELEASE_READINESS_REPORT.txt)** — Rapport préparation release
-
-### 🔗 Intégrations
-
-- **[integrations/ARIA_IMPLEMENTATION_GUIDE.md](./integrations/ARIA_IMPLEMENTATION_GUIDE.md)** — Guide d'implémentation ARIA
-- **[integrations/ECOSYSTEM_VISION.md](./integrations/ECOSYSTEM_VISION.md)** — Vision de l'écosystème Arkalia Luna
-- **[integrations/ARIA_INTEGRATION.md](./integrations/ARIA_INTEGRATION.md)** — Intégration avec Arkalia ARIA
-- **[integrations/ARKALIA_ARIA_PROJECT.md](./integrations/ARKALIA_ARIA_PROJECT.md)** — Projet Arkalia ARIA
-- **[integrations/ARKALIA_ARIA_SUMMARY.md](./integrations/ARKALIA_ARIA_SUMMARY.md)** — Résumé Arkalia ARIA
-- **[integrations/PORTAILS_SANTE.md](./integrations/PORTAILS_SANTE.md)** — Portails santé
-- **[integrations/STRATEGIE_GRATUITE_PORTAILS_SANTE.md](./integrations/STRATEGIE_GRATUITE_PORTAILS_SANTE.md)** — Stratégie portails santé
-- **[integrations/INTEGRATION_ANDAMAN7_MASANTE.md](./integrations/INTEGRATION_ANDAMAN7_MASANTE.md)** — Intégration Andaman 7 / MaSanté
-- **[integrations/INTEGRATION_EHEALTH_DETAILLEE.md](./integrations/INTEGRATION_EHEALTH_DETAILLEE.md)** — Intégration eHealth détaillée
-- **[integrations/STATUT_INTEGRATION_PORTAILS_SANTE.md](./integrations/STATUT_INTEGRATION_PORTAILS_SANTE.md)** — Statut intégration portails santé
-
-### 🛠️ Troubleshooting
-
-- **[troubleshooting/GRADLE_FIX_GUIDE.md](./troubleshooting/GRADLE_FIX_GUIDE.md)** — Guide correction Gradle
-- **[troubleshooting/SOLUTION_FICHIERS_MACOS.md](./troubleshooting/SOLUTION_FICHIERS_MACOS.md)** — Solution fichiers macOS
-- **[troubleshooting/TROUVER_CONNECT_VIA_NETWORK.md](./troubleshooting/TROUVER_CONNECT_VIA_NETWORK.md)** — Connexion WiFi ADB
-- **[troubleshooting/MISE_A_JOUR_S25_CORRIGEE.md](./troubleshooting/MISE_A_JOUR_S25_CORRIGEE.md)** — Mise à jour S25 corrigée
-- **[troubleshooting/MISE_A_JOUR_S25_WIFI.md](./troubleshooting/MISE_A_JOUR_S25_WIFI.md)** — Mise à jour S25 WiFi
-- **[troubleshooting/TESTER_ET_METTRE_A_JOUR.md](./troubleshooting/TESTER_ET_METTRE_A_JOUR.md)** — Tester et mettre à jour
-
-### 📋 Plans d'Implémentation
-
-- **[plans/README.md](./plans/README.md)** — Index des plans d'implémentation
-- **[plans/STATUS_IMPLEMENTATION.md](./plans/STATUS_IMPLEMENTATION.md)** — Statut d'implémentation des plans
-- **[plans/CE_QUI_RESTE_A_FAIRE.md](./plans/CE_QUI_RESTE_A_FAIRE.md)** — Ce qui reste à faire
-- **[plans/PLAN_00_ONBOARDING_INTELLIGENT.md](./plans/PLAN_00_ONBOARDING_INTELLIGENT.md)** — Plan onboarding
-- **[plans/PLAN_01_PARSER_PDF_MEDICAUX.md](./plans/PLAN_01_PARSER_PDF_MEDICAUX.md)** — Plan parser PDF
-- **[plans/PLAN_02_HISTORIQUE_MEDECINS.md](./plans/PLAN_02_HISTORIQUE_MEDECINS.md)** — Plan historique médecins
-- **[plans/PLAN_03_RECHERCHE_AVANCEE.md](./plans/PLAN_03_RECHERCHE_AVANCEE.md)** — Plan recherche avancée
-- **[plans/PLAN_04_IA_PATTERNS.md](./plans/PLAN_04_IA_PATTERNS.md)** — Plan IA patterns
-- **[plans/PLAN_05_PARTAGE_FAMILIAL.md](./plans/PLAN_05_PARTAGE_FAMILIAL.md)** — Plan partage familial
-- **[plans/PLAN_06_IA_CONVERSATIONNELLE.md](./plans/PLAN_06_IA_CONVERSATIONNELLE.md)** — Plan IA conversationnelle
-- **[plans/PLAN_IMPLEMENTATION_IMPORT_MANUEL.md](./plans/PLAN_IMPLEMENTATION_IMPORT_MANUEL.md)** — Plan import manuel
-- **[plans/PROMPTS_IMPLEMENTATION_4_PHASES.md](./plans/PROMPTS_IMPLEMENTATION_4_PHASES.md)** — Prompts implémentation 4 phases
-- **[plans/GUIDE_TEST_VISUEL_LIVE.md](./plans/GUIDE_TEST_VISUEL_LIVE.md)** — Guide test visuel live
-
-### ⚡ Optimisations
-
-- **[optimizations/OPTIMISATIONS_COMPLETE.md](./optimizations/OPTIMISATIONS_COMPLETE.md)** — Optimisations complètes
-- **[optimizations/OPTIMISATIONS_TESTS.md](./optimizations/OPTIMISATIONS_TESTS.md)** — Optimisations tests
-- **[optimizations/OPTIMISATION_SCRIPTS.md](./optimizations/OPTIMISATION_SCRIPTS.md)** — Optimisation scripts
-
-### 📦 Métadonnées Projet
-
-- **[meta/TODO_RESTANT_1.3.1.md](./meta/TODO_RESTANT_1.3.1.md)** — TODOs restants version 1.3.1
-- **[meta/TODOS_DOCUMENTES.md](./meta/TODOS_DOCUMENTES.md)** — TODOs documentés
-- **[meta/QUALITE_VALIDATION.md](./meta/QUALITE_VALIDATION.md)** — Qualité et validation
-- **[meta/TESTS_DOCUMENTATION_COMPLETE.md](./meta/TESTS_DOCUMENTATION_COMPLETE.md)** — Documentation tests complète
-- **[meta/VERIFICATION_COMPLETE.md](./meta/VERIFICATION_COMPLETE.md)** — Vérification complète
-- **[meta/SCREENSHOTS_CHECKLIST.md](./meta/SCREENSHOTS_CHECKLIST.md)** — Checklist screenshots
+- **[CE_QUI_MANQUE_10_DECEMBRE_2025.md](./CE_QUI_MANQUE_10_DECEMBRE_2025.md)** — Ce qui manque encore (optionnel)
 
 ---
 
-## 📦 Archives
+## 🔍 Recherche Rapide par Sujet
 
-Les fichiers obsolètes ou redondants sont archivés dans :
+### Architecture & Technique
+- **Architecture générale** : `ARCHITECTURE.md`
+- **Architecture services** : `ARCHITECTURE_SERVICES.md`
+- **API complète** : `API_DOCUMENTATION.md`
+- **Vue d'ensemble** : `VUE_ENSEMBLE_PROJET.md`
 
-- **[archive/audits_redondants/](./archive/audits_redondants/)** — Résumés et bilans redondants
-- **[archive/audits/](./archive/audits/)** — Audits anciens
-- **[archive/corrections/](./archive/corrections/)** — Corrections anciennes
-- **[archive/old_status/](./archive/old_status/)** — Statuts anciens
-- **[archive/releases/](./archive/releases/)** — Releases redondants
-- **[archive/plans/](./archive/plans/)** — Plans obsolètes
+### Corrections & Problèmes
+- **Toutes les corrections** : `deployment/CORRECTIONS_NAVIGATION_AUTH_10_DEC.md` ⭐
+- **Corrections audit** : `audits/CORRECTIONS_AUDIT_CONSOLIDEES.md`
+- **Dépannage** : `troubleshooting/`
+
+### Sécurité & Audits
+- **Audit principal** : `audits/AUDIT_SECURITE_PERFECTION_DECEMBRE_2025.md` ⭐
+- **Sécurité** : `../SECURITY.md`
+- **Checklist sécurité** : `audits/CHECKLIST_FINALE_SECURITE.md`
+- **Politique confidentialité** : `POLITIQUE_CONFIDENTIALITE.md`
+
+### Déploiement
+- **Statut déploiement** : `deployment/STATUT_DEPLOIEMENT_FINAL.md`
+- **Statut PWA** : `deployment/STATUT_PWA_FINAL.md`
+- **Guide déploiement** : `deployment/GUIDE_DEPLOIEMENT_FINAL.md`
+- **Checklist release** : `deployment/CHECKLIST_RELEASE_CONSOLIDEE.md`
+
+### Intégrations
+- **ARIA** : `integrations/ARIA_INTEGRATION.md`
+- **Portails santé** : `integrations/STRATEGIE_GRATUITE_PORTAILS_SANTE.md`
+- **Andaman 7 / MaSanté** : `integrations/INTEGRATION_ANDAMAN7_MASANTE.md`
+
+### Guides Utilisateur
+- **Guide mère** : `POUR_MAMAN.md`
+- **Guide utilisation** : `guides/GUIDE_UTILISATION_MERE.md`
+- **Comment envoyer** : `guides/COMMENT_ENVOYER_A_MAMAN.md`
 
 ---
 
-## 🔍 Recherche Rapide
+## 📊 Statistiques Documentation
 
-### Par Sujet
-
-- **Architecture** : `ARCHITECTURE.md`, `ARCHITECTURE_SERVICES.md`
-- **API** : `API_DOCUMENTATION.md`
-- **Sécurité** : `audits/CHECKLIST_FINALE_SECURITE.md`, `audits/TESTS_MANQUANTS_SECURITE.md`
-- **Tests** : `meta/TESTS_DOCUMENTATION_COMPLETE.md`, `audits/RAPPORT_AUDIT_TESTS.md`
-- **Déploiement** : `deployment/` (tous les guides)
-- **Troubleshooting** : `troubleshooting/` (tous les guides)
-- **Intégrations** : `integrations/` (portails santé, eHealth)
-- **Analyses** : `analysis/` (besoins utilisateur)
+- **Total fichiers MD** : ~166 fichiers
+- **Dernière organisation** : 10 décembre 2025
+- **Statut** : ✅ Organisé et consolidé
 
 ---
 
-**Dernière mise à jour** : 27 novembre 2025  
-**Version** : 1.3.1
+## 🔄 Historique Organisation
+
+- **10 décembre 2025** : Consolidation complète
+  - ✅ Fusion corrections (novembre + décembre 2025)
+  - ✅ Consolidation audits (références croisées)
+  - ✅ Consolidation statuts (références croisées)
+  - ✅ README.md créé avec index complet
+
+---
+
+## 📝 Notes
+
+- Les fichiers dans `archive/` sont conservés pour référence historique
+- Les fichiers marqués ⭐ sont les documents principaux à consulter en priorité
+- Tous les documents sont à jour au 10 décembre 2025
+
+---
+
+**Dernière mise à jour** : 10 décembre 2025  
+**Version** : 1.3.1+5

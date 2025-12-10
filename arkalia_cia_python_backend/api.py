@@ -886,9 +886,7 @@ async def get_health_portal_documents(
         if not current_user.user_id:
             raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
 
-        if not current_user.user_id:
-        raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
-    user_id = int(current_user.user_id)
+        user_id = int(current_user.user_id)
 
         # Récupérer tous les documents de l'utilisateur via la base de données
         documents = db.get_user_documents(user_id, skip=0, limit=1000)
@@ -922,10 +920,7 @@ async def delete_health_portal_document(
     try:
         if not current_user.user_id:
             raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
-
-        if not current_user.user_id:
-        raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
-    user_id = int(current_user.user_id)
+        user_id = int(current_user.user_id)
 
         # Vérifier que le document appartient à l'utilisateur
         user_docs = db.get_user_documents(user_id, skip=0, limit=1000)
@@ -1007,15 +1002,16 @@ async def get_document(
         raise HTTPException(status_code=404, detail="Document non trouvé")
 
     # Audit log
-    db.add_audit_log(
-        user_id=int(current_user.user_id),
-        action="document_access",
-        resource_type="document",
-        resource_id=str(doc_id),
-        ip_address=get_remote_address(request),
-        user_agent=request.headers.get("user-agent"),
-        success=True,
-    )
+    if current_user.user_id:
+        db.add_audit_log(
+            user_id=int(current_user.user_id),
+            action="document_get",
+            resource_type="document",
+            resource_id=str(doc_id),
+            ip_address=get_remote_address(request),
+            user_agent=request.headers.get("user-agent"),
+            success=True,
+        )
 
     return DocumentResponse(**document)
 
@@ -1064,15 +1060,16 @@ async def delete_document(
 
     if not current_user.user_id:
         raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
-    
+
     # Supprimer de la base de données
     success = db.delete_document(doc_id)
     if not success:
         raise HTTPException(status_code=500, detail="Erreur lors de la suppression")
 
     # Audit log
-    db.add_audit_log(
-        user_id=int(current_user.user_id),
+    if current_user.user_id:
+        db.add_audit_log(
+            user_id=int(current_user.user_id),
             action="document_delete",
             resource_type="document",
             resource_id=str(doc_id),
@@ -1098,7 +1095,7 @@ async def create_reminder(
     """Crée un rappel"""
     if not current_user.user_id:
         raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
-    
+
     reminder_id = db.add_reminder(
         title=reminder.title,
         description=reminder.description or "",
@@ -1106,8 +1103,9 @@ async def create_reminder(
     )
 
     # Audit log
-    db.add_audit_log(
-        user_id=int(current_user.user_id),
+    if current_user.user_id:
+        db.add_audit_log(
+            user_id=int(current_user.user_id),
             action="reminder_create",
             resource_type="reminder",
             resource_id=str(reminder_id),
@@ -1166,15 +1164,16 @@ async def create_emergency_contact(
     )
 
     # Audit log
-    db.add_audit_log(
-        user_id=int(current_user.user_id),
-        action="emergency_contact_create",
-        resource_type="emergency_contact",
-        resource_id=str(contact_id),
-        ip_address=get_remote_address(request),
-        user_agent=request.headers.get("user-agent"),
-        success=True,
-    )
+    if current_user.user_id:
+        db.add_audit_log(
+            user_id=int(current_user.user_id),
+            action="emergency_contact_create",
+            resource_type="emergency_contact",
+            resource_id=str(contact_id),
+            ip_address=get_remote_address(request),
+            user_agent=request.headers.get("user-agent"),
+            success=True,
+        )
 
     # Récupérer le contact créé (seulement les 10 derniers pour économiser la mémoire)
     contacts = db.get_emergency_contacts(skip=0, limit=10)
@@ -1629,7 +1628,7 @@ async def generate_medical_report(
 
         if not current_user.user_id:
             raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
-        
+
         # Générer le rapport
         report = report_service.generate_pre_consultation_report(
             user_id=str(current_user.user_id),
@@ -1707,7 +1706,7 @@ async def export_medical_report_pdf(
 
         if not current_user.user_id:
             raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
-        
+
         # Générer le rapport
         report = report_service.generate_pre_consultation_report(
             user_id=str(current_user.user_id),

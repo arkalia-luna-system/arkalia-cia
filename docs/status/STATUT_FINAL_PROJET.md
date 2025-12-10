@@ -1,10 +1,17 @@
 # Statut Final Consolidé — Arkalia CIA
 
-**Date** : 27 novembre 2025  
-**Version** : 1.3.1  
-**Statut** : 100% Production-Ready - 100% d'exploitation - Toutes les 4 phases d'améliorations terminées - **AUDIT FINAL VALIDÉ (9/10)**
+**Date** : 10 décembre 2025  
+**Dernière mise à jour** : 10 décembre 2025  
+**Version** : 1.3.1+5  
+**Statut** : 100% Production-Ready - 100% d'exploitation - Toutes les 4 phases d'améliorations terminées - **AUDIT FINAL VALIDÉ (10/10)**
 
 Document consolidé fusionnant tous les statuts et résumés du projet.
+
+> **Note** : Ce document consolide tous les statuts du projet.  
+> Pour les statuts spécifiques :
+> - **Déploiement** : Voir `deployment/STATUT_DEPLOIEMENT_FINAL.md`
+> - **PWA** : Voir `deployment/STATUT_PWA_FINAL.md`
+> - **Intégration Portails Santé** : Voir `integrations/STATUT_INTEGRATION_PORTAILS_SANTE.md`
 
 ---
 
