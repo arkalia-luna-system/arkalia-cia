@@ -683,8 +683,9 @@ J'ai fait tester l'application par un expert et voici ce qui a été **validé c
 
 ---
 
-*Dernière mise à jour : 27 novembre 2025*  
+*Dernière mise à jour : 10 décembre 2025*  
 *Version : 1.3.1 (PRÊTE - Disponible en PWA)*  
 *Toutes les fonctionnalités implémentées et testées ✅*  
-*Application complète et fonctionnelle - Prête à être distribuée 📱✨*
+*Application complète et fonctionnelle - Disponible maintenant 📱✨*  
+*URL : https://arkalia-luna-system.github.io/arkalia-cia/*
 
