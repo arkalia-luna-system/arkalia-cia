@@ -28,8 +28,6 @@ void main() {
         reason: 'manifest.json doit exister dans arkalia_cia/web/');
       
       final manifestContent = manifestFile!.readAsStringSync();
-
-      final manifestContent = manifestFile.readAsStringSync();
       final manifest = jsonDecode(manifestContent) as Map<String, dynamic>;
 
       // Vérifier les champs requis
