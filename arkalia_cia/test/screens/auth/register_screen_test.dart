@@ -87,10 +87,15 @@ void main() {
       await tester.enterText(confirmPasswordField, 'password123');
       await tester.enterText(emailField, 'invalid-email');
       
+      // Sortir du champ email pour déclencher la validation
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await tester.pump();
+      
       await tester.tap(find.text('Créer le compte'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Format d\'email invalide'), findsOneWidget);
+      // Le message d'erreur peut être dans un Text widget ou dans le helperText
+      expect(find.textContaining('Format d\'email invalide'), findsWidgets);
     });
 
     testWidgets('Affiche le texte d\'aide pour l\'email', (WidgetTester tester) async {
