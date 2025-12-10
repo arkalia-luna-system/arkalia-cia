@@ -778,26 +778,28 @@ async def logout(
 
                 if jti and exp:
                     expires_at = datetime.fromtimestamp(exp)
-                    db.add_token_to_blacklist(
-                        token_jti=jti,
-                        user_id=int(current_user.user_id),
-                        token_type="access",
-                        expires_at=expires_at,
-                        reason="User logout",
-                    )
+                    if current_user.user_id:
+                        db.add_token_to_blacklist(
+                            token_jti=jti,
+                            user_id=int(current_user.user_id),
+                            token_type="access",
+                            expires_at=expires_at,
+                            reason="User logout",
+                        )
             except Exception:
                 # Si le token est invalide, on continue quand même
                 pass
 
         # Audit log
-        db.add_audit_log(
-            user_id=int(current_user.user_id),
-            action="logout",
-            resource_type="auth",
-            ip_address=get_remote_address(request),
-            user_agent=request.headers.get("user-agent"),
-            success=True,
-        )
+        if current_user.user_id:
+            db.add_audit_log(
+                user_id=int(current_user.user_id),
+                action="logout",
+                resource_type="auth",
+                ip_address=get_remote_address(request),
+                user_agent=request.headers.get("user-agent"),
+                success=True,
+            )
 
         return {"success": True, "message": "Déconnexion réussie"}
     except Exception as e:
@@ -841,12 +843,13 @@ async def upload_document(
         )
 
         # Audit log
-        db_instance = get_database()
-        db_instance.add_audit_log(
-            user_id=int(current_user.user_id),
-            action="document_upload",
-            resource_type="document",
-            resource_id=str(doc_id),
+        if current_user.user_id:
+            db_instance = get_database()
+            db_instance.add_audit_log(
+                user_id=int(current_user.user_id),
+                action="document_upload",
+                resource_type="document",
+                resource_id=str(doc_id),
             ip_address=get_remote_address(request),
             user_agent=request.headers.get("user-agent"),
             success=True,
@@ -963,10 +966,11 @@ async def get_documents(
             int(current_user.user_id), skip=skip, limit=limit
         )
         # Audit log
-        db.add_audit_log(
-            user_id=int(current_user.user_id),
-            action="documents_list",
-            resource_type="document",
+        if current_user.user_id:
+            db.add_audit_log(
+                user_id=int(current_user.user_id),
+                action="documents_list",
+                resource_type="document",
             ip_address=get_remote_address(request),
             user_agent=request.headers.get("user-agent"),
             success=True,
@@ -1059,15 +1063,16 @@ async def delete_document(
         raise HTTPException(status_code=500, detail="Erreur lors de la suppression")
 
     # Audit log
-    db.add_audit_log(
-        user_id=int(current_user.user_id),
-        action="document_delete",
-        resource_type="document",
-        resource_id=str(doc_id),
-        ip_address=get_remote_address(request),
-        user_agent=request.headers.get("user-agent"),
-        success=True,
-    )
+    if current_user.user_id:
+        db.add_audit_log(
+            user_id=int(current_user.user_id),
+            action="document_delete",
+            resource_type="document",
+            resource_id=str(doc_id),
+            ip_address=get_remote_address(request),
+            user_agent=request.headers.get("user-agent"),
+            success=True,
+        )
 
     return {"success": True, "message": "Document supprimé avec succès"}
 
@@ -1091,15 +1096,16 @@ async def create_reminder(
     )
 
     # Audit log
-    db.add_audit_log(
-        user_id=int(current_user.user_id),
-        action="reminder_create",
-        resource_type="reminder",
-        resource_id=str(reminder_id),
-        ip_address=get_remote_address(request),
-        user_agent=request.headers.get("user-agent"),
-        success=True,
-    )
+    if current_user.user_id:
+        db.add_audit_log(
+            user_id=int(current_user.user_id),
+            action="reminder_create",
+            resource_type="reminder",
+            resource_id=str(reminder_id),
+            ip_address=get_remote_address(request),
+            user_agent=request.headers.get("user-agent"),
+            success=True,
+        )
 
     # Récupérer le rappel créé (limite configurable)
     reminders = db.get_reminders(skip=0, limit=settings.max_reminders_list)
@@ -1502,15 +1508,16 @@ async def chat_with_ai(
         )
 
         # Audit log
-        db.add_audit_log(
-            user_id=int(current_user.user_id),
-            action="ai_chat",
-            resource_type="ai_conversation",
-            resource_id="",
-            ip_address=get_remote_address(request),
-            user_agent=request.headers.get("user-agent"),
-            success=True,
-        )
+        if current_user.user_id:
+            db.add_audit_log(
+                user_id=int(current_user.user_id),
+                action="ai_chat",
+                resource_type="ai_conversation",
+                resource_id="",
+                ip_address=get_remote_address(request),
+                user_agent=request.headers.get("user-agent"),
+                success=True,
+            )
 
         return ChatResponse(
             answer=result.get("answer", ""),
@@ -1620,15 +1627,16 @@ async def generate_medical_report(
         )
 
         # Audit log
-        db.add_audit_log(
-            user_id=int(current_user.user_id),
-            action="medical_report_generate",
-            resource_type="medical_report",
-            resource_id="",
-            ip_address=get_remote_address(request),
-            user_agent=request.headers.get("user-agent"),
-            success=True,
-        )
+        if current_user.user_id:
+            db.add_audit_log(
+                user_id=int(current_user.user_id),
+                action="medical_report_generate",
+                resource_type="medical_report",
+                resource_id="",
+                ip_address=get_remote_address(request),
+                user_agent=request.headers.get("user-agent"),
+                success=True,
+            )
 
         return MedicalReportResponse(
             report_date=report["report_date"],
@@ -1711,15 +1719,16 @@ async def export_medical_report_pdf(
             filename = f"rapport_medical_{date_str}.pdf"
 
             # Audit log
-            db.add_audit_log(
-                user_id=int(current_user.user_id),
-                action="medical_report_export_pdf",
-                resource_type="medical_report",
-                resource_id="",
-                ip_address=get_remote_address(request),
-                user_agent=request.headers.get("user-agent"),
-                success=True,
-            )
+            if current_user.user_id:
+                db.add_audit_log(
+                    user_id=int(current_user.user_id),
+                    action="medical_report_export_pdf",
+                    resource_type="medical_report",
+                    resource_id="",
+                    ip_address=get_remote_address(request),
+                    user_agent=request.headers.get("user-agent"),
+                    success=True,
+                )
 
             # Ajouter la tâche de nettoyage en arrière-plan
             background_tasks.add_task(_cleanup_temp_file, pdf_path)
