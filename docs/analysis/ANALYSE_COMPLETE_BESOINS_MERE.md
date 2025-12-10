@@ -1070,8 +1070,8 @@ Analyse exhaustive de l'écosystème Arkalia Luna System et des besoins utilisat
 - [x] Portabilité données (export complet PDF/Excel/CSV)
 - [x] Minimisation données
 - [x] Stockage local (100% local, optionnel cloud)
-- [ ] **À AJOUTER** : Politique confidentialité explicite
-- [ ] **À AJOUTER** : Consentement partage familial
+- [x] **✅ AJOUTÉ** : Politique confidentialité explicite (`docs/POLITIQUE_CONFIDENTIALITE.md`)
+- [x] **✅ AJOUTÉ** : Consentement partage familial (dialog dans `family_sharing_screen.dart`)
 
 ### ✅ **Sécurité**
 - [x] Chiffrement AES-256
@@ -1079,8 +1079,8 @@ Analyse exhaustive de l'écosystème Arkalia Luna System et des besoins utilisat
 - [x] Authentification biométrique
 - [x] Tests sécurité réguliers (Bandit, Safety)
 - [x] CI/CD avec scan vulnérabilités
-- [ ] **À AJOUTER** : Audit log (qui accède à quoi)
-- [ ] **À AJOUTER** : Chiffrement bout-en-bout (partage)
+- [x] **✅ AJOUTÉ** : Audit log (qui accède à quoi) - Table `audit_logs` + intégration endpoints
+- [x] **✅ AJOUTÉ** : Chiffrement bout-en-bout (partage) - E2E avec clés dérivées SHA-256
 
 ### ✅ **Certification**
 - [x] Pas de diagnostic automatique → Pas de certification MD requise
