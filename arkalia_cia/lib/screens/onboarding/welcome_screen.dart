@@ -13,7 +13,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -79,7 +79,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 'Création automatique de votre historique médical',
               ),
               
-              const Spacer(),
+              const SizedBox(height: 48),
               
               // Bouton continuer
               SizedBox(
@@ -103,6 +103,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                 ),
               ),
+              const SizedBox(height: 24),
             ],
           ),
         ),

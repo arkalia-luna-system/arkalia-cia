@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../services/auth_api_service.dart';
 import '../../services/backend_config_service.dart';
+import '../../services/onboarding_service.dart';
 import 'login_screen.dart';
+import '../onboarding/welcome_screen.dart';
+import '../home_page.dart';
 
 /// Écran d'inscription pour créer un compte utilisateur
 class RegisterScreen extends StatefulWidget {
@@ -62,18 +65,49 @@ class _RegisterScreenState extends State<RegisterScreen> {
             : _emailController.text.trim(),
       );
 
-      if (result['success'] == true && mounted) {
+      if (result['success'] == true) {
+        if (!mounted) return;
+        
         setState(() {
-          _successMessage = 'Compte créé avec succès ! Redirection vers la connexion...';
+          _successMessage = 'Compte créé avec succès ! Connexion automatique...';
           _isLoading = false;
         });
 
-        // Attendre un peu puis rediriger vers login
-        await Future.delayed(const Duration(seconds: 2));
-        if (mounted) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const LoginScreen()),
-          );
+        // Se connecter automatiquement après inscription
+        await Future.delayed(const Duration(seconds: 1));
+        if (!mounted) return;
+        
+        final loginResult = await AuthApiService.login(
+          username: _usernameController.text.trim(),
+          password: _passwordController.text,
+        );
+        
+        if (!mounted) return;
+        
+        if (loginResult['success'] == true) {
+          // Connexion réussie, vérifier l'onboarding
+          final onboardingCompleted = await OnboardingService.isOnboardingCompleted();
+          
+          if (!mounted) return;
+          
+          if (!onboardingCompleted) {
+            // Première connexion : afficher onboarding
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+            );
+          } else {
+            // Onboarding complété : aller à l'accueil
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => const HomePage()),
+            );
+          }
+        } else {
+          // Échec connexion automatique, rediriger vers login
+          if (mounted) {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => const LoginScreen()),
+            );
+          }
         }
       } else {
         setState(() {
@@ -197,14 +231,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // Champ email (optionnel)
+                // Champ email (optionnel mais recommandé pour récupération)
                 TextFormField(
                   controller: _emailController,
                   decoration: const InputDecoration(
-                    labelText: 'Email (optionnel)',
+                    labelText: 'Email (recommandé)',
                     hintText: 'votre@email.com',
                     prefixIcon: Icon(Icons.email),
                     border: OutlineInputBorder(),
+                    helperText: 'Permet la récupération de compte si vous oubliez votre mot de passe',
                   ),
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,

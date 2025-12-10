@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../services/auth_api_service.dart';
 import '../../services/backend_config_service.dart';
+import '../../services/onboarding_service.dart';
 import 'register_screen.dart';
 import '../home_page.dart';
+import '../onboarding/welcome_screen.dart';
 
 /// Écran de connexion pour l'authentification API
 class LoginScreen extends StatefulWidget {
@@ -53,11 +55,23 @@ class _LoginScreenState extends State<LoginScreen> {
         password: _passwordController.text,
       );
 
-      if (result['success'] == true && mounted) {
-        // Connexion réussie, aller à l'accueil
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const HomePage()),
-        );
+      if (result['success'] == true) {
+        // Connexion réussie, vérifier l'onboarding
+        final onboardingCompleted = await OnboardingService.isOnboardingCompleted();
+        
+        if (!mounted) return;
+        
+        if (!onboardingCompleted) {
+          // Première connexion : afficher onboarding
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+          );
+        } else {
+          // Onboarding complété : aller à l'accueil
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const HomePage()),
+          );
+        }
       } else {
         setState(() {
           _errorMessage = result['error'] ?? 'Erreur lors de la connexion';
