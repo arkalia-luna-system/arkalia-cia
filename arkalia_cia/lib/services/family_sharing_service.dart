@@ -430,7 +430,7 @@ class FamilySharingService {
   Future<String> encryptDocumentForMember(String content, String memberEmail) async {
     await _initializeEncryption();
     // Générer clé unique par membre (E2E)
-    final memberKey = _generateMemberKey(memberEmail);
+    final memberKey = await _generateMemberKey(memberEmail);
     final iv = encrypt.IV.fromSecureRandom(16);
     final memberEncrypter = encrypt.Encrypter(encrypt.AES(memberKey));
     final encrypted = memberEncrypter.encrypt(content, iv: iv);
@@ -449,17 +449,18 @@ class FamilySharingService {
     final encrypted = encrypt.Encrypted.fromBase64(parts[1]);
     
     // Générer clé unique par membre
-    final memberKey = _generateMemberKey(memberEmail);
+    final memberKey = await _generateMemberKey(memberEmail);
     final memberEncrypter = encrypt.Encrypter(encrypt.AES(memberKey));
     return memberEncrypter.decrypt(encrypted, iv: iv);
   }
 
   /// Génère une clé unique pour un membre famille (E2E)
-  encrypt.Key _generateMemberKey(String memberEmail) {
+  Future<encrypt.Key> _generateMemberKey(String memberEmail) async {
     // Utiliser la clé maître + email du membre pour générer clé unique
     // En production, on utiliserait une fonction de dérivation de clé (PBKDF2)
-    final masterKey = _encrypter.key;
-    final combined = '$memberEmail:${masterKey.base64}';
+    final prefs = await SharedPreferences.getInstance();
+    final masterKeyBase64 = prefs.getString(_encryptionKeyKey) ?? '';
+    final combined = '$memberEmail:$masterKeyBase64';
     final bytes = utf8.encode(combined);
     final hash = sha256.convert(bytes);
     // Prendre les 32 premiers bytes du hash pour la clé

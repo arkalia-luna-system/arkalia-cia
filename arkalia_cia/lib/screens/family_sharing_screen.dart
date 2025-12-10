@@ -79,6 +79,12 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
       return;
     }
 
+    // Afficher dialog de consentement explicite
+    final consent = await _showConsentDialog(selectedIds.length, _members.length);
+    if (consent != true) {
+      return; // Utilisateur a refusé
+    }
+
     // Partager avec tous les membres actifs
     final memberIds = List.generate(_members.length, (i) => i);
     for (final docId in selectedIds) {
@@ -93,6 +99,108 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
         _selectedDocuments.clear();
       });
     }
+  }
+
+  /// Affiche un dialog de consentement explicite pour le partage
+  Future<bool?> _showConsentDialog(int documentCount, int memberCount) async {
+    return showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Row(
+            children: [
+              Icon(Icons.security, color: Colors.orange),
+              SizedBox(width: 8),
+              Text('Consentement Partage Familial'),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Avant de partager vos documents médicaux, veuillez confirmer que vous comprenez :',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
+                _buildConsentItem(
+                  Icons.description,
+                  '$documentCount document(s) médical(aux) seront partagés',
+                ),
+                const SizedBox(height: 8),
+                _buildConsentItem(
+                  Icons.people,
+                  '$memberCount membre(s) de votre famille auront accès',
+                ),
+                const SizedBox(height: 8),
+                _buildConsentItem(
+                  Icons.lock,
+                  'Les documents seront chiffrés bout-en-bout (sécurisés)',
+                ),
+                const SizedBox(height: 8),
+                _buildConsentItem(
+                  Icons.history,
+                  'Tous les accès seront enregistrés dans l\'audit log',
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.shade50,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.orange.shade200),
+                  ),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.info_outline, color: Colors.orange, size: 20),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Vous pourrez révoquer ce partage à tout moment',
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Annuler'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Je comprends et j\'accepte'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildConsentItem(IconData icon, String text) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 20, color: Theme.of(context).colorScheme.primary),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            text,
+            style: const TextStyle(fontSize: 14),
+          ),
+        ),
+      ],
+    );
   }
 
   @override

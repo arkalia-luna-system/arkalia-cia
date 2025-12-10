@@ -150,7 +150,7 @@ class MedicalReportService:
                 end_date=end_date,
                 limit=20,
             )
-            
+
             consultations = []
             for consult in consultations_data:
                 doctor_name = f"{consult.get('first_name', '')} {consult.get('last_name', '')}".strip()
@@ -161,7 +161,7 @@ class MedicalReportService:
                     "reason": consult.get("reason", ""),
                     "notes": consult.get("notes", ""),
                 })
-            
+
             return consultations
         except Exception as e:
             logger.warning(f"Erreur récupération consultations: {e}")
@@ -435,5 +435,164 @@ class MedicalReportService:
         formatted_text = report.get("formatted_text", "")
         return str(formatted_text) if formatted_text else ""
 
-    # TODO: Phase 2 - Export PDF
-    # La fonction export_report_to_pdf sera implémentée dans une phase ultérieure
+    def export_report_to_pdf(
+        self, report: dict[str, Any], output_path: str | None = None
+    ) -> str:
+        """Exporte le rapport en PDF (gratuit avec reportlab)"""
+        try:
+            from reportlab.lib.pagesizes import letter
+            from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+            from reportlab.lib.units import inch
+            from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
+
+            # Créer le document PDF
+            if output_path is None:
+                import tempfile
+                output_path = tempfile.mktemp(suffix=".pdf")
+
+            doc = SimpleDocTemplate(output_path, pagesize=letter)
+            story = []
+            styles = getSampleStyleSheet()
+
+            # Style titre
+            title_style = ParagraphStyle(
+                "CustomTitle",
+                parent=styles["Heading1"],
+                fontSize=16,
+                textColor="black",
+                spaceAfter=12,
+            )
+
+            # Style sous-titre
+            subtitle_style = ParagraphStyle(
+                "CustomSubtitle",
+                parent=styles["Heading2"],
+                fontSize=14,
+                textColor="black",
+                spaceAfter=8,
+            )
+
+            # En-tête
+            consultation_date = datetime.fromisoformat(
+                report["report_date"].replace("Z", "+00:00")
+            )
+            story.append(
+                Paragraph(
+                    f"RAPPORT MÉDICAL - Consultation du {consultation_date.strftime('%d/%m/%Y')}",
+                    title_style,
+                )
+            )
+            story.append(Spacer(1, 0.2 * inch))
+
+            # Section Documents
+            if "documents" in report["sections"]:
+                docs_section = report["sections"]["documents"]
+                story.append(Paragraph(docs_section["title"], subtitle_style))
+                if docs_section["items"]:
+                    for doc in docs_section["items"]:
+                        doc_date = doc.get("date", "")
+                        if doc_date:
+                            try:
+                                date_obj = datetime.fromisoformat(
+                                    doc_date.replace("Z", "+00:00")
+                                )
+                                date_str = date_obj.strftime("%d/%m/%Y")
+                            except (ValueError, AttributeError):
+                                date_str = doc_date
+                        else:
+                            date_str = "Date inconnue"
+                        story.append(
+                            Paragraph(
+                                f"• {doc.get('name', 'Document')} ({doc.get('type', 'Document')}) - {date_str}",
+                                styles["Normal"],
+                            )
+                        )
+                else:
+                    story.append(Paragraph("Aucun document récent", styles["Normal"]))
+                story.append(Spacer(1, 0.1 * inch))
+
+            # Section Consultations
+            if "consultations" in report["sections"]:
+                cons_section = report["sections"]["consultations"]
+                if cons_section["items"]:
+                    story.append(Paragraph(cons_section["title"], subtitle_style))
+                    for cons in cons_section["items"]:
+                        story.append(Paragraph(f"• {cons}", styles["Normal"]))
+                    story.append(Spacer(1, 0.1 * inch))
+
+            # Section ARIA
+            if "aria" in report["sections"]:
+                aria_section = report["sections"]["aria"]
+                story.append(Paragraph(aria_section["title"], subtitle_style))
+
+                # Timeline douleur
+                if "pain_timeline" in aria_section:
+                    pain = aria_section["pain_timeline"]
+                    story.append(Paragraph("Timeline Douleur", styles["Heading3"]))
+                    if pain.get("total_entries", 0) > 0:
+                        story.append(
+                            Paragraph(
+                                f"Intensité moyenne : {pain.get('average_intensity', 'N/A')}/10",
+                                styles["Normal"],
+                            )
+                        )
+                        if pain.get("peak_pain"):
+                            peak = pain["peak_pain"]
+                            peak_date = peak.get("date", "")
+                            if peak_date:
+                                try:
+                                    date_obj = datetime.fromisoformat(
+                                        peak_date.replace("Z", "+00:00")
+                                    )
+                                    date_str = date_obj.strftime("%d/%m/%Y, %H:%M")
+                                except (ValueError, AttributeError):
+                                    date_str = peak_date
+                            else:
+                                date_str = "Date inconnue"
+                            story.append(
+                                Paragraph(
+                                    f"Pic douleur : {peak.get('intensity', 'N/A')}/10 ({date_str})",
+                                    styles["Normal"],
+                                )
+                            )
+                    else:
+                        story.append(
+                            Paragraph("Aucune donnée douleur disponible", styles["Normal"])
+                        )
+                    story.append(Spacer(1, 0.1 * inch))
+
+                # Patterns détectés
+                if "patterns" in aria_section and aria_section["patterns"]:
+                    patterns = aria_section["patterns"]
+                    story.append(Paragraph("Patterns Détectés", styles["Heading3"]))
+                    if isinstance(patterns, dict):
+                        for key, value in patterns.items():
+                            if isinstance(value, dict):
+                                desc = value.get("description", value.get("pattern", ""))
+                                if desc:
+                                    story.append(Paragraph(f"• {desc}", styles["Normal"]))
+                            else:
+                                story.append(Paragraph(f"• {key}: {value}", styles["Normal"]))
+                    story.append(Spacer(1, 0.1 * inch))
+
+            # Pied de page
+            story.append(Spacer(1, 0.2 * inch))
+            story.append(
+                Paragraph(
+                    f"Rapport généré le {datetime.now().strftime('%d/%m/%Y à %H:%M')}",
+                    styles["Normal"],
+                )
+            )
+            story.append(Paragraph("Arkalia CIA - Assistant Santé Personnel", styles["Normal"]))
+
+            # Générer le PDF
+            doc.build(story)
+            logger.info(f"Rapport PDF généré : {output_path}")
+            return output_path
+
+        except ImportError as e:
+            logger.error("reportlab non disponible pour export PDF")
+            raise RuntimeError("Export PDF non disponible (reportlab requis)") from e
+        except Exception as e:
+            logger.error(f"Erreur génération PDF : {e}")
+            raise

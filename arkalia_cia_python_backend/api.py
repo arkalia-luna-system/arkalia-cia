@@ -1082,6 +1082,17 @@ async def create_reminder(
         reminder_date=reminder.reminder_date,
     )
 
+    # Audit log
+    db.add_audit_log(
+        user_id=int(current_user.user_id),
+        action="reminder_create",
+        resource_type="reminder",
+        resource_id=str(reminder_id),
+        ip_address=get_remote_address(request),
+        user_agent=request.headers.get("user-agent"),
+        success=True,
+    )
+
     # Récupérer le rappel créé (limite configurable)
     reminders = db.get_reminders(skip=0, limit=settings.max_reminders_list)
     created_reminder = next((r for r in reminders if r["id"] == reminder_id), None)
@@ -1129,6 +1140,17 @@ async def create_emergency_contact(
         phone=contact.phone,
         relationship=contact.relationship or "",
         is_primary=contact.is_primary,
+    )
+
+    # Audit log
+    db.add_audit_log(
+        user_id=int(current_user.user_id),
+        action="emergency_contact_create",
+        resource_type="emergency_contact",
+        resource_id=str(contact_id),
+        ip_address=get_remote_address(request),
+        user_agent=request.headers.get("user-agent"),
+        success=True,
     )
 
     # Récupérer le contact créé (seulement les 10 derniers pour économiser la mémoire)
@@ -1180,6 +1202,17 @@ async def create_health_portal(
         url=portal.url,
         description=portal.description or "",
         category=portal.category or "",
+    )
+
+    # Audit log
+    db.add_audit_log(
+        user_id=int(current_user.user_id),
+        action="health_portal_create",
+        resource_type="health_portal",
+        resource_id=str(portal_id),
+        ip_address=get_remote_address(request),
+        user_agent=request.headers.get("user-agent"),
+        success=True,
     )
 
     # Récupérer le portail créé (limite configurable)
@@ -1459,6 +1492,17 @@ async def chat_with_ai(
             related_documents=",".join(result.get("related_documents", [])),
         )
 
+        # Audit log
+        db.add_audit_log(
+            user_id=int(current_user.user_id),
+            action="ai_chat",
+            resource_type="ai_conversation",
+            resource_id="",
+            ip_address=get_remote_address(request),
+            user_agent=request.headers.get("user-agent"),
+            success=True,
+        )
+
         return ChatResponse(
             answer=result.get("answer", ""),
             related_documents=result.get("related_documents", []),
@@ -1564,6 +1608,17 @@ async def generate_medical_report(
             consultation_date=consultation_date,
             days_range=report_request.days_range,
             include_aria=report_request.include_aria,
+        )
+
+        # Audit log
+        db.add_audit_log(
+            user_id=int(current_user.user_id),
+            action="medical_report_generate",
+            resource_type="medical_report",
+            resource_id="",
+            ip_address=get_remote_address(request),
+            user_agent=request.headers.get("user-agent"),
+            success=True,
         )
 
         return MedicalReportResponse(
