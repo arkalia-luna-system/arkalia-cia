@@ -809,7 +809,7 @@
                     <strong>Projet:</strong> <span>/Volumes/T7/arkalia-cia</span>
                 </div>
                 <div class="info-item">
-                    <strong>Dernière mise à jour:</strong> <span>2025-11-26T17:34:01.972711</span>
+                    <strong>Dernière mise à jour:</strong> <span>2025-12-10T18:41:25.842939</span>
                 </div>
             </div>
             <div style="text-align: center; margin-top: 1.5rem;">
@@ -828,7 +828,7 @@
             </div>
             <div class="vuln-card vuln-medium">
                 <div class="vuln-icon">⚠️</div>
-                <div class="vuln-number">0</div>
+                <div class="vuln-number">1</div>
                 <div class="vuln-label">Vulnérabilités Moyennes</div>
             </div>
             <div class="vuln-card vuln-low">
@@ -838,7 +838,7 @@
             </div>
             <div class="vuln-card">
                 <div class="vuln-icon">📊</div>
-                <div class="vuln-number">0</div>
+                <div class="vuln-number">1</div>
                 <div class="vuln-label">Total Vulnérabilités</div>
             </div>
         </div>
@@ -850,19 +850,19 @@
                     
         <div class="metric-row">
             <span class="metric-label">📁 Fichiers Scannés</span>
-            <span class="metric-value">78</span>
+            <span class="metric-value">81</span>
         </div>
         <div class="metric-row">
             <span class="metric-label">🔍 Vulnérabilités Détectées</span>
-            <span class="metric-value">0</span>
+            <span class="metric-value">1</span>
         </div>
         <div class="metric-row">
             <span class="metric-label">⚠️ Niveau de Risque</span>
-            <span class="metric-value risk-unknown">UNKNOWN</span>
+            <span class="metric-value risk-low">LOW</span>
         </div>
         <div class="metric-row">
             <span class="metric-label">📊 Ratio Vuln/Fichier</span>
-            <span class="metric-value">0.0‰</span>
+            <span class="metric-value">12.3‰</span>
         </div>
         
                 </div>
@@ -874,19 +874,19 @@
                     
         <div class="metric-row">
             <span class="metric-label">🐍 Fichiers Python</span>
-            <span class="metric-value">78</span>
+            <span class="metric-value">81</span>
         </div>
         <div class="metric-row">
             <span class="metric-label">📝 Lignes de Code</span>
-            <span class="metric-value">19,179</span>
+            <span class="metric-value">20,150</span>
         </div>
         <div class="metric-row">
             <span class="metric-label">🧪 Tests Collectés</span>
-            <span class="metric-value">508</span>
+            <span class="metric-value">509</span>
         </div>
         <div class="metric-row">
             <span class="metric-label">📚 Documentation</span>
-            <span class="metric-value">481 fichiers</span>
+            <span class="metric-value">154 fichiers</span>
         </div>
         
                 </div>
@@ -934,11 +934,11 @@
         </div>
         <div class="metric-row">
             <span class="metric-label">⚠️ Vulnérabilités Moyennes</span>
-            <span class="metric-value risk-medium">0</span>
+            <span class="metric-value risk-medium">1</span>
         </div>
         <div class="metric-row">
             <span class="metric-label">📊 Total Vulnérabilités</span>
-            <span class="metric-value">0</span>
+            <span class="metric-value">1</span>
         </div>
         <div class="metric-row">
             <span class="metric-label">⚡ Athalia Components</span>
@@ -960,7 +960,7 @@
         </div>
 
         <div class="footer">
-            <p>🕒 Dernière mise à jour: 2025-11-26T17:34:01.972711</p>
+            <p>🕒 Dernière mise à jour: 2025-12-10T18:41:25.842939</p>
             <p>🛡️ Dashboard de sécurité généré automatiquement par Athalia v12.0.0</p>
         </div>
     </div>
@@ -1053,9 +1053,9 @@
         const ctx = document.getElementById('securityChart').getContext('2d');
         // Calculer les valeurs pour le graphique (s'assurer que ce sont des entiers)
         const chartHigh = 0;
-        const chartMedium = 0;
+        const chartMedium = 1;
         const chartLow = 0;
-        const chartTotal = 0;
+        const chartTotal = 1;
         const chartData = {
             labels: ['Critiques', 'Moyennes', 'Mineures'],
                 datasets: [{
@@ -1149,7 +1149,7 @@
 
             // Déterminer le badge selon le score ET les vulnérabilités
             const hasHighVulns = 0 > 0;
-            const hasManyMediumVulns = 0 > 20;
+            const hasManyMediumVulns = 1 > 20;
 
             if (score >= 85 && !hasHighVulns && !hasManyMediumVulns) {
                 badge.className += ' excellent';
@@ -1167,7 +1167,7 @@
             scoreElement.parentElement.appendChild(badge);
 
             // Ajouter une alerte visuelle si nécessaire
-            if (hasHighVulns || (score < 50 && 0 > 10)) {
+            if (hasHighVulns || (score < 50 && 1 > 10)) {
                 const alertDiv = document.createElement('div');
                 alertDiv.style.cssText = (
                     'background: #fff3cd; border-left: 4px solid #ffc107; '
@@ -1187,7 +1187,7 @@
 
         // Ajouter des informations contextuelles intelligentes
         function addContextualInfo() {
-            const totalVulns = 0;
+            const totalVulns = 1;
             const score = 100;
 
             // Calculer des statistiques utiles

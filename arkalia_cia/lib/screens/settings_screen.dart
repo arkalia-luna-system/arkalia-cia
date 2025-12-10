@@ -774,8 +774,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
+            children: const [
+              Text(
                 'Arkalia CIA respecte votre vie privée :',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
