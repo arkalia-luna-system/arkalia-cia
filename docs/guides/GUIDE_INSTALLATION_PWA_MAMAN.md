@@ -20,6 +20,8 @@ Une PWA (Progressive Web App) est une application qui fonctionne comme une app n
 
 ## 📱 INSTALLATION SUR ANDROID (Samsung, etc.)
 
+> **Note** : Pour installation sur ordinateur (Mac, Windows), voir [GUIDE_INSTALLATION_PWA_DESKTOP.md](./GUIDE_INSTALLATION_PWA_DESKTOP.md)
+
 ### Étape 1 : Ouvrir Chrome
 
 1. Sur ton téléphone, ouvrir l'application **Chrome** (le navigateur)

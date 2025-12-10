@@ -75,7 +75,7 @@ self.addEventListener('fetch', (event) => {
                             return cachedResponse;
                         }
                         // Si pas de cache, retourner une page offline basique
-                        if (event.request.destination === 'document') {
+                        if (event.request.destination === 'document' || event.request.mode === 'navigate') {
                             return caches.match('/index.html');
                         }
                     });
