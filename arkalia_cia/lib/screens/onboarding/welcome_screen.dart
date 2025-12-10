@@ -16,7 +16,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // Logo / Icône
               Icon(
@@ -51,7 +52,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 textAlign: TextAlign.center,
               ),
               
-              const SizedBox(height: 48),
+              const SizedBox(height: 32),
               
               // Avantages
               _buildFeature(
@@ -95,15 +96,15 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   },
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 56),
-                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                   ),
                   child: const Text(
                     'Commencer',
-                    style: TextStyle(fontSize: 18),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 32),
             ],
           ),
         ),

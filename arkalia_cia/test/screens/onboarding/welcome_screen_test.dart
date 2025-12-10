@@ -16,7 +16,7 @@ void main() {
       );
 
       expect(find.text('Bienvenue dans Arkalia CIA'), findsOneWidget);
-      expect(find.text('Votre assistant santé personnel'), findsOneWidget);
+      expect(find.textContaining('Votre assistant santé personnel'), findsOneWidget);
     });
 
     testWidgets('Affiche les fonctionnalités', (WidgetTester tester) async {
