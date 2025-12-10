@@ -76,10 +76,19 @@ void main() {
         ),
       );
 
+      // Remplir les champs requis d'abord
+      final usernameField = find.widgetWithText(TextFormField, 'Nom d\'utilisateur *');
+      final passwordField = find.widgetWithText(TextFormField, 'Mot de passe *');
+      final confirmPasswordField = find.widgetWithText(TextFormField, 'Confirmer le mot de passe *');
       final emailField = find.widgetWithText(TextFormField, 'Email (recommandé)');
+      
+      await tester.enterText(usernameField, 'testuser');
+      await tester.enterText(passwordField, 'password123');
+      await tester.enterText(confirmPasswordField, 'password123');
       await tester.enterText(emailField, 'invalid-email');
+      
       await tester.tap(find.text('Créer le compte'));
-      await tester.pump();
+      await tester.pumpAndSettle();
 
       expect(find.text('Format d\'email invalide'), findsOneWidget);
     });

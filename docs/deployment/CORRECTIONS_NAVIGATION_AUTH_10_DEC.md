@@ -107,13 +107,13 @@
 
 ### Tests Navigation et Onboarding
 
-1. **`test/screens/onboarding/welcome_screen_test.dart`**
+1. **`arkalia_cia/test/screens/onboarding/welcome_screen_test.dart`**
    - ✅ Test affichage titre et description
    - ✅ Test affichage fonctionnalités
    - ✅ Test navigation vers ImportChoiceScreen
    - ✅ Test scrollabilité
 
-2. **`test/screens/auth/register_screen_test.dart`**
+2. **`arkalia_cia/test/screens/auth/register_screen_test.dart`**
    - ✅ Test affichage formulaire
    - ✅ Test validation nom d'utilisateur (min 3 caractères)
    - ✅ Test validation mot de passe (min 8 caractères)
@@ -134,8 +134,8 @@
 5. `arkalia_cia/lib/screens/auth/register_screen.dart`
 
 ### Fichiers Créés (3)
-1. `test/screens/onboarding/welcome_screen_test.dart`
-2. `test/screens/auth/register_screen_test.dart`
+1. `arkalia_cia/test/screens/onboarding/welcome_screen_test.dart`
+2. `arkalia_cia/test/screens/auth/register_screen_test.dart`
 3. `docs/deployment/CORRECTIONS_NAVIGATION_AUTH_10_DEC.md` (ce document)
 
 ---

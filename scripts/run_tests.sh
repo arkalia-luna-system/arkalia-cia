@@ -13,8 +13,8 @@ echo "🧹 Nettoyage des processus pytest existants..."
 
 # Utiliser cleanup_all.sh pour nettoyer pytest (plus efficace et unifié)
 # Mais seulement pytest/coverage, pas tout le reste
-if [ -f "$SCRIPT_DIR/lib/common_functions.sh" ]; then
-    source "$SCRIPT_DIR/lib/common_functions.sh"
+if [ -f "$SCRIPT_DIR/common_functions.sh" ]; then
+    source "$SCRIPT_DIR/common_functions.sh"
     cleanup_processes "pytest|coverage.*pytest" "pytest/coverage" 5 false
 else
     # Fallback rapide

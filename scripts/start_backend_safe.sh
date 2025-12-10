@@ -8,9 +8,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
 # Charger les fonctions communes si disponibles
-LIB_DIR="$SCRIPT_DIR/lib"
-if [ -f "$LIB_DIR/common_functions.sh" ]; then
-    source "$LIB_DIR/common_functions.sh"
+if [ -f "$SCRIPT_DIR/common_functions.sh" ]; then
+    source "$SCRIPT_DIR/common_functions.sh"
 fi
 
 LOCK_FILE="/tmp/arkalia_backend.lock"

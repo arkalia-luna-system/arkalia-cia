@@ -10,9 +10,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
 # Charger les fonctions communes
-LIB_DIR="$SCRIPT_DIR/lib"
-if [ -f "$LIB_DIR/common_functions.sh" ]; then
-    source "$LIB_DIR/common_functions.sh"
+if [ -f "$SCRIPT_DIR/common_functions.sh" ]; then
+    source "$SCRIPT_DIR/common_functions.sh"
 else
     echo "⚠️  Fichier common_functions.sh non trouvé, utilisation des fonctions intégrées"
     # Fonction de fallback

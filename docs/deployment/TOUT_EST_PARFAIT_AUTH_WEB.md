@@ -33,7 +33,7 @@ Si le navigateur ne propose pas de s'enregistrer mais propose directement un cod
 
 ### 2. Tests ✅
 
-- ✅ **16 tests créés** (`test/services/pin_auth_service_test.dart`)
+- ✅ **16 tests créés** (`arkalia_cia/test/services/pin_auth_service_test.dart`)
 - ✅ **Tous les tests passent** (16/16)
 - ✅ **Aucune erreur de lint**
 

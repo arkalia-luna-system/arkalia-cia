@@ -17,7 +17,7 @@
 
 ### 2. Tests ✅
 
-- ✅ `tests/web/pwa_test.dart` : Tests créés et corrigés
+- ✅ `tests/web/pwa_test.dart` : Tests créés et corrigés (dossier racine, correct)
   - Chemins relatifs corrigés pour fonctionner depuis n'importe où
   - 6 tests complets
   - Aucune erreur de lint

@@ -228,6 +228,7 @@ target/
 temp/
 test-results/
 test_*.xml
+test_temp/
 unlinked_ds/
 uploads/
 var/
