@@ -1,5 +1,5 @@
+import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:root_detector/root_detector.dart';
 import '../utils/app_logger.dart';
 
 /// Service de sécurité runtime pour détecter root/jailbreak et vérifier l'intégrité
@@ -15,10 +15,11 @@ class RuntimeSecurityService {
     try {
       // Détecter root/jailbreak (uniquement sur mobile)
       if (!kIsWeb) {
-        _isRooted = await RootDetector.isRooted();
-        // Note: root_detector 0.0.6 ne supporte que isRooted (Android)
-        // Pour iOS jailbreak, il faudrait utiliser un autre package
-        _isJailbroken = false; // TODO: Implémenter avec flutter_jailbreak_detection si nécessaire
+        if (Platform.isAndroid) {
+          _isRooted = await _checkAndroidRoot();
+        } else if (Platform.isIOS) {
+          _isJailbroken = await _checkIOSJailbreak();
+        }
         
         if (_isRooted == true || _isJailbroken == true) {
           AppLogger.warning('⚠️ Appareil rooté/jailbreaké détecté - Sécurité compromise');
@@ -38,6 +39,58 @@ class RuntimeSecurityService {
       _isRooted = false;
       _isJailbroken = false;
       _isInitialized = true;
+    }
+  }
+
+  /// Vérifie si Android est rooté (détection basique)
+  static Future<bool> _checkAndroidRoot() async {
+    try {
+      // Vérifier présence de su (superuser)
+      final result = await Process.run('which', ['su']);
+      if (result.exitCode == 0) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      // Si erreur, considérer comme non rooté (sécurité par défaut)
+      return false;
+    }
+  }
+
+  /// Vérifie si iOS est jailbreaké (détection basique)
+  static Future<bool> _checkIOSJailbreak() async {
+    try {
+      // Vérifier présence de fichiers jailbreak communs
+      final jailbreakPaths = [
+        '/Applications/Cydia.app',
+        '/Library/MobileSubstrate/MobileSubstrate.dylib',
+        '/bin/bash',
+        '/usr/sbin/sshd',
+        '/etc/apt',
+        '/private/var/lib/apt/',
+        '/private/var/lib/cydia',
+        '/private/var/mobile/Library/SBSettings/Themes',
+        '/private/var/tmp/cydia.log',
+        '/Applications/RockApp.app',
+        '/Applications/Icy.app',
+        '/usr/bin/sshd',
+        '/usr/libexec/ssh-keysign',
+        '/Applications/MxTube.app',
+        '/Applications/IntelliScreen.app',
+        '/Applications/FakeCarrier.app',
+        '/Applications/WinterBoard.app',
+      ];
+
+      for (final path in jailbreakPaths) {
+        final file = File(path);
+        if (await file.exists()) {
+          return true;
+        }
+      }
+      return false;
+    } catch (e) {
+      // Si erreur, considérer comme non jailbreaké (sécurité par défaut)
+      return false;
     }
   }
 

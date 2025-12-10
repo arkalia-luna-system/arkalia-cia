@@ -199,5 +199,56 @@
 
 ---
 
+---
+
+## ✅ CORRECTIONS SUPPLÉMENTAIRES (10 décembre 2025)
+
+### 9. ✅ Correction datetime.utcnow() déprécié
+
+**Problème** :
+- ❌ `datetime.utcnow()` est déprécié dans Python 3.12+
+- ❌ Utilisation dans `auth.py` pour création tokens JWT
+
+**Solution** :
+- ✅ Remplacement par `datetime.now(timezone.utc)`
+- ✅ Import `timezone` ajouté
+
+**Fichiers modifiés** :
+- `arkalia_cia_python_backend/auth.py`
+
+---
+
+### 10. ✅ Optimisation imports uuid
+
+**Problème** :
+- ❌ Import `uuid` dans les fonctions (lignes 94, 106)
+- ❌ Performance et meilleures pratiques
+
+**Solution** :
+- ✅ Import `uuid` déplacé en haut du fichier
+
+**Fichiers modifiés** :
+- `arkalia_cia_python_backend/auth.py`
+
+---
+
+### 11. ✅ Implémentation détection root/jailbreak native
+
+**Problème** :
+- ❌ Dépendance externe `root_detector` non nécessaire
+- ❌ TODO pour iOS jailbreak
+
+**Solution** :
+- ✅ Implémentation native avec `dart:io`
+- ✅ Détection Android : vérification `su` command
+- ✅ Détection iOS : vérification fichiers jailbreak communs
+- ✅ Suppression dépendance `root_detector`
+
+**Fichiers modifiés** :
+- `arkalia_cia/lib/services/runtime_security_service.dart`
+- `arkalia_cia/pubspec.yaml` (dépendance supprimée)
+
+---
+
 **Tout est prêt pour être pushé sur `develop` !** 🎉
 

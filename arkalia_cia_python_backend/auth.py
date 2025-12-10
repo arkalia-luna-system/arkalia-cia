@@ -6,7 +6,9 @@ Gestion des JWT tokens et permissions
 import logging
 import os
 import secrets
-from datetime import datetime, timedelta
+import uuid
+from datetime import datetime, timedelta, timezone
+from typing import Any
 
 import jwt
 from fastapi import Depends, HTTPException, status
@@ -83,28 +85,34 @@ def get_password_hash(password: str) -> str:
 
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
-    """Crée un token JWT d'accès"""
+    """Crée un token JWT d'accès avec JTI (JWT ID) pour rotation"""
     to_encode = data.copy()
     if expires_delta:
-        expire = datetime.utcnow() + expires_delta
+        expire = datetime.now(timezone.utc) + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp": expire, "type": "access"})
+        expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    # Ajouter JTI (JWT ID) unique pour permettre la blacklist
+    jti = str(uuid.uuid4())
+    to_encode.update({"exp": expire, "type": "access", "jti": jti})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
 
 def create_refresh_token(data: dict) -> str:
-    """Crée un token JWT de rafraîchissement"""
+    """Crée un token JWT de rafraîchissement avec JTI pour rotation"""
     to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
-    to_encode.update({"exp": expire, "type": "refresh"})
+    expire = datetime.now(timezone.utc) + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
+    # Ajouter JTI (JWT ID) unique pour permettre la blacklist et rotation
+    jti = str(uuid.uuid4())
+    to_encode.update({"exp": expire, "type": "refresh", "jti": jti})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
 
-def verify_token(token: str, token_type: str = "access") -> TokenData:  # nosec B107
-    """Vérifie et décode un token JWT"""
+def verify_token(
+    token: str, token_type: str = "access", db: Any = None
+) -> TokenData:  # nosec B107
+    """Vérifie et décode un token JWT avec vérification blacklist"""
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
 
@@ -114,6 +122,15 @@ def verify_token(token: str, token_type: str = "access") -> TokenData:  # nosec 
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Type de token invalide",
             )
+
+        # Vérifier si le token est dans la blacklist (si DB fournie)
+        if db is not None:
+            jti = payload.get("jti")
+            if jti and db.is_token_blacklisted(jti):
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Token révoqué",
+                )
 
         user_id: str = payload.get("sub")
         username: str = payload.get("username")
@@ -126,6 +143,8 @@ def verify_token(token: str, token_type: str = "access") -> TokenData:  # nosec 
             )
 
         return TokenData(user_id=user_id, username=username, role=role)
+    except HTTPException:
+        raise
     except jwt.ExpiredSignatureError as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -141,18 +160,57 @@ def verify_token(token: str, token_type: str = "access") -> TokenData:  # nosec 
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
 ) -> TokenData:
-    """Dépendance FastAPI pour obtenir l'utilisateur actuel"""
+    """Dépendance FastAPI pour obtenir l'utilisateur actuel (sans DB pour compatibilité)"""
     token = credentials.credentials
     token_data = verify_token(token, token_type="access")  # nosec B106
     return token_data
 
 
+async def get_current_user_with_db(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: Any = None,  # Sera injecté via Depends(get_database) dans api.py
+) -> TokenData:
+    """Dépendance FastAPI pour obtenir l'utilisateur actuel avec vérification blacklist"""
+    token = credentials.credentials
+    # Vérifier blacklist si DB disponible
+    token_data = verify_token(token, token_type="access", db=db)  # nosec B106
+    return token_data
+
+
+# Fonction helper pour créer une dépendance avec DB
+def get_current_user_dependency(db_func):
+    """Crée une dépendance get_current_user qui utilise la DB"""
+    async def _get_current_user_with_db_injected(
+        credentials: HTTPAuthorizationCredentials = Depends(security),
+        db: Any = Depends(db_func),
+    ) -> TokenData:
+        token = credentials.credentials
+        token_data = verify_token(token, token_type="access", db=db)  # nosec B106
+        return token_data
+    return _get_current_user_with_db_injected
+
+
 async def get_current_active_user(
     current_user: TokenData = Depends(get_current_user),
 ) -> TokenData:
-    """Vérifie que l'utilisateur est actif"""
-    # Ici on pourrait vérifier dans la DB si l'utilisateur est actif
-    # Pour l'instant, on retourne simplement l'utilisateur
+    """Vérifie que l'utilisateur est actif (sans DB pour compatibilité)"""
+    # Note: Vérification DB sera ajoutée dans les endpoints qui ont besoin
+    return current_user
+
+
+async def get_current_active_user_with_db(
+    current_user: TokenData = Depends(get_current_user_with_db),
+    db: Any = None,  # Sera injecté via Depends(get_database) dans api.py
+) -> TokenData:
+    """Vérifie que l'utilisateur est actif avec vérification DB et blacklist"""
+    # Vérifier dans la DB si l'utilisateur est actif (si DB disponible)
+    if db is not None:
+        user_data = db.get_user_by_id(int(current_user.user_id))
+        if user_data and not user_data.get("is_active", True):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Compte utilisateur désactivé",
+            )
     return current_user
 
 
