@@ -233,7 +233,9 @@ uploads/
 var/
 venv.bak/
 venv/
-web/
+# Ignorer build web mais pas les fichiers source PWA
+build/web/
+# Les fichiers source dans web/ doivent être versionnés
 wheels/
 windows/flutter/generated_plugin_registrant.cc
 windows/flutter/generated_plugin_registrant.h
