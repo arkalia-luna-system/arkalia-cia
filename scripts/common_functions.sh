@@ -1,6 +1,6 @@
 #!/bin/bash
 # Fonctions communes pour tous les scripts
-# Source ce fichier avec: source "$(dirname "$0")/lib/common_functions.sh"
+# Source ce fichier avec: source "$(dirname "$0")/common_functions.sh"
 
 # Fonction optimisée pour arrêter proprement les processus
 # Utilise un cache pour éviter les appels répétés à ps aux

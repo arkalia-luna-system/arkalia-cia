@@ -229,6 +229,8 @@ temp/
 test-results/
 test_*.xml
 test_temp/
+# Dossier de fichiers sensibles (hors projet, mais ignorer au cas où)
+~/Desktop/cle/
 unlinked_ds/
 uploads/
 var/
