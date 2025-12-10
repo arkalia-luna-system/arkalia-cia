@@ -1,13 +1,13 @@
 """
 Module d'authentification et d'authorization pour Arkalia CIA
-Gestion des JWT tokens et permissions
+Gestion des JWT tokens et permissions avec RBAC
 """
 
 import logging
 import os
 import secrets
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from typing import Any
 
 import jwt
@@ -23,6 +23,14 @@ SECRET_KEY = os.getenv("JWT_SECRET_KEY", secrets.token_urlsafe(32))
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 REFRESH_TOKEN_EXPIRE_DAYS = 7
+
+# Rôles disponibles
+ROLES = {
+    "admin": ["admin", "user", "family_viewer", "family_editor"],
+    "user": ["user"],
+    "family_viewer": ["user", "family_viewer"],
+    "family_editor": ["user", "family_viewer", "family_editor"],
+}
 
 # Contexte de hachage de mot de passe
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -53,6 +61,7 @@ class UserCreate(BaseModel):
     username: str = Field(..., min_length=3, max_length=50)
     password: str = Field(..., min_length=8, max_length=100)
     email: str | None = None
+    role: str = Field(default="user", pattern="^(admin|user|family_viewer|family_editor)$")
 
 
 class UserLogin(BaseModel):
@@ -88,9 +97,9 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
     """Crée un token JWT d'accès avec JTI (JWT ID) pour rotation"""
     to_encode = data.copy()
     if expires_delta:
-        expire = datetime.now(timezone.utc) + expires_delta
+        expire = datetime.utcnow() + expires_delta
     else:
-        expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     # Ajouter JTI (JWT ID) unique pour permettre la blacklist
     jti = str(uuid.uuid4())
     to_encode.update({"exp": expire, "type": "access", "jti": jti})
@@ -101,7 +110,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
 def create_refresh_token(data: dict) -> str:
     """Crée un token JWT de rafraîchissement avec JTI pour rotation"""
     to_encode = data.copy()
-    expire = datetime.now(timezone.utc) + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
+    expire = datetime.utcnow() + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
     # Ajouter JTI (JWT ID) unique pour permettre la blacklist et rotation
     jti = str(uuid.uuid4())
     to_encode.update({"exp": expire, "type": "refresh", "jti": jti})
@@ -177,19 +186,6 @@ async def get_current_user_with_db(
     return token_data
 
 
-# Fonction helper pour créer une dépendance avec DB
-def get_current_user_dependency(db_func):
-    """Crée une dépendance get_current_user qui utilise la DB"""
-    async def _get_current_user_with_db_injected(
-        credentials: HTTPAuthorizationCredentials = Depends(security),
-        db: Any = Depends(db_func),
-    ) -> TokenData:
-        token = credentials.credentials
-        token_data = verify_token(token, token_type="access", db=db)  # nosec B106
-        return token_data
-    return _get_current_user_with_db_injected
-
-
 async def get_current_active_user(
     current_user: TokenData = Depends(get_current_user),
 ) -> TokenData:
@@ -214,6 +210,12 @@ async def get_current_active_user_with_db(
     return current_user
 
 
+def has_permission(user_role: str, required_permission: str) -> bool:
+    """Vérifie si un rôle a une permission donnée (RBAC)"""
+    user_permissions = ROLES.get(user_role, [])
+    return required_permission in user_permissions
+
+
 def require_role(allowed_roles: list[str]):
     """Décorateur pour vérifier les rôles"""
 
@@ -226,3 +228,19 @@ def require_role(allowed_roles: list[str]):
         return current_user
 
     return role_checker
+
+
+def require_permission(required_permission: str):
+    """Décorateur pour vérifier une permission spécifique (RBAC)"""
+
+    async def permission_checker(
+        current_user: TokenData = Depends(get_current_active_user),
+    ):
+        if not has_permission(current_user.role or "user", required_permission):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Permission '{required_permission}' requise",
+            )
+        return current_user
+
+    return permission_checker

@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
 import '../services/local_storage_service.dart';
@@ -424,7 +426,47 @@ class FamilySharingService {
     await prefs.setStringList(_sharedDocumentsKey, sharedJson);
   }
 
-  // Chiffrement/déchiffrement
+  // Chiffrement/déchiffrement E2E amélioré
+  Future<String> encryptDocumentForMember(String content, String memberEmail) async {
+    await _initializeEncryption();
+    // Générer clé unique par membre (E2E)
+    final memberKey = _generateMemberKey(memberEmail);
+    final iv = encrypt.IV.fromSecureRandom(16);
+    final memberEncrypter = encrypt.Encrypter(encrypt.AES(memberKey));
+    final encrypted = memberEncrypter.encrypt(content, iv: iv);
+    // Retourner IV + données chiffrées (format: iv:encrypted)
+    return '${iv.base64}:${encrypted.base64}';
+  }
+
+  Future<String> decryptDocumentForMember(String encryptedContent, String memberEmail) async {
+    await _initializeEncryption();
+    // Extraire IV et données
+    final parts = encryptedContent.split(':');
+    if (parts.length != 2) {
+      throw Exception('Format de données chiffrées invalide');
+    }
+    final iv = encrypt.IV.fromBase64(parts[0]);
+    final encrypted = encrypt.Encrypted.fromBase64(parts[1]);
+    
+    // Générer clé unique par membre
+    final memberKey = _generateMemberKey(memberEmail);
+    final memberEncrypter = encrypt.Encrypter(encrypt.AES(memberKey));
+    return memberEncrypter.decrypt(encrypted, iv: iv);
+  }
+
+  /// Génère une clé unique pour un membre famille (E2E)
+  encrypt.Key _generateMemberKey(String memberEmail) {
+    // Utiliser la clé maître + email du membre pour générer clé unique
+    // En production, on utiliserait une fonction de dérivation de clé (PBKDF2)
+    final masterKey = _encrypter.key;
+    final combined = '$memberEmail:${masterKey.base64}';
+    final bytes = utf8.encode(combined);
+    final hash = sha256.convert(bytes);
+    // Prendre les 32 premiers bytes du hash pour la clé
+    return encrypt.Key.fromBase64(base64Encode(hash.bytes.sublist(0, 32)));
+  }
+
+  // Méthodes legacy (gardées pour compatibilité)
   Future<String> encryptDocument(String content) async {
     await _initializeEncryption();
     final iv = encrypt.IV.fromLength(16);

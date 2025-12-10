@@ -250,5 +250,74 @@
 
 ---
 
+---
+
+## 📋 CE QUI MANQUE ENCORE (10 décembre 2025)
+
+### ⚠️ DÉCISION IMPORTANTE : PAS DE FONCTIONNALITÉS PAYANTES
+
+**Stratégie** : L'app reste **100% gratuite** - Aucune fonctionnalité nécessitant des APIs payantes ne sera implémentée.
+
+**Fonctionnalités exclues** (pour éviter les coûts) :
+- ❌ **API automatique Andaman 7** : 2 000-5 000€/an (partenariat commercial)
+- ❌ **Services cloud payants** : Déjà évité (local-first)
+- ❌ **APIs tierces payantes** : Aucune intégration payante
+
+**Fonctionnalités gratuites conservées** :
+- ✅ **Import manuel portails santé** : Gratuit (PDF upload)
+- ✅ **Export PDF basique** : Gratuit (reportlab)
+- ✅ **Toutes les fonctionnalités locales** : Gratuites
+
+---
+
+### 🔴 CRITIQUE
+
+**Aucun point critique identifié** ✅
+
+---
+
+### 🟠 ÉLEVÉ
+
+1. **Export PDF Rapports Médicaux (GRATUIT)**
+   - **Fichier** : `medical_report_service.py` ligne 421
+   - **Statut** : TODO Phase 2 - Export PDF
+   - **Impact** : Fonctionnalité promise mais non implémentée
+   - **Coût** : 0€ (reportlab gratuit)
+   - **Effort** : 2-3 jours
+
+2. **Tests avec Fichiers Réels (Import Manuel)**
+   - **Statut** : Code prêt, tests manquants
+   - **Actions** : Obtenir PDF réels Andaman 7/MaSanté et tester parsers
+   - **Coût** : 0€
+   - **Effort** : 1 semaine
+
+---
+
+### 🟡 MOYEN
+
+3. **Tests Flutter Supplémentaires**
+   - **Statut** : 11 tests existants, peut continuer
+   - **Actions** : Tests widget pour écrans principaux
+   - **Coût** : 0€
+   - **Effort** : 1-2 semaines
+
+4. **Accréditation eHealth** ⏸️ **NON PRIORITAIRE**
+   - **Statut** : En attente (procédure administrative)
+   - **Coût** : 0€ mais procédure longue (1-3 mois)
+   - **Décision** : Non prioritaire (import manuel fonctionne)
+   - **Note** : Peut être fait plus tard si besoin
+
+---
+
+### 🟢 BASSE
+
+5. **Organisation Documentation**
+   - **Statut** : 122 fichiers MD (trop, à organiser)
+   - **Actions** : Fusionner redondants, supprimer obsolètes
+   - **Coût** : 0€
+   - **Effort** : 2-3 heures
+
+---
+
 **Tout est prêt pour être pushé sur `develop` !** 🎉
 

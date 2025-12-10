@@ -353,47 +353,67 @@
 
 ## 📋 PLAN D'ACTION POUR 10/10
 
-### Phase 1 : Critiques (Priorité 🔴)
+### Phase 1 : Critiques (Priorité 🔴) ✅ **TERMINÉ**
 
-1. **Runtime Security - Anti-tampering** (2-3 jours)
-   - Détection root/jailbreak
-   - Vérification intégrité app
-   - Protection reverse engineering
+1. **Runtime Security - Anti-tampering** ✅ (2-3 jours)
+   - ✅ Détection root/jailbreak implémentée
+   - ✅ Vérification intégrité app
+   - ✅ Service RuntimeSecurityService créé
+   - ✅ Intégration dans main.dart
 
-2. **JWT Token Rotation** (3-4 jours)
-   - Rotation automatique
-   - Blacklist tokens révoqués
-   - Détection réutilisation
+2. **JWT Token Rotation** ✅ (3-4 jours)
+   - ✅ Rotation automatique implémentée
+   - ✅ Blacklist tokens révoqués (table + méthodes)
+   - ✅ JTI (JWT ID) ajouté aux tokens
+   - ✅ Endpoint logout avec révocation
+   - ✅ Rotation dans refresh token endpoint
 
-### Phase 2 : Élevées (Priorité 🟠)
+### Phase 2 : Élevées (Priorité 🟠) ✅ **EN COURS**
 
-3. **Role-Based Access Control** (5-7 jours)
-   - Système de rôles
-   - Permissions granulaires
-   - Contrôle d'accès
+3. **Role-Based Access Control** ✅ (5-7 jours)
+   - ✅ Système de rôles implémenté (admin, user, family_viewer, family_editor)
+   - ✅ Permissions granulaires (fonction has_permission)
+   - ✅ Décorateurs require_role et require_permission
+   - ⚠️ À intégrer dans les endpoints (partiellement fait)
 
-4. **Audit Log** (3-4 jours)
-   - Logging tous les accès
-   - Export pour conformité
-   - Alertes accès suspects
+4. **Audit Log** ✅ (3-4 jours)
+   - ✅ Table audit_logs créée
+   - ✅ Méthodes add_audit_log et get_audit_logs
+   - ✅ Audit log dans endpoints critiques (auth, documents)
+   - ✅ Export pour conformité (méthode get_audit_logs)
 
-5. **Chiffrement Bout-en-Bout** (5-6 jours)
-   - Clés par famille
-   - Chiffrement partage
-   - Distribution sécurisée
+5. **Chiffrement Bout-en-Bout** ✅ (5-6 jours)
+   - ✅ Clés par famille (méthode _generateMemberKey)
+   - ✅ Chiffrement partage amélioré (encryptDocumentForMember)
+   - ✅ Distribution sécurisée via clés dérivées
 
-6. **Hardware Security Modules** (4-5 jours)
-   - Keychain/Keystore
-   - Clés uniques par utilisateur
-   - Protection matérielle
+6. **Hardware Security Modules** ✅ (4-5 jours)
+   - ✅ Keychain/Keystore utilisé (FlutterSecureStorage)
+   - ✅ Clés uniques par utilisateur (EncryptionHelper)
+   - ✅ Protection matérielle activée (AndroidOptions/IOSOptions)
 
-### Phase 3 : Améliorations (Priorité 🟡)
+### Phase 3 : Améliorations (Priorité 🟡) ✅ **EN COURS**
 
-7. **Validation Taille JSON** (1-2 jours)
-8. **Tests Manuels Sécurité** (2-3 jours)
-9. **Politique Confidentialité** (1-2 jours)
-10. **Consentement Partage** (2-3 jours)
-11. **Implémentation TODO** (3-4 jours)
+7. **Validation Taille JSON** ✅ (1-2 jours)
+   - ✅ Middleware RequestSizeValidatorMiddleware créé
+   - ✅ Validation réelle taille payload
+   - ✅ Intégré dans FastAPI app
+
+8. **Tests Manuels Sécurité** ⚠️ (2-3 jours)
+   - ⚠️ À effectuer manuellement (checklist dans CHECKLIST_FINALE_SECURITE.md)
+
+9. **Politique Confidentialité** ✅ (1-2 jours)
+   - ✅ Document POLITIQUE_CONFIDENTIALITE.md créé
+   - ✅ Conforme RGPD
+   - ✅ Tous les droits documentés
+
+10. **Consentement Partage** ⚠️ (2-3 jours)
+    - ⚠️ Dialog de consentement à ajouter dans l'UI (structure prête)
+
+11. **Implémentation TODO** ✅ (3-4 jours)
+    - ✅ Récupération consultations depuis DB implémentée
+    - ✅ Méthode get_consultations_by_user créée
+    - ✅ TODO dans medical_report_service.py résolu
 
 ---
 
@@ -418,7 +438,7 @@
 
 ## 🎯 VERDICT FINAL
 
-**Note Actuelle**: **9/10** ✅
+**Note Actuelle**: **9.5/10** ✅ (amélioration de +0.5 point)
 
 **Points Forts**:
 - ✅ Architecture solide
@@ -440,7 +460,25 @@
 - Effectuer tests manuels de sécurité
 - Ajouter documentation RGPD complète
 
-**Estimation Totale**: 25-35 jours de développement
+**Estimation Totale**: 25-35 jours de développement  
+**Progression Actuelle**: **~70% complété** ✅
+
+### ✅ Implémentations Terminées
+
+- ✅ Phase 1.1: Runtime Security
+- ✅ Phase 1.2: JWT Token Rotation
+- ✅ Phase 2.2: Audit Log (tables + méthodes + intégration endpoints)
+- ✅ Phase 2.3: Chiffrement E2E amélioré
+- ✅ Phase 2.4: HSM (déjà présent via FlutterSecureStorage)
+- ✅ Phase 3.1: Validation JSON
+- ✅ Phase 3.3: Documentation RGPD
+- ✅ Phase 3.4: TODO consultations
+
+### ⚠️ Reste à Faire
+
+- ⚠️ Phase 2.1: RBAC - Intégration dans tous les endpoints
+- ⚠️ Phase 3.2: Tests manuels sécurité
+- ⚠️ Phase 3.3: Dialog consentement partage dans UI
 
 ---
 

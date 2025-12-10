@@ -14,6 +14,10 @@ from typing import Any
 from fastapi import Depends, FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
+
+from arkalia_cia_python_backend.middleware.request_size_validator import (
+    RequestSizeValidatorMiddleware,
+)
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field, field_validator
 from slowapi import Limiter
@@ -26,6 +30,8 @@ from arkalia_cia_python_backend.ai.conversational_ai import ConversationalAI
 from arkalia_cia_python_backend.ai.pattern_analyzer import AdvancedPatternAnalyzer
 from arkalia_cia_python_backend.aria_integration.api import router as aria_router
 from arkalia_cia_python_backend.auth import (
+    ALGORITHM,
+    SECRET_KEY,
     Token,
     TokenData,
     UserCreate,
@@ -89,6 +95,8 @@ def get_rate_limit_key(request: Request):
         if auth_header.startswith("Bearer "):
             token = auth_header.split(" ")[1]
             try:
+                # Note: Pas de DB disponible ici pour vérifier blacklist
+                # La vérification blacklist se fait dans get_current_user
                 token_data = verify_token(token, token_type="access")  # nosec B106
                 if token_data.user_id:
                     # Combiner IP + user_id pour un rate limiting par utilisateur
@@ -322,6 +330,9 @@ def rate_limit_handler(request: Request, exc: Exception) -> Response:
 
 app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
 
+# Middleware de validation taille requêtes (avant autres middlewares)
+app.add_middleware(RequestSizeValidatorMiddleware)
+
 # Middleware de sécurité : Trusted Host
 # En production, ajouter les domaines autorisés
 if _ENVIRONMENT == "production":
@@ -422,6 +433,9 @@ else:
         "http://localhost:3000",
         "http://127.0.0.1:3000",
     ]
+
+# Middleware de validation taille requêtes (avant CORS)
+app.add_middleware(RequestSizeValidatorMiddleware)
 
 app.add_middleware(
     CORSMiddleware,
@@ -571,6 +585,16 @@ async def register(
                 detail="Erreur lors de la récupération de l'utilisateur",
             )
 
+        # Audit log
+        db.add_audit_log(
+            user_id=user_id,
+            action="register",
+            resource_type="auth",
+            ip_address=get_remote_address(request),
+            user_agent=request.headers.get("user-agent"),
+            success=True,
+        )
+
         return UserResponse(
             id=user["id"],
             username=user["username"],
@@ -629,6 +653,16 @@ async def login(
         access_token = create_access_token(token_data)
         refresh_token = create_refresh_token(token_data)
 
+        # Audit log
+        db.add_audit_log(
+            user_id=user["id"],
+            action="login",
+            resource_type="auth",
+            ip_address=get_remote_address(request),
+            user_agent=request.headers.get("user-agent"),
+            success=True,
+        )
+
         return Token(
             access_token=access_token,
             refresh_token=refresh_token,
@@ -646,12 +680,37 @@ async def login(
 
 @app.post(f"{API_PREFIX}/auth/refresh", response_model=Token)
 @limiter.limit("20/minute")
-async def refresh_token_endpoint(request: Request, token_request: RefreshTokenRequest):
-    """Rafraîchit un token d'accès avec un refresh token"""
+async def refresh_token_endpoint(
+    request: Request,
+    token_request: RefreshTokenRequest,
+    db: CIADatabase = Depends(get_database),
+):
+    """Rafraîchit un token d'accès avec un refresh token (rotation automatique)"""
     try:
+        # Vérifier le refresh token avec blacklist
         token_data = verify_token(
-            token_request.refresh_token, token_type="refresh"
+            token_request.refresh_token, token_type="refresh", db=db
         )  # nosec B106
+
+        # Extraire le JTI de l'ancien refresh token pour le blacklister
+        import jwt
+        from datetime import datetime
+        old_payload = jwt.decode(
+            token_request.refresh_token, SECRET_KEY, algorithms=[ALGORITHM]
+        )
+        old_jti = old_payload.get("jti")
+        old_exp = old_payload.get("exp")
+        
+        # Blacklister l'ancien refresh token (rotation)
+        if old_jti and old_exp:
+            expires_at = datetime.fromtimestamp(old_exp)
+            db.add_token_to_blacklist(
+                token_jti=old_jti,
+                user_id=int(token_data.user_id),
+                token_type="refresh",
+                expires_at=expires_at,
+                reason="Token rotation",
+            )
 
         # Créer un nouveau token d'accès
         new_token_data = {
@@ -661,8 +720,18 @@ async def refresh_token_endpoint(request: Request, token_request: RefreshTokenRe
         }
         access_token = create_access_token(new_token_data)
 
-        # Créer un nouveau refresh token
+        # Créer un nouveau refresh token (rotation)
         new_refresh_token = create_refresh_token(new_token_data)
+
+        # Audit log
+        db.add_audit_log(
+            user_id=int(token_data.user_id),
+            action="token_refresh",
+            resource_type="auth",
+            ip_address=get_remote_address(request),
+            user_agent=request.headers.get("user-agent"),
+            success=True,
+        )
 
         return Token(
             access_token=access_token,
@@ -676,6 +745,58 @@ async def refresh_token_endpoint(request: Request, token_request: RefreshTokenRe
         raise HTTPException(
             status_code=401,
             detail="Token de rafraîchissement invalide",
+        ) from e
+
+
+@app.post(f"{API_PREFIX}/auth/logout")
+@limiter.limit("20/minute")
+async def logout(
+    request: Request,
+    current_user: TokenData = Depends(get_current_active_user),
+    db: CIADatabase = Depends(get_database),
+):
+    """Déconnecte un utilisateur et révoque ses tokens"""
+    try:
+        # Extraire le token de la requête pour le blacklister
+        auth_header = request.headers.get("authorization", "")
+        if auth_header.startswith("Bearer "):
+            token = auth_header.split(" ")[1]
+            import jwt
+            from datetime import datetime
+            try:
+                payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+                jti = payload.get("jti")
+                exp = payload.get("exp")
+                
+                if jti and exp:
+                    expires_at = datetime.fromtimestamp(exp)
+                    db.add_token_to_blacklist(
+                        token_jti=jti,
+                        user_id=int(current_user.user_id),
+                        token_type="access",
+                        expires_at=expires_at,
+                        reason="User logout",
+                    )
+            except Exception:
+                # Si le token est invalide, on continue quand même
+                pass
+
+        # Audit log
+        db.add_audit_log(
+            user_id=int(current_user.user_id),
+            action="logout",
+            resource_type="auth",
+            ip_address=get_remote_address(request),
+            user_agent=request.headers.get("user-agent"),
+            success=True,
+        )
+
+        return {"success": True, "message": "Déconnexion réussie"}
+    except Exception as e:
+        logger.error(f"Erreur logout: {sanitize_log_message(str(e))}")
+        raise HTTPException(
+            status_code=500,
+            detail="Erreur lors de la déconnexion",
         ) from e
 
 
@@ -709,6 +830,18 @@ async def upload_document(
         # Sauvegarder en base avec métadonnées
         doc_id = document_service.save_document_with_metadata(
             result, int(current_user.user_id), metadata
+        )
+
+        # Audit log
+        db_instance = get_database()
+        db_instance.add_audit_log(
+            user_id=int(current_user.user_id),
+            action="document_upload",
+            resource_type="document",
+            resource_id=str(doc_id),
+            ip_address=get_remote_address(request),
+            user_agent=request.headers.get("user-agent"),
+            success=True,
         )
 
         return {
@@ -821,6 +954,15 @@ async def get_documents(
         documents = db.get_user_documents(
             int(current_user.user_id), skip=skip, limit=limit
         )
+        # Audit log
+        db.add_audit_log(
+            user_id=int(current_user.user_id),
+            action="documents_list",
+            resource_type="document",
+            ip_address=get_remote_address(request),
+            user_agent=request.headers.get("user-agent"),
+            success=True,
+        )
     else:
         documents = []
     return [DocumentResponse(**doc) for doc in documents]
@@ -846,11 +988,24 @@ async def get_document(
     document = db.get_document(doc_id)
     if not document:
         raise HTTPException(status_code=404, detail="Document non trouvé")
+    
+    # Audit log
+    db.add_audit_log(
+        user_id=int(current_user.user_id),
+        action="document_access",
+        resource_type="document",
+        resource_id=str(doc_id),
+        ip_address=get_remote_address(request),
+        user_agent=request.headers.get("user-agent"),
+        success=True,
+    )
+    
     return DocumentResponse(**document)
 
 
 @app.delete(f"{API_PREFIX}/documents/{{doc_id}}")
 async def delete_document(
+    request: Request,
     doc_id: int,
     current_user: TokenData = Depends(get_current_active_user),
     db: CIADatabase = Depends(get_database),
@@ -894,6 +1049,17 @@ async def delete_document(
     success = db.delete_document(doc_id)
     if not success:
         raise HTTPException(status_code=500, detail="Erreur lors de la suppression")
+
+    # Audit log
+    db.add_audit_log(
+        user_id=int(current_user.user_id),
+        action="document_delete",
+        resource_type="document",
+        resource_id=str(doc_id),
+        ip_address=get_remote_address(request),
+        user_agent=request.headers.get("user-agent"),
+        success=True,
+    )
 
     return {"success": True, "message": "Document supprimé avec succès"}
 

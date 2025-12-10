@@ -5,6 +5,7 @@ Adapté du storage.py d'Arkalia-Luna-Pro
 
 import sqlite3
 import tempfile
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -99,6 +100,45 @@ class CIADatabase:
             """
             )
 
+            # Table des médecins (pour consultations)
+            cursor.execute(
+                """
+                CREATE TABLE IF NOT EXISTS doctors (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    first_name TEXT NOT NULL,
+                    last_name TEXT NOT NULL,
+                    specialty TEXT,
+                    phone TEXT,
+                    email TEXT,
+                    address TEXT,
+                    city TEXT,
+                    postal_code TEXT,
+                    country TEXT DEFAULT 'Belgique',
+                    notes TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """
+            )
+
+            # Table des consultations
+            cursor.execute(
+                """
+                CREATE TABLE IF NOT EXISTS consultations (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    doctor_id INTEGER NOT NULL,
+                    user_id INTEGER,
+                    date TEXT NOT NULL,
+                    reason TEXT,
+                    notes TEXT,
+                    documents TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (doctor_id) REFERENCES doctors(id) ON DELETE CASCADE,
+                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                )
+            """
+            )
+
             # Table des métadonnées documents
             cursor.execute(
                 """
@@ -162,6 +202,63 @@ class CIADatabase:
                     UNIQUE(user_id, document_id)
                 )
             """
+            )
+
+            # Table pour blacklist des tokens JWT révoqués
+            cursor.execute(
+                """
+                CREATE TABLE IF NOT EXISTS token_blacklist (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    token_jti TEXT NOT NULL UNIQUE,
+                    user_id INTEGER NOT NULL,
+                    token_type TEXT NOT NULL,
+                    expires_at TIMESTAMP NOT NULL,
+                    revoked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    reason TEXT,
+                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                )
+            """
+            )
+
+            # Index pour recherche rapide
+            cursor.execute(
+                "CREATE INDEX IF NOT EXISTS idx_token_blacklist_jti ON token_blacklist(token_jti)"
+            )
+            cursor.execute(
+                "CREATE INDEX IF NOT EXISTS idx_token_blacklist_user ON token_blacklist(user_id)"
+            )
+            cursor.execute(
+                "CREATE INDEX IF NOT EXISTS idx_token_blacklist_expires ON token_blacklist(expires_at)"
+            )
+
+            # Table pour audit log des accès
+            cursor.execute(
+                """
+                CREATE TABLE IF NOT EXISTS audit_logs (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id INTEGER,
+                    action TEXT NOT NULL,
+                    resource_type TEXT NOT NULL,
+                    resource_id TEXT,
+                    ip_address TEXT,
+                    user_agent TEXT,
+                    success BOOLEAN DEFAULT TRUE,
+                    error_message TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+                )
+            """
+            )
+
+            # Index pour audit log
+            cursor.execute(
+                "CREATE INDEX IF NOT EXISTS idx_audit_logs_user ON audit_logs(user_id)"
+            )
+            cursor.execute(
+                "CREATE INDEX IF NOT EXISTS idx_audit_logs_action ON audit_logs(action)"
+            )
+            cursor.execute(
+                "CREATE INDEX IF NOT EXISTS idx_audit_logs_created ON audit_logs(created_at)"
             )
 
             conn.commit()
@@ -559,6 +656,178 @@ class CIADatabase:
                     """,
                     (user_id,),
                 )
+            return [dict(row) for row in cursor.fetchall()]
+
+    # === GESTION BLACKLIST TOKENS ===
+
+    def add_token_to_blacklist(
+        self,
+        token_jti: str,
+        user_id: int,
+        token_type: str,
+        expires_at: datetime,
+        reason: str | None = None,
+    ) -> bool:
+        """Ajoute un token à la blacklist"""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            try:
+                cursor.execute(
+                    """
+                    INSERT INTO token_blacklist (token_jti, user_id, token_type, expires_at, reason)
+                    VALUES (?, ?, ?, ?, ?)
+                    """,
+                    (token_jti, user_id, token_type, expires_at.isoformat(), reason),
+                )
+                return True
+            except sqlite3.IntegrityError:
+                # Token déjà dans la blacklist
+                return False
+
+    def is_token_blacklisted(self, token_jti: str) -> bool:
+        """Vérifie si un token est dans la blacklist"""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                """
+                SELECT COUNT(*) FROM token_blacklist
+                WHERE token_jti = ? AND expires_at > datetime('now')
+                """,
+                (token_jti,),
+            )
+            result = cursor.fetchone()
+            return bool(result[0] > 0) if result else False
+
+    def revoke_all_user_tokens(self, user_id: int, reason: str = "User logout") -> int:
+        """Révoque tous les tokens d'un utilisateur"""
+        # Note: On ne peut pas blacklister tous les tokens existants sans les avoir
+        # Mais on peut marquer qu'on veut forcer une rotation
+        # Pour l'instant, on retourne 0 (sera amélioré avec rotation)
+        return 0
+
+    def cleanup_expired_tokens(self) -> int:
+        """Nettoie les tokens expirés de la blacklist"""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                "DELETE FROM token_blacklist WHERE expires_at < datetime('now')"
+            )
+            return cursor.rowcount
+
+    # === GESTION AUDIT LOG ===
+
+    def add_audit_log(
+        self,
+        user_id: int | None,
+        action: str,
+        resource_type: str,
+        resource_id: str | None = None,
+        ip_address: str | None = None,
+        user_agent: str | None = None,
+        success: bool = True,
+        error_message: str | None = None,
+    ) -> int | None:
+        """Ajoute une entrée dans l'audit log"""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            try:
+                cursor.execute(
+                    """
+                    INSERT INTO audit_logs (
+                        user_id, action, resource_type, resource_id,
+                        ip_address, user_agent, success, error_message
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        user_id,
+                        action,
+                        resource_type,
+                        resource_id,
+                        ip_address,
+                        user_agent,
+                        success,
+                        error_message,
+                    ),
+                )
+                return cursor.lastrowid
+            except Exception:
+                # En cas d'erreur, on ne bloque pas l'application
+                return None
+
+    def get_audit_logs(
+        self,
+        user_id: int | None = None,
+        action: str | None = None,
+        limit: int = 100,
+        skip: int = 0,
+    ) -> list[dict[str, Any]]:
+        """Récupère les logs d'audit"""
+        with sqlite3.connect(self.db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            conditions: list[str] = []
+            params: list[Any] = []
+
+            if user_id is not None:
+                conditions.append("user_id = ?")
+                params.append(user_id)
+            if action is not None:
+                conditions.append("action = ?")
+                params.append(action)
+
+            where_clause = " AND ".join(conditions) if conditions else "1=1"
+            params.extend([limit, skip])
+
+            cursor.execute(
+                f"""
+                SELECT * FROM audit_logs
+                WHERE {where_clause}
+                ORDER BY created_at DESC
+                LIMIT ? OFFSET ?
+                """,
+                params,
+            )
+            return [dict(row) for row in cursor.fetchall()]
+
+    # === GESTION CONSULTATIONS ===
+
+    def get_consultations_by_user(
+        self,
+        user_id: int,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
+        limit: int = 50,
+    ) -> list[dict[str, Any]]:
+        """Récupère les consultations d'un utilisateur"""
+        with sqlite3.connect(self.db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            
+            conditions: list[str] = ["user_id = ?"]
+            params: list[Any] = [user_id]
+
+            if start_date:
+                conditions.append("date >= ?")
+                params.append(start_date.isoformat())
+            if end_date:
+                conditions.append("date <= ?")
+                params.append(end_date.isoformat())
+
+            where_clause = " AND ".join(conditions)
+            params.append(limit)
+            
+            cursor.execute(
+                f"""
+                SELECT c.*, d.first_name, d.last_name, d.specialty
+                FROM consultations c
+                LEFT JOIN doctors d ON c.doctor_id = d.id
+                WHERE {where_clause}
+                ORDER BY c.date DESC
+                LIMIT ?
+                """,
+                params,
+            )
             return [dict(row) for row in cursor.fetchall()]
 
 

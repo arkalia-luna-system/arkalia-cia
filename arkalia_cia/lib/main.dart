@@ -10,6 +10,7 @@ import 'services/auth_api_service.dart';
 import 'services/backend_config_service.dart';
 import 'services/offline_cache_service.dart';
 import 'services/notification_service.dart';
+import 'services/runtime_security_service.dart';
 import 'utils/app_logger.dart';
 
 void main() async {
@@ -30,6 +31,8 @@ void main() async {
   await CalendarService.init();
   // Initialiser le service de notifications au démarrage
   await NotificationService.initialize();
+  // Initialiser le service de sécurité runtime
+  await RuntimeSecurityService.initialize();
   // Nettoyer automatiquement les caches expirés au démarrage
   await OfflineCacheService.clearExpiredCaches();
   runApp(const ArkaliaCIAApp());

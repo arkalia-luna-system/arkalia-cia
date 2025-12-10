@@ -142,13 +142,30 @@ class MedicalReportService:
     def _get_recent_consultations(
         self, user_id: str, start_date: datetime, end_date: datetime
     ) -> list[dict[str, Any]]:
-        """Récupère les consultations récentes"""
-        # Récupérer consultations depuis la base de données
-        # Note: Structure dépend de l'implémentation réelle
-        consultations: list[dict[str, Any]] = []
-        # TODO: Implémenter récupération consultations depuis DB
-        # Pour l'instant, retourner liste vide
-        return consultations
+        """Récupère les consultations récentes depuis la base de données"""
+        try:
+            consultations_data = self.db.get_consultations_by_user(
+                user_id=int(user_id),
+                start_date=start_date,
+                end_date=end_date,
+                limit=20,
+            )
+            
+            consultations = []
+            for consult in consultations_data:
+                doctor_name = f"{consult.get('first_name', '')} {consult.get('last_name', '')}".strip()
+                consultations.append({
+                    "date": consult.get("date", ""),
+                    "doctor": doctor_name,
+                    "specialty": consult.get("specialty", ""),
+                    "reason": consult.get("reason", ""),
+                    "notes": consult.get("notes", ""),
+                })
+            
+            return consultations
+        except Exception as e:
+            logger.warning(f"Erreur récupération consultations: {e}")
+            return []
 
     def _get_aria_data(self, user_id: str, days_range: int) -> dict[str, Any] | None:
         """Récupère les données ARIA (douleur, patterns, métriques)"""

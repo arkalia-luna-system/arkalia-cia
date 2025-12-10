@@ -186,19 +186,18 @@ def parse_masante_pdf(file_path):
 
 ## 🎯 ÉVOLUTION FUTURE
 
-### Si l'app scale (revenue généré)
+### ⚠️ DÉCISION : RESTER GRATUIT
 
-**Option 1** : Partenariat Andaman 7
-- Coût : ~2 000-5 000€/an
-- Bénéfice : Sync automatique, meilleure UX
+**Stratégie définitive** : L'app reste **100% gratuite** - Aucune fonctionnalité payante ne sera implémentée.
 
-**Option 2** : Accréditation eHealth
-- Coût : 0€ (mais 1-3 mois onboarding)
-- Bénéfice : API officielle, données complètes
+**Options exclues** (pour éviter les coûts) :
+- ❌ **Option 1** : Partenariat Andaman 7 (2 000-5 000€/an) - **EXCLU**
+- ❌ **Option 2** : Accréditation eHealth (procédure longue) - **NON PRIORITAIRE**
 
-**Option 3** : Rester gratuit
+**Option choisie** : ✅ **Rester gratuit**
 - Coût : 0€
-- Bénéfice : Pas de dépendance, contrôle total
+- Bénéfice : Pas de dépendance, contrôle total, app gratuite pour toujours
+- Import manuel : Fonctionne parfaitement, gratuit, immédiat
 
 ---
 

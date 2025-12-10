@@ -2,6 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:arkalia_cia/services/onboarding_service.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  
   group('OnboardingService', () {
     setUp(() async {
       // Réinitialiser l'onboarding avant chaque test
