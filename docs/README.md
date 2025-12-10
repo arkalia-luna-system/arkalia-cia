@@ -226,5 +226,8 @@
 
 ---
 
-**Dernière mise à jour** : 10 décembre 2025  
-**Version** : 1.3.1+5
+<div align="center">
+
+**Dernière mise à jour** : 10 décembre 2025 | **Version** : 1.3.1+5
+
+</div>

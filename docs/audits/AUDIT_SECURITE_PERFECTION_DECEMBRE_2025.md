@@ -40,66 +40,47 @@
 
 ---
 
-### 2. JWT Token Rotation ✅ **TERMINÉ**
+### 2. JWT Token Rotation ✅
 
-**Statut**: ✅ Implémenté  
-**Référence**: `arkalia_cia_python_backend/auth.py`, `database.py`
+**Fichiers** : `auth.py`, `database.py`, `api.py`
 
-**Implémentation**:
-- ✅ Blacklist de tokens révoqués (table `token_blacklist`)
-- ✅ Rotation automatique des refresh tokens
-- ✅ JTI (JWT ID) pour identification unique
-- ✅ Blacklist lors logout et refresh
+**Fonctionnalités** :
+- ✅ Blacklist tokens révoqués
+- ✅ Rotation automatique refresh tokens
+- ✅ JTI pour identification unique
 - ✅ Nettoyage automatique tokens expirés
 
-**Fichiers**:
-- `arkalia_cia_python_backend/database.py` - Table et méthodes blacklist
-- `arkalia_cia_python_backend/auth.py` - JTI dans tokens, vérification blacklist
-- `arkalia_cia_python_backend/api.py` - Endpoints logout et refresh avec blacklist
-
-**Priorité**: ✅ RÉSOLU
+**Statut** : ✅ Résolu
 
 ---
 
-### 3. Role-Based Access Control (RBAC) ✅ **TERMINÉ**
+### 3. RBAC (Role-Based Access Control) ✅
 
-**Statut**: ✅ Framework complet implémenté  
-**Référence**: `arkalia_cia_python_backend/auth.py`
+**Fichier** : `auth.py`
 
-**Implémentation**:
+**Fonctionnalités** :
 - ✅ Système de rôles (admin, user, family_viewer, family_editor)
-- ✅ Permissions granulaires par ressource
-- ✅ Fonction `has_permission()` pour vérification
-- ✅ Décorateur `@require_permission()` pour endpoints
-- ✅ ROLES dictionary avec permissions définies
+- ✅ Permissions granulaires
+- ✅ Fonction `has_permission()`
+- ✅ Décorateur `@require_permission()`
 
-**Fichiers**:
-- `arkalia_cia_python_backend/auth.py` - Framework RBAC complet
-- Prêt à être appliqué aux endpoints selon besoins spécifiques
-
-**Note**: Le framework est prêt. Application progressive aux endpoints selon besoins.
-
-**Priorité**: ✅ RÉSOLU
-- Endpoints pour gestion des permissions
-```
+**Statut** : ✅ Résolu (framework prêt)
 
 **Priorité**: 🟠 ÉLEVÉE  
 **Effort**: 5-7 jours
 
 ---
 
-### 4. Hardware Security Modules (HSM) ✅ **TERMINÉ**
+### 4. HSM (Hardware Security Modules) ✅
 
-**Statut**: ✅ Implémenté via FlutterSecureStorage  
-**Référence**: `SECURITY.md` ligne 147
+**Fichier** : `SECURITY.md`
 
-**Problème**:
-- Clés de chiffrement stockées en dur dans l'app
-- Pas de protection matérielle des clés
-- Clés partagées entre tous les utilisateurs
+**Fonctionnalités** :
+- ✅ FlutterSecureStorage (Keychain/Keystore)
+- ✅ Protection matérielle des clés
+- ✅ Clés par utilisateur
 
-**Impact**:
-- Si l'app est décompilée, clés exposées
+**Statut** : ✅ Résolu
 - Pas de protection contre extraction matérielle
 - Clés de chiffrement vulnérables
 

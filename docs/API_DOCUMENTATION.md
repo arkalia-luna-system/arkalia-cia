@@ -1,13 +1,18 @@
-# Documentation API — Arkalia CIA
+# 🔌 Documentation API — Arkalia CIA
 
-**Version** : 1.3.1
-**Date** : 27 novembre 2025
-**Base URL** : `http://localhost:8000` (développement) ou configurée via `BackendConfigService`
-**Version API** : `/api/v1/`
+<div align="center">
 
-Documentation complète de l'API REST d'Arkalia CIA.
+**Version** : 1.3.1+5 | **Date** : 10 décembre 2025
 
-**Total endpoints** : 19 endpoints avec préfixe `/api/v1/` + 2 endpoints système (`/` et `/health`) = 21 endpoints au total.
+[![Endpoints](https://img.shields.io/badge/endpoints-21-blue)]()
+[![Auth](https://img.shields.io/badge/auth-JWT-orange)]()
+[![Rate Limit](https://img.shields.io/badge/rate%20limit-actif-yellow)]()
+
+</div>
+
+**Base URL** : `http://localhost:8000` (dev) ou configurée via `BackendConfigService`  
+**Version API** : `/api/v1/`  
+**Total** : 21 endpoints (19 API + 2 système)
 
 ---
 
@@ -35,26 +40,27 @@ Tous les endpoints (sauf `/`, `/health` et `/api/v1/auth/*`) nécessitent une au
 
 ```mermaid
 sequenceDiagram
-    participant C as Client
-    participant API as Backend API
-    participant DB as Database
+    autonumber
+    participant C as 👤 Client
+    participant API as 🐍 Backend API
+    participant DB as 💾 Database
 
     C->>API: POST /api/v1/auth/register
     API->>DB: Créer utilisateur
-    DB-->>API: Utilisateur créé
-    API-->>C: 201 Created
+    DB-->>API: ✅ Utilisateur créé
+    API-->>C: ✅ 201 Created
 
     C->>API: POST /api/v1/auth/login
     API->>DB: Vérifier credentials
-    DB-->>API: Utilisateur valide
+    DB-->>API: ✅ Utilisateur valide
     API->>API: Générer JWT
-    API-->>C: access_token + refresh_token
+    API-->>C: ✅ access_token + refresh_token
 
     C->>API: GET /api/v1/documents (avec token)
     API->>API: Valider JWT
     API->>DB: Récupérer documents
     DB-->>API: Documents
-    API-->>C: 200 OK + données
+    API-->>C: ✅ 200 OK + données
 ```
 
 ### Inscription

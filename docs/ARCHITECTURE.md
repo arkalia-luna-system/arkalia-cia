@@ -1,24 +1,30 @@
-# Architecture
+# 🏗️ Architecture — Arkalia CIA
 
-**Version** : 1.3.1
-**Dernière mise à jour** : 20 novembre 2025
-**Statut** : Production Ready
+<div align="center">
 
-Documentation technique de l'architecture et de la conception système d'Arkalia CIA.
+**Version** : 1.3.1+5 | **Dernière mise à jour** : 10 décembre 2025
+
+[![Statut](https://img.shields.io/badge/statut-production--ready-success)]()
+[![Architecture](https://img.shields.io/badge/architecture-local--first-blue)]()
+
+</div>
+
+Documentation technique de l'architecture système.
 
 ---
 
 ## Vue d'ensemble
 
-Arkalia CIA implémente une **architecture local-first** privilégiant la simplicité, la fiabilité et la confidentialité des données. L'application fonctionne entièrement sur l'appareil sans dépendances externes pour les fonctionnalités principales.
+Architecture **local-first** : simplicité, fiabilité, confidentialité.  
+Fonctionne entièrement sur l'appareil, sans dépendances externes.
 
-### Principes architecturaux
+### Principes
 
-1. **Local-First** : Toutes les données stockées localement
-2. **Offline-First** : Fonctionnalités principales disponibles hors ligne
-3. **Sécurité par conception** : Chiffrement AES-256, authentification JWT
-4. **Intégration native** : Calendrier, contacts, biométrie
-5. **Performance** : Cache intelligent, pagination, optimisations mémoire
+1. **Local-First** : Données stockées localement
+2. **Offline-First** : Fonctionnalités hors ligne
+3. **Sécurité** : AES-256, JWT, biométrie
+4. **Intégration native** : Calendrier, contacts
+5. **Performance** : Cache, pagination, optimisations
 
 ---
 
@@ -326,27 +332,33 @@ erDiagram
 
 ```mermaid
 graph LR
-    A[CIA] --> B[ARIAIntegration Service]
-    B --> C[ARIA API]
-    C --> D[Pain Data]
-    C --> E[Patterns]
-    C --> F[Health Metrics]
-    D --> G[ConversationalAI]
+    A[📱 CIA] --> B[🔗 ARIAIntegration]
+    B --> C[🌐 ARIA API]
+    C --> D[📊 Pain Data]
+    C --> E[📈 Patterns]
+    C --> F[💚 Health Metrics]
+    D --> G[🤖 ConversationalAI]
     E --> G
     F --> G
-    G --> H[Enhanced Responses]
+    G --> H[✨ Enhanced Responses]
+
+    style A fill:#e1f5ff
+    style B fill:#fff4e1
+    style C fill:#ffe1f5
+    style G fill:#e1ffe1
+    style H fill:#fff9e1
 ```
 
 ### Portails santé
 
 ```mermaid
 graph TB
-    A[HealthPortalAuthScreen] --> B[HealthPortalAuthService]
-    B --> C[OAuth Flow]
-    C --> D[eHealth]
-    C --> E[Andaman 7]
-    C --> F[MaSanté]
-    D --> G[Import Data]
+    A[📱 HealthPortalAuthScreen] --> B[🔐 HealthPortalAuthService]
+    B --> C[🔄 OAuth Flow]
+    C --> D[🏥 eHealth]
+    C --> E[📱 Andaman 7]
+    C --> F[💚 MaSanté]
+    D --> G[📥 Import Data]
     E --> G
     F --> G
     G --> H[Backend API]

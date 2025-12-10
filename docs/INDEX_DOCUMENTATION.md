@@ -196,4 +196,8 @@ docs/
 
 ---
 
-*Dernière mise à jour : 27 novembre 2025*
+<div align="center">
+
+*Dernière mise à jour : 10 décembre 2025*
+
+</div>

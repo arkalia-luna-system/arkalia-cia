@@ -440,7 +440,13 @@
 
 ---
 
-**Tout est prêt et pushé sur `develop` !** 🎉
+---
 
-**Score global** : 4.5/10 → **7.5/10** (amélioration +3.0 points) → **10/10** (après corrections décembre 2025)
+<div align="center">
+
+**✅ Tout est prêt et pushé sur `develop` !**
+
+**Score** : 4.5/10 → 7.5/10 → **10/10** ✅
+
+</div>
 
