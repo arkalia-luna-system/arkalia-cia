@@ -1,11 +1,14 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:arkalia_cia/services/onboarding_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   
   group('OnboardingService', () {
     setUp(() async {
+      // Réinitialiser les préférences avant chaque test
+      SharedPreferences.setMockInitialValues({});
       // Réinitialiser l'onboarding avant chaque test
       await OnboardingService.resetOnboarding();
     });

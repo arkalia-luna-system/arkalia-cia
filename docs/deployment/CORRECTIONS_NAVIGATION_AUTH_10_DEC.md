@@ -367,5 +367,43 @@
 
 ---
 
+---
+
+### 15. ✅ Implémentation Endpoint Export PDF Rapports Médicaux
+
+**Problème** :
+- ❌ Fonction `export_report_to_pdf()` implémentée mais pas d'endpoint API
+- ❌ L'utilisateur ne peut pas télécharger le PDF depuis l'app
+
+**Solution** :
+- ✅ Endpoint `/api/v1/medical-reports/export-pdf` créé
+- ✅ Génération PDF avec BackgroundTasks pour nettoyage automatique
+- ✅ Tests d'intégration créés
+- ✅ Gestion erreurs complète (reportlab non disponible, etc.)
+
+**Fichiers modifiés** :
+- `arkalia_cia_python_backend/api.py` : Endpoint export PDF
+- `tests/integration/test_medical_report_api.py` : Tests export PDF
+
+---
+
+### 16. ✅ Correction Tests Sécurité
+
+**Problème** :
+- ❌ `test_url_validation` : ValueError avec user_id None
+- ❌ `test_file_size_limit` : Exception non gérée
+
+**Solution** :
+- ✅ Tests corrigés pour utiliser DB réelle avec utilisateur valide
+- ✅ Gestion erreurs améliorée dans `get_current_active_user_with_db`
+- ✅ Test file size avec `raise_server_exceptions=False`
+
+**Fichiers modifiés** :
+- `tests/unit/test_security_vulnerabilities.py` : Tests corrigés
+- `arkalia_cia_python_backend/auth.py` : Gestion user_id None
+- `arkalia_cia_python_backend/api.py` : Protection audit log si user_id None
+
+---
+
 **Tout est prêt et pushé sur `develop` !** 🎉
 

@@ -11,7 +11,15 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from fastapi import BackgroundTasks, Depends, FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import (
+    BackgroundTasks,
+    Depends,
+    FastAPI,
+    File,
+    Form,
+    HTTPException,
+    UploadFile,
+)
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import FileResponse, JSONResponse
@@ -1205,15 +1213,16 @@ async def create_health_portal(
     )
 
     # Audit log
-    db.add_audit_log(
-        user_id=int(current_user.user_id),
-        action="health_portal_create",
-        resource_type="health_portal",
-        resource_id=str(portal_id),
-        ip_address=get_remote_address(request),
-        user_agent=request.headers.get("user-agent"),
-        success=True,
-    )
+    if current_user.user_id:
+        db.add_audit_log(
+            user_id=int(current_user.user_id),
+            action="health_portal_create",
+            resource_type="health_portal",
+            resource_id=str(portal_id),
+            ip_address=get_remote_address(request),
+            user_agent=request.headers.get("user-agent"),
+            success=True,
+        )
 
     # Récupérer le portail créé (limite configurable)
     portals = db.get_health_portals(skip=0, limit=settings.max_reminders_list)
@@ -1712,13 +1721,15 @@ async def export_medical_report_pdf(
                 success=True,
             )
 
-            # Retourner le fichier PDF avec suppression automatique
+            # Ajouter la tâche de nettoyage en arrière-plan
+            background_tasks.add_task(_cleanup_temp_file, pdf_path)
+
+            # Retourner le fichier PDF
             return FileResponse(
                 pdf_path,
                 filename=filename,
                 media_type="application/pdf",
                 headers={"Content-Disposition": f'attachment; filename="{filename}"'},
-                background=None,  # FileResponse supprime automatiquement le fichier après envoi
             )
         except RuntimeError as e:
             # Si reportlab n'est pas disponible

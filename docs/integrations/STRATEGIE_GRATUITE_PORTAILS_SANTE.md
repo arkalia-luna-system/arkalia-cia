@@ -186,18 +186,23 @@ def parse_masante_pdf(file_path):
 
 ## 🎯 ÉVOLUTION FUTURE
 
-### ⚠️ DÉCISION : RESTER GRATUIT
+### ✅ DÉCISION DÉFINITIVE : RESTER 100% GRATUIT À VIE
 
-**Stratégie définitive** : L'app reste **100% gratuite** - Aucune fonctionnalité payante ne sera implémentée.
+**Stratégie définitive** : L'app reste **100% gratuite pour toujours** - Aucune fonctionnalité payante ne sera jamais implémentée.
 
-**Options exclues** (pour éviter les coûts) :
-- ❌ **Option 1** : Partenariat Andaman 7 (2 000-5 000€/an) - **EXCLU**
-- ❌ **Option 2** : Accréditation eHealth (procédure longue) - **NON PRIORITAIRE**
+**Options exclues définitivement** (pour éviter les coûts) :
+- ❌ **Option 1** : Partenariat Andaman 7 (2 000-5 000€/an) - **EXCLU DÉFINITIVEMENT**
+- ❌ **Option 2** : Accréditation eHealth (procédure longue) - **NON PRIORITAIRE** (peut être fait plus tard si besoin, mais gratuit)
+- ❌ **Option 3** : APIs IA payantes (OpenAI, Claude, Gemini) - **EXCLU DÉFINITIVEMENT**
+- ❌ **Option 4** : Services cloud payants (AWS, GCP, Azure) - **EXCLU DÉFINITIVEMENT**
 
-**Option choisie** : ✅ **Rester gratuit**
-- Coût : 0€
+**Option choisie** : ✅ **Rester gratuit à vie**
+- Coût : 0€ (garanti)
 - Bénéfice : Pas de dépendance, contrôle total, app gratuite pour toujours
 - Import manuel : Fonctionne parfaitement, gratuit, immédiat
+- **Garantie** : Aucune fonctionnalité payante ne sera ajoutée
+
+**Voir** : `POLITIQUE_GRATUITE_100_PERCENT.md` pour la politique complète
 
 ---
 

@@ -154,6 +154,18 @@ graph TB
 - Backend synchronization
 - **Recurring reminders** (daily/weekly/monthly)
 
+#### 💰 Politique Gratuite
+
+**Garantie** : Arkalia CIA reste **100% gratuit pour toujours**.
+
+- ✅ Toutes les fonctionnalités sont gratuites
+- ✅ Pas d'APIs payantes (Andaman 7, OpenAI, etc.)
+- ✅ Pas de services cloud payants
+- ✅ Import manuel portails santé (gratuit)
+- ✅ IA locale uniquement (gratuit)
+
+**Voir** : `docs/POLITIQUE_GRATUITE_100_PERCENT.md` pour les détails
+
 #### 🚨 Emergency
 - ICE (In Case of Emergency) contacts
 - One-tap emergency calling

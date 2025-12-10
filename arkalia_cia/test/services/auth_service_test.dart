@@ -23,14 +23,19 @@ void main() {
     });
 
     test('shouldAuthenticateOnStartup should return correct value', () async {
-      // Par défaut, l'authentification est activée
+      // Par défaut, l'authentification au démarrage est activée
       final shouldAuth = await AuthService.shouldAuthenticateOnStartup();
       expect(shouldAuth, true);
 
-      // Désactiver l'authentification
-      await AuthService.setAuthEnabled(false);
+      // Désactiver l'authentification au démarrage
+      await AuthService.setAuthOnStartup(false);
       final shouldAuthAfterDisable = await AuthService.shouldAuthenticateOnStartup();
       expect(shouldAuthAfterDisable, false);
+
+      // Réactiver l'authentification au démarrage
+      await AuthService.setAuthOnStartup(true);
+      final shouldAuthAfterEnable = await AuthService.shouldAuthenticateOnStartup();
+      expect(shouldAuthAfterEnable, true);
     });
 
     // Note: Les tests pour isBiometricAvailable, getAvailableBiometrics et authenticate

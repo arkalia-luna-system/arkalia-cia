@@ -239,11 +239,13 @@ Analyse exhaustive de l'écosystème Arkalia Luna System et des besoins utilisat
 - ⚠️ UI authentification existe (`health_portal_auth_screen.dart`)
 - ✅ Parsing automatique documents médicaux (`pdf_processor.py`)
 - ✅ OCR/scan pour documents scannés (`ocr_integration.py`)
-- ⚠️ **MANQUE** : Connexion réelle aux APIs Andaman 7/MaSanté
-- ⚠️ **MANQUE** : Import automatique données depuis APIs
-- ⚠️ **MANQUE** : Extraction historique via NLP spécialisé santé
+- ✅ **SOLUTION GRATUITE** : Import manuel PDF (Andaman 7/MaSanté)
+- ✅ **IMPLÉMENTÉ** : Parser PDF automatique (gratuit)
+- ✅ **IMPLÉMENTÉ** : Extraction métadonnées (gratuit)
+- ❌ **EXCLU** : APIs automatiques payantes (Andaman 7 = 2 000-5 000€/an)
 
-**Impact** : 🔴 **BLOQUANT** - Structure existe mais implémentation réelle manquante
+**Impact** : ✅ **NON BLOQUANT** - Import manuel fonctionne parfaitement et reste gratuit
+**Note** : Les APIs automatiques sont exclues pour rester gratuit. L'import manuel est la solution choisie.
 
 ---
 

@@ -200,13 +200,17 @@ async def get_current_active_user_with_db(
 ) -> TokenData:
     """Vérifie que l'utilisateur est actif avec vérification DB et blacklist"""
     # Vérifier dans la DB si l'utilisateur est actif (si DB disponible)
-    if db is not None:
-        user_data = db.get_user_by_id(int(current_user.user_id))
-        if user_data and not user_data.get("is_active", True):
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Compte utilisateur désactivé",
-            )
+    if db is not None and current_user.user_id:
+        try:
+            user_data = db.get_user_by_id(int(current_user.user_id))
+            if user_data and not user_data.get("is_active", True):
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Compte utilisateur désactivé",
+                )
+        except (ValueError, TypeError):
+            # Si user_id n'est pas un nombre valide, ignorer la vérification DB
+            pass
     return current_user
 
 

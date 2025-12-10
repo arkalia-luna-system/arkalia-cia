@@ -448,6 +448,23 @@
 
 **Note**: Ces éléments sont optionnels et n'empêchent pas d'atteindre 10/10. Le framework RBAC est prêt et peut être appliqué selon les besoins spécifiques de chaque endpoint.
 
+### 💰 Politique Gratuite 100%
+
+**Garantie** : Arkalia CIA restera **100% gratuit pour toujours**.
+
+**Exclusions définitives** (pour éviter les coûts) :
+- ❌ APIs portails santé payantes (Andaman 7 = 2 000-5 000€/an) - **EXCLU**
+- ❌ APIs IA payantes (OpenAI, Claude, Gemini) - **EXCLU**
+- ❌ Services cloud payants (AWS, GCP, Azure) - **EXCLU**
+
+**Solution actuelle** : ✅ **Tout est gratuit**
+- Import manuel portails santé (gratuit)
+- IA locale avec patterns (gratuit)
+- Stockage local uniquement (gratuit)
+- Toutes les bibliothèques sont open-source gratuites
+
+**Voir** : `POLITIQUE_GRATUITE_100_PERCENT.md` pour les détails complets
+
 ---
 
 ## 📚 RÉFÉRENCES
