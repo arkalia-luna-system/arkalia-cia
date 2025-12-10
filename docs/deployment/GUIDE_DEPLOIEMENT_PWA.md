@@ -38,8 +38,11 @@ Le script fait tout automatiquement :
 cd arkalia_cia
 flutter clean
 flutter pub get
-flutter build web --release --no-wasm-dry-run
+# Base-href nécessaire pour GitHub Pages (repo non-racine)
+flutter build web --release --no-wasm-dry-run --base-href "/arkalia-cia/"
 ```
+
+**Important** : Le `--base-href "/arkalia-cia/"` est **obligatoire** pour que l'app fonctionne sur GitHub Pages (repo non-racine).
 
 **Résultat** : Dossier `build/web/` avec tous les fichiers statiques
 
