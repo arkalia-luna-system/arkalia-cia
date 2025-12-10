@@ -3,8 +3,9 @@
 > **Ton application santé personnelle** - Tout ce que tu pourras faire avec Arkalia CIA
 
 **Créé par** : Ta fille qui t'aime ❤️  
-**Date** : 27 novembre 2025  
-**Version** : 1.3.1 (en développement)
+**Date** : 10 décembre 2025  
+**Version** : 1.3.1  
+**Installation** : Voir [GUIDE_INSTALLATION_PWA_MAMAN.md](./guides/GUIDE_INSTALLATION_PWA_MAMAN.md) pour installer l'app en PWA
 
 ---
 
@@ -17,11 +18,12 @@ Ta fille attend juste la validation de Google Play Store pour te l'envoyer.
 
 **Tu recevras l'app très bientôt (dans quelques jours) !** 📱✨
 
-**Statut actuel** (27 novembre 2025) :
+**Statut actuel** (10 décembre 2025) :
 - ✅ Toutes les fonctionnalités sont prêtes
 - ✅ Tests terminés (352 tests passés)
 - ✅ 0 erreur dans le code
-- ⏳ En attente : Validation Google Play Store (1-3 jours)
+- ✅ **PWA disponible** : L'app peut être installée directement depuis Internet (voir guide d'installation)
+- ⏳ Play Store : En attente validation (alternative PWA disponible)
 
 ---
 
