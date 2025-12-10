@@ -21,11 +21,24 @@
 
 ### Étape 1 : Build Web (5 minutes)
 
+**Option A : Script automatique** (Recommandé) ⭐
+
+```bash
+./scripts/deploy_pwa_github_pages.sh
+```
+
+Le script fait tout automatiquement :
+- Build web
+- Création `.nojekyll`
+- Push sur `gh-pages`
+
+**Option B : Manuel**
+
 ```bash
 cd arkalia_cia
 flutter clean
 flutter pub get
-flutter build web --release
+flutter build web --release --no-wasm-dry-run
 ```
 
 **Résultat** : Dossier `build/web/` avec tous les fichiers statiques
@@ -33,7 +46,7 @@ flutter build web --release
 **Vérification** :
 ```bash
 ls -la build/web/
-# Doit contenir : index.html, main.dart.js, assets/, etc.
+# Doit contenir : index.html, main.dart.js, assets/, .nojekyll, etc.
 ```
 
 ---
@@ -51,9 +64,11 @@ ls -la build/web/
 
 **Étapes** :
 
-1. **Créer branche gh-pages** :
+1. **Créer branche gh-pages** (si pas déjà fait) :
 ```bash
 cd build/web
+# Créer .nojekyll (important pour GitHub Pages)
+touch .nojekyll
 git init
 git add .
 git commit -m "Deploy PWA v1.3.1"
@@ -77,6 +92,8 @@ git push -u origin gh-pages --force
    - Save
 
 5. **Attendre 2-3 minutes** → URL disponible !
+
+**Note importante** : Le fichier `.nojekyll` est **obligatoire** pour que GitHub Pages fonctionne correctement. Il est créé automatiquement par le script `deploy_pwa_github_pages.sh`.
 
 ---
 
