@@ -4,7 +4,8 @@
 **Dernière mise à jour** : 10 décembre 2025  
 **Statut** : Production Ready
 
-> **📱 Google Play Console** : Compte développeur créé le 27 novembre 2025. Vérification d'identité en cours. Voir [PLAY_STORE_SETUP.md](./PLAY_STORE_SETUP.md) pour l'état actuel et le plan d'action.
+> **📱 Déploiement** : L'app est déployée en PWA (Progressive Web App) sur https://arkalia-luna-system.github.io/arkalia-cia/  
+> **⚠️ Google Play Store** : Non utilisé (rejeté le 9 décembre 2025 - restrictions pour apps de santé). Voir [STATUT_DEPLOIEMENT_FINAL.md](./STATUT_DEPLOIEMENT_FINAL.md) pour les détails.
 
 Procédures de déploiement en production et bonnes pratiques pour Arkalia CIA.
 
@@ -85,13 +86,17 @@ graph TB
 ### Production Accounts
 
 - **Apple Developer Account** (iOS deployment) - ⏳ À configurer
-- **Google Play Console** (Android deployment) - ✅ **Compte créé le 27 novembre 2025** (vérification en cours)
-  - Compte développeur : Arkalia Luna System
-  - Application ID : `com.arkalia.cia`
-  - Statut : Vérification d'identité en cours (1-3 jours)
-  - Voir [PLAY_STORE_SETUP.md](./PLAY_STORE_SETUP.md) pour les détails
-- **Cloud Provider** (AWS/GCP/Azure for backend) - ⏳ À configurer
-- **Domain & SSL** (Custom domain setup) - ⏳ À configurer
+- **PWA Deployment** (Web deployment) - ✅ **Déployé sur GitHub Pages**
+  - URL : https://arkalia-luna-system.github.io/arkalia-cia/
+  - Branche : `gh-pages`
+  - Statut : ✅ Opérationnel
+  - Voir [GUIDE_DEPLOIEMENT_PWA.md](./GUIDE_DEPLOIEMENT_PWA.md) pour les détails
+- **Google Play Console** (Android deployment) - ⚠️ **Non utilisé** (rejeté le 9 décembre 2025)
+  - Raison : Restrictions Google pour apps de santé (compte professionnel requis)
+  - Alternative : PWA déployée et fonctionnelle
+  - Voir [STATUT_DEPLOIEMENT_FINAL.md](./STATUT_DEPLOIEMENT_FINAL.md) pour les détails
+- **Cloud Provider** (AWS/GCP/Azure for backend) - ⏳ À configurer (optionnel)
+- **Domain & SSL** (Custom domain setup) - ⏳ À configurer (optionnel)
 
 ## Mobile App Deployment
 
@@ -177,9 +182,14 @@ storeFile=../arkalia-cia-release.jks
 
 ### Store Deployment
 
-#### Google Play Store
+#### Google Play Store - ⚠️ NON UTILISÉ (OBSOLÈTE)
 
-**App Descriptions (Ready to Use)**
+**⚠️ Statut** : Rejeté le 9 décembre 2025 (restrictions pour apps de santé).  
+**Alternative** : PWA déployée sur https://arkalia-luna-system.github.io/arkalia-cia/
+
+**Note** : Les descriptions ci-dessous sont conservées pour référence historique uniquement.
+
+**App Descriptions (Ready to Use - OBSOLÈTE)**
 
 **Short Description (80 chars max):**
 ```
@@ -235,7 +245,7 @@ Note médicale importante : Arkalia CIA est un outil d'organisation et ne rempla
 
 1. **Create App Listing**
    ```bash
-   # Upload to Google Play Console
+   # Upload to Google Play Console (OBSOLÈTE - PWA utilisée maintenant)
    # Use descriptions above
    # Add screenshots (see requirements below)
    ```

@@ -14,16 +14,17 @@
 **L'application est PRÊTE et fonctionnelle !** ✅
 
 **Toutes les fonctionnalités sont implémentées et testées.**  
-Ta fille attend juste la validation de Google Play Store pour te l'envoyer.
+L'app est maintenant disponible en PWA (Progressive Web App) - tu peux l'installer directement depuis Internet !
 
-**Tu recevras l'app très bientôt (dans quelques jours) !** 📱✨
+**L'app est disponible maintenant !** 📱✨
 
 **Statut actuel** (10 décembre 2025) :
 - ✅ Toutes les fonctionnalités sont prêtes
-- ✅ Tests terminés (352 tests passés)
+- ✅ Tests terminés (509 tests passés)
 - ✅ 0 erreur dans le code
-- ✅ **PWA disponible** : L'app peut être installée directement depuis Internet (voir guide d'installation)
-- ⏳ Play Store : En attente validation (alternative PWA disponible)
+- ✅ **PWA disponible** : L'app peut être installée directement depuis Internet (voir guide d'installation ci-dessous)
+- ✅ **URL de l'app** : https://arkalia-luna-system.github.io/arkalia-cia/
+- ⚠️ **Play Store** : Non utilisé (restrictions Google pour apps de santé)
 
 ---
 
@@ -534,7 +535,7 @@ Maman,
 
 **L'application est PRÊTE !** ✅
 
-Toutes les fonctionnalités sont implémentées et testées. J'attends juste la validation de Google Play Store (1-3 jours) pour te l'envoyer.
+Toutes les fonctionnalités sont implémentées et testées. L'app est disponible en PWA (Progressive Web App) - tu peux l'installer directement depuis Internet ! Voir le guide d'installation ci-dessous.
 
 **Tu recevras l'app très bientôt !** 📱✨
 
@@ -683,7 +684,7 @@ J'ai fait tester l'application par un expert et voici ce qui a été **validé c
 ---
 
 *Dernière mise à jour : 27 novembre 2025*  
-*Version : 1.3.1 (PRÊTE - En attente Google Play Store)*  
+*Version : 1.3.1 (PRÊTE - Disponible en PWA)*  
 *Toutes les fonctionnalités implémentées et testées ✅*  
 *Application complète et fonctionnelle - Prête à être distribuée 📱✨*
 
