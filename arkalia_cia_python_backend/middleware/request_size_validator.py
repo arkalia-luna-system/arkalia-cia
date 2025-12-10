@@ -4,9 +4,9 @@ Protection contre DoS par payloads énormes
 """
 
 import logging
-from fastapi import Request, HTTPException, status
+
+from fastapi import HTTPException, Request, status
 from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.responses import Response
 
 from arkalia_cia_python_backend.config import get_settings
 

@@ -803,7 +803,7 @@ class CIADatabase:
         with sqlite3.connect(self.db_path) as conn:
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
-            
+
             conditions: list[str] = ["user_id = ?"]
             params: list[Any] = [user_id]
 
@@ -816,7 +816,7 @@ class CIADatabase:
 
             where_clause = " AND ".join(conditions)
             params.append(limit)
-            
+
             cursor.execute(
                 f"""
                 SELECT c.*, d.first_name, d.last_name, d.specialty
