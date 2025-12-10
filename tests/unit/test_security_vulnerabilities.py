@@ -4,6 +4,7 @@ Tests contre injection SQL, XSS, path traversal, etc.
 """
 
 import bcrypt
+import pytest
 from fastapi.testclient import TestClient
 
 from arkalia_cia_python_backend.api import API_PREFIX, app

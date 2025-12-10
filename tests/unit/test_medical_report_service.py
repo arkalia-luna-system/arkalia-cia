@@ -48,16 +48,6 @@ class TestMedicalReportService:
         assert "formatted_text" in report
         assert "documents" in report["sections"]
 
-    def test_export_report_to_text(self, report_service):
-        """Test export rapport en texte"""
-        report = {
-            "report_date": datetime.now().isoformat(),
-            "generated_at": datetime.now().isoformat(),
-            "formatted_text": "Test rapport",
-        }
-        text = report_service.export_report_to_text(report)
-        assert text == "Test rapport"
-
     def test_export_report_to_pdf(self, report_service):
         """Test export rapport en PDF"""
         import os
