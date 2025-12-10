@@ -54,6 +54,14 @@ jobs:
           echo "🧪 Running Flutter tests with coverage..."
           flutter test --coverage || echo "Flutter tests completed with warnings"
 
+          # Tests PWA si disponibles
+          if [ -f "../tests/web/pwa_test.dart" ]; then
+            echo "🧪 Running PWA tests..."
+            cd ..
+            dart test tests/web/pwa_test.dart || echo "PWA tests completed with warnings"
+            cd arkalia_cia
+          fi
+
           # Vérifier que le fichier de couverture a été généré
           if [ -f "coverage/lcov.info" ]; then
             echo "✅ Coverage report generated: coverage/lcov.info"

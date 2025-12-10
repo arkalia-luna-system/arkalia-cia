@@ -139,26 +139,17 @@ vercel
 
 ---
 
-### Étape 4 : Créer Guide pour Ta Mère
+### Étape 4 : Guide pour Ta Mère ✅
 
-Créer un document simple avec :
-- L'URL de l'app
-- Instructions d'installation (2-3 étapes)
-- Screenshots si nécessaire
+**Guide créé** : `docs/guides/GUIDE_INSTALLATION_PWA_MAMAN.md`
 
-**Exemple** :
+Le guide complet est disponible avec :
+- ✅ Instructions détaillées étape par étape
+- ✅ Dépannage pour problèmes courants
+- ✅ Notes importantes
+- ✅ Format simple et clair pour ta mère
 
-```
-📱 INSTALLATION ARKALIA CIA
-
-1. Ouvrir Chrome sur ton téléphone
-2. Aller à : https://arkalia-luna-system.github.io/arkalia-cia
-3. Menu (3 points) → "Ajouter à l'écran d'accueil"
-4. ✅ C'est installé !
-
-L'icône apparaît sur ton écran d'accueil.
-Tu peux l'utiliser comme une app normale.
-```
+**URL du guide** : `docs/guides/GUIDE_INSTALLATION_PWA_MAMAN.md`
 
 ---
 
