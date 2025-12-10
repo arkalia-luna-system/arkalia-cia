@@ -920,6 +920,7 @@ async def delete_health_portal_document(
     try:
         if not current_user.user_id:
             raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
+
         user_id = int(current_user.user_id)
 
         # Vérifier que le document appartient à l'utilisateur
