@@ -30,8 +30,10 @@ void main() {
 
       final usernameField = find.widgetWithText(TextFormField, 'Nom d\'utilisateur *');
       await tester.enterText(usernameField, 'ab');
-      await tester.tap(find.text('Créer le compte'));
-      await tester.pump();
+      await tester.ensureVisible(find.text('Créer le compte'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Créer le compte'), warnIfMissed: false);
+      await tester.pumpAndSettle();
 
       expect(find.text('Le nom d\'utilisateur doit contenir au moins 3 caractères'), findsOneWidget);
     });
@@ -45,8 +47,10 @@ void main() {
 
       final passwordField = find.widgetWithText(TextFormField, 'Mot de passe *');
       await tester.enterText(passwordField, 'short');
-      await tester.tap(find.text('Créer le compte'));
-      await tester.pump();
+      await tester.ensureVisible(find.text('Créer le compte'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Créer le compte'), warnIfMissed: false);
+      await tester.pumpAndSettle();
 
       expect(find.text('Le mot de passe doit contenir au moins 8 caractères'), findsOneWidget);
     });
@@ -58,13 +62,17 @@ void main() {
         ),
       );
 
+      final usernameField = find.widgetWithText(TextFormField, 'Nom d\'utilisateur *');
       final passwordField = find.widgetWithText(TextFormField, 'Mot de passe *');
       final confirmPasswordField = find.widgetWithText(TextFormField, 'Confirmer le mot de passe *');
 
+      await tester.enterText(usernameField, 'testuser');
       await tester.enterText(passwordField, 'password123');
       await tester.enterText(confirmPasswordField, 'different');
-      await tester.tap(find.text('Créer le compte'));
-      await tester.pump();
+      await tester.ensureVisible(find.text('Créer le compte'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Créer le compte'), warnIfMissed: false);
+      await tester.pumpAndSettle();
 
       expect(find.text('Les mots de passe ne correspondent pas'), findsOneWidget);
     });
