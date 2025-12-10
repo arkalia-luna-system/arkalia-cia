@@ -1,4 +1,4 @@
-# 📱❤️🔐 **Arkalia CIA** - Assistant Mobile Santé
+# 📱❤️🔐 **Arkalia CIA** - Assistant Mobile Santé | Tests: 509, couverture: 72%
 
 > **🌍 English**: Health-focused mobile assistant (Flutter+Python) for secure document management and senior-friendly reminders - privacy-first, locally secured, complete CI/CD.
 
@@ -8,7 +8,8 @@
 [![Python](https://img.shields.io/badge/Python-3.10.14-green.svg?logo=python)](https://python.org)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI/CD](https://img.shields.io/badge/CI%2FCD-Passing-brightgreen.svg)](https://github.com/arkalia-luna-system/arkalia-cia/actions)
-[![Coverage](https://img.shields.io/badge/Coverage-85%25-green.svg)](https://codecov.io/gh/arkalia-luna-system/arkalia-cia)
+[![Coverage](https://img.shields.io/badge/Coverage-72%25-yellow.svg)](https://codecov.io/gh/arkalia-luna-system/arkalia-cia)
+[![PWA](https://img.shields.io/badge/PWA-Disponible-success)](https://arkalia-luna-system.github.io/arkalia-cia/)
 [![CodeQL](https://img.shields.io/badge/CodeQL-Python%20Only-brightgreen.svg?logo=github)](https://github.com/arkalia-luna-system/arkalia-cia/security/code-scanning)
 [![Phase](https://img.shields.io/badge/Phase-2%20Enhanced%20Features-orange.svg)](https://github.com/arkalia-luna-system/arkalia-cia/tree/develop)
 [![Good First Issue](https://img.shields.io/badge/Good%20First-Issue-green.svg)](https://github.com/arkalia-luna-system/arkalia-cia/labels/good%20first%20issue)
@@ -17,12 +18,13 @@
 ## Overview
 
 **Project Status**: En cours, release Q1 2026 - Passage en stable v1.0  
-**Last Audit**: 27 novembre 2025 (Note: 8.5/10 ✅)  
+**Last Audit**: 10 décembre 2025 (Note: 8.5/10 ✅)  
 **Production-Ready**: 100% ✅  
-**Google Play Console**: ✅ Version 1.3.1 publiée en tests internes (26 novembre 2025)  
-**Exploitation**: 85% ✅ (amélioration +7% depuis audit initial du 26 novembre 2025, maintenu le 27 novembre 2025)  
+**Google Play Console**: ⚠️ Version 1.3.1 - Rejeté le 9 décembre 2025 (politique familiale)  
+**PWA Alternative**: ✅ Déployée sur https://arkalia-luna-system.github.io/arkalia-cia/  
+**Exploitation**: 85% ✅ (amélioration +7% depuis audit initial du 26 novembre 2025, maintenu le 10 décembre 2025)  
 **Bugs Critiques**: Tous corrigés ✅ (13/13 bugs corrigés - 100%)  
-**Tests**: 508 passed ✅ (71.98% coverage Python, 1 test Flutter)  
+**Tests**: 509 passed ✅ (71.98% coverage Python, 1 test Flutter)  
 **Optimisations**: Audit approfondi terminé - Logger conditionnel, 0 log production, code optimisé  
 **Lint**: 0 erreur Flutter, 0 erreur Python ✅  
 **Accessibilité**: Améliorée ✅ (tous textes ≥14px pour seniors)  
@@ -55,7 +57,7 @@
 | **Temps de démarrage** | <2.1s |
 | **Chiffrement** | AES-256 |
 | **Mode hors ligne** | Complet |
-| **Couverture tests** | 71.98% (508 tests Python, 1 test Flutter) |
+| **Couverture tests** | 72% (509 tests: 508 Python, 1 Flutter) |
 | **Plateformes** | iOS + Android |
 | **Utilisateurs cibles** | Seniors et familles |
 | **CI/CD** | Workflows fonctionnels |
@@ -354,7 +356,7 @@ make deps-update        # Update dependencies
 - Système de navigation
 - Intégration stockage local
 - Services de données sécurisés
-- Suite de tests (218 tests, 85% couverture)
+- Suite de tests (509 tests, 72% couverture)
 - Pipeline CI/CD fonctionnel
 - Standards qualité code (Black + Ruff)
 
@@ -449,18 +451,16 @@ A: `git clone`, `flutter pub get`, `flutter run`. See Quick Start section above.
 
 ## Tests Utilisateurs
 
-Tests effectués avec 24 utilisateurs seniors (65-82 ans) pour valider l'accessibilité.
+Tests prévus pour Q1 2026 avec utilisateurs seniors (65-82 ans) pour valider l'accessibilité.
 
-### Résultats Tests
+### Résultats Attendus
 
-- **Satisfaction utilisateur**: 4.8/5
-- **Taux de réussite tâches**: 94%
-- **Temps d'apprentissage**: <5 minutes en moyenne
-- **Rétention quotidienne**: 78% après 1 semaine
+- **Satisfaction utilisateur cible**: 4.5/5
+- **Taux de réussite tâches cible**: 90%+
+- **Temps d'apprentissage cible**: <5 minutes
+- **Rétention quotidienne cible**: 75%+ après 1 semaine
 
 ## Accessibilité Seniors
-
-Tests effectués avec 24 utilisateurs seniors (65-82 ans) pour valider l'accessibilité.
 
 ### Fonctionnalités Accessibilité
 
@@ -488,7 +488,7 @@ Tests effectués avec 24 utilisateurs seniors (65-82 ans) pour valider l'accessi
 # Run test suite
 pytest tests/ -v --cov=arkalia_cia_python_backend
 
-# Coverage: 71.98% (508 tests Python collectés, tous passants)
+# Coverage: 72% (509 tests: 508 Python, 1 Flutter - tous passants)
 # Integration tests: Multiple scenarios
 # Unit tests: Comprehensive coverage for all modules
 ```
@@ -500,7 +500,7 @@ Le projet utilise **Codecov** pour le suivi automatique de la couverture :
 - **Flutter Mobile**: Suivi via flag `flutter` dans `.github/workflows/flutter-ci.yml`
 - **Dashboard**: [codecov.io/gh/arkalia-luna-system/arkalia-cia](https://codecov.io/gh/arkalia-luna-system/arkalia-cia)
 - **Configuration**: Voir `.codecov.yml` pour les détails de configuration
-- **Couverture actuelle**: 85% globale (180/1215 lignes non couvertes)
+- **Couverture actuelle**: 72% globale (71.98% Python, test Flutter minime)
   - `database.py`: 100% ✅
   - `auto_documenter.py`: 92% ✅
   - `pdf_processor.py`: 89% ✅

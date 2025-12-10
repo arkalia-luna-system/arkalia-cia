@@ -38,17 +38,34 @@
   <link rel="manifest" href="manifest.json">
   <script>
     // Enregistrer le Service Worker
+    // Fix pour Comet: Désinscrire les anciens service workers avant d'enregistrer le nouveau
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        // Utiliser le chemin relatif pour compatibilité GitHub Pages
-        const swPath = './sw.js';
-        navigator.serviceWorker.register(swPath)
-          .then((registration) => {
-            console.log('Service Worker enregistré avec succès:', registration.scope);
-          })
-          .catch((error) => {
-            console.log('Échec de l\'enregistrement du Service Worker:', error);
-          });
+        // Désinscrire tous les service workers existants (fix pour Comet)
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+          for (let registration of registrations) {
+            registration.unregister().then(() => {
+              console.log('Ancien service worker désinscrit');
+            });
+          }
+        }).then(() => {
+          // Attendre un peu avant d'enregistrer le nouveau
+          setTimeout(() => {
+            // Utiliser le chemin relatif pour compatibilité GitHub Pages
+            const swPath = './sw.js';
+            navigator.serviceWorker.register(swPath)
+              .then((registration) => {
+                console.log('Service Worker enregistré avec succès:', registration.scope);
+                // Forcer l'activation immédiate
+                if (registration.waiting) {
+                  registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                }
+              })
+              .catch((error) => {
+                console.log('Échec de l\'enregistrement du Service Worker:', error);
+              });
+          }, 100);
+        });
       });
     }
   </script>

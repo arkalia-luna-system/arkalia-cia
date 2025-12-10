@@ -47,7 +47,47 @@ self.addEventListener('activate', (event) => {
 });
 
 // Stratégie: Network First, puis Cache
+// Fix pour Comet: Ignorer les requêtes de service worker et les requêtes de cache
 self.addEventListener('fetch', (event) => {
+    // Ignorer les requêtes de service worker lui-même
+    if (event.request.url.includes('/sw.js') || event.request.url.includes('service-worker')) {
+        return;
+    }
+
+    // Pour les requêtes de navigation (page principale), toujours essayer le réseau d'abord
+    if (event.request.mode === 'navigate' || event.request.destination === 'document') {
+        event.respondWith(
+            fetch(event.request)
+                .then((response) => {
+                    // Si le réseau réussit, mettre en cache et retourner
+                    if (response && response.status === 200) {
+                        const responseToCache = response.clone();
+                        caches.open(CACHE_NAME)
+                            .then((cache) => {
+                                cache.put(event.request, responseToCache);
+                            });
+                    }
+                    return response;
+                })
+                .catch(() => {
+                    // Si le réseau échoue, utiliser le cache
+                    return caches.match('./index.html')
+                        .then((cachedResponse) => {
+                            if (cachedResponse) {
+                                return cachedResponse;
+                            }
+                            // Fallback: retourner une réponse basique
+                            return new Response('Page non disponible hors-ligne', {
+                                status: 503,
+                                headers: { 'Content-Type': 'text/plain' }
+                            });
+                        });
+                })
+        );
+        return;
+    }
+
+    // Pour les autres requêtes (assets, API, etc.)
     event.respondWith(
         fetch(event.request)
             .then((response) => {
