@@ -47,5 +47,18 @@
 	<true/>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Authentification requise pour accéder à vos données médicales sécurisées dans Arkalia CIA</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<!-- Remplacer par votre REVERSED_CLIENT_ID depuis GoogleService-Info.plist -->
+				<!-- Exemple: com.googleusercontent.apps.123456789-abcdefghijklmnop -->
+				<string>com.arkalia.cia</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

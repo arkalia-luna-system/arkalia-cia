@@ -189,6 +189,12 @@ graph TB
 - Medical emergency card
 - Critical health information
 
+#### 🔐 Authentification
+- **Connexion Google/Gmail** : Authentification gratuite via Google Sign In
+- **Mode offline-first** : Stockage local des informations utilisateur
+- **Biométrie** : Empreinte digitale/Face ID sur mobile
+- **PIN local** : Code PIN pour le web (4-6 chiffres, hashé SHA-256)
+
 #### ❤️ ARIA Integration
 - **Laboratory health integration** with Arkalia ARIA
 - **Pain tracking data** synchronization

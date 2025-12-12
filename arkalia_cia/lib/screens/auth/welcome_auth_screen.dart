@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'login_screen.dart';
 import 'register_screen.dart';
 import '../lock_screen.dart';
+import '../../services/google_auth_service.dart';
 
 /// Écran d'accueil pour l'authentification
 /// Propose plusieurs options : Gmail/Google, créer un compte, ou continuer sans compte
@@ -50,38 +51,68 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
 
   /// Gestion de la connexion Google Sign In
   /// 
-  /// **Fonctionnalité future** : Implémentation prévue avec `google_sign_in` package
-  /// - Nécessite configuration OAuth dans Google Cloud Console
-  /// - Intégration avec backend pour authentification JWT
-  /// 
-  /// Pour l'instant, affiche un message informatif à l'utilisateur
+  /// **Mode gratuit et offline-first** :
+  /// - Utilise Google Sign In pour authentifier l'utilisateur
+  /// - Stocke les informations localement (email, nom, photo)
+  /// - Aucun backend requis, 100% gratuit
   Future<void> _handleGoogleSignIn(BuildContext context) async {
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Connexion Google - Bientôt disponible !'),
-          duration: Duration(seconds: 2),
-        ),
-      );
+    if (!context.mounted) return;
+
+    // Afficher un indicateur de chargement
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+
+    try {
+      final result = await GoogleAuthService.signIn();
+
+      if (!context.mounted) return;
+      Navigator.of(context).pop(); // Fermer le dialog de chargement
+
+      if (result['success'] == true) {
+        // Connexion réussie, aller à LockScreen
+        if (context.mounted) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const LockScreen()),
+          );
+        }
+      } else {
+        // Afficher l'erreur seulement si ce n'est pas une annulation
+        if (result['error'] != 'Connexion annulée' && context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(result['error'] ?? 'Erreur lors de la connexion'),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 3),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        Navigator.of(context).pop(); // Fermer le dialog de chargement
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erreur: ${e.toString()}'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
     }
   }
 
   /// Gestion de la connexion Gmail Sign In
   /// 
-  /// **Fonctionnalité future** : Implémentation prévue avec `google_sign_in` package
-  /// - Nécessite configuration OAuth dans Google Cloud Console
-  /// - Intégration avec backend pour authentification JWT
-  /// 
-  /// Pour l'instant, affiche un message informatif à l'utilisateur
+  /// Gmail utilise le même système que Google Sign In
+  /// (Gmail est un service Google)
   Future<void> _handleGmailSignIn(BuildContext context) async {
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Connexion Gmail - Bientôt disponible !'),
-          duration: Duration(seconds: 2),
-        ),
-      );
-    }
+    // Gmail et Google utilisent le même système d'authentification
+    await _handleGoogleSignIn(context);
   }
 
   @override
@@ -124,17 +155,17 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                       child: Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.1),
+                          color: Colors.white,
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
+                              color: Colors.black.withValues(alpha: 0.2),
                               blurRadius: 20,
                               spreadRadius: 2,
                               offset: const Offset(0, 4),
                             ),
                             BoxShadow(
-                              color: Colors.white.withOpacity(0.1),
+                              color: Colors.white.withValues(alpha: 0.1),
                               blurRadius: 10,
                               spreadRadius: -2,
                               offset: const Offset(0, -2),
@@ -145,7 +176,16 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                           'assets/images/logo.png',
                           width: 120,
                           height: 120,
+                          fit: BoxFit.contain,
                           filterQuality: FilterQuality.high,
+                          errorBuilder: (context, error, stackTrace) {
+                            // Fallback si l'image ne se charge pas
+                            return Icon(
+                              Icons.health_and_safety,
+                              size: 80,
+                              color: Colors.blue[800],
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -232,19 +272,19 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                   // Séparateur
                   Row(
                     children: [
-                      Expanded(child: Divider(color: Colors.white.withOpacity(0.3))),
+                      Expanded(child: Divider(color: Colors.white.withValues(alpha: 0.3))),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
                           'OU',
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.8),
+                            color: Colors.white.withValues(alpha: 0.8),
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
                           ),
                         ),
                       ),
-                      Expanded(child: Divider(color: Colors.white.withOpacity(0.3))),
+                      Expanded(child: Divider(color: Colors.white.withValues(alpha: 0.3))),
                     ],
                   ),
                   
