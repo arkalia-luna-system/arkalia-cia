@@ -25,12 +25,12 @@ if ! command -v flutter &> /dev/null; then
     exit 1
 fi
 
-# Mettre à jour la branche
-echo -e "${YELLOW}📥 Mise à jour de la branche...${NC}"
+# Mettre à jour la branche (main pour le web)
+echo -e "${YELLOW}📥 Mise à jour de la branche (main pour web)...${NC}"
 cd "$(cd "$PROJECT_DIR/.." && pwd)"
-CURRENT_BRANCH=$(git branch --show-current)
-echo "   Branche actuelle: $CURRENT_BRANCH"
-git pull origin "$CURRENT_BRANCH" || echo "   ⚠️  Impossible de mettre à jour (peut-être pas un repo git)"
+echo "   Branche pour web: main"
+git checkout main 2>/dev/null || echo "   ⚠️  Branche main non disponible"
+git pull origin main || echo "   ⚠️  Impossible de mettre à jour (peut-être pas un repo git)"
 cd "$PROJECT_DIR"
 
 # Nettoyer

@@ -25,11 +25,14 @@ if ! command -v flutter &> /dev/null; then
     exit 1
 fi
 
-# Mettre à jour la branche
-echo -e "${YELLOW}📥 Mise à jour de la branche...${NC}"
+# Mettre à jour les branches (main pour web, develop pour Android/macOS)
+echo -e "${YELLOW}📥 Mise à jour des branches...${NC}"
 cd "$(cd "$PROJECT_DIR/.." && pwd)"
 CURRENT_BRANCH=$(git branch --show-current)
 echo "   Branche actuelle: $CURRENT_BRANCH"
+echo "   Web utilise: main"
+echo "   Android/macOS utilisent: develop"
+# Pour web, on utilisera main, pour Android/macOS on reste sur develop
 git pull origin "$CURRENT_BRANCH" || echo "   ⚠️  Impossible de mettre à jour (peut-être pas un repo git)"
 cd "$PROJECT_DIR"
 
@@ -56,16 +59,21 @@ cleanup() {
 
 trap cleanup SIGINT SIGTERM
 
-# Lancer sur WEB
+# Lancer sur WEB (utilise la branche main)
 if echo "$DEVICES" | grep -q "Chrome\|chrome\|web"; then
-    echo -e "${GREEN}🌐 Lancement sur WEB...${NC}"
+    echo -e "${GREEN}🌐 Lancement sur WEB (branche main)...${NC}"
     if echo "$DEVICES" | grep -q "Chrome\|chrome"; then
         WEB_DEVICE="chrome"
     else
         WEB_DEVICE="web-server"
     fi
     (
+        cd "$(cd "$PROJECT_DIR/.." && pwd)"
+        git checkout main 2>/dev/null || echo "   ⚠️  Branche main non disponible"
+        git pull origin main || true
         cd "$PROJECT_DIR"
+        flutter clean > /dev/null 2>&1 || true
+        flutter pub get
         flutter run -d "$WEB_DEVICE" --web-port=8080 > /tmp/arkalia_web.log 2>&1
     ) &
     WEB_PID=$!
