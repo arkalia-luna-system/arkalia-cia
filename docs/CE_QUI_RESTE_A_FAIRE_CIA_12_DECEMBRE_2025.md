@@ -2,7 +2,7 @@
 
 **Date** : 12 décembre 2025  
 **Version** : 1.3.1+6  
-**Statut** : 12/20 problèmes résolus (60%)
+**Statut** : 14/20 problèmes résolus (70%)
 
 ---
 
@@ -159,8 +159,8 @@ Tous les problèmes élevés ont été résolus.
 
 Note : ARIA serveur est géré dans le projet ARIA séparé, pas dans CIA.
 
-### Élevé (1)
-1. Pathologies - Sous-catégories
+### Élevé (0)
+Tous les problèmes élevés ont été résolus.
 
 ### Moyen (4)
 1. Patterns - Erreur non spécifiée
@@ -173,11 +173,11 @@ Note : ARIA serveur est géré dans le projet ARIA séparé, pas dans CIA.
 ## RECOMMANDATIONS
 
 ### Priorité immédiate
-1. Médecins - Détection auto (1 jour)
+1. Patterns - Erreur non spécifiée (1 jour)
 
 ### Après
-2. Patterns - Erreur (1 jour)
-3. Statistiques - Placement (1 jour)
+2. Statistiques - Placement UI (1 jour)
+3. Dialog partage - Feedback (1 jour)
 
 ### Futur
 5. Profil multi-appareil (10-16 jours) - Fonctionnalité majeure
@@ -215,7 +215,7 @@ Note : ARIA serveur est géré dans le projet ARIA séparé, pas dans CIA.
 ---
 
 **Dernière mise à jour** : 12 décembre 2025  
-**Prochaine étape recommandée** : Portails santé - Épinglage (1-2 jours)
+**Prochaine étape recommandée** : Patterns - Erreur non spécifiée (1 jour)
 
 Note : ARIA serveur est géré dans le projet ARIA séparé. Ce document liste uniquement les problèmes à résoudre dans le projet CIA.
 
