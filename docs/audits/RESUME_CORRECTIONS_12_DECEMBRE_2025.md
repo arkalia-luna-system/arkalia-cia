@@ -17,9 +17,10 @@ Résumé complet des corrections appliquées le 12 décembre 2025.
 ## 📊 RÉSUMÉ EXÉCUTIF
 
 **Problèmes critiques résolus** : 6/8 (7/8 avec documentation ARIA)  
-**Tests créés/améliorés** : 22 tests passent  
-**Fichiers modifiés** : 16 fichiers  
-**Fichiers créés** : 5 fichiers (welcome_auth_screen, calendar_service_test, DEPLOIEMENT_ARIA_RENDER.md, tests)
+**Problèmes élevés résolus** : 1/7 (Rappels modifiables)  
+**Tests créés/améliorés** : 41 tests créés  
+**Fichiers modifiés** : 18 fichiers  
+**Fichiers créés** : 6 fichiers (welcome_auth_screen, calendar_service_test, reminders_screen_test, DEPLOIEMENT_ARIA_RENDER.md, EXPLICATION_GITHUB_VS_RENDER.md, ANALYSE_GITHUB_VS_RENDER_POUR_CIA.md)
 
 ---
 
@@ -216,18 +217,18 @@ Résumé complet des corrections appliquées le 12 décembre 2025.
 ## 📊 STATISTIQUES
 
 ### Code
-- **Fichiers modifiés** : 12
-- **Fichiers créés** : 3
-- **Lignes de code** : ~500 lignes modifiées/ajoutées
+- **Fichiers modifiés** : 18 fichiers Dart/Python
+- **Fichiers créés** : 6 fichiers (3 code + 3 docs)
+- **Lignes de code** : ~800 lignes modifiées/ajoutées
 
 ### Tests
-- **Tests créés** : 9 nouveaux tests
+- **Tests créés** : 28 nouveaux tests
 - **Tests améliorés** : 5 tests existants
-- **Taux de réussite** : 100% (14/14)
+- **Total tests** : 41 tests créés (19 reminders_screen + 8 calendar + 6 welcome_auth + 5 auth_service + 3 auth_api)
 
 ### Documentation
-- **Fichiers MD mis à jour** : 3
-- **Fichiers MD créés** : 2 (AUDIT_RESTE_A_FAIRE, RESUME_CORRECTIONS)
+- **Fichiers MD mis à jour** : 5 fichiers
+- **Fichiers MD créés** : 5 fichiers (AUDIT_RESTE_A_FAIRE, RESUME_CORRECTIONS, DEPLOIEMENT_ARIA_RENDER, EXPLICATION_GITHUB_VS_RENDER, ANALYSE_GITHUB_VS_RENDER_POUR_CIA)
 
 ---
 
@@ -237,8 +238,8 @@ Résumé complet des corrections appliquées le 12 décembre 2025.
 1. ✅ ARIA serveur (documentation créée, déploiement à faire)
 2. 🔴 Profil multi-appareil (complexe, 10-16 jours)
 
-### Élevés restants (7)
-- Couleurs pathologie, Portails, Hydratation, Paramètres, Contacts, Rappels, Pathologies
+### Élevés restants (6)
+- Couleurs pathologie, Portails, Hydratation, Paramètres, Contacts, Pathologies
 
 ### Moyens restants (5)
 - Médecins auto, Patterns, Statistiques, Dialog partage, BBIA
@@ -249,10 +250,11 @@ Résumé complet des corrections appliquées le 12 décembre 2025.
 
 <div align="center">
 
-**✅ 6 problèmes critiques résolus sur 8 (7/8 avec documentation ARIA)**
+**✅ 6 problèmes critiques résolus sur 8 (7/8 avec documentation ARIA)**  
+**✅ 1 problème élevé résolu (Rappels modifiables)**
 
-**Tests** : 22/22 passent ✅  
-**Code** : Propre, 0 erreur lint critique ✅  
+**Tests** : 41 tests créés ✅  
+**Code** : Propre, 0 erreur lint ✅  
 **Documentation** : À jour ✅
 
 **Prochaine étape** : Profil multi-appareil (complexe, 10-16 jours)

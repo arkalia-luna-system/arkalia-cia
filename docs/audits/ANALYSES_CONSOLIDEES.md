@@ -35,7 +35,7 @@ Le projet Arkalia CIA exploite maintenant 100% de son potentiel avec toutes les 
 |-----------|------------|---------|----------|------|
 | Services Flutter | 21 | 21 | 21 | 100% |
 | Écrans Flutter | 25 | 25 | 25 | 100% |
-| Endpoints API Backend | 18 | 18 | 18 | 100% |
+| Endpoints API Backend | 36 | 36 | 36 | 100% |
 | Modules Backend | 8 | 8 | 8 | 100% |
 | Intégrations Natives | 5 | 5 | 5 | 100% |
 | Fonctionnalités Avancées | 12 | 12 | 12 | 100% |

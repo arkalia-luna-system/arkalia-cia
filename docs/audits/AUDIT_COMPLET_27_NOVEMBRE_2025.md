@@ -28,7 +28,7 @@
 - ✅ 0 erreur lint Python (ruff)
 - ✅ 0 erreur lint Flutter (analyze)
 - ✅ Code formaté (black)
-- ✅ Architecture propre (24 services documentés)
+- ✅ Architecture propre (services documentés)
 - ✅ Gestion erreurs cohérente (ErrorHelper partout)
 - ✅ Logging conditionnel (AppLogger)
 
