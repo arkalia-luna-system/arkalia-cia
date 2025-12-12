@@ -282,11 +282,12 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
                 vertical: 4,
               ),
               child: ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 leading: Container(
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: pathology.color.withOpacity(0.2),
+                    color: pathology.color.withValues(alpha: 0.2),
                     shape: BoxShape.circle,
                     border: Border.all(
                       color: pathology.color,
@@ -296,21 +297,28 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
                   child: Icon(
                     Icons.medical_services,
                     color: pathology.color,
+                    size: 24,
                   ),
                 ),
                 title: Text(
                   pathology.name,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                 ),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (pathology.description != null)
-                      Text(
-                        pathology.description!,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                subtitle: Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (pathology.description != null)
+                        Text(
+                          pathology.description!,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontSize: 14),
+                        ),
                     if (pathology.subcategory != null) ...[
                       const SizedBox(height: 4),
                       Text(
@@ -392,7 +400,7 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.purple.withOpacity(0.1),
+                          color: Colors.purple.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(

@@ -644,9 +644,19 @@ class _HomePageState extends State<HomePage> {
                   label: '${item['title'] ?? item['name'] ?? item['original_name'] ?? 'Sans titre'}',
                   button: true,
                   child: ListTile(
-                    title: Text(item['title'] ?? item['name'] ?? item['original_name'] ?? 'Sans titre'),
-                    subtitle: Text(item['description'] ?? item['phone'] ?? item['category'] ?? ''),
-                    trailing: const Icon(Icons.chevron_right, color: Colors.grey),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    title: Text(
+                      item['title'] ?? item['name'] ?? item['original_name'] ?? 'Sans titre',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    subtitle: Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        item['description'] ?? item['phone'] ?? item['category'] ?? '',
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                    ),
+                    trailing: const Icon(Icons.chevron_right, color: Colors.grey, size: 24),
                     onTap: () {
                       // Navigation vers le détail selon le type
                       if (title == 'Documents') {
