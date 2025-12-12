@@ -12,15 +12,19 @@ echo -e "${YELLOW}🍎 Nettoyage des fichiers macOS cachés dans Pods...${NC}"
 
 cd /Volumes/T7/arkalia-cia/arkalia_cia
 
-# Supprimer tous les fichiers macOS cachés dans Pods
+# Supprimer tous les fichiers macOS cachés dans Pods (iOS et macOS)
 find ios/Pods -name "._*" -type f -delete 2>/dev/null || true
 find ios/Pods -name ".DS_Store" -type f -delete 2>/dev/null || true
+find macos/Pods -name "._*" -type f -delete 2>/dev/null || true
+find macos/Pods -name ".DS_Store" -type f -delete 2>/dev/null || true
 
-COUNT=$(find ios/Pods -name "._*" -type f 2>/dev/null | wc -l | tr -d ' ')
+COUNT_IOS=$(find ios/Pods -name "._*" -type f 2>/dev/null | wc -l | tr -d ' ')
+COUNT_MACOS=$(find macos/Pods -name "._*" -type f 2>/dev/null | wc -l | tr -d ' ')
+COUNT=$((COUNT_IOS + COUNT_MACOS))
 if [ "$COUNT" -eq 0 ]; then
-    echo -e "${GREEN}✅ Aucun fichier macOS caché trouvé dans Pods${NC}"
+    echo -e "${GREEN}✅ Aucun fichier macOS caché trouvé dans Pods (iOS et macOS)${NC}"
 else
-    echo -e "${YELLOW}⚠️  $COUNT fichiers macOS cachés restants${NC}"
+    echo -e "${YELLOW}⚠️  $COUNT fichiers macOS cachés restants (iOS: $COUNT_IOS, macOS: $COUNT_MACOS)${NC}"
 fi
 
 echo -e "${GREEN}✅ Nettoyage terminé${NC}"
