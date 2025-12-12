@@ -9,9 +9,15 @@ COUNT_BEFORE=$(find . -name "._*" -type f 2>/dev/null | wc -l | tr -d ' ')
 # Supprimer tous les fichiers ._* (y compris dans .git)
 find . -name "._*" -type f -delete 2>/dev/null || true
 
-# Supprimer les fichiers macOS dans .git/objects/pack et .git/refs
-find .git/objects/pack -name "._*" -type f -delete 2>/dev/null || true
-find .git/refs -name "._*" -type f -delete 2>/dev/null || true
+# Supprimer les fichiers macOS dans .git/objects/pack et .git/refs (si .git existe)
+if [ -d ".git" ]; then
+  if [ -d ".git/objects/pack" ]; then
+    find .git/objects/pack -name "._*" -type f -delete 2>/dev/null || true
+  fi
+  if [ -d ".git/refs" ]; then
+    find .git/refs -name "._*" -type f -delete 2>/dev/null || true
+  fi
+fi
 
 # Supprimer les dossiers de build (sans erreur si n'existent pas)
 rm -rf build/ dist/ *.egg-info/ 2>/dev/null || true
