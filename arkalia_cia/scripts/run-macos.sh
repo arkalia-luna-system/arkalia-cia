@@ -46,8 +46,17 @@ git fetch origin develop
 git pull origin develop || echo "   ⚠️  Impossible de mettre à jour"
 cd "$PROJECT_DIR"
 
-# Nettoyer
-echo -e "${YELLOW}🧹 Nettoyage...${NC}"
+# Nettoyer les fichiers macOS AVANT le build
+echo -e "${YELLOW}🧹 Nettoyage des fichiers macOS...${NC}"
+REPO_ROOT="$(cd "$PROJECT_DIR/.." && pwd)"
+if [ -f "$REPO_ROOT/scripts/clean_macos_files.sh" ]; then
+    bash "$REPO_ROOT/scripts/clean_macos_files.sh" > /dev/null 2>&1 || true
+fi
+# Nettoyer spécifiquement dans build/macos
+find build/macos -name "._*" -type f -delete 2>/dev/null || true
+
+# Nettoyer Flutter
+echo -e "${YELLOW}🧹 Nettoyage Flutter...${NC}"
 flutter clean > /dev/null 2>&1 || true
 flutter pub get
 

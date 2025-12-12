@@ -8,6 +8,7 @@ import 'services/theme_service.dart';
 import 'services/auto_sync_service.dart';
 import 'services/auth_api_service.dart';
 import 'services/backend_config_service.dart';
+import 'services/google_auth_service.dart';
 import 'services/offline_cache_service.dart';
 import 'services/notification_service.dart';
 import 'services/runtime_security_service.dart';
@@ -130,28 +131,66 @@ class _InitialScreenState extends State<_InitialScreen> {
     
     if (backendEnabled) {
       // Si backend activé, vérifier l'authentification API
-      final isLoggedIn = await AuthApiService.isLoggedIn();
+      final hasToken = await AuthApiService.isLoggedIn();
       
       if (mounted) {
-        if (isLoggedIn) {
-          // Utilisateur connecté, aller à LockScreen (authentification biométrique locale)
+        if (hasToken) {
+          // Token présent : tenter de vérifier sa validité
+          // Si le backend n'est pas accessible, on assume que le token est valide
+          // (mode offline-first : on garde le token même si le backend est temporairement inaccessible)
+          final backendUrl = await BackendConfigService.getBackendURL();
+          if (backendUrl.isNotEmpty && !backendUrl.contains('localhost') && !backendUrl.contains('127.0.0.1')) {
+            try {
+              // Tenter un refresh silencieux (sans déconnecter en cas d'erreur réseau)
+              final refreshResult = await AuthApiService.refreshToken();
+              
+              // Si le refresh échoue avec une erreur réseau, on garde le token
+              // Seulement si c'est une erreur d'authentification (401/403), on déconnecte
+              if (refreshResult['success'] == false && 
+                  refreshResult['error']?.contains('Session expirée') == true) {
+                // Token invalide : déconnecter et aller à WelcomeAuthScreen
+                await AuthApiService.logout();
+                if (mounted) {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const WelcomeAuthScreen()),
+                  );
+                }
+                return;
+              }
+            } catch (e) {
+              // Erreur réseau ou autre : on garde le token (mode offline-first)
+              // Ne pas déconnecter l'utilisateur en cas d'erreur réseau
+            }
+          }
+          
+          // Token valide ou erreur réseau (on garde le token) : aller à LockScreen
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => const LockScreen()),
           );
         } else {
-          // Utilisateur non connecté, aller à WelcomeAuthScreen
+          // Pas de token : aller à WelcomeAuthScreen pour login/register
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => const WelcomeAuthScreen()),
           );
         }
       }
     } else {
-      // Backend non activé : TOUJOURS proposer WelcomeAuthScreen en premier
-      // L'utilisateur peut choisir de créer un compte ou continuer sans compte (mode offline)
+      // Backend non activé : vérifier Google Sign-In ou proposer WelcomeAuthScreen
+      final isGoogleSignedIn = await GoogleAuthService.isSignedIn();
+      
       if (mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const WelcomeAuthScreen()),
-        );
+        if (isGoogleSignedIn) {
+          // Utilisateur connecté avec Google : aller à LockScreen
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const LockScreen()),
+          );
+        } else {
+          // Pas de connexion Google : proposer WelcomeAuthScreen
+          // L'utilisateur peut choisir de se connecter avec Google ou continuer sans compte (mode offline)
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const WelcomeAuthScreen()),
+          );
+        }
       }
     }
   }

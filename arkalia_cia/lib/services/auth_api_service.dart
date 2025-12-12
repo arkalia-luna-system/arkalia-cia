@@ -194,6 +194,17 @@ class AuthApiService {
       }
 
       final url = await BackendConfigService.getBackendURL();
+      
+      // Vérifier que l'URL est valide avant d'essayer de rafraîchir
+      if (url.isEmpty || url.contains('localhost') || url.contains('127.0.0.1')) {
+        // URL invalide ou localhost : ne pas essayer de rafraîchir
+        // Retourner une erreur réseau pour que l'app garde le token (mode offline-first)
+        return {
+          'success': false,
+          'error': 'Backend non accessible (mode offline)',
+        };
+      }
+      
       final response = await http.post(
         Uri.parse('$url/api/v1/auth/refresh'),
         headers: {'Content-Type': 'application/json'},

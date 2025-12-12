@@ -3,11 +3,12 @@ import 'package:flutter/foundation.dart';
 import '../services/auth_service.dart';
 import '../services/pin_auth_service.dart';
 import '../services/onboarding_service.dart';
+import '../services/auth_api_service.dart';
+import '../services/backend_config_service.dart';
+import '../services/google_auth_service.dart';
 import 'home_page.dart';
 import 'onboarding/welcome_screen.dart';
 import 'pin_entry_screen.dart';
-import 'pin_setup_screen.dart';
-import 'auth/welcome_auth_screen.dart';
 
 /// Écran de verrouillage avec authentification biométrique
 class LockScreen extends StatefulWidget {
@@ -30,10 +31,30 @@ class _LockScreenState extends State<LockScreen> {
 
   /// Initialise l'authentification : vérifie d'abord la disponibilité, puis lance l'auth
   Future<void> _initializeAuth() async {
+    // D'abord, vérifier si l'utilisateur est vraiment connecté (Google ou backend)
+    // Si pas connecté, permettre l'accès direct en mode offline
+    // (l'utilisateur a choisi "Continuer sans compte")
+    final isReallyConnected = await _isReallyConnected();
+    if (!isReallyConnected) {
+      // Mode offline : permettre l'accès direct sans authentification
+      _unlockApp();
+      return;
+    }
+    
     // D'abord, vérifier la disponibilité biométrique
     await _checkBiometricAvailability();
     // Ensuite, lancer l'authentification au démarrage
     await _authenticateOnStartup();
+  }
+
+/// Vérifie si l'utilisateur est vraiment connecté (pas juste en mode offline)
+  /// Retourne true si connecté avec Google ou backend, false si mode offline
+  Future<bool> _isReallyConnected() async {
+    final backendEnabled = await BackendConfigService.isBackendEnabled();
+    if (backendEnabled) {
+      return await AuthApiService.isLoggedIn();
+    }
+    return await GoogleAuthService.isSignedIn();
   }
 
   Future<void> _checkBiometricAvailability() async {
@@ -77,66 +98,12 @@ class _LockScreenState extends State<LockScreen> {
         return;
       }
       
-      // Si aucun PIN n'est configuré, proposer la configuration
-      // Mais d'abord, proposer de revenir à WelcomeAuthScreen pour créer un compte
+      // Si aucun PIN n'est configuré, permettre l'accès direct
+      // L'utilisateur est déjà connecté (vérifié dans _initializeAuth)
+      // Le PIN est optionnel pour la sécurité supplémentaire
       if (!pinConfigured) {
-        await Future.delayed(const Duration(milliseconds: 500));
-        if (mounted) {
-          // Proposer d'abord de créer un compte ou configurer le PIN
-          final shouldSetupPin = await showDialog<bool>(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Créer un compte ou continuer ?'),
-              content: const Text(
-                'Pour utiliser Arkalia CIA, vous pouvez :\n\n'
-                '✅ Créer un compte avec Gmail/Google (recommandé)\n'
-                '   → Synchronisation, sauvegarde, partage familial\n\n'
-                '🔒 Configurer un code PIN (mode offline)\n'
-                '   → Données uniquement sur cet appareil',
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: const Text(
-                    'Créer un compte',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: const Text('Mode offline (PIN)'),
-                ),
-              ],
-            ),
-          );
-          
-          if (shouldSetupPin == false) {
-            // L'utilisateur veut créer un compte, retourner à WelcomeAuthScreen
-            if (!mounted) return;
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const WelcomeAuthScreen()),
-            );
-            return;
-          }
-          
-          if (shouldSetupPin == true) {
-            // L'utilisateur veut configurer le PIN
-            if (!mounted) return;
-            final result = await Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const PinSetupScreen()),
-            );
-            if (result == true) {
-              // PIN configuré, maintenant demander l'authentification
-              await _authenticate();
-            } else {
-              // Configuration annulée, permettre l'accès direct
-              _unlockApp();
-            }
-          } else {
-            // Dialog annulé, permettre l'accès direct
-            _unlockApp();
-          }
-        }
+        // Pas de PIN configuré mais utilisateur connecté : permettre l'accès direct
+        _unlockApp();
         return;
       }
       

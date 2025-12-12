@@ -49,8 +49,6 @@ class GoogleAuthService {
     } catch (e, stackTrace) {
       // Log détaillé pour débogage
       AppLogger.error('Erreur Google Sign-In', e, stackTrace);
-      print('❌ [GoogleAuthService] Erreur détaillée: $e');
-      print('❌ [GoogleAuthService] Stack trace: $stackTrace');
       
       // Gestion d'erreurs spécifiques pour messages utilisateur clairs
       final errorMessage = e.toString();

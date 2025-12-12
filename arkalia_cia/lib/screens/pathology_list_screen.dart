@@ -300,7 +300,7 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: pathology.color.withValues(alpha: 0.2),
+                    color: pathology.color.withValues(alpha:0.2),
                     shape: BoxShape.circle,
                     border: Border.all(
                       color: pathology.color,
@@ -420,7 +420,7 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
                             Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: Colors.purple.withValues(alpha: 0.1),
+                                color: Colors.purple.withValues(alpha:0.1),
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
