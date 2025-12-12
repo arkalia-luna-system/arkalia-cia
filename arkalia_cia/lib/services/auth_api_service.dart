@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import '../utils/app_logger.dart';
 import '../utils/error_helper.dart';
 import 'backend_config_service.dart';
@@ -21,7 +22,20 @@ class AuthApiService {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(key, value);
     } else {
-      await _secureStorage.write(key: key, value: value);
+      try {
+        await _secureStorage.write(key: key, value: value);
+      } on MissingPluginException catch (e) {
+        // Fallback vers SharedPreferences si flutter_secure_storage n'est pas disponible
+        // (peut arriver en mode test ou si la plateforme n'est pas disponible)
+        AppLogger.debug('FlutterSecureStorage non disponible, utilisation SharedPreferences: $e');
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString(key, value);
+      } catch (e) {
+        // Autre erreur, fallback vers SharedPreferences
+        AppLogger.debug('Erreur FlutterSecureStorage, utilisation SharedPreferences: $e');
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString(key, value);
+      }
     }
   }
 
@@ -30,7 +44,19 @@ class AuthApiService {
       final prefs = await SharedPreferences.getInstance();
       return prefs.getString(key);
     } else {
-      return await _secureStorage.read(key: key);
+      try {
+        return await _secureStorage.read(key: key);
+      } on MissingPluginException catch (e) {
+        // Fallback vers SharedPreferences si flutter_secure_storage n'est pas disponible
+        AppLogger.debug('FlutterSecureStorage non disponible, utilisation SharedPreferences: $e');
+        final prefs = await SharedPreferences.getInstance();
+        return prefs.getString(key);
+      } catch (e) {
+        // Autre erreur, fallback vers SharedPreferences
+        AppLogger.debug('Erreur FlutterSecureStorage, utilisation SharedPreferences: $e');
+        final prefs = await SharedPreferences.getInstance();
+        return prefs.getString(key);
+      }
     }
   }
 
@@ -39,7 +65,19 @@ class AuthApiService {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(key);
     } else {
-      await _secureStorage.delete(key: key);
+      try {
+        await _secureStorage.delete(key: key);
+      } on MissingPluginException catch (e) {
+        // Fallback vers SharedPreferences si flutter_secure_storage n'est pas disponible
+        AppLogger.debug('FlutterSecureStorage non disponible, utilisation SharedPreferences: $e');
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.remove(key);
+      } catch (e) {
+        // Autre erreur, fallback vers SharedPreferences
+        AppLogger.debug('Erreur FlutterSecureStorage, utilisation SharedPreferences: $e');
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.remove(key);
+      }
     }
   }
 

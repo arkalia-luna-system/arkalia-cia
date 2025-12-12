@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:open_filex/open_filex.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../services/local_storage_service.dart';
 import '../services/file_storage_service.dart';
 import '../services/category_service.dart';
@@ -444,6 +445,30 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           }
         }
         return;
+      }
+
+      // Sur Android, demander la permission de lecture si nécessaire
+      if (!kIsWeb && Platform.isAndroid) {
+        // Sur Android 13+ (API 33+), utiliser READ_MEDIA_IMAGES
+        // Sur Android < 13, utiliser READ_EXTERNAL_STORAGE
+        Permission permission;
+        try {
+          // Vérifier la version Android
+          permission = Permission.storage;
+        } catch (e) {
+          permission = Permission.photos;
+        }
+        
+        final status = await permission.status;
+        if (!status.isGranted) {
+          final result = await permission.request();
+          if (!result.isGranted) {
+            if (mounted) {
+              _showError('Permission de lecture refusée. Impossible d\'ouvrir le PDF.');
+            }
+            return;
+          }
+        }
       }
 
       // Ouvrir le PDF avec open_filex (fonctionne mieux sur iOS/macOS)

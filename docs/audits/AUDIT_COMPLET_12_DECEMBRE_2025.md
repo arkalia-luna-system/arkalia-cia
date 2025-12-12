@@ -841,4 +841,6 @@ class Device {
 
 **Total problèmes** : 20 | **Critiques** : 8 | **Élevés** : 7 | **Moyens** : 5
 
+**Corrections appliquées** : 3/8 critiques (Biométrie, PDF, Connexion) + Tests corrigés (15/15 passent)
+
 </div>

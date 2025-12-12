@@ -36,10 +36,25 @@ class _LockScreenState extends State<LockScreen> {
   }
 
   Future<void> _checkBiometricAvailability() async {
-    final available = await AuthService.isBiometricAvailable();
-    setState(() {
-      _isBiometricAvailable = available;
-    });
+    if (kIsWeb) {
+      setState(() {
+        _isBiometricAvailable = false;
+      });
+      return;
+    }
+    
+    try {
+      final available = await AuthService.isBiometricAvailable();
+      final biometrics = await AuthService.getAvailableBiometrics();
+      
+      setState(() {
+        _isBiometricAvailable = available && biometrics.isNotEmpty;
+      });
+    } catch (e) {
+      setState(() {
+        _isBiometricAvailable = false;
+      });
+    }
   }
 
   Future<void> _authenticateOnStartup() async {

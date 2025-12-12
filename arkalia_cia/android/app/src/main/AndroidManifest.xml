@@ -6,6 +6,10 @@
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <!-- Permission pour authentification biométrique -->
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <!-- Permission pour lire les fichiers (PDF) -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     
     <application
         android:label="arkalia_cia"

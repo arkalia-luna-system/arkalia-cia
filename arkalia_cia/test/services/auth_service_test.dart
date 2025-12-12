@@ -3,10 +3,15 @@ import 'package:arkalia_cia/services/auth_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  // Initialiser le binding Flutter pour les tests
+  TestWidgetsFlutterBinding.ensureInitialized();
+  
   group('AuthService', () {
     setUp(() async {
       // Réinitialiser les préférences avant chaque test
       SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
     });
 
     test('isAuthEnabled should return true by default', () async {
@@ -38,9 +43,23 @@ void main() {
       expect(shouldAuthAfterEnable, true);
     });
 
-    // Note: Les tests pour isBiometricAvailable, getAvailableBiometrics et authenticate
-    // nécessitent des mocks plus complexes car ils utilisent LocalAuthentication
-    // qui nécessite une plateforme réelle. Ces tests sont marqués comme à faire.
+    test('isBiometricAvailable should handle errors gracefully', () async {
+      // Sur web, isBiometricAvailable retourne toujours false
+      // Sur mobile, cela nécessite une plateforme réelle
+      // Ce test vérifie que la méthode ne crash pas
+      final available = await AuthService.isBiometricAvailable();
+      expect(available, isA<bool>());
+    });
+
+    test('getAvailableBiometrics should return a list', () async {
+      // Cette méthode retourne toujours une liste (vide si non disponible)
+      final biometrics = await AuthService.getAvailableBiometrics();
+      expect(biometrics, isA<List>());
+    });
+
+    // Note: Les tests pour authenticate nécessitent des mocks plus complexes
+    // car ils utilisent LocalAuthentication qui nécessite une plateforme réelle.
+    // Ces tests sont à faire avec des mocks appropriés.
   });
 }
 

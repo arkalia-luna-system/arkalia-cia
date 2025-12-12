@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import '../../services/auth_api_service.dart';
 import '../../services/backend_config_service.dart';
 import '../../services/onboarding_service.dart';
+import '../../services/auth_service.dart';
 import 'login_screen.dart';
 import '../onboarding/welcome_screen.dart';
 import '../home_page.dart';
@@ -73,6 +75,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
           _isLoading = false;
         });
 
+        // S'assurer qu'aucune session précédente n'est active
+        await AuthApiService.logout();
+        
         // Se connecter automatiquement après inscription
         await Future.delayed(const Duration(seconds: 1));
         if (!mounted) return;
@@ -85,7 +90,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
         if (!mounted) return;
         
         if (loginResult['success'] == true) {
-          // Connexion réussie, vérifier l'onboarding
+          // Vérifier que la session est bien active
+          final isLoggedIn = await AuthApiService.isLoggedIn();
+          if (!isLoggedIn) {
+            if (mounted) {
+              setState(() {
+                _errorMessage = 'Erreur lors de la connexion automatique. Veuillez vous connecter manuellement.';
+                _isLoading = false;
+              });
+            }
+            return;
+          }
+          
+          // Connexion réussie, proposer biométrie si disponible (mobile uniquement)
+          if (!kIsWeb && mounted) {
+            final biometricAvailable = await AuthService.isBiometricAvailable();
+            if (biometricAvailable) {
+              final shouldEnable = await _showBiometricDialog();
+              if (shouldEnable == true) {
+                await AuthService.setAuthEnabled(true);
+              }
+            }
+          }
+          
+          // Vérifier l'onboarding
           final onboardingCompleted = await OnboardingService.isOnboardingCompleted();
           
           if (!mounted) return;
@@ -102,11 +130,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
             );
           }
         } else {
-          // Échec connexion automatique, rediriger vers login
+          // Échec connexion automatique, rediriger vers login avec message
           if (mounted) {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const LoginScreen()),
-            );
+            setState(() {
+              _errorMessage = loginResult['error'] ?? 'Erreur lors de la connexion automatique. Veuillez vous connecter manuellement.';
+              _isLoading = false;
+            });
+            // Ne pas rediriger immédiatement, laisser l'utilisateur voir l'erreur
+            await Future.delayed(const Duration(seconds: 2));
+            if (mounted) {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
+              );
+            }
           }
         }
       } else {
@@ -121,6 +157,40 @@ class _RegisterScreenState extends State<RegisterScreen> {
         _isLoading = false;
       });
     }
+  }
+
+  /// Affiche un dialog pour proposer l'activation de la biométrie
+  Future<bool?> _showBiometricDialog() async {
+    if (!mounted) return false;
+    
+    return showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Row(
+            children: [
+              Icon(Icons.fingerprint, size: 28),
+              SizedBox(width: 12),
+              Text('Activer l\'empreinte digitale'),
+            ],
+          ),
+          content: const Text(
+            'Voulez-vous activer l\'authentification par empreinte digitale pour sécuriser votre accès à Arkalia CIA ?\n\n'
+            'Vous pourrez toujours utiliser le code PIN de votre téléphone si l\'empreinte ne fonctionne pas.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Plus tard'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Activer'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override

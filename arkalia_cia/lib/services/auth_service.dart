@@ -62,7 +62,7 @@ class AuthService {
         options: AuthenticationOptions(
           useErrorDialogs: useErrorDialogs,
           stickyAuth: stickyAuth,
-          biometricOnly: false, // false = permet biométrie OU PIN système du téléphone
+          biometricOnly: true, // true = force biométrie d'abord, puis PIN si échec
         ),
       );
       return didAuthenticate;

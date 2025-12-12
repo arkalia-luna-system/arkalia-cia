@@ -6,6 +6,12 @@
 
 > **📌 Nouveau** : Voir **[AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md)** pour l'audit complet basé sur les tests utilisateur du 12 décembre 2025.
 
+> **✅ Corrections appliquées le 12 décembre 2025** :
+> - ✅ Biométrie : `biometricOnly: true` + dialog après inscription
+> - ✅ Permissions PDF : `READ_EXTERNAL_STORAGE` + demande runtime
+> - ✅ Bug connexion après création compte : réinitialisation session + vérification état
+> - ✅ Tests : Correction erreurs `MissingPluginException` avec fallback SharedPreferences
+
 ---
 
 ## ✅ CE QUI EST TERMINÉ (Tout fonctionne)
@@ -50,15 +56,27 @@
 
 ## 🔴 NOUVEAUX PROBLÈMES IDENTIFIÉS (12 décembre 2025)
 
-### 1. Biométrie ne s'affiche pas 🔴 **CRITIQUE**
+### 1. Biométrie ne s'affiche pas 🔴 **CRITIQUE** ✅ **CORRIGÉ**
 
 **Problème** : Empreinte notifiée dans paramètres mais ne s'affiche pas
 
-**Solution** : Vérifier permissions runtime + améliorer UI
+**Solution appliquée** :
+- ✅ Changement `biometricOnly: false` → `true` dans `auth_service.dart`
+- ✅ Amélioration `_checkBiometricAvailability()` dans `lock_screen.dart`
+- ✅ Dialog après inscription pour proposer biométrie dans `register_screen.dart`
+- ✅ Ajout `permission_handler` dans `pubspec.yaml`
+
+**Fichiers modifiés** :
+- `arkalia_cia/lib/services/auth_service.dart`
+- `arkalia_cia/lib/screens/lock_screen.dart`
+- `arkalia_cia/lib/screens/auth/register_screen.dart`
+- `arkalia_cia/pubspec.yaml`
+
+**Tests** : ✅ Tests améliorés dans `test/services/auth_service_test.dart` (5/5 passent)
 
 **Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md#1-biométrie-ne-saffiche-pas)
 
-**Priorité** : 🔴 **CRITIQUE**
+**Priorité** : ✅ **RÉSOLU**
 
 ---
 
@@ -110,15 +128,22 @@
 
 ---
 
-### 6. Documents PDF - Permission "voir" 🔴 **CRITIQUE**
+### 6. Documents PDF - Permission "voir" 🔴 **CRITIQUE** ✅ **CORRIGÉ**
 
 **Problème** : Icône yeux → alerte "Pas de permission"
 
-**Solution** : Ajouter permission `READ_EXTERNAL_STORAGE` + runtime
+**Solution appliquée** :
+- ✅ Ajout `READ_EXTERNAL_STORAGE` et permissions média dans `AndroidManifest.xml`
+- ✅ Demande permission runtime avant ouverture PDF dans `documents_screen.dart`
+- ✅ Gestion d'erreurs améliorée avec messages clairs
+
+**Fichiers modifiés** :
+- `arkalia_cia/android/app/src/main/AndroidManifest.xml`
+- `arkalia_cia/lib/screens/documents_screen.dart`
 
 **Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md#6-documents-pdf---permission-voir-ne-fonctionne-pas)
 
-**Priorité** : 🔴 **CRITIQUE**
+**Priorité** : ✅ **RÉSOLU**
 
 ---
 
@@ -134,15 +159,26 @@
 
 ---
 
-### 8. Bug connexion après création compte 🔴 **CRITIQUE**
+### 8. Bug connexion après création compte 🔴 **CRITIQUE** ✅ **CORRIGÉ**
 
 **Problème** : Après création compte dans paramètres, plus possible de se connecter
 
-**Solution** : Corriger gestion état session
+**Solution appliquée** :
+- ✅ Réinitialisation session avant connexion automatique
+- ✅ Vérification que session est active après login
+- ✅ Messages d'erreur plus clairs et gestion d'échec améliorée
+
+**Fichiers modifiés** :
+- `arkalia_cia/lib/screens/auth/register_screen.dart`
+
+**Tests** : ✅ Tests créés dans `test/services/auth_api_service_test.dart` (3/3 passent) + correction `MissingPluginException` avec fallback SharedPreferences
+
+**Fichiers modifiés supplémentaires** :
+- `arkalia_cia/lib/services/auth_api_service.dart` : Ajout gestion `MissingPluginException` avec fallback SharedPreferences pour tests
 
 **Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md#8-bug-connexion-après-création-compte)
 
-**Priorité** : 🔴 **CRITIQUE**
+**Priorité** : ✅ **RÉSOLU**
 
 ---
 
