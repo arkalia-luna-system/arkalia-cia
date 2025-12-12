@@ -2,9 +2,15 @@
 
 **Date** : 12 décembre 2025  
 **Statut Projet** : 10/10 Sécurité ✅ | Production-Ready ✅  
-**Politique** : 100% Gratuit ✅
+**Politique** : 100% Gratuit ✅  
+**Version** : 1.3.1+6
 
 > **📌 Nouveau** : Voir **[AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md)** pour l'audit complet basé sur les tests utilisateur du 12 décembre 2025.
+
+> **✅ Corrections appliquées le 12 décembre 2025 (suite)** :
+> - ✅ Correction warnings de dépréciation Flutter (pathology.dart)
+> - ✅ Documentation synchronisée avec code source (endpoints, services, versions)
+> - ✅ Dates obsolètes corrigées (Janvier 2025 → 12 décembre 2025)
 
 > **✅ Corrections appliquées le 12 décembre 2025** :
 > - ✅ Biométrie : `biometricOnly: true` + dialog après inscription

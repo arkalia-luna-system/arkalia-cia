@@ -7,6 +7,7 @@ import 'home_page.dart';
 import 'onboarding/welcome_screen.dart';
 import 'pin_entry_screen.dart';
 import 'pin_setup_screen.dart';
+import 'auth/welcome_auth_screen.dart';
 
 /// Écran de verrouillage avec authentification biométrique
 class LockScreen extends StatefulWidget {
@@ -77,17 +78,60 @@ class _LockScreenState extends State<LockScreen> {
       }
       
       // Si aucun PIN n'est configuré, proposer la configuration
+      // Mais d'abord, proposer de revenir à WelcomeAuthScreen pour créer un compte
       if (!pinConfigured) {
         await Future.delayed(const Duration(milliseconds: 500));
         if (mounted) {
-          final result = await Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const PinSetupScreen()),
+          // Proposer d'abord de créer un compte ou configurer le PIN
+          final shouldSetupPin = await showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Créer un compte ou continuer ?'),
+              content: const Text(
+                'Pour utiliser Arkalia CIA, vous pouvez :\n\n'
+                '✅ Créer un compte avec Gmail/Google (recommandé)\n'
+                '   → Synchronisation, sauvegarde, partage familial\n\n'
+                '🔒 Configurer un code PIN (mode offline)\n'
+                '   → Données uniquement sur cet appareil',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text(
+                    'Créer un compte',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text('Mode offline (PIN)'),
+                ),
+              ],
+            ),
           );
-          if (result == true) {
-            // PIN configuré, maintenant demander l'authentification
-            await _authenticate();
+          
+          if (shouldSetupPin == false) {
+            // L'utilisateur veut créer un compte, retourner à WelcomeAuthScreen
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => const WelcomeAuthScreen()),
+            );
+            return;
+          }
+          
+          if (shouldSetupPin == true) {
+            // L'utilisateur veut configurer le PIN
+            final result = await Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const PinSetupScreen()),
+            );
+            if (result == true) {
+              // PIN configuré, maintenant demander l'authentification
+              await _authenticate();
+            } else {
+              // Configuration annulée, permettre l'accès direct
+              _unlockApp();
+            }
           } else {
-            // Configuration annulée, permettre l'accès direct
+            // Dialog annulé, permettre l'accès direct
             _unlockApp();
           }
         }

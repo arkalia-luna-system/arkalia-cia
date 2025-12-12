@@ -148,10 +148,11 @@ class _InitialScreenState extends State<_InitialScreen> {
         }
       }
     } else {
-      // Backend non activé, aller directement à LockScreen (mode offline)
+      // Backend non activé : TOUJOURS proposer WelcomeAuthScreen en premier
+      // L'utilisateur peut choisir de créer un compte ou continuer sans compte (mode offline)
       if (mounted) {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const LockScreen()),
+          MaterialPageRoute(builder: (context) => const WelcomeAuthScreen()),
         );
       }
     }

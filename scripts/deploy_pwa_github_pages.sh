@@ -19,7 +19,7 @@ if ! command -v flutter &> /dev/null; then
 fi
 
 echo "📦 Build web en cours..."
-flutter clean
+flutter clean 2>&1 | grep -v "Failed to remove" || true
 flutter pub get
 # Base-href nécessaire pour GitHub Pages (repo non-racine)
 flutter build web --release --no-wasm-dry-run --base-href "/arkalia-cia/"

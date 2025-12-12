@@ -22,7 +22,7 @@ void main() {
       expect(find.text('Votre Carnet de Santé'), findsOneWidget);
     });
 
-    testWidgets('Affiche les deux boutons principaux', (WidgetTester tester) async {
+    testWidgets('Affiche les boutons principaux (Gmail, Google, Créer un compte)', (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: WelcomeAuthScreen(),
@@ -31,11 +31,13 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.text('SE CONNECTER'), findsOneWidget);
+      expect(find.text('Continuer avec Gmail'), findsOneWidget);
+      expect(find.text('Continuer avec Google'), findsOneWidget);
       expect(find.text('CRÉER UN COMPTE'), findsOneWidget);
+      expect(find.text('J\'ai déjà un compte'), findsOneWidget);
     });
 
-    testWidgets('Bouton SE CONNECTER navigue vers LoginScreen', (WidgetTester tester) async {
+    testWidgets('Bouton J\'ai déjà un compte navigue vers LoginScreen', (WidgetTester tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: WelcomeAuthScreen(),
@@ -44,10 +46,12 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final loginButton = find.text('SE CONNECTER');
+      final loginButton = find.text('J\'ai déjà un compte');
       expect(loginButton, findsOneWidget);
 
       await tester.tap(loginButton);
+      await tester.pump(); // Premier pump pour déclencher la navigation
+      await tester.pump(); // Deuxième pump pour s'assurer que la navigation est complète
       await tester.pumpAndSettle();
 
       expect(find.byType(LoginScreen), findsOneWidget);

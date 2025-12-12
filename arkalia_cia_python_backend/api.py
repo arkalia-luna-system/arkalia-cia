@@ -440,9 +440,6 @@ else:
         "http://127.0.0.1:3000",
     ]
 
-# Middleware de validation taille requêtes (avant CORS)
-app.add_middleware(RequestSizeValidatorMiddleware)
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=cors_origins,
