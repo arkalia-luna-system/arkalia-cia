@@ -294,15 +294,24 @@
 
 ---
 
-### 12. Paramètres - Accessibilité 🟠 **ÉLEVÉE**
+### 12. Paramètres - Accessibilité 🟠 **ÉLEVÉE** ✅ **RÉSOLU**
 
 **Problème** : Pas d'option taille texte/icônes
 
-**Solution** : Ajouter sliders + mode simplifié
+**Solution appliquée** :
+- ✅ Service `AccessibilityService` créé : gestion taille texte, icônes, mode simplifié
+- ✅ Sliders taille texte : Petit/Normal/Grand/Très Grand avec prévisualisation
+- ✅ Sliders taille icônes : Petit/Normal/Grand/Très Grand avec prévisualisation
+- ✅ Mode simplifié : Switch pour masquer fonctionnalités avancées
+- ✅ Section Accessibilité ajoutée dans Paramètres > Apparence
+
+**Fichiers créés/modifiés** :
+- `arkalia_cia/lib/services/accessibility_service.dart` (NOUVEAU)
+- `arkalia_cia/lib/screens/settings_screen.dart` (section accessibilité ajoutée)
 
 **Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md#12-paramètres---manque-accessibilité)
 
-**Priorité** : 🟠 **ÉLEVÉE**
+**Priorité** : ✅ **RÉSOLU**
 
 ---
 
