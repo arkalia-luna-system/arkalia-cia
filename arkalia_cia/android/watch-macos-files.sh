@@ -50,9 +50,18 @@ clean_macos_files() {
             # Supprimer aussi les répertoires vides créés par macOS
             find "$PROJECT_DIR/build/app/intermediates/javac" -type d -empty -delete 2>/dev/null || true
         fi
-        # Nettoyer aussi dans compileDebugJavaWithJavac/classes spécifiquement
+        # Nettoyer aussi dans compileDebugJavaWithJavac/classes spécifiquement (où l'erreur se produit)
         if [ -d "$PROJECT_DIR/build/app/intermediates/javac/debug/compileDebugJavaWithJavac/classes" ]; then
             find "$PROJECT_DIR/build/app/intermediates/javac/debug/compileDebugJavaWithJavac/classes" -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
+            # Nettoyer aussi dans com/arkalia/cia/ spécifiquement (où MainActivity.class est créé)
+            if [ -d "$PROJECT_DIR/build/app/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/arkalia/cia" ]; then
+                find "$PROJECT_DIR/build/app/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/arkalia/cia" -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
+            fi
+        fi
+        # Nettoyer aussi dans tous les sous-répertoires de javac (récursif)
+        if [ -d "$PROJECT_DIR/build/app/intermediates/javac" ]; then
+            find "$PROJECT_DIR/build/app/intermediates/javac" -type f -name "._*" -delete 2>/dev/null || true
+            find "$PROJECT_DIR/build/app/intermediates/javac" -type f -name ".!*!._*" -delete 2>/dev/null || true
         fi
         # Nettoyer aussi dans kotlin-classes (où les fichiers sont créés)
         if [ -d "$PROJECT_DIR/build/app/tmp/kotlin-classes" ]; then
@@ -85,11 +94,11 @@ echo "👀 Surveillance des fichiers macOS (PID: $$)"
 echo "   Pour arrêter: Ctrl+C ou './cleanup_all.sh'"
 echo ""
 
-# Surveiller en continu (toutes les 0.2 secondes pendant le build pour être ultra-réactif)
-# Plus rapide pendant le build pour éviter les erreurs D8/R8
+# Surveiller en continu (toutes les 0.5 seconde - plus fréquent pour éviter erreurs D8/R8)
+# D8/R8 traite les fichiers très rapidement, donc on nettoie plus souvent
 while [ -f "$LOCK_FILE" ]; do
     clean_macos_files
-    sleep 0.2
+    sleep 0.5
 done
 
 # Nettoyage à la fin

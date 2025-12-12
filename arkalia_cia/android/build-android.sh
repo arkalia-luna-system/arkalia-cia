@@ -80,6 +80,10 @@ if [ -d "build" ]; then
     # Nettoyer spécifiquement le répertoire javac qui cause des problèmes avec ArtProfile
     if [ -d "build/app/intermediates/javac" ]; then
         find build/app/intermediates/javac -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
+        # Nettoyer aussi dans compileDebugJavaWithJavac/classes/com/arkalia/cia (où MainActivity.class est créé)
+        if [ -d "build/app/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/arkalia/cia" ]; then
+            find build/app/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/arkalia/cia -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
+        fi
         echo -e "${GREEN}✅ Répertoire javac nettoyé${NC}"
     fi
     # Nettoyer spécifiquement compile_and_runtime_not_namespaced_r_class_jar (où l'erreur D8 se produit)
