@@ -48,25 +48,63 @@ echo ""
 # ========================================================================
 echo -e "${YELLOW}📱 Étape 2 : Vérification appareil Android${NC}"
 
-# Obtenir la liste des appareils
-DEVICES_OUTPUT=$(flutter devices 2>&1)
-ANDROID_DEVICES=$(echo "$DEVICES_OUTPUT" | grep -i "android" || true)
-
-if [ -z "$ANDROID_DEVICES" ]; then
-    echo -e "${YELLOW}⚠️  Aucun appareil Android détecté${NC}"
-    echo "   Options disponibles :"
-    echo "   1. Connecter un téléphone Android via USB (avec USB Debugging activé)"
-    echo "   2. Lancer un émulateur Android"
-    echo ""
-    echo -e "${YELLOW}   Voulez-vous continuer quand même ? (y/n)${NC}"
-    read -r response
-    if [[ ! "$response" =~ ^[Yy]$ ]]; then
-        echo -e "${RED}❌ Annulé${NC}"
-        exit 1
+# Vérifier avec adb d'abord (plus fiable pour détecter les appareils USB)
+ADB_DEVICES=""
+if command -v adb &> /dev/null; then
+    echo "   Vérification avec adb..."
+    # Relancer le serveur adb si nécessaire (parfois il faut le redémarrer)
+    adb kill-server 2>/dev/null || true
+    sleep 1
+    adb start-server 2>/dev/null || true
+    sleep 1
+    
+    ADB_OUTPUT=$(adb devices 2>&1 || true)
+    # Chercher les lignes avec "device" (appareil connecté et autorisé)
+    ADB_DEVICES=$(echo "$ADB_OUTPUT" | grep -E "device$" | grep -v "List of devices" || true)
+    
+    # Vérifier aussi les appareils "unauthorized" (besoin d'autoriser sur le téléphone)
+    UNAUTHORIZED=$(echo "$ADB_OUTPUT" | grep -E "unauthorized" || true)
+    if [ -n "$UNAUTHORIZED" ]; then
+        echo -e "${YELLOW}⚠️  Appareil détecté mais non autorisé${NC}"
+        echo "   Veuillez autoriser le débogage USB sur votre téléphone"
+        echo "   (Une popup devrait apparaître sur votre S25)"
     fi
-    DEVICE_ID="android"
-else
-    echo -e "${GREEN}✅ Appareil Android détecté${NC}"
+    
+    if [ -n "$ADB_DEVICES" ]; then
+        echo -e "${GREEN}✅ Appareil(s) Android détecté(s) via adb${NC}"
+        echo "$ADB_DEVICES" | while read -r line; do
+            DEVICE_SERIAL=$(echo "$line" | awk '{print $1}')
+            echo "   - $DEVICE_SERIAL"
+        done
+    elif [ -z "$UNAUTHORIZED" ]; then
+        echo -e "${YELLOW}   Aucun appareil détecté via adb${NC}"
+        echo "   Vérifiez que :"
+        echo "   1. Le téléphone est connecté en USB"
+        echo "   2. Le USB Debugging est activé (Options développeur)"
+        echo "   3. Le câble USB supporte les données (pas seulement la charge)"
+    fi
+fi
+
+# Obtenir la liste des appareils Flutter
+DEVICES_OUTPUT=$(flutter devices 2>&1)
+ANDROID_DEVICES=$(echo "$DEVICES_OUTPUT" | grep -i "android\|mobile" || true)
+
+# Si adb a trouvé des appareils mais pas Flutter, attendre un peu et réessayer
+if [ -n "$ADB_DEVICES" ] && [ -z "$ANDROID_DEVICES" ]; then
+    echo -e "${YELLOW}   Appareil détecté via adb mais pas encore par Flutter, attente...${NC}"
+    sleep 2
+    DEVICES_OUTPUT=$(flutter devices 2>&1)
+    ANDROID_DEVICES=$(echo "$DEVICES_OUTPUT" | grep -i "android\|mobile" || true)
+fi
+
+# Si toujours rien, utiliser adb pour obtenir l'ID
+if [ -z "$ANDROID_DEVICES" ] && [ -n "$ADB_DEVICES" ]; then
+    echo -e "${YELLOW}   Utilisation de l'ID depuis adb...${NC}"
+    # Prendre le premier appareil trouvé par adb
+    DEVICE_ID=$(echo "$ADB_DEVICES" | head -1 | awk '{print $1}')
+    echo -e "${GREEN}✅ Utilisation de l'appareil : ${DEVICE_ID}${NC}"
+elif [ -n "$ANDROID_DEVICES" ]; then
+    echo -e "${GREEN}✅ Appareil Android détecté par Flutter${NC}"
     echo "$ANDROID_DEVICES" | head -3
     
     # Extraire l'ID du premier appareil Android
@@ -92,6 +130,24 @@ else
     else
         echo -e "${GREEN}✅ Utilisation de l'appareil : ${DEVICE_ID}${NC}"
     fi
+elif [ -n "$ADB_DEVICES" ]; then
+    # Utiliser l'ID depuis adb
+    DEVICE_ID=$(echo "$ADB_DEVICES" | head -1 | awk '{print $1}')
+    echo -e "${GREEN}✅ Utilisation de l'appareil depuis adb : ${DEVICE_ID}${NC}"
+else
+    echo -e "${YELLOW}⚠️  Aucun appareil Android détecté${NC}"
+    echo "   Options disponibles :"
+    echo "   1. Connecter un téléphone Android via USB (avec USB Debugging activé)"
+    echo "   2. Vérifier que USB Debugging est activé dans les options développeur"
+    echo "   3. Lancer un émulateur Android"
+    echo ""
+    echo -e "${YELLOW}   Voulez-vous continuer quand même ? (y/n)${NC}"
+    read -r response
+    if [[ ! "$response" =~ ^[Yy]$ ]]; then
+        echo -e "${RED}❌ Annulé${NC}"
+        exit 1
+    fi
+    DEVICE_ID="android"
 fi
 echo ""
 
