@@ -286,15 +286,22 @@
 
 ---
 
-### 14. Rappels - Pas modifiables 🟠 **ÉLEVÉE**
+### 14. Rappels - Pas modifiables ✅ **RÉSOLU**
 
 **Problème** : Impossible de modifier un rappel créé
 
-**Solution** : Ajouter fonction modifier dans UI
+**Solution appliquée** :
+- ✅ Ajout bouton "Modifier" sur chaque rappel (icône edit)
+- ✅ Création `_showEditReminderDialog()` qui réutilise le dialog d'ajout pré-rempli
+- ✅ Fonction `_updateReminder()` qui utilise `LocalStorageService.updateReminder()`
+- ✅ Permet modification titre, description, date, heure, récurrence
+
+**Fichiers modifiés** :
+- `arkalia_cia/lib/screens/reminders_screen.dart`
 
 **Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md#14-rappels---pas-modifiables)
 
-**Priorité** : 🟠 **ÉLEVÉE**
+**Priorité** : ✅ **RÉSOLU**
 
 ---
 

@@ -2,7 +2,7 @@
 
 <div align="center">
 
-**Version** : 1.3.1+5 | **Date** : 12 décembre 2025  
+**Version** : 1.3.1+6 | **Date** : 12 décembre 2025  
 **Statut** : ✅ Production-Ready | ✅ Corrections appliquées (5/20 problèmes résolus)
 
 > **📌 Nouveau** : Voir **[AUDIT_COMPLET_12_DECEMBRE_2025.md](./../audits/AUDIT_COMPLET_12_DECEMBRE_2025.md)** pour l'audit complet basé sur les tests utilisateur.
@@ -217,7 +217,7 @@ Le projet est production-ready à 100%. Les améliorations futures (LLM avancés
 
 *Dernière mise à jour : 27 novembre 2025*  
 *Statut : 100% Production-Ready - 100% d'exploitation - Toutes les 4 phases d'améliorations terminées*  
-*Version : 1.3.1*  
+*Version : 1.3.1+6*  
 *Exploitation : 100% (toutes fonctionnalités critiques implémentées, améliorations optionnelles non bloquantes)*  
 *Bugs : 13/13 corrigés (100%) - Tous les bugs critiques, élevés, moyens et mineurs corrigés*  
 *Accessibilité : Améliorée (tous textes ≥14px pour seniors, contraste WCAG)*

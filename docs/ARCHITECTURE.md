@@ -2,7 +2,7 @@
 
 <div align="center">
 
-**Version** : 1.3.1+5 | **Dernière mise à jour** : 10 décembre 2025
+**Version** : 1.3.1+6 | **Dernière mise à jour** : 12 décembre 2025
 
 [![Statut](https://img.shields.io/badge/statut-production--ready-success)]()
 [![Architecture](https://img.shields.io/badge/architecture-local--first-blue)]()

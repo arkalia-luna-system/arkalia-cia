@@ -2,7 +2,7 @@
 
 <div align="center">
 
-**Version** : 1.3.1+5 | **Date** : 10 décembre 2025
+**Version** : 1.3.1+6 | **Date** : 12 décembre 2025
 
 [![Endpoints](https://img.shields.io/badge/endpoints-21-blue)]()
 [![Auth](https://img.shields.io/badge/auth-JWT-orange)]()

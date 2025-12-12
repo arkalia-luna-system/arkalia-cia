@@ -2,7 +2,7 @@
 
 <div align="center">
 
-**Date** : 10 décembre 2025 | **Version** : 1.3.1+5
+**Date** : 12 décembre 2025 | **Version** : 1.3.1+6
 
 [![Sécurité](https://img.shields.io/badge/sécurité-10%2F10-brightgreen)]()
 [![Perfection](https://img.shields.io/badge/perfection-10%2F10-brightgreen)]()

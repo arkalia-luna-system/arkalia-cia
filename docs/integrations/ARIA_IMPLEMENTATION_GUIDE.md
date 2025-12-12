@@ -1,6 +1,6 @@
 # Guide d'Implémentation ARIA
 
-**Version** : 1.3.1+5 | **Date** : 10 décembre 2025  
+**Version** : 1.3.1+6 | **Date** : 12 décembre 2025  
 **Statut** : ✅ Production-Ready
 
 Guide pratique pour implémenter l'intégration ARIA étape par étape.

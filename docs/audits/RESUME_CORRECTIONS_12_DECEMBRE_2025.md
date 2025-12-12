@@ -2,7 +2,7 @@
 
 <div align="center">
 
-**Date** : 12 décembre 2025 | **Version** : 1.3.1+5
+**Date** : 12 décembre 2025 | **Version** : 1.3.1+6
 
 [![Statut](https://img.shields.io/badge/statut-corrections%20appliquées-success)]()
 [![Tests](https://img.shields.io/badge/tests-22%2F22%20passent-success)]()

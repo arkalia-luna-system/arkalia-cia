@@ -1,7 +1,7 @@
 # 🔍 AUDIT COMPLET DES DÉPENDANCES - ARKALIA CIA
 
 **Date** : 12 décembre 2025  
-**Version** : 1.3.1+5  
+**Version** : 1.3.1+6  
 **Objectif** : Vérifier que toutes les dépendances sont gratuites, justifiées et nécessaires
 
 ---

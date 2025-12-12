@@ -2,7 +2,7 @@
 
 <div align="center">
 
-**Date** : 12 décembre 2025 | **Version** : 1.3.1+5
+**Date** : 12 décembre 2025 | **Version** : 1.3.1+6
 
 [![Statut](https://img.shields.io/badge/statut-en%20cours-yellow)]()
 [![Problèmes](https://img.shields.io/badge/problèmes%20restants-17-orange)]()
@@ -189,16 +189,20 @@ Audit complet des problèmes restants après corrections du 12 décembre 2025.
 
 ---
 
-### 14. Rappels - Pas modifiables 🟠 **ÉLEVÉE**
+### 14. Rappels - Pas modifiables ✅ **RÉSOLU**
 
-**Complexité** : 🟢 **FAIBLE** (UI simple)
+**Problème** : Impossible de modifier un rappel créé
 
-**Méthode recommandée** :
-1. Ajouter bouton "Modifier" sur chaque rappel (1-2 heures)
-2. Créer `EditReminderDialog` (2-3 heures)
-3. Permettre modification date, heure, récurrence (2-3 heures)
+**Solution appliquée** :
+- ✅ Ajout bouton "Modifier" sur chaque rappel (icône edit)
+- ✅ Création `_showEditReminderDialog()` qui réutilise le dialog d'ajout pré-rempli
+- ✅ Fonction `_updateReminder()` qui utilise `LocalStorageService.updateReminder()`
+- ✅ Permet modification titre, description, date, heure, récurrence
 
-**Total estimé** : 1 jour
+**Fichiers modifiés** :
+- `arkalia_cia/lib/screens/reminders_screen.dart`
+
+**Priorité** : ✅ **RÉSOLU**
 
 ---
 
