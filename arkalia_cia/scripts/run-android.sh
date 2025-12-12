@@ -115,26 +115,85 @@ echo "   GRADLE_USER_HOME=$GRADLE_USER_HOME"
 echo ""
 
 # ========================================================================
-# ÉTAPE 4 : Nettoyage léger
+# ÉTAPE 4 : Nettoyage agressif des fichiers macOS
 # ========================================================================
-echo -e "${YELLOW}🧹 Étape 4 : Nettoyage léger${NC}"
+echo -e "${YELLOW}🧹 Étape 4 : Nettoyage agressif des fichiers macOS${NC}"
 
-# Nettoyer uniquement les fichiers macOS (pas tout le build)
-echo "   Nettoyage des fichiers macOS..."
-find . -type f \( -name "._*" -o -name ".!*!._*" -o -name ".DS_Store" \) ! -path "./.git/*" ! -path "./.dart_tool/*" -delete 2>/dev/null || true
+# Utiliser le script de prévention si disponible (comme dans build-android.sh)
+PREVENT_SCRIPT="android/prevent-macos-files.sh"
+if [ -f "$PREVENT_SCRIPT" ]; then
+    echo "   Utilisation du script prevent-macos-files.sh..."
+    chmod +x "$PREVENT_SCRIPT"
+    "$PREVENT_SCRIPT" || true
+else
+    # Fallback : nettoyage manuel ultra-agressif
+    echo "   Nettoyage manuel agressif..."
+    find . -type f \( -name "._*" -o -name ".!*!._*" -o -name ".DS_Store" \) ! -path "./.git/*" ! -path "./.dart_tool/*" -delete 2>/dev/null || true
+    find . -type d \( -name ".AppleDouble" -o -name ".Spotlight-V100" -o -name ".Trashes" \) ! -path "./.git/*" -exec rm -rf {} + 2>/dev/null || true
+fi
 
-# Nettoyer spécifiquement dans build/ si existe
+# Nettoyer spécifiquement dans build/ (même s'il n'existe pas encore)
 if [ -d "build" ]; then
     find build -type f \( -name "._*" -o -name ".!*!._*" -o -name ".DS_Store" \) -delete 2>/dev/null || true
+    # Nettoyer spécifiquement le répertoire javac et intermediates qui causent des problèmes
+    if [ -d "build/app/intermediates" ]; then
+        find build/app/intermediates -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
+    fi
+    if [ -d "build/app/intermediates/javac" ]; then
+        find build/app/intermediates/javac -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
+    fi
+    # Nettoyer aussi dans tmp/kotlin-classes
+    if [ -d "build/app/tmp/kotlin-classes" ]; then
+        find build/app/tmp/kotlin-classes -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
+    fi
+fi
+
+# Lancer un script de surveillance en arrière-plan pour supprimer les fichiers pendant le build
+WATCH_SCRIPT="android/watch-macos-files.sh"
+if [ -f "$WATCH_SCRIPT" ]; then
+    chmod +x "$WATCH_SCRIPT"
+    "$WATCH_SCRIPT" &
+    WATCH_PID=$!
+    echo -e "${GREEN}✅ Surveillance des fichiers macOS activée (PID: $WATCH_PID)${NC}"
+    # Tuer le processus de surveillance à la fin
+    trap "kill $WATCH_PID 2>/dev/null || true" EXIT
+else
+    # Fallback : surveillance simple en arrière-plan
+    (
+        while true; do
+            sleep 0.5
+            if [ -d "build" ]; then
+                find build -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
+            fi
+        done
+    ) &
+    WATCH_PID=$!
+    echo -e "${GREEN}✅ Surveillance simple activée (PID: $WATCH_PID)${NC}"
+    trap "kill $WATCH_PID 2>/dev/null || true" EXIT
 fi
 
 echo -e "${GREEN}✅ Nettoyage terminé${NC}"
 echo ""
 
 # ========================================================================
-# ÉTAPE 5 : Récupération des dépendances
+# ÉTAPE 5 : Nettoyage Flutter (si nécessaire)
 # ========================================================================
-echo -e "${YELLOW}📦 Étape 5 : Récupération des dépendances${NC}"
+echo -e "${YELLOW}🧹 Étape 5 : Nettoyage Flutter (si nécessaire)${NC}"
+
+# Nettoyer seulement si build/ existe et contient des erreurs
+if [ -d "build" ] && [ -d "build/app/intermediates" ]; then
+    echo "   Nettoyage du build précédent..."
+    flutter clean > /dev/null 2>&1 || true
+    echo -e "${GREEN}✅ Build nettoyé${NC}"
+else
+    echo -e "${GREEN}✅ Pas de nettoyage nécessaire${NC}"
+fi
+echo ""
+
+# ========================================================================
+# ÉTAPE 6 : Récupération des dépendances
+# ========================================================================
+echo -e "${YELLOW}📦 Étape 6 : Récupération des dépendances${NC}"
 
 flutter pub get
 if [ $? -ne 0 ]; then
@@ -146,9 +205,9 @@ echo -e "${GREEN}✅ Dépendances récupérées${NC}"
 echo ""
 
 # ========================================================================
-# ÉTAPE 6 : Analyse rapide (optionnelle, non bloquante)
+# ÉTAPE 7 : Analyse rapide (optionnelle, non bloquante)
 # ========================================================================
-echo -e "${YELLOW}🔍 Étape 6 : Analyse rapide du code (optionnelle)${NC}"
+echo -e "${YELLOW}🔍 Étape 7 : Analyse rapide du code (optionnelle)${NC}"
 
 # Exécuter flutter analyze avec timeout strict (10 secondes)
 ANALYZE_OUTPUT=$(timeout 10 flutter analyze 2>&1) || {
@@ -179,7 +238,7 @@ fi
 echo ""
 
 # ========================================================================
-# ÉTAPE 7 : Lancement de l'app
+# ÉTAPE 8 : Lancement de l'app
 # ========================================================================
 echo -e "${BLUE}═══════════════════════════════════════════════════════════${NC}"
 echo -e "${GREEN}🚀 Lancement de l'app Android...${NC}"
