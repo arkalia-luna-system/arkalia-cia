@@ -25,6 +25,57 @@ Ce script vérifie :
 
 ## 🐛 PROBLÈMES COURANTS ET SOLUTIONS
 
+### ⚠️ PROBLÈME CRITIQUE : "This android application is not registered to use OAuth2.0"
+
+**Symptômes** :
+- Erreur dans les logs : `Server returned error: This android application is not registered to use OAuth2.0`
+- La connexion échoue immédiatement
+- Message mentionne "package name and SHA-1 certificate fingerprint"
+
+**Cause** : L'application n'est pas correctement enregistrée dans Google Cloud Console
+
+**Solution ÉTAPE PAR ÉTAPE** :
+
+1. **Vérifier le package name** :
+   ```bash
+   # Doit être exactement : com.arkalia.cia
+   grep -r "applicationId\|namespace" arkalia_cia/android/app/build.gradle.kts
+   ```
+
+2. **Obtenir le SHA-1 Debug actuel** :
+   ```bash
+   cd arkalia_cia/android
+   ./gradlew signingReport | grep -A 5 "Variant: debug" | grep "SHA1:"
+   ```
+   - SHA-1 attendu : `2C:68:D5:C0:92:A8:7F:59:E7:6A:7C:5B:7C:F9:77:54:9E:68:14:6E`
+
+3. **Vérifier dans Google Cloud Console** :
+   - URL : https://console.cloud.google.com/apis/credentials?project=arkalia-cia
+   - Ouvrir "Client Android 1"
+   - **Vérifier que** :
+     - Package name : `com.arkalia.cia` (exactement, sans espaces)
+     - SHA-1 Debug : `2C:68:D5:C0:92:A8:7F:59:E7:6A:7C:5B:7C:F9:77:54:9E:68:14:6E`
+   - **Si différent ou manquant** :
+     - Cliquer sur "EDIT"
+     - Ajouter le SHA-1 Debug dans "SHA-1 certificate fingerprints"
+     - Sauvegarder
+     - **Attendre 5-10 minutes** pour la propagation
+
+4. **Vérifier que l'API est activée** :
+   - URL : https://console.cloud.google.com/apis/library?project=arkalia-cia
+   - Chercher "Google Sign-In API"
+   - Vérifier qu'elle est activée (bouton "ENABLE" si désactivée)
+
+5. **Redémarrer l'app** après modification :
+   ```bash
+   # Arrêter l'app complètement
+   adb shell am force-stop com.arkalia.cia
+   # Relancer
+   bash scripts/run-android.sh
+   ```
+
+---
+
 ### Problème 1 : Erreur "DEVELOPER_ERROR" ou "10:"
 
 **Symptômes** :
