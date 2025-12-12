@@ -93,8 +93,11 @@ if [ -d "build" ]; then
     fi
     # Nettoyer aussi dans kotlin-classes
     if [ -d "build/app/tmp/kotlin-classes" ]; then
-        find build/app/tmp/kotlin-classes -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
+        find build/app/tmp/kotlin-classes -type f \( -name "._*" -o -name ".!*!._*" -o -name "._BuildConfig.class" \) -delete 2>/dev/null || true
     fi
+    # Nettoyer aussi tous les fichiers ._BuildConfig.class dans build/
+    find build -type f -name "._BuildConfig.class" -delete 2>/dev/null || true
+    find build -type f -name "._*.class" -delete 2>/dev/null || true
 fi
 
 # Lancer un script de surveillance en arrière-plan pour supprimer les fichiers pendant le build
