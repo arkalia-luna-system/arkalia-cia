@@ -48,10 +48,11 @@ echo ""
 # ========================================================================
 echo -e "${YELLOW}📱 Étape 2 : Vérification appareil Android${NC}"
 
-# Vérifier si un appareil Android est connecté
-DEVICES=$(flutter devices | grep -i "android" || true)
+# Obtenir la liste des appareils
+DEVICES_OUTPUT=$(flutter devices 2>&1)
+ANDROID_DEVICES=$(echo "$DEVICES_OUTPUT" | grep -i "android" || true)
 
-if [ -z "$DEVICES" ]; then
+if [ -z "$ANDROID_DEVICES" ]; then
     echo -e "${YELLOW}⚠️  Aucun appareil Android détecté${NC}"
     echo "   Options disponibles :"
     echo "   1. Connecter un téléphone Android via USB (avec USB Debugging activé)"
@@ -63,9 +64,21 @@ if [ -z "$DEVICES" ]; then
         echo -e "${RED}❌ Annulé${NC}"
         exit 1
     fi
+    DEVICE_ID="android"
 else
     echo -e "${GREEN}✅ Appareil Android détecté${NC}"
-    echo "$DEVICES" | head -3
+    echo "$ANDROID_DEVICES" | head -3
+    
+    # Extraire l'ID du premier appareil Android
+    # Format: "SM S938B (mobile) • R3CY60BJ3ZM • android-arm64 • Android 16 (API 36)"
+    DEVICE_ID=$(echo "$ANDROID_DEVICES" | head -1 | sed -n 's/.*• \([^•]*\) •.*/\1/p' | tr -d ' ')
+    
+    if [ -z "$DEVICE_ID" ]; then
+        echo -e "${YELLOW}⚠️  Impossible d'extraire l'ID, utilisation de 'android'${NC}"
+        DEVICE_ID="android"
+    else
+        echo -e "${GREEN}✅ Utilisation de l'appareil : ${DEVICE_ID}${NC}"
+    fi
 fi
 echo ""
 
@@ -165,15 +178,15 @@ BUILD_SCRIPT="android/build-android.sh"
 if [ -f "$BUILD_SCRIPT" ]; then
     echo "   Utilisation du wrapper Gradle optimisé..."
     chmod +x "$BUILD_SCRIPT"
-    # Utiliser le script wrapper pour flutter run
+    # Utiliser le script wrapper pour flutter run avec l'ID de l'appareil
     env GRADLE_USER_HOME="$HOME/.gradle" \
         GRADLE_OPTS="-Dorg.gradle.user.home=$HOME/.gradle -Duser.home=$HOME" \
-        flutter run -d android
+        flutter run -d "$DEVICE_ID"
 else
     echo "   Lancement direct avec Flutter..."
     env GRADLE_USER_HOME="$HOME/.gradle" \
         GRADLE_OPTS="-Dorg.gradle.user.home=$HOME/.gradle -Duser.home=$HOME" \
-        flutter run -d android
+        flutter run -d "$DEVICE_ID"
 fi
 
 # Le script se termine ici si flutter run réussit
