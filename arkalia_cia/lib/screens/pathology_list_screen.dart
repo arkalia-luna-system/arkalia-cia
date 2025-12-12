@@ -319,18 +319,19 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(fontSize: 14),
                         ),
-                    if (pathology.subcategory != null) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        pathology.subcategory!,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey[600],
-                          fontStyle: FontStyle.italic,
+                      if (pathology.subcategory != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          pathology.subcategory!,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[600],
+                            fontStyle: FontStyle.italic,
+                          ),
                         ),
-                      ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
                 trailing: PopupMenuButton(
                   itemBuilder: (context) => [

@@ -139,10 +139,6 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
           IconButton(
             icon: const Icon(Icons.info_outline, size: 24),
             onPressed: () {
-            constraints: const BoxConstraints(
-              minWidth: 48,
-              minHeight: 48,
-            ),
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(

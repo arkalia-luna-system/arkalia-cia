@@ -579,21 +579,21 @@ class _HomePageState extends State<HomePage> {
         (_searchResults['contacts']?.length ?? 0);
 
     if (totalResults == 0) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.search_off, size: 64, color: Colors.grey),
-            SizedBox(height: 16),
-              Text(
-                'Aucun résultat trouvé',
-                style: TextStyle(color: Colors.grey, fontSize: 18),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Essayez de modifier votre recherche',
-                style: TextStyle(color: Colors.grey[600], fontSize: 14),
-              ),
+            const Icon(Icons.search_off, size: 64, color: Colors.grey),
+            const SizedBox(height: 16),
+            const Text(
+              'Aucun résultat trouvé',
+              style: TextStyle(color: Colors.grey, fontSize: 18),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Essayez de modifier votre recherche',
+              style: TextStyle(color: Colors.grey[600], fontSize: 14),
+            ),
           ],
         ),
       );
