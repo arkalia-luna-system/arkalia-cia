@@ -7,7 +7,10 @@ import '../services/backend_config_service.dart';
 import '../services/health_portal_auth_service.dart' show HealthPortalAuthService, HealthPortal;
 import '../services/offline_cache_service.dart';
 import '../services/accessibility_service.dart';
+import '../services/google_auth_service.dart';
+import '../utils/app_logger.dart';
 import 'auth/login_screen.dart';
+import 'auth/welcome_auth_screen.dart';
 import 'stats_screen.dart';
 import 'user_profile_screen.dart';
 
@@ -245,12 +248,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         
                         if (shouldLogout == true) {
                           if (!mounted) return;
+                          
+                          // Vérifier si l'utilisateur est connecté avec Google et déconnecter
+                          try {
+                            final isGoogleSignedIn = await GoogleAuthService.isSignedIn();
+                            if (isGoogleSignedIn) {
+                              await GoogleAuthService.signOut();
+                            }
+                          } catch (e) {
+                            // Ignorer les erreurs de déconnexion Google
+                            AppLogger.debug('Erreur lors de la déconnexion Google: $e');
+                          }
+                          
+                          // Déconnexion backend si nécessaire
                           await AuthApiService.logout();
                           if (!mounted) return;
                           final navContext = context; // Capturer context après await
                           if (navContext.mounted) {
                             Navigator.of(navContext).pushAndRemoveUntil(
-                              MaterialPageRoute(builder: (context) => const LoginScreen()),
+                              MaterialPageRoute(builder: (context) => const WelcomeAuthScreen()),
                               (route) => false,
                             );
                           }
