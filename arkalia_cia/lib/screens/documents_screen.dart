@@ -299,10 +299,15 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           'created_at': DateTime.now().toIso8601String(),
         };
 
-        // Sur le web, stocker aussi les bytes
-        if (kIsWeb && pickedFile.bytes != null) {
-          document['bytes'] = pickedFile.bytes;
-        }
+        // ⚠️ CRITIQUE : Ne PAS stocker les bytes sur le web dans SharedPreferences
+        // SharedPreferences a une limite de ~5-10 MB par clé
+        // Les PDFs peuvent faire plusieurs MB chacun, ce qui peut faire planter l'app
+        // Les bytes doivent être stockés ailleurs (IndexedDB) ou chargés à la demande
+        // Pour l'instant, on ne stocke que les métadonnées
+        // TODO: Implémenter stockage IndexedDB pour fichiers volumineux sur web
+        // if (kIsWeb && pickedFile.bytes != null) {
+        //   document['bytes'] = pickedFile.bytes; // ⚠️ DÉSACTIVÉ - Trop volumineux
+        // }
 
         await LocalStorageService.saveDocument(document);
 

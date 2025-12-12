@@ -59,10 +59,16 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
         });
       }
       
-      // 2. Pathologies et leur tracking
+      // 2. Pathologies et leur tracking (LIMITÉ pour économiser mémoire)
       try {
         final pathologyService = PathologyService();
-        final pathologies = await pathologyService.getAllPathologies();
+        final allPathologies = await pathologyService.getAllPathologies();
+        
+        // ⚠️ OPTIMISATION MÉMOIRE : Limiter à 20 pathologies max et 90 jours de tracking
+        // Au lieu de charger TOUTES les pathologies avec 365 jours de tracking
+        final pathologies = allPathologies.take(20).toList();
+        final trackingStartDate = DateTime.now().subtract(const Duration(days: 90)); // 90 jours au lieu de 365
+        
         for (final pathology in pathologies) {
           // Ajouter la création de la pathologie
           data.add({
@@ -71,12 +77,15 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
             'value': 1,
           });
           
-          // Ajouter les entrées de tracking
+          // Ajouter les entrées de tracking (limité à 90 jours)
           final tracking = await pathologyService.getTrackingByPathology(
             pathology.id!,
-            startDate: DateTime.now().subtract(const Duration(days: 365)),
+            startDate: trackingStartDate,
           );
-          for (final entry in tracking) {
+          
+          // Limiter aussi le nombre d'entrées de tracking par pathologie (max 100)
+          final limitedTracking = tracking.take(100).toList();
+          for (final entry in limitedTracking) {
             final painLevel = entry.data['painLevel'] ?? entry.data['pain_level'];
             if (painLevel != null) {
               data.add({
@@ -91,10 +100,13 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
         // Ignorer les erreurs de pathologies
       }
       
-      // 3. Médicaments
+      // 3. Médicaments (LIMITÉ pour économiser mémoire)
       try {
         final medicationService = MedicationService();
-        final medications = await medicationService.getAllMedications();
+        final allMedications = await medicationService.getAllMedications();
+        
+        // ⚠️ OPTIMISATION MÉMOIRE : Limiter à 50 médicaments max
+        final medications = allMedications.take(50).toList();
         for (final medication in medications) {
           data.add({
             'date': medication.startDate.toIso8601String(),

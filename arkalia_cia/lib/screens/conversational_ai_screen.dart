@@ -15,6 +15,7 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
   final List<ChatMessage> _messages = [];
   bool _isLoading = false;
   bool _showHistory = false;
+  static const int _maxMessagesInMemory = 50; // Limite pour éviter consommation mémoire excessive
 
   @override
   void initState() {
@@ -65,6 +66,11 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
         isUser: true,
         timestamp: DateTime.now(),
       ));
+      // Limiter le nombre de messages en mémoire pour éviter consommation excessive
+      if (_messages.length > _maxMessagesInMemory) {
+        // Supprimer les messages les plus anciens (garder le message de bienvenue)
+        _messages.removeRange(1, _messages.length - _maxMessagesInMemory + 1);
+      }
       _questionController.clear();
       _isLoading = true;
     });
@@ -80,6 +86,10 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
           timestamp: DateTime.now(),
           suggestions: response.suggestions,
         ));
+        // Limiter le nombre de messages en mémoire
+        if (_messages.length > _maxMessagesInMemory) {
+          _messages.removeRange(1, _messages.length - _maxMessagesInMemory + 1);
+        }
         _isLoading = false;
       });
     } catch (e) {
@@ -112,6 +122,10 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
             'Tester la connexion dans les paramètres',
           ],
         ));
+        // Limiter le nombre de messages en mémoire
+        if (_messages.length > _maxMessagesInMemory) {
+          _messages.removeRange(1, _messages.length - _maxMessagesInMemory + 1);
+        }
         _isLoading = false;
       });
     }

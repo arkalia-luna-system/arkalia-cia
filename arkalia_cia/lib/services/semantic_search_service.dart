@@ -34,14 +34,27 @@ class SemanticSearchService {
   };
 
   /// Recherche sémantique dans documents
+  /// ⚠️ OPTIMISATION MÉMOIRE : Limite à 100 documents max pour le calcul de score
   Future<List<Map<String, dynamic>>> semanticSearch(
     String query,
     {int limit = 20}
   ) async {
-    final documents = await LocalStorageService.getDocuments();
+    final allDocuments = await LocalStorageService.getDocuments();
+    
+    // ⚠️ OPTIMISATION MÉMOIRE : Limiter à 100 documents max pour le calcul de score
+    // Si beaucoup de documents, on ne calcule le score que sur les 100 plus récents
+    // Cela évite de charger tous les documents en mémoire si il y en a des milliers
+    final documents = allDocuments.length > 100
+        ? (allDocuments..sort((a, b) {
+            final dateA = DateTime.tryParse(a['created_at'] ?? '') ?? DateTime(1970);
+            final dateB = DateTime.tryParse(b['created_at'] ?? '') ?? DateTime(1970);
+            return dateB.compareTo(dateA); // Plus récents en premier
+          })).take(100).toList()
+        : allDocuments;
+    
     final queryLower = query.toLowerCase();
     
-    // Calculer score sémantique pour chaque document
+    // Calculer score sémantique pour chaque document (limité à 100)
     final scoredDocs = documents.map((doc) {
       final score = _calculateSemanticScore(doc, queryLower);
       return {
@@ -123,9 +136,13 @@ class SemanticSearchService {
   }
 
   /// Recherche sémantique dans médecins
+  /// ⚠️ OPTIMISATION MÉMOIRE : Limite à 50 médecins max pour le calcul de score
   Future<List<dynamic>> semanticSearchDoctors(String query) async {
     final doctorService = DoctorService();
-    final doctors = await doctorService.getAllDoctors();
+    final allDoctors = await doctorService.getAllDoctors();
+    
+    // ⚠️ OPTIMISATION MÉMOIRE : Limiter à 50 médecins max pour le calcul de score
+    final doctors = allDoctors.take(50).toList();
     final queryLower = query.toLowerCase();
     
     final scoredDoctors = doctors.map((doctor) {

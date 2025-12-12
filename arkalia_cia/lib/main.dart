@@ -31,8 +31,8 @@ void main() async {
   await NotificationService.initialize();
   // Initialiser le service de sécurité runtime
   await RuntimeSecurityService.initialize();
-  // Nettoyer automatiquement les caches expirés au démarrage
-  await OfflineCacheService.clearExpiredCaches();
+  // Nettoyer automatiquement les caches expirés au démarrage et appliquer limite LRU
+  await OfflineCacheService.cleanupOnStartup();
   runApp(const ArkaliaCIAApp());
 }
 

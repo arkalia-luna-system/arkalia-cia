@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import '../../services/onboarding_service.dart';
 import '../../services/file_storage_service.dart';
 import '../../services/local_storage_service.dart';
+import '../../utils/app_logger.dart';
 import '../home_page.dart';
 import 'import_type.dart';
 
@@ -96,8 +97,20 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
         final timestamp = DateTime.now().millisecondsSinceEpoch;
         final uniqueFileName = '${timestamp}_$fileName';
 
-        // Sur le web, on stocke directement dans LocalStorageService
-        // On ne peut pas utiliser FileStorageService car il nécessite path_provider
+        // ⚠️ CRITIQUE : Ne PAS stocker les bytes sur le web dans SharedPreferences
+        // SharedPreferences a une limite de ~5-10 MB par clé
+        // Les PDFs peuvent faire plusieurs MB chacun, ce qui peut faire planter l'app
+        // Les bytes doivent être stockés ailleurs (IndexedDB) ou chargés à la demande
+        // Pour l'instant, on ne stocke que les métadonnées
+        // TODO: Implémenter stockage IndexedDB pour fichiers volumineux sur web
+        
+        // Vérifier la taille du fichier (limite 5 MB sur web)
+        const maxWebFileSize = 5 * 1024 * 1024; // 5 MB
+        if (bytes.length > maxWebFileSize) {
+          AppLogger.warning('Fichier trop volumineux pour le web: ${bytes.length} bytes (max: $maxWebFileSize)');
+          continue; // Ignorer les fichiers trop volumineux
+        }
+        
         final document = {
           'id': '${timestamp}_$i',
           'name': uniqueFileName,
@@ -106,7 +119,7 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
           'file_size': bytes.length,
           'category': 'Médical',
           'created_at': DateTime.now().toIso8601String(),
-          'bytes': bytes, // Stocker les bytes pour le web
+          // 'bytes': bytes, // ⚠️ DÉSACTIVÉ - Trop volumineux pour SharedPreferences
         };
 
         await LocalStorageService.saveDocument(document);

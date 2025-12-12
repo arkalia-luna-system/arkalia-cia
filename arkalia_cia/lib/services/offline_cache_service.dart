@@ -3,12 +3,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/app_logger.dart';
 
 /// Service de cache offline pour les données
+/// Cache LRU limité à 100 clés maximum pour éviter consommation mémoire excessive
 class OfflineCacheService {
   static const String _cachePrefix = 'offline_cache_';
   static const String _cacheTimestampPrefix = 'cache_timestamp_';
+  static const String _cacheAccessOrderKey = 'offline_cache_access_order';
   static const Duration _defaultCacheDuration = Duration(hours: 24);
+  static const int _maxCacheSize = 100; // Limite LRU : 100 clés maximum
 
-  /// Sauvegarde des données en cache
+  /// Sauvegarde des données en cache avec gestion LRU
   /// 
   /// [key] : Clé unique pour identifier le cache
   /// [data] : Données à mettre en cache (sera converti en JSON)
@@ -23,15 +26,69 @@ class OfflineCacheService {
       final cacheKey = '$_cachePrefix$key';
       final timestampKey = '$_cacheTimestampPrefix$key';
       
+      // Vérifier et nettoyer si limite LRU atteinte
+      await _enforceLRULimit(prefs);
+      
       final jsonString = jsonEncode(data);
       final expiryTime = DateTime.now().add(duration ?? _defaultCacheDuration);
       
       await prefs.setString(cacheKey, jsonString);
       await prefs.setString(timestampKey, expiryTime.toIso8601String());
       
+      // Mettre à jour l'ordre d'accès (LRU)
+      await _updateAccessOrder(prefs, key);
+      
       AppLogger.debug('Données mises en cache: $key (expire: $expiryTime)');
     } catch (e) {
       AppLogger.error('Erreur mise en cache $key', e);
+    }
+  }
+  
+  /// Applique la limite LRU en supprimant les clés les moins récemment utilisées
+  static Future<void> _enforceLRULimit(SharedPreferences prefs) async {
+    try {
+      final accessOrderStr = prefs.getString(_cacheAccessOrderKey);
+      if (accessOrderStr == null) return;
+      
+      final accessOrder = List<String>.from(jsonDecode(accessOrderStr));
+      
+      // Compter les clés de cache actives
+      final keys = prefs.getKeys();
+      final cacheKeys = keys.where((k) => k.startsWith(_cachePrefix)).length;
+      
+      // Si on dépasse la limite, supprimer les plus anciennes
+      if (cacheKeys >= _maxCacheSize) {
+        final keysToRemove = accessOrder.take(cacheKeys - _maxCacheSize + 1).toList();
+        
+        for (final key in keysToRemove) {
+          await clearCache(key);
+          accessOrder.remove(key);
+        }
+        
+        await prefs.setString(_cacheAccessOrderKey, jsonEncode(accessOrder));
+        AppLogger.debug('Cache LRU: ${keysToRemove.length} clé(s) supprimée(s)');
+      }
+    } catch (e) {
+      AppLogger.error('Erreur application limite LRU', e);
+    }
+  }
+  
+  /// Met à jour l'ordre d'accès pour le LRU
+  static Future<void> _updateAccessOrder(SharedPreferences prefs, String key) async {
+    try {
+      final accessOrderStr = prefs.getString(_cacheAccessOrderKey);
+      final accessOrder = accessOrderStr != null 
+          ? List<String>.from(jsonDecode(accessOrderStr))
+          : <String>[];
+      
+      // Retirer la clé si elle existe déjà
+      accessOrder.remove(key);
+      // Ajouter à la fin (plus récemment utilisée)
+      accessOrder.add(key);
+      
+      await prefs.setString(_cacheAccessOrderKey, jsonEncode(accessOrder));
+    } catch (e) {
+      AppLogger.error('Erreur mise à jour ordre accès', e);
     }
   }
 
@@ -61,6 +118,9 @@ class OfflineCacheService {
         return null;
       }
       
+      // Mettre à jour l'ordre d'accès (LRU) - cette clé est utilisée
+      await _updateAccessOrder(prefs, key);
+      
       return jsonDecode(cachedData);
     } catch (e) {
       AppLogger.error('Erreur récupération cache $key', e);
@@ -80,6 +140,15 @@ class OfflineCacheService {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('$_cachePrefix$key');
       await prefs.remove('$_cacheTimestampPrefix$key');
+      
+      // Retirer de l'ordre d'accès
+      final accessOrderStr = prefs.getString(_cacheAccessOrderKey);
+      if (accessOrderStr != null) {
+        final accessOrder = List<String>.from(jsonDecode(accessOrderStr));
+        accessOrder.remove(key);
+        await prefs.setString(_cacheAccessOrderKey, jsonEncode(accessOrder));
+      }
+      
       AppLogger.debug('Cache supprimé pour: $key');
     } catch (e) {
       AppLogger.error('Erreur suppression cache $key', e);
@@ -121,9 +190,27 @@ class OfflineCacheService {
           await prefs.remove(key);
         }
       }
+      
+      // Supprimer aussi l'ordre d'accès
+      await prefs.remove(_cacheAccessOrderKey);
+      
       AppLogger.debug('Tous les caches ont été supprimés');
     } catch (e) {
       AppLogger.error('Erreur suppression tous les caches', e);
+    }
+  }
+  
+  /// Nettoie automatiquement les caches expirés au démarrage
+  /// À appeler au démarrage de l'app pour libérer la mémoire
+  static Future<void> cleanupOnStartup() async {
+    try {
+      await clearExpiredCaches();
+      // Appliquer aussi la limite LRU au cas où
+      final prefs = await SharedPreferences.getInstance();
+      await _enforceLRULimit(prefs);
+      AppLogger.debug('Nettoyage cache au démarrage terminé');
+    } catch (e) {
+      AppLogger.error('Erreur nettoyage cache au démarrage', e);
     }
   }
 }

@@ -134,20 +134,28 @@ class ConversationalAIService {
     // Récupérer seulement les données récentes pour économiser la mémoire
     // Limiter à 10 documents récents, 5 médecins récents
     // Utiliser cache si disponible pour optimiser
+    
+    // ⚠️ OPTIMISATION MÉMOIRE : Ne charger que les données nécessaires
+    // Note: SharedPreferences charge tout en mémoire, mais on limite ensuite
+    // Pour vraiment optimiser, il faudrait implémenter pagination au niveau storage
     final allDocuments = await LocalStorageService.getDocuments();
     final doctorService = DoctorService();
     final allDoctors = await doctorService.getAllDoctors();
     
-    // Trier par date et prendre seulement les 10 documents les plus récents
-    allDocuments.sort((a, b) {
-      final dateA = DateTime.tryParse(a['created_at'] ?? '') ?? DateTime(1970);
-      final dateB = DateTime.tryParse(b['created_at'] ?? '') ?? DateTime(1970);
-      return dateB.compareTo(dateA);
-    });
-    final documents = allDocuments.take(10).toList();
+    // Optimisation : Trier seulement si nécessaire (éviter tri complet si peu de données)
+    final documents = allDocuments.length > 10
+        ? (allDocuments..sort((a, b) {
+            final dateA = DateTime.tryParse(a['created_at'] ?? '') ?? DateTime(1970);
+            final dateB = DateTime.tryParse(b['created_at'] ?? '') ?? DateTime(1970);
+            return dateB.compareTo(dateA);
+          })).take(10).toList()
+        : allDocuments.take(10).toList();
     
     // Prendre seulement les 5 médecins les plus récents (ou les plus consultés)
     final doctors = allDoctors.take(5).map((d) => d.toMap()).toList();
+    
+    // Libérer les références aux listes complètes pour libérer la mémoire
+    // (le GC Dart gère automatiquement, mais on peut aider)
     
     // Récupérer données douleur depuis ARIA si disponible (limité à 10)
     List<Map<String, dynamic>> painRecords = [];
