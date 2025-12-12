@@ -141,7 +141,7 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                             Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: Colors.grey.withOpacity(0.1),
+                                color: Colors.grey.withValues(alpha: 0.1),
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
@@ -327,7 +327,7 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: isSelected ? entry.key.withOpacity(0.3) : Colors.transparent,
+                    color: isSelected ? entry.key.withValues(alpha: 0.3) : Colors.transparent,
                     border: Border.all(
                       color: isSelected ? entry.key : Colors.grey,
                       width: isSelected ? 2 : 1,

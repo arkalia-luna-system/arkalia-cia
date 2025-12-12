@@ -297,11 +297,11 @@ class _HealthScreenState extends State<HealthScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.star_border, size: 64, color: Colors.grey),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.red.withOpacity(0.1),
+                color: Colors.red.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -341,98 +341,93 @@ class _HealthScreenState extends State<HealthScreen> {
             horizontal: 16,
             vertical: 4,
           ),
-          child: ListTile(
-            leading: CircleAvatar(
-              backgroundColor: Colors.grey.shade100,
-              child: Icon(
-                icon,
-                color: color,
-                size: 28,
-              ),
-            ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            leading: CircleAvatar(
-              backgroundColor: Colors.grey.shade100,
-              radius: 24,
-              child: Icon(
-                icon,
-                color: color,
-                size: 28,
-              ),
-            ),
-            title: Text(
-              portal['name'] ?? 'Portail',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-            ),
-            subtitle: Padding(
-              padding: const EdgeInsets.only(top: 4),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (portal['description'] != null)
-                    Text(
-                      portal['description'],
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        fontSize: 14,
-                      ),
-                    ),
-                if (category != null)
-                  Container(
-                    margin: const EdgeInsets.only(top: 4),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      category.toUpperCase(),
-                      style: TextStyle(
-                        color: color,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: Icon(
-                    isFavorite ? Icons.star : Icons.star_border,
-                    color: isFavorite ? Colors.amber : Colors.grey,
-                    size: 24,
-                  ),
-                  onPressed: () async {
-                    await HealthPortalFavoritesService.toggleFavorite(url);
-                    await _loadFavorites();
-                  },
-                  tooltip: isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris',
-                  constraints: const BoxConstraints(
-                    minWidth: 48,
-                    minHeight: 48,
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.open_in_new, color: Colors.blue, size: 24),
-                  onPressed: () => _openPortal(url),
-                  tooltip: 'Ouvrir le portail',
-                  constraints: const BoxConstraints(
-                    minWidth: 48,
-                    minHeight: 48,
-                  ),
-                ),
-              ],
-            ),
+          child: InkWell(
             onTap: () => _openPortal(url),
+            child: ListTile(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              leading: CircleAvatar(
+                backgroundColor: Colors.grey.shade100,
+                radius: 24,
+                child: Icon(
+                  icon,
+                  color: color,
+                  size: 28,
+                ),
+              ),
+              title: Text(
+                portal['name'] ?? 'Portail',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              subtitle: Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (portal['description'] != null)
+                      Text(
+                        portal['description'],
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
+                      ),
+                    if (category != null)
+                      Container(
+                        margin: const EdgeInsets.only(top: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          category.toUpperCase(),
+                          style: TextStyle(
+                            color: color,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      isFavorite ? Icons.star : Icons.star_border,
+                      color: isFavorite ? Colors.amber : Colors.grey,
+                      size: 24,
+                    ),
+                    onPressed: () async {
+                      await HealthPortalFavoritesService.toggleFavorite(url);
+                      await _loadFavorites();
+                    },
+                    tooltip: isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris',
+                    constraints: const BoxConstraints(
+                      minWidth: 48,
+                      minHeight: 48,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.open_in_new, color: Colors.blue, size: 24),
+                    onPressed: () => _openPortal(url),
+                    tooltip: 'Ouvrir le portail',
+                    constraints: const BoxConstraints(
+                      minWidth: 48,
+                      minHeight: 48,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         );
       },
@@ -503,7 +498,7 @@ class _HealthScreenState extends State<HealthScreen> {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.red.withOpacity(0.1),
+                          color: Colors.red.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
