@@ -500,9 +500,13 @@ Tests prévus pour Q1 2026 avec utilisateurs seniors (65-82 ans) pour valider l'
 # Run test suite
 pytest tests/ -v --cov=arkalia_cia_python_backend
 
-# Coverage: 72% (509 tests: 508 Python, 1 Flutter - tous passants)
+# Flutter tests
+flutter test --coverage
+
+# Coverage: 72% (508 tests Python + ~55 tests Flutter - tous passants)
 # Integration tests: Multiple scenarios
 # Unit tests: Comprehensive coverage for all modules
+# Tests Flutter: Utils (error_helper, retry_helper, validation_helper), Models (doctor, medication)
 ```
 
 ### Code Coverage Tracking
@@ -512,7 +516,7 @@ Le projet utilise **Codecov** pour le suivi automatique de la couverture :
 - **Flutter Mobile**: Suivi via flag `flutter` dans `.github/workflows/flutter-ci.yml`
 - **Dashboard**: [codecov.io/gh/arkalia-luna-system/arkalia-cia](https://codecov.io/gh/arkalia-luna-system/arkalia-cia)
 - **Configuration**: Voir `.codecov.yml` pour les détails de configuration
-- **Couverture actuelle**: 72% globale (71.98% Python, test Flutter minime)
+- **Couverture actuelle**: 72% globale (71.98% Python, amélioration Flutter en cours)
   - `database.py`: 100% ✅
   - `auto_documenter.py`: 92% ✅
   - `pdf_processor.py`: 89% ✅

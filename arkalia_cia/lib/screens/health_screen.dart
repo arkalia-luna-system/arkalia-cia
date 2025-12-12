@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../services/api_service.dart';
 import '../services/backend_config_service.dart';
+import '../services/health_portal_favorites_service.dart';
 import '../utils/validation_helper.dart';
 import '../config/health_portals_config.dart';
 import 'medical_report_screen.dart';
@@ -16,12 +17,24 @@ class HealthScreen extends StatefulWidget {
 class _HealthScreenState extends State<HealthScreen> {
   List<Map<String, dynamic>> portals = [];
   bool isLoading = false;
+  bool _showFavoritesOnly = false;
+  Set<String> _favoriteUrls = {};
 
   @override
   void initState() {
     super.initState();
     // Charger les portails (backend + pré-configurés)
     _loadPortals();
+    _loadFavorites();
+  }
+
+  Future<void> _loadFavorites() async {
+    final favorites = await HealthPortalFavoritesService.getFavoriteUrls();
+    if (mounted) {
+      setState(() {
+        _favoriteUrls = favorites;
+      });
+    }
   }
 
   Future<void> _loadPortals() async {
@@ -265,6 +278,128 @@ class _HealthScreenState extends State<HealthScreen> {
     }
   }
 
+  List<Map<String, dynamic>> _getFilteredPortals() {
+    if (_showFavoritesOnly) {
+      return portals.where((portal) {
+        final url = portal['url'] as String? ?? '';
+        return _favoriteUrls.contains(url);
+      }).toList();
+    }
+    return portals;
+  }
+
+  Widget _buildPortalsList() {
+    final filteredPortals = _getFilteredPortals();
+    
+    if (_showFavoritesOnly && filteredPortals.isEmpty) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.star_border, size: 64, color: Colors.grey),
+            SizedBox(height: 16),
+            Text(
+              'Aucun portail favori',
+              style: TextStyle(fontSize: 18, color: Colors.grey),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Épinglez des portails pour les retrouver facilement',
+              style: TextStyle(fontSize: 14, color: Colors.grey),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
+
+    return ListView.builder(
+      itemCount: filteredPortals.length,
+      itemBuilder: (context, index) {
+        final portal = filteredPortals[index];
+        final category = portal['category'];
+        final icon = _getCategoryIcon(category);
+        final color = _getCategoryColor(category);
+        final url = portal['url'] as String? ?? '';
+        final isFavorite = _favoriteUrls.contains(url);
+
+        return Card(
+          margin: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 4,
+          ),
+          child: ListTile(
+            leading: CircleAvatar(
+              backgroundColor: Colors.grey.shade100,
+              child: Icon(
+                icon,
+                color: color,
+                size: 28,
+              ),
+            ),
+            title: Text(
+              portal['name'] ?? 'Portail',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (portal['description'] != null)
+                  Text(
+                    portal['description'],
+                    style: const TextStyle(color: Colors.grey),
+                  ),
+                if (category != null)
+                  Container(
+                    margin: const EdgeInsets.only(top: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      category.toUpperCase(),
+                      style: TextStyle(
+                        color: color,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: Icon(
+                    isFavorite ? Icons.star : Icons.star_border,
+                    color: isFavorite ? Colors.amber : Colors.grey,
+                    size: 24,
+                  ),
+                  onPressed: () async {
+                    await HealthPortalFavoritesService.toggleFavorite(url);
+                    await _loadFavorites();
+                  },
+                  tooltip: isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris',
+                ),
+                IconButton(
+                  icon: const Icon(Icons.open_in_new, color: Colors.blue),
+                  onPressed: () => _openPortal(url),
+                  tooltip: 'Ouvrir le portail',
+                ),
+              ],
+            ),
+            onTap: () => _openPortal(url),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -273,6 +408,15 @@ class _HealthScreenState extends State<HealthScreen> {
         backgroundColor: Colors.red[600],
         foregroundColor: Colors.white,
         actions: [
+          IconButton(
+            icon: Icon(_showFavoritesOnly ? Icons.star : Icons.star_border),
+            onPressed: () {
+              setState(() {
+                _showFavoritesOnly = !_showFavoritesOnly;
+              });
+            },
+            tooltip: _showFavoritesOnly ? 'Afficher tous les portails' : 'Afficher seulement les favoris',
+          ),
           IconButton(
             icon: const Icon(Icons.description),
             onPressed: () {
@@ -287,7 +431,10 @@ class _HealthScreenState extends State<HealthScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: _loadPortals,
+            onPressed: () {
+              _loadPortals();
+              _loadFavorites();
+            },
           ),
         ],
       ),
@@ -321,71 +468,7 @@ class _HealthScreenState extends State<HealthScreen> {
                     ],
                   ),
                 )
-              : ListView.builder(
-                  itemCount: portals.length,
-                  itemBuilder: (context, index) {
-                    final portal = portals[index];
-                    final category = portal['category'];
-                    final icon = _getCategoryIcon(category);
-                    final color = _getCategoryColor(category);
-
-                    return Card(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 4,
-                      ),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: Colors.grey.shade100,
-                          child: Icon(
-                            icon,
-                            color: color,
-                            size: 28,
-                          ),
-                        ),
-                        title: Text(
-                          portal['name'] ?? 'Portail',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (portal['description'] != null)
-                              Text(
-                                portal['description'],
-                                style: const TextStyle(color: Colors.grey),
-                              ),
-                            if (category != null)
-                              Container(
-                                margin: const EdgeInsets.only(top: 4),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.shade100,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Text(
-                                  category.toUpperCase(),
-                                  style: TextStyle(
-                                    color: color,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.open_in_new, color: Colors.blue),
-                          onPressed: () => _openPortal(portal['url'] ?? ''),
-                        ),
-                        onTap: () => _openPortal(portal['url'] ?? ''),
-                      ),
-                    );
-                  },
-                ),
+              : _buildPortalsList(),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddPortalDialog,
         backgroundColor: Colors.red,

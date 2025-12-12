@@ -44,16 +44,52 @@ class EmergencyContactCard extends StatelessWidget {
     }
   }
 
+  Future<void> _sendSMS() async {
+    final phone = contact['phone'] as String?;
+    if (phone == null || phone.isEmpty) return;
+
+    final uri = Uri.parse('sms:$phone');
+    try {
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri);
+      }
+    } catch (e) {
+      // Gestion d'erreur sera faite par le parent
+    }
+  }
+
+  Future<void> _openWhatsApp() async {
+    final phone = contact['phone'] as String?;
+    if (phone == null || phone.isEmpty) return;
+
+    // Nettoyer le numéro pour WhatsApp (enlever espaces, +, etc.)
+    final cleanPhone = phone.replaceAll(RegExp(r'[^\d]'), '');
+    final whatsappUrl = 'https://wa.me/$cleanPhone';
+    
+    try {
+      final uri = Uri.parse(whatsappUrl);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
+    } catch (e) {
+      // Gestion d'erreur sera faite par le parent
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final name = contact['name'] as String? ?? 'Contact sans nom';
+    final displayName = contact['display_name'] as String? ?? name;
     final phone = contact['phone'] as String? ?? '';
     final relationship = contact['relationship'] as String? ?? '';
     final isPrimary = contact['is_primary'] as bool? ?? false;
+    final emoji = contact['emoji'] as String? ?? '👤';
+    final colorValue = contact['color'] as int?;
+    final color = colorValue != null ? Color(colorValue) : Colors.red;
 
     return Card(
       elevation: isPrimary ? 8 : 2,
-      color: isPrimary ? Colors.red.shade50 : null,
+      color: isPrimary ? color.withOpacity(0.1) : null,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -61,21 +97,58 @@ class EmergencyContactCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                if (isPrimary) ...[
-                  Icon(
-                    Icons.star,
-                    color: Colors.red.shade600,
-                    size: 20,
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.2),
+                    shape: BoxShape.circle,
                   ),
-                  const SizedBox(width: 8),
-                ],
-                Expanded(
-                  child: Text(
-                    name,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
+                  child: Center(
+                    child: Text(
+                      emoji,
+                      style: const TextStyle(fontSize: 24),
                     ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          if (isPrimary) ...[
+                            Icon(
+                              Icons.star,
+                              color: color,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 4),
+                          ],
+                          Flexible(
+                            child: Text(
+                              displayName,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                color: color,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (name != displayName) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          name,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                 ),
                 PopupMenuButton<String>(
@@ -141,27 +214,46 @@ class EmergencyContactCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            Row(
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
               children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: _makePhoneCall,
-                    icon: const Icon(Icons.call),
-                    label: const Text('Appeler'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      foregroundColor: Colors.white,
-                    ),
+                ElevatedButton.icon(
+                  onPressed: _makePhoneCall,
+                  icon: const Icon(Icons.call, size: 18),
+                  label: const Text('Appeler'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(100, 40),
                   ),
                 ),
-                const SizedBox(width: 12),
                 ElevatedButton.icon(
-                  onPressed: () => _copyToClipboard(context),
-                  icon: const Icon(Icons.copy),
-                  label: const Text('Copier'),
+                  onPressed: _sendSMS,
+                  icon: const Icon(Icons.sms, size: 18),
+                  label: const Text('SMS'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue.shade100,
-                    foregroundColor: Colors.blue.shade800,
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(100, 40),
+                  ),
+                ),
+                ElevatedButton.icon(
+                  onPressed: _openWhatsApp,
+                  icon: const Icon(Icons.chat, size: 18),
+                  label: const Text('WhatsApp'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green.shade700,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(100, 40),
+                  ),
+                ),
+                OutlinedButton.icon(
+                  onPressed: () => _copyToClipboard(context),
+                  icon: const Icon(Icons.copy, size: 18),
+                  label: const Text('Copier'),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(100, 40),
                   ),
                 ),
               ],

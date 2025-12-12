@@ -18,7 +18,10 @@ class _EmergencyContactDialogState extends State<EmergencyContactDialog> {
   late final TextEditingController nameController;
   late final TextEditingController phoneController;
   late final TextEditingController relationshipController;
+  late final TextEditingController displayNameController;
+  late final TextEditingController emojiController;
   bool isPrimary = false;
+  Color selectedColor = Colors.red;
 
   @override
   void initState() {
@@ -32,7 +35,16 @@ class _EmergencyContactDialogState extends State<EmergencyContactDialog> {
     relationshipController = TextEditingController(
       text: widget.existingContact?['relationship'] ?? '',
     );
+    displayNameController = TextEditingController(
+      text: widget.existingContact?['display_name'] ?? widget.existingContact?['name'] ?? '',
+    );
+    emojiController = TextEditingController(
+      text: widget.existingContact?['emoji'] ?? '👤',
+    );
     isPrimary = widget.existingContact?['is_primary'] ?? false;
+    if (widget.existingContact?['color'] != null) {
+      selectedColor = Color(widget.existingContact!['color'] as int);
+    }
   }
 
   @override
@@ -40,6 +52,8 @@ class _EmergencyContactDialogState extends State<EmergencyContactDialog> {
     nameController.dispose();
     phoneController.dispose();
     relationshipController.dispose();
+    displayNameController.dispose();
+    emojiController.dispose();
     super.dispose();
   }
 
@@ -89,6 +103,52 @@ class _EmergencyContactDialogState extends State<EmergencyContactDialog> {
               ),
             ),
             const SizedBox(height: 16),
+            TextField(
+              controller: displayNameController,
+              decoration: const InputDecoration(
+                labelText: 'Nom affiché (optionnel)',
+                helperText: 'Nom personnalisé pour l\'affichage',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: emojiController,
+                    decoration: const InputDecoration(
+                      labelText: 'Emoji (optionnel)',
+                      helperText: 'Ex: 👨‍⚕️, 👩‍⚕️, 🚑',
+                      border: OutlineInputBorder(),
+                    ),
+                    maxLength: 2,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Couleur', style: TextStyle(fontSize: 12)),
+                      const SizedBox(height: 8),
+                      GestureDetector(
+                        onTap: () => _showColorPicker(),
+                        child: Container(
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: selectedColor,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.grey),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
             CheckboxListTile(
               title: const Text('Contact principal'),
               subtitle: const Text('Ce contact sera affiché en premier'),
@@ -114,6 +174,13 @@ class _EmergencyContactDialogState extends State<EmergencyContactDialog> {
                     'name': nameController.text.trim(),
                     'phone': phoneController.text.trim(),
                     'relationship': relationshipController.text.trim(),
+                    'display_name': displayNameController.text.trim().isNotEmpty 
+                        ? displayNameController.text.trim() 
+                        : nameController.text.trim(),
+                    'emoji': emojiController.text.trim().isNotEmpty 
+                        ? emojiController.text.trim() 
+                        : '👤',
+                    'color': selectedColor.value,
                     'is_primary': isPrimary,
                     if (isEditing) 'id': widget.existingContact!['id'],
                   };
@@ -123,6 +190,52 @@ class _EmergencyContactDialogState extends State<EmergencyContactDialog> {
           child: Text(isEditing ? 'Modifier' : 'Ajouter'),
         ),
       ],
+    );
+  }
+
+  void _showColorPicker() {
+    final colors = [
+      Colors.red,
+      Colors.blue,
+      Colors.green,
+      Colors.orange,
+      Colors.purple,
+      Colors.pink,
+      Colors.teal,
+      Colors.indigo,
+    ];
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Choisir une couleur'),
+        content: Wrap(
+          spacing: 16,
+          runSpacing: 16,
+          children: colors.map((color) {
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  selectedColor = color;
+                });
+                Navigator.of(context).pop();
+              },
+              child: Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: color,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: selectedColor == color ? Colors.black : Colors.grey,
+                    width: selectedColor == color ? 3 : 1,
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ),
     );
   }
 }

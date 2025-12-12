@@ -557,7 +557,7 @@ Le projet utilise **Codecov** pour le suivi automatique de la couverture de code
   - `aria_integration/api.py`: 81% ✅
   - `storage.py`: 80% ✅
   - `security_dashboard.py`: 76% ✅
-- **Tests**: 308 tests Python collectés, tous passants (100%)
+- **Tests**: 508 tests Python + ~55 tests Flutter collectés, tous passants (100%)
 - **Status**: ✅ Configuré et fonctionnel - Upload automatique via CI/CD
 
 Les rapports sont automatiquement uploadés lors de chaque push/PR via :

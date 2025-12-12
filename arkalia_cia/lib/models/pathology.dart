@@ -73,7 +73,7 @@ class Pathology {
       'treatments': treatments.join(','),
       'exams': exams.join(','),
       'reminders': reminders.map((key, value) => MapEntry(key, value.toMap())),
-      'color': (((color.a * 255.0).round() & 0xff) << 24) | (((color.r * 255.0).round() & 0xff) << 16) | (((color.g * 255.0).round() & 0xff) << 8) | ((color.b * 255.0).round() & 0xff),
+      'color': color.value,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };
@@ -122,12 +122,7 @@ class Pathology {
           : [],
       reminders: remindersMap,
       color: map['color'] != null
-          ? Color.fromARGB(
-              (map['color'] as int) >> 24 & 0xFF,
-              (map['color'] as int) >> 16 & 0xFF,
-              (map['color'] as int) >> 8 & 0xFF,
-              (map['color'] as int) & 0xFF,
-            )
+          ? Color(map['color'] as int)
           : Colors.blue,
       createdAt: DateTime.parse(map['created_at']),
       updatedAt: DateTime.parse(map['updated_at']),
