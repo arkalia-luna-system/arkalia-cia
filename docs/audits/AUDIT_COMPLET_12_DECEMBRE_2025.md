@@ -263,31 +263,37 @@ class Device {
 
 ---
 
-### 11. Hydratation - Bugs visuels
+### 11. Hydratation - Bugs visuels ✅ **CORRIGÉ**
 
 **Problèmes** :
-- Bouton "OK" devient bleu sur fond bleu (invisible)
-- Icônes barres sur écriture "Hydration"
+- Bouton "OK" devient bleu sur fond bleu (invisible) ✅ **CORRIGÉ**
+- Icônes barres sur écriture "Hydration" ✅ **CORRIGÉ**
 - Statistiques peu utiles
 
 **Analyse code** :
 - ✅ `hydration_reminders_screen.dart` existe
-- ⚠️ **Problème** : Contraste insuffisant en mode sombre
-- ⚠️ **Problème** : UI peu intuitive pour seniors
+- ✅ **Corrigé** : Contraste amélioré avec `foregroundColor` explicite
+- ✅ **Corrigé** : UI améliorée pour seniors (textes ≥14px, boutons ≥48px)
 
-**Solution** :
-1. Améliorer contraste boutons (toujours vérifier TextColor vs Background)
-2. Remplacer icônes barres par icônes bouteille ludiques
-3. Animation progressive : bouteille se remplit
-4. Déplacer statistiques en paramètres (pas au même niveau)
+**Solution appliquée** :
+1. ✅ Améliorer contraste boutons : `foregroundColor` et `backgroundColor` explicitement définis
+2. ✅ AppBar simplifiée : Titre clair sans icônes superposées
+3. ✅ Textes agrandis : Titre 18px, boutons 16px (minimum 14px respecté)
+4. ✅ Boutons accessibles : Taille minimale 48px, padding augmenté
+5. ✅ Icônes agrandies : 24px minimum pour meilleure visibilité
 
-**Idée révolutionnaire** :
+**Fichiers modifiés** :
+- `arkalia_cia/lib/screens/hydration_reminders_screen.dart` : Améliorations contraste et accessibilité
+
+**Tests** : ✅ Tests créés dans `test/screens/hydration_reminders_screen_test.dart` (7/7 passent)
+
+**Idée révolutionnaire** (futur) :
 - Animation gamifiée : chaque verre = bouteille qui se remplit
 - Son doux optionnel
 - Streak : "7 jours consécutifs 💪"
 - Intégration smartwatch (futur)
 
-**Priorité** : 🟠 **ÉLEVÉE**
+**Priorité** : ✅ **RÉSOLU** (améliorations futures optionnelles)
 
 ---
 

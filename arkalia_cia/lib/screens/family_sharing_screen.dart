@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/family_sharing_service.dart';
 import '../services/local_storage_service.dart';
+import '../utils/app_logger.dart';
 import 'manage_family_members_screen.dart';
 
 class FamilySharingScreen extends StatefulWidget {
@@ -104,7 +105,7 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
         successCount++;
       } catch (e) {
         errorCount++;
-        print('[ARKALIA] Erreur partage document $docId: $e');
+        AppLogger.error('Erreur partage document $docId', e);
       }
     }
 

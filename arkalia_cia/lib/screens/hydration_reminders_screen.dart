@@ -156,6 +156,7 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
     final goalController = TextEditingController(
       text: _goal?.dailyGoal.toString() ?? '2000',
     );
+    final theme = Theme.of(context);
 
     final result = await showDialog<bool>(
       context: context,
@@ -183,7 +184,11 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annuler'),
+            style: TextButton.styleFrom(
+              minimumSize: const Size(100, 48), // Taille minimale pour accessibilité seniors
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            ),
+            child: const Text('Annuler', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
           ),
           ElevatedButton(
             onPressed: () {
@@ -196,7 +201,12 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                 );
               }
             },
-            child: const Text('Enregistrer'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: theme.colorScheme.primary,
+              foregroundColor: theme.colorScheme.onPrimary,
+              minimumSize: const Size(120, 48), // Taille minimale pour accessibilité seniors
+            ),
+            child: const Text('Enregistrer', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -472,23 +482,11 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
+          tooltip: 'Retour',
         ),
-        title: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(
-                Icons.water_drop,
-                color: theme.colorScheme.primary,
-              ),
-            ),
-            const SizedBox(width: 12),
-            const Text('Rappels Hydratation'),
-          ],
+        title: const Text(
+          'Rappels Hydratation',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold), // Taille minimale 18px pour accessibilité seniors
         ),
         actions: [
           IconButton(
@@ -842,14 +840,20 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                                         actions: [
                                           TextButton(
                                             onPressed: () => Navigator.pop(context, false),
-                                            child: const Text('Annuler'),
+                                            style: TextButton.styleFrom(
+                                              minimumSize: const Size(100, 48), // Taille minimale pour accessibilité seniors
+                                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                            ),
+                                            child: const Text('Annuler', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
                                           ),
                                           ElevatedButton(
                                             onPressed: () => Navigator.pop(context, true),
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: theme.colorScheme.error,
+                                              foregroundColor: theme.colorScheme.onError,
+                                              minimumSize: const Size(120, 48), // Taille minimale pour accessibilité seniors
                                             ),
-                                            child: const Text('Supprimer'),
+                                            child: const Text('Supprimer', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                                           ),
                                         ],
                                       ),
@@ -943,7 +947,11 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: const Text('Annuler'),
+                      style: TextButton.styleFrom(
+                        minimumSize: const Size(100, 48), // Taille minimale pour accessibilité seniors
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      ),
+                      child: const Text('Annuler', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
                     ),
                     ElevatedButton(
                       onPressed: () {
@@ -961,8 +969,10 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: theme.colorScheme.primary,
+                        foregroundColor: theme.colorScheme.onPrimary,
+                        minimumSize: const Size(140, 48), // Taille minimale pour accessibilité seniors
                       ),
-                      child: const Text('Enregistrer'),
+                      child: const Text('Enregistrer', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                     ),
                   ],
                 ),
@@ -971,18 +981,18 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
           },
           borderRadius: BorderRadius.circular(16),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18), // Padding augmenté pour accessibilité seniors
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(icon, color: Colors.white),
-                const SizedBox(width: 8),
+                Icon(icon, color: Colors.white, size: 24), // Taille icône augmentée
+                const SizedBox(width: 12), // Espacement augmenté
                 Text(
                   label,
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                    fontSize: 16, // Taille texte minimale 16px pour accessibilité seniors
                   ),
                 ),
               ],

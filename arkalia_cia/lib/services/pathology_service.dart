@@ -8,6 +8,7 @@ import '../models/pathology_tracking.dart';
 import '../utils/error_helper.dart';
 import '../utils/storage_helper.dart';
 import 'calendar_service.dart';
+import 'pathology_color_service.dart';
 
 /// Service de gestion des pathologies et de leur suivi
 class PathologyService {
@@ -621,7 +622,7 @@ class PathologyService {
           times: ['08:00'],
         ),
       },
-      color: Colors.pink,
+      color: PathologyColorService.getColorForPathology('Endométriose'),
     );
   }
 
@@ -659,7 +660,7 @@ class PathologyService {
           times: ['09:00'],
         ),
       },
-      color: Colors.red,
+      color: PathologyColorService.getColorForPathology('Cancer'),
     );
   }
 
@@ -694,7 +695,7 @@ class PathologyService {
           times: ['08:00'],
         ),
       },
-      color: Colors.purple,
+      color: PathologyColorService.getColorForPathology('Arthrite rhumatoïde'),
     );
   }
 
@@ -768,14 +769,14 @@ class PathologyService {
           times: ['14:00'],
         ),
       },
-      color: Colors.orange,
+      color: PathologyColorService.getColorForPathology('Arthrite'),
     );
   }
 
   /// Crée un template pour l'arthrite
   static Pathology createArthritisRheumatoidTemplate() {
     return Pathology(
-      name: 'Arthrite',
+      name: 'Arthrite rhumatoïde',
       description: 'Suivi de l\'arthrite avec douleurs et traitements',
       symptoms: [
         'Douleurs articulaires',
@@ -915,7 +916,7 @@ class PathologyService {
           times: ['09:00'],
         ),
       },
-      color: Colors.indigo,
+      color: PathologyColorService.getColorForPathology('Parkinson'),
     );
   }
 
@@ -952,7 +953,7 @@ class PathologyService {
           times: ['09:00'],
         ),
       },
-      color: Colors.teal,
+      color: PathologyColorService.getColorForPathology('Alzheimer'),
     );
   }
 
@@ -1064,7 +1065,7 @@ class PathologyService {
           times: ['09:00'],
         ),
       },
-      color: Colors.blue,
+      color: PathologyColorService.getColorForPathology('Diabète'),
     );
   }
 
@@ -1100,7 +1101,7 @@ class PathologyService {
           times: ['14:00'],
         ),
       },
-      color: Colors.blueGrey,
+      color: PathologyColorService.getColorForPathology('Dépression'),
     );
   }
 

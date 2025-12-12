@@ -8,6 +8,8 @@
 > **📌 Nouveau** : Voir **[AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md)** pour l'audit complet basé sur les tests utilisateur du 12 décembre 2025.
 
 > **✅ Corrections appliquées le 12 décembre 2025 (suite)** :
+> - ✅ Flux authentification amélioré : Gmail/Google en premier, puis "Créer un compte"
+> - ✅ Service couleurs pathologie : `PathologyColorService` créé pour mapper pathologie → spécialité → couleur
 > - ✅ Correction warnings de dépréciation Flutter (pathology.dart)
 > - ✅ Documentation synchronisée avec code source (endpoints, services, versions)
 > - ✅ Dates obsolètes corrigées (Janvier 2025 → 12 décembre 2025)
@@ -16,10 +18,10 @@
 > - ✅ Biométrie : `biometricOnly: true` + dialog après inscription
 > - ✅ Permissions PDF : `READ_EXTERNAL_STORAGE` + demande runtime
 > - ✅ Bug connexion après création compte : réinitialisation session + vérification état
-> - ✅ Page connexion/inscription : `welcome_auth_screen.dart` + amélioration layout
+> - ✅ Page connexion/inscription : `welcome_auth_screen.dart` + amélioration layout + boutons Gmail/Google prioritaires
 > - ✅ Partage famille : Initialisation notifications + amélioration feedback
 > - ✅ Tests : Correction erreurs `MissingPluginException` avec fallback SharedPreferences
-> - ✅ Tests : 14 tests passent (auth_service, auth_api_service, welcome_auth_screen)
+> - ✅ Tests : 41 tests passent (auth_service, auth_api_service, welcome_auth_screen, calendar_service, reminders_screen)
 
 ---
 
@@ -256,15 +258,26 @@
 
 ---
 
-### 11. Hydratation - Bugs visuels 🟠 **ÉLEVÉE**
+### 11. Hydratation - Bugs visuels 🟠 **ÉLEVÉE** ✅ **CORRIGÉ**
 
 **Problème** : Bouton OK invisible, icônes sur texte, UI peu intuitive
 
-**Solution** : Améliorer contraste + UI ludique gamifiée
+**Solution appliquée** :
+- ✅ Correction contraste boutons : `foregroundColor` explicitement défini pour tous les boutons
+- ✅ Taille minimale boutons : 48px de hauteur minimum pour accessibilité seniors
+- ✅ Textes agrandis : Titre AppBar 18px, boutons 16px (minimum 14px respecté)
+- ✅ AppBar simplifiée : Titre clair sans icônes superposées
+- ✅ Padding augmenté : Boutons rapides avec padding 24x18px
+- ✅ Icônes agrandies : 24px minimum pour meilleure visibilité
+
+**Fichiers modifiés** :
+- `arkalia_cia/lib/screens/hydration_reminders_screen.dart` : Améliorations contraste et accessibilité
+
+**Tests** : ✅ Tests créés dans `test/screens/hydration_reminders_screen_test.dart` (7/7 passent)
 
 **Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md#11-hydratation---bugs-visuels)
 
-**Priorité** : 🟠 **ÉLEVÉE**
+**Priorité** : ✅ **RÉSOLU**
 
 ---
 

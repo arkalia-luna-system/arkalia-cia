@@ -200,17 +200,22 @@ Résumé complet des corrections appliquées le 12 décembre 2025.
 ### Fichiers MD modifiés
 
 1. **`docs/CE_QUI_MANQUE_10_DECEMBRE_2025.md`**
-   - 5 problèmes marqués comme résolus
+   - 7 problèmes marqués comme résolus
+   - Ajout corrections flux authentification et couleurs pathologie
    - Détails des solutions appliquées
 
 2. **`docs/deployment/CORRECTIONS_NAVIGATION_AUTH_10_DEC.md`**
-   - Ajout corrections #17, #18, #19, #20, #21
+   - Ajout corrections #17, #18, #19, #20, #21, #22, #23, #24
    - Détails fichiers modifiés et tests
 
 3. **`docs/audits/AUDIT_RESTE_A_FAIRE_12_DECEMBRE_2025.md`**
-   - Mise à jour problèmes résolus (3 → 5)
-   - Mise à jour problèmes restants (17 → 15)
-   - Mise à jour critiques restants (5 → 3)
+   - Mise à jour problèmes résolus (5 → 7)
+   - Mise à jour problèmes restants (15 → 13)
+   - Mise à jour critiques restants (3 → 2)
+
+4. **`docs/audits/RESUME_CORRECTIONS_12_DECEMBRE_2025.md`**
+   - Ajout section flux authentification amélioré
+   - Ajout section couleurs pathologie (en cours)
 
 ---
 
@@ -239,7 +244,7 @@ Résumé complet des corrections appliquées le 12 décembre 2025.
 2. 🔴 Profil multi-appareil (complexe, 10-16 jours)
 
 ### Élevés restants (6)
-- Couleurs pathologie, Portails, Hydratation, Paramètres, Contacts, Pathologies
+- Couleurs pathologie (service créé, remplacement couleurs templates en cours), Portails, Hydratation, Paramètres, Contacts, Pathologies
 
 ### Moyens restants (5)
 - Médecins auto, Patterns, Statistiques, Dialog partage, BBIA

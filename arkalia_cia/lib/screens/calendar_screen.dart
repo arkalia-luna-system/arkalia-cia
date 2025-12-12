@@ -3,7 +3,6 @@ import 'package:table_calendar/table_calendar.dart';
 import '../services/calendar_service.dart';
 import '../services/doctor_service.dart';
 import '../services/medication_service.dart';
-// import '../services/hydration_service.dart'; // Non utilisé actuellement (rappels créés manuellement), mais gardé pour utilisation future
 import '../models/doctor.dart'; // Contient aussi Consultation
 
 /// Écran calendrier avec affichage des rappels médicaments et hydratation

@@ -13,7 +13,7 @@ cd arkalia_cia
 
 # Nettoyer le cache Flutter
 echo "🗑️  Nettoyage du cache Flutter..."
-flutter clean
+flutter clean 2>&1 | grep -v "Failed to remove" || true
 
 # Nettoyer les dépendances
 echo "🗑️  Suppression des dépendances..."

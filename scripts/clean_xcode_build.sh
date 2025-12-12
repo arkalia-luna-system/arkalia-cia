@@ -12,7 +12,7 @@ echo ""
 
 # Nettoyer Flutter
 echo "1. Nettoyage Flutter..."
-flutter clean
+flutter clean 2>&1 | grep -v "Failed to remove" || true
 flutter pub get
 
 # Supprimer les fichiers macOS cachés

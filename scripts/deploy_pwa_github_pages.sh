@@ -28,6 +28,12 @@ echo ""
 echo "✅ Build web réussi"
 echo ""
 
+# Vérifier que le dossier build/web existe
+if [ ! -d "build/web" ]; then
+    echo "❌ Erreur: Le dossier build/web n'existe pas après le build"
+    exit 1
+fi
+
 # Aller dans le dossier build/web
 cd build/web
 
