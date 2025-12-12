@@ -19,6 +19,7 @@ flutter pub get
 echo "2. Suppression des fichiers macOS cachés..."
 find ios -name "._*" -type f -delete 2>/dev/null || true
 find ios/Pods -name "._*" -type f -delete 2>/dev/null || true
+find macos/Pods -name "._*" -type f -delete 2>/dev/null || true
 echo "✅ Fichiers macOS cachés supprimés"
 
 # Réinstaller les pods
@@ -37,6 +38,7 @@ pod install 2>&1 | tail -5
 
 # Supprimer à nouveau les fichiers macOS cachés créés par pod install
 find Pods -name "._*" -type f -delete 2>/dev/null || true
+find macos/Pods -name "._*" -type f -delete 2>/dev/null || true
 
 cd ..
 

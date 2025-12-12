@@ -87,10 +87,12 @@ cd ..
 echo -e "${GREEN}✅ Dépendances CocoaPods installées${NC}"
 
 # 9. Supprimer les fichiers macOS cachés dans Pods (critique pour éviter les crashes)
-echo -e "${YELLOW}🍎 Suppression des fichiers macOS cachés dans Pods...${NC}"
+echo -e "${YELLOW}🍎 Suppression des fichiers macOS cachés dans Pods (iOS et macOS)...${NC}"
 find ios/Pods -name "._*" -type f -delete 2>/dev/null || true
 find ios/Pods -name ".DS_Store" -type f -delete 2>/dev/null || true
-echo -e "${GREEN}✅ Fichiers macOS cachés supprimés dans Pods${NC}"
+find macos/Pods -name "._*" -type f -delete 2>/dev/null || true
+find macos/Pods -name ".DS_Store" -type f -delete 2>/dev/null || true
+echo -e "${GREEN}✅ Fichiers macOS cachés supprimés dans Pods (iOS et macOS)${NC}"
 
 echo ""
 echo -e "${GREEN}========================================"
