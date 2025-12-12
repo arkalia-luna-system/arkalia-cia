@@ -316,7 +316,7 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
                       Text(
                         pathology.subcategory!,
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 14,
                           color: Colors.grey[600],
                           fontStyle: FontStyle.italic,
                         ),

@@ -151,7 +151,7 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                                 color: Colors.grey[600],
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 12),
                             ElevatedButton.icon(
                               onPressed: () async {
                                 final result = await Navigator.push(
@@ -166,6 +166,10 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                               },
                               icon: const Icon(Icons.add),
                               label: const Text('Ajouter un médecin'),
+                              style: ElevatedButton.styleFrom(
+                                minimumSize: const Size(200, 48),
+                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                              ),
                             ),
                           ],
                         ),
@@ -180,24 +184,35 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                               vertical: 8,
                             ),
                             child: ListTile(
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               leading: CircleAvatar(
                                 backgroundColor: Theme.of(context).colorScheme.primary,
+                                radius: 24,
                                 child: Text(
                                   doctor.firstName[0].toUpperCase(),
-                                  style: const TextStyle(color: Colors.white),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                               title: Row(
                                 children: [
-                                  Text(
-                                    doctor.fullName,
-                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                  Expanded(
+                                    child: Text(
+                                      doctor.fullName,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
                                   ),
                                   const SizedBox(width: 8),
                                   // Badge coloré selon spécialité (plus visible)
                                   Container(
-                                    width: 16,
-                                    height: 16,
+                                    width: 18,
+                                    height: 18,
                                     decoration: BoxDecoration(
                                       color: Doctor.getColorForSpecialty(doctor.specialty),
                                       shape: BoxShape.circle,
@@ -206,14 +221,25 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                                   ),
                                 ],
                               ),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  if (doctor.specialty != null)
-                                    Text(doctor.specialty!),
-                                  if (doctor.phone != null)
-                                    Text('📞 ${doctor.phone}'),
-                                ],
+                              subtitle: Padding(
+                                padding: const EdgeInsets.only(top: 4),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    if (doctor.specialty != null)
+                                      Text(
+                                        doctor.specialty!,
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                    if (doctor.phone != null) ...[
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        '📞 ${doctor.phone}',
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                    ],
+                                  ],
+                                ),
                               ),
                               trailing: const Icon(Icons.chevron_right),
                               onTap: () async {
@@ -276,7 +302,7 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
         children: [
           const Text(
             'Légende des couleurs (spécialités)',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
           const SizedBox(height: 8),
           Wrap(
@@ -316,7 +342,7 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                       Text(
                         entry.value,
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 16,
                           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                         ),
                       ),

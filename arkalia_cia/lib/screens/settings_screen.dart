@@ -312,7 +312,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ? Chip(
                             label: Text(
                               '${_lastSyncStats!['docs'] ?? 0} docs, ${_lastSyncStats!['reminders'] ?? 0} rappels, ${_lastSyncStats!['contacts'] ?? 0} contacts',
-                              style: const TextStyle(fontSize: 14),
+                              style: const TextStyle(fontSize: 16),
                             ),
                             backgroundColor: Colors.green[100],
                           )
@@ -599,9 +599,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       child: Text(
         title,
         style: TextStyle(
-          fontSize: 14,
+          fontSize: 16,
           fontWeight: FontWeight.bold,
-          color: Colors.grey[600],
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
         ),
       ),
     );
@@ -816,7 +816,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               SizedBox(height: 16),
               Text(
                 'Nous ne sommes pas responsables des décisions médicales prises sur la base d\'informations stockées dans l\'application.',
-                style: TextStyle(fontSize: 12, color: Colors.grey),
+                style: TextStyle(fontSize: 14, color: Colors.grey),
               ),
             ],
           ),
@@ -966,7 +966,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               SizedBox(height: 16),
               Text(
                 'Vous avez le contrôle total sur vos données. Vous pouvez les exporter ou les supprimer à tout moment.',
-                style: TextStyle(fontSize: 12, color: Colors.grey),
+                style: TextStyle(fontSize: 14, color: Colors.grey),
               ),
             ],
           ),

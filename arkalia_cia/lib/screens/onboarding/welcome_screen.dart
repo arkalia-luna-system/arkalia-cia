@@ -8,7 +8,32 @@ class WelcomeScreen extends StatefulWidget {
   State<WelcomeScreen> createState() => _WelcomeScreenState();
 }
 
-class _WelcomeScreenState extends State<WelcomeScreen> {
+class _WelcomeScreenState extends State<WelcomeScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeInOut,
+      ),
+    );
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,11 +44,38 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Logo / Icône
-              Icon(
-                Icons.health_and_safety,
-                size: 100,
-                color: Theme.of(context).colorScheme.primary,
+              // Logo / Icône avec effets visuels discrets et animation
+              FadeTransition(
+                opacity: _fadeAnimation,
+                child: Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary.withOpacity(0.05),
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
+                          blurRadius: 20,
+                          spreadRadius: 2,
+                          offset: const Offset(0, 4),
+                        ),
+                        BoxShadow(
+                          color: Colors.white.withOpacity(0.8),
+                          blurRadius: 10,
+                          spreadRadius: -2,
+                          offset: const Offset(0, -2),
+                        ),
+                      ],
+                    ),
+                    child: Image.asset(
+                      'assets/images/logo.png',
+                      width: 120,
+                      height: 120,
+                      filterQuality: FilterQuality.high,
+                    ),
+                  ),
+                ),
               ),
               
               const SizedBox(height: 32),

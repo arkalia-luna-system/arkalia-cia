@@ -247,7 +247,7 @@ class BBIAIntegrationScreen extends StatelessWidget {
                             '1362 tests collectés • 68.86% coverage • SDK officiel validé',
                             style: TextStyle(
                               color: isDark ? Colors.blue[200] : Colors.blue[800],
-                              fontSize: 13,
+                              fontSize: 14,
                             ),
                           ),
                         ),
@@ -410,7 +410,7 @@ class BBIAIntegrationScreen extends StatelessWidget {
         style: TextStyle(
           color: color,
           fontWeight: FontWeight.w600,
-          fontSize: 12,
+          fontSize: 14,
         ),
       ),
     );

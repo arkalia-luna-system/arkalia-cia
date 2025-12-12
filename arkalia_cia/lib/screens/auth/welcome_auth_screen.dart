@@ -5,8 +5,39 @@ import '../lock_screen.dart';
 
 /// Écran d'accueil pour l'authentification
 /// Propose plusieurs options : Gmail/Google, créer un compte, ou continuer sans compte
-class WelcomeAuthScreen extends StatelessWidget {
+class WelcomeAuthScreen extends StatefulWidget {
   const WelcomeAuthScreen({super.key});
+
+  @override
+  State<WelcomeAuthScreen> createState() => _WelcomeAuthScreenState();
+}
+
+class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeInOut,
+      ),
+    );
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   Future<void> _handleContinueWithoutAccount(BuildContext context) async {
     // Mode offline : aller directement à LockScreen (qui proposera PIN si nécessaire)
@@ -86,11 +117,38 @@ class WelcomeAuthScreen extends StatelessWidget {
                 children: [
                   const SizedBox(height: 40),
                   
-                  // Logo/Icone
-                  Icon(
-                    Icons.health_and_safety,
-                    size: 100,
-                    color: Colors.white,
+                  // Logo/Icone avec effets visuels discrets et animation
+                  FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: Center(
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 20,
+                              spreadRadius: 2,
+                              offset: const Offset(0, 4),
+                            ),
+                            BoxShadow(
+                              color: Colors.white.withOpacity(0.1),
+                              blurRadius: 10,
+                              spreadRadius: -2,
+                              offset: const Offset(0, -2),
+                            ),
+                          ],
+                        ),
+                        child: Image.asset(
+                          'assets/images/logo.png',
+                          width: 120,
+                          height: 120,
+                          filterQuality: FilterQuality.high,
+                        ),
+                      ),
+                    ),
                   ),
                   
                   const SizedBox(height: 32),

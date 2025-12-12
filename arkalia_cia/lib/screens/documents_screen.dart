@@ -161,9 +161,9 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+            const Text(
             'Répartition des examens',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
           const SizedBox(height: 8),
           ...distribution.entries.map((entry) {
@@ -175,9 +175,9 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                   Expanded(
                     child: Text(
                       '${entry.key}: ${entry.value}',
-                      style: const TextStyle(fontSize: 14),
-                    ),
+                    style: const TextStyle(fontSize: 16),
                   ),
+                ),
                   SizedBox(
                     width: 100,
                     child: LinearProgressIndicator(
@@ -191,7 +191,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                   const SizedBox(width: 8),
                   Text(
                     '$percentage%',
-                    style: const TextStyle(fontSize: 14),
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ],
               ),
@@ -624,7 +624,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                  minimumSize: const Size(double.infinity, 48),
                 ),
                 child: isUploading
                     ? const Row(
@@ -665,14 +666,21 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
             child: isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : documents.isEmpty
-                    ? const Center(
+                    ? Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
-                              Icons.folder_open,
-                              size: 64,
-                              color: Colors.green,
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.green.withOpacity(0.1),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.folder_open,
+                                size: 64,
+                                color: Colors.green,
+                              ),
                             ),
                             SizedBox(height: 16),
                             Text(
@@ -682,25 +690,33 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                                 color: Colors.grey,
                               ),
                             ),
+                            const SizedBox(height: 8),
                             Text(
                               'Utilisez le bouton ci-dessus pour uploader un PDF',
                               style: TextStyle(
                                 color: Colors.grey,
-                                fontSize: 16,
+                                fontSize: 14,
                               ),
                             ),
                           ],
                         ),
                       )
                     : filteredDocuments.isEmpty
-                        ? const Center(
+                        ? Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(
-                                  Icons.search_off,
-                                  size: 64,
-                                  color: Colors.grey,
+                                Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.withOpacity(0.1),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.search_off,
+                                    size: 64,
+                                    color: Colors.grey,
+                                  ),
                                 ),
                                 SizedBox(height: 16),
                                 Text(
@@ -708,6 +724,14 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                                   style: TextStyle(
                                     fontSize: 18,
                                     color: Colors.grey,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Essayez de modifier vos critères de recherche',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey[600],
                                   ),
                                 ),
                               ],
@@ -723,49 +747,75 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                               vertical: 4,
                             ),
                             child: ListTile(
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               leading: const Icon(
                                 Icons.picture_as_pdf,
                                 color: Colors.red,
-                                size: 32,
+                                size: 40,
                               ),
                               title: Text(
                                 doc['original_name'] ?? 'Document',
-                                style: const TextStyle(fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
                               ),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // Badge type d'examen si disponible
-                                  if (doc['metadata'] != null && doc['metadata'] is Map)
-                                    Padding(
-                                      padding: const EdgeInsets.only(bottom: 4),
-                                      child: ExamTypeBadge(
-                                        examType: doc['metadata']['exam_type'],
-                                        confidence: doc['metadata']['exam_type_confidence']?.toDouble(),
-                                        showConfidence: doc['metadata']['needs_verification'] == true,
+                              subtitle: Padding(
+                                padding: const EdgeInsets.only(top: 4),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Badge type d'examen si disponible
+                                    if (doc['metadata'] != null && doc['metadata'] is Map)
+                                      Padding(
+                                        padding: const EdgeInsets.only(bottom: 6),
+                                        child: ExamTypeBadge(
+                                          examType: doc['metadata']['exam_type'],
+                                          confidence: doc['metadata']['exam_type_confidence']?.toDouble(),
+                                          showConfidence: doc['metadata']['needs_verification'] == true,
+                                        ),
                                       ),
+                                    Text(
+                                      'Taille: ${_formatFileSize(doc['file_size'] ?? 0)}',
+                                      style: const TextStyle(fontSize: 14),
                                     ),
-                                  Text('Taille: ${_formatFileSize(doc['file_size'] ?? 0)}'),
-                                  Text('Ajouté: ${doc['created_at'] ?? 'Inconnu'}'),
-                                ],
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Ajouté: ${doc['created_at'] ?? 'Inconnu'}',
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                  ],
+                                ),
                               ),
                               trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   IconButton(
-                                    icon: const Icon(Icons.visibility, color: Colors.blue),
+                                    icon: const Icon(Icons.visibility, color: Colors.blue, size: 24),
                                     onPressed: () => _previewDocument(doc),
                                     tooltip: 'Prévisualiser',
+                                    constraints: const BoxConstraints(
+                                      minWidth: 48,
+                                      minHeight: 48,
+                                    ),
                                   ),
                                   IconButton(
-                                    icon: const Icon(Icons.share, color: Colors.green),
+                                    icon: const Icon(Icons.share, color: Colors.green, size: 24),
                                     onPressed: () => _shareDocument(doc),
                                     tooltip: 'Partager',
+                                    constraints: const BoxConstraints(
+                                      minWidth: 48,
+                                      minHeight: 48,
+                                    ),
                                   ),
                                   IconButton(
-                                    icon: const Icon(Icons.delete, color: Colors.red),
+                                    icon: const Icon(Icons.delete, color: Colors.red, size: 24),
                                     onPressed: () => _deleteDocument(doc['id']),
                                     tooltip: 'Supprimer',
+                                    constraints: const BoxConstraints(
+                                      minWidth: 48,
+                                      minHeight: 48,
+                                    ),
                                   ),
                                 ],
                               ),

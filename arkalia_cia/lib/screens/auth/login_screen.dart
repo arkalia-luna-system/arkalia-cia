@@ -102,11 +102,35 @@ class _LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 40),
-                // Logo ou icône
-                Icon(
-                  Icons.health_and_safety,
-                  size: 80,
-                  color: Theme.of(context).colorScheme.primary,
+                // Logo avec effets visuels discrets
+                Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary.withOpacity(0.05),
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
+                          blurRadius: 20,
+                          spreadRadius: 2,
+                          offset: const Offset(0, 4),
+                        ),
+                        BoxShadow(
+                          color: Colors.white.withOpacity(0.8),
+                          blurRadius: 10,
+                          spreadRadius: -2,
+                          offset: const Offset(0, -2),
+                        ),
+                      ],
+                    ),
+                    child: Image.asset(
+                      'assets/images/logo.png',
+                      width: 80,
+                      height: 80,
+                      filterQuality: FilterQuality.high,
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 24),
                 Text(

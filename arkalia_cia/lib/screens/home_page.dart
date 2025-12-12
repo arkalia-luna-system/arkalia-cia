@@ -113,7 +113,19 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Arkalia CIA'),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              'assets/images/logo.png',
+              width: 32,
+              height: 32,
+              filterQuality: FilterQuality.high,
+            ),
+            const SizedBox(width: 12),
+            const Text('Arkalia CIA'),
+          ],
+        ),
         backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
         foregroundColor: Theme.of(context).colorScheme.onSurface,
         actions: [
@@ -187,7 +199,7 @@ class _HomePageState extends State<HomePage> {
                   color: Theme.of(context).colorScheme.primary,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 8),
               Text(
                 'Votre santé au quotidien',
                 style: TextStyle(
@@ -391,21 +403,21 @@ class _HomePageState extends State<HomePage> {
                   size: 48,
                   color: adaptedColor,
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
                 Text(
                   title,
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 6),
                 Text(
                   subtitle,
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.w500,
                     color: subtitleColor,
                   ),
@@ -573,10 +585,15 @@ class _HomePageState extends State<HomePage> {
           children: [
             Icon(Icons.search_off, size: 64, color: Colors.grey),
             SizedBox(height: 16),
-            Text(
-              'Aucun résultat trouvé',
-              style: TextStyle(color: Colors.grey, fontSize: 16),
-            ),
+              Text(
+                'Aucun résultat trouvé',
+                style: TextStyle(color: Colors.grey, fontSize: 18),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Essayez de modifier votre recherche',
+                style: TextStyle(color: Colors.grey[600], fontSize: 14),
+              ),
           ],
         ),
       );
@@ -614,7 +631,7 @@ class _HomePageState extends State<HomePage> {
                   Text(
                     '$title (${items.length})',
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: color,
                     ),
@@ -645,11 +662,14 @@ class _HomePageState extends State<HomePage> {
             if (items.length > 5)
               Padding(
                 padding: const EdgeInsets.all(8),
-                child: Text(
-                  '... et ${items.length - 5} autre(s)',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 14),
-                  textAlign: TextAlign.center,
-                ),
+                  child: Text(
+                    '... et ${items.length - 5} autre(s)',
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 16,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
               ),
           ],
         ),
@@ -689,7 +709,7 @@ class _HomePageState extends State<HomePage> {
                   Text(
                     'Documents',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 18,
                       fontWeight: FontWeight.w500,
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
@@ -727,7 +747,7 @@ class _HomePageState extends State<HomePage> {
                   Text(
                     'Rappels',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 18,
                       fontWeight: FontWeight.w500,
                       color: Theme.of(context).colorScheme.onSurface,
                     ),

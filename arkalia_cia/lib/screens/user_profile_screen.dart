@@ -176,11 +176,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         'Aucun profil utilisateur',
                         style: TextStyle(fontSize: 18, color: Colors.grey),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 12),
                       const Text(
                         'Créez un compte pour activer la synchronisation multi-appareil',
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.grey),
+                        style: TextStyle(fontSize: 14, color: Colors.grey),
                       ),
                     ],
                   ),
@@ -234,7 +234,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                       'Dernière synchronisation: ${_formatDate(_profile!.lastSync!)}',
                                       style: TextStyle(
                                         color: Colors.grey[600],
-                                        fontSize: 12,
+                                        fontSize: 14,
                                       ),
                                     ),
                                   ],
@@ -293,7 +293,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     style: TextStyle(
                       color: Colors.green,
                       fontWeight: FontWeight.bold,
-                      fontSize: 12,
+                      fontSize: 14,
                     ),
                   ),
                 if (!device.isActive)
@@ -301,7 +301,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     'Inactif',
                     style: TextStyle(
                       color: Colors.orange,
-                      fontSize: 12,
+                      fontSize: 14,
                     ),
                   ),
               ],

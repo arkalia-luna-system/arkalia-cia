@@ -4,6 +4,13 @@
 **Version** : 1.3.1+6  
 **Statut** : 18/20 problèmes résolus (90%)
 
+**Dernière mise à jour visuelle** : 12 décembre 2025
+- ✅ Uniformisation tailles de texte (≥14px partout, titres ≥18px)
+- ✅ Uniformisation espacements (SizedBox, padding, margins)
+- ✅ Taille minimale boutons 48px (accessibilité seniors)
+- ✅ Uniformisation tailles icônes (24px standard)
+- ✅ Marges Cards uniformisées (16px horizontal, 8px vertical)
+
 ---
 
 ## RÉSUMÉ
