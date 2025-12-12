@@ -14,7 +14,7 @@
 - ✅ `docs/guides/SECURITE_GOOGLE_SIGN_IN.md`
 
 **Changements** :
-- Client Secret `GOCSPX-***[SECRET_REVOQUE]` → `GOCSPX-***` (placeholder)
+- Client Secret `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` → `GOCSPX-***` (placeholder)
 - Ajout d'avertissements de sécurité
 - Documentation mise à jour
 
@@ -78,7 +78,7 @@ grep -r "CLIENT_SECRET" . --exclude-dir=.git --exclude-dir=node_modules
 ```bash
 # 1. Télécharger BFG : https://rtyley.github.io/bfg-repo-cleaner/
 # 2. Créer un fichier passwords.txt avec :
-echo "GOCSPX-***[SECRET_REVOQUE]==>GOCSPX-***" > passwords.txt
+echo "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==>GOCSPX-***" > passwords.txt
 
 # 3. Exécuter BFG
 java -jar bfg.jar --replace-text passwords.txt

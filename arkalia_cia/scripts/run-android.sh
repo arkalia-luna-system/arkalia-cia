@@ -71,11 +71,24 @@ else
     
     # Extraire l'ID du premier appareil Android
     # Format: "SM S938B (mobile) • R3CY60BJ3ZM • android-arm64 • Android 16 (API 36)"
-    DEVICE_ID=$(echo "$ANDROID_DEVICES" | head -1 | sed -n 's/.*• \([^•]*\) •.*/\1/p' | tr -d ' ')
+    # On cherche le deuxième champ séparé par "•"
+    FIRST_LINE=$(echo "$ANDROID_DEVICES" | head -1)
+    # Extraire l'ID (deuxième champ entre les "•")
+    DEVICE_ID=$(echo "$FIRST_LINE" | awk -F'•' '{print $2}' | xargs)
     
-    if [ -z "$DEVICE_ID" ]; then
-        echo -e "${YELLOW}⚠️  Impossible d'extraire l'ID, utilisation de 'android'${NC}"
-        DEVICE_ID="android"
+    # Si l'extraction échoue, essayer une autre méthode
+    if [ -z "$DEVICE_ID" ] || [ "$DEVICE_ID" = "" ]; then
+        # Méthode alternative : chercher un ID qui ressemble à un ID d'appareil (alphanumérique, 8+ caractères)
+        DEVICE_ID=$(echo "$FIRST_LINE" | grep -oE '[A-Z0-9]{8,}' | head -1)
+    fi
+    
+    if [ -z "$DEVICE_ID" ] || [ "$DEVICE_ID" = "" ]; then
+        echo -e "${YELLOW}⚠️  Impossible d'extraire l'ID, utilisation de l'ID complet${NC}"
+        # Utiliser le nom complet de l'appareil comme fallback
+        DEVICE_ID=$(echo "$FIRST_LINE" | awk '{print $1}')
+        if [ -z "$DEVICE_ID" ]; then
+            DEVICE_ID="android"
+        fi
     else
         echo -e "${GREEN}✅ Utilisation de l'appareil : ${DEVICE_ID}${NC}"
     fi

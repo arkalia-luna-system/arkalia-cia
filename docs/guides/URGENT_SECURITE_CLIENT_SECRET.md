@@ -9,7 +9,7 @@
 
 GitGuardian a détecté que le **Client Secret Web Google OAuth2** était exposé dans le dépôt GitHub.
 
-**Client Secret exposé** : `GOCSPX-***[SECRET_REVOQUE]`
+**Client Secret exposé** : `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`
 
 **Fichiers concernés** :
 - `docs/guides/CONFIGURATION_GOOGLE_SIGN_IN_COMPLETE.md` (ligne 39)
@@ -53,7 +53,7 @@ git filter-branch --force --index-filter \
 # Option 2 : Utiliser BFG Repo-Cleaner (recommandé)
 # Télécharger BFG : https://rtyley.github.io/bfg-repo-cleaner/
 bfg --replace-text passwords.txt
-# Où passwords.txt contient : GOCSPX-***[SECRET_REVOQUE]==>GOCSPX-***
+# Où passwords.txt contient : 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==>GOCSPX-***
 
 # Option 3 : Forcer push (si dépôt privé et peu de contributeurs)
 git push origin --force --all
