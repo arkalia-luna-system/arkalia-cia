@@ -55,6 +55,7 @@ Si le navigateur ne propose pas de s'enregistrer mais propose directement un cod
    - Détection web vs mobile
    - Sur web : Affiche PinSetupScreen ou PinEntryScreen
    - Sur mobile : Fonctionne comme avant (biométrie)
+   - **SIMPLIFIÉ (25 janvier 2025)** : Suppression vérifications redondantes, logique centralisée dans main.dart
 
 ---
 
@@ -65,6 +66,8 @@ Si le navigateur ne propose pas de s'enregistrer mais propose directement un cod
 ```
 LockScreen → AuthService.authenticate() → Biométrie/PIN système → HomePage
 ```
+
+**Note (25 janvier 2025)** : Simplification du flux - LockScreen s'affiche seulement si authentification activée ET configurée. Voir `docs/SIMPLIFICATION_AUTHENTIFICATION.md` pour plus de détails.
 
 ### Sur Web (nouveau)
 

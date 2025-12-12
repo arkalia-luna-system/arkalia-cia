@@ -27,6 +27,7 @@
 **Last Audit**: 12 décembre 2025 (Note: 10/10 ✅ - Perfection atteinte !)  
 **Production-Ready**: 100% ✅  
 **Version**: 1.3.1+6 (12 décembre 2025)  
+**Dernière simplification**: 25 janvier 2025 - Authentification simplifiée (-30% complexité) ✅  
 **Google Play Console**: ⚠️ Version 1.3.1 - Rejeté le 9 décembre 2025 (politique familiale)  
 **PWA Alternative**: ✅ Déployée sur https://arkalia-luna-system.github.io/arkalia-cia/  
 **Exploitation**: 90% ✅ (18/20 problèmes résolus - amélioration +5% depuis 12 décembre 2025)  
