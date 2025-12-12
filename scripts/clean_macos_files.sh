@@ -31,8 +31,30 @@ find . -name ".AppleDouble" -type d -exec rm -rf {} + 2>/dev/null || true
 # Compter les fichiers après nettoyage
 COUNT_AFTER=$(find . -name "._*" -type f 2>/dev/null | wc -l | tr -d ' ')
 
+# Afficher le résultat du nettoyage
+if [ -z "$COUNT_BEFORE" ] || [ "$COUNT_BEFORE" = "0" ]; then
+  COUNT_BEFORE=0
+fi
+if [ -z "$COUNT_AFTER" ] || [ "$COUNT_AFTER" = "0" ]; then
+  COUNT_AFTER=0
+fi
+
 if [ "$COUNT_BEFORE" -gt 0 ]; then
-  echo "⚠️  Attention: $COUNT_BEFORE fichiers macOS détectés, suppression..."
+  REMOVED=$((COUNT_BEFORE - COUNT_AFTER))
+  # Vérifier que REMOVED n'est pas négatif (cas edge où COUNT_AFTER > COUNT_BEFORE)
+  if [ "$REMOVED" -lt 0 ]; then
+    REMOVED=0
+  fi
+  if [ "$REMOVED" -gt 0 ]; then
+    echo "✅ $REMOVED fichier(s) macOS supprimé(s) ($COUNT_BEFORE → $COUNT_AFTER)"
+  elif [ "$COUNT_AFTER" -eq "$COUNT_BEFORE" ]; then
+    echo "⚠️  $COUNT_BEFORE fichier(s) macOS détecté(s) mais non supprimé(s)"
+  else
+    # Cas où COUNT_AFTER > COUNT_BEFORE (ne devrait pas arriver, mais géré)
+    echo "⚠️  Situation inattendue: $COUNT_BEFORE fichier(s) avant, $COUNT_AFTER après"
+  fi
+else
+  echo "✅ Aucun fichier macOS détecté"
 fi
 
 echo "✅ Nettoyage terminé"

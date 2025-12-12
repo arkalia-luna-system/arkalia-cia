@@ -2,6 +2,9 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 
 /// Helper pour le chiffrement AES-256 des données sensibles
 class EncryptionHelper {
@@ -15,19 +18,56 @@ class EncryptionHelper {
     ),
   );
 
+  /// Lit la clé depuis le stockage sécurisé ou SharedPreferences (fallback)
+  static Future<String?> _readKey() async {
+    if (kIsWeb) {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString(_keyStorageKey);
+    } else {
+      try {
+        return await _secureStorage.read(key: _keyStorageKey);
+      } on MissingPluginException {
+        // Fallback vers SharedPreferences si flutter_secure_storage n'est pas disponible
+        final prefs = await SharedPreferences.getInstance();
+        return prefs.getString(_keyStorageKey);
+      } catch (e) {
+        // Autre erreur, fallback vers SharedPreferences
+        final prefs = await SharedPreferences.getInstance();
+        return prefs.getString(_keyStorageKey);
+      }
+    }
+  }
+
+  /// Écrit la clé dans le stockage sécurisé ou SharedPreferences (fallback)
+  static Future<void> _writeKey(String value) async {
+    if (kIsWeb) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_keyStorageKey, value);
+    } else {
+      try {
+        await _secureStorage.write(key: _keyStorageKey, value: value);
+      } on MissingPluginException {
+        // Fallback vers SharedPreferences si flutter_secure_storage n'est pas disponible
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString(_keyStorageKey, value);
+      } catch (e) {
+        // Autre erreur, fallback vers SharedPreferences
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString(_keyStorageKey, value);
+      }
+    }
+  }
+
   /// Génère ou récupère la clé de chiffrement
   static Future<encrypt.Key> _getEncryptionKey() async {
     try {
       // Essayer de récupérer la clé depuis le stockage sécurisé
-      String? keyString = await _secureStorage.read(key: _keyStorageKey);
+      String? keyString = await _readKey();
 
       if (keyString == null || keyString.isEmpty) {
         // Générer une nouvelle clé
         final key = encrypt.Key.fromSecureRandom(32); // 256 bits
-        await _secureStorage.write(
-          key: _keyStorageKey,
-          value: key.base64,
-        );
+        await _writeKey(key.base64);
         return key;
       }
 
@@ -35,10 +75,7 @@ class EncryptionHelper {
     } catch (e) {
       // En cas d'erreur, générer une nouvelle clé
       final key = encrypt.Key.fromSecureRandom(32);
-      await _secureStorage.write(
-        key: _keyStorageKey,
-        value: key.base64,
-      );
+      await _writeKey(key.base64);
       return key;
     }
   }
