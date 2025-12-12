@@ -1,5 +1,6 @@
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../utils/app_logger.dart';
 
 /// Service d'authentification Google pour Arkalia CIA
 /// 
@@ -45,26 +46,44 @@ class GoogleAuthService {
         'user': account,
         'error': null,
       };
-    } catch (e) {
+    } catch (e, stackTrace) {
+      // Log détaillé pour débogage
+      AppLogger.error('Erreur Google Sign-In', e, stackTrace);
+      print('❌ [GoogleAuthService] Erreur détaillée: $e');
+      print('❌ [GoogleAuthService] Stack trace: $stackTrace');
+      
       // Gestion d'erreurs spécifiques pour messages utilisateur clairs
       final errorMessage = e.toString();
       String userFriendlyMessage;
       
       if (errorMessage.contains('DEVELOPER_ERROR') ||
           errorMessage.contains('10:') ||
-          errorMessage.contains('configuration')) {
+          errorMessage.contains('configuration') ||
+          errorMessage.contains('SignInException')) {
         userFriendlyMessage = 
-            'Erreur de configuration. Vérifiez que le SHA-1 est correctement '
-            'configuré dans Google Cloud Console.';
+            'Erreur de configuration Google Sign-In.\n'
+            'Vérifiez que le SHA-1 est correctement configuré dans Google Cloud Console.\n'
+            'Erreur technique: ${e.toString()}';
       } else if (errorMessage.contains('NETWORK_ERROR') ||
                  errorMessage.contains('7:') ||
-                 errorMessage.contains('network')) {
+                 errorMessage.contains('network') ||
+                 errorMessage.contains('SocketException')) {
         userFriendlyMessage = 
-            'Erreur de connexion réseau. Vérifiez votre connexion internet.';
+            'Erreur de connexion réseau.\n'
+            'Vérifiez votre connexion internet.';
       } else if (errorMessage.contains('SIGN_IN_CANCELLED') ||
                  errorMessage.contains('12501') ||
-                 errorMessage.contains('cancelled')) {
+                 errorMessage.contains('cancelled') ||
+                 errorMessage.contains('PlatformException') && errorMessage.contains('12501')) {
         userFriendlyMessage = 'Connexion annulée';
+      } else if (errorMessage.contains('PlatformException')) {
+        // Extraire le code d'erreur de PlatformException
+        final codeMatch = RegExp(r'code:\s*([^,]+)').firstMatch(errorMessage);
+        final messageMatch = RegExp(r'message:\s*([^,]+)').firstMatch(errorMessage);
+        final code = codeMatch?.group(1) ?? 'UNKNOWN';
+        final message = messageMatch?.group(1) ?? errorMessage;
+        
+        userFriendlyMessage = 'Erreur Google Sign-In (Code: $code)\n$message';
       } else {
         userFriendlyMessage = 'Erreur lors de la connexion: ${e.toString()}';
       }

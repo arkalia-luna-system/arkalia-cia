@@ -83,11 +83,31 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
       } else {
         // Afficher l'erreur seulement si ce n'est pas une annulation
         if (result['error'] != 'Connexion annulée' && context.mounted) {
+          // Afficher un dialog avec l'erreur détaillée pour débogage
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Erreur de connexion Google'),
+              content: SingleChildScrollView(
+                child: Text(
+                  result['error'] ?? 'Erreur lors de la connexion',
+                  style: const TextStyle(fontSize: 14),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+          // Aussi afficher un snackbar pour visibilité
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(result['error'] ?? 'Erreur lors de la connexion'),
               backgroundColor: Colors.red,
-              duration: const Duration(seconds: 3),
+              duration: const Duration(seconds: 5),
             ),
           );
         }
