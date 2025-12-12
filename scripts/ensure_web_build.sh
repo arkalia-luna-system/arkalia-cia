@@ -9,6 +9,10 @@ echo "🔧 Vérification et génération du build web Flutter..."
 echo "=================================================="
 
 # Aller dans le dossier Flutter
+if [ ! -d "arkalia_cia" ]; then
+    echo "❌ Erreur: Le dossier arkalia_cia n'existe pas"
+    exit 1
+fi
 cd arkalia_cia
 
 # Vérifier si Flutter est installé

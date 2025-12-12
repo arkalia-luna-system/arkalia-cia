@@ -3,16 +3,30 @@
 
 echo "🧹 Nettoyage des fichiers macOS..."
 
-# Supprimer tous les fichiers ._*
-find . -name "._*" -type f -delete 2>/dev/null
+# Compter les fichiers avant nettoyage
+COUNT_BEFORE=$(find . -name "._*" -type f 2>/dev/null | wc -l | tr -d ' ')
 
-# Supprimer les dossiers de build
-rm -rf build/ dist/ *.egg-info/
+# Supprimer tous les fichiers ._* (y compris dans .git)
+find . -name "._*" -type f -delete 2>/dev/null || true
+
+# Supprimer les fichiers macOS dans .git/objects/pack et .git/refs
+find .git/objects/pack -name "._*" -type f -delete 2>/dev/null || true
+find .git/refs -name "._*" -type f -delete 2>/dev/null || true
+
+# Supprimer les dossiers de build (sans erreur si n'existent pas)
+rm -rf build/ dist/ *.egg-info/ 2>/dev/null || true
 
 # Supprimer les fichiers .DS_Store
-find . -name ".DS_Store" -type f -delete 2>/dev/null
+find . -name ".DS_Store" -type f -delete 2>/dev/null || true
 
 # Supprimer les fichiers .AppleDouble
-find . -name ".AppleDouble" -type d -exec rm -rf {} + 2>/dev/null
+find . -name ".AppleDouble" -type d -exec rm -rf {} + 2>/dev/null || true
+
+# Compter les fichiers après nettoyage
+COUNT_AFTER=$(find . -name "._*" -type f 2>/dev/null | wc -l | tr -d ' ')
+
+if [ "$COUNT_BEFORE" -gt 0 ]; then
+  echo "⚠️  Attention: $COUNT_BEFORE fichiers macOS détectés, suppression..."
+fi
 
 echo "✅ Nettoyage terminé"

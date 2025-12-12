@@ -9,6 +9,10 @@ echo "🧹 Nettoyage du cache Flutter..."
 echo "================================"
 
 # Aller dans le dossier Flutter
+if [ ! -d "arkalia_cia" ]; then
+    echo "❌ Erreur: Le dossier arkalia_cia n'existe pas"
+    exit 1
+fi
 cd arkalia_cia
 
 # Nettoyer le cache Flutter

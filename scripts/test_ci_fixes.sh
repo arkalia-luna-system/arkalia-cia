@@ -47,6 +47,10 @@ fi
 echo ""
 echo "📋 Test 3: Vérification de l'analyse Flutter..."
 
+if [ ! -d "arkalia_cia" ]; then
+    echo "❌ Erreur: Le dossier arkalia_cia n'existe pas"
+    exit 1
+fi
 cd arkalia_cia
 if flutter analyze --no-fatal-infos > /dev/null 2>&1; then
     echo "✅ Analyse Flutter réussie"

@@ -63,6 +63,10 @@ echo "📱 Démarrage d'Arkalia CIA Flutter..."
 echo ""
 
 # Aller dans le dossier Flutter
+if [ ! -d "$SCRIPT_DIR/arkalia_cia" ]; then
+    echo "❌ Erreur: Le dossier arkalia_cia n'existe pas"
+    exit 1
+fi
 cd "$SCRIPT_DIR/arkalia_cia"
 
 # Vérifier que Flutter est installé

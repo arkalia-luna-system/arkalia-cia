@@ -23,6 +23,10 @@ echo "✅ Fichiers macOS cachés supprimés"
 
 # Réinstaller les pods
 echo "3. Réinstallation des Pods..."
+if [ ! -d "ios" ]; then
+    echo "❌ Erreur: Le dossier ios n'existe pas"
+    exit 1
+fi
 cd ios
 rm -rf Pods Podfile.lock
 

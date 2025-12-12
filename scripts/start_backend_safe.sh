@@ -63,6 +63,10 @@ echo "🚀 Démarrage d'Arkalia CIA Backend..."
 echo ""
 
 # Aller dans le dossier backend
+if [ ! -d "$SCRIPT_DIR/arkalia_cia_python_backend" ]; then
+    echo "❌ Erreur: Le dossier arkalia_cia_python_backend n'existe pas"
+    exit 1
+fi
 cd "$SCRIPT_DIR/arkalia_cia_python_backend"
 
 # Activer l'environnement virtuel

@@ -50,6 +50,10 @@ echo -e "${GREEN}✅ Flutter nettoyé${NC}"
 
 # 4. Nettoyer CocoaPods
 echo -e "${YELLOW}📦 Nettoyage CocoaPods...${NC}"
+if [ ! -d "ios" ]; then
+    echo -e "${RED}❌ Erreur: Le dossier ios n'existe pas${NC}"
+    exit 1
+fi
 cd ios
 rm -rf Pods Podfile.lock .symlinks
 echo -e "${GREEN}✅ CocoaPods nettoyé${NC}"
@@ -73,6 +77,10 @@ echo -e "${GREEN}✅ Projet iOS régénéré${NC}"
 
 # 8. Installer les dépendances CocoaPods
 echo -e "${YELLOW}📦 Installation des dépendances CocoaPods...${NC}"
+if [ ! -d "ios" ]; then
+    echo -e "${RED}❌ Erreur: Le dossier ios n'existe pas${NC}"
+    exit 1
+fi
 cd ios
 pod install
 cd ..
