@@ -20,12 +20,12 @@ Ne pas développer ARIA ici - Utiliser le projet ARIA séparé.
 
 ## RÉSUMÉ
 
-**Problèmes résolus** : 13/20 (65%)  
-**Problèmes restants** : 6/20 (30%) - ARIA géré dans projet séparé
+**Problèmes résolus** : 14/20 (70%)  
+**Problèmes restants** : 5/20 (25%) - ARIA géré dans projet séparé
 
 - **Critiques** : 6/8 résolus (1 restant : Profil multi-appareil - fonctionnalité future)
 - **Élevés** : 7/7 résolus (100%)
-- **Moyens** : 0/5 résolus (5 restants)
+- **Moyens** : 1/5 résolus (4 restants)
 
 Note : ARIA serveur est géré dans le projet ARIA séparé, pas dans CIA.
 
@@ -162,12 +162,11 @@ Note : ARIA serveur est géré dans le projet ARIA séparé, pas dans CIA.
 ### Élevé (1)
 1. Pathologies - Sous-catégories
 
-### Moyen (5)
-1. Médecins - Détection auto
-2. Patterns - Erreur non spécifiée
-3. Statistiques - Placement UI
-4. Dialog partage - Feedback
-5. BBIA - Placeholder (futur)
+### Moyen (4)
+1. Patterns - Erreur non spécifiée
+2. Statistiques - Placement UI
+3. Dialog partage - Feedback
+4. BBIA - Placeholder (futur)
 
 ---
 
@@ -177,9 +176,8 @@ Note : ARIA serveur est géré dans le projet ARIA séparé, pas dans CIA.
 1. Médecins - Détection auto (1 jour)
 
 ### Après
-2. Médecins - Détection auto (1 jour)
-3. Patterns - Erreur (1 jour)
-4. Statistiques - Placement (1 jour)
+2. Patterns - Erreur (1 jour)
+3. Statistiques - Placement (1 jour)
 
 ### Futur
 5. Profil multi-appareil (10-16 jours) - Fonctionnalité majeure
@@ -205,6 +203,9 @@ Note : ARIA serveur est géré dans le projet ARIA séparé, pas dans CIA.
 - Portails santé épinglage
 - Contacts urgence personnalisation
 - Pathologies sous-catégories (12 décembre 2025)
+
+### Moyens résolus (1/5)
+- Médecins - Détection auto (12 décembre 2025)
 
 ### Documentation créée
 - Guide déploiement ARIA (Render.com)

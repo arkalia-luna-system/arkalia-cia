@@ -10,6 +10,10 @@ import 'package:permission_handler/permission_handler.dart';
 import '../services/local_storage_service.dart';
 import '../services/file_storage_service.dart';
 import '../services/category_service.dart';
+import '../services/doctor_detection_service.dart';
+import '../services/doctor_service.dart';
+import '../models/doctor.dart';
+import '../utils/app_logger.dart';
 import '../widgets/exam_type_badge.dart';
 import 'add_edit_doctor_screen.dart';
 
@@ -309,11 +313,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           isUploading = false;
         });
 
-        // Vérifier si un médecin est détecté dans le document (métadonnées)
-        // Note: L'extraction réelle se fait côté backend, ici on simule pour la démo
-        // En production, les métadonnées viendront de l'API backend
-        final filePath = kIsWeb ? uniqueFileName : savedFile!.path;
-        await _checkAndShowDoctorDialog(filePath, document);
+        // Vérifier si un médecin est détecté dans le document
+        await _checkAndShowDoctorDialog(document);
 
         _showSuccess('Document $fileName ajouté avec succès !');
         _loadDocuments(); // Recharger la liste
@@ -809,36 +810,78 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   }
 
   /// Vérifie si un médecin est détecté et affiche le dialog
-  Future<void> _checkAndShowDoctorDialog(String filePath, Map<String, dynamic> document) async {
-    // En production, les métadonnées viendront de l'API backend après extraction
-    // Pour l'instant, on vérifie si des métadonnées existent déjà dans le document
-    final metadata = document['metadata'];
-    if (metadata != null && metadata is Map) {
-      final doctorName = metadata['doctor_name'] as String?;
-      if (doctorName != null && doctorName.isNotEmpty) {
-        // Préparer les données détectées
-        final detectedData = {
-          'doctor_name': doctorName,
-          'doctor_specialty': metadata['doctor_specialty'],
-          'phone': metadata['doctor_phone'],
-          'email': metadata['doctor_email'],
-          'address': metadata['doctor_address'],
-        };
+  Future<void> _checkAndShowDoctorDialog(Map<String, dynamic> document) async {
+    if (!mounted) return;
 
-        // Afficher le dialog
-        if (!mounted) return;
+    try {
+      // Récupérer les métadonnées du document
+      final metadata = document['metadata'] as Map<String, dynamic>?;
+      
+      // Essayer de détecter un médecin depuis les métadonnées ou le texte
+      // Note: Pour l'instant, on utilise seulement les métadonnées
+      // Si le backend extrait le texte, on pourrait aussi l'utiliser
+      final detectedDoctor = DoctorDetectionService.detectDoctorFromMetadata(metadata);
+
+      if (detectedDoctor != null && mounted) {
+        // Vérifier si le médecin existe déjà
+        final doctorService = DoctorService();
+        final existingDoctors = await doctorService.getAllDoctors();
+        final alreadyExists = existingDoctors.any((doc) =>
+            doc.firstName.toLowerCase() == detectedDoctor['firstName']!.toLowerCase() &&
+            doc.lastName.toLowerCase() == detectedDoctor['lastName']!.toLowerCase());
+
+        if (alreadyExists) {
+          // Le médecin existe déjà, ne pas proposer
+          return;
+        }
+
+        // Afficher le dialog de proposition
         final shouldAdd = await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
             title: const Text('Médecin détecté'),
-            content: Text('Médecin détecté : $doctorName\n\nVoulez-vous l\'ajouter à l\'annuaire ?'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Un médecin a été détecté dans ce document :'),
+                const SizedBox(height: 16),
+                Text(
+                  '${detectedDoctor['firstName']} ${detectedDoctor['lastName']}',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+                if (detectedDoctor['specialty'] != null &&
+                    detectedDoctor['specialty']!.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    'Spécialité : ${detectedDoctor['specialty']}',
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 16),
+                const Text(
+                  'Souhaitez-vous l\'ajouter à votre liste de médecins ?',
+                  style: TextStyle(fontSize: 14),
+                ),
+              ],
+            ),
             actions: [
               TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('Plus tard'),
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('Ignorer'),
               ),
               ElevatedButton(
-                onPressed: () => Navigator.pop(context, true),
+                onPressed: () => Navigator.of(context).pop(true),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                ),
                 child: const Text('Ajouter'),
               ),
             ],
@@ -846,17 +889,34 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         );
 
         if (shouldAdd == true && mounted) {
-          // Ouvrir l'écran d'ajout avec les données pré-remplies
-          final result = await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddEditDoctorScreen(detectedData: detectedData),
-            ),
+          // Créer et ajouter le médecin
+          final newDoctor = Doctor(
+            firstName: detectedDoctor['firstName']!,
+            lastName: detectedDoctor['lastName']!,
+            specialty: detectedDoctor['specialty']?.isNotEmpty == true
+                ? detectedDoctor['specialty']
+                : null,
           );
-          if (result == true) {
-            _showSuccess('Médecin ajouté à l\'annuaire !');
+
+          await doctorService.insertDoctor(newDoctor);
+
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Dr ${newDoctor.firstName} ${newDoctor.lastName} ajouté avec succès',
+                ),
+                backgroundColor: Colors.green,
+                duration: const Duration(seconds: 3),
+              ),
+            );
           }
         }
+      }
+    } catch (e) {
+      // Erreur silencieuse - ne pas bloquer l'upload du document
+      if (mounted) {
+        AppLogger.debug('Erreur détection médecin: $e');
       }
     }
   }

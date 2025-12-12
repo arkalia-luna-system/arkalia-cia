@@ -1,0 +1,100 @@
+# .cursorignore - Fichiers à exclure de l'indexation Cursor pour améliorer les performances
+
+# Build directories (Flutter)
+arkalia_cia/build/
+build/
+*.build/
+
+# Logs
+*.log
+logs/
+arkalia_cia/flutter_*.log
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
+venv/
+env/
+.venv/
+arkalia_cia_venv/
+ENV/
+
+# Coverage reports
+htmlcov/
+coverage/
+.coverage
+*.cover
+coverage.xml
+lcov.info
+
+# Test files temporaires
+test_temp/
+test_*.db
+
+# Uploads
+uploads/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Flutter/Dart generated
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Web build artifacts (volumineux)
+arkalia_cia/build/web/
+*.wasm
+*.symbols
+*.js.map
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# OS
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# Large binary files
+*.so
+*.dylib
+*.dll
+*.exe
+
+# Documentation builds
+docs/_build/
+
+# Reports
+reports/
+*.report.json
+*.report.txt
+
+# State files
+state/
+
+# Memory files
+:memory:
+
+# Archives
+archive/
+
+# Backups
+backups/
+

@@ -2,17 +2,17 @@
 
 **Date** : 12 décembre 2025  
 **Version** : 1.3.1+6  
-**Statut** : 12/20 problèmes résolus (60%)
+**Statut** : 14/20 problèmes résolus (70%)
 
 ---
 
 ## RÉSUMÉ
 
-**Problèmes restants** : 7/20 (35%)
+**Problèmes restants** : 5/20 (25%)
 
 - **Critique** : 1 (Profil multi-appareil - fonctionnalité future, non-bloquant)
-- **Élevé** : 1 (Pathologies sous-catégories)
-- **Moyen** : 5 (Médecins auto, Patterns, Statistiques, Dialog partage, BBIA)
+- **Élevé** : 0 (100% résolu)
+- **Moyen** : 4 (Patterns, Statistiques, Dialog partage, BBIA)
 
 ---
 
