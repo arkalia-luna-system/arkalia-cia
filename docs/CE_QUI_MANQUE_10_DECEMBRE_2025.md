@@ -234,15 +234,23 @@
 
 ## 🟠 PROBLÈMES ÉLEVÉS
 
-### 9. Couleurs pathologie vs spécialités 🟠 **ÉLEVÉE**
+### 9. Couleurs pathologie vs spécialités 🟠 **ÉLEVÉE** ✅ **RÉSOLU**
 
 **Problème** : Couleurs pathologie ≠ couleurs spécialités → confusion
 
-**Solution** : Mapping standardisé pathologie → couleur
+**Solution appliquée** :
+- ✅ Service `PathologyColorService` créé : mapping pathologie → spécialité → couleur
+- ✅ Tous les templates (24) utilisent maintenant le service standardisé
+- ✅ Couleurs cohérentes avec spécialités médecins (Endométriose = Gynécologue = pink, etc.)
+- ✅ Mapping complet pour toutes les pathologies courantes
+
+**Fichiers modifiés** :
+- `arkalia_cia/lib/services/pathology_color_service.dart` (NOUVEAU)
+- `arkalia_cia/lib/services/pathology_service.dart` (tous templates mis à jour)
 
 **Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md#9-couleurs-pathologie--couleurs-spécialités)
 
-**Priorité** : 🟠 **ÉLEVÉE**
+**Priorité** : ✅ **RÉSOLU**
 
 ---
 

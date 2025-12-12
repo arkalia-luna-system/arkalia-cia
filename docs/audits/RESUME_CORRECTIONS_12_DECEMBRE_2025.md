@@ -243,8 +243,8 @@ Résumé complet des corrections appliquées le 12 décembre 2025.
 1. ✅ ARIA serveur (documentation créée, déploiement à faire)
 2. 🔴 Profil multi-appareil (complexe, 10-16 jours)
 
-### Élevés restants (6)
-- Couleurs pathologie (service créé, remplacement couleurs templates en cours), Portails, Hydratation, Paramètres, Contacts, Pathologies
+### Élevés restants (5)
+- Portails, Hydratation, Paramètres, Contacts, Pathologies
 
 ### Moyens restants (5)
 - Médecins auto, Patterns, Statistiques, Dialog partage, BBIA
@@ -256,7 +256,7 @@ Résumé complet des corrections appliquées le 12 décembre 2025.
 <div align="center">
 
 **✅ 6 problèmes critiques résolus sur 8 (7/8 avec documentation ARIA)**  
-**✅ 1 problème élevé résolu (Rappels modifiables)**
+**✅ 2 problèmes élevés résolus (Rappels modifiables, Couleurs pathologie)**
 
 **Tests** : 41 tests créés ✅  
 **Code** : Propre, 0 erreur lint ✅  
