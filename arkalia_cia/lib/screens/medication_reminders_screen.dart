@@ -431,11 +431,15 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
                                 'Aucun médicament actif',
                                 style: TextStyle(fontSize: 18, color: Colors.grey),
                               ),
-                              const SizedBox(height: 8),
+                              const SizedBox(height: 12),
                               ElevatedButton.icon(
                                 onPressed: () => _showAddEditMedicationDialog(),
                                 icon: const Icon(Icons.add),
                                 label: const Text('Ajouter un médicament'),
+                                style: ElevatedButton.styleFrom(
+                                  minimumSize: const Size(200, 48),
+                                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                ),
                               ),
                             ],
                           ),
@@ -456,20 +460,32 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     IconButton(
-                                      icon: const Icon(Icons.bar_chart),
+                                      icon: const Icon(Icons.bar_chart, size: 24),
                                       onPressed: () => _showTrackingChart(medication),
                                       tooltip: 'Voir le suivi',
+                                      constraints: const BoxConstraints(
+                                        minWidth: 48,
+                                        minHeight: 48,
+                                      ),
                                     ),
                                     IconButton(
-                                      icon: const Icon(Icons.edit),
+                                      icon: const Icon(Icons.edit, size: 24),
                                       onPressed: () => _showAddEditMedicationDialog(
                                         medication: medication,
                                       ),
                                       tooltip: 'Modifier',
+                                      constraints: const BoxConstraints(
+                                        minWidth: 48,
+                                        minHeight: 48,
+                                      ),
                                     ),
                                     IconButton(
-                                      icon: const Icon(Icons.delete),
+                                      icon: const Icon(Icons.delete, size: 24),
                                       onPressed: () async {
+                                      constraints: const BoxConstraints(
+                                        minWidth: 48,
+                                        minHeight: 48,
+                                      ),
                                         final confirm = await showDialog<bool>(
                                           context: context,
                                           builder: (context) => AlertDialog(

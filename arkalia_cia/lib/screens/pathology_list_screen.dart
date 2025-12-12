@@ -389,24 +389,31 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        Icons.medical_services_outlined,
-                        size: 64,
-                        color: Colors.grey[400],
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.purple.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.medical_services,
+                          size: 64,
+                          color: Colors.purple[400],
+                        ),
                       ),
                       const SizedBox(height: 16),
-                      Text(
-                        'Aucune pathologie suivie',
+                      const Text(
+                        'Aucune pathologie',
                         style: TextStyle(
                           fontSize: 18,
-                          color: Colors.grey[600],
+                          color: Colors.grey,
                         ),
                       ),
                       const SizedBox(height: 8),
-                      Text(
+                      const Text(
                         'Appuyez sur + pour ajouter une pathologie',
                         style: TextStyle(
-                          color: Colors.grey[500],
+                          color: Colors.grey,
                           fontSize: 14,
                         ),
                       ),

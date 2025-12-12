@@ -113,7 +113,7 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
             child: Center(
               child: Text(
                 number,
-                style: const TextStyle(color: Colors.white, fontSize: 12),
+                style: const TextStyle(color: Colors.white, fontSize: 14),
               ),
             ),
           ),

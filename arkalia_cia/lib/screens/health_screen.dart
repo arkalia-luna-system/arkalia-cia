@@ -448,16 +448,23 @@ class _HealthScreenState extends State<HealthScreen> {
         foregroundColor: Colors.white,
         actions: [
           IconButton(
-            icon: Icon(_showFavoritesOnly ? Icons.star : Icons.star_border),
+            icon: Icon(
+              _showFavoritesOnly ? Icons.star : Icons.star_border,
+              size: 24,
+            ),
             onPressed: () {
               setState(() {
                 _showFavoritesOnly = !_showFavoritesOnly;
               });
             },
             tooltip: _showFavoritesOnly ? 'Afficher tous les portails' : 'Afficher seulement les favoris',
+            constraints: const BoxConstraints(
+              minWidth: 48,
+              minHeight: 48,
+            ),
           ),
           IconButton(
-            icon: const Icon(Icons.description),
+            icon: const Icon(Icons.description, size: 24),
             onPressed: () {
               Navigator.push(
                 context,
@@ -467,13 +474,22 @@ class _HealthScreenState extends State<HealthScreen> {
               );
             },
             tooltip: 'Générer rapport médical',
+            constraints: const BoxConstraints(
+              minWidth: 48,
+              minHeight: 48,
+            ),
           ),
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh, size: 24),
             onPressed: () {
               _loadPortals();
               _loadFavorites();
             },
+            tooltip: 'Actualiser',
+            constraints: const BoxConstraints(
+              minWidth: 48,
+              minHeight: 48,
+            ),
           ),
         ],
       ),

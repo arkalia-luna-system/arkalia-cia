@@ -124,17 +124,25 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
         title: const Text('Assistant IA Santé'),
         actions: [
           IconButton(
-            icon: Icon(_showHistory ? Icons.chat : Icons.history),
+            icon: Icon(_showHistory ? Icons.chat : Icons.history, size: 24),
             onPressed: () {
               setState(() {
                 _showHistory = !_showHistory;
               });
             },
             tooltip: _showHistory ? 'Masquer historique' : 'Afficher historique',
+            constraints: const BoxConstraints(
+              minWidth: 48,
+              minHeight: 48,
+            ),
           ),
           IconButton(
-            icon: const Icon(Icons.info_outline),
+            icon: const Icon(Icons.info_outline, size: 24),
             onPressed: () {
+            constraints: const BoxConstraints(
+              minWidth: 48,
+              minHeight: 48,
+            ),
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
@@ -152,6 +160,10 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
                 ),
               );
             },
+            constraints: const BoxConstraints(
+              minWidth: 48,
+              minHeight: 48,
+            ),
           ),
         ],
       ),
@@ -209,11 +221,12 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
                 ),
                 const SizedBox(width: 8),
                 IconButton(
-                  icon: const Icon(Icons.send),
+                  icon: const Icon(Icons.send, size: 24),
                   onPressed: _sendMessage,
                   style: IconButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                    minimumSize: const Size(48, 48),
                   ),
                 ),
               ],

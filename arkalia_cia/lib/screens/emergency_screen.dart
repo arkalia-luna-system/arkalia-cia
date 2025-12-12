@@ -444,10 +444,17 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
               padding: const EdgeInsets.all(32),
               child: Column(
                 children: [
-                  Icon(
-                    Icons.contact_phone_outlined,
-                    size: 48,
-                    color: Colors.grey.shade400,
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.red.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.contact_phone_outlined,
+                      size: 48,
+                      color: Colors.red.shade400,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   Text(
