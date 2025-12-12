@@ -12,8 +12,10 @@ void main() {
     });
 
     test('init should not throw', () async {
-      expect(() => LocalStorageService.init(), returnsNormally);
-      await LocalStorageService.init();
+      await expectLater(
+        LocalStorageService.init(),
+        completes,
+      );
     });
 
     group('Documents', () {

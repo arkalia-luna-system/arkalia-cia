@@ -37,8 +37,8 @@ void main() {
 
     test('retry should throw after max retries', () async {
       int attempts = 0;
-      expect(
-        () => RetryHelper.retry(
+      await expectLater(
+        RetryHelper.retry(
           fn: () async {
             attempts++;
             throw Exception('Persistent error');
