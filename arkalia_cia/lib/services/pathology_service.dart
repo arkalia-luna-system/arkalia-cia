@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import '../models/pathology.dart';
 import '../models/pathology_tracking.dart';
