@@ -119,18 +119,27 @@ Pour audit ARIA : Voir `docs/PROMPT_AUDIT_ARIA_12_DECEMBRE_2025.md`
 
 ### 2. Pas de profil multi-appareil ✅ **IMPLÉMENTÉ (12 décembre 2025)**
 
-**Problème** : Impossible de passer mobile → ordi avec synchronisation
+**Statut** : ✅ Implémenté le 12 décembre 2025
 
-**Statut** : Fonctionnalité future complexe (10-16 jours de développement), pas un bug bloquant
+**Ce qui a été fait** :
+1. ✅ Modèles `UserProfile` et `Device` créés
+2. ✅ Service `UserProfileService` pour gestion profil local
+3. ✅ Service `MultiDeviceSyncService` avec synchronisation E2E
+4. ✅ Écran `UserProfileScreen` pour gestion profil et appareils
+5. ✅ Tests complets pour modèles et services
+6. ⚠️ Endpoints backend à ajouter (`/api/v1/user/profile`)
 
-**Solution** : Créer système profil utilisateur + sync E2E
-- Architecture complète à créer (modèles UserProfile, Device, services sync)
-- Nécessite backend avec authentification multi-appareil
-- Chiffrement E2E pour synchronisation sécurisée
+**Fichiers créés** :
+- `arkalia_cia/lib/models/user_profile.dart`
+- `arkalia_cia/lib/models/device.dart`
+- `arkalia_cia/lib/services/user_profile_service.dart`
+- `arkalia_cia/lib/services/multi_device_sync_service.dart`
+- `arkalia_cia/lib/screens/user_profile_screen.dart`
+- Tests associés
 
 **Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md#2-pas-de-profil-utilisateur-multi-appareil)
 
-**Priorité** : 🔴 **FONCTIONNALITÉ FUTURE** (non-bloquant pour usage actuel)
+**Priorité** : ✅ **RÉSOLU**
 
 ---
 
