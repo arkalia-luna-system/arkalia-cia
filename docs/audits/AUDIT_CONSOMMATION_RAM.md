@@ -18,20 +18,24 @@ Cet audit identifie les problèmes potentiels de consommation mémoire dans le p
 **Fichier** : `arkalia_cia/lib/services/offline_cache_service.dart`
 
 **Problème** :
+
 - Le cache offline utilise `SharedPreferences` sans limite sur le nombre de clés
 - Peut grandir indéfiniment si beaucoup de requêtes sont mises en cache
 - Chaque clé peut contenir des données JSON volumineuses
 
 **Impact** :
+
 - RAM : Potentiellement plusieurs dizaines de MB si beaucoup de clés
 - Risque : MODÉRÉ (le cache expire après 24h, mais peut s'accumuler)
 
 **Solution recommandée** :
+
 - Ajouter une limite LRU (Least Recently Used) similaire au backend Python
 - Limiter à ~100 clés maximum
 - Nettoyer automatiquement les plus anciennes quand la limite est atteinte
 
 **Statut** : ✅ **CORRIGÉ** (12 DEC 25)
+
 - Limite LRU de 100 clés implémentée
 - Nettoyage automatique au démarrage
 
@@ -42,25 +46,30 @@ Cet audit identifie les problèmes potentiels de consommation mémoire dans le p
 **Fichier** : `arkalia_cia/android/watch-macos-files.sh`
 
 **Problème** :
+
 - Boucle `while [ -f "$LOCK_FILE" ]; do` qui tourne toutes les **0.2 secondes**
 - Exécute `find` récursif toutes les 0.2s pendant le build
 - Peut consommer CPU/RAM si plusieurs instances tournent
 
 **Impact** :
+
 - CPU : 0-5% par instance (variable selon activité)
 - RAM : ~5-10 MB par instance
 - Risque : **FAIBLE** (contrôlé par lock file, mais peut s'accumuler si mal arrêté)
 
 **Solution actuelle** :
+
 - ✅ Lock file pour éviter les doublons
 - ✅ Gestion des signaux SIGINT/SIGTERM
 - ✅ Script `cleanup_all.sh` nettoie automatiquement
 
 **Amélioration possible** :
+
 - Augmenter le délai à 1 seconde au lieu de 0.2s (suffisant pour éviter les erreurs D8)
 - Vérifier que le script s'arrête bien après le build
 
 **Statut** : ✅ **OPTIMISÉ** (12 DEC 25)
+
 - Délai augmenté de 0.2s à 1s
 - Réduction CPU de ~80%
 
@@ -373,23 +382,29 @@ Cet audit identifie les problèmes potentiels de consommation mémoire dans le p
 ## 📋 RÉSUMÉ FINAL
 
 ### Problèmes Critiques Corrigés ✅
+
 1. ✅ Cache offline Flutter - Limite LRU 100 clés
 2. ✅ Stockage bytes PDF sur web - Désactivé
 3. ✅ Messages conversation IA - Limite 50 messages
 4. ✅ Script watch-macos-files.sh - Délai optimisé (1s)
 
 ### Problèmes Modérés Optimisés ✅
+
 5. ✅ Recherche sémantique - Optimisé (12 DEC 25)
+
    - `semantic_search_service.dart` : Limite 100 documents, 50 médecins
    - Tri par date (plus récents) avant limitation
 
 ### Problèmes Modérés Partiellement Optimisés ⚠️
+
 6. ⚠️ Chargement données avant filtrage - Partiellement optimisé (patterns_dashboard limité)
+
    - `conversational_ai_service.dart` : Tri conditionnel
    - `patterns_dashboard_screen.dart` : Limites ajoutées (20 pathologies, 90 jours, 100 entrées, 50 médicaments)
    - `search_service.dart` : Limité avec `.take(50)` mais charge tout d'abord (limitation SharedPreferences)
 
 ### Problèmes Faibles Documentés ✅
+
 7. ✅ Lecture fichiers sync - Documenté (généralement petits fichiers)
 8. ✅ Processus externes (Bandit/Mypy) - Documenté
 9. ✅ Boucle Calendar Service - Acceptable (limité à 52 événements)
@@ -402,20 +417,24 @@ Cet audit identifie les problèmes potentiels de consommation mémoire dans le p
 ## 🎯 RÉSUMÉ FINAL DES OPTIMISATIONS (12 DEC 25)
 
 ### ✅ Problèmes Critiques Corrigés
+
 1. ✅ Cache offline Flutter - Limite LRU 100 clés
 2. ✅ Stockage bytes PDF sur web - Désactivé + limite 5 MB
 3. ✅ Messages conversation IA - Limite 50 messages
 4. ✅ Script watch-macos-files.sh - Délai optimisé (1s)
 
 ### ✅ Problèmes Modérés Optimisés
+
 5. ✅ Recherche sémantique - Limite 100 documents, 50 médecins
 6. ✅ Patterns dashboard - Limite 20 pathologies, 90 jours, 100 entrées, 50 médicaments
 7. ✅ Conversational AI service - Tri conditionnel
 
 ### ⚠️ Problèmes Modérés Partiellement Optimisés
+
 8. ⚠️ Chargement données avant filtrage - Partiellement optimisé (limitation SharedPreferences)
 
 ### ✅ Problèmes Faibles Documentés
+
 9. ✅ Lecture fichiers sync - Documenté (généralement petits)
 10. ✅ Processus externes (Bandit/Mypy) - Documenté
 11. ✅ Boucle Calendar Service - Acceptable (limité à 52 événements)

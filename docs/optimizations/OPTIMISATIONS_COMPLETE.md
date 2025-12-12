@@ -10,7 +10,8 @@
 
 Ce document regroupe **toutes les optimisations** de performance, mémoire et tests implémentées dans Arkalia CIA.
 
-**Voir aussi**:
+**Voir aussi** :
+
 - [AUDIT_ET_OPTIMISATIONS.md](AUDIT_ET_OPTIMISATIONS.md) - Optimisations scripts et processus
 - [OPTIMISATIONS_TESTS.md](OPTIMISATIONS_TESTS.md) - Détails optimisations tests récentes (18 nov 2025)
 
@@ -19,11 +20,13 @@ Ce document regroupe **toutes les optimisations** de performance, mémoire et te
 ## ✅ Optimisations Performance (Flutter)
 
 ### 1. Gestion Mémoire - Controllers
+
 **Problème**: Risque de fuites mémoire si les controllers ne sont pas disposés.
 
 **Solution**: Tous les `TextEditingController`, `ScrollController`, etc. sont correctement disposés dans `dispose()`.
 
-**Fichiers concernés**:
+**Fichiers concernés** :
+
 - ✅ `home_page.dart` - `_searchController.dispose()`
 - ✅ `documents_screen.dart` - `_searchController.dispose()`
 - ✅ `emergency_contact_dialog.dart` - Tous les controllers disposés
@@ -34,11 +37,13 @@ Ce document regroupe **toutes les optimisations** de performance, mémoire et te
 ---
 
 ### 2. Vérifications `mounted` Avant `setState`
+
 **Problème**: Appels à `setState()` après que le widget soit démonté causent des erreurs.
 
 **Solution**: Vérification systématique de `mounted` avant chaque `setState()` dans les opérations asynchrones.
 
-**Pattern appliqué**:
+**Pattern appliqué** :
+
 ```dart
 // Avant chaque setState dans méthode async
 if (!mounted) return;  // Au début
@@ -50,7 +55,8 @@ if (mounted) {         // Avant setState
 }
 ```
 
-**Fichiers optimisés**:
+**Fichiers optimisés** :
+
 - ✅ `home_page.dart` - `_loadStats()`, `_onSearchChanged()`
 - ✅ `stats_screen.dart` - `_loadStats()`
 - ✅ `documents_screen.dart` - Toutes les méthodes async
@@ -61,11 +67,13 @@ if (mounted) {         // Avant setState
 ---
 
 ### 3. Lazy Loading avec ListView.builder
+
 **Problème**: `ListView` charge tous les éléments en mémoire même s'ils ne sont pas visibles.
 
 **Solution**: Utilisation de `ListView.builder` pour le chargement paresseux.
 
-**Fichiers optimisés**:
+**Fichiers optimisés** :
+
 - ✅ `documents_screen.dart` - `ListView.builder` pour la liste des documents
 - ✅ `reminders_screen.dart` - `ListView.builder` pour les rappels
 - ✅ `health_screen.dart` - `ListView.builder` pour les portails
@@ -75,11 +83,13 @@ if (mounted) {         // Avant setState
 ---
 
 ### 4. Cache Offline Intelligent
+
 **Problème**: Requêtes réseau répétées même si les données n'ont pas changé.
 
 **Solution**: `OfflineCacheService` avec expiration automatique (24h).
 
 **Bénéfices**:
+
 - ✅ Réduction des requêtes réseau de ~80%
 - ✅ Fonctionnement offline complet
 - ✅ Temps de chargement réduit
@@ -89,6 +99,7 @@ if (mounted) {         // Avant setState
 ---
 
 ### 5. Retry avec Backoff Exponentiel
+
 **Problème**: Tentatives réseau simultanées en cas d'erreur.
 
 **Solution**: `RetryHelper` avec délais progressifs (1s, 2s, 4s).
@@ -98,6 +109,7 @@ if (mounted) {         // Avant setState
 ---
 
 ### 6. Debouncing de la Recherche
+
 **Problème**: Recherche déclenchée à chaque caractère tapé.
 
 **Solution**: Listener sur `TextEditingController` avec gestion intelligente.
@@ -107,11 +119,13 @@ if (mounted) {         // Avant setState
 ---
 
 ### 7. Const Widgets
+
 **Problème**: Widgets recréés inutilement à chaque rebuild.
 
 **Solution**: Utilisation de `const` pour les widgets statiques.
 
 **Statistiques**:
+
 - ✅ **480 utilisations de `const`** dans les écrans
 - ✅ Widgets statiques optimisés
 
@@ -143,6 +157,7 @@ if (mounted) {         // Avant setState
 ---
 
 ### 3. Correction Validation Chemins DB
+
 **Problème**: Validation trop stricte rejetait les fichiers temporaires  
 **Solution**: Permettre fichiers temporaires dans `/tmp`, `/var` et répertoire courant  
 **Impact**: Tous les tests DB passent maintenant
@@ -163,6 +178,7 @@ if (mounted) {         // Avant setState
 ---
 
 ### 5. Utilisation UUID pour Fichiers Temporaires
+
 **Problème**: Fichiers temporaires avec noms fixes causaient conflits  
 **Solution**: Utilisation UUID pour fichiers temporaires uniques  
 **Impact**: Tests isolés, pas de conflits
@@ -210,6 +226,7 @@ if (mounted) {         // Avant setState
 ## ✅ Optimisations Mémoire Supplémentaires (18 Nov 2025)
 
 ### 8. Cache LRU Limité dans JSONFileBackend
+
 **Problème**: Le cache `_cache` dans `JSONFileBackend` pouvait grandir indéfiniment, consommant beaucoup de RAM.
 
 **Solution**: Implémentation d'un cache LRU (Least Recently Used) limité à 50 entrées maximum.
@@ -222,6 +239,7 @@ if (mounted) {         // Avant setState
 ---
 
 ### 9. Traitement PDF par Chunks (Streaming)
+
 **Problème**: Les fichiers PDF étaient chargés entièrement en mémoire avant traitement (jusqu'à 50 MB).
 
 **Solution**: Lecture et écriture par chunks de 1 MB directement dans le fichier temporaire.
@@ -234,6 +252,7 @@ if (mounted) {         // Avant setState
 ---
 
 ### 10. Extraction PDF Page par Page
+
 **Problème**: Toutes les pages d'un PDF étaient chargées en mémoire simultanément lors de l'extraction de texte.
 
 **Solution**: Traitement page par page avec nettoyage périodique du garbage collector.
@@ -246,6 +265,7 @@ if (mounted) {         // Avant setState
 ---
 
 ### 11. Libération Immédiate des Données Volumineuses
+
 **Problème**: Les données volumineuses restaient en mémoire après traitement.
 
 **Solution**: Suppression explicite des références avec `del` après utilisation.
@@ -259,6 +279,7 @@ if (mounted) {         // Avant setState
 ---
 
 ### 12. Cache Offline Flutter avec Limite LRU (12 DEC 25)
+
 **Problème**: Le cache offline Flutter utilisait `SharedPreferences` sans limite, pouvant grandir indéfiniment.
 
 **Solution**: Implémentation d'un cache LRU (Least Recently Used) limité à 100 clés maximum.
@@ -272,6 +293,7 @@ if (mounted) {         // Avant setState
 ---
 
 ### 13. Stockage Bytes PDF sur Web - Désactivé (12 DEC 25)
+
 **Problème**: Sur le web, les PDFs étaient stockés avec leurs bytes complets dans `SharedPreferences`, pouvant faire planter l'app (chaque PDF de 10 MB = 10 MB en RAM).
 
 **Solution**: Désactivation du stockage des bytes dans SharedPreferences sur le web. Limite de 5 MB par fichier.
@@ -285,6 +307,7 @@ if (mounted) {         // Avant setState
 ---
 
 ### 14. Limite Messages Conversation IA (12 DEC 25)
+
 **Problème**: Liste `_messages` dans `conversational_ai_screen.dart` pouvait grandir indéfiniment.
 
 **Solution**: Limite à 50 messages maximum en mémoire, suppression automatique des plus anciens.
@@ -297,6 +320,7 @@ if (mounted) {         // Avant setState
 ---
 
 ### 15. Optimisation Script watch-macos-files.sh (12 DEC 25)
+
 **Problème**: Boucle infinie qui tournait toutes les 0.2 secondes, consommant beaucoup de CPU.
 
 **Solution**: Délai augmenté à 1 seconde (suffisant pour éviter erreurs D8).
@@ -343,4 +367,3 @@ if (mounted) {         // Avant setState
 ---
 
 *Dernière mise à jour : 12 DEC 25*
-
