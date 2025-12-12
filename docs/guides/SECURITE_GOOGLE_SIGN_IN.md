@@ -67,9 +67,10 @@ static final GoogleSignIn _googleSignIn = GoogleSignIn(
 2. **Client ID Web** : `1062485264410-mc24cenl8rq8qj71enrrp36mibrsep79.apps.googleusercontent.com`
    - ✅ **Sécurisé** : Peut être public
 
-3. **Client Secret Web** : `GOCSPX-***[SECRET_REVOQUE]`
-   - ⚠️ **Sensible** : Ne pas rendre public
+3. **Client Secret Web** : `GOCSPX-***` (masqué pour sécurité)
+   - ⚠️ **SENSIBLE** : Ne jamais rendre public
    - ✅ **Protection** : Pas utilisé dans l'app mobile (seulement pour backend web si nécessaire)
+   - ✅ **Stockage** : Uniquement dans Google Cloud Console, jamais dans le code
 
 4. **SHA-1 Debug** : `2C:68:D5:C0:92:A8:7F:59:E7:6A:7C:5B:7C:F9:77:54:9E:68:14:6E`
    - ✅ **Sécurisé** : Peut être public

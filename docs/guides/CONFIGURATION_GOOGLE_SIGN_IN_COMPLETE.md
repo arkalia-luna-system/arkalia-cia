@@ -36,8 +36,9 @@
 #### **Client Web 1** ✅
 - **Type** : Application Web
 - **Client ID** : `1062485264410-mc24cenl8rq8qj71enrrp36mibrsep79.apps.googleusercontent.com`
-- **Client Secret** : `GOCSPX-***[SECRET_REVOQUE]` (⚠️ Ne pas rendre public)
+- **Client Secret** : `GOCSPX-***` (⚠️ **SECRET - Ne jamais exposer publiquement**)
 - **Statut** : ✅ Configuré (pour backend web si nécessaire)
+- **⚠️ IMPORTANT** : Le Client Secret est stocké uniquement dans Google Cloud Console et ne doit JAMAIS être committé dans Git
 
 ---
 
