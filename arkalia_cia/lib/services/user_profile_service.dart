@@ -7,8 +7,7 @@ import '../models/user_profile.dart';
 import '../models/device.dart';
 import '../utils/app_logger.dart';
 
-// Import conditionnel pour Platform (non disponible sur web)
-import 'dart:io' if (dart.library.html) 'dart:html' show window;
+// Note: dart:io n'est pas disponible sur web, donc on évite son utilisation
 
 /// Service de gestion du profil utilisateur
 /// Gère le stockage local et la synchronisation avec le backend
@@ -93,28 +92,10 @@ class UserProfileService {
       platform = 'Web';
       deviceName = 'Navigateur Web';
     } else {
-      // Utiliser Platform seulement si on n'est pas sur le web
-      try {
-        if (io.Platform.isAndroid) {
-          platform = 'Android';
-          deviceName = 'Appareil Android';
-        } else if (io.Platform.isIOS) {
-          platform = 'iOS';
-          deviceName = 'iPhone/iPad';
-        } else if (io.Platform.isMacOS) {
-          platform = 'macOS';
-          deviceName = 'Mac';
-        } else if (io.Platform.isWindows) {
-          platform = 'Windows';
-          deviceName = 'PC Windows';
-        } else if (io.Platform.isLinux) {
-          platform = 'Linux';
-          deviceName = 'Linux';
-        }
-      } catch (e) {
-        // Si Platform n'est pas disponible (web), on garde les valeurs par défaut
-        AppLogger.warning('Platform non disponible, utilisation valeurs par défaut');
-      }
+      // Sur mobile/desktop, on utilise des valeurs génériques
+      // Pour une détection précise, utiliser device_info_plus (optionnel)
+      platform = 'Mobile/Desktop';
+      deviceName = 'Appareil';
     }
 
     return Device(
