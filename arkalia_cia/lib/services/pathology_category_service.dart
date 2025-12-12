@@ -1,5 +1,3 @@
-import '../models/doctor.dart';
-
 /// Service pour mapper les pathologies aux catégories et sous-catégories
 /// Utilise les spécialités médicales comme catégories principales
 class PathologyCategoryService {

@@ -15,7 +15,6 @@ import '../services/doctor_service.dart';
 import '../models/doctor.dart';
 import '../utils/app_logger.dart';
 import '../widgets/exam_type_badge.dart';
-import 'add_edit_doctor_screen.dart';
 
 class DocumentsScreen extends StatefulWidget {
   const DocumentsScreen({super.key});
