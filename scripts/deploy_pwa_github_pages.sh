@@ -56,9 +56,13 @@ fi
 echo "📤 Ajout des fichiers..."
 git add .
 
+# Récupérer la version depuis pubspec.yaml (depuis le répertoire Flutter)
+FLUTTER_DIR="$(dirname "$0")/../arkalia_cia"
+VERSION=$(grep "^version:" "$FLUTTER_DIR/pubspec.yaml" | sed 's/version: //' | cut -d'+' -f1 | tr -d ' ')
+
 # Commit
 echo "💾 Commit..."
-git commit -m "Deploy PWA v1.3.1 - $(date +'%d %B %Y')" || echo "Aucun changement à commiter"
+git commit -m "Deploy PWA v$VERSION - $(date +'%d %B %Y') - Corrections authentification et packages" || echo "Aucun changement à commiter"
 
 # Push
 echo "🚀 Push sur GitHub Pages..."
