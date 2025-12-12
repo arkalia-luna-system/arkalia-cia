@@ -440,15 +440,27 @@
 
 ### 2. Tests Flutter Supplémentaires
 
-**Statut** : 19 tests existants, peut continuer
+**Statut** : 54+ tests créés, peut continuer
 
 **Actions** :
-- [ ] Tests pour autres services simples (`local_storage_service.dart`)
-- [ ] Tests widget pour écrans principaux (`home_screen.dart`, `documents_screen.dart`)
-- [ ] Tests d'intégration basiques
+- [x] Tests pour autres services simples ✅
+  - ✅ `local_storage_service.dart` (54 tests) - **NOUVEAU**
+  - ✅ `calendar_service.dart` (8 tests) - **NOUVEAU**
+- [x] Tests modèles ✅
+  - ✅ `doctor_test.dart` (11 tests) - **NOUVEAU**
+  - ✅ `medication_test.dart` (tests créés) - **NOUVEAU**
+- [x] Tests utils ✅
+  - ✅ `retry_helper_test.dart` (tests créés) - **NOUVEAU**
+  - ✅ `validation_helper_test.dart` (tests créés) - **NOUVEAU**
+  - ✅ `error_helper_test.dart` (tests créés) - **NOUVEAU**
+- [ ] Tests widget pour écrans principaux (non prioritaire)
+  - `home_screen.dart` (non prioritaire)
+  - `documents_screen.dart` (non prioritaire)
+  - `settings_screen.dart` (non prioritaire)
+- [ ] Tests d'intégration basiques (non prioritaire)
 
 **Priorité** : 🟡 MOYENNE (amélioration qualité)  
-**Effort** : 1-2 semaines
+**Effort** : 1-2 semaines (tests widget et intégration restants)
 
 ---
 
