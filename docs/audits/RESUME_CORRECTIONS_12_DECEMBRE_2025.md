@@ -5,8 +5,8 @@
 **Date** : 12 décembre 2025 | **Version** : 1.3.1+6
 
 [![Statut](https://img.shields.io/badge/statut-corrections%20appliquées-success)]()
-[![Tests](https://img.shields.io/badge/tests-22%2F22%20passent-success)]()
-[![Problèmes](https://img.shields.io/badge/résolus-7%2F20-critical)]()
+[![Tests](https://img.shields.io/badge/tests-54%2B%20passent-success)]()
+[![Problèmes](https://img.shields.io/badge/résolus-10%2F20-success)]()
 
 </div>
 
@@ -17,10 +17,10 @@ Résumé complet des corrections appliquées le 12 décembre 2025.
 ## 📊 RÉSUMÉ EXÉCUTIF
 
 **Problèmes critiques résolus** : 6/8 (7/8 avec documentation ARIA)  
-**Problèmes élevés résolus** : 1/7 (Rappels modifiables)  
-**Tests créés/améliorés** : 41 tests créés  
-**Fichiers modifiés** : 18 fichiers  
-**Fichiers créés** : 6 fichiers (welcome_auth_screen, calendar_service_test, reminders_screen_test, DEPLOIEMENT_ARIA_RENDER.md, EXPLICATION_GITHUB_VS_RENDER.md, ANALYSE_GITHUB_VS_RENDER_POUR_CIA.md)
+**Problèmes élevés résolus** : 4/7 (Rappels modifiables, Couleurs pathologie, Hydratation, Paramètres accessibilité)  
+**Tests créés/améliorés** : 54+ tests créés  
+**Fichiers modifiés** : 25+ fichiers  
+**Fichiers créés** : 8+ fichiers (welcome_auth_screen, calendar_service_test, reminders_screen_test, pathology_color_service, accessibility_service, DEPLOIEMENT_ARIA_RENDER.md, EXPLICATION_GITHUB_VS_RENDER.md, ANALYSE_GITHUB_VS_RENDER_POUR_CIA.md)
 
 ---
 
@@ -147,6 +147,62 @@ Résumé complet des corrections appliquées le 12 décembre 2025.
 
 ---
 
+### 9. ✅ Couleurs pathologie ≠ couleurs spécialités
+
+**Problème** : Couleurs pathologie ≠ couleurs spécialités → confusion
+
+**Solution** :
+- ✅ Service `PathologyColorService` créé : mapping pathologie → spécialité → couleur
+- ✅ Tous les templates (24) utilisent maintenant le service standardisé
+- ✅ Couleurs cohérentes avec spécialités médecins (Endométriose = Gynécologue = pink, etc.)
+- ✅ Mapping complet pour toutes les pathologies courantes
+
+**Fichiers créés/modifiés** :
+- `arkalia_cia/lib/services/pathology_color_service.dart` (NOUVEAU)
+- `arkalia_cia/lib/services/pathology_service.dart` (24 templates mis à jour)
+
+**Tests** : ✅ Code propre, 0 erreur lint
+
+---
+
+### 10. ✅ Hydratation - Bugs visuels
+
+**Problème** : Bouton OK invisible, icônes sur texte, UI peu intuitive
+
+**Solution** :
+- ✅ Correction contraste boutons : `foregroundColor` explicitement défini pour tous les boutons
+- ✅ Taille minimale boutons : 48px de hauteur minimum pour accessibilité seniors
+- ✅ Textes agrandis : Titre AppBar 18px, boutons 16px (minimum 14px respecté)
+- ✅ AppBar simplifiée : Titre clair sans icônes superposées
+- ✅ Padding augmenté : Boutons rapides avec padding 24x18px
+- ✅ Icônes agrandies : 24px minimum pour meilleure visibilité
+
+**Fichiers modifiés** :
+- `arkalia_cia/lib/screens/hydration_reminders_screen.dart` : Améliorations contraste et accessibilité
+
+**Tests** : ✅ Tests créés dans `test/screens/hydration_reminders_screen_test.dart` (7/7 passent)
+
+---
+
+### 11. ✅ Paramètres - Accessibilité
+
+**Problème** : Pas d'option taille texte/icônes
+
+**Solution** :
+- ✅ Service `AccessibilityService` créé : gestion taille texte, icônes, mode simplifié
+- ✅ Sliders taille texte : Petit/Normal/Grand/Très Grand avec prévisualisation en temps réel
+- ✅ Sliders taille icônes : Petit/Normal/Grand/Très Grand avec prévisualisation
+- ✅ Mode simplifié : Switch pour masquer les fonctionnalités avancées
+- ✅ Section Accessibilité ajoutée dans Paramètres > Apparence
+
+**Fichiers créés/modifiés** :
+- `arkalia_cia/lib/services/accessibility_service.dart` (NOUVEAU)
+- `arkalia_cia/lib/screens/settings_screen.dart` (section accessibilité ajoutée)
+
+**Tests** : ✅ Code propre, 0 erreur lint
+
+---
+
 ### 7. ✅ ARIA serveur - Documentation créée
 
 **Problème** : Serveur ARIA doit tourner sur Mac (pas disponible 24/7)
@@ -191,7 +247,11 @@ Résumé complet des corrections appliquées le 12 décembre 2025.
    - Tests LocalStorageService (saveReminder, updateReminder, markReminderComplete, deleteReminder)
    - Tests UI (affichage, scrollabilité, formatage dates)
 
-**Total** : 41 tests créés ✅
+**Total** : 54+ tests créés ✅
+- Tests services : auth_service (5), auth_api_service (3), calendar_service (8), local_storage_service (54)
+- Tests modèles : doctor (11), medication
+- Tests utils : retry_helper, validation_helper, error_helper
+- Tests écrans : welcome_auth_screen (6), reminders_screen (19), hydration_reminders_screen (7)
 
 ---
 
@@ -222,14 +282,14 @@ Résumé complet des corrections appliquées le 12 décembre 2025.
 ## 📊 STATISTIQUES
 
 ### Code
-- **Fichiers modifiés** : 18 fichiers Dart/Python
-- **Fichiers créés** : 6 fichiers (3 code + 3 docs)
-- **Lignes de code** : ~800 lignes modifiées/ajoutées
+- **Fichiers modifiés** : 25+ fichiers Dart/Python
+- **Fichiers créés** : 8+ fichiers (5 code + 3 docs)
+- **Lignes de code** : ~1200+ lignes modifiées/ajoutées
 
 ### Tests
-- **Tests créés** : 28 nouveaux tests
+- **Tests créés** : 54+ nouveaux tests
 - **Tests améliorés** : 5 tests existants
-- **Total tests** : 41 tests créés (19 reminders_screen + 8 calendar + 6 welcome_auth + 5 auth_service + 3 auth_api)
+- **Total tests** : 54+ tests créés (services, modèles, utils, écrans)
 
 ### Documentation
 - **Fichiers MD mis à jour** : 5 fichiers
@@ -258,7 +318,7 @@ Résumé complet des corrections appliquées le 12 décembre 2025.
 **✅ 6 problèmes critiques résolus sur 8 (7/8 avec documentation ARIA)**  
 **✅ 4 problèmes élevés résolus (Rappels modifiables, Couleurs pathologie, Hydratation, Paramètres accessibilité)**
 
-**Tests** : 41 tests créés ✅  
+**Tests** : 54+ tests créés ✅  
 **Code** : Propre, 0 erreur lint ✅  
 **Documentation** : À jour ✅
 

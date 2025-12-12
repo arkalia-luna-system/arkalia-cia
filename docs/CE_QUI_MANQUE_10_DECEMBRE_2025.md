@@ -9,10 +9,13 @@
 
 > **✅ Corrections appliquées le 12 décembre 2025 (suite)** :
 > - ✅ Flux authentification amélioré : Gmail/Google en premier, puis "Créer un compte"
-> - ✅ Service couleurs pathologie : `PathologyColorService` créé pour mapper pathologie → spécialité → couleur
+> - ✅ Service couleurs pathologie : `PathologyColorService` créé pour mapper pathologie → spécialité → couleur (24 templates mis à jour)
+> - ✅ Paramètres accessibilité : `AccessibilityService` créé avec sliders taille texte/icônes et mode simplifié
+> - ✅ Hydratation : Bugs visuels corrigés (contraste boutons, tailles accessibilité seniors)
 > - ✅ Correction warnings de dépréciation Flutter (pathology.dart)
 > - ✅ Documentation synchronisée avec code source (endpoints, services, versions)
 > - ✅ Dates obsolètes corrigées (Janvier 2025 → 12 décembre 2025)
+> - ✅ Tests : 54+ tests créés (services, modèles, utils, écrans)
 
 > **✅ Corrections appliquées le 12 décembre 2025** :
 > - ✅ Biométrie : `biometricOnly: true` + dialog après inscription

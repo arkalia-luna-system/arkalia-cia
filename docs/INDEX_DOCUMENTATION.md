@@ -2,7 +2,7 @@
 
 <div align="center">
 
-**Version** : 1.3.1 | **Dernière mise à jour** : 10 décembre 2025  
+**Version** : 1.3.1 | **Dernière mise à jour** : 12 décembre 2025  
 **Statut** : ✅ Production-Ready
 
 </div>
