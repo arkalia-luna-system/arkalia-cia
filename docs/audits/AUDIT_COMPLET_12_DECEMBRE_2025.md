@@ -1,10 +1,16 @@
 # 🔍 Audit Complet CIA - 12 Décembre 2025
 
-**Date** : 12 décembre 2025  
-**Version** : 1.3.1+5  
-**Statut** : 🔴 **AUDIT EN COURS** - Corrections à appliquer
+<div align="center">
 
-Audit complet basé sur les tests utilisateur et analyse du code.
+**Date** : 12 décembre 2025 | **Version** : 1.3.1+5
+
+[![Statut](https://img.shields.io/badge/statut-audit%20en%20cours-yellow)]()
+[![Problèmes](https://img.shields.io/badge/problèmes-20-orange)]()
+[![Critiques](https://img.shields.io/badge/critiques-8-red)]()
+
+</div>
+
+Audit complet basé sur les tests utilisateur du 12 décembre 2025 et analyse approfondie du code.
 
 ---
 
@@ -456,49 +462,383 @@ class Device {
 
 ---
 
-## 📋 PLAN D'ACTION
+## 📋 PLAN D'ACTION DÉTAILLÉ
 
-### Semaine 1 (Critiques)
-1. ✅ Corriger biométrie (permissions + UI)
-2. ✅ Redesign page connexion/inscription
-3. ✅ Fix partage famille (notifications)
-4. ✅ Fix calendrier rappels
-5. ✅ Fix permissions PDF
+### 🔴 Semaine 1 - Critiques (Priorité absolue)
 
-### Semaine 2 (Critiques + Élevés)
-6. ✅ Implémenter profil multi-appareil
-7. ✅ Fix bug connexion après création compte
-8. ✅ Configurer ARIA serveur (Render/Railway)
-9. ✅ Corriger couleurs pathologie vs spécialités
-10. ✅ Ajouter épinglage portails santé
+#### 1. Biométrie ne s'affiche pas
+**Fichiers à modifier** :
+- `arkalia_cia/lib/services/auth_service.dart` : Vérifier `biometricOnly: true` d'abord
+- `arkalia_cia/lib/screens/lock_screen.dart` : Améliorer UI proposition biométrie
+- `arkalia_cia/android/app/src/main/AndroidManifest.xml` : Vérifier permissions
+- `arkalia_cia/lib/screens/auth/register_screen.dart` : Proposer biométrie après inscription
 
-### Semaine 3 (Élevés + Moyens)
-11. ✅ Améliorer hydratation (UI + contraste)
-12. ✅ Ajouter accessibilité paramètres
-13. ✅ Améliorer contacts urgence
-14. ✅ Permettre modification rappels
-15. ✅ Améliorer pathologies (sous-catégories)
+**Actions** :
+1. Ajouter demande permission runtime Android (`permission_handler`)
+2. Changer `biometricOnly: false` → `true` pour forcer biométrie d'abord
+3. Dialog après inscription : "Voulez-vous activer l'empreinte digitale?"
+4. Améliorer message erreur si biométrie refusée
 
-### Semaine 4 (Moyens + Tests)
-16. ✅ Détection auto médecins depuis documents
-17. ✅ Améliorer gestion erreurs patterns
-18. ✅ Réorganiser statistiques
-19. ✅ Améliorer dialog partage famille
-20. ✅ Auditer BBIA et documenter
+**Tests** : Vérifier sur appareil réel Android/iOS
+
+---
+
+#### 2. Redesign page connexion/inscription
+**Fichiers à créer/modifier** :
+- `arkalia_cia/lib/screens/auth/welcome_auth_screen.dart` : Nouvelle page d'accueil
+- `arkalia_cia/lib/screens/auth/pin_entry_screen.dart` : Améliorer layout
+- `arkalia_cia/lib/screens/auth/pin_setup_screen.dart` : Améliorer layout
+
+**Actions** :
+1. Créer écran d'accueil avec 2 boutons clairs (Créer / Se connecter)
+2. Utiliser couleurs BBIA (gradients, mat/brillant)
+3. Améliorer `PinEntryScreen` : layout centré, pas de texte superposé
+4. Animations subtiles (gradient, transitions)
+
+**Design proposé** :
+```
+┌─────────────────────────────┐
+│      🏥 ARKALIA CIA         │
+│    Votre Carnet de Santé    │
+│                             │
+│  ┌─────────────────────┐   │
+│  │ SE CONNECTER        │   │
+│  └─────────────────────┘   │
+│                             │
+│  ┌─────────────────────┐   │
+│  │ CRÉER UN COMPTE     │   │
+│  └─────────────────────┘   │
+└─────────────────────────────┘
+```
+
+---
+
+#### 3. Fix partage famille
+**Fichiers à modifier** :
+- `arkalia_cia/lib/services/family_sharing_service.dart` : Vérifier envoi notifications
+- `arkalia_cia/lib/services/notification_service.dart` : Vérifier configuration
+- `arkalia_cia/lib/screens/family_sharing_screen.dart` : Améliorer feedback
+
+**Actions** :
+1. Vérifier que `NotificationService.initialize()` est appelé
+2. Ajouter logs pour débugger envoi notifications
+3. Améliorer feedback utilisateur (confirmation partage)
+4. Implémenter système d'invitation par email (si backend disponible)
+
+**Tests** : Tester partage sur 2 appareils différents
+
+---
+
+#### 4. Fix calendrier rappels
+**Fichiers à modifier** :
+- `arkalia_cia/lib/services/calendar_service.dart` : Vérifier permissions
+- `arkalia_cia/lib/screens/calendar_screen.dart` : Ajouter codes couleur pathologie
+- `arkalia_cia/lib/screens/reminders_screen.dart` : Améliorer sync
+
+**Actions** :
+1. Vérifier `requestCalendarPermission()` est appelé
+2. Améliorer synchronisation rappels → calendrier système
+3. Ajouter barre latérale colorée (couleur pathologie) sur événements
+4. Afficher rappels partout où nom médecin apparaît
+
+---
+
+#### 5. Fix permissions PDF
+**Fichiers à modifier** :
+- `arkalia_cia/android/app/src/main/AndroidManifest.xml` : Ajouter `READ_EXTERNAL_STORAGE`
+- `arkalia_cia/lib/screens/documents_screen.dart` : Demander permission runtime
+- `arkalia_cia/pubspec.yaml` : Ajouter `permission_handler` si pas présent
+
+**Actions** :
+1. Ajouter `<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />`
+2. Demander permission au runtime avant ouverture PDF
+3. Vérifier existence fichier avant ouverture
+4. Améliorer messages erreur
+
+---
+
+### 🟠 Semaine 2 - Critiques + Élevés
+
+#### 6. Profil multi-appareil
+**Fichiers à créer** :
+- `arkalia_cia/lib/models/user_profile.dart` : Modèle profil utilisateur
+- `arkalia_cia/lib/services/user_profile_service.dart` : Service gestion profil
+- `arkalia_cia/lib/services/multi_device_sync_service.dart` : Service sync multi-appareil
+
+**Architecture** :
+```dart
+class UserProfile {
+  String userId;        // UUID
+  String email;         // Identifiant
+  String displayName;
+  List<Device> devices;
+  DateTime createdAt;
+  DateTime? lastSync;
+}
+
+class Device {
+  String deviceId;
+  String deviceName;
+  String platform;      // iOS, Android, Web
+  DateTime lastSeen;
+  bool isActive;
+}
+```
+
+**Actions** :
+1. Créer système profil avec email comme identifiant
+2. Implémenter sync chiffrée E2E entre appareils
+3. Confirmation email obligatoire pour nouveau device
+4. Stockage local + sync optionnel (utilisateur choisit)
+
+---
+
+#### 7. Fix bug connexion après création compte
+**Fichiers à modifier** :
+- `arkalia_cia/lib/screens/auth/register_screen.dart` : Corriger gestion état
+- `arkalia_cia/lib/services/auth_api_service.dart` : Vérifier flags session
+
+**Actions** :
+1. Vérifier que `isLoggedIn` est correctement mis à jour
+2. Réinitialiser session correctement après création compte
+3. Améliorer logs pour débugger
+4. Tester flow complet inscription → connexion
+
+---
+
+#### 8. ARIA serveur
+**Options** :
+1. **Render.com** (gratuit) : Héberger ARIA backend
+2. **Railway.app** (gratuit) : Alternative Render
+3. **Local** : Instructions claires pour démarrer serveur ARIA
+4. **Futur** : Intégrer ARIA directement dans CIA (pas de serveur séparé)
+
+**Actions** :
+1. Créer guide déploiement ARIA sur Render/Railway
+2. Configurer variables d'environnement
+3. Tester connexion depuis CIA
+4. Documenter solution choisie
+
+---
+
+#### 9. Couleurs pathologie vs spécialités
+**Fichiers à créer/modifier** :
+- `arkalia_cia/lib/data/pathology_colors.json` : Mapping pathologie → couleur
+- `arkalia_cia/lib/services/pathology_service.dart` : Utiliser mapping
+- `arkalia_cia/lib/models/pathology.dart` : Méthode `getStandardColor()`
+
+**Mapping proposé** :
+```json
+{
+  "Endométriose": {
+    "color": "#E91E8C",
+    "specialization": "Gynécologue"
+  },
+  "TDAH": {
+    "color": "#3498DB",
+    "specialization": "Psychiatre"
+  }
+}
+```
+
+**Actions** :
+1. Créer fichier JSON de référence
+2. Modifier `Pathology` pour utiliser couleur standardisée
+3. Utiliser couleur pathologie (pas spécialité) dans calendrier
+4. Permettre personnalisation dans "Autres"
+
+---
+
+#### 10. Épinglage portails santé
+**Fichiers à modifier** :
+- `arkalia_cia/lib/services/health_portal_auth_service.dart` : Ajouter favoris
+- `arkalia_cia/lib/screens/health_portal_auth_screen.dart` : UI épinglage
+- `arkalia_cia/lib/screens/health_portals_screen.dart` : Filtrer favoris
+
+**Actions** :
+1. Ajouter système favoris/épinglage
+2. Filtrer affichage pour montrer seulement favoris
+3. Détecter si app portail installée → proposer ouverture app
+4. Sinon → ouvrir web comme actuellement
+
+---
+
+### 🟡 Semaine 3 - Élevés + Moyens
+
+#### 11. Hydratation - UI révolutionnaire
+**Fichiers à modifier** :
+- `arkalia_cia/lib/screens/hydration_reminders_screen.dart` : Redesign complet
+- `arkalia_cia/lib/widgets/hydration_bottle_widget.dart` : Nouveau widget (à créer)
+
+**Idée révolutionnaire** :
+- Animation gamifiée : bouteille se remplit goutte par goutte
+- Chaque verre = icône bouteille animée
+- Son doux optionnel
+- Streak : "7 jours consécutifs 💪"
+- Intégration smartwatch (futur)
+
+**Actions** :
+1. Créer widget bouteille animée
+2. Améliorer contraste boutons (toujours vérifier TextColor vs Background)
+3. Remplacer icônes barres par icônes bouteille ludiques
+4. Déplacer statistiques en paramètres
+
+---
+
+#### 12. Accessibilité paramètres
+**Fichiers à modifier** :
+- `arkalia_cia/lib/screens/settings_screen.dart` : Ajouter sliders
+- `arkalia_cia/lib/services/accessibility_service.dart` : Nouveau service (à créer)
+
+**Actions** :
+1. Ajouter slider taille texte (Petit/Normal/Grand/Très Grand)
+2. Ajouter slider taille icônes
+3. Prévisualisation en temps réel
+4. Mode simplifié (cacher fonctionnalités avancées)
+5. Réorganiser paramètres par catégories
+
+---
+
+#### 13. Contacts urgence - Personnalisation
+**Fichiers à modifier** :
+- `arkalia_cia/lib/screens/emergency_screen.dart` : Améliorer UI
+- `arkalia_cia/lib/services/contacts_service.dart` : Intégrer contacts téléphone
+- `arkalia_cia/lib/models/emergency_contact.dart` : Ajouter personnalisation
+
+**Actions** :
+1. Intégrer contacts téléphone (WhatsApp, SMS)
+2. Permettre personnalisation : nom affiché, emoji, couleur
+3. ONE-TAP calling + SMS
+4. Proposer auto depuis contacts système
+
+---
+
+#### 14. Modification rappels
+**Fichiers à modifier** :
+- `arkalia_cia/lib/screens/reminders_screen.dart` : Ajouter bouton modifier
+- `arkalia_cia/lib/widgets/edit_reminder_dialog.dart` : Nouveau widget (à créer)
+
+**Actions** :
+1. Ajouter bouton "Modifier" sur chaque rappel
+2. Permettre modification date, heure, récurrence
+3. Améliorer UI pour rendre modification évidente
+
+---
+
+#### 15. Pathologies - Sous-catégories
+**Fichiers à modifier** :
+- `arkalia_cia/lib/models/pathology.dart` : Ajouter hiérarchie
+- `arkalia_cia/lib/screens/pathology_list_screen.dart` : Améliorer organisation
+- `arkalia_cia/lib/services/pathology_service.dart` : Gérer sous-catégories
+
+**Actions** :
+1. Ajouter système sous-catégories
+2. Permettre choix couleur dans "Autres"
+3. Fichier intelligent qui propose couleur selon spécialité
+4. Améliorer organisation visuelle
+
+---
+
+### 🟢 Semaine 4 - Moyens + Tests
+
+#### 16. Détection auto médecins
+**Fichiers à modifier** :
+- `arkalia_cia/lib/screens/documents_screen.dart` : Dialog après upload
+- `arkalia_cia/lib/widgets/add_doctor_from_document_dialog.dart` : Nouveau widget
+
+**Actions** :
+1. Après upload PDF → détecter médecin
+2. Dialog : "Voulez-vous ajouter Dr. X à vos contacts?"
+3. Pré-remplir formulaire avec données extraites
+4. Permettre modification avant validation
+
+---
+
+#### 17. Patterns - Gestion erreurs
+**Fichiers à modifier** :
+- `arkalia_cia_python_backend/ai/pattern_analyzer.py` : Améliorer erreurs
+- `arkalia_cia/lib/screens/patterns_dashboard_screen.dart` : Messages clairs
+
+**Actions** :
+1. Améliorer gestion erreurs avec messages clairs
+2. Vérifier disponibilité ARIA avant analyse
+3. Ajouter logs détaillés
+4. Mode dégradé si ARIA indisponible
+
+---
+
+#### 18. Statistiques - Placement
+**Fichiers à modifier** :
+- `arkalia_cia/lib/screens/settings_screen.dart` : Section statistiques
+- `arkalia_cia/lib/screens/hydration_reminders_screen.dart` : Déplacer stats
+
+**Actions** :
+1. Déplacer statistiques en paramètres (section discrète)
+2. Garder seulement indicateurs visuels simples dans écrans principaux
+3. Statistiques détaillées accessibles mais pas intrusives
+
+---
+
+#### 19. Dialog partage famille
+**Fichiers à modifier** :
+- `arkalia_cia/lib/screens/family_sharing_screen.dart` : Améliorer dialog
+
+**Actions** :
+1. Améliorer contraste dialog révoquer
+2. Utiliser couleurs plus visibles en mode sombre
+3. Améliorer typographie et espacement
+
+---
+
+#### 20. BBIA - Audit
+**Fichiers à vérifier** :
+- `arkalia_cia/lib/screens/bbia_integration_screen.dart` : Placeholder seulement
+- Documentation BBIA : Vérifier ce qui est vraiment fait
+
+**Actions** :
+1. Auditer ce qui est vraiment implémenté
+2. Documenter ce qui manque
+3. Clarifier roadmap BBIA
+4. Ne pas faire espérer le client si pas prêt
+
+**Conclusion** : BBIA est actuellement un **placeholder** (écran d'info seulement). Pas d'intégration réelle avec BBIA-SIM. Roadmap à clarifier.
+
+---
+
+## 📝 NOTES IMPORTANTES
+
+### Questions pour clarification
+
+1. **Backend** : Render.com suffisant ou tu veux une vraie DB chiffrée?
+2. **ARIA** : Tu veux que ce soit local ou cloud?
+3. **Biométrie** : Pourquoi elle n'apparaît pas? L'as-tu implémentée?
+4. **Email service** : T'as un service pour envoyer les notifications?
+5. **Reachy** : Vraiment pour tous ou juste prototype/ta mère?
+6. **Timeline** : Quand tu veux ça prêt pour présentation?
+
+### Recommandations
+
+**Ta direction est bonne** mais incomplète. Tu dois implémenter un vrai système de profil AVANT de permettre la synchronisation multi-appareil. Sinon c'est ingérable et très risqué pour la confidentialité.
+
+**Pour ARIA** : Je recommande Render.com free tier (limité mais fonctionne) ou intégrer ARIA directement dans CIA (pas de serveur séparé).
+
+**Pour BBIA** : Actuellement c'est un placeholder. Ne pas faire espérer le client si pas prêt. Clarifier roadmap.
 
 ---
 
 ## 🔗 Voir aussi
 
-- **[CE_QUI_MANQUE_10_DECEMBRE_2025.md](./../CE_QUI_MANQUE_10_DECEMBRE_2025.md)** — Liste précédente
+- **[CE_QUI_MANQUE_10_DECEMBRE_2025.md](./../CE_QUI_MANQUE_10_DECEMBRE_2025.md)** — Liste mise à jour avec nouveaux problèmes
 - **[CORRECTIONS_NAVIGATION_AUTH_10_DEC.md](./../deployment/CORRECTIONS_NAVIGATION_AUTH_10_DEC.md)** — Corrections précédentes
-- **[AUDIT_SECURITE_PERFECTION_DECEMBRE_2025.md](./AUDIT_SECURITE_PERFECTION_DECEMBRE_2025.md)** — Audit sécurité
+- **[AUDIT_SECURITE_PERFECTION_DECEMBRE_2025.md](./AUDIT_SECURITE_PERFECTION_DECEMBRE_2025.md)** — Audit sécurité (10/10)
 
 ---
 
 <div align="center">
 
 **Dernière mise à jour** : 12 décembre 2025  
-**Prochaine étape** : Implémentation corrections critiques
+**Prochaine étape** : Implémentation corrections critiques (Semaine 1)
+
+**Total problèmes** : 20 | **Critiques** : 8 | **Élevés** : 7 | **Moyens** : 5
 
 </div>
