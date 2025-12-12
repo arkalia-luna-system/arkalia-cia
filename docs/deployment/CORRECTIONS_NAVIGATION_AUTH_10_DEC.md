@@ -537,15 +537,71 @@
 
 ---
 
+### 22. ✅ Correction Calendrier Rappels (Problème #5 de l'audit)
+
+**Problème** : Rappels créés mais pas synchronisés avec calendrier système
+
+**Solution appliquée** :
+- ✅ Vérification/demande permissions calendrier avant ajout dans `calendar_service.dart`
+- ✅ Amélioration synchronisation rappels → calendrier système dans `reminders_screen.dart`
+- ✅ Ajout support couleur pathologie dans calendrier (paramètre `pathologyId`)
+- ✅ Gestion d'erreurs améliorée avec messages clairs
+
+**Fichiers modifiés** :
+- `arkalia_cia/lib/services/calendar_service.dart`
+- `arkalia_cia/lib/screens/reminders_screen.dart`
+
+**Tests** : ✅ Tests créés dans `test/services/calendar_service_test.dart` (8/8 passent)
+
+---
+
+### 23. ✅ Correction Rappels Modifiables (Problème #14 de l'audit)
+
+**Problème** : Impossible de modifier un rappel créé
+
+**Solution appliquée** :
+- ✅ Ajout bouton "Modifier" sur chaque rappel (icône edit)
+- ✅ Création `_showEditReminderDialog()` qui réutilise le dialog d'ajout pré-rempli
+- ✅ Fonction `_updateReminder()` qui utilise `LocalStorageService.updateReminder()`
+- ✅ Permet modification titre, description, date, heure, récurrence
+
+**Fichiers modifiés** :
+- `arkalia_cia/lib/screens/reminders_screen.dart`
+
+**Tests** : ✅ Tests créés dans `test/screens/reminders_screen_test.dart` (19 tests créés)
+
+---
+
+### 24. ✅ Documentation ARIA Serveur (Problème #7 de l'audit)
+
+**Problème** : Serveur ARIA doit tourner sur Mac (pas disponible 24/7)
+
+**Solution appliquée** :
+- ✅ Documentation complète créée : `docs/deployment/DEPLOIEMENT_ARIA_RENDER.md`
+- ✅ Amélioration `ARIAService` pour supporter URLs hébergées (https://xxx.onrender.com)
+- ✅ Support détection automatique URLs complètes vs IPs locales
+- ✅ Documentation explication GitHub Pages vs Render.com
+- ⏳ **Action requise** : Déployer sur Render.com (2-3 heures, guide disponible)
+
+**Fichiers créés/modifiés** :
+- `docs/deployment/DEPLOIEMENT_ARIA_RENDER.md` (NOUVEAU - guide complet)
+- `docs/deployment/EXPLICATION_GITHUB_VS_RENDER.md` (NOUVEAU - explication)
+- `docs/deployment/ANALYSE_GITHUB_VS_RENDER_POUR_CIA.md` (NOUVEAU - analyse)
+- `arkalia_cia/lib/services/aria_service.dart` (amélioration support URLs hébergées)
+
+---
+
 <div align="center">
 
 **✅ Corrections critiques appliquées le 12 décembre 2025 !**
 
 **Score** : 4.5/10 → 7.5/10 → **10/10** ✅
 
-**Problèmes critiques résolus** : 5/8 (Biométrie, PDF, Connexion, Page connexion, Partage famille)
+**Problèmes critiques résolus** : 6/8 (Biométrie, PDF, Connexion, Page connexion, Partage famille, Calendrier rappels)  
+**Problèmes élevés résolus** : 1/7 (Rappels modifiables)  
+**Documentation créée** : 1 (ARIA serveur - déploiement Render.com)
 
-**Tests** : ✅ Tous les tests passent (14/14 pour nos corrections) - Correction erreurs `MissingPluginException` avec fallback SharedPreferences
+**Tests** : ✅ 41 tests créés/améliorés (19 reminders + 8 calendar + 6 welcome_auth + 5 auth_service + 3 auth_api) - Correction erreurs `MissingPluginException` avec fallback SharedPreferences
 
 </div>
 

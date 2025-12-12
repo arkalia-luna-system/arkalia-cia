@@ -812,4 +812,4 @@ graph TB
 
 ---
 
-*Dernière mise à jour : Janvier 2025*
+*Dernière mise à jour : 12 décembre 2025*

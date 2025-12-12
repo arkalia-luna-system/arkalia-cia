@@ -1,7 +1,7 @@
 # 💰 POLITIQUE GRATUITE 100% - Arkalia CIA
 
-**Date** : 10 décembre 2025  
-**Version** : 1.3.0+  
+**Date** : 12 décembre 2025  
+**Version** : 1.3.1+6  
 **Statut** : **GARANTIE À VIE - 100% GRATUIT**
 
 ---

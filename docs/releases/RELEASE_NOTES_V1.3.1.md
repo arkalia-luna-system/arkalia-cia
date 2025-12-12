@@ -1,7 +1,7 @@
 # Release Notes — Arkalia CIA v1.3.1
 
-**Date de release** : 27 novembre 2025  
-**Version** : 1.3.1+1  
+**Date de release** : 12 décembre 2025  
+**Version** : 1.3.1+6  
 **Statut** : Production-Ready ✅
 
 ---
