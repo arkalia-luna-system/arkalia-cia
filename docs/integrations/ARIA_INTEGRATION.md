@@ -1,8 +1,28 @@
 # Intégration ARIA - Vision Clinique et Technique
 
 **Version** : 1.0.0  
-**Date** : 27 novembre 2025  
+**Date** : 27 novembre 2025 | **Mise à jour** : 12 décembre 2025  
 **Statut** : Production Ready
+
+---
+
+## ⚠️ IMPORTANT - Architecture Séparée
+
+**ARIA est un projet SÉPARÉ de CIA** :
+- ✅ **CIA** : Projet principal (`arkalia-cia`) - Assistant santé généraliste
+- ✅ **ARIA** : Projet séparé (`arkalia-aria`) - Laboratoire personnel douleur/mental
+- ✅ **Communication** : Via API HTTP (CIA ↔ ARIA)
+- ✅ **Déploiement** : CIA sur GitHub Pages (PWA), ARIA sur Render.com (serveur Python)
+
+**Pourquoi séparé ?**
+- Séparation des responsabilités (coffre-fort vs microscope)
+- Maintenance indépendante
+- Évolutivité indépendante
+- Déploiement indépendant
+
+**⚠️ Ne pas développer ARIA dans le projet CIA** - Utiliser le projet ARIA séparé.
+
+**Voir** : `docs/PROMPT_AUDIT_ARIA_12_DECEMBRE_2025.md` pour audit complet ARIA
 
 ---
 

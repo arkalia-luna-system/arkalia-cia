@@ -7,6 +7,8 @@
 
 > **📌 Nouveau** : Voir **[AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md)** pour l'audit complet basé sur les tests utilisateur du 12 décembre 2025.
 
+> **📋 Ce qui reste à faire** : Voir **[CE_QUI_RESTE_A_FAIRE_CIA_12_DECEMBRE_2025.md](./CE_QUI_RESTE_A_FAIRE_CIA_12_DECEMBRE_2025.md)** pour la liste complète des problèmes restants.
+
 > **✅ Corrections appliquées le 12 décembre 2025 (suite)** :
 > - ✅ Flux authentification amélioré : Gmail/Google en premier, puis "Créer un compte"
 > - ✅ Service couleurs pathologie : `PathologyColorService` créé pour mapper pathologie → spécialité → couleur (24 templates mis à jour)
@@ -65,6 +67,26 @@
 - ✅ `arkalia_cia_python_backend/api.py` - Toutes les occurrences corrigées
 
 **Priorité** : ✅ RÉSOLU
+
+---
+
+## ⚠️ IMPORTANT - ARIA est un Projet SÉPARÉ
+
+**ARIA n'est PAS développé dans ce projet CIA** :
+- ✅ **CIA** : Ce projet (`arkalia-cia`) - Assistant santé généraliste
+- ✅ **ARIA** : Projet séparé (`arkalia-aria`) - Laboratoire personnel douleur/mental
+- ✅ **Communication** : Via API HTTP (CIA ↔ ARIA)
+- ✅ **Déploiement** : CIA sur GitHub Pages (PWA), ARIA sur Render.com (serveur Python)
+
+**Pourquoi séparé ?**
+- Séparation des responsabilités (coffre-fort vs microscope)
+- Maintenance indépendante
+- Évolutivité indépendante
+- Déploiement indépendant
+
+**⚠️ Ne pas développer ARIA ici** - Utiliser le projet ARIA séparé.
+
+**Pour audit ARIA** : Voir `docs/PROMPT_AUDIT_ARIA_12_DECEMBRE_2025.md`
 
 ---
 
