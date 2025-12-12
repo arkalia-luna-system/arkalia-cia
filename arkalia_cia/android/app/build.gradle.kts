@@ -212,9 +212,24 @@ android {
             val code = flutter.versionCode
             // Convertir en Int de manière sûre
             when (code) {
-                is Int -> code
-                is Number -> code.toInt().coerceIn(1, Int.MAX_VALUE)
-                else -> code.toString().toIntOrNull()?.coerceIn(1, Int.MAX_VALUE) ?: 1
+                is Int -> code.coerceIn(1, Int.MAX_VALUE)
+                is Number -> {
+                    val longValue = code.toLong()
+                    if (longValue > Int.MAX_VALUE) {
+                        // Si le versionCode dépasse Int.MAX_VALUE, utiliser un modulo
+                        (longValue % Int.MAX_VALUE).toInt().coerceAtLeast(1)
+                    } else {
+                        longValue.toInt().coerceIn(1, Int.MAX_VALUE)
+                    }
+                }
+                else -> {
+                    val longValue = code.toString().toLongOrNull()
+                    if (longValue != null && longValue > Int.MAX_VALUE) {
+                        (longValue % Int.MAX_VALUE).toInt().coerceAtLeast(1)
+                    } else {
+                        code.toString().toIntOrNull()?.coerceIn(1, Int.MAX_VALUE) ?: 1
+                    }
+                }
             }
         } catch (e: Exception) {
             println("⚠️ Erreur conversion flutter.versionCode: ${e.message}, utilisation de 1")
