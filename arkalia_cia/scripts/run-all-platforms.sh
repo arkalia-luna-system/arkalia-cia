@@ -25,15 +25,14 @@ if ! command -v flutter &> /dev/null; then
     exit 1
 fi
 
-# Mettre à jour les branches (main pour web, develop pour Android/macOS)
-echo -e "${YELLOW}📥 Mise à jour des branches...${NC}"
+# Mettre à jour la branche UNIQUE (develop pour TOUT)
+echo -e "${YELLOW}📥 Mise à jour de la branche UNIQUE (develop pour tout)...${NC}"
 REPO_ROOT="$(cd "$PROJECT_DIR/.." && pwd)"
 cd "$REPO_ROOT"
 CURRENT_BRANCH=$(git branch --show-current)
 echo "   Branche actuelle: $CURRENT_BRANCH"
-echo "   Web utilise: main"
-echo "   Android/macOS utilisent: develop"
-# Mettre à jour develop d'abord
+echo "   ✅ TOUT utilise: develop (unifié)"
+# Mettre à jour develop
 echo "   Fetch et pull develop..."
 git fetch origin develop
 git checkout develop 2>/dev/null || true
@@ -63,9 +62,9 @@ cleanup() {
 
 trap cleanup SIGINT SIGTERM
 
-# Lancer sur WEB (utilise la branche main)
+# Lancer sur WEB (utilise la branche develop - UNIFIÉE)
 if echo "$DEVICES" | grep -q "Chrome\|chrome\|web"; then
-    echo -e "${GREEN}🌐 Lancement sur WEB (branche main)...${NC}"
+    echo -e "${GREEN}🌐 Lancement sur WEB (branche develop - unifiée)...${NC}"
     if echo "$DEVICES" | grep -q "Chrome\|chrome"; then
         WEB_DEVICE="chrome"
     else
@@ -73,10 +72,8 @@ if echo "$DEVICES" | grep -q "Chrome\|chrome\|web"; then
     fi
     (
         cd "$REPO_ROOT"
-        echo "   Checkout main pour web..."
-        git fetch origin main
-        git checkout main 2>/dev/null || echo "   ⚠️  Branche main non disponible"
-        git pull origin main || true
+        echo "   Vérification develop pour web (unifié)..."
+        git checkout develop 2>/dev/null || true
         cd "$PROJECT_DIR"
         echo "   Nettoyage et pub get pour web..."
         flutter clean > /dev/null 2>&1 || true

@@ -32,6 +32,35 @@ class _LockScreenState extends State<LockScreen> {
   Future<void> _initializeAuth() async {
     // Vérifier la disponibilité biométrique
     await _checkBiometricAvailability();
+    
+    // VÉRIFICATION FINALE : Si l'auth n'est pas vraiment disponible/configurée, aller directement à HomePage
+    // (au cas où l'utilisateur arrive quand même sur LockScreen)
+    final authEnabled = await AuthService.isAuthEnabled();
+    if (!authEnabled) {
+      _unlockApp();
+      return;
+    }
+    
+    final shouldAuth = await AuthService.shouldAuthenticateOnStartup();
+    if (!shouldAuth) {
+      _unlockApp();
+      return;
+    }
+    
+    if (kIsWeb) {
+      final pinConfigured = await PinAuthService.isPinConfigured();
+      if (!pinConfigured) {
+        _unlockApp();
+        return;
+      }
+    } else {
+      if (!_isBiometricAvailable) {
+        // Biométrie non disponible : permettre l'accès direct
+        _unlockApp();
+        return;
+      }
+    }
+    
     // Lancer l'authentification au démarrage
     await _authenticateOnStartup();
   }
