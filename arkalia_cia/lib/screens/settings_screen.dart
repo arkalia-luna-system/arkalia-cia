@@ -6,6 +6,7 @@ import '../services/auto_sync_service.dart';
 import '../services/backend_config_service.dart';
 import '../services/health_portal_auth_service.dart' show HealthPortalAuthService, HealthPortal;
 import '../services/offline_cache_service.dart';
+import '../services/accessibility_service.dart';
 import 'auth/login_screen.dart';
 
 /// Écran de paramètres de l'application
@@ -28,6 +29,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String _backendUrl = '';
   bool _backendEnabled = false;
   bool _isTestingConnection = false;
+  AccessibilityTextSize _textSize = AccessibilityTextSize.normal;
+  AccessibilityIconSize _iconSize = AccessibilityIconSize.normal;
+  bool _simplifiedMode = false;
 
   @override
   void initState() {
@@ -53,6 +57,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final lastSyncStats = await AutoSyncService.getLastSyncStats();
     final backendUrl = await BackendConfigService.getBackendURL();
     final backendEnabled = await BackendConfigService.isBackendEnabled();
+    final textSize = await AccessibilityService.getTextSize();
+    final iconSize = await AccessibilityService.getIconSize();
+    final simplifiedMode = await AccessibilityService.isSimplifiedModeEnabled();
 
     if (mounted) {
       setState(() {
@@ -66,6 +73,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         _lastSyncStats = lastSyncStats;
         _backendUrl = backendUrl;
         _backendEnabled = backendEnabled;
+        _textSize = textSize;
+        _iconSize = iconSize;
+        _simplifiedMode = simplifiedMode;
       });
     }
   }
@@ -96,6 +106,45 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   subtitle: Text(_getThemeLabel(_currentTheme)),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => _showThemeDialog(),
+                ),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.text_fields),
+                  title: const Text('Taille du texte'),
+                  subtitle: Text(_textSize.label),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => _showTextSizeDialog(),
+                ),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.image),
+                  title: const Text('Taille des icônes'),
+                  subtitle: Text(_iconSize.label),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => _showIconSizeDialog(),
+                ),
+                const Divider(),
+                SwitchListTile(
+                  secondary: const Icon(Icons.accessibility_new),
+                  title: const Text('Mode simplifié'),
+                  subtitle: const Text('Masquer les fonctionnalités avancées'),
+                  value: _simplifiedMode,
+                  onChanged: (value) async {
+                    await AccessibilityService.setSimplifiedMode(value);
+                    if (mounted) {
+                      setState(() {
+                        _simplifiedMode = value;
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(value 
+                            ? 'Mode simplifié activé' 
+                            : 'Mode simplifié désactivé'),
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    }
+                  },
                 ),
               ],
             ),
@@ -753,6 +802,106 @@ class _SettingsScreenState extends State<SettingsScreen> {
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text('J\'ai compris'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showTextSizeDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Taille du texte'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: AccessibilityTextSize.values.map((size) {
+            return RadioListTile<AccessibilityTextSize>(
+              title: Text(
+                size.label,
+                style: TextStyle(fontSize: (14 * size.multiplier)),
+              ),
+              subtitle: Text(
+                'Exemple de texte avec cette taille',
+                style: TextStyle(fontSize: (12 * size.multiplier)),
+              ),
+              value: size,
+              groupValue: _textSize,
+              onChanged: (value) async {
+                if (value != null) {
+                  await AccessibilityService.setTextSize(value);
+                  if (mounted) {
+                    setState(() {
+                      _textSize = value;
+                    });
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Taille du texte : ${value.label}'),
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                }
+              },
+            );
+          }).toList(),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Annuler'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showIconSizeDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Taille des icônes'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: AccessibilityIconSize.values.map((size) {
+            return RadioListTile<AccessibilityIconSize>(
+              title: Text(size.label),
+              subtitle: Row(
+                children: [
+                  Icon(Icons.home, size: (24.0 * size.multiplier)),
+                  const SizedBox(width: 8),
+                  Icon(Icons.settings, size: (24.0 * size.multiplier)),
+                  const SizedBox(width: 8),
+                  Icon(Icons.favorite, size: (24.0 * size.multiplier)),
+                ],
+              ),
+              value: size,
+              groupValue: _iconSize,
+              onChanged: (value) async {
+                if (value != null) {
+                  await AccessibilityService.setIconSize(value);
+                  if (mounted) {
+                    setState(() {
+                      _iconSize = value;
+                    });
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Taille des icônes : ${value.label}'),
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                }
+              },
+            );
+          }).toList(),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Annuler'),
           ),
         ],
       ),
