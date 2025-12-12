@@ -1,20 +1,20 @@
 # 📋 CE QUI RESTE À FAIRE POUR CIA - 12 Décembre 2025
 
 **Date** : 12 décembre 2025  
-**Version** : 1.3.1+7  
+**Version** : 1.3.1+6  
 **Statut** : 12/20 problèmes résolus (60%)
 
 ---
 
-## ⚠️ IMPORTANT - ARIA est SÉPARÉ
+## IMPORTANT - ARIA est séparé
 
-**ARIA n'est PAS développé dans ce projet** :
-- ✅ **CIA** : Ce projet (`arkalia-cia`) - Assistant santé généraliste
-- ✅ **ARIA** : Projet séparé (`arkalia-aria`) - Laboratoire personnel douleur/mental
-- ✅ **Communication** : Via API HTTP (CIA ↔ ARIA)
-- ✅ **Déploiement ARIA** : Sur Render.com (voir `docs/deployment/DEPLOIEMENT_ARIA_RENDER.md`)
+ARIA n'est pas développé dans ce projet :
+- CIA : Ce projet (`arkalia-cia`) - Assistant santé généraliste
+- ARIA : Projet séparé (`arkalia-aria`) - Laboratoire personnel douleur/mental
+- Communication : Via API HTTP (CIA ↔ ARIA)
+- Déploiement ARIA : Sur Render.com (voir `docs/deployment/DEPLOIEMENT_ARIA_RENDER.md`)
 
-**⚠️ Ne pas développer ARIA ici** - Utiliser le projet ARIA séparé.
+Ne pas développer ARIA ici - Utiliser le projet ARIA séparé.
 
 ---
 
@@ -31,9 +31,9 @@
 
 ---
 
-## 🔴 PROBLÈMES CRITIQUES RESTANTS (1)
+## PROBLÈMES CRITIQUES RESTANTS (1)
 
-### 1. Profil multi-appareil 🔴 **FONCTIONNALITÉ FUTURE**
+### Profil multi-appareil
 
 **Problème** : Impossible de passer mobile → ordi avec synchronisation
 
@@ -45,32 +45,15 @@
 - Nécessite backend avec authentification multi-appareil
 - Chiffrement E2E pour synchronisation sécurisée
 
-**Priorité** : 🔴 **FONCTIONNALITÉ FUTURE** (non-bloquant pour usage actuel)
+**Priorité** : Fonctionnalité future (non-bloquant pour usage actuel)
 
 **Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./AUDIT_COMPLET_12_DECEMBRE_2025.md#2-pas-de-profil-utilisateur-multi-appareil)
 
 ---
 
-## 🟠 PROBLÈMES ÉLEVÉS RESTANTS (1)
+## PROBLÈMES ÉLEVÉS RESTANTS (1)
 
-### 3. Pathologies - Sous-catégories 🟠 **ÉLEVÉE**
-
-**Problème** : "On devrait pouvoir épingle pour ne voir que ceux que on voudrait"
-
-**Ce qui reste à faire** :
-1. Ajouter système favoris/épinglage portails
-2. Filtrer affichage pour montrer seulement favoris
-3. Intégration app : Détecter si app portail installée → proposer ouverture app
-4. Sinon → ouvrir web comme actuellement
-
-**Fichiers à modifier** :
-- `arkalia_cia/lib/services/health_portal_auth_service.dart` : Ajouter favoris
-- `arkalia_cia/lib/screens/health_portal_auth_screen.dart` : UI épinglage
-- `arkalia_cia/lib/screens/health_portals_screen.dart` : Filtrer favoris
-
-**Priorité** : 🟠 **ÉLEVÉE**
-
-**Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./AUDIT_COMPLET_12_DECEMBRE_2025.md#15-pathologies---manque-sous-catégories)
+### Pathologies - Sous-catégories
 
 **Problème** : Pas de sous-catégories, organisation limitée
 
@@ -85,15 +68,15 @@
 - `arkalia_cia/lib/services/pathology_service.dart` : Gestion hiérarchie
 - `arkalia_cia/lib/screens/pathologies_screen.dart` : UI catégories
 
-**Priorité** : 🟠 **ÉLEVÉE**
+**Priorité** : Élevée
 
-**Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./AUDIT_COMPLET_12_DECEMBRE_2025.md#15-pathologies---manque-sous-catégories)
+**Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md#15-pathologies---manque-sous-catégories)
 
 ---
 
-## 🟡 PROBLÈMES MOYENS RESTANTS (5)
+## PROBLÈMES MOYENS RESTANTS (5)
 
-### 6. Médecins - Détection auto 🟡 **MOYENNE**
+### Médecins - Détection auto
 
 **Problème** : Pas de proposition auto ajout médecin après upload PDF
 
@@ -106,7 +89,7 @@
 - `arkalia_cia/lib/services/document_service.dart` : Détection médecin
 - `arkalia_cia/lib/screens/documents_screen.dart` : Dialog proposition
 
-**Priorité** : 🟡 **MOYENNE**
+**Priorité** : Moyenne
 
 **Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./AUDIT_COMPLET_12_DECEMBRE_2025.md#16-médecins---détection-auto-depuis-documents)
 
@@ -126,7 +109,7 @@
 - `arkalia_cia_python_backend/ai/pattern_analyzer.py` : Gestion erreurs
 - `arkalia_cia/lib/screens/patterns_screen.dart` : Affichage erreurs
 
-**Priorité** : 🟡 **MOYENNE**
+**Priorité** : Moyenne
 
 **Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./AUDIT_COMPLET_12_DECEMBRE_2025.md#17-patterns---erreur-une-erreur-est-survenue)
 
@@ -145,7 +128,7 @@
 - `arkalia_cia/lib/screens/settings_screen.dart` : Ajouter section statistiques
 - `arkalia_cia/lib/screens/home_page.dart` : Simplifier indicateurs
 
-**Priorité** : 🟡 **MOYENNE**
+**Priorité** : Moyenne
 
 **Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./AUDIT_COMPLET_12_DECEMBRE_2025.md#18-statistiques---placement-dans-ui)
 
@@ -163,7 +146,7 @@
 **Fichiers à modifier** :
 - `arkalia_cia/lib/screens/family_sharing_screen.dart` : Améliorer feedback
 
-**Priorité** : 🟡 **MOYENNE**
+**Priorité** : Moyenne
 
 **Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./AUDIT_COMPLET_12_DECEMBRE_2025.md#19-dialog-partage---pas-de-feedback)
 
@@ -209,8 +192,8 @@
 
 ## 🎯 RECOMMANDATIONS
 
-### Priorité immédiate (CIA uniquement)
-1. **Pathologies - Sous-catégories** (2-3 jours) - Organisation améliorée
+### Priorité immédiate
+1. Pathologies - Sous-catégories (2-3 jours)
 
 ### Après
 4. **Médecins - Détection auto** (1 jour) - Amélioration UX
@@ -249,5 +232,5 @@
 **Dernière mise à jour** : 12 décembre 2025  
 **Prochaine étape recommandée** : Portails santé - Épinglage (1-2 jours)
 
-**Note importante** : ARIA serveur est géré dans le projet ARIA séparé. Ce document liste uniquement les problèmes à résoudre dans le projet CIA.
+Note : ARIA serveur est géré dans le projet ARIA séparé. Ce document liste uniquement les problèmes à résoudre dans le projet CIA.
 

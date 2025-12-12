@@ -1,100 +1,99 @@
 # 📋 CE QUI MANQUE ENCORE - 12 Décembre 2025
 
 **Date** : 12 décembre 2025  
-**Statut Projet** : 10/10 Sécurité ✅ | Production-Ready ✅  
-**Politique** : 100% Gratuit ✅  
-**Version** : 1.3.1+6
+**Version** : 1.3.1+6  
+**Statut** : Production-Ready
 
-> **📌 Nouveau** : Voir **[AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md)** pour l'audit complet basé sur les tests utilisateur du 12 décembre 2025.
+Voir [AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md) pour l'audit complet basé sur les tests utilisateur du 12 décembre 2025.
 
-> **📋 Ce qui reste à faire** : Voir **[CE_QUI_RESTE_A_FAIRE_CIA_12_DECEMBRE_2025.md](./CE_QUI_RESTE_A_FAIRE_CIA_12_DECEMBRE_2025.md)** pour la liste complète des problèmes restants.
+Voir [CE_QUI_RESTE_A_FAIRE_CIA_12_DECEMBRE_2025.md](./CE_QUI_RESTE_A_FAIRE_CIA_12_DECEMBRE_2025.md) pour la liste complète des problèmes restants.
 
-> **🔍 Audit qualité code** : Voir **[AUDIT_QUALITE_CODE_12_DECEMBRE_2025.md](./audits/AUDIT_QUALITE_CODE_12_DECEMBRE_2025.md)** pour l'audit qualité code, maintenabilité, tests et documentation.
+Voir [AUDIT_QUALITE_CODE_12_DECEMBRE_2025.md](./audits/AUDIT_QUALITE_CODE_12_DECEMBRE_2025.md) pour l'audit qualité code, maintenabilité, tests et documentation.
 
-> **✅ Corrections appliquées le 12 décembre 2025 (suite)** :
-> - ✅ Flux authentification amélioré : Gmail/Google en premier, puis "Créer un compte"
-> - ✅ Service couleurs pathologie : `PathologyColorService` créé pour mapper pathologie → spécialité → couleur (24 templates mis à jour)
-> - ✅ Paramètres accessibilité : `AccessibilityService` créé avec sliders taille texte/icônes et mode simplifié
-> - ✅ Hydratation : Bugs visuels corrigés (contraste boutons, tailles accessibilité seniors)
-> - ✅ Correction warnings de dépréciation Flutter (pathology.dart)
-> - ✅ Documentation synchronisée avec code source (endpoints, services, versions)
-> - ✅ Dates obsolètes corrigées (Janvier 2025 → 12 décembre 2025)
-> - ✅ Tests : 54+ tests créés (services, modèles, utils, écrans)
+**Corrections appliquées le 12 décembre 2025 (suite)** :
+- Flux authentification amélioré : Gmail/Google en premier, puis "Créer un compte"
+- Service couleurs pathologie : `PathologyColorService` créé pour mapper pathologie → spécialité → couleur (24 templates mis à jour)
+- Paramètres accessibilité : `AccessibilityService` créé avec sliders taille texte/icônes et mode simplifié
+- Hydratation : Bugs visuels corrigés (contraste boutons, tailles accessibilité seniors)
+- Correction warnings de dépréciation Flutter (pathology.dart)
+- Documentation synchronisée avec code source (endpoints, services, versions)
+- Dates obsolètes corrigées (Janvier 2025 → 12 décembre 2025)
+- Tests : 54+ tests créés (services, modèles, utils, écrans)
 
-> **✅ Corrections appliquées le 12 décembre 2025** :
-> - ✅ Biométrie : `biometricOnly: true` + dialog après inscription
-> - ✅ Permissions PDF : `READ_EXTERNAL_STORAGE` + demande runtime
-> - ✅ Bug connexion après création compte : réinitialisation session + vérification état
-> - ✅ Page connexion/inscription : `welcome_auth_screen.dart` + amélioration layout + boutons Gmail/Google prioritaires
-> - ✅ Partage famille : Initialisation notifications + amélioration feedback
-> - ✅ Tests : Correction erreurs `MissingPluginException` avec fallback SharedPreferences
-> - ✅ Tests : 41 tests passent (auth_service, auth_api_service, welcome_auth_screen, calendar_service, reminders_screen)
+**Corrections appliquées le 12 décembre 2025** :
+- Biométrie : `biometricOnly: true` + dialog après inscription
+- Permissions PDF : `READ_EXTERNAL_STORAGE` + demande runtime
+- Bug connexion après création compte : réinitialisation session + vérification état
+- Page connexion/inscription : `welcome_auth_screen.dart` + amélioration layout + boutons Gmail/Google prioritaires
+- Partage famille : Initialisation notifications + amélioration feedback
+- Tests : Correction erreurs `MissingPluginException` avec fallback SharedPreferences
+- Tests : 41 tests passent (auth_service, auth_api_service, welcome_auth_screen, calendar_service, reminders_screen)
 
 ---
 
-## ✅ CE QUI EST TERMINÉ (Tout fonctionne)
+## CE QUI EST TERMINÉ
 
-### Sécurité (10/10) ✅
-- ✅ Runtime Security (détection root/jailbreak)
-- ✅ JWT Token Rotation (blacklist)
-- ✅ RBAC (framework complet)
-- ✅ Audit Logs (tous endpoints critiques)
-- ✅ Chiffrement E2E (partage familial)
-- ✅ HSM (Keychain/Keystore)
-- ✅ Validation JSON (protection DoS)
-- ✅ Politique Confidentialité RGPD
-- ✅ Consentement partage familial
+### Sécurité
+- Runtime Security (détection root/jailbreak)
+- JWT Token Rotation (blacklist)
+- RBAC (framework complet)
+- Audit Logs (tous endpoints critiques)
+- Chiffrement E2E (partage familial)
+- HSM (Keychain/Keystore)
+- Validation JSON (protection DoS)
+- Politique Confidentialité RGPD
+- Consentement partage familial
 
-### Fonctionnalités ✅
-- ✅ Gestion documents médicaux
-- ✅ Rappels & contacts d'urgence
-- ✅ IA conversationnelle (locale)
-- ✅ Rapports médicaux (génération + export PDF)
-- ✅ Intégration ARIA (localhost)
-- ✅ Partage familial (chiffrement E2E)
-- ✅ Import manuel portails santé (gratuit)
-- ✅ Export PDF rapports (reportlab gratuit)
+### Fonctionnalités
+- Gestion documents médicaux
+- Rappels & contacts d'urgence
+- IA conversationnelle (locale)
+- Rapports médicaux (génération + export PDF)
+- Intégration ARIA (localhost)
+- Partage familial (chiffrement E2E)
+- Import manuel portails santé (gratuit)
+- Export PDF rapports (reportlab gratuit)
 
 ---
 
 ## 🔧 CORRECTIONS TECHNIQUES
 
-### 1. Protection `user_id` None dans audit logs ✅ **TERMINÉ**
+### Protection `user_id` None dans audit logs
 
 **Problème** : Certains `int(current_user.user_id)` peuvent échouer si `user_id` est None
 
-**Solution appliquée** : ✅ Vérification `if current_user.user_id:` ajoutée avant chaque `int(current_user.user_id)` et chaque audit log
+**Solution appliquée** : Vérification `if current_user.user_id:` ajoutée avant chaque `int(current_user.user_id)` et chaque audit log
 
 **Fichiers corrigés** :
-- ✅ `arkalia_cia_python_backend/api.py` - Toutes les occurrences corrigées
+- `arkalia_cia_python_backend/api.py` - Toutes les occurrences corrigées
 
-**Priorité** : ✅ RÉSOLU
+**Statut** : Résolu
 
 ---
 
-## ⚠️ IMPORTANT - ARIA est un Projet SÉPARÉ
+## IMPORTANT - ARIA est un projet séparé
 
-**ARIA n'est PAS développé dans ce projet CIA** :
-- ✅ **CIA** : Ce projet (`arkalia-cia`) - Assistant santé généraliste
-- ✅ **ARIA** : Projet séparé (`arkalia-aria`) - Laboratoire personnel douleur/mental
-- ✅ **Communication** : Via API HTTP (CIA ↔ ARIA)
-- ✅ **Déploiement** : CIA sur GitHub Pages (PWA), ARIA sur Render.com (serveur Python)
+ARIA n'est pas développé dans ce projet CIA :
+- CIA : Ce projet (`arkalia-cia`) - Assistant santé généraliste
+- ARIA : Projet séparé (`arkalia-aria`) - Laboratoire personnel douleur/mental
+- Communication : Via API HTTP (CIA ↔ ARIA)
+- Déploiement : CIA sur GitHub Pages (PWA), ARIA sur Render.com (serveur Python)
 
-**Pourquoi séparé ?**
+Pourquoi séparé :
 - Séparation des responsabilités (coffre-fort vs microscope)
 - Maintenance indépendante
 - Évolutivité indépendante
 - Déploiement indépendant
 
-**⚠️ Ne pas développer ARIA ici** - Utiliser le projet ARIA séparé.
+Ne pas développer ARIA ici - Utiliser le projet ARIA séparé.
 
-**Pour audit ARIA** : Voir `docs/PROMPT_AUDIT_ARIA_12_DECEMBRE_2025.md`
+Pour audit ARIA : Voir `docs/PROMPT_AUDIT_ARIA_12_DECEMBRE_2025.md`
 
 ---
 
-## 🔴 NOUVEAUX PROBLÈMES IDENTIFIÉS (12 décembre 2025)
+## NOUVEAUX PROBLÈMES IDENTIFIÉS (12 décembre 2025)
 
-### 1. Biométrie ne s'affiche pas 🔴 **CRITIQUE** ✅ **CORRIGÉ**
+### Biométrie ne s'affiche pas - CORRIGÉ
 
 **Problème** : Empreinte notifiée dans paramètres mais ne s'affiche pas
 
@@ -294,7 +293,7 @@
 
 **Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md#10-portails-santé---pas-dépinglage)
 
-**Priorité** : 🟠 **ÉLEVÉE**
+**Priorité** : Élevée
 
 ---
 
@@ -350,7 +349,7 @@
 
 **Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md#13-contacts-urgence---pas-assez-personnalisable)
 
-**Priorité** : 🟠 **ÉLEVÉE**
+**Priorité** : Élevée
 
 ---
 
@@ -381,7 +380,7 @@
 
 **Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md#15-pathologies---manque-sous-catégories)
 
-**Priorité** : 🟠 **ÉLEVÉE**
+**Priorité** : Élevée
 
 ---
 
@@ -395,7 +394,7 @@
 
 **Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md#16-médecins---détection-auto-depuis-documents)
 
-**Priorité** : 🟡 **MOYENNE**
+**Priorité** : Moyenne
 
 ---
 
@@ -407,7 +406,7 @@
 
 **Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md#17-patterns---erreur-une-erreur-est-survenue)
 
-**Priorité** : 🟡 **MOYENNE**
+**Priorité** : Moyenne
 
 ---
 
@@ -419,7 +418,7 @@
 
 **Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md#18-statistiques---placement-dans-ui)
 
-**Priorité** : 🟡 **MOYENNE**
+**Priorité** : Moyenne
 
 ---
 
@@ -431,7 +430,7 @@
 
 **Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md#19-partage-famille---cadran-peu-lisible)
 
-**Priorité** : 🟡 **MOYENNE**
+**Priorité** : Moyenne
 
 ---
 
@@ -443,7 +442,7 @@
 
 **Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md#20-bbia---vérifier-ce-qui-est-fait)
 
-**Priorité** : 🟡 **MOYENNE**
+**Priorité** : Moyenne
 
 ---
 
