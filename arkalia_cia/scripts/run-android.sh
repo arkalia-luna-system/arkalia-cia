@@ -148,45 +148,35 @@ if [ -d "build" ]; then
     fi
 fi
 
-# Lancer un script de surveillance en arrière-plan pour supprimer les fichiers pendant le build
-WATCH_SCRIPT="android/watch-macos-files.sh"
-if [ -f "$WATCH_SCRIPT" ]; then
-    chmod +x "$WATCH_SCRIPT"
-    "$WATCH_SCRIPT" &
-    WATCH_PID=$!
-    echo -e "${GREEN}✅ Surveillance des fichiers macOS activée (PID: $WATCH_PID)${NC}"
-    # Tuer le processus de surveillance à la fin
-    trap "kill $WATCH_PID 2>/dev/null || true" EXIT
-else
-    # Fallback : surveillance simple en arrière-plan
-    (
-        while true; do
-            sleep 0.5
-            if [ -d "build" ]; then
-                find build -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
-            fi
-        done
-    ) &
-    WATCH_PID=$!
-    echo -e "${GREEN}✅ Surveillance simple activée (PID: $WATCH_PID)${NC}"
-    trap "kill $WATCH_PID 2>/dev/null || true" EXIT
-fi
+# Note: build-android.sh lancera sa propre surveillance, pas besoin de la lancer ici
+# pour éviter les doublons
 
 echo -e "${GREEN}✅ Nettoyage terminé${NC}"
 echo ""
 
 # ========================================================================
-# ÉTAPE 5 : Nettoyage Flutter (si nécessaire)
+# ÉTAPE 5 : Nettoyage Flutter complet (nécessaire pour éviter fichiers macOS)
 # ========================================================================
-echo -e "${YELLOW}🧹 Étape 5 : Nettoyage Flutter (si nécessaire)${NC}"
+echo -e "${YELLOW}🧹 Étape 5 : Nettoyage Flutter complet${NC}"
 
-# Nettoyer seulement si build/ existe et contient des erreurs
-if [ -d "build" ] && [ -d "build/app/intermediates" ]; then
-    echo "   Nettoyage du build précédent..."
+# Nettoyer complètement le répertoire build pour éviter les fichiers macOS
+if [ -d "build" ]; then
+    echo "   Suppression complète du répertoire build/..."
+    rm -rf build/app/intermediates/javac 2>/dev/null || true
+    rm -rf build/app/tmp/kotlin-classes 2>/dev/null || true
+    rm -rf build/app/intermediates/compile_and_runtime_not_namespaced_r_class_jar 2>/dev/null || true
+    # Nettoyer aussi les autres répertoires problématiques
+    find build -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
+    echo -e "${GREEN}✅ Répertoires problématiques supprimés${NC}"
+fi
+
+# Faire un flutter clean si build/ existe encore
+if [ -d "build" ]; then
+    echo "   Nettoyage Flutter complet..."
     flutter clean > /dev/null 2>&1 || true
     echo -e "${GREEN}✅ Build nettoyé${NC}"
 else
-    echo -e "${GREEN}✅ Pas de nettoyage nécessaire${NC}"
+    echo -e "${GREEN}✅ Pas de build à nettoyer${NC}"
 fi
 echo ""
 
@@ -238,24 +228,52 @@ fi
 echo ""
 
 # ========================================================================
-# ÉTAPE 8 : Lancement de l'app
+# ÉTAPE 8 : Nettoyage final ultra-agressif AVANT le build
+# ========================================================================
+echo -e "${YELLOW}🧹 Étape 8 : Nettoyage final ultra-agressif avant build${NC}"
+
+# Nettoyer TOUS les fichiers macOS dans build/ de manière ultra-agressive
+if [ -d "build" ]; then
+    echo "   Nettoyage ultra-agressif de build/..."
+    # Nettoyer spécifiquement javac qui cause les erreurs D8
+    if [ -d "build/app/intermediates/javac" ]; then
+        find build/app/intermediates/javac -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
+        # Supprimer aussi les répertoires vides créés par macOS
+        find build/app/intermediates/javac -type d -empty -delete 2>/dev/null || true
+    fi
+    # Nettoyer tous les intermediates
+    if [ -d "build/app/intermediates" ]; then
+        find build/app/intermediates -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
+    fi
+    # Nettoyer kotlin-classes
+    if [ -d "build/app/tmp/kotlin-classes" ]; then
+        find build/app/tmp/kotlin-classes -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
+    fi
+    # Nettoyage général récursif
+    find build -type f \( -name "._*" -o -name ".!*!._*" -o -name ".DS_Store" \) -delete 2>/dev/null || true
+fi
+
+echo -e "${GREEN}✅ Nettoyage final terminé${NC}"
+echo ""
+
+# ========================================================================
+# ÉTAPE 9 : Lancement de l'app
 # ========================================================================
 echo -e "${BLUE}═══════════════════════════════════════════════════════════${NC}"
 echo -e "${GREEN}🚀 Lancement de l'app Android...${NC}"
 echo -e "${BLUE}═══════════════════════════════════════════════════════════${NC}"
 echo ""
 
-# Utiliser le script build-android.sh si disponible pour la configuration Gradle
+# Utiliser le script build-android.sh pour wrapper flutter run
+# Ce script gère déjà le nettoyage macOS et la surveillance
 BUILD_SCRIPT="android/build-android.sh"
 if [ -f "$BUILD_SCRIPT" ]; then
-    echo "   Utilisation du wrapper Gradle optimisé..."
+    echo "   Utilisation du wrapper build-android.sh (gère macOS automatiquement)..."
     chmod +x "$BUILD_SCRIPT"
-    # Utiliser le script wrapper pour flutter run avec l'ID de l'appareil
-    env GRADLE_USER_HOME="$HOME/.gradle" \
-        GRADLE_OPTS="-Dorg.gradle.user.home=$HOME/.gradle -Duser.home=$HOME" \
-        flutter run -d "$DEVICE_ID"
+    # Le script build-android.sh prend la commande Flutter en argument
+    "$BUILD_SCRIPT" flutter run -d "$DEVICE_ID"
 else
-    echo "   Lancement direct avec Flutter..."
+    echo "   Lancement direct avec Flutter (sans wrapper)..."
     env GRADLE_USER_HOME="$HOME/.gradle" \
         GRADLE_OPTS="-Dorg.gradle.user.home=$HOME/.gradle -Duser.home=$HOME" \
         flutter run -d "$DEVICE_ID"
