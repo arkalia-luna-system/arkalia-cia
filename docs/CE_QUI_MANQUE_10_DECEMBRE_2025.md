@@ -117,7 +117,7 @@ Pour audit ARIA : Voir `docs/PROMPT_AUDIT_ARIA_12_DECEMBRE_2025.md`
 
 ---
 
-### 2. Pas de profil multi-appareil 🔴 **FONCTIONNALITÉ FUTURE**
+### 2. Pas de profil multi-appareil ✅ **IMPLÉMENTÉ (12 décembre 2025)**
 
 **Problème** : Impossible de passer mobile → ordi avec synchronisation
 

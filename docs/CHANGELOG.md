@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.3.1+6] - 2025-12-12
+
+### Fonctionnalités Majeures
+- ✅ **Profil multi-appareil** : Système complet de synchronisation entre appareils
+  - Modèles `UserProfile` et `Device` créés
+  - Service `UserProfileService` pour gestion profil local
+  - Service `MultiDeviceSyncService` avec synchronisation E2E
+  - Écran `UserProfileScreen` pour gestion profil et appareils
+  - Tests complets pour modèles et services
+
+### Corrections
+- ✅ **Patterns** : Amélioration gestion erreurs avec messages spécifiques
+- ✅ **Statistiques** : Section détaillée ajoutée dans paramètres
+- ✅ **Partage familial** : Feedback amélioré avec indicateurs visuels
+- ✅ **Imports** : Correction imports inutilisés
+
+### Documentation
+- ✅ Mise à jour tous les MD avec statut profil multi-appareil
+- ✅ Statut projet : 18/20 problèmes résolus (90%)
+
 ## [1.3.1] - 2025-11-27
 
 ### Corrections CI/CD et Build (27 novembre 2025)
