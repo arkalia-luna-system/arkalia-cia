@@ -54,9 +54,9 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<!-- Remplacer par votre REVERSED_CLIENT_ID depuis GoogleService-Info.plist -->
-				<!-- Exemple: com.googleusercontent.apps.123456789-abcdefghijklmnop -->
-				<string>com.arkalia.cia</string>
+				<!-- REVERSED_CLIENT_ID pour Google Sign-In iOS -->
+				<!-- Format: com.googleusercontent.apps.{CLIENT_ID} -->
+				<string>com.googleusercontent.apps.1062485264410-ifvnihjo5mmna0ckt11321uvfd569jnl</string>
 			</array>
 		</dict>
 	</array>
