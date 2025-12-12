@@ -97,16 +97,11 @@ void main() {
 
     test('retry should use exponential backoff', () async {
       int attempts = 0;
-      final delays = <int>[];
 
       try {
         await RetryHelper.retry(
           fn: () async {
             attempts++;
-            if (attempts > 1) {
-              final now = DateTime.now().millisecondsSinceEpoch;
-              delays.add(now);
-            }
             throw Exception('Error');
           },
           maxRetries: 4,
