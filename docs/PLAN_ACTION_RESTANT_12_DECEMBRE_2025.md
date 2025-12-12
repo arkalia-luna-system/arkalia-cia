@@ -18,7 +18,28 @@
 
 ## RECOMMANDATION : PAR QUOI COMMENCER
 
-### Priorité 1 : Pathologies - Sous-catégories (2-3 jours)
+### ✅ Priorité 1 : Pathologies - Sous-catégories (TERMINÉ - 12 décembre 2025)
+
+**Statut** : Résolu
+
+**Ce qui a été fait** :
+1. ✅ Modèle `Pathology` : Ajout champs `category` et `subcategory`
+2. ✅ Service `PathologyCategoryService` : Mapping pathologie → catégorie → sous-catégorie
+3. ✅ Migration base de données : Colonnes `category` et `subcategory` ajoutées
+4. ✅ `PathologyService` : Méthodes de groupement et filtrage par catégorie
+5. ✅ `PathologyListScreen` : UI avec sections par catégorie (ExpansionTile)
+6. ✅ Tous les templates mis à jour avec catégories
+7. ✅ Tests créés et passés
+
+**Fichiers modifiés** :
+- `arkalia_cia/lib/models/pathology.dart`
+- `arkalia_cia/lib/services/pathology_category_service.dart` (nouveau)
+- `arkalia_cia/lib/services/pathology_service.dart`
+- `arkalia_cia/lib/screens/pathology_list_screen.dart`
+- `arkalia_cia/test/models/pathology_test.dart` (nouveau)
+- `arkalia_cia/test/services/pathology_category_service_test.dart` (nouveau)
+
+### Priorité 1 (nouvelle) : Médecins - Détection auto (1 jour)
 
 **Pourquoi commencer par ça ?**
 - Seul problème élevé restant

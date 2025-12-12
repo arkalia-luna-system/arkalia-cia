@@ -124,6 +124,8 @@ class Pathology {
       color: map['color'] != null
           ? Color(map['color'] as int)
           : Colors.blue,
+      category: map['category'],
+      subcategory: map['subcategory'],
       createdAt: DateTime.parse(map['created_at']),
       updatedAt: DateTime.parse(map['updated_at']),
     );
@@ -138,6 +140,8 @@ class Pathology {
     List<String>? exams,
     Map<String, ReminderConfig>? reminders,
     Color? color,
+    String? category,
+    String? subcategory,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -150,6 +154,8 @@ class Pathology {
       exams: exams ?? this.exams,
       reminders: reminders ?? this.reminders,
       color: color ?? this.color,
+      category: category ?? this.category,
+      subcategory: subcategory ?? this.subcategory,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );

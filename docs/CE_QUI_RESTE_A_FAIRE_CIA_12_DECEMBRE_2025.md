@@ -20,11 +20,11 @@ Ne pas développer ARIA ici - Utiliser le projet ARIA séparé.
 
 ## RÉSUMÉ
 
-**Problèmes résolus** : 12/20 (60%)  
-**Problèmes restants** : 7/20 (35%) - ARIA géré dans projet séparé
+**Problèmes résolus** : 13/20 (65%)  
+**Problèmes restants** : 6/20 (30%) - ARIA géré dans projet séparé
 
 - **Critiques** : 6/8 résolus (1 restant : Profil multi-appareil - fonctionnalité future)
-- **Élevés** : 6/7 résolus (1 restant : Pathologies sous-catégories)
+- **Élevés** : 7/7 résolus (100%)
 - **Moyens** : 0/5 résolus (5 restants)
 
 Note : ARIA serveur est géré dans le projet ARIA séparé, pas dans CIA.
@@ -51,26 +51,9 @@ Note : ARIA serveur est géré dans le projet ARIA séparé, pas dans CIA.
 
 ---
 
-## PROBLÈMES ÉLEVÉS RESTANTS (1)
+## PROBLÈMES ÉLEVÉS RESTANTS (0)
 
-### Pathologies - Sous-catégories
-
-**Problème** : Pas de sous-catégories, organisation limitée
-
-**Ce qui reste à faire** :
-1. Système hiérarchique (catégorie → sous-catégorie → pathologie)
-2. Choix couleur personnalisée (en plus des couleurs spécialités)
-3. Organisation par spécialité médicale
-4. Filtres avancés
-
-**Fichiers à modifier** :
-- `arkalia_cia/lib/models/pathology.dart` : Ajouter catégories
-- `arkalia_cia/lib/services/pathology_service.dart` : Gestion hiérarchie
-- `arkalia_cia/lib/screens/pathologies_screen.dart` : UI catégories
-
-**Priorité** : Élevée
-
-**Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md#15-pathologies---manque-sous-catégories)
+Tous les problèmes élevés ont été résolus.
 
 ---
 
@@ -191,7 +174,7 @@ Note : ARIA serveur est géré dans le projet ARIA séparé, pas dans CIA.
 ## RECOMMANDATIONS
 
 ### Priorité immédiate
-1. Pathologies - Sous-catégories (2-3 jours)
+1. Médecins - Détection auto (1 jour)
 
 ### Après
 2. Médecins - Détection auto (1 jour)
@@ -214,13 +197,14 @@ Note : ARIA serveur est géré dans le projet ARIA séparé, pas dans CIA.
 - Calendrier rappels
 - Bug connexion après création compte
 
-### Élevés résolus (6/7)
+### Élevés résolus (7/7)
 - Rappels modifiables
 - Couleurs pathologie
 - Hydratation bugs visuels
 - Paramètres accessibilité
 - Portails santé épinglage
 - Contacts urgence personnalisation
+- Pathologies sous-catégories (12 décembre 2025)
 
 ### Documentation créée
 - Guide déploiement ARIA (Render.com)

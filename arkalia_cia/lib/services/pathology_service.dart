@@ -32,13 +32,22 @@ class PathologyService {
 
       return await openDatabase(
         path,
-        version: 3,
+        version: 4,
         onCreate: (db, version) async {
           await _createTables(db);
         },
         onUpgrade: (db, oldVersion, newVersion) async {
-          if (oldVersion < 3) {
-            await _createTables(db);
+          if (oldVersion < 4) {
+            // Migration : ajouter colonnes category et subcategory
+            try {
+              await db.execute('ALTER TABLE pathologies ADD COLUMN category TEXT');
+              await db.execute('ALTER TABLE pathologies ADD COLUMN subcategory TEXT');
+            } catch (e) {
+              // Colonnes peuvent déjà exister, ignorer l'erreur
+            }
+            if (oldVersion < 3) {
+              await _createTables(db);
+            }
           }
         },
       );
@@ -60,6 +69,8 @@ class PathologyService {
         exams TEXT,
         reminders TEXT,
         color INTEGER NOT NULL,
+        category TEXT,
+        subcategory TEXT,
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL
       )
@@ -622,6 +633,8 @@ class PathologyService {
         ),
       },
       color: PathologyColorService.getColorForPathology('Endométriose'),
+      category: PathologyCategoryService.getCategoryForPathology('Endométriose'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology('Endométriose'),
     );
   }
 
@@ -660,6 +673,8 @@ class PathologyService {
         ),
       },
       color: PathologyColorService.getColorForPathology('Cancer'),
+      category: PathologyCategoryService.getCategoryForPathology('Cancer'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology('Cancer'),
     );
   }
 
@@ -695,6 +710,8 @@ class PathologyService {
         ),
       },
       color: PathologyColorService.getColorForPathology('Myélome'),
+      category: PathologyCategoryService.getCategoryForPathology('Myélome'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology('Myélome'),
     );
   }
 
@@ -733,6 +750,8 @@ class PathologyService {
         ),
       },
       color: PathologyColorService.getColorForPathology('Ostéoporose'),
+      category: PathologyCategoryService.getCategoryForPathology('Ostéoporose'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology('Ostéoporose'),
     );
   }
 
@@ -769,6 +788,8 @@ class PathologyService {
         ),
       },
       color: PathologyColorService.getColorForPathology('Arthrite'),
+      category: PathologyCategoryService.getCategoryForPathology('Arthrite'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology('Arthrite'),
     );
   }
 
@@ -806,6 +827,8 @@ class PathologyService {
         ),
       },
       color: PathologyColorService.getColorForPathology('Arthrite rhumatoïde'),
+      category: PathologyCategoryService.getCategoryForPathology('Arthrite rhumatoïde'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology('Arthrite rhumatoïde'),
     );
   }
 
@@ -840,7 +863,9 @@ class PathologyService {
           times: ['14:00'],
         ),
       },
-      color: PathologyColorService.getColorForPathology('Hypothyroïdie'),
+      color: PathologyColorService.getColorForPathology('Tendinite'),
+      category: PathologyCategoryService.getCategoryForPathology('Tendinite'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology('Tendinite'),
     );
   }
 
@@ -877,6 +902,8 @@ class PathologyService {
         ),
       },
       color: PathologyColorService.getColorForPathology('Spondylarthrite'),
+      category: PathologyCategoryService.getCategoryForPathology('Spondylarthrite'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology('Spondylarthrite'),
     );
   }
 
@@ -916,6 +943,8 @@ class PathologyService {
         ),
       },
       color: PathologyColorService.getColorForPathology('Parkinson'),
+      category: PathologyCategoryService.getCategoryForPathology('Parkinson'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology('Parkinson'),
     );
   }
 
@@ -953,6 +982,8 @@ class PathologyService {
         ),
       },
       color: PathologyColorService.getColorForPathology('Alzheimer'),
+      category: PathologyCategoryService.getCategoryForPathology('Alzheimer'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology('Alzheimer'),
     );
   }
 
@@ -990,6 +1021,8 @@ class PathologyService {
         ),
       },
       color: PathologyColorService.getColorForPathology('Anémie'),
+      category: PathologyCategoryService.getCategoryForPathology('Anémie'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology('Anémie'),
     );
   }
 
@@ -1027,6 +1060,8 @@ class PathologyService {
         ),
       },
       color: PathologyColorService.getColorForPathology('Asthme'),
+      category: PathologyCategoryService.getCategoryForPathology('Asthme'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology('Asthme'),
     );
   }
 
@@ -1065,6 +1100,8 @@ class PathologyService {
         ),
       },
       color: PathologyColorService.getColorForPathology('Diabète'),
+      category: PathologyCategoryService.getCategoryForPathology('Diabète'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology('Diabète'),
     );
   }
 
@@ -1101,6 +1138,8 @@ class PathologyService {
         ),
       },
       color: PathologyColorService.getColorForPathology('Dépression'),
+      category: PathologyCategoryService.getCategoryForPathology('Dépression'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology('Dépression'),
     );
   }
 
@@ -1137,6 +1176,8 @@ class PathologyService {
         ),
       },
       color: PathologyColorService.getColorForPathology('Eczéma'),
+      category: PathologyCategoryService.getCategoryForPathology('Eczéma'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology('Eczéma'),
     );
   }
 
@@ -1173,6 +1214,8 @@ class PathologyService {
         ),
       },
       color: PathologyColorService.getColorForPathology('Fibromyalgie'),
+      category: PathologyCategoryService.getCategoryForPathology('Fibromyalgie'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology('Fibromyalgie'),
     );
   }
 
@@ -1209,6 +1252,8 @@ class PathologyService {
         ),
       },
       color: PathologyColorService.getColorForPathology('Hypertension'),
+      category: PathologyCategoryService.getCategoryForPathology('Hypertension'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology('Hypertension'),
     );
   }
 
@@ -1244,6 +1289,8 @@ class PathologyService {
         ),
       },
       color: PathologyColorService.getColorForPathology('Hypothyroïdie'),
+      category: PathologyCategoryService.getCategoryForPathology('Hypothyroïdie'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology('Hypothyroïdie'),
     );
   }
 
@@ -1317,6 +1364,8 @@ class PathologyService {
         ),
       },
       color: PathologyColorService.getColorForPathology('Polyarthrite rhumatoïde'),
+      category: PathologyCategoryService.getCategoryForPathology('Arthrite rhumatoïde'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology('Arthrite rhumatoïde'),
     );
   }
 
@@ -1353,6 +1402,8 @@ class PathologyService {
         ),
       },
       color: PathologyColorService.getColorForPathology('Psoriasis'),
+      category: PathologyCategoryService.getCategoryForPathology('Psoriasis'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology('Psoriasis'),
     );
   }
 
@@ -1389,6 +1440,8 @@ class PathologyService {
         ),
       },
       color: PathologyColorService.getColorForPathology('Reflux gastro-œsophagien'),
+      category: PathologyCategoryService.getCategoryForPathology('Reflux gastro-œsophagien'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology('Reflux gastro-œsophagien'),
     );
   }
 
@@ -1426,6 +1479,8 @@ class PathologyService {
         ),
       },
       color: PathologyColorService.getColorForPathology('Sclérose en plaques'),
+      category: PathologyCategoryService.getCategoryForPathology('Sclérose en plaques'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology('Sclérose en plaques'),
     );
   }
 
@@ -1462,7 +1517,65 @@ class PathologyService {
         ),
       },
       color: PathologyColorService.getColorForPathology('Syndrome du côlon irritable'),
+      category: PathologyCategoryService.getCategoryForPathology('Syndrome du côlon irritable'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology('Syndrome du côlon irritable'),
     );
+  }
+
+  // === MÉTHODES DE GROUPEMENT ET FILTRAGE ===
+
+  /// Groupe les pathologies par catégorie
+  Future<Map<String, List<Pathology>>> getPathologiesByCategory() async {
+    final allPathologies = await getAllPathologies();
+    final grouped = <String, List<Pathology>>{};
+    
+    for (final pathology in allPathologies) {
+      final category = pathology.category ?? 'Autres';
+      if (!grouped.containsKey(category)) {
+        grouped[category] = [];
+      }
+      grouped[category]!.add(pathology);
+    }
+    
+    // Trier les pathologies dans chaque catégorie
+    for (final category in grouped.keys) {
+      grouped[category]!.sort((a, b) => a.name.compareTo(b.name));
+    }
+    
+    return grouped;
+  }
+
+  /// Filtre les pathologies par catégorie
+  Future<List<Pathology>> getPathologiesByCategoryFilter(String? category) async {
+    if (category == null) {
+      return await getAllPathologies();
+    }
+    final allPathologies = await getAllPathologies();
+    return allPathologies.where((p) => p.category == category).toList()
+      ..sort((a, b) => a.name.compareTo(b.name));
+  }
+
+  /// Filtre les pathologies par sous-catégorie
+  Future<List<Pathology>> getPathologiesBySubcategoryFilter(String? subcategory) async {
+    if (subcategory == null) {
+      return await getAllPathologies();
+    }
+    final allPathologies = await getAllPathologies();
+    return allPathologies.where((p) => p.subcategory == subcategory).toList()
+      ..sort((a, b) => a.name.compareTo(b.name));
+  }
+
+  /// Retourne toutes les catégories disponibles (avec compteur)
+  Future<Map<String, int>> getCategoriesWithCount() async {
+    final allPathologies = await getAllPathologies();
+    final categories = <String, int>{};
+    
+    for (final pathology in allPathologies) {
+      final category = pathology.category ?? 'Autres';
+      categories[category] = (categories[category] ?? 0) + 1;
+    }
+    
+    return categories;
   }
 
   /// Liste tous les templates disponibles (triés par ordre alphabétique)
