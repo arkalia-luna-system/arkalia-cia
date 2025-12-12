@@ -63,13 +63,14 @@ cleanup() {
 trap cleanup SIGINT SIGTERM
 
 # Lancer sur WEB (utilise la branche develop - UNIFIÉE)
-if echo "$DEVICES" | grep -q "Chrome\|chrome\|web"; then
+# Web est toujours disponible via web-server, même si non listé dans flutter devices
+WEB_DEVICE="web-server"
+if echo "$DEVICES" | grep -q "Chrome\|chrome"; then
+    WEB_DEVICE="chrome"
+fi
+
+if command -v flutter &> /dev/null; then
     echo -e "${GREEN}🌐 Lancement sur WEB (branche develop - unifiée)...${NC}"
-    if echo "$DEVICES" | grep -q "Chrome\|chrome"; then
-        WEB_DEVICE="chrome"
-    else
-        WEB_DEVICE="web-server"
-    fi
     (
         cd "$REPO_ROOT"
         echo "   Vérification develop pour web (unifié)..."
@@ -83,11 +84,9 @@ if echo "$DEVICES" | grep -q "Chrome\|chrome\|web"; then
     ) &
     WEB_PID=$!
     echo "   Web PID: $WEB_PID"
+    echo "   Device: $WEB_DEVICE"
     echo "   URL: http://localhost:8080"
     sleep 3
-else
-    echo -e "${YELLOW}⚠️  Web non disponible, web ignoré${NC}"
-    WEB_PID=""
 fi
 
 # Lancer sur ANDROID (utilise develop)
