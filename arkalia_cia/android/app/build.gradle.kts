@@ -105,24 +105,24 @@ fun extractVersionCodeFromPubspec(): Long {
                             return@extractVersionCodeFromPubspec 1L
                         }
                         println("🔢 Version Code extrait depuis pubspec.yaml: $codeLong (depuis: $versionLine, split: '$codeStr')")
-                        codeLong
+                        codeLong.toLong()
                     } else {
                         println("⚠️ Aucun '+' trouvé dans: $versionLine")
                         // Essayer avec regex en dernier recours
                         val regexMatch = Regex("\\+(\\d+)").findAll(versionLine).lastOrNull()
                         if (regexMatch != null) {
                             val versionCodeStr = regexMatch.groupValues[1]
-                            val codeInt = versionCodeStr.toIntOrNull() ?: 1
-                            println("🔢 Version Code extrait (regex fallback): $codeInt (groupe: '$versionCodeStr')")
-                            codeInt
+                            val codeLong = versionCodeStr.toLongOrNull() ?: 1L
+                            println("🔢 Version Code extrait (regex fallback): $codeLong (groupe: '$versionCodeStr')")
+                            codeLong.toLong()
                         } else {
                             println("⚠️ Aucun version code trouvé dans pubspec.yaml, utilisation de 1")
-                            1
+                            return@extractVersionCodeFromPubspec 1L
                         }
                     }
                 } else {
                     println("⚠️ Ligne 'version:' introuvable dans pubspec.yaml, utilisation de 1")
-                    1
+                    return@extractVersionCodeFromPubspec 1L
                 }
             } else {
                 println("⚠️ pubspec.yaml introuvable à ${pubspecFile.absolutePath}")
@@ -139,24 +139,24 @@ fun extractVersionCodeFromPubspec(): Long {
                             val codeStr = parts[1].trim()
                             val codeLong = codeStr.toLongOrNull() ?: 1L
                             println("🔢 Version Code extrait depuis pubspec.yaml (fallback): $codeLong (split: '$codeStr')")
-                            codeLong
+                            codeLong.toLong()
                         } else {
                             println("⚠️ Aucun version code trouvé dans pubspec.yaml (fallback), utilisation de 1")
-                            1L
+                            return@extractVersionCodeFromPubspec 1L
                         }
                     } else {
                         println("⚠️ Ligne 'version:' introuvable (fallback), utilisation de 1")
-                        1L
+                        return@extractVersionCodeFromPubspec 1L
                     }
                 } else {
                     println("⚠️ pubspec.yaml introuvable (fallback aussi), utilisation de 1")
-                    1L
+                    return@extractVersionCodeFromPubspec 1L
                 }
             }
         } catch (e: Exception) {
             println("⚠️ Erreur lors de l'extraction du versionCode: ${e.message}")
             e.printStackTrace()
-            1L
+            return@extractVersionCodeFromPubspec 1L
         }
     }
 
@@ -192,11 +192,11 @@ android {
         versionCode = try {
             val code = extractVersionCodeFromPubspec()
             // S'assurer que le code est dans les limites d'Android (Int.MAX_VALUE)
-            if (code > Int.MAX_VALUE) {
+            if (code > Int.MAX_VALUE.toLong()) {
                 // Si le versionCode dépasse Int.MAX_VALUE, utiliser un modulo
-                (code % Int.MAX_VALUE).toInt().coerceAtLeast(1)
+                (code % Int.MAX_VALUE.toLong()).toInt().coerceAtLeast(1)
             } else {
-                code.coerceIn(1, Int.MAX_VALUE)
+                code.toInt().coerceIn(1, Int.MAX_VALUE)
             }
         } catch (e: Exception) {
             println("⚠️ Erreur extraction versionCode: ${e.message}, utilisation de 1")
