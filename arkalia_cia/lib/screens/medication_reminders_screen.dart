@@ -482,10 +482,6 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
                                     IconButton(
                                       icon: const Icon(Icons.delete, size: 24),
                                       onPressed: () async {
-                                      constraints: const BoxConstraints(
-                                        minWidth: 48,
-                                        minHeight: 48,
-                                      ),
                                         final confirm = await showDialog<bool>(
                                           context: context,
                                           builder: (context) => AlertDialog(
@@ -514,6 +510,10 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
                                         }
                                       },
                                       tooltip: 'Supprimer',
+                                      constraints: const BoxConstraints(
+                                        minWidth: 48,
+                                        minHeight: 48,
+                                      ),
                                     ),
                                   ],
                                 ),
