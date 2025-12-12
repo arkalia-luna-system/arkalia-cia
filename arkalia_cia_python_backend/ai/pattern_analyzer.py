@@ -36,23 +36,63 @@ class AdvancedPatternAnalyzer:
             }
         """
         try:
+            # Valider les données d'entrée
+            if not data or len(data) == 0:
+                logger.warning("Aucune donnée fournie pour l'analyse de patterns")
+                return {
+                    "recurring_patterns": [],
+                    "trends": {},
+                    "seasonality": {},
+                    "predictions": {},
+                    "error": "Aucune donnée disponible pour l'analyse",
+                }
+            
+            if len(data) < 3:
+                logger.warning(f"Données insuffisantes pour l'analyse: {len(data)} point(s)")
+                return {
+                    "recurring_patterns": [],
+                    "trends": {},
+                    "seasonality": {},
+                    "predictions": {},
+                    "error": f"Données insuffisantes ({len(data)} point(s)). Minimum 3 points requis.",
+                }
+
             # Analyser récurrence
-            recurring = self._detect_recurrence(data)
+            try:
+                recurring = self._detect_recurrence(data)
+            except Exception as e:
+                logger.error(f"Erreur détection récurrence: {e}", exc_info=True)
+                recurring = []
 
             # Analyser tendances
-            trends = self._detect_trends(data)
+            try:
+                trends = self._detect_trends(data)
+            except Exception as e:
+                logger.error(f"Erreur détection tendances: {e}", exc_info=True)
+                trends = {}
 
             # Analyser saisonnalité
-            seasonality = self._detect_seasonality(data)
+            try:
+                seasonality = self._detect_seasonality(data)
+            except Exception as e:
+                logger.error(f"Erreur détection saisonnalité: {e}", exc_info=True)
+                seasonality = {}
 
             # Prédictions avec Prophet si disponible
             predictions = {}
             if PROPHET_AVAILABLE and len(data) >= 7:  # Minimum 7 points pour Prophet
                 try:
                     predictions = self._generate_prophet_predictions(data)
-                except Exception as e:
-                    logger.warning(f"Erreur prédictions Prophet: {e}")
+                except ValueError as e:
+                    logger.warning(f"Erreur validation données Prophet: {e}")
                     predictions = {}
+                except Exception as e:
+                    logger.warning(f"Erreur prédictions Prophet: {e}", exc_info=True)
+                    predictions = {}
+            elif not PROPHET_AVAILABLE:
+                logger.debug("Prophet non disponible, prédictions désactivées")
+            elif len(data) < 7:
+                logger.debug(f"Données insuffisantes pour Prophet: {len(data)} point(s), minimum 7 requis")
 
             return {
                 "recurring_patterns": recurring,
@@ -60,13 +100,31 @@ class AdvancedPatternAnalyzer:
                 "seasonality": seasonality,
                 "predictions": predictions,
             }
+        except ValueError as e:
+            logger.error(f"Erreur validation données patterns: {e}", exc_info=True)
+            return {
+                "recurring_patterns": [],
+                "trends": {},
+                "seasonality": {},
+                "predictions": {},
+                "error": f"Erreur de validation des données: {str(e)}",
+            }
         except Exception as e:
-            logger.error(f"Erreur détection patterns: {e}")
-            return {}
+            logger.error(f"Erreur détection patterns: {e}", exc_info=True)
+            return {
+                "recurring_patterns": [],
+                "trends": {},
+                "seasonality": {},
+                "predictions": {},
+                "error": f"Erreur lors de l'analyse: {str(e)}",
+            }
 
     def _detect_recurrence(self, data: list[dict]) -> list[dict]:
         """Détecte patterns récurrents"""
         patterns = []
+
+        if not data:
+            return patterns
 
         # Grouper par type et analyser fréquence
         types: dict[str, list] = {}
@@ -86,9 +144,17 @@ class AdvancedPatternAnalyzer:
             # Calculer intervalles entre occurrences
             intervals = []
             for i in range(1, len(type_data)):
-                date1 = datetime.fromisoformat(type_data[i - 1].get("date", ""))
-                date2 = datetime.fromisoformat(type_data[i].get("date", ""))
-                intervals.append((date2 - date1).days)
+                try:
+                    date1_str = type_data[i - 1].get("date", "")
+                    date2_str = type_data[i].get("date", "")
+                    if not date1_str or not date2_str:
+                        continue
+                    date1 = datetime.fromisoformat(date1_str)
+                    date2 = datetime.fromisoformat(date2_str)
+                    intervals.append((date2 - date1).days)
+                except (ValueError, TypeError) as e:
+                    logger.warning(f"Erreur parsing date pour récurrence: {e}")
+                    continue
 
             if intervals:
                 # Optimisé: calculer moyenne et écart-type en une seule passe

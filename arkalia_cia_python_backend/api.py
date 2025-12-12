@@ -1812,17 +1812,41 @@ async def analyze_patterns(
     """Analyse les patterns dans les données"""
     try:
         if not pattern_request.data:
-            raise HTTPException(status_code=400, detail="Aucune donnée fournie")
+            raise HTTPException(
+                status_code=400,
+                detail="Aucune donnée fournie pour l'analyse. Ajoutez des documents, pathologies ou médicaments pour voir des patterns."
+            )
+
+        if len(pattern_request.data) < 3:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Données insuffisantes ({len(pattern_request.data)} point(s)). Minimum 3 points requis pour l'analyse."
+            )
 
         patterns = pattern_analyzer.detect_temporal_patterns(pattern_request.data)
+        
+        # Vérifier si l'analyse a retourné une erreur
+        if isinstance(patterns, dict) and "error" in patterns:
+            error_msg = patterns.get("error", "Erreur inconnue lors de l'analyse")
+            logger.warning(f"Analyse patterns retournée avec erreur: {error_msg}")
+            # Retourner quand même les résultats partiels si disponibles
+            return patterns
+        
         return patterns
     except HTTPException:
         # Ré-élever les HTTPException sans les transformer en 500
         raise
-    except Exception as e:
-        logger.error(f"Erreur analyse patterns: {sanitize_log_message(str(e))}")
+    except ValueError as e:
+        logger.error(f"Erreur validation données patterns: {sanitize_log_message(str(e))}")
         raise HTTPException(
-            status_code=500, detail="Erreur lors de l'analyse des patterns"
+            status_code=400,
+            detail=f"Erreur de validation des données: {str(e)}"
+        ) from e
+    except Exception as e:
+        logger.error(f"Erreur analyse patterns: {sanitize_log_message(str(e))}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erreur lors de l'analyse des patterns: {str(e)}"
         ) from e
 
 

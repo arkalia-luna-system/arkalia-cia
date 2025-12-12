@@ -46,6 +46,36 @@ class TestAdvancedPatternAnalyzer:
         assert isinstance(result, dict)
         assert "recurring_patterns" in result
         assert isinstance(result["recurring_patterns"], list)
+        assert "error" in result
+        assert "Aucune donnée disponible" in result["error"]
+
+    def test_detect_temporal_patterns_insufficient_data(self, analyzer):
+        """Test avec données insuffisantes (< 3 points)"""
+        base_date = datetime(2024, 1, 1)
+        data = [
+            {
+                "date": (base_date + timedelta(days=i)).isoformat(),
+                "value": 5 + i,
+                "type": "document",
+            }
+            for i in range(2)  # Seulement 2 points
+        ]
+        result = analyzer.detect_temporal_patterns(data)
+        assert isinstance(result, dict)
+        assert "error" in result
+        assert "Données insuffisantes" in result["error"]
+
+    def test_detect_temporal_patterns_invalid_dates(self, analyzer):
+        """Test avec dates invalides"""
+        data = [
+            {"date": "invalid-date", "value": 5, "type": "document"},
+            {"date": "2024-01-02", "value": 6, "type": "document"},
+            {"date": "2024-01-03", "value": 7, "type": "document"},
+        ]
+        result = analyzer.detect_temporal_patterns(data)
+        # Doit gérer gracieusement les dates invalides
+        assert isinstance(result, dict)
+        assert "recurring_patterns" in result
 
     def test_detect_recurrence(self, analyzer):
         """Test détection récurrence"""

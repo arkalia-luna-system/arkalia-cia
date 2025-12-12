@@ -86,6 +86,32 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
       return; // Utilisateur a refusé
     }
 
+    // Afficher indicateur de chargement
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text('Partage de ${selectedIds.length} document(s) en cours...'),
+              ),
+            ],
+          ),
+          duration: const Duration(seconds: 30), // Longue durée pour permettre le partage
+          backgroundColor: Colors.blue,
+        ),
+      );
+    }
+
     // Partager avec tous les membres actifs
     final memberIds = _members.asMap().entries
         .where((e) => e.value.isActive)
@@ -109,19 +135,51 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
       }
     }
 
+    // Fermer le SnackBar de chargement
+    if (mounted) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    }
+
+    // Recharger les données pour mettre à jour les statistiques
+    await _loadData();
+
     if (mounted) {
       if (errorCount == 0) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('$successCount document(s) partagé(s) avec succès'),
+            content: Row(
+              children: [
+                const Icon(Icons.check_circle, color: Colors.white),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text('$successCount document(s) partagé(s) avec succès avec ${memberIds.length} membre(s)'),
+                ),
+              ],
+            ),
             backgroundColor: Colors.green,
-            duration: const Duration(seconds: 3),
+            duration: const Duration(seconds: 4),
+            action: SnackBarAction(
+              label: 'Voir',
+              textColor: Colors.white,
+              onPressed: () {
+                // Basculer vers l'onglet statistiques
+                _tabController.animateTo(1);
+              },
+            ),
           ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('$successCount partagé(s), $errorCount erreur(s)'),
+            content: Row(
+              children: [
+                const Icon(Icons.warning, color: Colors.white),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text('$successCount partagé(s), $errorCount erreur(s)'),
+                ),
+              ],
+            ),
             backgroundColor: Colors.orange,
             duration: const Duration(seconds: 4),
           ),

@@ -8,7 +8,6 @@ import 'health_screen.dart';
 import 'aria_screen.dart';
 import 'sync_screen.dart';
 import 'settings_screen.dart';
-import 'stats_screen.dart';
 import 'doctors_list_screen.dart';
 import 'advanced_search_screen.dart';
 import 'family_sharing_screen.dart';
@@ -340,17 +339,7 @@ class _HomePageState extends State<HomePage> {
                       onTap: () => _showPatterns(context),
                     ),
 
-                    // Bouton 11: Statistiques
-                    _buildActionButton(
-                      context,
-                      icon: MdiIcons.chartBox,
-                      title: 'Stats',
-                      subtitle: 'Statistiques',
-                      color: Colors.blue,
-                      onTap: () => _showStats(context),
-                    ),
-
-                    // Bouton 12: Hydratation
+                    // Bouton 11: Hydratation
                     _buildActionButton(
                       context,
                       icon: MdiIcons.water,
@@ -548,13 +537,6 @@ class _HomePageState extends State<HomePage> {
         _loadStats();
       }
     });
-  }
-
-  void _showStats(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const StatsScreen()),
-    );
   }
 
   void _showPathologies(BuildContext context) {

@@ -187,6 +187,36 @@ class TestPatternAnalysisEndpoint:
         response = client.post("/api/v1/patterns/analyze", json={}, headers=headers)
         assert response.status_code in [400, 422]
 
+    def test_pattern_analysis_insufficient_data(self, client, temp_db, auth_token):
+        """Test d'analyse de patterns avec données insuffisantes (< 3 points)"""
+        pattern_data: dict[str, Any] = {
+            "data": [
+                {"date": "2024-01-01", "value": 5},
+                {"date": "2024-01-02", "value": 6},
+            ]
+        }
+        headers = {"Authorization": f"Bearer {auth_token}"}
+        response = client.post(
+            "/api/v1/patterns/analyze", json=pattern_data, headers=headers
+        )
+        assert response.status_code == 400
+        data = response.json()
+        assert "detail" in data
+        assert "insuffisantes" in data["detail"].lower() or "minimum" in data["detail"].lower()
+
+    def test_pattern_analysis_error_message(self, client, temp_db, auth_token):
+        """Test que les messages d'erreur sont clairs et spécifiques"""
+        pattern_data: dict[str, list] = {"data": []}
+        headers = {"Authorization": f"Bearer {auth_token}"}
+        response = client.post(
+            "/api/v1/patterns/analyze", json=pattern_data, headers=headers
+        )
+        assert response.status_code == 400
+        data = response.json()
+        assert "detail" in data
+        # Le message doit être informatif
+        assert len(data["detail"]) > 20  # Message suffisamment détaillé
+
 
 class TestPrepareAppointmentEndpoint:
     """Tests pour l'endpoint de préparation de rendez-vous"""

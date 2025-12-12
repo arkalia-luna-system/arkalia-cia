@@ -8,6 +8,7 @@ import '../services/health_portal_auth_service.dart' show HealthPortalAuthServic
 import '../services/offline_cache_service.dart';
 import '../services/accessibility_service.dart';
 import 'auth/login_screen.dart';
+import 'stats_screen.dart';
 
 /// Écran de paramètres de l'application
 class SettingsScreen extends StatefulWidget {
@@ -420,6 +421,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
             ),
           ),
+
+          // Section Statistiques
+          _buildSectionTitle('Statistiques'),
+          Card(
+            child: Column(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.bar_chart),
+                  title: const Text('Statistiques détaillées'),
+                  subtitle: const Text('Voir graphiques et analyses complètes'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const StatsScreen()),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
 
           // Section Cache
           _buildSectionTitle('Cache'),

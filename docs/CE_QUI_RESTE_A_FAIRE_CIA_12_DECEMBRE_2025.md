@@ -2,7 +2,7 @@
 
 **Date** : 12 décembre 2025  
 **Version** : 1.3.1+6  
-**Statut** : 14/20 problèmes résolus (70%)
+**Statut** : 17/20 problèmes résolus (85%)
 
 ---
 
@@ -20,12 +20,12 @@ Ne pas développer ARIA ici - Utiliser le projet ARIA séparé.
 
 ## RÉSUMÉ
 
-**Problèmes résolus** : 14/20 (70%)  
-**Problèmes restants** : 5/20 (25%) - ARIA géré dans projet séparé
+**Problèmes résolus** : 17/20 (85%)  
+**Problèmes restants** : 3/20 (15%) - ARIA géré dans projet séparé
 
 - **Critiques** : 6/8 résolus (1 restant : Profil multi-appareil - fonctionnalité future)
 - **Élevés** : 7/7 résolus (100%)
-- **Moyens** : 1/5 résolus (4 restants)
+- **Moyens** : 4/5 résolus (1 restant : BBIA - fonctionnalité future)
 
 Note : ARIA serveur est géré dans le projet ARIA séparé, pas dans CIA.
 
@@ -57,64 +57,59 @@ Tous les problèmes élevés ont été résolus.
 
 ---
 
-## PROBLÈMES MOYENS RESTANTS (4)
+## PROBLÈMES MOYENS RESTANTS (3)
 
 ---
 
-### Patterns - Erreur non spécifiée
+### Patterns - Erreur non spécifiée ✅ RÉSOLU
 
-**Problème** : "Une erreur est survenue" sans détails
+**Statut** : ✅ Résolu le 12 décembre 2025
 
-**Ce qui reste à faire** :
-1. Améliorer gestion erreurs dans `pattern_analyzer.py`
-2. Messages d'erreur clairs et spécifiques
-3. Logging détaillé pour debugging
-4. Fallback gracieux si analyse échoue
+**Ce qui a été fait** :
+1. ✅ Amélioration gestion erreurs dans `pattern_analyzer.py` avec messages spécifiques
+2. ✅ Messages d'erreur clairs et détaillés par type d'erreur
+3. ✅ Logging détaillé avec contexte pour debugging
+4. ✅ Fallback gracieux si analyse échoue
+5. ✅ Amélioration affichage erreurs dans `patterns_dashboard_screen.dart` avec suggestions
+6. ✅ Tests ajoutés pour couvrir les nouveaux cas d'erreur
 
-**Fichiers à modifier** :
-- `arkalia_cia_python_backend/ai/pattern_analyzer.py` : Gestion erreurs
-- `arkalia_cia/lib/screens/patterns_screen.dart` : Affichage erreurs
-
-**Priorité** : Moyenne
-
-**Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./AUDIT_COMPLET_12_DECEMBRE_2025.md#17-patterns---erreur-une-erreur-est-survenue)
-
----
-
-### Statistiques - Placement UI
-
-**Problème** : Trop visible ou pas assez selon contexte
-
-**Ce qui reste à faire** :
-1. Déplacer statistiques détaillées en paramètres
-2. Garder indicateurs simples sur écrans principaux
-3. Section "Statistiques" dans paramètres avec graphiques
-
-**Fichiers à modifier** :
-- `arkalia_cia/lib/screens/settings_screen.dart` : Ajouter section statistiques
-- `arkalia_cia/lib/screens/home_page.dart` : Simplifier indicateurs
-
-**Priorité** : Moyenne
-
-**Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./AUDIT_COMPLET_12_DECEMBRE_2025.md#18-statistiques---placement-dans-ui)
+**Fichiers modifiés** :
+- `arkalia_cia_python_backend/ai/pattern_analyzer.py` : Gestion erreurs améliorée
+- `arkalia_cia_python_backend/api.py` : Messages d'erreur spécifiques
+- `arkalia_cia/lib/screens/patterns_dashboard_screen.dart` : Affichage erreurs avec suggestions
+- `tests/unit/test_pattern_analyzer.py` : Tests erreurs ajoutés
+- `tests/unit/test_api_ai_endpoints.py` : Tests API erreurs ajoutés
 
 ---
 
-### Dialog partage - Pas de feedback
+### Statistiques - Placement UI ✅ RÉSOLU
 
-**Problème** : Pas de confirmation visuelle après partage
+**Statut** : ✅ Résolu le 12 décembre 2025
 
-**Ce qui reste à faire** :
-1. SnackBar avec confirmation après partage
-2. Indicateur visuel (icône check) pendant partage
-3. Compteur documents partagés
+**Ce qui a été fait** :
+1. ✅ Section "Statistiques" ajoutée dans `settings_screen.dart`
+2. ✅ Redirection vers `StatsScreen` depuis les paramètres
+3. ✅ Indicateurs simples conservés sur `home_page.dart` (2 cartes)
 
-**Fichiers à modifier** :
-- `arkalia_cia/lib/screens/family_sharing_screen.dart` : Améliorer feedback
+**Fichiers modifiés** :
+- `arkalia_cia/lib/screens/settings_screen.dart` : Section statistiques ajoutée
+- `arkalia_cia/lib/screens/home_page.dart` : Indicateurs déjà simplifiés (conservés)
 
-**Priorité** : Moyenne
+---
 
-**Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./AUDIT_COMPLET_12_DECEMBRE_2025.md#19-dialog-partage---pas-de-feedback)
+### Dialog partage - Pas de feedback ✅ RÉSOLU
+
+**Statut** : ✅ Résolu le 12 décembre 2025
+
+**Ce qui a été fait** :
+1. ✅ SnackBar avec confirmation après partage (avec icône check)
+2. ✅ Indicateur visuel (CircularProgressIndicator) pendant partage
+3. ✅ Compteur documents partagés dans le message de confirmation
+4. ✅ Action "Voir" dans SnackBar pour basculer vers l'onglet statistiques
+5. ✅ Rechargement automatique des données après partage
+
+**Fichiers modifiés** :
+- `arkalia_cia/lib/screens/family_sharing_screen.dart` : Feedback amélioré
 
 ---
 
@@ -145,26 +140,21 @@ Note : ARIA serveur est géré dans le projet ARIA séparé, pas dans CIA.
 ### Élevé (0)
 Tous les problèmes élevés ont été résolus.
 
-### Moyen (4)
-1. Patterns - Erreur non spécifiée
-2. Statistiques - Placement UI
-3. Dialog partage - Feedback
-4. BBIA - Placeholder (futur)
+### Moyen (1)
+1. BBIA - Placeholder (futur)
 
 ---
 
 ## RECOMMANDATIONS
 
-### Priorité immédiate
-1. Patterns - Erreur non spécifiée (1 jour)
-
-### Après
-2. Statistiques - Placement UI (1 jour)
-3. Dialog partage - Feedback (1 jour)
+### ✅ Complété (12 décembre 2025)
+1. ✅ Patterns - Erreur non spécifiée
+2. ✅ Statistiques - Placement UI
+3. ✅ Dialog partage - Feedback
 
 ### Futur
-5. Profil multi-appareil (10-16 jours) - Fonctionnalité majeure
-6. BBIA (Phase 4) - Fonctionnalité future
+1. Profil multi-appareil (10-16 jours) - Fonctionnalité majeure
+2. BBIA (Phase 4) - Fonctionnalité future
 
 ---
 
@@ -187,8 +177,11 @@ Tous les problèmes élevés ont été résolus.
 - Contacts urgence personnalisation
 - Pathologies sous-catégories (12 décembre 2025)
 
-### Moyens résolus (1/5)
+### Moyens résolus (4/5)
 - Médecins - Détection auto (12 décembre 2025)
+- Patterns - Erreur non spécifiée (12 décembre 2025)
+- Statistiques - Placement UI (12 décembre 2025)
+- Dialog partage - Feedback (12 décembre 2025)
 
 ### Documentation créée
 - Guide déploiement ARIA (Render.com)
@@ -198,7 +191,7 @@ Tous les problèmes élevés ont été résolus.
 ---
 
 **Dernière mise à jour** : 12 décembre 2025  
-**Prochaine étape recommandée** : Patterns - Erreur non spécifiée (1 jour)
+**Prochaine étape recommandée** : Tous les problèmes moyens prioritaires sont résolus. Prochaines étapes : fonctionnalités futures (Profil multi-appareil, BBIA)
 
 Note : ARIA serveur est géré dans le projet ARIA séparé. Ce document liste uniquement les problèmes à résoudre dans le projet CIA.
 

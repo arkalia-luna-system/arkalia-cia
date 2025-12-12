@@ -244,12 +244,21 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
         if (body.isEmpty) {
           return {};
         }
-        return json.decode(body);
+        final decoded = json.decode(body);
+        // Vérifier si la réponse contient une erreur
+        if (decoded is Map && decoded.containsKey('error')) {
+          throw Exception(decoded['error'] as String? ?? 'Erreur lors de l\'analyse');
+        }
+        return decoded;
       } else {
         try {
           final errorData = json.decode(response.body);
-          throw Exception(errorData['detail'] ?? 'Erreur HTTP ${response.statusCode}');
-        } catch (_) {
+          final detail = errorData['detail'] ?? errorData['message'] ?? 'Erreur HTTP ${response.statusCode}';
+          throw Exception(detail);
+        } catch (e) {
+          if (e is Exception) {
+            rethrow;
+          }
           throw Exception('Erreur HTTP ${response.statusCode}');
         }
       }
@@ -296,6 +305,56 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
                           textAlign: TextAlign.center,
                           style: const TextStyle(fontSize: 16),
                         ),
+                        const SizedBox(height: 24),
+                        // Suggestions selon le type d'erreur
+                        if (_error!.toLowerCase().contains('données insuffisantes') ||
+                            _error!.toLowerCase().contains('aucune donnée'))
+                          Card(
+                            color: Colors.blue[50],
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                children: [
+                                  const Icon(Icons.info_outline, color: Colors.blue),
+                                  const SizedBox(height: 8),
+                                  const Text(
+                                    'Conseil:',
+                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  const Text(
+                                    'Ajoutez au moins 3 documents, pathologies ou médicaments pour voir des patterns.',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        if (_error!.toLowerCase().contains('backend') ||
+                            _error!.toLowerCase().contains('connexion'))
+                          Card(
+                            color: Colors.orange[50],
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                children: [
+                                  const Icon(Icons.wifi_off, color: Colors.orange),
+                                  const SizedBox(height: 8),
+                                  const Text(
+                                    'Vérifiez:',
+                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  const Text(
+                                    '1. Le backend est démarré\n2. L\'URL est correcte dans les paramètres\n3. Votre connexion réseau',
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
                         const SizedBox(height: 16),
                         ElevatedButton.icon(
                           onPressed: _loadPatterns,
