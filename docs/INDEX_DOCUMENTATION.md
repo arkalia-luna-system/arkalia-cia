@@ -90,6 +90,8 @@ Tous les plans sont dans le dossier **[plans/](./plans/)** :
 
 ## Sécurité et audits
 
+- **[audits/AUDIT_QUALITE_CODE_12_DECEMBRE_2025.md](./audits/AUDIT_QUALITE_CODE_12_DECEMBRE_2025.md)** — Audit qualité code, maintenabilité, tests, documentation (12 déc 2025)
+- **[audits/AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md)** — Audit fonctionnel complet (12 déc 2025)
 - **[audits/CHECKLIST_FINALE_SECURITE.md](./audits/CHECKLIST_FINALE_SECURITE.md)** — Checklist sécurité complète
 - **[CORRECTIONS_SECURITE_EFFECTUEES.md](./CORRECTIONS_SECURITE_EFFECTUEES.md)** — Détails des corrections sécurité
 - **[audits/AUDIT_SECURITE_SENIOR.md](./audits/AUDIT_SECURITE_SENIOR.md)** — Audit sécurité
