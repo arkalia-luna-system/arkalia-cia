@@ -21,42 +21,19 @@
 ## 📊 RÉSUMÉ
 
 **Problèmes résolus** : 10/20 (50%)  
-**Problèmes restants** : 10/20 (50%)
+**Problèmes restants** : 9/20 (45%) - **ARIA géré dans projet séparé**
 
-- **Critiques** : 2/8 résolus (6 restants, dont 1 fonctionnalité future)
+- **Critiques** : 6/8 résolus (1 restant : Profil multi-appareil - fonctionnalité future)
 - **Élevés** : 4/7 résolus (3 restants)
 - **Moyens** : 0/5 résolus (5 restants)
 
----
-
-## 🔴 PROBLÈMES CRITIQUES RESTANTS (2)
-
-### 1. ARIA serveur - Déploiement ⏳ **EN ATTENTE**
-
-**Statut** : Documentation créée, déploiement à faire
-
-**Ce qui est fait** :
-- ✅ Documentation complète : `docs/deployment/DEPLOIEMENT_ARIA_RENDER.md`
-- ✅ Service ARIA amélioré : Support URLs complètes (https://xxx.onrender.com)
-- ✅ Support IPs locales (127.0.0.1:8080)
-- ✅ Détection automatique HTTPS pour port 443
-
-**Ce qui reste à faire** :
-- ⏳ Déployer ARIA sur Render.com (2-3 heures, guide disponible)
-- ⏳ Configurer URL ARIA dans CIA après déploiement
-- ⏳ Tester connexion CIA ↔ ARIA
-
-**Fichiers** :
-- `docs/deployment/DEPLOIEMENT_ARIA_RENDER.md` (guide complet)
-- `arkalia_cia/lib/services/aria_service.dart` (service prêt)
-
-**Priorité** : 🔴 **CRITIQUE** (mais documentation prête)
-
-**Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./AUDIT_COMPLET_12_DECEMBRE_2025.md#7-aria-serveur-doit-tourner-sur-mac)
+**Note** : ARIA serveur est géré dans le projet ARIA séparé, pas dans CIA.
 
 ---
 
-### 2. Profil multi-appareil 🔴 **FONCTIONNALITÉ FUTURE**
+## 🔴 PROBLÈMES CRITIQUES RESTANTS (1)
+
+### 1. Profil multi-appareil 🔴 **FONCTIONNALITÉ FUTURE**
 
 **Problème** : Impossible de passer mobile → ordi avec synchronisation
 
@@ -236,9 +213,10 @@
 
 ## 📊 RÉCAPITULATIF PAR PRIORITÉ
 
-### 🔴 Critique (2)
-1. ⏳ ARIA serveur (déploiement) - Documentation prête
-2. 🔴 Profil multi-appareil - Fonctionnalité future (10-16 jours)
+### 🔴 Critique (1)
+1. 🔴 Profil multi-appareil - Fonctionnalité future (10-16 jours)
+
+**Note** : ARIA serveur est géré dans le projet ARIA séparé, pas dans CIA.
 
 ### 🟠 Élevé (3)
 1. Portails santé - Épinglage favoris
@@ -256,7 +234,7 @@
 
 ## 🎯 RECOMMANDATIONS
 
-### Priorité immédiate
+### Priorité immédiate (CIA uniquement)
 1. **Portails santé - Épinglage** (1-2 jours) - Impact utilisateur élevé
 2. **Contacts urgence - Personnalisation** (2-3 jours) - Impact utilisateur élevé
 3. **Pathologies - Sous-catégories** (2-3 jours) - Organisation améliorée
@@ -297,4 +275,6 @@
 
 **Dernière mise à jour** : 12 décembre 2025  
 **Prochaine étape recommandée** : Portails santé - Épinglage (1-2 jours)
+
+**Note importante** : ARIA serveur est géré dans le projet ARIA séparé. Ce document liste uniquement les problèmes à résoudre dans le projet CIA.
 

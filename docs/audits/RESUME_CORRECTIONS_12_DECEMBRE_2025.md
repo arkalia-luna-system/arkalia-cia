@@ -299,9 +299,10 @@ Résumé complet des corrections appliquées le 12 décembre 2025.
 
 ## 🎯 PROCHAINES ÉTAPES
 
-### Critiques restants (2)
-1. ✅ ARIA serveur (documentation créée, déploiement à faire)
-2. 🔴 Profil multi-appareil (complexe, 10-16 jours)
+### Critiques restants (1)
+1. 🔴 Profil multi-appareil (complexe, 10-16 jours) - Fonctionnalité future
+
+**Note** : ARIA serveur est géré dans le projet ARIA séparé, pas dans CIA.
 
 ### Élevés restants (4)
 - Portails, Contacts, Pathologies (Hydratation et Paramètres résolus)
