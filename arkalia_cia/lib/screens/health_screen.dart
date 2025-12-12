@@ -292,7 +292,7 @@ class _HealthScreenState extends State<HealthScreen> {
     final filteredPortals = _getFilteredPortals();
     
     if (_showFavoritesOnly && filteredPortals.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
