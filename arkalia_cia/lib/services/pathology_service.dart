@@ -8,6 +8,7 @@ import '../utils/error_helper.dart';
 import '../utils/storage_helper.dart';
 import 'calendar_service.dart';
 import 'pathology_color_service.dart';
+import 'pathology_category_service.dart';
 
 /// Service de gestion des pathologies et de leur suivi
 class PathologyService {

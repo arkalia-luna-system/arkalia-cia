@@ -42,6 +42,8 @@ class Pathology {
   final List<String> exams;
   final Map<String, ReminderConfig> reminders;
   final Color color;
+  final String? category;
+  final String? subcategory;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -54,6 +56,8 @@ class Pathology {
     List<String>? exams,
     Map<String, ReminderConfig>? reminders,
     Color? color,
+    this.category,
+    this.subcategory,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) : symptoms = symptoms ?? [],
@@ -73,7 +77,9 @@ class Pathology {
       'treatments': treatments.join(','),
       'exams': exams.join(','),
       'reminders': reminders.map((key, value) => MapEntry(key, value.toMap())),
-      'color': color.value,
+      'color': color.value, // ignore: deprecated_member_use
+      'category': category,
+      'subcategory': subcategory,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };
