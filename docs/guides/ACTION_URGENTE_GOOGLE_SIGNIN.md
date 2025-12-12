@@ -1,7 +1,23 @@
 # 🚨 ACTION URGENTE - Résolution Erreur Google Sign-In
 
 **Date** : 12 décembre 2025  
-**Erreur** : `This android application is not registered to use OAuth2.0`
+**Erreur** : `This android application is not registered to use OAuth2.0`  
+**Statut** : ✅ **RÉSOLU** - SHA-1 Debug configuré dans Google Cloud Console
+
+---
+
+## ✅ SOLUTION APPLIQUÉE
+
+Le problème était que Google Cloud Console n'avait **QUE le SHA-1 production**, mais **PAS le SHA-1 debug**.
+
+**Action effectuée** :
+- ✅ SHA-1 Debug ajouté dans "Client Android 1" : `2C:68:D5:C0:92:A8:7F:59:E7:6A:7C:5B:7C:F9:77:54:9E:68:14:6E`
+- ✅ Modification sauvegardée dans Google Cloud Console
+
+**⚠️ IMPORTANT** : Pour la production (Google Play Store), il faudra aussi ajouter le SHA-1 production :
+- SHA-1 Production : `AC:9E:D1:E9:29:66:5E:95:DD:0E:0B:7F:9F:F9:88:D1:5D:69:71:19`
+
+**Recommandation** : Ajouter les DEUX SHA-1 dans le même client Android pour que ça fonctionne en debug ET en production.
 
 ---
 
