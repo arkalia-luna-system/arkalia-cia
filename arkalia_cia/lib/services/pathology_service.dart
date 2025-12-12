@@ -695,7 +695,7 @@ class PathologyService {
           times: ['08:00'],
         ),
       },
-      color: PathologyColorService.getColorForPathology('Arthrite rhumatoïde'),
+      color: PathologyColorService.getColorForPathology('Myélome'),
     );
   }
 
@@ -733,7 +733,7 @@ class PathologyService {
           times: ['08:00', '20:00'],
         ),
       },
-      color: Colors.grey,
+      color: PathologyColorService.getColorForPathology('Ostéoporose'),
     );
   }
 
@@ -806,7 +806,7 @@ class PathologyService {
           times: ['14:00'],
         ),
       },
-      color: Colors.deepOrange,
+      color: PathologyColorService.getColorForPathology('Arthrite rhumatoïde'),
     );
   }
 
@@ -841,7 +841,7 @@ class PathologyService {
           times: ['14:00'],
         ),
       },
-      color: Colors.amber,
+      color: PathologyColorService.getColorForPathology('Hypothyroïdie'),
     );
   }
 
@@ -877,7 +877,7 @@ class PathologyService {
           times: ['14:00'],
         ),
       },
-      color: Colors.brown,
+      color: PathologyColorService.getColorForPathology('Spondylarthrite'),
     );
   }
 
@@ -990,7 +990,7 @@ class PathologyService {
           times: ['09:00'],
         ),
       },
-      color: Colors.red.shade300,
+      color: PathologyColorService.getColorForPathology('Anémie'),
     );
   }
 
@@ -1027,7 +1027,7 @@ class PathologyService {
           times: ['09:00'],
         ),
       },
-      color: Colors.cyan,
+      color: PathologyColorService.getColorForPathology('Asthme'),
     );
   }
 
@@ -1137,7 +1137,7 @@ class PathologyService {
           times: ['09:00'],
         ),
       },
-      color: Colors.pink.shade200,
+      color: PathologyColorService.getColorForPathology('Eczéma'),
     );
   }
 
@@ -1173,7 +1173,7 @@ class PathologyService {
           times: ['14:00'],
         ),
       },
-      color: Colors.purple.shade300,
+      color: PathologyColorService.getColorForPathology('Fibromyalgie'),
     );
   }
 
@@ -1209,7 +1209,7 @@ class PathologyService {
           times: ['08:00', '20:00'],
         ),
       },
-      color: Colors.red.shade700,
+      color: PathologyColorService.getColorForPathology('Hypertension'),
     );
   }
 
@@ -1244,7 +1244,7 @@ class PathologyService {
           times: ['09:00'],
         ),
       },
-      color: Colors.orange.shade300,
+      color: PathologyColorService.getColorForPathology('Hypothyroïdie'),
     );
   }
 
@@ -1280,7 +1280,7 @@ class PathologyService {
           times: ['09:00'],
         ),
       },
-      color: Colors.deepPurple,
+      color: PathologyColorService.getColorForPathology('Migraine'),
     );
   }
 
@@ -1317,7 +1317,7 @@ class PathologyService {
           times: ['09:00'],
         ),
       },
-      color: Colors.deepOrange.shade400,
+      color: PathologyColorService.getColorForPathology('Polyarthrite rhumatoïde'),
     );
   }
 
@@ -1353,7 +1353,7 @@ class PathologyService {
           times: ['09:00'],
         ),
       },
-      color: Colors.red.shade400,
+      color: PathologyColorService.getColorForPathology('Psoriasis'),
     );
   }
 
@@ -1389,7 +1389,7 @@ class PathologyService {
           times: ['09:00'],
         ),
       },
-      color: Colors.amber.shade700,
+      color: PathologyColorService.getColorForPathology('Reflux gastro-œsophagien'),
     );
   }
 
@@ -1426,7 +1426,7 @@ class PathologyService {
           times: ['09:00'],
         ),
       },
-      color: Colors.blue.shade800,
+      color: PathologyColorService.getColorForPathology('Sclérose en plaques'),
     );
   }
 
@@ -1462,7 +1462,7 @@ class PathologyService {
           times: ['09:00'],
         ),
       },
-      color: Colors.green.shade600,
+      color: PathologyColorService.getColorForPathology('Syndrome du côlon irritable'),
     );
   }
 
