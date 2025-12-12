@@ -9,6 +9,8 @@
 
 > **📋 Ce qui reste à faire** : Voir **[CE_QUI_RESTE_A_FAIRE_CIA_12_DECEMBRE_2025.md](./CE_QUI_RESTE_A_FAIRE_CIA_12_DECEMBRE_2025.md)** pour la liste complète des problèmes restants.
 
+> **🔍 Audit qualité code** : Voir **[AUDIT_QUALITE_CODE_12_DECEMBRE_2025.md](./audits/AUDIT_QUALITE_CODE_12_DECEMBRE_2025.md)** pour l'audit qualité code, maintenabilité, tests et documentation.
+
 > **✅ Corrections appliquées le 12 décembre 2025 (suite)** :
 > - ✅ Flux authentification amélioré : Gmail/Google en premier, puis "Créer un compte"
 > - ✅ Service couleurs pathologie : `PathologyColorService` créé pour mapper pathologie → spécialité → couleur (24 templates mis à jour)
