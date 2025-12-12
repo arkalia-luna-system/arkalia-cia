@@ -1,4 +1,4 @@
-# 📋 CE QUI RESTE À FAIRE POUR CIA - 12 Décembre 2025
+# CE QUI RESTE À FAIRE POUR CIA - 12 Décembre 2025
 
 **Date** : 12 décembre 2025  
 **Version** : 1.3.1+6  
@@ -18,16 +18,16 @@ Ne pas développer ARIA ici - Utiliser le projet ARIA séparé.
 
 ---
 
-## 📊 RÉSUMÉ
+## RÉSUMÉ
 
 **Problèmes résolus** : 12/20 (60%)  
-**Problèmes restants** : 7/20 (35%) - **ARIA géré dans projet séparé**
+**Problèmes restants** : 7/20 (35%) - ARIA géré dans projet séparé
 
 - **Critiques** : 6/8 résolus (1 restant : Profil multi-appareil - fonctionnalité future)
 - **Élevés** : 6/7 résolus (1 restant : Pathologies sous-catégories)
 - **Moyens** : 0/5 résolus (5 restants)
 
-**Note** : ARIA serveur est géré dans le projet ARIA séparé, pas dans CIA.
+Note : ARIA serveur est géré dans le projet ARIA séparé, pas dans CIA.
 
 ---
 
@@ -95,7 +95,7 @@ Ne pas développer ARIA ici - Utiliser le projet ARIA séparé.
 
 ---
 
-### 7. Patterns - Erreur non spécifiée 🟡 **MOYENNE**
+### Patterns - Erreur non spécifiée
 
 **Problème** : "Une erreur est survenue" sans détails
 
@@ -115,7 +115,7 @@ Ne pas développer ARIA ici - Utiliser le projet ARIA séparé.
 
 ---
 
-### 8. Statistiques - Placement UI 🟡 **MOYENNE**
+### Statistiques - Placement UI
 
 **Problème** : Trop visible ou pas assez selon contexte
 
@@ -134,7 +134,7 @@ Ne pas développer ARIA ici - Utiliser le projet ARIA séparé.
 
 ---
 
-### 9. Dialog partage - Pas de feedback 🟡 **MOYENNE**
+### Dialog partage - Pas de feedback
 
 **Problème** : Pas de confirmation visuelle après partage
 
@@ -152,7 +152,7 @@ Ne pas développer ARIA ici - Utiliser le projet ARIA séparé.
 
 ---
 
-### 10. BBIA - Placeholder uniquement 🟡 **MOYENNE**
+### BBIA - Placeholder uniquement
 
 **Problème** : BBIA est juste un placeholder, pas d'intégration réelle
 
@@ -163,25 +163,23 @@ Ne pas développer ARIA ici - Utiliser le projet ARIA séparé.
 - Communication CIA ↔ BBIA
 - Interface émotionnelle robotique
 
-**Priorité** : 🟡 **FONCTIONNALITÉ FUTURE** (Phase 4)
+**Priorité** : Fonctionnalité future (Phase 4)
 
 **Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./AUDIT_COMPLET_12_DECEMBRE_2025.md#20-bbia---placeholder-uniquement)
 
 ---
 
-## 📊 RÉCAPITULATIF PAR PRIORITÉ
+## RÉCAPITULATIF PAR PRIORITÉ
 
-### 🔴 Critique (1)
-1. 🔴 Profil multi-appareil - Fonctionnalité future (10-16 jours)
+### Critique (1)
+1. Profil multi-appareil - Fonctionnalité future (10-16 jours)
 
-**Note** : ARIA serveur est géré dans le projet ARIA séparé, pas dans CIA.
+Note : ARIA serveur est géré dans le projet ARIA séparé, pas dans CIA.
 
-### 🟠 Élevé (3)
-1. Portails santé - Épinglage favoris
-2. Contacts urgence - Personnalisation
-3. Pathologies - Sous-catégories
+### Élevé (1)
+1. Pathologies - Sous-catégories
 
-### 🟡 Moyen (5)
+### Moyen (5)
 1. Médecins - Détection auto
 2. Patterns - Erreur non spécifiée
 3. Statistiques - Placement UI
@@ -190,42 +188,44 @@ Ne pas développer ARIA ici - Utiliser le projet ARIA séparé.
 
 ---
 
-## 🎯 RECOMMANDATIONS
+## RECOMMANDATIONS
 
 ### Priorité immédiate
 1. Pathologies - Sous-catégories (2-3 jours)
 
 ### Après
-4. **Médecins - Détection auto** (1 jour) - Amélioration UX
-5. **Patterns - Erreur** (1 jour) - Correction bug
-6. **Statistiques - Placement** (1 jour) - Amélioration UI
+2. Médecins - Détection auto (1 jour)
+3. Patterns - Erreur (1 jour)
+4. Statistiques - Placement (1 jour)
 
 ### Futur
-7. **Profil multi-appareil** (10-16 jours) - Fonctionnalité majeure
-8. **BBIA** (Phase 4) - Fonctionnalité future
+5. Profil multi-appareil (10-16 jours) - Fonctionnalité majeure
+6. BBIA (Phase 4) - Fonctionnalité future
 
 ---
 
-## ✅ CE QUI EST DÉJÀ FAIT
+## CE QUI EST DÉJÀ FAIT
 
 ### Critiques résolus (6/8)
-- ✅ Biométrie
-- ✅ Permissions PDF
-- ✅ Page connexion/inscription
-- ✅ Partage famille
-- ✅ Calendrier rappels
-- ✅ Bug connexion après création compte
+- Biométrie
+- Permissions PDF
+- Page connexion/inscription
+- Partage famille
+- Calendrier rappels
+- Bug connexion après création compte
 
-### Élevés résolus (4/7)
-- ✅ Rappels modifiables
-- ✅ Couleurs pathologie
-- ✅ Hydratation bugs visuels
-- ✅ Paramètres accessibilité
+### Élevés résolus (6/7)
+- Rappels modifiables
+- Couleurs pathologie
+- Hydratation bugs visuels
+- Paramètres accessibilité
+- Portails santé épinglage
+- Contacts urgence personnalisation
 
 ### Documentation créée
-- ✅ Guide déploiement ARIA (Render.com)
-- ✅ Explication GitHub Pages vs Render.com
-- ✅ Prompt audit ARIA complet
+- Guide déploiement ARIA (Render.com)
+- Explication GitHub Pages vs Render.com
+- Prompt audit ARIA complet
 
 ---
 

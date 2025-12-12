@@ -3,56 +3,48 @@
 <div align="center">
 
 **Version** : 1.3.1+6 | **Dernière mise à jour** : 12 décembre 2025  
-**Statut** : ✅ Production-Ready
-
-[![Documentation](https://img.shields.io/badge/docs-169%20fichiers-blue)](./)
-[![Statut](https://img.shields.io/badge/statut-production--ready-success)](./status/STATUT_FINAL_PROJET.md)
-[![Sécurité](https://img.shields.io/badge/sécurité-10%2F10-brightgreen)](./audits/AUDIT_SECURITE_PERFECTION_DECEMBRE_2025.md)
+**Statut** : Production-Ready
 
 </div>
 
 ---
 
-## 🎯 Navigation Rapide
+## Navigation rapide
 
-<div align="center">
-
-| 📖 **Commencer** | 📊 **Statut** | 🏗️ **Architecture** | 🔌 **API** |
+| Commencer | Statut | Architecture | API |
 |:---:|:---:|:---:|:---:|
 | [Index](./INDEX_DOCUMENTATION.md) | [Statut Final](./status/STATUT_FINAL_PROJET.md) | [Architecture](./ARCHITECTURE.md) | [API Docs](./API_DOCUMENTATION.md) |
 
-| ✅ **Corrections** | 🔍 **Audits** | 🔒 **Sécurité** | 🤝 **Contribuer** |
+| Corrections | Audits | Sécurité | Contribuer |
 |:---:|:---:|:---:|:---:|
-| [Toutes Corrections](./deployment/CORRECTIONS_NAVIGATION_AUTH_10_DEC.md) | [Audit 12 déc](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md) ⭐ | [Sécurité](../SECURITY.md) | [Guide](./CONTRIBUTING.md) |
-
-</div>
+| [Toutes Corrections](./deployment/CORRECTIONS_NAVIGATION_AUTH_10_DEC.md) | [Audit 12 déc](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md) | [Sécurité](../SECURITY.md) | [Guide](./CONTRIBUTING.md) |
 
 ---
 
-## 📖 Documents Essentiels
+## Documents essentiels
 
-### 🎯 Vue d'Ensemble
+### Vue d'ensemble
 
 - **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de toute la documentation
 - **[VUE_ENSEMBLE_PROJET.md](./VUE_ENSEMBLE_PROJET.md)** — Vue d'ensemble visuelle du projet
 - **[status/STATUT_FINAL_PROJET.md](./status/STATUT_FINAL_PROJET.md)** — Statut final consolidé du projet
 - **[CHANGELOG.md](./CHANGELOG.md)** — Historique complet des versions
 
-### 🏗️ Architecture & Technique
+### Architecture et technique
 
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture générale avec diagrammes Mermaid
 - **[ARCHITECTURE_SERVICES.md](./ARCHITECTURE_SERVICES.md)** — Architecture des services
 - **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** — Documentation API complète (36 endpoints)
 
-### ✅ Corrections & Audits
+### Corrections et audits
 
-- **[audits/AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md)** — ⭐ **AUDIT COMPLET** basé sur tests utilisateur (20 problèmes identifiés)
+- **[audits/AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md)** — Audit complet basé sur tests utilisateur (20 problèmes identifiés)
 - **[deployment/CORRECTIONS_NAVIGATION_AUTH_10_DEC.md](./deployment/CORRECTIONS_NAVIGATION_AUTH_10_DEC.md)** — Toutes les corrections (novembre-décembre 2025)
 - **[audits/AUDIT_SECURITE_PERFECTION_DECEMBRE_2025.md](./audits/AUDIT_SECURITE_PERFECTION_DECEMBRE_2025.md)** — Audit sécurité & perfection (10/10)
 - **[audits/AUDIT_COMPLET_27_NOVEMBRE_2025.md](./audits/AUDIT_COMPLET_27_NOVEMBRE_2025.md)** — Audit complet consolidé (8.5/10)
 - **[audits/CORRECTIONS_AUDIT_CONSOLIDEES.md](./audits/CORRECTIONS_AUDIT_CONSOLIDEES.md)** — Corrections d'audit (novembre 2025)
 
-### 🔒 Sécurité & Politiques
+### Sécurité et politiques
 
 - **[../SECURITY.md](../SECURITY.md)** — Documentation sécurité complète
 - **[POLITIQUE_CONFIDENTIALITE.md](./POLITIQUE_CONFIDENTIALITE.md)** — Politique de confidentialité RGPD
@@ -60,18 +52,18 @@
 
 ---
 
-## 📁 Organisation par Dossiers
+## Organisation par dossiers
 
-### 📊 `analysis/` — Analyses
+### `analysis/` — Analyses
 
 - **[ANALYSE_COMPLETE_BESOINS_MERE.md](./analysis/ANALYSE_COMPLETE_BESOINS_MERE.md)** — Analyse complète des besoins utilisateur
 - **[BESOINS_MERE_23_NOVEMBRE_2025.md](./analysis/BESOINS_MERE_23_NOVEMBRE_2025.md)** — Besoins exprimés par la mère
 - **[USE_CASES.md](./analysis/USE_CASES.md)** — Cas d'utilisation
 - **[IMPORTS_ANALYSIS.md](./analysis/IMPORTS_ANALYSIS.md)** — Analyse des imports
 
-### 🔍 `audits/` — Audits & Analyses
+### `audits/` — Audits et analyses
 
-- **[AUDIT_SECURITE_PERFECTION_DECEMBRE_2025.md](./audits/AUDIT_SECURITE_PERFECTION_DECEMBRE_2025.md)** — Audit sécurité & perfection (10/10) ⭐ **PRINCIPAL**
+- **[AUDIT_SECURITE_PERFECTION_DECEMBRE_2025.md](./audits/AUDIT_SECURITE_PERFECTION_DECEMBRE_2025.md)** — Audit sécurité et perfection (10/10)
 - **[AUDIT_COMPLET_27_NOVEMBRE_2025.md](./audits/AUDIT_COMPLET_27_NOVEMBRE_2025.md)** — Audit complet consolidé (8.5/10)
 - **[AUDITS_CONSOLIDES.md](./audits/AUDITS_CONSOLIDES.md)** — Audits historiques consolidés
 - **[BILAN_FINAL_10_DECEMBRE_2025.md](./audits/BILAN_FINAL_10_DECEMBRE_2025.md)** — Bilan final décembre 2025
@@ -80,9 +72,9 @@
 - **[RAPPORT_AUDIT_TESTS.md](./audits/RAPPORT_AUDIT_TESTS.md)** — Rapport audit tests
 - **[TESTS_MANQUANTS_SECURITE.md](./audits/TESTS_MANQUANTS_SECURITE.md)** — Tests manquants sécurité
 
-### 🚀 `deployment/` — Déploiement
+### `deployment/` — Déploiement
 
-- **[CORRECTIONS_NAVIGATION_AUTH_10_DEC.md](./deployment/CORRECTIONS_NAVIGATION_AUTH_10_DEC.md)** — Toutes les corrections ⭐ **PRINCIPAL**
+- **[CORRECTIONS_NAVIGATION_AUTH_10_DEC.md](./deployment/CORRECTIONS_NAVIGATION_AUTH_10_DEC.md)** — Toutes les corrections
 - **[STATUT_DEPLOIEMENT_FINAL.md](./deployment/STATUT_DEPLOIEMENT_FINAL.md)** — Statut déploiement final
 - **[STATUT_PWA_FINAL.md](./deployment/STATUT_PWA_FINAL.md)** — Statut PWA final
 - **[CHECKLIST_RELEASE_CONSOLIDEE.md](./deployment/CHECKLIST_RELEASE_CONSOLIDEE.md)** — Checklist release complète
@@ -91,7 +83,7 @@
 - **[GUIDE_DEPLOIEMENT_FINAL.md](./deployment/GUIDE_DEPLOIEMENT_FINAL.md)** — Guide déploiement complet
 - **[WORKFLOW_DEPLOIEMENT_AUTOMATIQUE.md](./deployment/WORKFLOW_DEPLOIEMENT_AUTOMATIQUE.md)** — Workflow déploiement
 
-### 📖 `guides/` — Guides Utilisateur & Développeur
+### `guides/` — Guides utilisateur et développeur
 
 - **[GUIDE_UTILISATION_MERE.md](./guides/GUIDE_UTILISATION_MERE.md)** — Guide utilisateur complet
 - **[COMMENT_ENVOYER_A_MAMAN.md](./guides/COMMENT_ENVOYER_A_MAMAN.md)** — Comment envoyer l'app à maman
