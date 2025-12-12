@@ -20,14 +20,26 @@ echo ""
 # Obtenir le répertoire du script
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+REPO_ROOT="$(cd "$PROJECT_DIR/.." && pwd)"
+
+# Mettre à jour la branche develop AVANT tout
+echo -e "${YELLOW}📥 Mise à jour de la branche develop...${NC}"
+cd "$REPO_ROOT"
+CURRENT_BRANCH=$(git branch --show-current)
+if [ "$CURRENT_BRANCH" != "develop" ]; then
+    echo "   Checkout vers develop..."
+    git checkout develop 2>/dev/null || echo "   ⚠️  Impossible de checkout develop"
+fi
+echo "   Fetch et pull depuis origin/develop..."
+git fetch origin develop
+git pull origin develop || echo "   ⚠️  Impossible de mettre à jour"
+cd "$PROJECT_DIR"
 
 # Vérifier qu'on est dans le bon répertoire
 if [ ! -f "$PROJECT_DIR/pubspec.yaml" ]; then
     echo -e "${RED}❌ Erreur: Ce script doit être exécuté depuis le répertoire du projet${NC}"
     exit 1
 fi
-
-cd "$PROJECT_DIR"
 
 # ========================================================================
 # ÉTAPE 1 : Vérification Flutter
