@@ -296,7 +296,7 @@ class _HealthScreenState extends State<HealthScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.star_border, size: 64, color: Colors.grey),
+            const Icon(Icons.star_border, size: 64, color: Colors.grey),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(16),
