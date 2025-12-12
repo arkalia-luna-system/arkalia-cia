@@ -46,9 +46,32 @@ class GoogleAuthService {
         'error': null,
       };
     } catch (e) {
+      // Gestion d'erreurs spécifiques pour messages utilisateur clairs
+      final errorMessage = e.toString();
+      String userFriendlyMessage;
+      
+      if (errorMessage.contains('DEVELOPER_ERROR') ||
+          errorMessage.contains('10:') ||
+          errorMessage.contains('configuration')) {
+        userFriendlyMessage = 
+            'Erreur de configuration. Vérifiez que le SHA-1 est correctement '
+            'configuré dans Google Cloud Console.';
+      } else if (errorMessage.contains('NETWORK_ERROR') ||
+                 errorMessage.contains('7:') ||
+                 errorMessage.contains('network')) {
+        userFriendlyMessage = 
+            'Erreur de connexion réseau. Vérifiez votre connexion internet.';
+      } else if (errorMessage.contains('SIGN_IN_CANCELLED') ||
+                 errorMessage.contains('12501') ||
+                 errorMessage.contains('cancelled')) {
+        userFriendlyMessage = 'Connexion annulée';
+      } else {
+        userFriendlyMessage = 'Erreur lors de la connexion: ${e.toString()}';
+      }
+      
       return {
         'success': false,
-        'error': 'Erreur lors de la connexion: ${e.toString()}',
+        'error': userFriendlyMessage,
         'user': null,
       };
     }

@@ -82,6 +82,15 @@ if [ -d "build" ]; then
         find build/app/intermediates/javac -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
         echo -e "${GREEN}✅ Répertoire javac nettoyé${NC}"
     fi
+    # Nettoyer spécifiquement compile_and_runtime_not_namespaced_r_class_jar (où l'erreur D8 se produit)
+    if [ -d "build/app/intermediates/compile_and_runtime_not_namespaced_r_class_jar" ]; then
+        find build/app/intermediates/compile_and_runtime_not_namespaced_r_class_jar -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
+        echo -e "${GREEN}✅ Répertoire compile_and_runtime_not_namespaced_r_class_jar nettoyé${NC}"
+    fi
+    # Nettoyer aussi dans kotlin-classes
+    if [ -d "build/app/tmp/kotlin-classes" ]; then
+        find build/app/tmp/kotlin-classes -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
+    fi
 fi
 
 # Lancer un script de surveillance en arrière-plan pour supprimer les fichiers pendant le build

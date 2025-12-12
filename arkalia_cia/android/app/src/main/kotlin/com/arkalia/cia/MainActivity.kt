@@ -1,4 +1,4 @@
-package com.example.arkalia_cia
+package com.arkalia.cia
 
 import io.flutter.embedding.android.FlutterActivity
 

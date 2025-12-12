@@ -44,6 +44,28 @@ clean_macos_files() {
         if [ -d "$PROJECT_DIR/build/app/intermediates" ]; then
             find "$PROJECT_DIR/build/app/intermediates" -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
         fi
+        # Nettoyer spécifiquement javac qui cause les erreurs D8
+        if [ -d "$PROJECT_DIR/build/app/intermediates/javac" ]; then
+            find "$PROJECT_DIR/build/app/intermediates/javac" -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
+            # Supprimer aussi les répertoires vides créés par macOS
+            find "$PROJECT_DIR/build/app/intermediates/javac" -type d -empty -delete 2>/dev/null || true
+        fi
+        # Nettoyer aussi dans compileDebugJavaWithJavac/classes spécifiquement
+        if [ -d "$PROJECT_DIR/build/app/intermediates/javac/debug/compileDebugJavaWithJavac/classes" ]; then
+            find "$PROJECT_DIR/build/app/intermediates/javac/debug/compileDebugJavaWithJavac/classes" -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
+        fi
+        # Nettoyer aussi dans kotlin-classes (où les fichiers sont créés)
+        if [ -d "$PROJECT_DIR/build/app/tmp/kotlin-classes" ]; then
+            find "$PROJECT_DIR/build/app/tmp/kotlin-classes" -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
+        fi
+        # Nettoyer spécifiquement compile_and_runtime_not_namespaced_r_class_jar (où l'erreur se produit)
+        if [ -d "$PROJECT_DIR/build/app/intermediates/compile_and_runtime_not_namespaced_r_class_jar" ]; then
+            find "$PROJECT_DIR/build/app/intermediates/compile_and_runtime_not_namespaced_r_class_jar" -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
+        fi
+        # Nettoyer aussi dans processDebugResources/R.jar spécifiquement
+        if [ -d "$PROJECT_DIR/build/app/intermediates/compile_and_runtime_not_namespaced_r_class_jar/debug/processDebugResources" ]; then
+            find "$PROJECT_DIR/build/app/intermediates/compile_and_runtime_not_namespaced_r_class_jar/debug/processDebugResources" -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
+        fi
     fi
     
     # Nettoyer spécifiquement dans packaged_res (où l'erreur parseReleaseLocalResources se produit)
@@ -63,11 +85,11 @@ echo "👀 Surveillance des fichiers macOS (PID: $$)"
 echo "   Pour arrêter: Ctrl+C ou './cleanup_all.sh'"
 echo ""
 
-# Surveiller en continu (toutes les 0.5 secondes pendant le build pour être plus réactif)
-# Plus rapide pendant le build pour éviter les erreurs AAPT
+# Surveiller en continu (toutes les 0.2 secondes pendant le build pour être ultra-réactif)
+# Plus rapide pendant le build pour éviter les erreurs D8/R8
 while [ -f "$LOCK_FILE" ]; do
     clean_macos_files
-    sleep 0.5
+    sleep 0.2
 done
 
 # Nettoyage à la fin

@@ -179,7 +179,7 @@ fun extractVersionCodeFromPubspec(): Int {
     }
 
 android {
-    namespace = "com.example.arkalia_cia"
+    namespace = "com.arkalia.cia"
     compileSdk = 36
     ndkVersion = "27.0.12077973"
 

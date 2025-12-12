@@ -146,6 +146,10 @@ if [ -d "build" ]; then
     if [ -d "build/app/tmp/kotlin-classes" ]; then
         find build/app/tmp/kotlin-classes -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
     fi
+    # Nettoyer spécifiquement compile_and_runtime_not_namespaced_r_class_jar (où l'erreur D8 se produit)
+    if [ -d "build/app/intermediates/compile_and_runtime_not_namespaced_r_class_jar" ]; then
+        find build/app/intermediates/compile_and_runtime_not_namespaced_r_class_jar -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
+    fi
 fi
 
 # Note: build-android.sh lancera sa propre surveillance, pas besoin de la lancer ici
@@ -167,6 +171,10 @@ if [ -d "build" ]; then
     rm -rf build/app/intermediates/compile_and_runtime_not_namespaced_r_class_jar 2>/dev/null || true
     # Nettoyer aussi les autres répertoires problématiques
     find build -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
+    # Nettoyer spécifiquement compile_and_runtime_not_namespaced_r_class_jar avant suppression
+    if [ -d "build/app/intermediates/compile_and_runtime_not_namespaced_r_class_jar" ]; then
+        find build/app/intermediates/compile_and_runtime_not_namespaced_r_class_jar -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
+    fi
     echo -e "${GREEN}✅ Répertoires problématiques supprimés${NC}"
 fi
 
