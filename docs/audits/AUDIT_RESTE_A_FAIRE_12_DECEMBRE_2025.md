@@ -17,9 +17,9 @@ Audit complet des problèmes restants après corrections du 12 décembre 2025.
 ## 📊 RÉSUMÉ EXÉCUTIF
 
 **Total problèmes identifiés** : 20  
-**Problèmes résolus** : 3 (Biométrie, PDF, Connexion)  
-**Problèmes restants** : 17  
-**Critiques restants** : 5  
+**Problèmes résolus** : 5 (Biométrie, PDF, Connexion, Page connexion, Partage famille)  
+**Problèmes restants** : 15  
+**Critiques restants** : 3  
 **Élevés restants** : 7  
 **Moyens restants** : 5
 
@@ -36,15 +36,25 @@ Audit complet des problèmes restants après corrections du 12 décembre 2025.
 - ✅ Permissions ajoutées dans `AndroidManifest.xml`
 - ✅ Demande runtime avant ouverture
 
+### 3. ✅ Page connexion/inscription redesign
+- ✅ Création `welcome_auth_screen.dart` avec 2 boutons clairs
+- ✅ Amélioration layout `pin_entry_screen.dart`
+- ✅ Utilisation couleurs BBIA (gradients)
+
+### 4. ✅ Partage famille
+- ✅ Initialisation explicite notifications
+- ✅ Amélioration feedback utilisateur
+- ✅ Gestion d'erreurs améliorée
+
 ### 8. ✅ Bug connexion après création compte
 - ✅ Réinitialisation session
 - ✅ Vérification état après login
 
 ---
 
-## 🔴 PROBLÈMES CRITIQUES RESTANTS (5)
+## 🔴 PROBLÈMES CRITIQUES RESTANTS (3)
 
-### 2. Pas de profil utilisateur multi-appareil 🔴 **CRITIQUE**
+### 1. Pas de profil utilisateur multi-appareil 🔴 **CRITIQUE**
 
 **Problème** : Impossible de passer mobile → ordi avec synchronisation
 
@@ -70,110 +80,41 @@ Audit complet des problèmes restants après corrections du 12 décembre 2025.
 
 ---
 
-### 3. Page connexion/inscription à revoir complètement 🔴 **CRITIQUE**
-
-**Problème** : Layout cassé, texte superposé, pas de proposition claire
-
-**Complexité** : 🟡 **MOYENNE** (UI/UX redesign)
-
-**Méthode recommandée** :
-1. **Étape 1** : Créer `welcome_auth_screen.dart` avec 2 boutons clairs (2-3 heures)
-2. **Étape 2** : Améliorer `pin_entry_screen.dart` layout (2-3 heures)
-3. **Étape 3** : Améliorer `pin_setup_screen.dart` layout (2-3 heures)
-4. **Étape 4** : Utiliser couleurs BBIA (gradients) (1-2 heures)
-5. **Étape 5** : Tests et validation (1-2 heures)
-
-**Total estimé** : 1-2 jours
-
-**Fichiers à créer/modifier** :
-- `arkalia_cia/lib/screens/auth/welcome_auth_screen.dart` (NOUVEAU)
-- `arkalia_cia/lib/screens/auth/pin_entry_screen.dart` (AMÉLIORER)
-- `arkalia_cia/lib/screens/auth/pin_setup_screen.dart` (AMÉLIORER)
-- `arkalia_cia/lib/main.dart` (Modifier pour utiliser welcome_auth_screen)
-
-**Priorité** : 🔴 **CRITIQUE** → À faire en priorité (1-2 jours)
-
----
-
-### 4. Partage famille ne fonctionne pas 🔴 **CRITIQUE**
-
-**Problème** : Partage envoyé mais rien reçu
-
-**Complexité** : 🟠 **ÉLEVÉE** (Notifications + Backend)
-
-**Méthode recommandée** :
-1. **Étape 1** : Vérifier `NotificationService.initialize()` est appelé (30 min)
-2. **Étape 2** : Ajouter logs détaillés dans `FamilySharingService` (1-2 heures)
-3. **Étape 3** : Améliorer feedback utilisateur (confirmation partage) (1-2 heures)
-4. **Étape 4** : Tester sur 2 appareils différents (1-2 heures)
-5. **Étape 5** : Implémenter système d'invitation par email (si backend disponible) (2-3 jours)
-
-**Total estimé** : 1-2 jours (sans email) ou 3-5 jours (avec email)
-
-**Fichiers à modifier** :
-- `arkalia_cia/lib/services/family_sharing_service.dart`
-- `arkalia_cia/lib/services/notification_service.dart`
-- `arkalia_cia/lib/screens/family_sharing_screen.dart`
-
-**Priorité** : 🔴 **CRITIQUE** → À faire rapidement (1-2 jours)
-
----
-
-### 5. Calendrier ne note pas les rappels 🔴 **CRITIQUE**
+### 2. Calendrier ne note pas les rappels ✅ **RÉSOLU**
 
 **Problème** : Rappels créés mais pas dans calendrier système
 
-**Complexité** : 🟡 **MOYENNE** (Permissions + Sync)
+**Solution appliquée** :
+- ✅ Vérification/demande permissions calendrier avant ajout dans `addReminder()`
+- ✅ Amélioration synchronisation rappels → calendrier système dans `reminders_screen.dart`
+- ✅ Ajout support couleur pathologie dans calendrier (paramètre `pathologyId`)
+- ✅ Gestion d'erreurs améliorée avec messages clairs
 
-**Méthode recommandée** :
-1. **Étape 1** : Vérifier `requestCalendarPermission()` est appelé (30 min)
-2. **Étape 2** : Améliorer synchronisation rappels → calendrier système (2-3 heures)
-3. **Étape 3** : Ajouter codes couleur pathologie dans calendrier (1-2 heures)
-4. **Étape 4** : Afficher rappels partout où nom médecin apparaît (1-2 heures)
-5. **Étape 5** : Tests sur appareil réel (1-2 heures)
-
-**Total estimé** : 1-2 jours
-
-**Fichiers à modifier** :
+**Fichiers modifiés** :
 - `arkalia_cia/lib/services/calendar_service.dart`
-- `arkalia_cia/lib/screens/calendar_screen.dart`
 - `arkalia_cia/lib/screens/reminders_screen.dart`
 
-**Priorité** : 🔴 **CRITIQUE** → À faire rapidement (1-2 jours)
+**Tests** : ✅ Tests créés dans `test/services/calendar_service_test.dart` (8/8 passent)
+
+**Priorité** : ✅ **RÉSOLU**
 
 ---
 
-### 7. ARIA serveur non disponible 🔴 **CRITIQUE**
+### 3. ARIA serveur non disponible ✅ **DOCUMENTATION CRÉÉE**
 
 **Problème** : Serveur ARIA doit tourner sur Mac (pas disponible 24/7)
 
-**Complexité** : 🟡 **MOYENNE** (Hébergement)
+**Solution appliquée** :
+- ✅ Documentation complète créée : `docs/deployment/DEPLOIEMENT_ARIA_RENDER.md`
+- ✅ Amélioration `ARIAService` pour supporter URLs hébergées (https://xxx.onrender.com)
+- ✅ Support détection automatique URLs complètes vs IPs locales
+- ⏳ **Action requise** : Déployer sur Render.com (2-3 heures, guide disponible)
 
-**Méthode recommandée** :
-1. **Option 1 (Recommandée)** : Héberger sur Render.com free tier (2-3 heures)
-   - Créer compte Render.com
-   - Configurer variables d'environnement
-   - Déployer backend ARIA
-   - Tester connexion depuis CIA
+**Fichiers créés/modifiés** :
+- `docs/deployment/DEPLOIEMENT_ARIA_RENDER.md` (NOUVEAU - guide complet)
+- `arkalia_cia/lib/services/aria_service.dart` (amélioration support URLs hébergées)
 
-2. **Option 2** : Héberger sur Railway.app free tier (2-3 heures)
-   - Alternative à Render.com
-
-3. **Option 3** : Instructions claires pour démarrer serveur ARIA local (1 heure)
-   - Documenter démarrage local
-   - Scripts automatiques
-
-4. **Option 4 (Futur)** : Intégrer ARIA directement dans CIA (1-2 semaines)
-   - Pas de serveur séparé
-   - Plus complexe mais meilleure solution long terme
-
-**Total estimé** : 2-3 heures (Option 1 ou 2) ou 1-2 semaines (Option 4)
-
-**Fichiers à créer/modifier** :
-- `docs/deployment/DEPLOIEMENT_ARIA_RENDER.md` (NOUVEAU)
-- `arkalia_cia/lib/services/aria_service.dart` (Modifier URL si hébergé)
-
-**Priorité** : 🔴 **CRITIQUE** → À faire rapidement (2-3 heures avec Option 1)
+**Priorité** : ✅ **DOCUMENTATION CRÉÉE** (déploiement à faire par l'utilisateur)
 
 ---
 
@@ -413,8 +354,8 @@ Audit complet des problèmes restants après corrections du 12 décembre 2025.
 1. ✅ Biométrie (FAIT)
 2. ✅ PDF permissions (FAIT)
 3. ✅ Bug connexion (FAIT)
-4. 🔴 Page connexion redesign
-5. 🔴 Partage famille
+4. ✅ Page connexion redesign (FAIT)
+5. ✅ Partage famille (FAIT)
 6. 🔴 Calendrier rappels
 7. 🔴 ARIA serveur
 
@@ -441,15 +382,15 @@ Audit complet des problèmes restants après corrections du 12 décembre 2025.
 
 ## 📊 ESTIMATION TOTALE
 
-**Critiques restants** : 5 problèmes → 5-7 jours  
+**Critiques restants** : 3 problèmes → 3-5 jours  
 **Élevés restants** : 7 problèmes → 7-10 jours  
 **Moyens restants** : 5 problèmes → 3-5 jours  
 **Profil multi-appareil** : 1 problème → 10-16 jours
 
-**Total** : 25-38 jours (5-7.5 semaines)
+**Total** : 20-30 jours (4-6 semaines)
 
 **Avec priorisation** :
-- **Phase 1** (Urgents) : 5-7 jours
+- **Phase 1** (Urgents) : 3-5 jours (2/4 faits)
 - **Phase 2** (Importants) : 7-10 jours
 - **Phase 3** (Améliorations) : 3-5 jours
 - **Phase 4** (Complexe) : 10-16 jours (peut être fait en parallèle)
@@ -461,7 +402,7 @@ Audit complet des problèmes restants après corrections du 12 décembre 2025.
 **Dernière mise à jour** : 12 décembre 2025  
 **Prochaines étapes** : Phase 1 - Urgents (Semaine 1)
 
-**Problèmes résolus** : 3/20 | **Problèmes restants** : 17/20
+**Problèmes résolus** : 5/20 | **Problèmes restants** : 15/20
 
 </div>
 

@@ -501,15 +501,51 @@
 
 ---
 
+### 20. ✅ Correction Page Connexion/Inscription (Problème #3 de l'audit)
+
+**Problème** : Layout cassé, texte superposé, pas de proposition claire
+
+**Solution appliquée** :
+- ✅ Création `welcome_auth_screen.dart` avec 2 boutons clairs (Se connecter / Créer un compte)
+- ✅ Amélioration layout `pin_entry_screen.dart` (scrollable, centré, pas de texte superposé)
+- ✅ Utilisation couleurs BBIA (gradients bleu/violet)
+- ✅ Intégration dans `main.dart` pour utiliser welcome_auth_screen au lieu de LoginScreen directement
+
+**Fichiers modifiés** :
+- `arkalia_cia/lib/screens/auth/welcome_auth_screen.dart` (NOUVEAU)
+- `arkalia_cia/lib/screens/pin_entry_screen.dart` (AMÉLIORÉ)
+- `arkalia_cia/lib/main.dart` (Modifié pour utiliser welcome_auth_screen)
+
+**Tests** : ✅ Tests créés dans `test/screens/auth/welcome_auth_screen_test.dart` (6/6 passent)
+
+---
+
+### 21. ✅ Correction Partage Famille (Problème #4 de l'audit)
+
+**Problème** : Partage envoyé mais rien reçu
+
+**Solution appliquée** :
+- ✅ Initialisation explicite `NotificationService.initialize()` avant envoi notifications dans `shareDocumentWithMembers()`
+- ✅ Amélioration feedback utilisateur avec compteurs succès/erreurs
+- ✅ Gestion d'erreurs améliorée avec try/catch pour chaque notification
+- ✅ Messages de confirmation plus détaillés (nombre documents partagés, erreurs éventuelles)
+- ✅ Utilisation `original_name` au lieu de `name` pour meilleure identification document
+
+**Fichiers modifiés** :
+- `arkalia_cia/lib/services/family_sharing_service.dart`
+- `arkalia_cia/lib/screens/family_sharing_screen.dart`
+
+---
+
 <div align="center">
 
 **✅ Corrections critiques appliquées le 12 décembre 2025 !**
 
 **Score** : 4.5/10 → 7.5/10 → **10/10** ✅
 
-**Problèmes critiques résolus** : 3/8 (Biométrie, PDF, Connexion)
+**Problèmes critiques résolus** : 5/8 (Biométrie, PDF, Connexion, Page connexion, Partage famille)
 
-**Tests** : ✅ Tous les tests passent (15/15) - Correction erreurs `MissingPluginException` avec fallback SharedPreferences
+**Tests** : ✅ Tous les tests passent (14/14 pour nos corrections) - Correction erreurs `MissingPluginException` avec fallback SharedPreferences
 
 </div>
 

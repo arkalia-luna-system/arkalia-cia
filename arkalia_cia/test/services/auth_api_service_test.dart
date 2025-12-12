@@ -3,7 +3,6 @@
 // Tests pour vérifier la gestion de session après création de compte
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter/foundation.dart';
 import 'package:arkalia_cia/services/auth_api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

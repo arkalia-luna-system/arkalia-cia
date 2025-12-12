@@ -259,14 +259,28 @@ class _RemindersScreenState extends State<RemindersScreen> {
       // Essayer d'ajouter au calendrier natif (mobile seulement)
       if (!kIsWeb) {
         try {
-          await CalendarService.addReminder(
-            title: reminderData['title'],
-            description: reminderData['description'],
-            reminderDate: DateTime.parse(reminderData['reminder_date']),
-            recurrence: reminderData['recurrence'] as String?,
-          );
+          // Vérifier les permissions avant d'ajouter
+          final hasPermission = await CalendarService.hasCalendarPermission();
+          if (!hasPermission) {
+            final permissionGranted = await CalendarService.requestCalendarPermission();
+            if (!permissionGranted) {
+              // Permission refusée, on continue quand même avec le stockage local
+              _showError('Permission calendrier refusée. Le rappel est sauvegardé localement uniquement.');
+            }
+          }
+          
+          // Ajouter au calendrier si permission accordée
+          if (hasPermission || await CalendarService.hasCalendarPermission()) {
+            await CalendarService.addReminder(
+              title: reminderData['title'],
+              description: reminderData['description'],
+              reminderDate: DateTime.parse(reminderData['reminder_date']),
+              recurrence: reminderData['recurrence'] as String?,
+            );
+          }
         } catch (e) {
           // Ignorer les erreurs de calendrier, on a déjà sauvegardé localement
+          _showError('Erreur lors de l\'ajout au calendrier: $e');
         }
       }
 

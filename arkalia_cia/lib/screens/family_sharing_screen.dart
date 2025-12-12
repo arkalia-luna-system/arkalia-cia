@@ -86,15 +86,46 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
     }
 
     // Partager avec tous les membres actifs
-    final memberIds = List.generate(_members.length, (i) => i);
+    final memberIds = _members.asMap().entries
+        .where((e) => e.value.isActive)
+        .map((e) => e.key)
+        .toList();
+    
+    int successCount = 0;
+    int errorCount = 0;
+    
     for (final docId in selectedIds) {
-      await _sharingService.shareDocumentWithMembers(docId, memberIds);
+      try {
+        await _sharingService.shareDocumentWithMembers(
+          docId,
+          memberIds,
+          sendNotification: true,
+        );
+        successCount++;
+      } catch (e) {
+        errorCount++;
+        print('[ARKALIA] Erreur partage document $docId: $e');
+      }
     }
 
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Documents partagés avec succès')),
-      );
+      if (errorCount == 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('$successCount document(s) partagé(s) avec succès'),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('$successCount partagé(s), $errorCount erreur(s)'),
+            backgroundColor: Colors.orange,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
       setState(() {
         _selectedDocuments.clear();
       });

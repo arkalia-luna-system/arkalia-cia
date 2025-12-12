@@ -32,10 +32,28 @@ class ARIAService {
   }
 
   /// Construit l'URL de base ARIA
+  /// Supporte les URLs complètes (https://xxx.onrender.com) et les IPs locales
   static Future<String?> getBaseURL() async {
     final ip = await getARIAIP();
     if (ip == null || ip.isEmpty) return null;
     final port = await getARIAPort();
+    
+    // Si c'est déjà une URL complète (http:// ou https://), la retourner telle quelle
+    if (ip.startsWith('http://') || ip.startsWith('https://')) {
+      return ip;
+    }
+    
+    // Si le port est 443, utiliser HTTPS (pour les services hébergés)
+    if (port == '443') {
+      return 'https://$ip';
+    }
+    
+    // Si le port est 80, utiliser HTTP sans port
+    if (port == '80') {
+      return 'http://$ip';
+    }
+    
+    // Sinon, utiliser HTTP avec port (pour les services locaux)
     return 'http://$ip:$port';
   }
 

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import '../models/doctor.dart';
 import 'doctor_service.dart';
+import 'pathology_service.dart';
 
 /// Service de gestion du calendrier natif pour Arkalia CIA
 /// Intègre le calendrier système et les notifications
@@ -46,11 +47,22 @@ class CalendarService {
     required DateTime reminderDate,
     String? recurrence, // 'daily', 'weekly', 'monthly', ou null
     int? doctorId, // ID du médecin pour couleur
+    int? pathologyId, // ID de la pathologie pour couleur
   }) async {
     // Sur le web, device_calendar n'est pas disponible
     if (kIsWeb) {
       return false;
     }
+    
+    // Vérifier et demander les permissions si nécessaire
+    final hasPermission = await hasCalendarPermission();
+    if (!hasPermission) {
+      final permissionGranted = await requestCalendarPermission();
+      if (!permissionGranted) {
+        return false; // Permission refusée
+      }
+    }
+    
     try {
       // Récupérer les calendriers disponibles
       final calendarsResult = await _deviceCalendarPlugin.retrieveCalendars();
@@ -61,14 +73,24 @@ class CalendarService {
       // Utiliser le premier calendrier disponible
       final calendar = calendarsResult.data!.first;
 
-      // Récupérer la couleur du médecin si disponible
-      Color? doctorColor;
+      // Récupérer la couleur du médecin ou de la pathologie si disponible
+      Color? eventColor;
       if (doctorId != null) {
         try {
           final doctorService = DoctorService();
           final doctor = await doctorService.getDoctorById(doctorId);
           if (doctor != null) {
-            doctorColor = Doctor.getColorForSpecialty(doctor.specialty);
+            eventColor = Doctor.getColorForSpecialty(doctor.specialty);
+          }
+        } catch (e) {
+          // Ignorer erreur, utiliser couleur par défaut
+        }
+      } else if (pathologyId != null) {
+        try {
+          final pathologyService = PathologyService();
+          final pathology = await pathologyService.getPathologyById(pathologyId);
+          if (pathology != null) {
+            eventColor = pathology.color;
           }
         } catch (e) {
           // Ignorer erreur, utiliser couleur par défaut
@@ -89,14 +111,13 @@ class CalendarService {
       );
       
       // Ajouter info couleur dans description si disponible
-      if (doctorColor != null) {
+      if (eventColor != null) {
         // Format: #RRGGBB (sans alpha)
         // Les accesseurs .red, .green, .blue retournent des valeurs entre 0 et 255
-        // Note: .blue est deprecated mais fonctionne encore dans Flutter 3.35.3
-        final r = doctorColor.red & 0xff;
-        final g = doctorColor.green & 0xff;
-        // ignore: deprecated_member_use
-        final b = doctorColor.blue & 0xff; // Utiliser .blue (deprecated mais fonctionne)
+        // Utiliser les accesseurs recommandés (non deprecated)
+        final r = (eventColor.r * 255.0).round() & 0xff;
+        final g = (eventColor.g * 255.0).round() & 0xff;
+        final b = (eventColor.b * 255.0).round() & 0xff;
         final colorHex = '#${r.toRadixString(16).padLeft(2, '0').toUpperCase()}'
             '${g.toRadixString(16).padLeft(2, '0').toUpperCase()}'
             '${b.toRadixString(16).padLeft(2, '0').toUpperCase()}';

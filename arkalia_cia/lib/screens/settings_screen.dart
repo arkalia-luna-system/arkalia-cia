@@ -709,12 +709,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Text('Avertissement Médical'),
           ],
         ),
-        content: SingleChildScrollView(
+        content: const SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'IMPORTANT : Arkalia CIA n\'est PAS un dispositif médical ou un outil de diagnostic.',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
@@ -722,27 +722,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   color: Colors.red,
                 ),
               ),
-              const SizedBox(height: 16),
-              const Text(
+              SizedBox(height: 16),
+              Text(
                 'L\'application :',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 8),
-              const Text('❌ Ne fournit PAS de conseils médicaux, de diagnostics ou de traitements'),
-              const SizedBox(height: 8),
-              const Text('❌ Ne remplace PAS les conseils de professionnels de santé'),
-              const SizedBox(height: 8),
-              const Text('✅ Est un outil d\'organisation pour gérer vos documents et rappels'),
-              const SizedBox(height: 16),
-              const Text(
+              SizedBox(height: 8),
+              Text('❌ Ne fournit PAS de conseils médicaux, de diagnostics ou de traitements'),
+              SizedBox(height: 8),
+              Text('❌ Ne remplace PAS les conseils de professionnels de santé'),
+              SizedBox(height: 8),
+              Text('✅ Est un outil d\'organisation pour gérer vos documents et rappels'),
+              SizedBox(height: 16),
+              Text(
                 'Toujours consulter un professionnel de santé qualifié pour toute décision médicale.',
                 style: TextStyle(
                   fontStyle: FontStyle.italic,
                   color: Colors.grey,
                 ),
               ),
-              const SizedBox(height: 16),
-              const Text(
+              SizedBox(height: 16),
+              Text(
                 'Nous ne sommes pas responsables des décisions médicales prises sur la base d\'informations stockées dans l\'application.',
                 style: TextStyle(fontSize: 12, color: Colors.grey),
               ),
@@ -770,29 +770,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Text('Politique de Confidentialité'),
           ],
         ),
-        content: SingleChildScrollView(
+        content: const SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               Text(
                 'Arkalia CIA respecte votre vie privée :',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 16),
-              const Text('✅ Aucune collecte de données'),
-              const Text('   Toutes vos données restent sur votre appareil'),
-              const SizedBox(height: 8),
-              const Text('✅ Aucune transmission'),
-              const Text('   Vos données ne quittent jamais votre téléphone'),
-              const SizedBox(height: 8),
-              const Text('✅ Chiffrement AES-256'),
-              const Text('   Tous vos documents sont chiffrés localement'),
-              const SizedBox(height: 8),
-              const Text('✅ Stockage 100% local'),
-              const Text('   Aucun cloud, aucun serveur externe'),
-              const SizedBox(height: 16),
-              const Text(
+              SizedBox(height: 16),
+              Text('✅ Aucune collecte de données'),
+              Text('   Toutes vos données restent sur votre appareil'),
+              SizedBox(height: 8),
+              Text('✅ Aucune transmission'),
+              Text('   Vos données ne quittent jamais votre téléphone'),
+              SizedBox(height: 8),
+              Text('✅ Chiffrement AES-256'),
+              Text('   Tous vos documents sont chiffrés localement'),
+              SizedBox(height: 8),
+              Text('✅ Stockage 100% local'),
+              Text('   Aucun cloud, aucun serveur externe'),
+              SizedBox(height: 16),
+              Text(
                 'Vous avez le contrôle total sur vos données. Vous pouvez les exporter ou les supprimer à tout moment.',
                 style: TextStyle(fontSize: 12, color: Colors.grey),
               ),

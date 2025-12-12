@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
 import '../services/local_storage_service.dart';
 import 'notification_service.dart';
+import '../utils/app_logger.dart';
 
 class FamilyMember {
   final int? id;
@@ -221,16 +222,36 @@ class FamilySharingService {
     
     // Envoyer notification si demandé
     if (sendNotification) {
+      // S'assurer que NotificationService est initialisé
+      await NotificationService.initialize();
+      
       final members = await getFamilyMembers();
+      final doc = await LocalStorageService.getDocuments();
+      final docData = doc.firstWhere(
+        (d) => d['id'] == documentId,
+        orElse: () => {'name': 'Document', 'original_name': 'Document'},
+      );
+      final docName = docData['original_name'] ?? docData['name'] ?? 'Document';
+      
       for (final memberId in memberIds) {
-        final member = members.firstWhere((m) => m.id == memberId, orElse: () => FamilyMember(name: 'Membre', email: '', relationship: ''));
-        final doc = await LocalStorageService.getDocuments();
-        final docName = doc.firstWhere((d) => d['id'] == documentId, orElse: () => {'name': 'Document'})['name'] ?? 'Document';
-        await NotificationService.notifyDocumentShared(
-          documentName: docName,
-          memberName: member.name,
+        final member = members.firstWhere(
+          (m) => m.id == memberId,
+          orElse: () => FamilyMember(name: 'Membre', email: '', relationship: ''),
         );
+        
+        try {
+          await NotificationService.notifyDocumentShared(
+            documentName: docName,
+            memberName: member.name,
+          );
+        } catch (e) {
+          // Logger l'erreur mais ne pas bloquer le partage
+          AppLogger.error('Erreur notification partage', e);
+        }
       }
+      
+      // Confirmation visuelle supplémentaire (sera affichée dans l'UI)
+      AppLogger.info('Document $docName partagé avec ${memberIds.length} membre(s)');
     }
   }
   

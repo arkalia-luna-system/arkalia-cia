@@ -97,38 +97,41 @@ class _PinEntryScreenState extends State<PinEntryScreen> {
           child: Center(
             child: Padding(
               padding: const EdgeInsets.all(32.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Logo/Icone
-                  const Icon(
-                    Icons.lock,
-                    size: 80,
-                    color: Colors.white,
-                  ),
-                  const SizedBox(height: 32),
-
-                  // Titre
-                  const Text(
-                    'Arkalia CIA',
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(height: 40),
+                    // Logo/Icone
+                    const Icon(
+                      Icons.lock,
+                      size: 80,
                       color: Colors.white,
                     ),
-                  ),
-                  const SizedBox(height: 16),
+                    const SizedBox(height: 32),
 
-                  // Message
-                  const Text(
-                    'Entrez votre code PIN',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.white70,
+                    // Titre
+                    const Text(
+                      'Arkalia CIA',
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 48),
+                    const SizedBox(height: 16),
+
+                    // Message
+                    const Text(
+                      'Entrez votre code PIN',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white70,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 48),
 
                   // Message d'erreur
                   if (_errorMessage.isNotEmpty)
@@ -202,7 +205,9 @@ class _PinEntryScreenState extends State<PinEntryScreen> {
                       ),
                     ),
                   ),
-                ],
+                    const SizedBox(height: 40),
+                  ],
+                ),
               ),
             ),
           ),

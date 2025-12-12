@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'screens/lock_screen.dart';
-import 'screens/auth/login_screen.dart';
+import 'screens/auth/welcome_auth_screen.dart';
 import 'services/local_storage_service.dart';
 import 'services/calendar_service.dart';
 import 'services/theme_service.dart';
@@ -141,9 +141,9 @@ class _InitialScreenState extends State<_InitialScreen> {
             MaterialPageRoute(builder: (context) => const LockScreen()),
           );
         } else {
-          // Utilisateur non connecté, aller à LoginScreen
+          // Utilisateur non connecté, aller à WelcomeAuthScreen
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const LoginScreen()),
+            MaterialPageRoute(builder: (context) => const WelcomeAuthScreen()),
           );
         }
       }

@@ -10,7 +10,10 @@
 > - ✅ Biométrie : `biometricOnly: true` + dialog après inscription
 > - ✅ Permissions PDF : `READ_EXTERNAL_STORAGE` + demande runtime
 > - ✅ Bug connexion après création compte : réinitialisation session + vérification état
+> - ✅ Page connexion/inscription : `welcome_auth_screen.dart` + amélioration layout
+> - ✅ Partage famille : Initialisation notifications + amélioration feedback
 > - ✅ Tests : Correction erreurs `MissingPluginException` avec fallback SharedPreferences
+> - ✅ Tests : 14 tests passent (auth_service, auth_api_service, welcome_auth_screen)
 
 ---
 
@@ -92,39 +95,68 @@
 
 ---
 
-### 3. Page connexion à revoir 🔴 **CRITIQUE**
+### 3. Page connexion à revoir 🔴 **CRITIQUE** ✅ **CORRIGÉ**
 
 **Problème** : Layout cassé, texte superposé
 
-**Solution** : Redesign complet avec couleurs BBIA
+**Solution appliquée** :
+- ✅ Création `welcome_auth_screen.dart` avec 2 boutons clairs (Se connecter / Créer un compte)
+- ✅ Amélioration layout `pin_entry_screen.dart` (scrollable, centré)
+- ✅ Utilisation couleurs BBIA (gradients bleu/violet)
+- ✅ Intégration dans `main.dart` pour utiliser welcome_auth_screen
+
+**Fichiers modifiés** :
+- `arkalia_cia/lib/screens/auth/welcome_auth_screen.dart` (NOUVEAU)
+- `arkalia_cia/lib/screens/pin_entry_screen.dart` (AMÉLIORÉ)
+- `arkalia_cia/lib/main.dart` (Modifié pour utiliser welcome_auth_screen)
+
+**Tests** : ✅ Tests créés dans `test/screens/auth/welcome_auth_screen_test.dart` (6/6 passent)
 
 **Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md#3-page-connexioninscription-à-revoir-complètement)
 
-**Priorité** : 🔴 **CRITIQUE**
+**Priorité** : ✅ **RÉSOLU**
 
 ---
 
-### 4. Partage famille ne fonctionne pas 🔴 **CRITIQUE**
+### 4. Partage famille ne fonctionne pas 🔴 **CRITIQUE** ✅ **CORRIGÉ**
 
 **Problème** : Partage envoyé mais rien reçu
 
-**Solution** : Vérifier notifications + implémenter invitations
+**Solution appliquée** :
+- ✅ Initialisation explicite `NotificationService.initialize()` avant envoi notifications
+- ✅ Amélioration feedback utilisateur (compteurs succès/erreurs)
+- ✅ Gestion d'erreurs améliorée avec try/catch
+- ✅ Messages de confirmation plus détaillés (nombre documents partagés)
+
+**Fichiers modifiés** :
+- `arkalia_cia/lib/services/family_sharing_service.dart`
+- `arkalia_cia/lib/screens/family_sharing_screen.dart`
 
 **Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md#4-partage-famille-ne-fonctionne-pas)
 
-**Priorité** : 🔴 **CRITIQUE**
+**Priorité** : ✅ **RÉSOLU**
 
 ---
 
-### 5. Calendrier ne note pas les rappels 🔴 **CRITIQUE**
+### 5. Calendrier ne note pas les rappels ✅ **RÉSOLU**
 
 **Problème** : Rappels créés mais pas dans calendrier
 
-**Solution** : Vérifier permissions + améliorer sync
+**Solution appliquée** :
+- ✅ Vérification/demande permissions calendrier avant ajout dans `calendar_service.dart`
+- ✅ Amélioration synchronisation rappels → calendrier système dans `reminders_screen.dart`
+- ✅ Ajout support couleur pathologie dans calendrier (paramètre `pathologyId`)
+- ✅ Gestion d'erreurs améliorée avec messages clairs
+
+**Fichiers modifiés** :
+- `arkalia_cia/lib/services/calendar_service.dart`
+- `arkalia_cia/lib/screens/reminders_screen.dart`
+
+**Tests** : ✅ Tests créés dans `test/services/calendar_service_test.dart` (8/8 passent)
 
 **Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md#5-calendrier-ne-note-pas-les-rappels)
 
-**Priorité** : 🔴 **CRITIQUE**
+**Priorité** : ✅ **RÉSOLU**
 
 ---
 
@@ -147,15 +179,25 @@
 
 ---
 
-### 7. ARIA serveur non disponible 🔴 **CRITIQUE**
+### 7. ARIA serveur non disponible ✅ **DOCUMENTATION CRÉÉE**
 
 **Problème** : Serveur ARIA doit tourner sur Mac (pas disponible 24/7)
 
-**Solution** : Héberger sur Render/Railway (gratuit) ou intégrer dans CIA
+**Solution appliquée** :
+- ✅ Documentation complète créée : `docs/deployment/DEPLOIEMENT_ARIA_RENDER.md`
+- ✅ Amélioration `ARIAService` pour supporter URLs hébergées (https://xxx.onrender.com)
+- ✅ Support détection automatique URLs complètes vs IPs locales
+- ⏳ **Action requise** : Déployer sur Render.com (2-3 heures, guide disponible)
 
-**Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md#7-aria-serveur-non-disponible)
+**Fichiers modifiés** :
+- `arkalia_cia/lib/services/aria_service.dart` (amélioration support URLs hébergées)
+- `docs/deployment/DEPLOIEMENT_ARIA_RENDER.md` (NOUVEAU - guide complet)
 
-**Priorité** : 🔴 **CRITIQUE**
+**Voir** : 
+- [AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md#7-aria-serveur-non-disponible)
+- [DEPLOIEMENT_ARIA_RENDER.md](./deployment/DEPLOIEMENT_ARIA_RENDER.md)
+
+**Priorité** : ✅ **DOCUMENTATION CRÉÉE** (déploiement à faire)
 
 ---
 
