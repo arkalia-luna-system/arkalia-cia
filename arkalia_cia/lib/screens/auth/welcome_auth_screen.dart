@@ -18,9 +18,14 @@ class WelcomeAuthScreen extends StatelessWidget {
     }
   }
 
+  /// Gestion de la connexion Google Sign In
+  /// 
+  /// **Fonctionnalité future** : Implémentation prévue avec `google_sign_in` package
+  /// - Nécessite configuration OAuth dans Google Cloud Console
+  /// - Intégration avec backend pour authentification JWT
+  /// 
+  /// Pour l'instant, affiche un message informatif à l'utilisateur
   Future<void> _handleGoogleSignIn(BuildContext context) async {
-    // TODO: Implémenter Google Sign In
-    // Pour l'instant, afficher un message informatif
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -31,9 +36,14 @@ class WelcomeAuthScreen extends StatelessWidget {
     }
   }
 
+  /// Gestion de la connexion Gmail Sign In
+  /// 
+  /// **Fonctionnalité future** : Implémentation prévue avec `google_sign_in` package
+  /// - Nécessite configuration OAuth dans Google Cloud Console
+  /// - Intégration avec backend pour authentification JWT
+  /// 
+  /// Pour l'instant, affiche un message informatif à l'utilisateur
   Future<void> _handleGmailSignIn(BuildContext context) async {
-    // TODO: Implémenter Gmail Sign In
-    // Pour l'instant, afficher un message informatif
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
