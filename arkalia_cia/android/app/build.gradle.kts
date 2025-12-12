@@ -114,7 +114,7 @@ fun extractVersionCodeFromPubspec(): Long {
                             val versionCodeStr = regexMatch.groupValues[1]
                             val codeLong = versionCodeStr.toLongOrNull() ?: 1L
                             println("🔢 Version Code extrait (regex fallback): $codeLong (groupe: '$versionCodeStr')")
-                            codeLong.toLong()
+                            return@extractVersionCodeFromPubspec codeLong.toLong()
                         } else {
                             println("⚠️ Aucun version code trouvé dans pubspec.yaml, utilisation de 1")
                             return@extractVersionCodeFromPubspec 1L
