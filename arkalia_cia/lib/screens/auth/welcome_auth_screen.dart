@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
 import 'register_screen.dart';
-import '../lock_screen.dart';
+import '../home_page.dart';
+import '../onboarding/welcome_screen.dart';
 import '../../services/google_auth_service.dart';
+import '../../services/onboarding_service.dart';
 
 /// Écran d'accueil pour l'authentification
 /// Propose plusieurs options : Gmail/Google, créer un compte, ou continuer sans compte
@@ -40,11 +42,25 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
     super.dispose();
   }
 
+  /// SIMPLIFIÉ : Mode offline - aller directement à HomePage
+  /// LockScreen s'affichera automatiquement au prochain démarrage si authentification activée
   Future<void> _handleContinueWithoutAccount(BuildContext context) async {
-    // Mode offline : aller directement à LockScreen (qui proposera PIN si nécessaire)
-    if (context.mounted) {
+    if (!context.mounted) return;
+    
+    // Vérifier l'onboarding
+    final onboardingCompleted = await OnboardingService.isOnboardingCompleted();
+    
+    if (!context.mounted) return;
+    
+    if (!onboardingCompleted) {
+      // Première connexion : afficher onboarding
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const LockScreen()),
+        MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+      );
+    } else {
+      // Onboarding complété : aller directement à l'accueil
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const HomePage()),
       );
     }
   }
@@ -74,10 +90,24 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
       Navigator.of(context).pop(); // Fermer le dialog de chargement
 
       if (result['success'] == true) {
-        // Connexion réussie, aller à LockScreen
-        if (context.mounted) {
+        // SIMPLIFIÉ : Connexion réussie, aller directement à HomePage
+        // LockScreen s'affichera automatiquement au prochain démarrage si authentification activée
+        if (!context.mounted) return;
+        
+        // Vérifier l'onboarding
+        final onboardingCompleted = await OnboardingService.isOnboardingCompleted();
+        
+        if (!context.mounted) return;
+        
+        if (!onboardingCompleted) {
+          // Première connexion : afficher onboarding
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const LockScreen()),
+            MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+          );
+        } else {
+          // Onboarding complété : aller directement à l'accueil
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const HomePage()),
           );
         }
       } else {

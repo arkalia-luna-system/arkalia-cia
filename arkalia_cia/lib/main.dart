@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'screens/lock_screen.dart';
 import 'screens/auth/welcome_auth_screen.dart';
+import 'screens/home_page.dart';
 import 'services/local_storage_service.dart';
 import 'services/calendar_service.dart';
 import 'services/theme_service.dart';
@@ -9,6 +10,9 @@ import 'services/auto_sync_service.dart';
 import 'services/auth_api_service.dart';
 import 'services/backend_config_service.dart';
 import 'services/google_auth_service.dart';
+import 'services/auth_service.dart';
+import 'services/pin_auth_service.dart';
+import 'services/onboarding_service.dart';
 import 'services/offline_cache_service.dart';
 import 'services/notification_service.dart';
 import 'services/runtime_security_service.dart';
@@ -163,10 +167,21 @@ class _InitialScreenState extends State<_InitialScreen> {
             }
           }
           
-          // Token valide ou erreur réseau (on garde le token) : aller à LockScreen
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const LockScreen()),
-          );
+          // Token valide ou erreur réseau (on garde le token) : vérifier si auth activée
+          // SIMPLIFIÉ : Aller à LockScreen seulement si authentification activée ET configurée
+          // Sinon, aller directement à HomePage
+          final shouldShowLock = await _shouldShowLockScreen();
+          if (mounted) {
+            if (shouldShowLock) {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => const LockScreen()),
+              );
+            } else {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => const HomePage()),
+              );
+            }
+          }
         } else {
           // Pas de token : aller à WelcomeAuthScreen pour login/register
           Navigator.of(context).pushReplacement(
@@ -180,10 +195,19 @@ class _InitialScreenState extends State<_InitialScreen> {
       
       if (mounted) {
         if (isGoogleSignedIn) {
-          // Utilisateur connecté avec Google : aller à LockScreen
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const LockScreen()),
-          );
+          // SIMPLIFIÉ : Utilisateur connecté avec Google : vérifier si auth activée
+          final shouldShowLock = await _shouldShowLockScreen();
+          if (mounted) {
+            if (shouldShowLock) {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => const LockScreen()),
+              );
+            } else {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => const HomePage()),
+              );
+            }
+          }
         } else {
           // Pas de connexion Google : proposer WelcomeAuthScreen
           // L'utilisateur peut choisir de se connecter avec Google ou continuer sans compte (mode offline)
@@ -193,6 +217,26 @@ class _InitialScreenState extends State<_InitialScreen> {
         }
       }
     }
+  }
+
+  /// SIMPLIFIÉ : Vérifie si LockScreen doit être affiché
+  /// LockScreen s'affiche seulement si authentification activée ET configurée
+  Future<bool> _shouldShowLockScreen() async {
+    final authEnabled = await AuthService.isAuthEnabled();
+    if (!authEnabled) return false;
+    
+    final shouldAuthOnStartup = await AuthService.shouldAuthenticateOnStartup();
+    if (!shouldAuthOnStartup) return false;
+    
+    // Sur web, vérifier si PIN configuré
+    if (kIsWeb) {
+      final pinConfigured = await PinAuthService.isPinConfigured();
+      return pinConfigured;
+    }
+    
+    // Sur mobile, vérifier si biométrie disponible
+    final biometricAvailable = await AuthService.isBiometricAvailable();
+    return biometricAvailable;
   }
 
   @override

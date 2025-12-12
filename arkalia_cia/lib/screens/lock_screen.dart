@@ -3,9 +3,6 @@ import 'package:flutter/foundation.dart';
 import '../services/auth_service.dart';
 import '../services/pin_auth_service.dart';
 import '../services/onboarding_service.dart';
-import '../services/auth_api_service.dart';
-import '../services/backend_config_service.dart';
-import '../services/google_auth_service.dart';
 import 'home_page.dart';
 import 'onboarding/welcome_screen.dart';
 import 'pin_entry_screen.dart';
@@ -29,32 +26,14 @@ class _LockScreenState extends State<LockScreen> {
     _initializeAuth();
   }
 
-  /// Initialise l'authentification : vérifie d'abord la disponibilité, puis lance l'auth
+  /// Initialise l'authentification : vérifie la disponibilité, puis lance l'auth
+  /// SIMPLIFIÉ : LockScreen s'affiche seulement si authentification activée ET configurée
+  /// La vérification de connexion est faite dans main.dart, pas besoin de la refaire ici
   Future<void> _initializeAuth() async {
-    // D'abord, vérifier si l'utilisateur est vraiment connecté (Google ou backend)
-    // Si pas connecté, permettre l'accès direct en mode offline
-    // (l'utilisateur a choisi "Continuer sans compte")
-    final isReallyConnected = await _isReallyConnected();
-    if (!isReallyConnected) {
-      // Mode offline : permettre l'accès direct sans authentification
-      _unlockApp();
-      return;
-    }
-    
-    // D'abord, vérifier la disponibilité biométrique
+    // Vérifier la disponibilité biométrique
     await _checkBiometricAvailability();
-    // Ensuite, lancer l'authentification au démarrage
+    // Lancer l'authentification au démarrage
     await _authenticateOnStartup();
-  }
-
-/// Vérifie si l'utilisateur est vraiment connecté (pas juste en mode offline)
-  /// Retourne true si connecté avec Google ou backend, false si mode offline
-  Future<bool> _isReallyConnected() async {
-    final backendEnabled = await BackendConfigService.isBackendEnabled();
-    if (backendEnabled) {
-      return await AuthApiService.isLoggedIn();
-    }
-    return await GoogleAuthService.isSignedIn();
   }
 
   Future<void> _checkBiometricAvailability() async {
