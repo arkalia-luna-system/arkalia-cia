@@ -27,13 +27,17 @@ fi
 
 # Mettre à jour les branches (main pour web, develop pour Android/macOS)
 echo -e "${YELLOW}📥 Mise à jour des branches...${NC}"
-cd "$(cd "$PROJECT_DIR/.." && pwd)"
+REPO_ROOT="$(cd "$PROJECT_DIR/.." && pwd)"
+cd "$REPO_ROOT"
 CURRENT_BRANCH=$(git branch --show-current)
 echo "   Branche actuelle: $CURRENT_BRANCH"
 echo "   Web utilise: main"
 echo "   Android/macOS utilisent: develop"
-# Pour web, on utilisera main, pour Android/macOS on reste sur develop
-git pull origin "$CURRENT_BRANCH" || echo "   ⚠️  Impossible de mettre à jour (peut-être pas un repo git)"
+# Mettre à jour develop d'abord
+echo "   Fetch et pull develop..."
+git fetch origin develop
+git checkout develop 2>/dev/null || true
+git pull origin develop || echo "   ⚠️  Impossible de mettre à jour develop"
 cd "$PROJECT_DIR"
 
 # Nettoyer
@@ -68,48 +72,62 @@ if echo "$DEVICES" | grep -q "Chrome\|chrome\|web"; then
         WEB_DEVICE="web-server"
     fi
     (
-        cd "$(cd "$PROJECT_DIR/.." && pwd)"
+        cd "$REPO_ROOT"
+        echo "   Checkout main pour web..."
+        git fetch origin main
         git checkout main 2>/dev/null || echo "   ⚠️  Branche main non disponible"
         git pull origin main || true
         cd "$PROJECT_DIR"
+        echo "   Nettoyage et pub get pour web..."
         flutter clean > /dev/null 2>&1 || true
         flutter pub get
+        echo "   Lancement web..."
         flutter run -d "$WEB_DEVICE" --web-port=8080 > /tmp/arkalia_web.log 2>&1
     ) &
     WEB_PID=$!
     echo "   Web PID: $WEB_PID"
     echo "   URL: http://localhost:8080"
-    sleep 2
+    sleep 3
 else
     echo -e "${YELLOW}⚠️  Web non disponible, web ignoré${NC}"
     WEB_PID=""
 fi
 
-# Lancer sur ANDROID
+# Lancer sur ANDROID (utilise develop)
 if echo "$DEVICES" | grep -q "android\|Android\|mobile"; then
-    echo -e "${GREEN}📱 Lancement sur ANDROID...${NC}"
+    echo -e "${GREEN}📱 Lancement sur ANDROID (branche develop)...${NC}"
     (
+        cd "$REPO_ROOT"
+        echo "   Vérification develop pour Android..."
+        git checkout develop 2>/dev/null || true
         cd "$PROJECT_DIR"
         bash scripts/run-android.sh > /tmp/arkalia_android.log 2>&1
     ) &
     ANDROID_PID=$!
     echo "   Android PID: $ANDROID_PID"
-    sleep 2
+    sleep 3
 else
     echo -e "${YELLOW}⚠️  Android non disponible, Android ignoré${NC}"
     ANDROID_PID=""
 fi
 
-# Lancer sur macOS
+# Lancer sur macOS (utilise develop)
 if echo "$DEVICES" | grep -q "macos"; then
-    echo -e "${GREEN}🍎 Lancement sur macOS...${NC}"
+    echo -e "${GREEN}🍎 Lancement sur macOS (branche develop)...${NC}"
     (
+        cd "$REPO_ROOT"
+        echo "   Vérification develop pour macOS..."
+        git checkout develop 2>/dev/null || true
         cd "$PROJECT_DIR"
+        echo "   Nettoyage et pub get pour macOS..."
+        flutter clean > /dev/null 2>&1 || true
+        flutter pub get
+        echo "   Lancement macOS..."
         flutter run -d macos > /tmp/arkalia_macos.log 2>&1
     ) &
     MACOS_PID=$!
     echo "   macOS PID: $MACOS_PID"
-    sleep 2
+    sleep 3
 else
     echo -e "${YELLOW}⚠️  macOS non disponible, macOS ignoré${NC}"
     MACOS_PID=""

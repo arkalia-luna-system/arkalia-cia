@@ -32,12 +32,18 @@ if ! flutter devices | grep -q "macos"; then
     exit 1
 fi
 
-# Mettre à jour la branche
-echo -e "${YELLOW}📥 Mise à jour de la branche...${NC}"
-cd "$(cd "$PROJECT_DIR/.." && pwd)"
+# Mettre à jour la branche develop AVANT tout
+echo -e "${YELLOW}📥 Mise à jour de la branche develop...${NC}"
+REPO_ROOT="$(cd "$PROJECT_DIR/.." && pwd)"
+cd "$REPO_ROOT"
 CURRENT_BRANCH=$(git branch --show-current)
-echo "   Branche actuelle: $CURRENT_BRANCH"
-git pull origin "$CURRENT_BRANCH" || echo "   ⚠️  Impossible de mettre à jour (peut-être pas un repo git)"
+if [ "$CURRENT_BRANCH" != "develop" ]; then
+    echo "   Checkout vers develop..."
+    git checkout develop 2>/dev/null || echo "   ⚠️  Impossible de checkout develop"
+fi
+echo "   Pull depuis origin/develop..."
+git fetch origin develop
+git pull origin develop || echo "   ⚠️  Impossible de mettre à jour"
 cd "$PROJECT_DIR"
 
 # Nettoyer
