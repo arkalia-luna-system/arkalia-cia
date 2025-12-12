@@ -18,13 +18,11 @@ void main() async {
   
   // Initialiser databaseFactory pour le web (si nécessaire)
   if (kIsWeb) {
-    try {
-      // Pour le web, sqflite nécessite sqflite_common_ffi
-      // Si le package n'est pas disponible, on continue sans initialisation
-      // Les services géreront l'erreur gracieusement
-    } catch (e) {
-      AppLogger.debug('Note: sqflite_common_ffi non disponible pour web. Mode offline uniquement.');
-    }
+    // Pour le web, sqflite nécessite sqflite_common_ffi
+    // Si le package n'est pas disponible, on continue sans initialisation
+    // Les services géreront l'erreur gracieusement
+    // Note: Le try-catch a été supprimé car le bloc était vide
+    AppLogger.debug('Mode web: sqflite_common_ffi géré par les services si nécessaire.');
   }
   
   await LocalStorageService.init();
