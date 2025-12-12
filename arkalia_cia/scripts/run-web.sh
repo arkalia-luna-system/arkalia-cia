@@ -39,9 +39,19 @@ flutter clean > /dev/null 2>&1 || true
 flutter pub get
 
 # Lancer sur web
-echo -e "${GREEN}🚀 Lancement sur web (Chrome)...${NC}"
+echo -e "${GREEN}🚀 Lancement sur web...${NC}"
+
+# Vérifier si Chrome est disponible
+if flutter devices | grep -q "Chrome\|chrome"; then
+    DEVICE="chrome"
+    echo "   Device: Chrome"
+else
+    DEVICE="web-server"
+    echo "   Device: Web Server (Chrome non trouvé)"
+fi
+
 echo "   URL: http://localhost:8080"
 echo ""
 
-flutter run -d chrome --web-port=8080
+flutter run -d "$DEVICE" --web-port=8080
 

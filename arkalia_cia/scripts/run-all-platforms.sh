@@ -57,19 +57,23 @@ cleanup() {
 trap cleanup SIGINT SIGTERM
 
 # Lancer sur WEB
-if echo "$DEVICES" | grep -q "Chrome\|chrome"; then
-    echo -e "${GREEN}🌐 Lancement sur WEB (Chrome)...${NC}"
+if echo "$DEVICES" | grep -q "Chrome\|chrome\|web"; then
+    echo -e "${GREEN}🌐 Lancement sur WEB...${NC}"
+    if echo "$DEVICES" | grep -q "Chrome\|chrome"; then
+        WEB_DEVICE="chrome"
+    else
+        WEB_DEVICE="web-server"
+    fi
     (
         cd "$PROJECT_DIR"
-        flutter run -d chrome --web-port=8080 > /tmp/arkalia_web.log 2>&1 &
-        WEB_PID=$!
-        echo "   Web PID: $WEB_PID"
-        echo "   URL: http://localhost:8080"
-        wait $WEB_PID
+        flutter run -d "$WEB_DEVICE" --web-port=8080 > /tmp/arkalia_web.log 2>&1
     ) &
     WEB_PID=$!
+    echo "   Web PID: $WEB_PID"
+    echo "   URL: http://localhost:8080"
+    sleep 2
 else
-    echo -e "${YELLOW}⚠️  Chrome non disponible, web ignoré${NC}"
+    echo -e "${YELLOW}⚠️  Web non disponible, web ignoré${NC}"
     WEB_PID=""
 fi
 
@@ -78,11 +82,11 @@ if echo "$DEVICES" | grep -q "android\|Android\|mobile"; then
     echo -e "${GREEN}📱 Lancement sur ANDROID...${NC}"
     (
         cd "$PROJECT_DIR"
-        bash scripts/run-android.sh > /tmp/arkalia_android.log 2>&1 &
-        ANDROID_PID=$!
-        wait $ANDROID_PID
+        bash scripts/run-android.sh > /tmp/arkalia_android.log 2>&1
     ) &
     ANDROID_PID=$!
+    echo "   Android PID: $ANDROID_PID"
+    sleep 2
 else
     echo -e "${YELLOW}⚠️  Android non disponible, Android ignoré${NC}"
     ANDROID_PID=""
@@ -93,11 +97,11 @@ if echo "$DEVICES" | grep -q "macos"; then
     echo -e "${GREEN}🍎 Lancement sur macOS...${NC}"
     (
         cd "$PROJECT_DIR"
-        flutter run -d macos > /tmp/arkalia_macos.log 2>&1 &
-        MACOS_PID=$!
-        wait $MACOS_PID
+        flutter run -d macos > /tmp/arkalia_macos.log 2>&1
     ) &
     MACOS_PID=$!
+    echo "   macOS PID: $MACOS_PID"
+    sleep 2
 else
     echo -e "${YELLOW}⚠️  macOS non disponible, macOS ignoré${NC}"
     MACOS_PID=""
@@ -107,13 +111,15 @@ echo ""
 echo -e "${GREEN}✅ Toutes les plateformes lancées en parallèle${NC}"
 echo ""
 echo "   Logs:"
-echo "   - Web: /tmp/arkalia_web.log"
-echo "   - Android: /tmp/arkalia_android.log"
-echo "   - macOS: /tmp/arkalia_macos.log"
+[ -n "$WEB_PID" ] && echo "   - Web (PID $WEB_PID): /tmp/arkalia_web.log"
+[ -n "$ANDROID_PID" ] && echo "   - Android (PID $ANDROID_PID): /tmp/arkalia_android.log"
+[ -n "$MACOS_PID" ] && echo "   - macOS (PID $MACOS_PID): /tmp/arkalia_macos.log"
 echo ""
 echo "   Pour arrêter: Ctrl+C"
 echo ""
 
 # Attendre que tous les processus se terminent
-wait
+if [ -n "$WEB_PID" ]; then wait $WEB_PID; fi
+if [ -n "$ANDROID_PID" ]; then wait $ANDROID_PID; fi
+if [ -n "$MACOS_PID" ]; then wait $MACOS_PID; fi
 
