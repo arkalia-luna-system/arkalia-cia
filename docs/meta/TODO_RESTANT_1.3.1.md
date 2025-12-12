@@ -1,6 +1,6 @@
 # 📋 TODO RESTANT - Version 1.3.1
 
-**Date** : 27 novembre 2025  
+**Date** : 12 décembre 2025  
 **Statut** : Version 1.3.1 complète, tâches restantes non-bloquantes
 
 ---
@@ -58,12 +58,12 @@
   - ✅ ThemeService (7 tests)
   - ✅ BackendConfigService (5 tests)
   - ✅ CategoryService (8 tests) - **NOUVEAU**
-- [ ] Tests pour autres services simples
-  - `local_storage_service.dart` (peut-être testable)
+- [x] Tests pour autres services simples ✅
+  - ✅ `local_storage_service.dart` (test créé : `test/services/local_storage_service_test.dart`)
 - [ ] Tests widget pour écrans principaux
-  - `home_screen.dart`
-  - `documents_screen.dart`
-  - `settings_screen.dart`
+  - `home_screen.dart` (non prioritaire)
+  - `documents_screen.dart` (non prioritaire)
+  - `settings_screen.dart` (non prioritaire)
 - [ ] Tests d'intégration basiques
 
 **Impact** : Améliore la qualité et la confiance dans le code
@@ -138,5 +138,5 @@
 - **Lint** : ✅ 0 erreur
 - **Version** : ✅ 1.3.1+1 (complète)
 
-**Dernière mise à jour** : 27 novembre 2025
+**Dernière mise à jour** : 12 décembre 2025
 

@@ -91,15 +91,20 @@
 
 ---
 
-### 2. Pas de profil multi-appareil 🔴 **CRITIQUE**
+### 2. Pas de profil multi-appareil 🔴 **FONCTIONNALITÉ FUTURE**
 
 **Problème** : Impossible de passer mobile → ordi avec synchronisation
 
+**Statut** : Fonctionnalité future complexe (10-16 jours de développement), pas un bug bloquant
+
 **Solution** : Créer système profil utilisateur + sync E2E
+- Architecture complète à créer (modèles UserProfile, Device, services sync)
+- Nécessite backend avec authentification multi-appareil
+- Chiffrement E2E pour synchronisation sécurisée
 
 **Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md#2-pas-de-profil-utilisateur-multi-appareil)
 
-**Priorité** : 🔴 **CRITIQUE**
+**Priorité** : 🔴 **FONCTIONNALITÉ FUTURE** (non-bloquant pour usage actuel)
 
 ---
 
