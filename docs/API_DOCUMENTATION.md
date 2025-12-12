@@ -4,7 +4,7 @@
 
 **Version** : 1.3.1+6 | **Date** : 12 décembre 2025
 
-[![Endpoints](https://img.shields.io/badge/endpoints-21-blue)]()
+[![Endpoints](https://img.shields.io/badge/endpoints-36-blue)]()
 [![Auth](https://img.shields.io/badge/auth-JWT-orange)]()
 [![Rate Limit](https://img.shields.io/badge/rate%20limit-actif-yellow)]()
 
@@ -12,7 +12,7 @@
 
 **Base URL** : `http://localhost:8000` (dev) ou configurée via `BackendConfigService`  
 **Version API** : `/api/v1/`  
-**Total** : 21 endpoints (19 API + 2 système)
+**Total** : 36 endpoints (28 API principale + 8 ARIA Integration)
 
 ---
 
@@ -27,8 +27,9 @@
 7. [Endpoints Rapports Médicaux](#endpoints-rapports-médicaux)
 8. [Endpoints IA](#endpoints-ia)
 9. [Endpoints Patterns](#endpoints-patterns)
-10. [Gestion d'erreurs](#gestion-derreurs)
-11. [Rate Limiting](#rate-limiting)
+10. [Endpoints ARIA Integration](#endpoints-aria-integration)
+11. [Gestion d'erreurs](#gestion-derreurs)
+12. [Rate Limiting](#rate-limiting)
 
 ---
 
@@ -605,6 +606,111 @@ Authorization: Bearer <token>
   "accuracy": 0.78
 }
 ```
+
+---
+
+## Endpoints ARIA Integration
+
+Les endpoints ARIA permettent d'intégrer les données de douleur et de patterns depuis Arkalia ARIA.
+
+**Base URL ARIA** : `http://127.0.0.1:8001` (port différent de CIA)  
+**Préfixe** : `/api/aria/`
+
+### Statut ARIA
+
+```http
+GET /api/aria/status
+```
+
+Vérifie si ARIA est disponible et accessible.
+
+**Réponse** :
+```json
+{
+  "status": "online",
+  "version": "1.0.0"
+}
+```
+
+### Entrée douleur rapide
+
+```http
+POST /api/aria/quick-pain-entry
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{
+  "intensity": 7,
+  "location": "Dos"
+}
+```
+
+### Entrée douleur complète
+
+```http
+POST /api/aria/pain-entry
+Content-Type: application/json
+Authorization: Bearer <token>
+
+{
+  "intensity": 7,
+  "physical_trigger": "Mouvement",
+  "mental_trigger": "Stress",
+  "activity": "Assis",
+  "location": "Dos",
+  "action_taken": "Médicament",
+  "effectiveness": 8,
+  "notes": "Douleur après longue période assise",
+  "timestamp": "2025-12-12T10:00:00"
+}
+```
+
+### Liste entrées douleur
+
+```http
+GET /api/aria/pain-entries
+Authorization: Bearer <token>
+```
+
+Récupère toutes les entrées de douleur.
+
+### Entrées récentes
+
+```http
+GET /api/aria/pain-entries/recent
+Authorization: Bearer <token>
+```
+
+Récupère les entrées de douleur récentes (30 derniers jours).
+
+### Export CSV
+
+```http
+GET /api/aria/export/csv
+Authorization: Bearer <token>
+```
+
+Exporte les données de douleur en CSV.
+
+### Patterns récents
+
+```http
+GET /api/aria/patterns/recent
+Authorization: Bearer <token>
+```
+
+Récupère les patterns de douleur détectés récemment.
+
+### Prédictions actuelles
+
+```http
+GET /api/aria/predictions/current
+Authorization: Bearer <token>
+```
+
+Récupère les prédictions de douleur actuelles basées sur les patterns.
+
+**Note** : Tous les endpoints ARIA nécessitent une authentification JWT et communiquent avec l'instance ARIA locale sur le port 8001.
 
 ---
 
