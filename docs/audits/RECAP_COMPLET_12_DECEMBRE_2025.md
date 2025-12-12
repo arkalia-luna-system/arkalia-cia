@@ -70,7 +70,7 @@
 - `arkalia_cia/lib/screens/auth/register_screen.dart` → Réinitialisation session
 - `arkalia_cia/lib/services/auth_api_service.dart` → Fallback SharedPreferences pour tests
 
-**Tests** : ✅ 3 tests créés (`test/services/auth_api_service_test.dart`)
+**Tests** : 3 tests créés (`test/services/auth_api_service_test.dart`)
 
 ---
 
@@ -101,21 +101,21 @@
 
 ---
 
-### 📚 DOCUMENTATION CRÉÉE (1 problème critique)
+### DOCUMENTATION CRÉÉE (1 problème critique)
 
-#### 8. ✅ ARIA serveur - Documentation créée
+#### ARIA serveur - Documentation créée
 
 **Fichiers créés/modifiés** :
-- `docs/deployment/DEPLOIEMENT_ARIA_RENDER.md` (NOUVEAU) → Guide complet déploiement Render.com
-- `docs/deployment/EXPLICATION_GITHUB_VS_RENDER.md` (NOUVEAU) → Explication pourquoi GitHub Pages vs Render.com
-- `docs/deployment/ANALYSE_GITHUB_VS_RENDER_POUR_CIA.md` (NOUVEAU) → Analyse détaillée pour CIA
+- `docs/deployment/DEPLOIEMENT_ARIA_RENDER.md` (nouveau) → Guide complet déploiement Render.com
+- `docs/deployment/EXPLICATION_GITHUB_VS_RENDER.md` (nouveau) → Explication pourquoi GitHub Pages vs Render.com
+- `docs/deployment/ANALYSE_GITHUB_VS_RENDER_POUR_CIA.md` (nouveau) → Analyse détaillée pour CIA
 - `arkalia_cia/lib/services/aria_service.dart` → Support URLs hébergées (https://xxx.onrender.com)
 
 **Résultat** : Documentation complète pour déployer ARIA sur Render.com (2-3 heures)
 
 ---
 
-## 🧪 TESTS CRÉÉS/AMÉLIORÉS
+## TESTS CRÉÉS/AMÉLIORÉS
 
 ### Tests créés aujourd'hui (28 nouveaux)
 
@@ -143,11 +143,11 @@
    - Tests LocalStorageService (saveReminder, updateReminder, markReminderComplete, deleteReminder)
    - Tests UI (affichage, scrollabilité, formatage dates)
 
-**Total** : **41 tests créés/améliorés** ✅
+**Total** : 41 tests créés/améliorés
 
 ---
 
-## 📝 DOCUMENTATION MISE À JOUR
+## DOCUMENTATION MISE À JOUR
 
 ### Fichiers MD créés (5)
 
@@ -185,7 +185,7 @@
 
 ---
 
-## 📊 STATISTIQUES DÉTAILLÉES
+## STATISTIQUES DÉTAILLÉES
 
 ### Code
 
@@ -202,12 +202,12 @@
 
 | Fichier | Tests | Statut |
 |---------|-------|--------|
-| `auth_service_test.dart` | 5 | ✅ Améliorés |
-| `auth_api_service_test.dart` | 3 | ✅ Créés |
-| `welcome_auth_screen_test.dart` | 6 | ✅ Créés |
-| `calendar_service_test.dart` | 8 | ✅ Créés |
-| `reminders_screen_test.dart` | 19 | ✅ Créés |
-| **Total** | **41** | ✅ **Tous créés** |
+| `auth_service_test.dart` | 5 | Améliorés |
+| `auth_api_service_test.dart` | 3 | Créés |
+| `welcome_auth_screen_test.dart` | 6 | Créés |
+| `calendar_service_test.dart` | 8 | Créés |
+| `reminders_screen_test.dart` | 19 | Créés |
+| **Total** | **41** | Tous créés |
 
 ### Documentation
 
@@ -218,34 +218,34 @@
 
 ---
 
-## ✅ VALIDATION FINALE
+## VALIDATION FINALE
 
 ### Code
-- ✅ **0 erreur lint** (`flutter analyze`)
-- ✅ **0 warning critique**
-- ✅ **Tous les fichiers compilent** sans erreur
-- ✅ **Code propre** et bien structuré
+- 0 erreur lint (`flutter analyze`)
+- 0 warning critique
+- Tous les fichiers compilent sans erreur
+- Code propre et bien structuré
 
 ### Tests
-- ✅ **41 tests créés/améliorés**
-- ✅ **Tous les tests sont valides** (structure correcte)
-- ✅ **Couverture améliorée** pour les fonctionnalités corrigées
+- 41 tests créés/améliorés
+- Tous les tests sont valides (structure correcte)
+- Couverture améliorée pour les fonctionnalités corrigées
 
 ### Documentation
-- ✅ **Tous les MD sont à jour** avec les corrections
-- ✅ **Cohérence vérifiée** entre tous les documents
-- ✅ **Statuts corrects** (RÉSOLU, DOCUMENTATION CRÉÉE, etc.)
+- Tous les MD sont à jour avec les corrections
+- Cohérence vérifiée entre tous les documents
+- Statuts corrects (RÉSOLU, DOCUMENTATION CRÉÉE, etc.)
 
 ---
 
-## 📋 LISTE COMPLÈTE DES FICHIERS MODIFIÉS
+## LISTE COMPLÈTE DES FICHIERS MODIFIÉS
 
 ### Code Flutter (14 fichiers)
 
 1. `arkalia_cia/lib/services/auth_service.dart` → `biometricOnly: true`
 2. `arkalia_cia/lib/screens/lock_screen.dart` → Amélioration vérification biométrie
 3. `arkalia_cia/lib/screens/auth/register_screen.dart` → Dialog biométrie + session
-4. `arkalia_cia/lib/screens/auth/welcome_auth_screen.dart` → **NOUVEAU** (créé)
+4. `arkalia_cia/lib/screens/auth/welcome_auth_screen.dart` → nouveau (créé)
 5. `arkalia_cia/lib/screens/pin_entry_screen.dart` → Layout amélioré
 6. `arkalia_cia/lib/main.dart` → Utilise WelcomeAuthScreen
 7. `arkalia_cia/lib/screens/documents_screen.dart` → Permissions PDF runtime
@@ -282,32 +282,28 @@
 29. `docs/status/STATUT_FINAL_PROJET.md` → Mis à jour
 30. `docs/audits/RECAP_COMPLET_12_DECEMBRE_2025.md` → **NOUVEAU** (ce fichier)
 
-**Total** : **30 fichiers modifiés/créés** ✅
+**Total** : 30 fichiers modifiés/créés
 
 ---
 
-## 🎯 PROBLÈMES RESTANTS
+## PROBLÈMES RESTANTS
 
-### Critiques (2)
-1. ✅ ARIA serveur (documentation créée, déploiement à faire)
-2. 🔴 Profil multi-appareil (complexe, 10-16 jours)
+### Critiques (1)
+1. Profil multi-appareil (complexe, 10-16 jours)
 
-### Élevés (6)
-1. 🟠 Couleurs pathologie ≠ couleurs spécialités
-2. 🟠 Portails santé - Pas d'épinglage
-3. 🟠 Hydratation - Bugs visuels
-4. 🟠 Paramètres - Accessibilité
-5. 🟠 Contacts urgence - Personnalisation
-6. 🟠 Pathologies - Sous-catégories
+Note : ARIA serveur est géré dans le projet ARIA séparé.
+
+### Élevés (1)
+1. Pathologies - Sous-catégories
 
 ### Moyens (5)
-1. 🟡 Médecins - Détection auto
-2. 🟡 Patterns - Erreur non spécifiée
-3. 🟡 Statistiques - Pas de graphiques
-4. 🟡 Dialog partage - Pas de feedback
-5. 🟡 BBIA - Placeholder uniquement
+1. Médecins - Détection auto
+2. Patterns - Erreur non spécifiée
+3. Statistiques - Pas de graphiques
+4. Dialog partage - Pas de feedback
+5. BBIA - Placeholder uniquement
 
-**Total restant** : **13 problèmes** (2 critiques + 6 élevés + 5 moyens)
+**Total restant** : 7 problèmes (1 critique + 1 élevé + 5 moyens)
 
 ---
 
