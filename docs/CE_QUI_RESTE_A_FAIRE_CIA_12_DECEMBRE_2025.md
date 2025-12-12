@@ -1,8 +1,8 @@
 # 📋 CE QUI RESTE À FAIRE POUR CIA - 12 Décembre 2025
 
 **Date** : 12 décembre 2025  
-**Version** : 1.3.1+6  
-**Statut** : 10/20 problèmes résolus (50%)
+**Version** : 1.3.1+7  
+**Statut** : 12/20 problèmes résolus (60%)
 
 ---
 
@@ -20,11 +20,11 @@
 
 ## 📊 RÉSUMÉ
 
-**Problèmes résolus** : 10/20 (50%)  
-**Problèmes restants** : 9/20 (45%) - **ARIA géré dans projet séparé**
+**Problèmes résolus** : 12/20 (60%)  
+**Problèmes restants** : 7/20 (35%) - **ARIA géré dans projet séparé**
 
 - **Critiques** : 6/8 résolus (1 restant : Profil multi-appareil - fonctionnalité future)
-- **Élevés** : 4/7 résolus (3 restants)
+- **Élevés** : 6/7 résolus (1 restant : Pathologies sous-catégories)
 - **Moyens** : 0/5 résolus (5 restants)
 
 **Note** : ARIA serveur est géré dans le projet ARIA séparé, pas dans CIA.
@@ -51,9 +51,9 @@
 
 ---
 
-## 🟠 PROBLÈMES ÉLEVÉS RESTANTS (3)
+## 🟠 PROBLÈMES ÉLEVÉS RESTANTS (1)
 
-### 3. Portails santé - Pas d'épinglage 🟠 **ÉLEVÉE**
+### 3. Pathologies - Sous-catégories 🟠 **ÉLEVÉE**
 
 **Problème** : "On devrait pouvoir épingle pour ne voir que ceux que on voudrait"
 
@@ -70,32 +70,7 @@
 
 **Priorité** : 🟠 **ÉLEVÉE**
 
-**Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./AUDIT_COMPLET_12_DECEMBRE_2025.md#10-portails-santé---pas-dépinglage)
-
----
-
-### 4. Contacts urgence - Personnalisation 🟠 **ÉLEVÉE**
-
-**Problème** : "Que le contacte d'urgence soit plus perso"
-
-**Ce qui reste à faire** :
-1. Intégrer contacts téléphone (WhatsApp, SMS)
-2. Permettre personnalisation : nom affiché, emoji, couleur
-3. ONE-TAP calling + SMS
-4. Proposer auto depuis contacts système
-
-**Fichiers à modifier** :
-- `arkalia_cia/lib/screens/emergency_screen.dart` : Améliorer UI
-- `arkalia_cia/lib/services/contacts_service.dart` : Intégrer contacts téléphone
-- `arkalia_cia/lib/models/emergency_contact.dart` : Ajouter personnalisation
-
-**Priorité** : 🟠 **ÉLEVÉE**
-
-**Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./AUDIT_COMPLET_12_DECEMBRE_2025.md#13-contacts-urgence---pas-assez-personnalisable)
-
----
-
-### 5. Pathologies - Sous-catégories 🟠 **ÉLEVÉE**
+**Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./AUDIT_COMPLET_12_DECEMBRE_2025.md#15-pathologies---manque-sous-catégories)
 
 **Problème** : Pas de sous-catégories, organisation limitée
 
@@ -235,9 +210,7 @@
 ## 🎯 RECOMMANDATIONS
 
 ### Priorité immédiate (CIA uniquement)
-1. **Portails santé - Épinglage** (1-2 jours) - Impact utilisateur élevé
-2. **Contacts urgence - Personnalisation** (2-3 jours) - Impact utilisateur élevé
-3. **Pathologies - Sous-catégories** (2-3 jours) - Organisation améliorée
+1. **Pathologies - Sous-catégories** (2-3 jours) - Organisation améliorée
 
 ### Après
 4. **Médecins - Détection auto** (1 jour) - Amélioration UX
