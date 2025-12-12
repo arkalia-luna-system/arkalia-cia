@@ -9,6 +9,7 @@ import '../services/offline_cache_service.dart';
 import '../services/accessibility_service.dart';
 import 'auth/login_screen.dart';
 import 'stats_screen.dart';
+import 'user_profile_screen.dart';
 
 /// Écran de paramètres de l'application
 class SettingsScreen extends StatefulWidget {
@@ -131,20 +132,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   subtitle: const Text('Masquer les fonctionnalités avancées'),
                   value: _simplifiedMode,
                   onChanged: (value) async {
+                    final messenger = ScaffoldMessenger.of(context);
                     await AccessibilityService.setSimplifiedMode(value);
-                    if (mounted) {
-                      setState(() {
-                        _simplifiedMode = value;
-                      });
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(value 
-                            ? 'Mode simplifié activé' 
-                            : 'Mode simplifié désactivé'),
-                          duration: const Duration(seconds: 2),
-                        ),
-                      );
-                    }
+                    if (!mounted) return;
+                    setState(() {
+                      _simplifiedMode = value;
+                    });
+                    if (!mounted) return;
+                    messenger.showSnackBar(
+                      SnackBar(
+                        content: Text(value 
+                          ? 'Mode simplifié activé' 
+                          : 'Mode simplifié désactivé'),
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
                   },
                 ),
               ],
@@ -185,7 +187,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   const Divider(),
                   ListTile(
                     leading: const Icon(Icons.person, color: Colors.blue),
-                    title: const Text('Compte utilisateur'),
+                    title: const Text('Profil utilisateur'),
                     subtitle: FutureBuilder<String?>(
                       future: AuthApiService.getUsername(),
                       builder: (context, snapshot) {
@@ -195,6 +197,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         return const Text('Non connecté');
                       },
                     ),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const UserProfileScreen()),
+                      );
+                    },
+                  ),
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.logout, color: Colors.red),
+                    title: const Text('Déconnexion'),
+                    subtitle: const Text('Se déconnecter du compte'),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () async {
                       if (!mounted) return;
@@ -852,19 +867,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
               groupValue: _textSize,
               onChanged: (value) async {
                 if (value != null) {
+                  final navigator = Navigator.of(context);
+                  final messenger = ScaffoldMessenger.of(context);
                   await AccessibilityService.setTextSize(value);
-                  if (mounted) {
-                    setState(() {
-                      _textSize = value;
-                    });
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Taille du texte : ${value.label}'),
-                        duration: const Duration(seconds: 2),
-                      ),
-                    );
-                  }
+                  if (!mounted) return;
+                  setState(() {
+                    _textSize = value;
+                  });
+                  if (!mounted) return;
+                  navigator.pop();
+                  if (!mounted) return;
+                  messenger.showSnackBar(
+                    SnackBar(
+                      content: Text('Taille du texte : ${value.label}'),
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
                 }
               },
             );
@@ -903,19 +921,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
               groupValue: _iconSize,
               onChanged: (value) async {
                 if (value != null) {
+                  final navigator = Navigator.of(context);
+                  final messenger = ScaffoldMessenger.of(context);
                   await AccessibilityService.setIconSize(value);
-                  if (mounted) {
-                    setState(() {
-                      _iconSize = value;
-                    });
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Taille des icônes : ${value.label}'),
-                        duration: const Duration(seconds: 2),
-                      ),
-                    );
-                  }
+                  if (!mounted) return;
+                  setState(() {
+                    _iconSize = value;
+                  });
+                  if (!mounted) return;
+                  navigator.pop();
+                  if (!mounted) return;
+                  messenger.showSnackBar(
+                    SnackBar(
+                      content: Text('Taille des icônes : ${value.label}'),
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
                 }
               },
             );

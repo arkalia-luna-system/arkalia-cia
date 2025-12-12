@@ -209,7 +209,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             calendarStyle: CalendarStyle(
               outsideDaysVisible: false,
               todayDecoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.5),
+                color: Colors.blue.withValues(alpha:0.5),
                 shape: BoxShape.circle,
               ),
               selectedDecoration: BoxDecoration(
@@ -272,35 +272,44 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
           // Liste des événements sélectionnés
           Expanded(
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : _selectedEvents.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.event_busy,
-                              size: 64,
-                              color: Colors.grey[400],
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Aucun événement ce jour',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.grey[600],
+            child: RefreshIndicator(
+              onRefresh: _loadEvents,
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _selectedEvents.isEmpty
+                      ? SingleChildScrollView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          child: SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.3,
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.event_busy,
+                                    size: 64,
+                                    color: Colors.grey[400],
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    'Aucun événement ce jour',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
+                          ),
+                        )
+                      : ListView.builder(
+                          itemCount: _selectedEvents.length,
+                          itemBuilder: (context, index) {
+                            return _buildEventCard(_selectedEvents[index]);
+                          },
                         ),
-                      )
-                    : ListView.builder(
-                        itemCount: _selectedEvents.length,
-                        itemBuilder: (context, index) {
-                          return _buildEventCard(_selectedEvents[index]);
-                        },
-                      ),
+            ),
           ),
         ],
       ),

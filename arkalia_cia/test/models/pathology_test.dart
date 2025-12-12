@@ -48,7 +48,7 @@ void main() {
         'treatments': '',
         'exams': '',
         'reminders': '{}',
-        'color': Colors.blue.value,
+        'color': Colors.blue.toARGB32(),
         'category': 'Rhumatologie',
         'subcategory': 'Arthrites',
         'created_at': DateTime.now().toIso8601String(),

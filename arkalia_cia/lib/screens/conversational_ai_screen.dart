@@ -167,13 +167,16 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
         children: [
           // Liste messages
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: _messages.length,
-              itemBuilder: (context, index) {
-                final message = _messages[index];
-                return _buildMessageBubble(message);
-              },
+            child: RefreshIndicator(
+              onRefresh: _loadHistory,
+              child: ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: _messages.length,
+                itemBuilder: (context, index) {
+                  final message = _messages[index];
+                  return _buildMessageBubble(message);
+                },
+              ),
             ),
           ),
           

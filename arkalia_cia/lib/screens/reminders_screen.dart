@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import '../services/calendar_service.dart';
 import '../services/local_storage_service.dart';
+import 'medication_reminders_screen.dart';
 
 class RemindersScreen extends StatefulWidget {
   const RemindersScreen({super.key});
@@ -409,50 +410,71 @@ class _RemindersScreenState extends State<RemindersScreen> {
         foregroundColor: Colors.white,
         actions: [
           IconButton(
+            icon: const Icon(Icons.medication),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const MedicationRemindersScreen(),
+                ),
+              );
+            },
+            tooltip: 'Rappels médicaments',
+          ),
+          IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _loadReminders,
+            tooltip: 'Actualiser',
           ),
         ],
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : reminders.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.orange.withValues(alpha: 0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.notifications_none,
-                          size: 64,
-                          color: Colors.orange,
+      body: RefreshIndicator(
+        onRefresh: _loadReminders,
+        child: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : reminders.isEmpty
+                ? SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.7,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.orange.withValues(alpha: 0.1),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.notifications_none,
+                                size: 64,
+                                color: Colors.orange,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            const Text(
+                              'Aucun rappel',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            const Text(
+                              'Appuyez sur + pour créer un rappel',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      const Text(
-                        'Aucun rappel',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'Appuyez sur + pour créer un rappel',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              : ListView.builder(
+                    ),
+                  )
+                : ListView.builder(
                   itemCount: reminders.length,
                   itemBuilder: (context, index) {
                     final reminder = reminders[index];
@@ -536,6 +558,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
                     );
                   },
                 ),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddReminderDialog,
         backgroundColor: Colors.orange,

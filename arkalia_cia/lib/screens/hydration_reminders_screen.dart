@@ -302,7 +302,7 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                     value: stats['compliance_rate'] / 100,
                     minHeight: 8,
                     borderRadius: BorderRadius.circular(4),
-                    backgroundColor: Colors.grey.withOpacity(0.2),
+                    backgroundColor: Colors.grey.withValues(alpha:0.2),
                     valueColor: AlwaysStoppedAnimation<Color>(
                       dialogTheme.colorScheme.primary,
                     ),
@@ -360,11 +360,11 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                           colors: isToday
                               ? [
                                   theme.colorScheme.primary,
-                                  theme.colorScheme.primary.withOpacity( 0.6),
+                                  theme.colorScheme.primary.withValues(alpha: 0.6),
                                 ]
                               : [
-                                  theme.colorScheme.secondary.withOpacity( 0.6),
-                                  theme.colorScheme.secondary.withOpacity( 0.3),
+                                  theme.colorScheme.secondary.withValues(alpha: 0.6),
+                                  theme.colorScheme.secondary.withValues(alpha: 0.3),
                                 ],
                         ),
                         borderRadius: const BorderRadius.vertical(
@@ -425,7 +425,7 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withOpacity(0.2),
+                color: theme.colorScheme.primary.withValues(alpha:0.2),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: theme.colorScheme.primary),
@@ -503,10 +503,12 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          : RefreshIndicator(
+              onRefresh: _loadData,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Suggestion intelligente
                   if (_smartSuggestion != null) ...[
@@ -515,13 +517,13 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            theme.colorScheme.primary.withOpacity( 0.1),
-                            theme.colorScheme.secondary.withOpacity( 0.1),
+                            theme.colorScheme.primary.withValues(alpha: 0.1),
+                            theme.colorScheme.secondary.withValues(alpha: 0.1),
                           ],
                         ),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: theme.colorScheme.primary.withOpacity( 0.3),
+                          color: theme.colorScheme.primary.withValues(alpha: 0.3),
                           width: 1,
                         ),
                       ),
@@ -557,7 +559,7 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                       leading: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.primary.withOpacity(0.2),
+                          color: theme.colorScheme.primary.withValues(alpha:0.2),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Icon(
@@ -610,19 +612,19 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                         end: Alignment.bottomRight,
                         colors: isGoalReached
                             ? [
-                                theme.colorScheme.secondary.withOpacity( 0.3),
-                                theme.colorScheme.secondary.withOpacity( 0.1),
+                                theme.colorScheme.secondary.withValues(alpha: 0.3),
+                                theme.colorScheme.secondary.withValues(alpha: 0.1),
                               ]
                             : [
-                                theme.colorScheme.primary.withOpacity( 0.3),
-                                theme.colorScheme.primary.withOpacity( 0.1),
+                                theme.colorScheme.primary.withValues(alpha: 0.3),
+                                theme.colorScheme.primary.withValues(alpha: 0.1),
                               ],
                       ),
                       borderRadius: BorderRadius.circular(24),
                       border: Border.all(
                         color: isGoalReached
-                            ? theme.colorScheme.secondary.withOpacity( 0.5)
-                            : theme.colorScheme.primary.withOpacity( 0.5),
+                            ? theme.colorScheme.secondary.withValues(alpha: 0.5)
+                            : theme.colorScheme.primary.withValues(alpha: 0.5),
                         width: 2,
                       ),
                     ),
@@ -771,7 +773,7 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                               Icon(
                                 Icons.water_drop_outlined,
                                 size: 64,
-                                color: theme.colorScheme.onSurfaceVariant.withOpacity( 0.5),
+                                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
                               ),
                               const SizedBox(height: 16),
                               Text(
@@ -797,7 +799,7 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                                 color: theme.colorScheme.surfaceContainerHighest,
                                 borderRadius: BorderRadius.circular(16),
                                 border: Border.all(
-                                  color: theme.colorScheme.outline.withOpacity( 0.2),
+                                  color: theme.colorScheme.outline.withValues(alpha: 0.2),
                                 ),
                               ),
                               child: ListTile(
@@ -808,7 +810,7 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                                 leading: Container(
                                   padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
-                                    color: theme.colorScheme.primary.withOpacity(0.2),
+                                    color: theme.colorScheme.primary.withValues(alpha:0.2),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Icon(
@@ -871,6 +873,7 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                 ],
               ),
             ),
+          ),
     );
   }
 
@@ -880,13 +883,13 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
         borderRadius: BorderRadius.circular(16),
         gradient: LinearGradient(
           colors: [
-            theme.colorScheme.primary.withOpacity( 0.8),
-            theme.colorScheme.primary.withOpacity( 0.6),
+            theme.colorScheme.primary.withValues(alpha: 0.8),
+            theme.colorScheme.primary.withValues(alpha: 0.6),
           ],
         ),
         boxShadow: [
           BoxShadow(
-            color: theme.colorScheme.primary.withOpacity( 0.3),
+            color: theme.colorScheme.primary.withValues(alpha: 0.3),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),

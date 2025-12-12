@@ -107,17 +107,17 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary.withOpacity(0.05),
+                      color: Colors.white,
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
+                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
                           blurRadius: 20,
                           spreadRadius: 2,
                           offset: const Offset(0, 4),
                         ),
                         BoxShadow(
-                          color: Colors.white.withOpacity(0.8),
+                          color: Colors.white.withValues(alpha: 0.8),
                           blurRadius: 10,
                           spreadRadius: -2,
                           offset: const Offset(0, -2),
@@ -128,7 +128,16 @@ class _LoginScreenState extends State<LoginScreen> {
                       'assets/images/logo.png',
                       width: 80,
                       height: 80,
+                      fit: BoxFit.contain,
                       filterQuality: FilterQuality.high,
+                      errorBuilder: (context, error, stackTrace) {
+                        // Fallback si l'image ne se charge pas
+                        return Icon(
+                          Icons.health_and_safety,
+                          size: 60,
+                          color: Theme.of(context).colorScheme.primary,
+                        );
+                      },
                     ),
                   ),
                 ),

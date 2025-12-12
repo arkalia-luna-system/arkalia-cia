@@ -112,6 +112,7 @@ class _LockScreenState extends State<LockScreen> {
           
           if (shouldSetupPin == false) {
             // L'utilisateur veut créer un compte, retourner à WelcomeAuthScreen
+            if (!mounted) return;
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (context) => const WelcomeAuthScreen()),
             );
@@ -120,6 +121,7 @@ class _LockScreenState extends State<LockScreen> {
           
           if (shouldSetupPin == true) {
             // L'utilisateur veut configurer le PIN
+            if (!mounted) return;
             final result = await Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => const PinSetupScreen()),
             );
@@ -260,17 +262,17 @@ class _LockScreenState extends State<LockScreen> {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.1),
+                      color: Colors.white.withValues(alpha:0.1),
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
+                          color: Colors.black.withValues(alpha:0.2),
                           blurRadius: 20,
                           spreadRadius: 2,
                           offset: const Offset(0, 4),
                         ),
                         BoxShadow(
-                          color: Colors.white.withOpacity(0.1),
+                          color: Colors.white.withValues(alpha:0.1),
                           blurRadius: 10,
                           spreadRadius: -2,
                           offset: const Offset(0, -2),

@@ -371,11 +371,13 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
                           ),
                         ),
                       )
-                    : ListView.builder(
-                        itemCount: _results.length,
-                        itemBuilder: (context, index) {
-                          final result = _results[index];
-                          return Card(
+                    : RefreshIndicator(
+                        onRefresh: _performSearch,
+                        child: ListView.builder(
+                          itemCount: _results.length,
+                          itemBuilder: (context, index) {
+                            final result = _results[index];
+                            return Card(
                             margin: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 8,
@@ -429,6 +431,7 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
                           );
                         },
                       ),
+                    ),
           ),
         ],
       ),
@@ -437,22 +440,28 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
 
   Future<void> _showCategoryDialog() async {
     final categories = ['Tous', 'Ordonnance', 'Résultat', 'Compte-rendu', 'Autre'];
+    String? tempSelected = _selectedCategory ?? 'Tous';
     final selected = await showDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Choisir catégorie'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: categories.map((cat) {
-            return RadioListTile<String>(
-              title: Text(cat),
-              value: cat,
-              groupValue: _selectedCategory ?? 'Tous',
-              onChanged: (value) {
-                Navigator.pop(context, value);
-              },
-            );
-          }).toList(),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: const Text('Choisir catégorie'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: categories.map((cat) {
+              return RadioListTile<String>(
+                title: Text(cat),
+                value: cat,
+                groupValue: tempSelected,
+                onChanged: (value) {
+                  setState(() {
+                    tempSelected = value;
+                  });
+                  Navigator.pop(context, value);
+                },
+              );
+            }).toList(),
+          ),
         ),
       ),
     );
@@ -482,29 +491,35 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
   }
 
   Future<void> _showExamTypeDialog() async {
+    String? tempSelected = _selectedExamType;
     final selected = await showDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Choisir type d\'examen'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: _examTypes.map((type) {
-            return RadioListTile<String>(
-              title: Text(type),
-              value: type,
-              groupValue: _selectedExamType,
-              onChanged: (value) {
-                Navigator.pop(context, value);
-              },
-            );
-          }).toList(),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Annuler'),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: const Text('Choisir type d\'examen'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: _examTypes.map((type) {
+              return RadioListTile<String>(
+                title: Text(type),
+                value: type,
+                groupValue: tempSelected,
+                onChanged: (value) {
+                  setState(() {
+                    tempSelected = value;
+                  });
+                  Navigator.pop(context, value);
+                },
+              );
+            }).toList(),
           ),
-        ],
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Annuler'),
+            ),
+          ],
+        ),
       ),
     );
     
@@ -593,28 +608,34 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
       return;
     }
 
+    int? tempSelected = _selectedDoctorId;
     final selected = await showDialog<int>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Choisir médecin'),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: _doctors.length,
-            itemBuilder: (context, index) {
-              final doctor = _doctors[index];
-              if (doctor.id == null) return const SizedBox.shrink();
-              return RadioListTile<int>(
-                title: Text(doctor.fullName),
-                subtitle: doctor.specialty != null ? Text(doctor.specialty!) : null,
-                value: doctor.id!,
-                groupValue: _selectedDoctorId,
-                onChanged: (value) {
-                  Navigator.pop(context, value);
-                },
-              );
-            },
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: const Text('Choisir médecin'),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: _doctors.length,
+              itemBuilder: (context, index) {
+                final doctor = _doctors[index];
+                if (doctor.id == null) return const SizedBox.shrink();
+                return RadioListTile<int>(
+                  title: Text(doctor.fullName),
+                  subtitle: doctor.specialty != null ? Text(doctor.specialty!) : null,
+                  value: doctor.id!,
+                  groupValue: tempSelected,
+                  onChanged: (value) {
+                    setState(() {
+                      tempSelected = value;
+                    });
+                    Navigator.pop(context, value);
+                  },
+                );
+              },
+            ),
           ),
         ),
       ),

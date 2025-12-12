@@ -277,7 +277,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
+                  color: Colors.grey.withValues(alpha:0.2),
                   spreadRadius: 1,
                   blurRadius: 4,
                   offset: const Offset(0, -2),
@@ -353,7 +353,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: color.withOpacity(0.8),
+            color: color.withValues(alpha:0.8),
           ),
         ),
         Text(

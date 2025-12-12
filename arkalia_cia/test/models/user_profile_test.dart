@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import '../../lib/models/user_profile.dart';
-import '../../lib/models/device.dart';
+import 'package:arkalia_cia/models/user_profile.dart';
+import 'package:arkalia_cia/models/device.dart';
 
 void main() {
   group('UserProfile', () {

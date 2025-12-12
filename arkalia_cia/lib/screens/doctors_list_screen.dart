@@ -131,9 +131,11 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
           
           // Liste médecins
           Expanded(
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : _filteredDoctors.isEmpty
+            child: RefreshIndicator(
+              onRefresh: _loadDoctors,
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _filteredDoctors.isEmpty
                     ? Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -264,6 +266,7 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                           );
                         },
                       ),
+            ),
           ),
           
           // Légende des couleurs

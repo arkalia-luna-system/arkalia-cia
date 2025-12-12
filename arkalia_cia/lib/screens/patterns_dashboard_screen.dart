@@ -292,100 +292,121 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
               : _error != null
-              ? Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(32.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.error_outline, size: 64, color: Colors.red),
-                        const SizedBox(height: 16),
-                        Text(
-                          _error!,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                        const SizedBox(height: 24),
-                        // Suggestions selon le type d'erreur
-                        if (_error!.toLowerCase().contains('données insuffisantes') ||
-                            _error!.toLowerCase().contains('aucune donnée'))
-                          Card(
-                            color: Colors.blue[50],
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                children: [
-                                  const Icon(Icons.info_outline, color: Colors.blue),
-                                  const SizedBox(height: 8),
-                                  const Text(
-                                    'Conseil:',
-                                    style: TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  const Text(
-                                    'Ajoutez au moins 3 documents, pathologies ou médicaments pour voir des patterns.',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(fontSize: 14),
-                                  ),
-                                ],
+              ? RefreshIndicator(
+                  onRefresh: _loadPatterns,
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.8,
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(32.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                              const SizedBox(height: 16),
+                              Text(
+                                _error!,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontSize: 16),
                               ),
-                            ),
-                          ),
-                        if (_error!.toLowerCase().contains('backend') ||
-                            _error!.toLowerCase().contains('connexion'))
-                          Card(
-                            color: Colors.orange[50],
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                children: [
-                                  const Icon(Icons.wifi_off, color: Colors.orange),
-                                  const SizedBox(height: 8),
-                                  const Text(
-                                    'Vérifiez:',
-                                    style: TextStyle(fontWeight: FontWeight.bold),
+                              const SizedBox(height: 24),
+                              // Suggestions selon le type d'erreur
+                              if (_error!.toLowerCase().contains('données insuffisantes') ||
+                                  _error!.toLowerCase().contains('aucune donnée'))
+                                Card(
+                                  color: Colors.blue[50],
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(16.0),
+                                    child: Column(
+                                      children: [
+                                        Icon(Icons.info_outline, color: Colors.blue),
+                                        SizedBox(height: 8),
+                                        Text(
+                                          'Conseil:',
+                                          style: TextStyle(fontWeight: FontWeight.bold),
+                                        ),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          'Ajoutez au moins 3 documents, pathologies ou médicaments pour voir des patterns.',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(fontSize: 14),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  const SizedBox(height: 4),
-                                  const Text(
-                                    '1. Le backend est démarré\n2. L\'URL est correcte dans les paramètres\n3. Votre connexion réseau',
-                                    textAlign: TextAlign.left,
-                                    style: TextStyle(fontSize: 14),
+                                ),
+                              if (_error!.toLowerCase().contains('backend') ||
+                                  _error!.toLowerCase().contains('connexion'))
+                                Card(
+                                  color: Colors.orange[50],
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(16.0),
+                                    child: Column(
+                                      children: [
+                                        Icon(Icons.wifi_off, color: Colors.orange),
+                                        SizedBox(height: 8),
+                                        Text(
+                                          'Vérifiez:',
+                                          style: TextStyle(fontWeight: FontWeight.bold),
+                                        ),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          '1. Le backend est démarré\n2. L\'URL est correcte dans les paramètres\n3. Votre connexion réseau',
+                                          textAlign: TextAlign.left,
+                                          style: TextStyle(fontSize: 14),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ],
+                                ),
+                              const SizedBox(height: 16),
+                              ElevatedButton.icon(
+                                onPressed: _loadPatterns,
+                                icon: const Icon(Icons.refresh),
+                                label: const Text('Réessayer'),
                               ),
-                            ),
+                            ],
                           ),
-                        const SizedBox(height: 16),
-                        ElevatedButton.icon(
-                          onPressed: _loadPatterns,
-                          icon: const Icon(Icons.refresh),
-                          label: const Text('Réessayer'),
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 )
               : _patterns == null
-                  ? const Center(child: Text('Aucune donnée disponible'))
-                  : SingleChildScrollView(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildSection(
-                            'Patterns Récurrents',
-                            _patterns!['recurring_patterns'] ?? [],
-                          ),
-                          const SizedBox(height: 24),
-                          _buildTrendsSection(_patterns!['trends'] ?? {}),
-                          const SizedBox(height: 24),
-                          _buildSeasonalitySection(_patterns!['seasonality'] ?? {}),
-                          if (_patterns!['predictions'] != null &&
-                              (_patterns!['predictions'] as Map).isNotEmpty) ...[
+                  ? RefreshIndicator(
+                      onRefresh: _loadPatterns,
+                      child: SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        child: SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.8,
+                          child: const Center(child: Text('Aucune donnée disponible')),
+                        ),
+                      ),
+                    )
+                  : RefreshIndicator(
+                      onRefresh: _loadPatterns,
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildSection(
+                              'Patterns Récurrents',
+                              _patterns!['recurring_patterns'] ?? [],
+                            ),
                             const SizedBox(height: 24),
-                            _buildPredictionsSection(_patterns!['predictions'] ?? {}),
+                            _buildTrendsSection(_patterns!['trends'] ?? {}),
+                            const SizedBox(height: 24),
+                            _buildSeasonalitySection(_patterns!['seasonality'] ?? {}),
+                            if (_patterns!['predictions'] != null &&
+                                (_patterns!['predictions'] as Map).isNotEmpty) ...[
+                              const SizedBox(height: 24),
+                              _buildPredictionsSection(_patterns!['predictions'] ?? {}),
+                            ],
                           ],
-                        ],
+                        ),
                       ),
                     ),
     );
@@ -606,10 +627,10 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
               style: const TextStyle(fontSize: 16),
             ),
             backgroundColor: direction == 'increasing'
-                ? Colors.green.withOpacity( 0.2)
+                ? Colors.green.withValues(alpha: 0.2)
                 : direction == 'decreasing'
-                    ? Colors.red.withOpacity( 0.2)
-                    : Colors.grey.withOpacity( 0.2),
+                    ? Colors.red.withValues(alpha: 0.2)
+                    : Colors.grey.withValues(alpha: 0.2),
           ),
         ],
       ),

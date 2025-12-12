@@ -17,6 +17,7 @@ import 'bbia_integration_screen.dart';
 import 'pathology_list_screen.dart';
 import 'calendar_screen.dart';
 import 'hydration_reminders_screen.dart';
+import 'stats_screen.dart';
 import '../services/local_storage_service.dart';
 import '../services/calendar_service.dart';
 import '../services/search_service.dart';
@@ -693,76 +694,102 @@ class _HomePageState extends State<HomePage> {
     return Row(
       children: [
         Expanded(
-          child: Card(
-            elevation: 2,
-            color: isDark 
-                ? Theme.of(context).colorScheme.surfaceContainerHigh
-                : Colors.green[50],
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                children: [
-                  Icon(
-                    Icons.folder, 
-                    color: isDark ? Colors.green[300] : Colors.green[700], 
-                    size: 32,
+          child: Semantics(
+            label: 'Statistiques documents',
+            button: true,
+            child: InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const StatsScreen()),
+                );
+              },
+              borderRadius: BorderRadius.circular(12),
+              child: Card(
+                elevation: 2,
+                color: isDark 
+                    ? Theme.of(context).colorScheme.surfaceContainerHigh
+                    : Colors.green[50],
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.folder, 
+                        color: isDark ? Colors.green[300] : Colors.green[700], 
+                        size: 32,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '$_documentCount',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.green[300] : Colors.green[700],
+                        ),
+                      ),
+                      Text(
+                        'Documents',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '$_documentCount',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.green[300] : Colors.green[700],
-                    ),
-                  ),
-                  Text(
-                    'Documents',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ),
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: Card(
-            elevation: 2,
-            color: isDark 
-                ? Theme.of(context).colorScheme.surfaceContainerHigh
-                : Colors.orange[50],
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                children: [
-                  Icon(
-                    Icons.notifications, 
-                    color: isDark ? Colors.orange[300] : Colors.orange[700], 
-                    size: 32,
+          child: Semantics(
+            label: 'Statistiques rappels',
+            button: true,
+            child: InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const StatsScreen()),
+                );
+              },
+              borderRadius: BorderRadius.circular(12),
+              child: Card(
+                elevation: 2,
+                color: isDark 
+                    ? Theme.of(context).colorScheme.surfaceContainerHigh
+                    : Colors.orange[50],
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.notifications, 
+                        color: isDark ? Colors.orange[300] : Colors.orange[700], 
+                        size: 32,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '$_upcomingRemindersCount',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.orange[300] : Colors.orange[700],
+                        ),
+                      ),
+                      Text(
+                        'Rappels',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '$_upcomingRemindersCount',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.orange[300] : Colors.orange[700],
-                    ),
-                  ),
-                  Text(
-                    'Rappels',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ),

@@ -208,36 +208,49 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
 
   Future<void> _showFilterDialog() async {
     final categories = _pathologiesByCategory.keys.toList()..sort();
+    String? tempSelected = _selectedCategory;
     final selected = await showDialog<String?>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Filtrer par catégorie'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                title: const Text('Toutes les catégories'),
-                leading: Radio<String?>(
-                  value: null,
-                  groupValue: _selectedCategory,
-                  onChanged: (value) => Navigator.pop(context, value),
-                ),
-              ),
-              const Divider(),
-              ...categories.map((category) {
-                final count = _pathologiesByCategory[category]?.length ?? 0;
-                return ListTile(
-                  title: Text(category),
-                  subtitle: Text('$count pathologie${count > 1 ? 's' : ''}'),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: const Text('Filtrer par catégorie'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  title: const Text('Toutes les catégories'),
                   leading: Radio<String?>(
-                    value: category,
-                    groupValue: _selectedCategory,
-                    onChanged: (value) => Navigator.pop(context, value),
+                    value: null,
+                    groupValue: tempSelected,
+                    onChanged: (value) {
+                      setState(() {
+                        tempSelected = value;
+                      });
+                      Navigator.pop(context, value);
+                    },
                   ),
-                );
-              }),
-            ],
+                ),
+                const Divider(),
+                ...categories.map((category) {
+                  final count = _pathologiesByCategory[category]?.length ?? 0;
+                  return ListTile(
+                    title: Text(category),
+                    subtitle: Text('$count pathologie${count > 1 ? 's' : ''}'),
+                    leading: Radio<String?>(
+                      value: category,
+                      groupValue: tempSelected,
+                      onChanged: (value) {
+                        setState(() {
+                          tempSelected = value;
+                        });
+                        Navigator.pop(context, value);
+                      },
+                    ),
+                  );
+                }),
+              ],
+            ),
           ),
         ),
       ),
@@ -391,45 +404,54 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
           ),
         ],
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _pathologiesByCategory.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.purple.withValues(alpha: 0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.medical_services,
-                          size: 64,
-                          color: Colors.purple[400],
+      body: RefreshIndicator(
+        onRefresh: _loadPathologies,
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : _pathologiesByCategory.isEmpty
+                ? SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.7,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.purple.withValues(alpha: 0.1),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.medical_services,
+                                size: 64,
+                                color: Colors.purple[400],
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            const Text(
+                              'Aucune pathologie',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            const Text(
+                              'Appuyez sur + pour ajouter une pathologie',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      const Text(
-                        'Aucune pathologie',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'Appuyez sur + pour ajouter une pathologie',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              : _buildPathologiesList(),
+                    ),
+                  )
+                : _buildPathologiesList(),
+      ),
     );
   }
 }

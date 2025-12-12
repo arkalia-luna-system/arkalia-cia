@@ -663,9 +663,11 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
 
           // Liste des documents
           Expanded(
-            child: isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : documents.isEmpty
+            child: RefreshIndicator(
+              onRefresh: _loadDocuments,
+              child: isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : documents.isEmpty
                     ? Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -682,8 +684,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                                 color: Colors.green,
                               ),
                             ),
-                            SizedBox(height: 16),
-                            Text(
+                            const SizedBox(height: 16),
+                            const Text(
                               'Aucun document',
                               style: TextStyle(
                                 fontSize: 18,
@@ -691,7 +693,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                               ),
                             ),
                             const SizedBox(height: 8),
-                            Text(
+                            const Text(
                               'Utilisez le bouton ci-dessus pour uploader un PDF',
                               style: TextStyle(
                                 color: Colors.grey,
@@ -718,8 +720,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                                     color: Colors.grey,
                                   ),
                                 ),
-                                SizedBox(height: 16),
-                                Text(
+                                const SizedBox(height: 16),
+                                const Text(
                                   'Aucun document trouvé',
                                   style: TextStyle(
                                     fontSize: 18,
@@ -727,11 +729,11 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                                   ),
                                 ),
                                 const SizedBox(height: 8),
-                                Text(
+                                const Text(
                                   'Essayez de modifier vos critères de recherche',
                                   style: TextStyle(
                                     fontSize: 14,
-                                    color: Colors.grey[600],
+                                    color: Colors.grey,
                                   ),
                                 ),
                               ],
@@ -823,8 +825,24 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                           );
                         },
                       ),
+            ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: isUploading ? null : _uploadDocument,
+        backgroundColor: Colors.green,
+        tooltip: 'Ajouter un document',
+        child: isUploading
+            ? const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              )
+            : const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
@@ -883,6 +901,9 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           // Le médecin existe déjà, ne pas proposer
           return;
         }
+
+        // Vérifier que le widget est toujours monté avant d'utiliser context
+        if (!mounted) return;
 
         // Afficher le dialog de proposition
         final shouldAdd = await showDialog<bool>(

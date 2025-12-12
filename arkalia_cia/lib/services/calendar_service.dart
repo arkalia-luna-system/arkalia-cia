@@ -113,11 +113,10 @@ class CalendarService {
       // Ajouter info couleur dans description si disponible
       if (eventColor != null) {
         // Format: #RRGGBB (sans alpha)
-        // Utiliser color.value (format 0xAARRGGBB) et extraire les composants
-        final colorValue = eventColor.value;
-        final r = (colorValue >> 16) & 0xFF;
-        final g = (colorValue >> 8) & 0xFF;
-        final b = colorValue & 0xFF;
+        // Utiliser les accesseurs de composants de couleur (nouvelle API)
+        final r = (eventColor.r * 255.0).round() & 0xff;
+        final g = (eventColor.g * 255.0).round() & 0xff;
+        final b = (eventColor.b * 255.0).round() & 0xff;
         final colorHex = '#${r.toRadixString(16).padLeft(2, '0').toUpperCase()}'
             '${g.toRadixString(16).padLeft(2, '0').toUpperCase()}'
             '${b.toRadixString(16).padLeft(2, '0').toUpperCase()}';

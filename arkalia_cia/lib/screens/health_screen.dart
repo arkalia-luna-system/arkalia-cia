@@ -507,15 +507,15 @@ class _HealthScreenState extends State<HealthScreen> {
                           color: Colors.red,
                         ),
                       ),
-                      SizedBox(height: 16),
-                      Text(
+                      const SizedBox(height: 16),
+                      const Text(
                         'Aucun portail santé',
                         style: TextStyle(
                           fontSize: 18,
                           color: Colors.grey,
                         ),
                       ),
-                      Text(
+                      const Text(
                         'Appuyez sur + pour ajouter un portail',
                         style: TextStyle(
                           color: Colors.grey,

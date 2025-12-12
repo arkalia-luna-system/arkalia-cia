@@ -180,7 +180,7 @@ class _EmergencyContactDialogState extends State<EmergencyContactDialog> {
                     'emoji': emojiController.text.trim().isNotEmpty 
                         ? emojiController.text.trim() 
                         : '👤',
-                    'color': selectedColor.value,
+                    'color': selectedColor.toARGB32(), // Utilisation de toARGB32() au lieu de .value déprécié
                     'is_primary': isPrimary,
                     if (isEditing) 'id': widget.existingContact!['id'],
                   };
