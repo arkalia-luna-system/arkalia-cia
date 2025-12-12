@@ -2,14 +2,15 @@
 
 <div align="center">
 
-**Date** : 10 décembre 2025 | **Version** : 1.3.1+5
+**Date** : 12 décembre 2025 | **Version** : 1.3.1+5
 
-[![Statut](https://img.shields.io/badge/statut-toutes%20corrigées-success)]()
+[![Statut](https://img.shields.io/badge/statut-corrections%20en%20cours-yellow)]()
 [![Score](https://img.shields.io/badge/score-10%2F10-brightgreen)]()
 
 </div>
 
-> **Note** : Consolide toutes les corrections (novembre + décembre 2025)
+> **Note** : Consolide toutes les corrections (novembre + décembre 2025)  
+> **📌 Nouveau** : Voir **[AUDIT_COMPLET_12_DECEMBRE_2025.md](./../audits/AUDIT_COMPLET_12_DECEMBRE_2025.md)** pour les nouveaux problèmes identifiés le 12 décembre 2025.
 
 ---
 

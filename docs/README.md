@@ -23,7 +23,7 @@
 
 | ✅ **Corrections** | 🔍 **Audits** | 🔒 **Sécurité** | 🤝 **Contribuer** |
 |:---:|:---:|:---:|:---:|
-| [Toutes Corrections](./deployment/CORRECTIONS_NAVIGATION_AUTH_10_DEC.md) | [Audit 10/10](./audits/AUDIT_SECURITE_PERFECTION_DECEMBRE_2025.md) | [Sécurité](../SECURITY.md) | [Guide](./CONTRIBUTING.md) |
+| [Toutes Corrections](./deployment/CORRECTIONS_NAVIGATION_AUTH_10_DEC.md) | [Audit 12 déc](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md) ⭐ | [Sécurité](../SECURITY.md) | [Guide](./CONTRIBUTING.md) |
 
 </div>
 
@@ -46,6 +46,7 @@
 
 ### ✅ Corrections & Audits
 
+- **[audits/AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md)** — ⭐ **AUDIT COMPLET** basé sur tests utilisateur (20 problèmes identifiés)
 - **[deployment/CORRECTIONS_NAVIGATION_AUTH_10_DEC.md](./deployment/CORRECTIONS_NAVIGATION_AUTH_10_DEC.md)** — Toutes les corrections (novembre-décembre 2025)
 - **[audits/AUDIT_SECURITE_PERFECTION_DECEMBRE_2025.md](./audits/AUDIT_SECURITE_PERFECTION_DECEMBRE_2025.md)** — Audit sécurité & perfection (10/10)
 - **[audits/AUDIT_COMPLET_27_NOVEMBRE_2025.md](./audits/AUDIT_COMPLET_27_NOVEMBRE_2025.md)** — Audit complet consolidé (8.5/10)
@@ -172,7 +173,9 @@
 - **Vue d'ensemble** : `VUE_ENSEMBLE_PROJET.md`
 
 ### Corrections & Problèmes
-- **Toutes les corrections** : `deployment/CORRECTIONS_NAVIGATION_AUTH_10_DEC.md` ⭐
+- **Audit complet 12 déc** : `audits/AUDIT_COMPLET_12_DECEMBRE_2025.md` ⭐ **NOUVEAU**
+- **Toutes les corrections** : `deployment/CORRECTIONS_NAVIGATION_AUTH_10_DEC.md`
+- **Ce qui manque** : `CE_QUI_MANQUE_10_DECEMBRE_2025.md` (mis à jour 12 déc)
 - **Corrections audit** : `audits/CORRECTIONS_AUDIT_CONSOLIDEES.md`
 - **Dépannage** : `troubleshooting/`
 
@@ -228,6 +231,6 @@
 
 <div align="center">
 
-**Dernière mise à jour** : 10 décembre 2025 | **Version** : 1.3.1+5
+**Dernière mise à jour** : 12 décembre 2025 | **Version** : 1.3.1+5
 
 </div>

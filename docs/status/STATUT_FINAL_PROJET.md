@@ -2,8 +2,10 @@
 
 <div align="center">
 
-**Version** : 1.3.1+5 | **Date** : 10 décembre 2025  
-**Statut** : ✅ Production-Ready
+**Version** : 1.3.1+5 | **Date** : 12 décembre 2025  
+**Statut** : ✅ Production-Ready | ⚠️ Audit en cours (20 problèmes identifiés)
+
+> **📌 Nouveau** : Voir **[AUDIT_COMPLET_12_DECEMBRE_2025.md](./../audits/AUDIT_COMPLET_12_DECEMBRE_2025.md)** pour l'audit complet basé sur les tests utilisateur.
 
 [![Statut](https://img.shields.io/badge/statut-production--ready-success)]()
 [![Sécurité](https://img.shields.io/badge/sécurité-10%2F10-brightgreen)](./../audits/AUDIT_SECURITE_PERFECTION_DECEMBRE_2025.md)
