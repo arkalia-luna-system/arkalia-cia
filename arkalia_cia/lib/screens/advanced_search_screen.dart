@@ -337,7 +337,14 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.search_off, size: 64, color: Colors.grey[400]),
+                              Container(
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.withOpacity(0.1),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(Icons.search_off, size: 64, color: Colors.grey[400]),
+                              ),
                               const SizedBox(height: 16),
                               Text(
                                 'Aucun résultat trouvé',

@@ -298,12 +298,25 @@ class _HealthScreenState extends State<HealthScreen> {
           children: [
             Icon(Icons.star_border, size: 64, color: Colors.grey),
             SizedBox(height: 16),
-            Text(
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.red.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.favorite_border,
+                size: 64,
+                color: Colors.red,
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
               'Aucun portail favori',
               style: TextStyle(fontSize: 18, color: Colors.grey),
             ),
-            SizedBox(height: 8),
-            Text(
+            const SizedBox(height: 8),
+            const Text(
               'Épinglez des portails pour les retrouver facilement',
               style: TextStyle(fontSize: 14, color: Colors.grey),
               textAlign: TextAlign.center,
@@ -337,18 +350,36 @@ class _HealthScreenState extends State<HealthScreen> {
                 size: 28,
               ),
             ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            leading: CircleAvatar(
+              backgroundColor: Colors.grey.shade100,
+              radius: 24,
+              child: Icon(
+                icon,
+                color: color,
+                size: 28,
+              ),
+            ),
             title: Text(
               portal['name'] ?? 'Portail',
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
             ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (portal['description'] != null)
-                  Text(
-                    portal['description'],
-                    style: const TextStyle(color: Colors.grey),
-                  ),
+            subtitle: Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (portal['description'] != null)
+                    Text(
+                      portal['description'],
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 14,
+                      ),
+                    ),
                 if (category != null)
                   Container(
                     margin: const EdgeInsets.only(top: 4),
@@ -385,11 +416,19 @@ class _HealthScreenState extends State<HealthScreen> {
                     await _loadFavorites();
                   },
                   tooltip: isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris',
+                  constraints: const BoxConstraints(
+                    minWidth: 48,
+                    minHeight: 48,
+                  ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.open_in_new, color: Colors.blue),
+                  icon: const Icon(Icons.open_in_new, color: Colors.blue, size: 24),
                   onPressed: () => _openPortal(url),
                   tooltip: 'Ouvrir le portail',
+                  constraints: const BoxConstraints(
+                    minWidth: 48,
+                    minHeight: 48,
+                  ),
                 ),
               ],
             ),
@@ -441,14 +480,21 @@ class _HealthScreenState extends State<HealthScreen> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : portals.isEmpty
-              ? const Center(
+              ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        Icons.medical_services,
-                        size: 64,
-                        color: Colors.red,
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.red.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.medical_services,
+                          size: 64,
+                          color: Colors.red,
+                        ),
                       ),
                       SizedBox(height: 16),
                       Text(

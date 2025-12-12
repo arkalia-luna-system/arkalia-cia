@@ -138,10 +138,17 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
-                              Icons.people_outline,
-                              size: 64,
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.grey.withOpacity(0.1),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.people_outline,
+                                size: 64,
                                 color: Colors.grey.shade400,
+                              ),
                             ),
                             const SizedBox(height: 16),
                             Text(

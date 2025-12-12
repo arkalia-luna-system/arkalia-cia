@@ -363,7 +363,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
             const Text(
               'Numéros d\'urgence',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -378,7 +378,8 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+                      minimumSize: const Size(0, 48),
                     ),
                   ),
                 ),
@@ -391,7 +392,8 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+                      minimumSize: const Size(0, 48),
                     ),
                   ),
                 ),

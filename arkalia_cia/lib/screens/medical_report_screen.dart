@@ -359,7 +359,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
         Text(
           label,
           style: TextStyle(
-            fontSize: 12,
+            fontSize: 14,
             color: Colors.grey[700],
           ),
         ),

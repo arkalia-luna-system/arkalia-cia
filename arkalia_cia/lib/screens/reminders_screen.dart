@@ -417,28 +417,36 @@ class _RemindersScreenState extends State<RemindersScreen> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : reminders.isEmpty
-              ? const Center(
+              ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        Icons.notifications_none,
-                        size: 64,
-                        color: Colors.orange,
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.orange.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.notifications_none,
+                          size: 64,
+                          color: Colors.orange,
+                        ),
                       ),
-                      SizedBox(height: 16),
-                      Text(
+                      const SizedBox(height: 16),
+                      const Text(
                         'Aucun rappel',
                         style: TextStyle(
                           fontSize: 18,
                           color: Colors.grey,
                         ),
                       ),
-                      Text(
+                      const SizedBox(height: 8),
+                      const Text(
                         'Appuyez sur + pour créer un rappel',
                         style: TextStyle(
                           color: Colors.grey,
-                          fontSize: 16,
+                          fontSize: 14,
                         ),
                       ),
                     ],
@@ -456,52 +464,71 @@ class _RemindersScreenState extends State<RemindersScreen> {
                         vertical: 4,
                       ),
                       child: ListTile(
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         leading: Icon(
                           isCompleted ? Icons.check_circle : Icons.schedule,
                           color: isCompleted ? Colors.green : Colors.orange,
-                          size: 32,
+                          size: 40,
                         ),
                         title: Text(
                           reminder['title'] ?? 'Rappel',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
+                            fontSize: 16,
                             decoration: isCompleted
                                 ? TextDecoration.lineThrough
                                 : TextDecoration.none,
                           ),
                         ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (reminder['description'] != null)
-                              Text(reminder['description']),
-                            Text(
-                              _formatDateTime(reminder['reminder_date'] ?? ''),
-                              style: TextStyle(
-                                color: isCompleted ? Colors.grey : Colors.orange[700],
-                                fontWeight: FontWeight.w500,
+                        subtitle: Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (reminder['description'] != null)
+                                Text(
+                                  reminder['description'],
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              if (reminder['description'] != null)
+                                const SizedBox(height: 4),
+                              Text(
+                                _formatDateTime(reminder['reminder_date'] ?? ''),
+                                style: TextStyle(
+                                  color: isCompleted ? Colors.grey : Colors.orange[700],
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                         trailing: isCompleted
-                            ? const Icon(Icons.check, color: Colors.green)
+                            ? const Icon(Icons.check, color: Colors.green, size: 24)
                             : Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   IconButton(
-                                    icon: const Icon(Icons.edit),
+                                    icon: const Icon(Icons.edit, size: 24),
                                     onPressed: () async {
                                       await _showEditReminderDialog(reminder);
                                     },
                                     tooltip: 'Modifier',
+                                    constraints: const BoxConstraints(
+                                      minWidth: 48,
+                                      minHeight: 48,
+                                    ),
                                   ),
                                   IconButton(
-                                    icon: const Icon(Icons.check_circle_outline),
+                                    icon: const Icon(Icons.check_circle_outline, size: 24),
                                     onPressed: () async {
                                       await _markReminderComplete(reminder['id']);
                                     },
                                     tooltip: 'Marquer comme terminé',
+                                    constraints: const BoxConstraints(
+                                      minWidth: 48,
+                                      minHeight: 48,
+                                    ),
                                   ),
                                 ],
                               ),

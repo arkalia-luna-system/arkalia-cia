@@ -338,7 +338,7 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
                         getTitlesWidget: (value, meta) {
                           return Text(
                             value.toInt().toString(),
-                            style: const TextStyle(fontSize: 12),
+                            style: const TextStyle(fontSize: 14),
                           );
                         },
                       ),
