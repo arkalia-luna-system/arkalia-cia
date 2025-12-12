@@ -57,24 +57,7 @@ Tous les problèmes élevés ont été résolus.
 
 ---
 
-## PROBLÈMES MOYENS RESTANTS (5)
-
-### Médecins - Détection auto
-
-**Problème** : Pas de proposition auto ajout médecin après upload PDF
-
-**Ce qui reste à faire** :
-1. Détecter nom médecin dans PDF uploadé
-2. Dialog proposition après détection
-3. Permettre ajout rapide depuis dialog
-
-**Fichiers à modifier** :
-- `arkalia_cia/lib/services/document_service.dart` : Détection médecin
-- `arkalia_cia/lib/screens/documents_screen.dart` : Dialog proposition
-
-**Priorité** : Moyenne
-
-**Voir** : [AUDIT_COMPLET_12_DECEMBRE_2025.md](./AUDIT_COMPLET_12_DECEMBRE_2025.md#16-médecins---détection-auto-depuis-documents)
+## PROBLÈMES MOYENS RESTANTS (4)
 
 ---
 
