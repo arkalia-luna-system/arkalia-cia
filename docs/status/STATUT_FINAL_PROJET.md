@@ -53,7 +53,7 @@ Le projet Arkalia CIA est **100% opérationnel** avec toutes les fonctionnalité
 
 ### Infrastructure
 - 🔒 Sécurité : AES-256, JWT, biométrie
-- 🐍 Backend : 20+ endpoints, rate limiting
+- 🐍 Backend : 36 endpoints (28 API principale + 8 ARIA), rate limiting
 - 💾 Base de données : SQLite complet
 - 🔄 Synchronisation : CIA ↔ ARIA
 - ⚡ Cache : OfflineCacheService
@@ -93,7 +93,8 @@ Le projet Arkalia CIA est **100% opérationnel** avec toutes les fonctionnalité
 
 ### Backend Python
 
-- `api.py` : 18 endpoints avec sécurité et pagination
+- `api.py` : 28 endpoints avec sécurité et pagination
+- `aria_integration/api.py` : 8 endpoints ARIA
 - `auth.py` : Authentification JWT complète
 - `PDFProcessor` : Extraction texte + OCR Tesseract
 - `MetadataExtractor` : Extraction métadonnées activée

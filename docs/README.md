@@ -42,7 +42,7 @@
 
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture générale avec diagrammes Mermaid
 - **[ARCHITECTURE_SERVICES.md](./ARCHITECTURE_SERVICES.md)** — Architecture des 24 services
-- **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** — Documentation API complète (18+ endpoints)
+- **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** — Documentation API complète (36 endpoints)
 
 ### ✅ Corrections & Audits
 

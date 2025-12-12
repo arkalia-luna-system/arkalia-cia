@@ -30,7 +30,7 @@ graph TB
 
     subgraph "Arkalia CIA — Composants"
         D[Flutter App<br/>25 écrans]
-        E[Python Backend<br/>18 endpoints]
+        E[Python Backend<br/>36 endpoints]
         F[SQLite Local<br/>Stockage sécurisé]
     end
 
@@ -316,7 +316,7 @@ sequenceDiagram
 
 ### Code
 
-- **Backend Python** : 18 endpoints, 8 modules principaux
+- **Backend Python** : 36 endpoints (28 API principale + 8 ARIA), 8 modules principaux
 - **Frontend Flutter** : 28 écrans, 22 services, 6 utils
 - **Tests** : 352 passed (70.83% couverture)
 - **Documentation** : 94 fichiers MD organisés

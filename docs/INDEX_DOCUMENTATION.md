@@ -38,7 +38,7 @@ Guide de navigation dans la documentation du projet Arkalia CIA.
 
 ### API et intégration
 
-- **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** — Documentation API complète (18 endpoints)
+- **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** — Documentation API complète (36 endpoints)
 - **[API.md](./API.md)** — Documentation API (version simplifiée)
 - **[integrations/ARIA_IMPLEMENTATION_GUIDE.md](./integrations/ARIA_IMPLEMENTATION_GUIDE.md)** — Guide d'intégration ARIA
 

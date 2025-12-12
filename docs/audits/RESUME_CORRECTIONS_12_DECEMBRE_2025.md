@@ -129,6 +129,23 @@ Résumé complet des corrections appliquées le 12 décembre 2025.
 
 ---
 
+### 8. ✅ Rappels - Pas modifiables
+
+**Problème** : Impossible de modifier un rappel créé
+
+**Solution** :
+- ✅ Ajout bouton "Modifier" sur chaque rappel (icône edit)
+- ✅ Création `_showEditReminderDialog()` qui réutilise le dialog d'ajout pré-rempli
+- ✅ Fonction `_updateReminder()` qui utilise `LocalStorageService.updateReminder()`
+- ✅ Permet modification titre, description, date, heure, récurrence
+
+**Fichiers modifiés** :
+- `arkalia_cia/lib/screens/reminders_screen.dart`
+
+**Tests** : ✅ Tests créés dans `test/screens/reminders_screen_test.dart` (19 tests créés)
+
+---
+
 ### 7. ✅ ARIA serveur - Documentation créée
 
 **Problème** : Serveur ARIA doit tourner sur Mac (pas disponible 24/7)
@@ -168,7 +185,12 @@ Résumé complet des corrections appliquées le 12 décembre 2025.
    - addReminder, getUpcomingReminders, getUpcomingEvents
    - scheduleNotification, scheduleAdaptiveMedicationReminder, getEventsByType
 
-**Total** : 22 tests passent ✅
+5. **`test/screens/reminders_screen_test.dart`** : 19 tests créés
+   - Affichage rappels, boutons Modifier/Terminer
+   - Tests LocalStorageService (saveReminder, updateReminder, markReminderComplete, deleteReminder)
+   - Tests UI (affichage, scrollabilité, formatage dates)
+
+**Total** : 41 tests créés ✅
 
 ---
 

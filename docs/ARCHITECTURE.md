@@ -54,7 +54,7 @@ graph TB
 
     subgraph Backend["🐍 Backend Python"]
         K --> T[FastAPI]
-        T --> U["api.py<br/>20+ endpoints"]
+        T --> U["api.py<br/>36 endpoints"]
         T --> V[PDFProcessor]
         T --> W[ConversationalAI]
         T --> X[PatternAnalyzer]
@@ -129,7 +129,8 @@ arkalia_cia/lib/
 
 ```
 arkalia_cia_python_backend/
-├── api.py                       # FastAPI - 18 endpoints
+├── api.py                       # FastAPI - 28 endpoints
+├── aria_integration/api.py      # ARIA Integration - 8 endpoints
 ├── auth.py                      # Authentification JWT
 ├── database.py                  # Gestion base de données
 ├── pdf_processor.py             # Traitement PDF
