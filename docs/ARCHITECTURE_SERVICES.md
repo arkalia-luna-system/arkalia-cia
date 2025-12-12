@@ -1,8 +1,8 @@
 # 🏗️ ARCHITECTURE DES SERVICES - Arkalia CIA
 
-**Date** : 27 novembre 2025  
-**Version** : 1.3.1  
-**Statut** : Documentation complète
+**Date** : 12 décembre 2025  
+**Version** : 1.3.1+6  
+**Statut** : Documentation complète (28 services documentés)
 
 ---
 
@@ -397,6 +397,75 @@ Ce document décrit l'architecture et les responsabilités de tous les services 
 
 ---
 
+### 25. `HealthPortalImportService` (Service)
+**Fichier** : `lib/services/health_portal_import_service.dart`
+
+**Responsabilité** :
+- Import manuel de documents depuis portails santé (stratégie gratuite)
+- Upload PDF exporté depuis Andaman 7 ou MaSanté
+
+**Fonctionnalités** :
+- `uploadPortalPDF()` : Upload PDF avec parsing automatique
+- Gestion progression upload
+- Support Andaman 7 et MaSanté
+
+**Note** : Alternative gratuite aux APIs payantes (2 000-5 000€/an)
+
+---
+
+### 26. `AuthService` (Service)
+**Fichier** : `lib/services/auth_service.dart`
+
+**Responsabilité** :
+- Authentification biométrique système (mobile)
+- Détection disponibilité biométrie (Face ID, Touch ID, empreinte)
+
+**Fonctionnalités** :
+- `isBiometricAvailable()` : Vérifie disponibilité biométrie
+- `getAvailableBiometrics()` : Liste types biométrie disponibles
+- `authenticate()` : Authentification biométrique
+- `stopAuthentication()` : Arrêt authentification
+
+**Note** : Sur web, utilise `PinAuthService` à la place
+
+---
+
+### 27. `PinAuthService` (Service)
+**Fichier** : `lib/services/pin_auth_service.dart`
+
+**Responsabilité** :
+- Authentification PIN pour le web (quand biométrie indisponible)
+- Stockage sécurisé hash PIN
+
+**Fonctionnalités** :
+- `isPinConfigured()` : Vérifie si PIN configuré
+- `configurePin()` : Configure nouveau PIN (4-6 chiffres)
+- `verifyPin()` : Vérifie PIN
+- `changePin()` : Change PIN existant
+- `clearPin()` : Supprime PIN
+
+**Note** : Utilisé uniquement sur web, mobile utilise `AuthService` (biométrie)
+
+---
+
+### 28. `RuntimeSecurityService` (Service)
+**Fichier** : `lib/services/runtime_security_service.dart`
+
+**Responsabilité** :
+- Détection root/jailbreak (sécurité runtime)
+- Vérification intégrité application
+- Protection contre appareils compromis
+
+**Fonctionnalités** :
+- `initialize()` : Initialise détection sécurité
+- `isRooted()` : Détecte Android rooté
+- `isJailbroken()` : Détecte iOS jailbreaké
+- `checkIntegrity()` : Vérifie intégrité app
+
+**Note** : Protection sécurité importante pour données médicales sensibles
+
+---
+
 ## 📊 RÉSUMÉ DES RESPONSABILITÉS
 
 | Service | Responsabilité Principale | Utilise |
@@ -425,6 +494,10 @@ Ce document décrit l'architecture et les responsabilités de tous les services 
 | `ARIService` | Intégration ARIA | `BackendConfigService` |
 | `FamilySharingService` | Partage familial | - |
 | `HealthPortalAuthService` | OAuth portails santé | `AuthApiService` |
+| `HealthPortalImportService` | Import manuel portails | `AuthApiService` |
+| `AuthService` | Authentification biométrique | - |
+| `PinAuthService` | Authentification PIN (web) | - |
+| `RuntimeSecurityService` | Sécurité runtime | - |
 
 ---
 
