@@ -76,7 +76,8 @@ if (keystorePropertiesFile.exists()) {
 }
 
 // Fonction pour extraire le version code depuis pubspec.yaml (définie AVANT android {})
-fun extractVersionCodeFromPubspec(): Int {
+// Retourne un Long pour gérer les grands nombres, puis converti en Int avec modulo si nécessaire
+fun extractVersionCodeFromPubspec(): Long {
         return try {
             // Lire directement depuis pubspec.yaml (plus fiable que flutter.versionCode)
             // Utiliser flutterSourceDir qui pointe vers le répertoire racine Flutter
@@ -97,33 +98,14 @@ fun extractVersionCodeFromPubspec(): Int {
                     if (parts.size > 1) {
                         val codeStr = parts[1].trim()
                         println("🔍 [DEBUG] codeStr: '$codeStr', length: ${codeStr.length}, toIntOrNull(): ${codeStr.toIntOrNull()}")
-                        val codeInt = codeStr.toIntOrNull()
-                        if (codeInt == null) {
-                            println("❌ [DEBUG] toIntOrNull() a retourné null pour '$codeStr'")
-                            println("❌ [DEBUG] Tentative avec toLongOrNull(): ${codeStr.toLongOrNull()}")
-                            // Essayer avec toLong puis convertir en Int
-                            val codeLong = codeStr.toLongOrNull()
-                            if (codeLong != null) {
-                                println("🔍 [DEBUG] codeLong: $codeLong, Int.MAX_VALUE: ${Int.MAX_VALUE}, comparaison: ${codeLong <= Int.MAX_VALUE.toLong()}")
-                                if (codeLong <= Int.MAX_VALUE.toLong()) {
-                                    val finalCode = codeLong.toInt()
-                                    println("✅ [DEBUG] Conversion réussie via Long: $finalCode")
-                                    return@extractVersionCodeFromPubspec finalCode
-                                } else {
-                                    println("⚠️ [DEBUG] $codeLong dépasse Int.MAX_VALUE (${Int.MAX_VALUE})")
-                                    println("⚠️ [DEBUG] Utilisation d'un modulo pour rester dans les limites: ${codeLong % Int.MAX_VALUE}")
-                                    // Si le version code dépasse Int.MAX_VALUE, utiliser un modulo
-                                    val finalCode = (codeLong % Int.MAX_VALUE).toInt()
-                                    println("✅ [DEBUG] Version code ajusté: $finalCode")
-                                    return@extractVersionCodeFromPubspec finalCode
-                                }
-                            } else {
-                                println("❌ [DEBUG] Impossible de convertir '$codeStr' en Long")
-                                return@extractVersionCodeFromPubspec 1
-                            }
+                        // Utiliser toLongOrNull directement pour gérer les grands nombres
+                        val codeLong = codeStr.toLongOrNull()
+                        if (codeLong == null) {
+                            println("❌ [DEBUG] Impossible de convertir '$codeStr' en Long")
+                            return@extractVersionCodeFromPubspec 1L
                         }
-                        println("🔢 Version Code extrait depuis pubspec.yaml: $codeInt (depuis: $versionLine, split: '$codeStr')")
-                        codeInt
+                        println("🔢 Version Code extrait depuis pubspec.yaml: $codeLong (depuis: $versionLine, split: '$codeStr')")
+                        codeLong
                     } else {
                         println("⚠️ Aucun '+' trouvé dans: $versionLine")
                         // Essayer avec regex en dernier recours
@@ -155,26 +137,26 @@ fun extractVersionCodeFromPubspec(): Int {
                         val parts = versionLine.split("+")
                         if (parts.size > 1) {
                             val codeStr = parts[1].trim()
-                            val codeInt = codeStr.toIntOrNull() ?: 1
-                            println("🔢 Version Code extrait depuis pubspec.yaml (fallback): $codeInt (split: '$codeStr')")
-                            codeInt
+                            val codeLong = codeStr.toLongOrNull() ?: 1L
+                            println("🔢 Version Code extrait depuis pubspec.yaml (fallback): $codeLong (split: '$codeStr')")
+                            codeLong
                         } else {
                             println("⚠️ Aucun version code trouvé dans pubspec.yaml (fallback), utilisation de 1")
-                            1
+                            1L
                         }
                     } else {
                         println("⚠️ Ligne 'version:' introuvable (fallback), utilisation de 1")
-                        1
+                        1L
                     }
                 } else {
                     println("⚠️ pubspec.yaml introuvable (fallback aussi), utilisation de 1")
-                    1
+                    1L
                 }
             }
         } catch (e: Exception) {
             println("⚠️ Erreur lors de l'extraction du versionCode: ${e.message}")
             e.printStackTrace()
-            1
+            1L
         }
     }
 
@@ -205,34 +187,19 @@ android {
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        // SOLUTION SIMPLE : Utiliser directement flutter.versionCode
-        // Le plugin Flutter lit déjà depuis pubspec.yaml et le convertit correctement
-        // Si le versionCode dépasse Int.MAX_VALUE, le plugin Flutter le gère automatiquement
+        // Utiliser la fonction extractVersionCodeFromPubspec() qui lit directement depuis pubspec.yaml
+        // Plus fiable que flutter.versionCode qui peut causer des erreurs de conversion
         versionCode = try {
-            val code = flutter.versionCode
-            // Convertir en Int de manière sûre
-            when (code) {
-                is Int -> code.coerceIn(1, Int.MAX_VALUE)
-                is Number -> {
-                    val longValue = code.toLong()
-                    if (longValue > Int.MAX_VALUE) {
-                        // Si le versionCode dépasse Int.MAX_VALUE, utiliser un modulo
-                        (longValue % Int.MAX_VALUE).toInt().coerceAtLeast(1)
-                    } else {
-                        longValue.toInt().coerceIn(1, Int.MAX_VALUE)
-                    }
-                }
-                else -> {
-                    val longValue = code.toString().toLongOrNull()
-                    if (longValue != null && longValue > Int.MAX_VALUE) {
-                        (longValue % Int.MAX_VALUE).toInt().coerceAtLeast(1)
-                    } else {
-                        code.toString().toIntOrNull()?.coerceIn(1, Int.MAX_VALUE) ?: 1
-                    }
-                }
+            val code = extractVersionCodeFromPubspec()
+            // S'assurer que le code est dans les limites d'Android (Int.MAX_VALUE)
+            if (code > Int.MAX_VALUE) {
+                // Si le versionCode dépasse Int.MAX_VALUE, utiliser un modulo
+                (code % Int.MAX_VALUE).toInt().coerceAtLeast(1)
+            } else {
+                code.coerceIn(1, Int.MAX_VALUE)
             }
         } catch (e: Exception) {
-            println("⚠️ Erreur conversion flutter.versionCode: ${e.message}, utilisation de 1")
+            println("⚠️ Erreur extraction versionCode: ${e.message}, utilisation de 1")
             1
         }
         versionName = flutter.versionName
