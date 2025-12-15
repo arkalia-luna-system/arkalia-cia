@@ -292,7 +292,7 @@ jobs:
 
       - name: Upload artifact (always available for manual upload)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: app-release-${{ github.run_number }}
           path: arkalia_cia/build/app/outputs/bundle/release/app-release.aab
