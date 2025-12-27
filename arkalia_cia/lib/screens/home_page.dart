@@ -21,6 +21,7 @@ import 'stats_screen.dart';
 import '../services/local_storage_service.dart';
 import '../services/calendar_service.dart';
 import '../services/search_service.dart';
+import '../utils/page_transitions.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -448,7 +449,7 @@ class _HomePageState extends State<HomePage> {
   void _showDocuments(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const DocumentsScreen()),
+      PageTransitions.slideRight(const DocumentsScreen()),
     ).then((_) {
       if (mounted) {
         _loadStats();
@@ -459,14 +460,14 @@ class _HomePageState extends State<HomePage> {
   void _showHealth(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const HealthScreen()),
+      PageTransitions.slideRight(const HealthScreen()),
     );
   }
 
   void _showReminders(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const RemindersScreen()),
+      PageTransitions.slideRight(const RemindersScreen()),
     ).then((_) {
       if (mounted) {
         _loadStats();
@@ -477,7 +478,7 @@ class _HomePageState extends State<HomePage> {
   void _showDoctors(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const DoctorsListScreen()),
+      PageTransitions.slideRight(const DoctorsListScreen()),
     ).then((_) {
       if (mounted) {
         _loadStats();
@@ -488,35 +489,35 @@ class _HomePageState extends State<HomePage> {
   void _showCalendar(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const CalendarScreen()),
+      PageTransitions.slideRight(const CalendarScreen()),
     );
   }
 
   void _showFamilySharing(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const FamilySharingScreen()),
+      PageTransitions.slideRight(const FamilySharingScreen()),
     );
   }
 
   void _showConversationalAI(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const ConversationalAIScreen()),
+      PageTransitions.slideRight(const ConversationalAIScreen()),
     );
   }
 
   void _showPatterns(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const PatternsDashboardScreen()),
+      PageTransitions.slideRight(const PatternsDashboardScreen()),
     );
   }
 
   void _showBBIAIntegration(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const BBIAIntegrationScreen()),
+      PageTransitions.slideRight(const BBIAIntegrationScreen()),
     );
   }
 
@@ -525,28 +526,28 @@ class _HomePageState extends State<HomePage> {
     if (!mounted) return;
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const EmergencyScreen()),
+      PageTransitions.slideRight(const EmergencyScreen()),
     );
   }
 
   void _showARIA(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const ARIAScreen()),
+      PageTransitions.slideRight(const ARIAScreen()),
     );
   }
 
   void _showSync(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const SyncScreen()),
+      PageTransitions.slideRight(const SyncScreen()),
     );
   }
 
   void _showSettings(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const SettingsScreen()),
+      PageTransitions.slideRight(const SettingsScreen()),
     ).then((_) {
       if (mounted) {
         _loadStats();
@@ -557,7 +558,7 @@ class _HomePageState extends State<HomePage> {
   void _showPathologies(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const PathologyListScreen()),
+      PageTransitions.slideRight(const PathologyListScreen()),
     ).then((_) {
       if (mounted) {
         _loadStats();
@@ -568,7 +569,7 @@ class _HomePageState extends State<HomePage> {
   void _showHydration(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const HydrationRemindersScreen()),
+      PageTransitions.slideRight(const HydrationRemindersScreen()),
     );
   }
 
