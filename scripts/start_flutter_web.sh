@@ -125,13 +125,20 @@ fi
 # Créer le lock file
 echo $$ > "$LOCK_FILE"
 
+# Obtenir l'IP locale pour l'accès mobile
+LOCAL_IP=$(ifconfig | grep -E "inet " | grep -v 127.0.0.1 | awk '{print $2}' | head -1)
+if [ -z "$LOCAL_IP" ]; then
+    LOCAL_IP="<votre-ip-locale>"
+fi
+
 # Démarrer le serveur web local
 echo ""
 echo -e "${GREEN}🌟 Démarrage du serveur web...${NC}"
-echo -e "${BLUE}📱 Ouvrez Comet et allez à: http://localhost:$PORT${NC}"
+echo -e "${BLUE}💻 Sur votre Mac: http://localhost:$PORT${NC}"
+echo -e "${BLUE}📱 Sur votre mobile (même WiFi): http://$LOCAL_IP:$PORT${NC}"
 echo -e "${YELLOW}💡 Appuyez sur Ctrl+C pour arrêter${NC}"
 echo ""
 
-# Démarrer Flutter en mode web
-flutter run -d web-server --web-port=$PORT --web-hostname=localhost
+# Démarrer Flutter en mode web (0.0.0.0 permet l'accès depuis le réseau local)
+flutter run -d web-server --web-port=$PORT --web-hostname=0.0.0.0
 
