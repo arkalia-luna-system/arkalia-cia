@@ -22,6 +22,7 @@ import 'stats_screen.dart';
 import '../services/local_storage_service.dart';
 import '../services/calendar_service.dart';
 import '../services/search_service.dart';
+import '../utils/input_sanitizer.dart';
 import '../utils/page_transitions.dart';
 
 class HomePage extends StatefulWidget {

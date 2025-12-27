@@ -11,7 +11,9 @@ void main() {
         ),
       );
 
-      // Attendre que l'écran soit chargé
+      // Attendre que l'écran soit chargé avec plusieurs pumps pour les appels async
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
       await tester.pumpAndSettle();
 
       // Vérifier que la section Statistiques est présente
@@ -27,7 +29,9 @@ void main() {
         ),
       );
 
-      // Attendre que l'écran soit chargé
+      // Attendre que l'écran soit chargé avec plusieurs pumps
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
       await tester.pumpAndSettle();
 
       // Vérifier que l'icône est présente
@@ -41,7 +45,9 @@ void main() {
         ),
       );
 
-      // Attendre que l'écran soit chargé
+      // Attendre que l'écran soit chargé avec plusieurs pumps
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
       await tester.pumpAndSettle();
 
       // Trouver le ListTile des statistiques
