@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -40,8 +41,19 @@ class GoogleAuthService {
   /// - 'error': String? (si erreur)
   static Future<Map<String, dynamic>> signIn() async {
     try {
-      // SIMPLIFIÉ : Tentative de connexion directe
-      final GoogleSignInAccount? account = await _googleSignIn.signIn();
+      // SIMPLIFIÉ : Tentative de connexion directe avec timeout
+      // Sur le web, la page de consentement peut rester bloquée, donc on ajoute un timeout
+      final GoogleSignInAccount? account = await _googleSignIn.signIn().timeout(
+        const Duration(minutes: 2), // Timeout de 2 minutes pour éviter blocage infini
+        onTimeout: () {
+          AppLogger.warning('Google Sign-In timeout après 2 minutes');
+          throw TimeoutException(
+            'La connexion Google a pris trop de temps. '
+            'Vérifiez votre connexion internet et réessayez.',
+            const Duration(minutes: 2),
+          );
+        },
+      );
       
       if (account == null) {
         // L'utilisateur a annulé la connexion (pas une erreur)

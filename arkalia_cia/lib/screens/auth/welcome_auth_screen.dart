@@ -87,12 +87,32 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
   Future<void> _handleGoogleSignIn(BuildContext context) async {
     if (!context.mounted) return;
 
-    // Afficher un indicateur de chargement
+    // Afficher un indicateur de chargement avec message
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const Center(
-        child: CircularProgressIndicator(),
+      builder: (context) => AlertDialog(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const CircularProgressIndicator(),
+            const SizedBox(height: 16),
+            const Text(
+              'Connexion en cours...',
+              style: TextStyle(fontSize: 14),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Si la page de consentement reste bloquée,\n'
+              'attendez 1-2 minutes puis réessayez.',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[600],
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
 
