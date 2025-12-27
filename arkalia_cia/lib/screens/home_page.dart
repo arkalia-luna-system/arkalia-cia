@@ -79,11 +79,14 @@ class _HomePageState extends State<HomePage> {
   Future<void> _performSearch(String query) async {
     if (!mounted) return;
     
+    // Sanitizer la requête de recherche pour prévenir XSS
+    final sanitizedQuery = InputSanitizer.sanitizeForStorage(query);
+    
     setState(() {
       _isSearching = true;
     });
 
-    final results = await SearchService.searchAll(query);
+    final results = await SearchService.searchAll(sanitizedQuery);
     if (mounted) {
       setState(() {
         _searchResults = results;

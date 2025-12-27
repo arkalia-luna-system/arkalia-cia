@@ -3,6 +3,7 @@ import '../services/search_service.dart';
 import '../services/doctor_service.dart';
 import '../models/doctor.dart';
 import '../utils/error_helper.dart';
+import '../utils/input_sanitizer.dart';
 import 'documents_screen.dart';
 import 'doctor_detail_screen.dart';
 
@@ -85,8 +86,12 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
   Future<void> _performSearch() async {
     setState(() {
       _isSearching = true;
+      // Sanitizer la requête de recherche pour prévenir XSS
+      final sanitizedQuery = _searchController.text.isNotEmpty 
+          ? InputSanitizer.sanitizeForStorage(_searchController.text.trim())
+          : null;
       _filters = SearchFilters(
-        query: _searchController.text.isNotEmpty ? _searchController.text : null,
+        query: sanitizedQuery,
         category: _selectedCategory,
         examType: _selectedExamType,
         startDate: _startDate,

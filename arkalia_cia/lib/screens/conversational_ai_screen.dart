@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/conversational_ai_service.dart';
 import '../utils/error_helper.dart';
+import '../utils/input_sanitizer.dart';
 
 class ConversationalAIScreen extends StatefulWidget {
   const ConversationalAIScreen({super.key});
@@ -59,10 +60,13 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
     final question = _questionController.text.trim();
     if (question.isEmpty) return;
 
+    // Sanitizer la question utilisateur pour prévenir XSS
+    final sanitizedQuestion = InputSanitizer.sanitizeForStorage(question);
+
     // Ajouter message utilisateur
     setState(() {
       _messages.add(ChatMessage(
-        text: question,
+        text: sanitizedQuestion,
         isUser: true,
         timestamp: DateTime.now(),
       ));
@@ -75,9 +79,9 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
       _isLoading = true;
     });
 
-    // Obtenir réponse IA
+    // Obtenir réponse IA (utiliser la question sanitizée)
     try {
-      final response = await _aiService.askQuestion(question);
+      final response = await _aiService.askQuestion(sanitizedQuestion);
       
       setState(() {
         _messages.add(ChatMessage(

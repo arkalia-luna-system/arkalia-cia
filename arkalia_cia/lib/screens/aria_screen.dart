@@ -176,8 +176,9 @@ class _ARIAScreenState extends State<ARIAScreen> {
                       Text(
                         _isARIAConnected
                           ? 'Laboratoire de recherche santé opérationnel'
-                          : 'Vérifiez que le serveur ARIA est démarré',
+                          : 'Vérifiez que le serveur ARIA est démarré\n(Configuration disponible dans les paramètres)',
                         style: TextStyle(
+                          fontSize: 14,
                           color: _isARIAConnected ? Colors.green[600] : Colors.red[600],
                         ),
                       ),

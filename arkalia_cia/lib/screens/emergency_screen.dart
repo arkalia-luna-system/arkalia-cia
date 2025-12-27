@@ -5,6 +5,7 @@ import '../widgets/emergency_contact_dialog.dart';
 import '../widgets/emergency_contact_card.dart';
 import '../widgets/emergency_info_card.dart';
 import '../utils/error_helper.dart';
+import '../utils/input_sanitizer.dart';
 
 /// Écran de gestion des contacts et informations d'urgence
 class EmergencyScreen extends StatefulWidget {
@@ -241,7 +242,9 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
             onPressed: () {
               final data = <String, dynamic>{};
               for (final entry in controllers.entries) {
-                data[entry.key] = entry.value.text.trim();
+                // Sanitizer les entrées utilisateur pour prévenir XSS
+                final sanitizedValue = InputSanitizer.sanitizeForStorage(entry.value.text.trim());
+                data[entry.key] = sanitizedValue;
               }
               Navigator.of(context).pop(data);
             },

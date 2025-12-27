@@ -31,6 +31,9 @@ void main() {
         ),
       );
 
+      // Attendre un peu plus longtemps pour le chargement
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
       await tester.pumpAndSettle();
 
       expect(find.text('Rappels'), findsOneWidget);
@@ -43,8 +46,12 @@ void main() {
         ),
       );
 
+      // Attendre le chargement complet
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
       await tester.pumpAndSettle();
 
+      // L'icône notifications_none est affichée dans l'état vide
       expect(find.byIcon(Icons.notifications_none), findsOneWidget);
     });
 
@@ -55,8 +62,12 @@ void main() {
         ),
       );
 
+      // Attendre le chargement complet
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
       await tester.pumpAndSettle();
 
+      // Le bouton add est dans le FloatingActionButton
       expect(find.byIcon(Icons.add), findsOneWidget);
     });
 
@@ -80,6 +91,9 @@ void main() {
         ),
       );
 
+      // Attendre le chargement complet avec plusieurs pumps
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
       await tester.pumpAndSettle();
 
       expect(find.text('Test Rappel'), findsOneWidget);
