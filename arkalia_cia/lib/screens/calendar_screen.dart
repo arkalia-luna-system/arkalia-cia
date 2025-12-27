@@ -67,48 +67,51 @@ class _CalendarScreenState extends State<CalendarScreen> {
       }
 
       // Récupérer les médicaments actifs
+      // Charger pour tous les jours du mois visible (pas seulement _focusedDay)
       final medications = await _medicationService.getActiveMedications();
-      for (final medication in medications) {
-        for (final time in medication.times) {
-          final reminderDate = DateTime(
-            _focusedDay.year,
-            _focusedDay.month,
-            _focusedDay.day,
-            time.hour,
-            time.minute,
-          );
-          final dateOnly = DateTime(reminderDate.year, reminderDate.month, reminderDate.day);
+      final monthEnd = DateTime(_focusedDay.year, _focusedDay.month + 1, 0);
+      
+      // Charger les médicaments pour tous les jours du mois visible
+      for (int day = 1; day <= monthEnd.day; day++) {
+        final currentDate = DateTime(_focusedDay.year, _focusedDay.month, day);
+        for (final medication in medications) {
+          for (final time in medication.times) {
+            final dateOnly = DateTime(currentDate.year, currentDate.month, currentDate.day);
+
+            if (!eventsMap.containsKey(dateOnly)) {
+              eventsMap[dateOnly] = [];
+            }
+
+            eventsMap[dateOnly]!.add({
+              'type': 'medication',
+              'medication': medication,
+              'time': time,
+              'title': '💊 ${medication.name}',
+              'description': medication.dosage ?? 'Médicament',
+              'color': Colors.blue,
+            });
+          }
+        }
+      }
+
+      // Récupérer les rappels d'hydratation (toutes les 2h de 8h à 20h)
+      // Charger pour tous les jours du mois visible
+      for (int day = 1; day <= monthEnd.day; day++) {
+        final currentDate = DateTime(_focusedDay.year, _focusedDay.month, day);
+        for (int hour = 8; hour <= 20; hour += 2) {
+          final dateOnly = DateTime(currentDate.year, currentDate.month, currentDate.day);
 
           if (!eventsMap.containsKey(dateOnly)) {
             eventsMap[dateOnly] = [];
           }
 
           eventsMap[dateOnly]!.add({
-            'type': 'medication',
-            'medication': medication,
-            'time': time,
-            'title': '💊 ${medication.name}',
-            'description': medication.dosage ?? 'Médicament',
-            'color': Colors.blue,
+            'type': 'hydration',
+            'title': '💧 Hydratation',
+            'description': 'N\'oubliez pas de boire de l\'eau !',
+            'color': Colors.cyan,
           });
         }
-      }
-
-      // Récupérer les rappels d'hydratation (toutes les 2h de 8h à 20h)
-      for (int hour = 8; hour <= 20; hour += 2) {
-        final reminderDate = DateTime(_focusedDay.year, _focusedDay.month, _focusedDay.day, hour, 0);
-        final dateOnly = DateTime(reminderDate.year, reminderDate.month, reminderDate.day);
-
-        if (!eventsMap.containsKey(dateOnly)) {
-          eventsMap[dateOnly] = [];
-        }
-
-        eventsMap[dateOnly]!.add({
-          'type': 'hydration',
-          'title': '💧 Hydratation',
-          'description': 'N\'oubliez pas de boire de l\'eau !',
-          'color': Colors.cyan,
-        });
       }
 
       // Récupérer aussi les rappels du calendrier système
@@ -243,7 +246,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
               });
             },
             onPageChanged: (focusedDay) {
-              _focusedDay = focusedDay;
+              setState(() {
+                _focusedDay = focusedDay;
+                // Recharger les événements pour le nouveau mois
+                _loadEvents();
+              });
             },
             calendarBuilders: CalendarBuilders(
               markerBuilder: (context, date, events) {
