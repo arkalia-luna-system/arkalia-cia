@@ -59,20 +59,17 @@ class _RemindersScreenState extends State<RemindersScreen> {
             'is_completed': false,
             'source': 'calendar',
           }).toList();
+          // Mettre à jour avec les rappels calendrier si disponibles
+          if (mounted && calendarReminders.isNotEmpty) {
+            setState(() {
+              reminders = [...localReminders, ...calendarReminders];
+              _hasMoreItems = reminders.length > _itemsPerPage;
+              displayedReminders = reminders.take(_itemsPerPage).toList();
+            });
+          }
         } catch (e) {
           // Ignorer les erreurs de calendrier, on a déjà les rappels locaux
         }
-      }
-
-      if (mounted) {
-        setState(() {
-          reminders = [...localReminders, ...calendarReminders];
-          // Pagination : Charger seulement les 20 premiers
-          _currentPage = 0;
-          _hasMoreItems = reminders.length > _itemsPerPage;
-          displayedReminders = reminders.take(_itemsPerPage).toList();
-          isLoading = false;
-        });
       }
     } catch (e) {
       if (mounted) {
