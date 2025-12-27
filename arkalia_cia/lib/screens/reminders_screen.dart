@@ -35,12 +35,24 @@ class _RemindersScreenState extends State<RemindersScreen> {
     });
 
     try {
-      // Charger depuis le stockage local
+      // Charger depuis le stockage local (rapide, ne bloque pas)
       final localReminders = await LocalStorageService.getReminders();
       
+      // Afficher immédiatement les rappels locaux (ne pas attendre CalendarService)
+      if (mounted) {
+        setState(() {
+          reminders = localReminders;
+          // Pagination : Charger seulement les 20 premiers
+          _currentPage = 0;
+          _hasMoreItems = reminders.length > _itemsPerPage;
+          displayedReminders = reminders.take(_itemsPerPage).toList();
+          isLoading = false;
+        });
+      }
+      
+      // Charger CalendarService en arrière-plan (ne bloque pas l'UI)
       // Essayer de charger depuis le calendrier natif (mobile seulement)
-      List<Map<String, dynamic>> calendarReminders = [];
-      if (!kIsWeb) {
+      if (!kIsWeb && mounted) {
         try {
           // Ajouter un timeout très court pour éviter les blocages en test
           // Utiliser un Future avec timeout plutôt qu'un Timer pour éviter les timers en attente
