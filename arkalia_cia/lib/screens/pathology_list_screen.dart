@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/pathology_service.dart';
 import '../models/pathology.dart';
+import '../utils/input_sanitizer.dart';
 import 'pathology_detail_screen.dart';
 
 class PathologyListScreen extends StatefulWidget {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../utils/validation_helper.dart';
+import '../../utils/input_sanitizer.dart';
 
 /// Dialog pour ajouter/éditer un contact d'urgence
 class EmergencyContactDialog extends StatefulWidget {
@@ -170,16 +171,25 @@ class _EmergencyContactDialogState extends State<EmergencyContactDialog> {
         ElevatedButton(
           onPressed: _isValid
               ? () {
+                  // Sanitizer les entrées utilisateur pour prévenir XSS
+                  final sanitizedName = InputSanitizer.sanitizeForStorage(nameController.text.trim());
+                  final sanitizedPhone = phoneController.text.trim(); // Phone déjà validé par ValidationHelper
+                  final sanitizedRelationship = relationshipController.text.trim().isNotEmpty
+                      ? InputSanitizer.sanitizeForStorage(relationshipController.text.trim())
+                      : '';
+                  final sanitizedDisplayName = displayNameController.text.trim().isNotEmpty 
+                      ? InputSanitizer.sanitizeForStorage(displayNameController.text.trim())
+                      : sanitizedName;
+                  final sanitizedEmoji = emojiController.text.trim().isNotEmpty 
+                      ? emojiController.text.trim() // Emoji ne nécessite pas de sanitization
+                      : '👤';
+                  
                   final contactData = {
-                    'name': nameController.text.trim(),
-                    'phone': phoneController.text.trim(),
-                    'relationship': relationshipController.text.trim(),
-                    'display_name': displayNameController.text.trim().isNotEmpty 
-                        ? displayNameController.text.trim() 
-                        : nameController.text.trim(),
-                    'emoji': emojiController.text.trim().isNotEmpty 
-                        ? emojiController.text.trim() 
-                        : '👤',
+                    'name': sanitizedName,
+                    'phone': sanitizedPhone,
+                    'relationship': sanitizedRelationship,
+                    'display_name': sanitizedDisplayName,
+                    'emoji': sanitizedEmoji,
                     'color': selectedColor.value, // Utilisation de .value pour obtenir la valeur entière ARGB
                     'is_primary': isPrimary,
                     if (isEditing) 'id': widget.existingContact!['id'],
