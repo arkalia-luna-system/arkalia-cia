@@ -563,7 +563,8 @@ class _RemindersScreenState extends State<RemindersScreen> {
                           size: 40,
                         ),
                         title: Text(
-                          reminder['title'] ?? 'Rappel',
+                          // Sanitizer à l'affichage pour prévenir XSS (défense en profondeur)
+                          InputSanitizer.sanitize(reminder['title']?.toString() ?? 'Rappel'),
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
@@ -579,7 +580,8 @@ class _RemindersScreenState extends State<RemindersScreen> {
                             children: [
                               if (reminder['description'] != null && reminder['description'].toString().isNotEmpty)
                                 Text(
-                                  reminder['description'].toString(),
+                                  // Sanitizer à l'affichage pour prévenir XSS (défense en profondeur)
+                                  InputSanitizer.sanitize(reminder['description'].toString()),
                                   style: const TextStyle(fontSize: 14),
                                 ),
                               if (reminder['description'] != null)

@@ -1122,9 +1122,15 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     if (!mounted) return;
     
     final controller = TextEditingController();
-    int refreshKey = 0; // Clé pour forcer le FutureBuilder à se reconstruire
     
     if (!mounted) return;
+    
+    // Charger les catégories initiales
+    List<String> customCategories = [];
+    final allCategories = await CategoryService.getCategories();
+    customCategories = allCategories.where((c) => 
+      !['Médical', 'Administratif', 'Autre'].contains(c)
+    ).toList();
     
     await showDialog(
       context: context,
@@ -1147,11 +1153,17 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                   if (controller.text.trim().isNotEmpty) {
                     // Sanitizer la catégorie avant ajout pour prévenir XSS
                     final sanitizedCategory = InputSanitizer.sanitizeForStorage(controller.text.trim());
-                    await CategoryService.addCategory(sanitizedCategory);
-                    controller.clear();
-                    // Incrémenter la clé pour forcer le FutureBuilder à se reconstruire
-                    refreshKey++;
-                    setDialogState(() {});
+                    final success = await CategoryService.addCategory(sanitizedCategory);
+                    if (success) {
+                      controller.clear();
+                      // Recharger les catégories depuis le service
+                      final updatedCategories = await CategoryService.getCategories();
+                      setDialogState(() {
+                        customCategories = updatedCategories.where((c) => 
+                          !['Médical', 'Administratif', 'Autre'].contains(c)
+                        ).toList();
+                      });
+                    }
                   }
                 },
                 child: const Text('Ajouter'),
@@ -1159,43 +1171,30 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
               const SizedBox(height: 16),
               const Text('Catégories personnalisées:', style: TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
-              // Utiliser FutureBuilder avec une clé pour rafraîchir après ajout/suppression
-              FutureBuilder<List<String>>(
-                key: ValueKey(refreshKey), // Clé pour forcer la reconstruction
-                future: CategoryService.getCategories(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  
-                  final allCategories = snapshot.data ?? [];
-                  final currentCustomCategories = allCategories.where((c) => 
-                    !['Médical', 'Administratif', 'Autre'].contains(c)
-                  ).toList();
-                  
-                  if (currentCustomCategories.isEmpty) {
-                    return const Padding(
+              // Afficher les catégories depuis l'état local (mis à jour en temps réel)
+              customCategories.isEmpty
+                  ? const Padding(
                       padding: EdgeInsets.all(16.0),
                       child: Text('Aucune catégorie personnalisée', style: TextStyle(color: Colors.grey)),
-                    );
-                  }
-                  
-                  return Column(
-                    children: currentCustomCategories.map((category) => ListTile(
-                      title: Text(category),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () async {
-                          await CategoryService.deleteCategory(category);
-                          // Incrémenter la clé pour forcer le FutureBuilder à se reconstruire
-                          refreshKey++;
-                          setDialogState(() {});
-                        },
-                      ),
-                    )).toList(),
-                  );
-                },
-              ),
+                    )
+                  : Column(
+                      children: customCategories.map((category) => ListTile(
+                        title: Text(category),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () async {
+                            await CategoryService.deleteCategory(category);
+                            // Recharger les catégories depuis le service
+                            final updatedCategories = await CategoryService.getCategories();
+                            setDialogState(() {
+                              customCategories = updatedCategories.where((c) => 
+                                !['Médical', 'Administratif', 'Autre'].contains(c)
+                              ).toList();
+                            });
+                          },
+                        ),
+                      )).toList(),
+                    ),
             ],
           ),
           actions: [

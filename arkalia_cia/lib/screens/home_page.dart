@@ -49,6 +49,18 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Recharger les stats quand la page devient visible (après retour de navigation)
+    // Utiliser un petit délai pour éviter les appels multiples
+    Future.microtask(() {
+      if (mounted) {
+        _loadStats();
+      }
+    });
+  }
+
+  @override
   void dispose() {
     _debounceTimer?.cancel();
     _searchController.removeListener(_onSearchChanged);
