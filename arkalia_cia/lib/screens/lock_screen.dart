@@ -17,7 +17,7 @@ class LockScreen extends StatefulWidget {
 }
 
 class _LockScreenState extends State<LockScreen> {
-  bool _isAuthenticating = false;
+  final bool _isAuthenticating = false;
   String _errorMessage = '';
 
   @override
@@ -215,11 +215,11 @@ class _LockScreenState extends State<LockScreen> {
                   const SizedBox(height: 16),
                   
                   // Message
-                  Text(
+                  const Text(
                     kIsWeb
                         ? 'Authentification requise\n(Code PIN)'
                         : 'Authentification désactivée',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       color: Colors.white70,
                     ),
