@@ -15,7 +15,7 @@
 
 ---
 
-## ✅ CE QUI EST FAIT (27 Décembre 2025)
+## ✅ CE QUI EST effectué (27 Décembre 2025)
 
 ### Phase 1 - Critique ✅ COMPLÉTÉE
 
@@ -272,9 +272,9 @@
 
 **Pour une application prête pour production** :
 
-- ✅ **Fait** : Toutes les fonctionnalités critiques sont complétées
+- ✅ **effectué** : Toutes les fonctionnalités critiques sont complétées
 - ⚠️ **Recommandé** : Cache intelligent + Tests d'accessibilité
-- 📝 **Optionnel** : Tout le reste peut être fait plus tard
+- 📝 **Optionnel** : Tout le reste peut être effectué plus tard
 
 **L'application est déjà utilisable et performante !** 🎉
 

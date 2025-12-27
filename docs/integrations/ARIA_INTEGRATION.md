@@ -22,7 +22,6 @@
 
 **⚠️ Ne pas développer ARIA dans le projet CIA** - Utiliser le projet ARIA séparé.
 
-**Voir** : `docs/PROMPT_AUDIT_ARIA_12_DECEMBRE_2025.md` pour audit complet ARIA
 
 ---
 

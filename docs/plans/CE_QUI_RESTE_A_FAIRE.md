@@ -4,7 +4,7 @@
 
 ---
 
-## ✅ CE QUI EST FAIT
+## ✅ CE QUI EST effectué
 
 ### Phase 1 - Critique ✅
 - ✅ Tous textes ≥14px
@@ -157,9 +157,9 @@
 ## 🎯 RECOMMANDATION
 
 **Pour une application prête pour production** :
-- ✅ **Fait** : Toutes les fonctionnalités critiques sont complétées
+- ✅ **effectué** : Toutes les fonctionnalités critiques sont complétées
 - ⚠️ **Recommandé** : Cache intelligent + Tests d'accessibilité
-- 📝 **Optionnel** : Tout le reste peut être fait plus tard
+- 📝 **Optionnel** : Tout le reste peut être effectué plus tard
 
 **L'application est déjà utilisable et performante !** 🎉
 

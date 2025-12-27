@@ -4,8 +4,8 @@
 **Dernière mise à jour** : 10 décembre 2025  
 **Statut** : Production Ready
 
-> **📱 Déploiement** : L'app est déployée en PWA (Progressive Web App) sur https://arkalia-luna-system.github.io/arkalia-cia/  
-> **⚠️ Google Play Store** : Non utilisé (rejeté le 9 décembre 2025 - restrictions pour apps de santé). Voir [STATUT_DEPLOIEMENT_FINAL.md](./STATUT_DEPLOIEMENT_FINAL.md) pour les détails.
+> **📱 Déploiement** : L'application est déployée en PWA (Progressive Web App) sur https://arkalia-luna-system.github.io/arkalia-cia/  
+> **⚠️ Google Play Store** : Non utilisé (rejeté le 9 décembre 2025 - restrictions pour applications de santé).
 
 Procédures de déploiement en production et bonnes pratiques pour Arkalia CIA.
 
@@ -94,7 +94,6 @@ graph TB
 - **Google Play Console** (Android deployment) - ⚠️ **Non utilisé** (rejeté le 9 décembre 2025)
   - Raison : Restrictions Google pour apps de santé (compte professionnel requis)
   - Alternative : PWA déployée et fonctionnelle
-  - Voir [STATUT_DEPLOIEMENT_FINAL.md](./STATUT_DEPLOIEMENT_FINAL.md) pour les détails
 - **Cloud Provider** (AWS/GCP/Azure for backend) - ⏳ À configurer (optionnel)
 - **Domain & SSL** (Custom domain setup) - ⏳ À configurer (optionnel)
 
@@ -775,7 +774,6 @@ kubectl apply -f canary-deployment.yaml
 - **[BUILD_RELEASE_ANDROID.md](./BUILD_RELEASE_ANDROID.md)** — Guide build Android
 - **[IOS_DEPLOYMENT_GUIDE.md](./IOS_DEPLOYMENT_GUIDE.md)** — Guide déploiement iOS
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture système
-- **[CHECKLIST_RELEASE_CONSOLIDEE.md](./CHECKLIST_RELEASE_CONSOLIDEE.md)** — Checklist release
 - **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
 
 ---

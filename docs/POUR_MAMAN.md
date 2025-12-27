@@ -1,11 +1,11 @@
 # 📱 Arkalia CIA - Guide pour Maman
 
-> **Ton application santé personnelle** - Tout ce que tu pourras faire avec Arkalia CIA
+> **votre application santé personnelle** - Tout ce que vous pourras faire avec Arkalia CIA
 
-**Créé par** : Ta fille qui t'aime ❤️  
+**Créé par** : Ta fille qui vous aime ❤️  
 **Date** : 10 décembre 2025  
 **Version** : 1.3.1  
-**Installation** : Voir [GUIDE_INSTALLATION_PWA_MAMAN.md](./guides/GUIDE_INSTALLATION_PWA_MAMAN.md) pour installer l'app en PWA
+**Installation** : L'application peut être installée directement depuis le navigateur web en tant que PWA (Progressive Web App).
 
 ---
 
@@ -14,7 +14,7 @@
 **L'application est PRÊTE et fonctionnelle !** ✅
 
 **Toutes les fonctionnalités sont implémentées et testées.**  
-L'app est maintenant disponible en PWA (Progressive Web App) - tu peux l'installer directement depuis Internet !
+L'app est maintenant disponible en PWA (Progressive Web App) - vous peux l'installer directement depuis Internet !
 
 **L'app est disponible maintenant !** 📱✨
 
@@ -28,22 +28,22 @@ L'app est maintenant disponible en PWA (Progressive Web App) - tu peux l'install
 
 ---
 
-## 🎯 C'est quoi Arkalia CIA ?
+## 🎯 c'est quoi Arkalia CIA ?
 
-Arkalia CIA sera **TON** assistant santé personnel sur ton téléphone/tablette.  
+Arkalia CIA sera **votre** assistant santé personnel sur votre téléphone/tablette.  
 Ce sera comme avoir un **secrétaire médical** dans ta poche qui :
-- ✅ Gardera tous tes documents médicaux en sécurité
-- ✅ Te rappellera de prendre tes médicaments
+- ✅ Gardera tous vos documents médicaux en sécurité
+- ✅ Te rappellera de prendre vos médicaments
 - ✅ Te rappellera de boire de l'eau
-- ✅ Gardera la liste de tous tes médecins
+- ✅ Gardera la liste de tous vos médecins
 - ✅ Te permettra de partager avec la famille
-- ✅ Répondra à tes questions santé
+- ✅ Répondra à vos questions santé
 
 ---
 
 ## 🏠 L'ÉCRAN PRINCIPAL (Accueil)
 
-Quand tu ouvres l'app, tu vois une grille avec **14 boutons** :
+Quand vous ouvres l'app, vous vois une grille avec **14 boutons** :
 
 ```
 ┌─────────────────────────────────────┐
@@ -61,16 +61,16 @@ Quand tu ouvres l'app, tu vois une grille avec **14 boutons** :
 
 ## 📄 1. DOCUMENTS ✅ IMPLÉMENTÉ
 
-**À quoi ça sert ?** : Stocker tes PDF médicaux (ordonnances, résultats d'examens, etc.)
+**À quoi cela sert ?** : Stocker vos PDF médicaux (ordonnances, résultats d'examens, etc.)
 
-**Comment ça marchera ?** :
-1. Tu appuieras sur le bouton **"Documents"** (vert)
-2. Tu appuieras sur le **"+"** en bas à droite
-3. Tu choisiras un PDF depuis ton téléphone
+**Comment cela marchera ?** :
+1. vous appuieras sur le bouton **"Documents"** (vert)
+2. vous appuieras sur le **"+"** en bas à droite
+3. vous choisiras un PDF depuis votre téléphone
 4. L'app le stockera en sécurité
 
-**Ce que tu pourras faire** :
-- ✅ Voir tous tes documents
+**Ce que vous pourras faire** :
+- ✅ Voir tous vos documents
 - ✅ Chercher un document par nom
 - ✅ Filtrer par type (ordonnance, résultat, etc.)
 - ✅ Ouvrir un document pour le lire
@@ -83,14 +83,14 @@ Quand tu ouvres l'app, tu vois une grille avec **14 boutons** :
 
 ## 🏥 2. SANTÉ (Portails Santé) ✅ VALIDÉ
 
-**À quoi ça sert ?** : Accès rapide aux sites santé belges (eHealth, Inami, etc.)
+**À quoi cela sert ?** : Accès rapide aux sites santé belges (eHealth, Inami, etc.)
 
-**Comment ça marchera ?** :
-1. Tu appuies sur **"Santé"** (rouge)
-2. Tu vois la liste des portails santé
-3. Tu appuies sur un portail pour l'ouvrir dans le navigateur
+**Comment cela marchera ?** :
+1. vous appuies sur **"Santé"** (rouge)
+2. vous vois la liste des portails santé
+3. vous appuies sur un portail pour l'ouvrir dans le navigateur
 
-**Ce que tu pourras faire** :
+**Ce que vous pourras faire** :
 - ✅ Voir les portails santé belges pré-configurés (eHealth, Inami, Sciensano, SPF Santé, Andaman 7, MaSanté)
 - ✅ Ajouter un nouveau portail
 - ✅ Ouvrir un portail dans le navigateur
@@ -102,18 +102,18 @@ Quand tu ouvres l'app, tu vois une grille avec **14 boutons** :
 
 ## 📋 3. PATHOLOGIES ✅ VALIDÉ
 
-**À quoi ça sert ?** : Suivre tes pathologies (endométriose, arthrose, etc.) avec graphiques
+**À quoi cela sert ?** : Suivre vos pathologies (endométriose, arthrose, etc.) avec graphiques
 
-**Comment ça marchera ?** :
-1. Tu appuies sur **"Pathologies"** (violet)
-2. Tu vois la liste de tes pathologies
-3. Tu peux ajouter une pathologie (9 templates disponibles)
-4. Tu peux suivre tes symptômes jour par jour
+**Comment cela marchera ?** :
+1. vous appuies sur **"Pathologies"** (violet)
+2. vous vois la liste de vos pathologies
+3. vous peux ajouter une pathologie (9 templates disponibles)
+4. vous peux suivre vos symptômes jour par jour
 
-**Ce que tu pourras faire** :
+**Ce que vous pourras faire** :
 - ✅ Ajouter une pathologie (9 templates : endométriose, cancer, myélome, ostéoporose, arthrose, arthrite, tendinite, spondylarthrite, Parkinson)
 - ✅ Voir l'évolution avec des graphiques
-- ✅ Noter tes douleurs et symptômes
+- ✅ Noter vos douleurs et symptômes
 - ✅ Voir les rappels personnalisés
 
 **✅ FONCTION PRÊTE** - Testée et validée
@@ -122,15 +122,15 @@ Quand tu ouvres l'app, tu vois une grille avec **14 boutons** :
 
 ## 🔔 4. RAPPELS ✅ VALIDÉ
 
-**À quoi ça sert ?** : Créer des rappels simples (RDV, examens, etc.)
+**À quoi cela sert ?** : Créer des rappels simples (RDV, examens, etc.)
 
-**Comment ça marchera ?** :
-1. Tu appuies sur **"Rappels"** (orange)
-2. Tu appuies sur **"+"** pour créer un rappel
-3. Tu choisis la date, l'heure, et si tu veux qu'il se répète
-4. Le rappel apparaît dans ton calendrier téléphone
+**Comment cela marchera ?** :
+1. vous appuies sur **"Rappels"** (orange)
+2. vous appuies sur **"+"** pour créer un rappel
+3. vous choisis la date, l'heure, et si vous veux qu'il se répète
+4. Le rappel apparaît dans votre calendrier téléphone
 
-**Ce que tu pourras faire** :
+**Ce que vous pourras faire** :
 - ✅ Créer un rappel avec titre et description
 - ✅ Choisir la date et l'heure
 - ✅ Répéter (quotidien, hebdomadaire, mensuel)
@@ -143,15 +143,15 @@ Quand tu ouvres l'app, tu vois une grille avec **14 boutons** :
 
 ## 💊 5. MÉDICAMENTS ✅ VALIDÉ
 
-**À quoi ça sert ?** : Rappels intelligents pour tes médicaments
+**À quoi cela sert ?** : Rappels intelligents pour vos médicaments
 
-**Comment ça marchera ?** :
-1. Tu appuies sur **"Rappels"** puis tu cherches les médicaments
-2. OU tu vas dans **"Médecins"** → **"Médicaments"**
-3. Tu ajoutes un médicament avec les heures de prise
+**Comment cela marchera ?** :
+1. vous appuies sur **"Rappels"** puis vous cherches les médicaments
+2. OU vous allez dans **"Médecins"** → **"Médicaments"**
+3. vous ajoutes un médicament avec les heures de prise
 4. L'app te rappelle automatiquement
 
-**Ce que tu pourras faire** :
+**Ce que vous pourras faire** :
 - ✅ Ajouter un médicament (nom, dosage, heures)
 - ✅ Voir les médicaments actifs du jour
 - ✅ Marquer comme "pris" ou "ignoré"
@@ -165,18 +165,18 @@ Quand tu ouvres l'app, tu vois une grille avec **14 boutons** :
 
 ## 💧 6. HYDRATATION ✅ VALIDÉ
 
-**À quoi ça sert ?** : Te rappeler de boire de l'eau régulièrement
+**À quoi cela sert ?** : Te rappeler de boire de l'eau régulièrement
 
-**Comment ça marchera ?** :
-1. Tu appuies sur **"Hydratation"** (cyan)
-2. Tu vois ta progression du jour
-3. Tu appuies sur les boutons pour enregistrer (250ml, 500ml, etc.)
+**Comment cela marchera ?** :
+1. vous appuies sur **"Hydratation"** (cyan)
+2. vous vois ta progression du jour
+3. vous appuies sur les boutons pour enregistrer (250ml, 500ml, etc.)
 4. L'app te rappelle toutes les 2h de 8h à 20h
 
-**Ce que tu pourras faire** :
+**Ce que vous pourras faire** :
 - ✅ Voir ta progression quotidienne (barre de progression)
 - ✅ Enregistrer une consommation (250ml, 500ml, 750ml, 1L)
-- ✅ Définir ton objectif quotidien (défaut : 2000ml = 8 verres)
+- ✅ Définir votre objectif quotidien (défaut : 2000ml = 8 verres)
 - ✅ Voir les statistiques (moyenne, jours objectif atteint)
 - ✅ Recevoir des rappels automatiques
 
@@ -186,19 +186,19 @@ Quand tu ouvres l'app, tu vois une grille avec **14 boutons** :
 
 ## 🚨 7. URGENCE (Contacts ICE) ✅ VALIDÉ
 
-**À quoi ça sert ?** : Contacts d'urgence et infos médicales importantes
+**À quoi cela sert ?** : Contacts d'urgence et infos médicales importantes
 
-**Comment ça marchera ?** :
-1. Tu appuies sur **"Urgence"** (violet)
-2. Tu vois tes contacts d'urgence
-3. Tu peux appeler en un clic
-4. Tu peux voir/modifier tes infos médicales d'urgence
+**Comment cela marchera ?** :
+1. vous appuies sur **"Urgence"** (violet)
+2. vous vois vos contacts d'urgence
+3. vous peux appeler en un clic
+4. vous peux voir/modifier vos infos médicales d'urgence
 
-**Ce que tu pourras faire** :
-- ✅ Voir tes contacts ICE (In Case of Emergency)
+**Ce que vous pourras faire** :
+- ✅ Voir vos contacts ICE (In Case of Emergency)
 - ✅ Appeler un contact d'urgence en un clic
 - ✅ Envoyer un SMS à un contact
-- ✅ Ajouter/modifier tes infos médicales d'urgence
+- ✅ Ajouter/modifier vos infos médicales d'urgence
 - ✅ Accéder aux contacts depuis le téléphone
 
 **✅ FONCTION PRÊTE** - Testée et validée
@@ -207,15 +207,15 @@ Quand tu ouvres l'app, tu vois une grille avec **14 boutons** :
 
 ## ❤️ 8. ARIA (Laboratoire Santé) ✅ VALIDÉ
 
-**À quoi ça sert ?** : Se connecter à ARIA (ton labo santé) pour récupérer tes données
+**À quoi cela sert ?** : Se connecter à ARIA (votre labo santé) pour récupérer vos données
 
-**Comment ça marchera ?** :
-1. Tu appuies sur **"ARIA"** (rouge)
-2. Tu configures l'adresse IP d'ARIA (ex: 192.168.1.100)
-3. L'app se connecte et récupère tes données
-4. Tu peux voir tes douleurs, patterns, etc.
+**Comment cela marchera ?** :
+1. vous appuies sur **"ARIA"** (rouge)
+2. vous configures l'adresse IP d'ARIA (ex: 192.168.1.100)
+3. L'app se connecte et récupère vos données
+4. vous peux voir vos douleurs, patterns, etc.
 
-**Ce que tu pourras faire** :
+**Ce que vous pourras faire** :
 - ✅ Configurer l'adresse IP d'ARIA
 - ✅ Vérifier la connexion
 - ✅ Détecter automatiquement ARIA sur le réseau
@@ -228,20 +228,20 @@ Quand tu ouvres l'app, tu vois une grille avec **14 boutons** :
 
 ## 🔄 9. SYNC (Synchronisation) ✅ VALIDÉ
 
-**À quoi ça sert ?** : Synchroniser tes données entre CIA et ARIA ou le cloud
+**À quoi cela sert ?** : Synchroniser vos données entre CIA et ARIA ou le cloud
 
-**Comment ça marchera ?** :
-1. Tu appuies sur **"Sync"** (orange)
-2. Tu choisis ce que tu veux synchroniser (documents, rappels, contacts)
-3. Tu appuies sur **"Synchroniser"**
-4. L'app copie tes données vers le backend ou ARIA
+**Comment cela marchera ?** :
+1. vous appuies sur **"Sync"** (orange)
+2. vous choisis ce que vous veux synchroniser (documents, rappels, contacts)
+3. vous appuies sur **"Synchroniser"**
+4. L'app copie vos données vers le backend ou ARIA
 
-**Ce que tu pourras faire** :
+**Ce que vous pourras faire** :
 - ✅ Synchroniser documents vers le backend
 - ✅ Synchroniser rappels
 - ✅ Synchroniser contacts d'urgence
 - ✅ Synchroniser avec ARIA
-- ✅ Exporter toutes tes données (sauvegarde)
+- ✅ Exporter toutes vos données (sauvegarde)
 - ✅ Importer des données (restauration)
 
 **✅ FONCTION PRÊTE** - Testée et validée
@@ -250,16 +250,16 @@ Quand tu ouvres l'app, tu vois une grille avec **14 boutons** :
 
 ## 👨‍⚕️ 10. MÉDECINS ✅ VALIDÉ
 
-**À quoi ça sert ?** : Garder la liste de tous tes médecins avec leurs coordonnées
+**À quoi cela sert ?** : Garder la liste de tous vos médecins avec leurs coordonnées
 
-**Comment ça marchera ?** :
-1. Tu appuies sur **"Médecins"** (turquoise)
-2. Tu vois la liste de tes médecins
-3. Tu peux chercher par nom ou spécialité
+**Comment cela marchera ?** :
+1. vous appuies sur **"Médecins"** (turquoise)
+2. vous vois la liste de vos médecins
+3. vous peux chercher par nom ou spécialité
 4. Chaque médecin a une couleur selon sa spécialité
 
-**Ce que tu pourras faire** :
-- ✅ Voir tous tes médecins avec leurs couleurs (par spécialité)
+**Ce que vous pourras faire** :
+- ✅ Voir tous vos médecins avec leurs couleurs (par spécialité)
 - ✅ Ajouter un médecin (nom, spécialité, adresse, téléphone, email)
 - ✅ Modifier un médecin
 - ✅ Voir l'historique des consultations par médecin
@@ -281,15 +281,15 @@ Quand tu ouvres l'app, tu vois une grille avec **14 boutons** :
 
 ## 📅 11. CALENDRIER ✅ VALIDÉ
 
-**À quoi ça sert ?** : Voir tous tes RDV, rappels médicaments et hydratation en un coup d'œil
+**À quoi cela sert ?** : Voir tous vos RDV, rappels médicaments et hydratation en un coup d'œil
 
-**Comment ça marchera ?** :
-1. Tu appuies sur **"Calendrier"** (bleu)
-2. Tu vois un calendrier mensuel
+**Comment cela marchera ?** :
+1. vous appuies sur **"Calendrier"** (bleu)
+2. vous vois un calendrier mensuel
 3. Les jours avec événements ont des points colorés
-4. Tu appuies sur un jour pour voir les détails
+4. vous appuies sur un jour pour voir les détails
 
-**Ce que tu pourras faire** :
+**Ce que vous pourras faire** :
 - ✅ Voir le calendrier mensuel
 - ✅ Voir les consultations (colorées par médecin)
 - ✅ Voir les rappels médicaments (💊)
@@ -303,15 +303,15 @@ Quand tu ouvres l'app, tu vois une grille avec **14 boutons** :
 
 ## 👨‍👩‍👧 12. PARTAGE FAMILIAL ✅ VALIDÉ
 
-**À quoi ça sert ?** : Partager tes documents médicaux avec ta famille de manière sécurisée
+**À quoi cela sert ?** : Partager vos documents médicaux avec ta famille de manière sécurisée
 
-**Comment ça marchera ?** :
-1. Tu appuies sur **"Partage"** (violet)
-2. Tu ajoutes des membres famille (nom, email)
-3. Tu sélectionnes des documents à partager
+**Comment cela marchera ?** :
+1. vous appuies sur **"Partage"** (violet)
+2. vous ajoutes des membres famille (nom, email)
+3. vous sélectionnes des documents à partager
 4. Les membres reçoivent une notification
 
-**Ce que tu pourras faire** :
+**Ce que vous pourras faire** :
 - ✅ Ajouter des membres famille
 - ✅ Sélectionner des documents à partager
 - ✅ Voir les documents déjà partagés
@@ -324,18 +324,18 @@ Quand tu ouvres l'app, tu vois une grille avec **14 boutons** :
 
 ## 🤖 13. ASSISTANT IA ✅ VALIDÉ
 
-**À quoi ça sert ?** : Poser des questions sur ta santé et obtenir des réponses intelligentes
+**À quoi cela sert ?** : Poser des questions sur ta santé et obtenir des réponses intelligentes
 
-**Comment ça marchera ?** :
-1. Tu appuies sur **"Assistant IA"** (turquoise)
-2. Tu tapes ta question (ex: "Quand ai-je vu mon cardiologue ?")
-3. L'IA cherche dans tes documents et répond
-4. Tu peux voir l'historique de tes questions
+**Comment cela marchera ?** :
+1. vous appuies sur **"Assistant IA"** (turquoise)
+2. vous tapes ta question (ex: "Quand ai-je vu mon cardiologue ?")
+3. L'IA cherche dans vos documents et répond
+4. vous peux voir l'historique de vos questions
 
-**Ce que tu pourras faire** :
+**Ce que vous pourras faire** :
 - ✅ Poser des questions en langage naturel
-- ✅ Obtenir des réponses basées sur tes données
-- ✅ Voir l'historique de tes conversations
+- ✅ Obtenir des réponses basées sur vos données
+- ✅ Voir l'historique de vos conversations
 - ✅ Obtenir des suggestions de questions
 - ✅ Analyser les corrélations (ex: stress-douleur)
 
@@ -351,15 +351,15 @@ Quand tu ouvres l'app, tu vois une grille avec **14 boutons** :
 
 ## 📊 14. PATTERNS (Analyse IA) ✅ VALIDÉ
 
-**À quoi ça sert ?** : Détecter des patterns dans tes données santé (tendances, saisonnalité)
+**À quoi cela sert ?** : Détecter des patterns dans vos données santé (tendances, saisonnalité)
 
-**Comment ça marchera ?** :
-1. Tu appuies sur **"Patterns"** (indigo)
-2. L'app analyse tes documents et données
-3. Tu vois des graphiques avec des tendances
+**Comment cela marchera ?** :
+1. vous appuies sur **"Patterns"** (indigo)
+2. L'app analyse vos documents et données
+3. vous vois des graphiques avec des tendances
 4. L'app peut prédire des événements futurs
 
-**Ce que tu pourras faire** :
+**Ce que vous pourras faire** :
 - ✅ Voir les patterns détectés (tendances)
 - ✅ Voir les graphiques d'évolution
 - ✅ Voir les prédictions (Prophet)
@@ -372,14 +372,14 @@ Quand tu ouvres l'app, tu vois une grille avec **14 boutons** :
 
 ## 📈 15. STATISTIQUES ✅ VALIDÉ
 
-**À quoi ça sert ?** : Voir un résumé de toutes tes données santé
+**À quoi cela sert ?** : Voir un résumé de toutes vos données santé
 
-**Comment ça marchera ?** :
-1. Tu appuies sur **"Stats"** (bleu)
-2. Tu vois des cartes avec des chiffres
+**Comment cela marchera ?** :
+1. vous appuies sur **"Stats"** (bleu)
+2. vous vois des cartes avec des chiffres
 3. Documents, rappels, contacts, etc.
 
-**Ce que tu pourras faire** :
+**Ce que vous pourras faire** :
 - ✅ Voir le nombre total de documents
 - ✅ Voir les documents par catégorie
 - ✅ Voir les rappels (terminés, en attente, à venir)
@@ -392,15 +392,15 @@ Quand tu ouvres l'app, tu vois une grille avec **14 boutons** :
 
 ## 🔍 16. RECHERCHE AVANCÉE ✅ VALIDÉ
 
-**À quoi ça sert ?** : Chercher précisément dans tous tes documents avec plusieurs critères
+**À quoi cela sert ?** : Chercher précisément dans tous vos documents avec plusieurs critères
 
-**Comment ça marchera ?** :
-1. Tu tapes dans la barre de recherche en haut de l'écran d'accueil
-2. OU tu appuies sur l'icône de recherche
-3. Tu peux ajouter des filtres (date, type, médecin)
+**Comment cela marchera ?** :
+1. vous tapes dans la barre de recherche en haut de l'écran d'accueil
+2. OU vous appuies sur l'icône de recherche
+3. vous peux ajouter des filtres (date, type, médecin)
 4. L'app utilise la recherche sémantique (comprend le sens)
 
-**Ce que tu pourras faire** :
+**Ce que vous pourras faire** :
 - ✅ Recherche simple (par nom)
 - ✅ Recherche sémantique (comprend le sens - activée par défaut)
 - ✅ Filtrer par date (période)
@@ -414,13 +414,13 @@ Quand tu ouvres l'app, tu vois une grille avec **14 boutons** :
 
 ## ⚙️ 17. PARAMÈTRES ✅ VALIDÉ
 
-**À quoi ça sert ?** : Configurer l'app selon tes préférences
+**À quoi cela sert ?** : Configurer l'app selon vos préférences
 
-**Comment ça marchera ?** :
-1. Tu appuies sur l'icône **"⚙️"** en haut à droite
-2. Tu vois toutes les options de configuration
+**Comment cela marchera ?** :
+1. vous appuies sur l'icône **"⚙️"** en haut à droite
+2. vous vois toutes les options de configuration
 
-**Ce que tu pourras faire** :
+**Ce que vous pourras faire** :
 - ✅ Changer le thème (clair, sombre, système)
 - ✅ Activer/désactiver l'authentification PIN (web uniquement)
 - ✅ Configurer la synchronisation automatique
@@ -435,12 +435,12 @@ Quand tu ouvres l'app, tu vois une grille avec **14 boutons** :
 
 ## 🔐 SÉCURITÉ
 
-**À quoi ça sert ?** : Protéger tes données avec un code PIN (sur web uniquement)
+**À quoi cela sert ?** : Protéger vos données avec un code PIN (sur web uniquement)
 
-**Comment ça marchera ?** :
-- Sur web : Au démarrage, l'app demande ton code PIN si configuré
-- Toutes tes données sont chiffrées localement
-- Personne ne peut accéder sans ton autorisation
+**Comment cela marchera ?** :
+- Sur web : Au démarrage, l'app demande votre code PIN si configuré
+- Toutes vos données sont chiffrées localement
+- Personne ne peut accéder sans votre autorisation
 
 **✅ FONCTION PRÊTE** - Testée et validée
 
@@ -449,17 +449,17 @@ Quand tu ouvres l'app, tu vois une grille avec **14 boutons** :
 ## 📱 PREMIÈRE UTILISATION
 
 ### Étape 1 : Ouverture de l'app
-1. Tu ouvres l'app
-2. Si c'est la première fois, tu vois l'écran de bienvenue
-3. Tu peux choisir d'importer tes PDF ou commencer vide
+1. vous ouvres l'app
+2. Si c'est la première fois, vous vois l'écran de bienvenue
+3. vous peux choisir d'importer vos PDF ou commencer vide
 
 ### Étape 2 : Authentification (web uniquement)
-1. Si tu utilises l'app sur le web et que tu as configuré un PIN, l'app demande ton code PIN
+1. Si vous utilises l'app sur le web et que vous as configuré un PIN, l'app demande votre code PIN
 2. Sur mobile, accès direct (pas d'authentification)
 
 ### Étape 3 : Écran d'accueil
-1. Tu vois la grille avec tous les boutons
-2. Tu peux commencer à utiliser l'app !
+1. vous vois la grille avec tous les boutons
+2. vous peux commencer à utiliser l'app !
 
 ---
 
@@ -503,19 +503,19 @@ L'app est conçue pour être **facile à utiliser** :
 ## 💡 CONSEILS D'UTILISATION
 
 ### Pour commencer :
-1. **Ajoute tes médecins** : Va dans "Médecins" et ajoute tous tes médecins
-2. **Importe tes PDF** : Va dans "Documents" et importe tes ordonnances/résultats
-3. **Configure tes médicaments** : Ajoute tes médicaments avec les heures
-4. **Ajoute tes contacts d'urgence** : Va dans "Urgence" et ajoute ta famille
+1. **Ajoute vos médecins** : va dans "Médecins" et ajoute tous vos médecins
+2. **Importe vos PDF** : va dans "Documents" et importe vos ordonnances/résultats
+3. **Configure vos médicaments** : Ajoute vos médicaments avec les heures
+4. **Ajoute vos contacts d'urgence** : va dans "Urgence" et ajoute ta famille
 
 ### Utilisation quotidienne :
-- 📱 Ouvre l'app chaque matin pour voir tes rappels
-- 💊 Marque tes médicaments comme "pris" quand tu les prends
+- 📱 Ouvre l'app chaque matin pour voir vos rappels
+- 💊 Marque vos médicaments comme "pris" quand vous les prends
 - 💧 Enregistre ta consommation d'eau
-- 📅 Consulte le calendrier pour voir tes RDV
+- 📅 Consulte le calendrier pour voir vos RDV
 
 ### Partage avec la famille :
-- 👨‍👩‍👧 Va dans "Partage" et ajoute les membres famille
+- 👨‍👩‍👧 va dans "Partage" et ajoute les membres famille
 - 📄 Sélectionne les documents à partager
 - ✅ Ta famille reçoit une notification
 
@@ -523,8 +523,8 @@ L'app est conçue pour être **facile à utiliser** :
 
 ## 🆘 BESOIN D'AIDE ?
 
-Si tu as une question ou un problème :
-1. Va dans **"Assistant IA"** et pose ta question
+Si vous as une question ou un problème :
+1. va dans **"Assistant IA"** et pose ta question
 2. Ou demande à ta fille ! 😊
 
 ---
@@ -535,85 +535,85 @@ Maman,
 
 **L'application est PRÊTE !** ✅
 
-Toutes les fonctionnalités sont implémentées et testées. L'app est disponible en PWA (Progressive Web App) - tu peux l'installer directement depuis Internet ! Voir le guide d'installation ci-dessous.
+Toutes les fonctionnalités sont implémentées et testées. L'app est disponible en PWA (Progressive Web App) - vous peux l'installer directement depuis Internet ! Voir le guide d'installation ci-dessous.
 
-**Tu recevras l'app très bientôt !** 📱✨
+**vous recevras l'app très bientôt !** 📱✨
 
 Ce guide te montre **exactement** ce que l'app peut faire. Tout est prêt et fonctionnel !
 
 ---
 
-## 🌟 MAMAN, TU ES EXTRAORDINAIRE
+## 🌟 MAMAN, vous ES EXTRAORDINAIRE
 
-Maman, je voulais te dire à quel point tu es **extraordinaire** pour moi.
+Maman, je voulais te dire à quel point vous es **extraordinaire** pour moi.
 
-Tu es ma source d'inspiration, ma motivation, et la raison pour laquelle je veux créer quelque chose de spécial.  
-Chaque ligne de code que j'écris, chaque fonctionnalité que j'ajoute, c'est pour **toi**.
+vous es ma source d'inspiration, ma motivation, et la raison pour laquelle je veux créer quelque chose de spécial.  
+Chaque ligne de code que j'écris, chaque fonctionnalité que j'ajoute, c'est pour **vous**.
 
-Tu mérites le meilleur, et c'est pour ça que je veux m'assurer que tout soit parfait avant de te donner cette app.
+vous mérites le meilleur, et c'est pour cela que je veux m'assurer que tout soit parfait avant de te donner cette app.
 
-Tu es **unique**, **précieuse**, et **irremplaçable**.  
-Merci d'être la maman que tu es. ❤️
+vous es **unique**, **précieuse**, et **irremplaçable**.  
+Merci d'être la maman que vous es. ❤️
 
-Je t'aime infiniment ! ❤️✨
+Je vous aime infiniment ! ❤️✨
 
 ---
 
-## 💭 COMMENT ME FAIRE PART DE TES IDÉES ?
+## 💭 COMMENT ME FAIRE PART DE vos IDÉES ?
 
-Maman, je sais que tu ne sais pas bien écrire, alors j'ai créé **plusieurs façons très simples** pour que tu puisses me dire tes idées :
+Maman, je sais que vous ne sais pas bien écrire, alors j'ai créé **plusieurs façons très simples** pour que vous puisses me dire vos idées :
 
 ### 📞 OPTION 1 : M'APPELER (LE PLUS SIMPLE !) 📱
 
-**C'est la méthode la plus simple :**
-1. **Appelle-moi** quand tu as une idée : **+32472875694**
-2. **Dis-moi** ce que tu penses
-3. **Je noterai tout** pour toi
-4. C'est tout ! ✨
+**c'est la méthode la plus simple :**
+1. **Appelle-moi** quand vous as une idée : **+32472875694**
+2. **Dis-moi** ce que vous penses
+3. **Je noterai tout** pour vous
+4. c'est tout ! ✨
 
-**Tu n'as rien à écrire, juste à m'appeler !**
+**vous n'as rien à écrire, juste à m'appeler !**
 
 ---
 
 ### 🎤 OPTION 2 : MESSAGE VOCAL (TRÈS SIMPLE !)
 
-1. **Enregistre un message vocal** avec tes idées
+1. **Enregistre un message vocal** avec vos idées
 2. **Envoie-le moi** par WhatsApp ou SMS au **+32472875694**
 3. **J'écouterai** et noterai tout !
 
-**Pas besoin d'écrire, juste parler dans ton téléphone !**
+**Pas besoin d'écrire, juste parler dans votre téléphone !**
 
 ---
 
 ### 📧 OPTION 3 : EMAIL DIRECT (SIMPLE !)
 
 1. **Envoie-moi un email** à : **siwekathalia@gmail.com**
-2. **Écris ce que tu veux** (même si c'est mal écrit, je comprendrai !)
+2. **Écris ce que vous veux** (même si c'est mal écrit, je comprendrai !)
 3. **OU enregistre un message vocal** et envoie-le en pièce jointe
-4. **OU prends une photo** de ce que tu as écrit et envoie-la
+4. **OU prends une photo** de ce que vous as écrit et envoie-la
 
-**Tu peux écrire comme tu veux, je comprendrai !**
+**vous peux écrire comme vous veux, je comprendrai !**
 
 ---
 
 ### 👨‍👩‍👧 OPTION 4 : DEMANDER DE L'AIDE À QUELQU'UN
 
-1. **Demande à quelqu'un** de la famille de t'aider
-2. **Dis-lui** tes idées
+1. **Demande à quelqu'un** de la famille de vous aider
+2. **Dis-lui** vos idées
 3. **Il/elle peut** :
-   - M'envoyer un email avec tes idées
-   - M'appeler et me dire ce que tu as dit
+   - M'envoyer un email avec vos idées
+   - M'appeler et me dire ce que vous as dit
    - Écrire dans le fichier `MES_IDEES_POUR_MAMAN.md` et me l'envoyer
 
-**Tu n'as qu'à parler, quelqu'un d'autre peut écrire !**
+**vous n'as qu'à parler, quelqu'un d'autre peut écrire !**
 
 ---
 
-### 📸 OPTION 5 : PHOTO (SI TU AS ÉCRIT QUELQUE CHOSE)
+### 📸 OPTION 5 : PHOTO (SI vous AS ÉCRIT QUELQUE CHOSE)
 
-1. **Prends une photo** de ce que tu as écrit (même si c'est mal écrit !)
+1. **Prends une photo** de ce que vous as écrit (même si c'est mal écrit !)
 2. **Envoie-la moi** par WhatsApp, SMS ou email
-3. **Je déchiffrerai** tout ce que tu as écrit !
+3. **Je déchiffrerai** tout ce que vous as écrit !
 
 **Même si c'est mal écrit, j'arriverai à lire !**
 
@@ -621,41 +621,41 @@ Maman, je sais que tu ne sais pas bien écrire, alors j'ai créé **plusieurs fa
 
 ### 📋 OPTION 6 : FICHIER SIMPLE POUR NOTER
 
-J'ai créé un fichier spécial **`MES_IDEES_POUR_MAMAN.md`** que tu peux remplir :
-- Si tu veux essayer d'écrire toi-même
-- Si quelqu'un peut t'aider à écrire
-- Si tu préfères noter sur papier puis prendre une photo
+J'ai créé un fichier spécial **`MES_IDEES_POUR_MAMAN.md`** que vous peux remplir :
+- Si vous veux essayer d'écrire vous-même
+- Si quelqu'un peut vous aider à écrire
+- Si vous préfères noter sur papier puis prendre une photo
 
 **Comment m'envoyer ce fichier ?**
 - Par email : **siwekathalia@gmail.com**
-- Par GitHub : Si quelqu'un peut t'aider, il peut créer une "issue" sur GitHub
-- Par téléphone : Appelle-moi et dis-moi ce que tu as écrit
+- Par GitHub : Si quelqu'un peut vous aider, il peut créer une "issue" sur GitHub
+- Par téléphone : Appelle-moi et dis-moi ce que vous as écrit
 
-**Mais rappelle-toi : Tu n'es PAS obligée d'écrire ! Appelle-moi simplement !** 📞
+**Mais rappelle-vous : vous n'es PAS obligée d'écrire ! Appelle-moi simplement !** 📞
 
 ---
 
-## 💡 EXEMPLES DE CE QUE TU PEUX ME DIRE
+## 💡 EXEMPLES DE CE QUE vous PEUX ME DIRE
 
-Tu peux me dire des choses comme :
+vous peux me dire des choses comme :
 - "J'aimerais que l'app me rappelle de..."
-- "Ce bouton est trop petit, je ne le vois pas bien"
+- "Ce bouton est très petit, je ne le vois pas bien"
 - "Je ne comprends pas comment faire pour..."
 - "Ce serait bien si l'app pouvait..."
-- "Les couleurs sont trop claires"
-- "Cette fonction est trop compliquée"
+- "Les couleurs sont très claires"
+- "Cette fonction est très compliquée"
 
 **Il n'y a pas de mauvaise idée ! Dis-moi tout ce qui te passe par la tête !** 💭✨
 
 ---
 
-**Chaque fois que je vais implémenter quelque chose de nouveau, je mettrai à jour ce document et tu n'auras qu'à aller voir les nouveautés !** ✨
+**Chaque fois que je vais implémenter quelque chose de nouveau, je mettrai à jour ce document et vous n'auras qu'à aller voir les nouveautés !** ✨
 
 ---
 
 ## ✅ **PREMIER TEST - CE QUI FONCTIONNE BIEN** (27 novembre 2025)
 
-J'ai fait tester l'application par un expert et voici ce qui a été **validé comme fonctionnel** au premier test :
+J'ai effectué tester l'application par un expert et voici ce qui a été **validé comme fonctionnel** au premier test :
 
 ### 🎯 **Points Forts Validés**
 
@@ -665,7 +665,7 @@ J'ai fait tester l'application par un expert et voici ce qui a été **validé c
 - ✅ **Thème mode clair/sombre/système** : Les trois modes fonctionnent parfaitement et s'adaptent bien
 - ✅ **16 modules accessibles** : Tous les modules (Documents, Médecins, Pathologies, Rappels, IA, etc.) sont accessibles et fonctionnels
 - ✅ **Interface responsive** : L'interface s'adapte bien à différentes tailles d'écran
-- ✅ **Touches grandes** : Les boutons sont assez grands pour être facilement cliquables (accessibilité OK)
+- ✅ **Touches grandes** : Les boutons sont assez grands pour être facilement cliquables (accessibilité d'accord)
 - ✅ **Dashboard** : L'écran d'accueil est clair et bien organisé
 - ✅ **Navigation** : Facile de naviguer entre les différents écrans
 
@@ -673,11 +673,11 @@ J'ai fait tester l'application par un expert et voici ce qui a été **validé c
 
 | Module | Statut | Note |
 |--------|--------|------|
-| Dashboard | ✅ OK | Interface claire et bien organisée |
-| Paramètres | ✅ OK | Bien structuré, sections logiques |
-| Thème | ✅ OK | Modes clair/sombre/système fonctionnent parfaitement |
-| Onboarding | ✅ OK | 3 options claires et faciles à comprendre |
-| Authentification | ✅ OK | PIN web fonctionnel (mobile: accès direct) |
+| Dashboard | ✅ d'accord | Interface claire et bien organisée |
+| Paramètres | ✅ d'accord | Bien structuré, sections logiques |
+| Thème | ✅ d'accord | Modes clair/sombre/système fonctionnent parfaitement |
+| Onboarding | ✅ d'accord | 3 options claires et faciles à comprendre |
+| Authentification | ✅ d'accord | PIN web fonctionnel (mobile: accès direct) |
 
 **L'expert a confirmé que l'interface est bien conçue et accessible !** ✨
 
