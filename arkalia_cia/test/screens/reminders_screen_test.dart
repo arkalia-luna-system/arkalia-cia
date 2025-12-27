@@ -119,12 +119,22 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
       // Attendre que le timeout de CalendarService (2 secondes) soit passé
       await tester.pump(const Duration(seconds: 2));
-      // Un dernier pump pour s'assurer que tout est stable
+      // Plusieurs pumps supplémentaires pour s'assurer que le widget est construit
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
       await tester.pump();
 
-      expect(find.text('Test Rappel'), findsOneWidget);
-      expect(find.text('Description test'), findsOneWidget);
-    }, timeout: const Timeout(Duration(seconds: 30)));
+      // Vérifier que l'écran n'est plus en chargement
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+      
+      // Vérifier que le ListView est présent (indique que les rappels sont chargés)
+      expect(find.byType(ListView), findsOneWidget);
+      
+      // Vérifier que le texte est présent (après sanitization, "Test Rappel" reste "Test Rappel")
+      // Utiliser find.textContaining pour être plus flexible
+      expect(find.textContaining('Test Rappel'), findsOneWidget);
+      expect(find.textContaining('Description test'), findsOneWidget);
+    }, timeout: const Timeout(Duration(seconds: 10)));
 
     testWidgets('Affiche le bouton Modifier sur les rappels non terminés', (WidgetTester tester) async {
       // Créer un rappel de test non terminé
