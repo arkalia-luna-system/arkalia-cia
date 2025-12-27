@@ -192,10 +192,10 @@
 
 **Tâches** :
 1. **Implémenter pagination** (8h)
-   - [ ] `documents_screen.dart` : Pagination avec `ListView.builder`
-   - [ ] `reminders_screen.dart` : Pagination
-   - [ ] `doctors_list_screen.dart` : Pagination
-   - [ ] Limiter à 20 éléments par page initialement
+   - [x] `documents_screen.dart` : Pagination avec `ListView.builder` ✅
+   - [x] `reminders_screen.dart` : Pagination ✅
+   - [x] `doctors_list_screen.dart` : Pagination ✅
+   - [x] Limiter à 20 éléments par page initialement ✅
 
 2. **Implémenter cache intelligent** (6h)
    - [ ] Cache des documents récents
