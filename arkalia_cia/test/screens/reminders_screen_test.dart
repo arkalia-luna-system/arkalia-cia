@@ -116,25 +116,26 @@ void main() {
         ),
       );
 
-      // Attendre que les rappels locaux soient chargés (sans attendre CalendarService)
-      // Les rappels locaux sont chargés immédiatement, CalendarService peut bloquer
+      // Les rappels locaux sont chargés en premier dans _loadReminders, avant CalendarService
+      // On attend seulement quelques frames pour que les rappels locaux soient affichés
+      // Ne pas attendre CalendarService qui peut bloquer indéfiniment
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pump(const Duration(milliseconds: 50));
       await tester.pump();
       
-      // Attendre que le texte apparaisse (les rappels locaux sont chargés rapidement)
-      // Ne pas attendre CalendarService qui peut bloquer
+      // Vérifier directement que le texte est présent
+      // Si le texte n'est pas trouvé, attendre encore un peu (max 500ms)
       int attempts = 0;
-      const maxAttempts = 20; // 20 * 50ms = 1 seconde max (suffisant pour rappels locaux)
+      const maxAttempts = 10; // 10 * 50ms = 500ms max
       while (find.text('Test Rappel').evaluate().isEmpty && attempts < maxAttempts) {
         await tester.pump(const Duration(milliseconds: 50));
         attempts++;
       }
       
-      // Vérifier que le texte est présent
+      // Vérifier que le texte est présent (les rappels locaux doivent être chargés)
       expect(find.text('Test Rappel'), findsOneWidget, reason: 'Le titre du rappel doit être affiché');
       expect(find.text('Description test'), findsOneWidget, reason: 'La description du rappel doit être affichée');
-    }, timeout: const Timeout(Duration(seconds: 30)));
+    }, timeout: const Timeout(Duration(seconds: 10)));
 
     testWidgets('Affiche le bouton Modifier sur les rappels non terminés', (WidgetTester tester) async {
       // Créer un rappel de test non terminé
