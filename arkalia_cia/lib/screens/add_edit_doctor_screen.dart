@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/doctor_service.dart';
 import '../models/doctor.dart';
 import '../utils/error_helper.dart';
+import '../utils/input_sanitizer.dart';
 
 class AddEditDoctorScreen extends StatefulWidget {
   final Doctor? doctor;
@@ -82,31 +83,42 @@ class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> {
     setState(() => _isSaving = true);
 
     try {
+      // Sanitizer les entrées utilisateur pour prévenir XSS
+      final sanitizedFirstName = InputSanitizer.sanitizeForStorage(_firstNameController.text.trim());
+      final sanitizedLastName = InputSanitizer.sanitizeForStorage(_lastNameController.text.trim());
+      final sanitizedSpecialty = _specialtyController.text.trim().isNotEmpty 
+          ? InputSanitizer.sanitizeForStorage(_specialtyController.text.trim())
+          : null;
+      final sanitizedPhone = _phoneController.text.trim().isEmpty 
+          ? null 
+          : _phoneController.text.trim(); // Phone déjà validé par ValidationHelper
+      final sanitizedEmail = _emailController.text.trim().isEmpty 
+          ? null 
+          : _emailController.text.trim(); // Email déjà validé par ValidationHelper
+      final sanitizedAddress = _addressController.text.trim().isEmpty 
+          ? null 
+          : InputSanitizer.sanitizeForStorage(_addressController.text.trim());
+      final sanitizedCity = _cityController.text.trim().isEmpty 
+          ? null 
+          : InputSanitizer.sanitizeForStorage(_cityController.text.trim());
+      final sanitizedPostalCode = _postalCodeController.text.trim().isEmpty 
+          ? null 
+          : _postalCodeController.text.trim(); // Code postal = chiffres seulement
+      final sanitizedNotes = _notesController.text.trim().isEmpty 
+          ? null 
+          : InputSanitizer.sanitizeForStorage(_notesController.text.trim());
+      
       final doctor = Doctor(
         id: widget.doctor?.id,
-        firstName: _firstNameController.text.trim(),
-        lastName: _lastNameController.text.trim(),
-        specialty: _specialtyController.text.trim().isEmpty 
-            ? null 
-            : _specialtyController.text.trim(),
-        phone: _phoneController.text.trim().isEmpty 
-            ? null 
-            : _phoneController.text.trim(),
-        email: _emailController.text.trim().isEmpty 
-            ? null 
-            : _emailController.text.trim(),
-        address: _addressController.text.trim().isEmpty 
-            ? null 
-            : _addressController.text.trim(),
-        city: _cityController.text.trim().isEmpty 
-            ? null 
-            : _cityController.text.trim(),
-        postalCode: _postalCodeController.text.trim().isEmpty 
-            ? null 
-            : _postalCodeController.text.trim(),
-        notes: _notesController.text.trim().isEmpty 
-            ? null 
-            : _notesController.text.trim(),
+        firstName: sanitizedFirstName,
+        lastName: sanitizedLastName,
+        specialty: sanitizedSpecialty,
+        phone: sanitizedPhone,
+        email: sanitizedEmail,
+        address: sanitizedAddress,
+        city: sanitizedCity,
+        postalCode: sanitizedPostalCode,
+        notes: sanitizedNotes,
       );
 
       if (widget.doctor == null) {

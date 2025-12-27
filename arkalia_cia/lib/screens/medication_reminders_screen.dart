@@ -267,15 +267,24 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
     );
 
     if (result == true) {
+      // Sanitizer les entrées utilisateur pour prévenir XSS
+      final sanitizedName = InputSanitizer.sanitizeForStorage(nameController.text.trim());
+      final sanitizedDosage = dosageController.text.trim().isNotEmpty
+          ? InputSanitizer.sanitizeForStorage(dosageController.text.trim())
+          : null;
+      final sanitizedNotes = notesController.text.trim().isNotEmpty
+          ? InputSanitizer.sanitizeForStorage(notesController.text.trim())
+          : null;
+      
       final newMedication = Medication(
         id: medication?.id,
-        name: nameController.text,
-        dosage: dosageController.text.isEmpty ? null : dosageController.text,
+        name: sanitizedName,
+        dosage: sanitizedDosage,
         frequency: frequency,
         times: times,
         startDate: startDate ?? DateTime.now(),
         endDate: endDate,
-        notes: notesController.text.isEmpty ? null : notesController.text,
+        notes: sanitizedNotes,
       );
 
       try {

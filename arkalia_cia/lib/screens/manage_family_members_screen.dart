@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/family_sharing_service.dart';
+import '../utils/input_sanitizer.dart';
 
 class ManageFamilyMembersScreen extends StatefulWidget {
   const ManageFamilyMembersScreen({super.key});
@@ -171,11 +172,19 @@ class _AddMemberDialogState extends State<_AddMemberDialog> {
         ElevatedButton(
           onPressed: () {
             if (_formKey.currentState!.validate()) {
+              // Sanitizer les entrées utilisateur pour prévenir XSS
+              final sanitizedName = InputSanitizer.sanitizeForStorage(_nameController.text.trim());
+              final sanitizedEmail = _emailController.text.trim(); // Email déjà validé
+              final sanitizedPhone = _phoneController.text.trim().isEmpty 
+                  ? null 
+                  : _phoneController.text.trim(); // Phone déjà validé
+              final sanitizedRelationship = InputSanitizer.sanitizeForStorage(_relationship);
+              
               Navigator.pop(context, {
-                'name': _nameController.text,
-                'email': _emailController.text,
-                'phone': _phoneController.text.isEmpty ? null : _phoneController.text,
-                'relationship': _relationship,
+                'name': sanitizedName,
+                'email': sanitizedEmail,
+                'phone': sanitizedPhone,
+                'relationship': sanitizedRelationship,
               });
             }
           },
