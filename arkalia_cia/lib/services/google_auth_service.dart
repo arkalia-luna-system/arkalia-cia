@@ -85,6 +85,21 @@ class GoogleAuthService {
             '1. Package name : com.arkalia.cia\n'
             '2. SHA-1 Debug : 2C:68:D5:C0:92:A8:7F:59:E7:6A:7C:5B:7C:F9:77:54:9E:68:14:6E\n\n'
             'URL : https://console.cloud.google.com/apis/credentials?project=arkalia-cia';
+      } else if (errorMessage.contains('403') ||
+                 errorMessage.contains('PERMISSION_DENIED') ||
+                 errorMessage.contains('People API') ||
+                 errorMessage.contains('SERVICE_DISABLED') ||
+                 errorMessage.contains('people.googleapis.com')) {
+        // Erreur People API non activée (403)
+        userFriendlyMessage = 
+            '🔧 Erreur People API non activée (Erreur 403)\n\n'
+            '⚠️ L\'API People API n\'est pas activée dans Google Cloud Console.\n\n'
+            '📋 ACTION REQUISE (1 minute) :\n\n'
+            '1️⃣ Ouvrir ce lien pour activer l\'API :\n'
+            '   👉 https://console.developers.google.com/apis/api/people.googleapis.com/overview?project=1062485264410\n\n'
+            '2️⃣ Cliquer sur "ACTIVER" (bouton bleu)\n\n'
+            '3️⃣ Attendre 1-2 minutes puis réessayer\n\n'
+            '💡 Alternative : Simplifier les scopes pour ne pas utiliser People API';
       } else if (errorMessage.contains('redirect_uri_mismatch') ||
                  errorMessage.contains('redirect') ||
                  (errorMessage.contains('400') && kIsWeb)) {
@@ -93,18 +108,21 @@ class GoogleAuthService {
         // Il faut donc ajouter exactement cette URI dans Google Cloud Console
         userFriendlyMessage = 
             '🔧 Erreur redirect_uri_mismatch (Erreur 400)\n\n'
-            '⚠️ Les URI de redirection ne sont pas configurées dans Google Cloud Console.\n\n'
-            '📋 ACTION REQUISE (2 minutes) :\n\n'
+            '⚠️ Les URI de redirection ne sont pas configurées OU pas encore propagées.\n\n'
+            '📋 VÉRIFICATION (2 minutes) :\n\n'
             '1️⃣ Ouvrir Google Cloud Console :\n'
             '   👉 https://console.cloud.google.com/apis/credentials?project=arkalia-cia\n\n'
-            '2️⃣ Cliquer sur "Client Web 1" (dans la liste OAuth 2.0 Client IDs)\n\n'
-            '3️⃣ Faire défiler jusqu\'à "URIs de redirection autorisées"\n\n'
-            '4️⃣ Cliquer sur "+ AJOUTER UN URI" et ajouter (une par une) :\n'
+            '2️⃣ Cliquer sur "Client Web 1"\n\n'
+            '3️⃣ Vérifier "Origines JavaScript autorisées" contient :\n'
+            '   ✅ http://localhost:8080\n\n'
+            '4️⃣ Vérifier "URIs de redirection autorisées" contient :\n'
             '   ✅ http://localhost:8080\n'
-            '   ✅ http://localhost:8080/\n'
-            '   (Si vous utilisez un autre port, ajoutez aussi http://localhost:PORT)\n\n'
-            '5️⃣ Cliquer sur "ENREGISTRER" (en bas de la page)\n\n'
-            '6️⃣ Attendre 1-2 minutes puis recharger cette page (Ctrl+F5)\n\n'
+            '   ✅ http://localhost:8080/\n\n'
+            '5️⃣ Si manquant, ajouter puis "ENREGISTRER"\n\n'
+            '6️⃣ ⏰ ATTENDRE 5-10 minutes (propagation Google)\n\n'
+            '7️⃣ Vider le cache navigateur (Cmd+Shift+Delete) puis réessayer\n\n'
+            '💡 Si vous venez de configurer, attendez encore quelques minutes.\n'
+            '   La propagation Google peut prendre jusqu\'à 10 minutes.\n\n'
             '📖 Guide détaillé : docs/guides/FIX_REDIRECT_URI_MISMATCH.md';
       } else if (errorMessage.contains('NETWORK_ERROR') ||
                  errorMessage.contains('7:') ||
