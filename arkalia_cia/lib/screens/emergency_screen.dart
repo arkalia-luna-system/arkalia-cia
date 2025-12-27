@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/contacts_service.dart';
 import '../services/local_storage_service.dart';
+import '../services/api_service.dart';
 import '../widgets/emergency_contact_dialog.dart';
 import '../widgets/emergency_contact_card.dart';
 import '../widgets/emergency_info_card.dart';
@@ -144,19 +145,51 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
 
   Future<void> _addContact(Map<String, dynamic> contactData) async {
     try {
-      final success = await ContactsService.addEmergencyContact(
-        name: contactData['name']!,
-        phone: contactData['phone']!,
-        relationship: contactData['relationship'] ?? '',
-      );
-
-      if (success) {
-        await LocalStorageService.saveEmergencyContact(contactData);
-        await _loadData();
-        _showSuccess('Contact d\'urgence ajouté avec succès');
-      } else {
-        _showError('Impossible d\'ajouter le contact. Veuillez réessayer.');
+      // 1. Sauvegarder dans le backend si configuré
+      final backendConfigured = await ApiService.isBackendConfigured();
+      if (backendConfigured) {
+        try {
+          final backendResult = await ApiService.createEmergencyContact(
+            name: contactData['name']!,
+            phone: contactData['phone']!,
+            relationship: contactData['relationship'] ?? '',
+            isPrimary: contactData['is_primary'] ?? false,
+          );
+          
+          if (backendResult['success'] == false || backendResult['error'] != null) {
+            // Erreur backend, afficher message détaillé
+            final errorMsg = backendResult['error'] ?? 'Erreur lors de la sauvegarde sur le serveur';
+            _showError('Erreur serveur: $errorMsg');
+            return;
+          }
+          
+          // Si le backend retourne un ID, l'utiliser
+          if (backendResult['id'] != null) {
+            contactData['id'] = backendResult['id'];
+          }
+        } catch (e) {
+          // Erreur backend, continuer avec stockage local uniquement
+          ErrorHelper.logError('EmergencyScreen._addContact (backend)', e);
+          // Ne pas bloquer, continuer avec stockage local
+        }
       }
+      
+      // 2. Ajouter au système natif (contacts du téléphone)
+      try {
+        await ContactsService.addEmergencyContact(
+          name: contactData['name']!,
+          phone: contactData['phone']!,
+          relationship: contactData['relationship'] ?? '',
+        );
+      } catch (e) {
+        // Erreur système natif, continuer quand même avec stockage local
+        ErrorHelper.logError('EmergencyScreen._addContact (contacts natifs)', e);
+      }
+
+      // 3. Sauvegarder localement
+      await LocalStorageService.saveEmergencyContact(contactData);
+      await _loadData();
+      _showSuccess('Contact d\'urgence ajouté avec succès');
     } catch (e) {
       ErrorHelper.logError('EmergencyScreen._addContact', e);
       _showError(ErrorHelper.getUserFriendlyMessage(e));

@@ -733,15 +733,10 @@ class _HomePageState extends State<HomePage> {
       children: [
         Expanded(
           child: Semantics(
-            label: 'Statistiques documents',
+            label: 'Documents',
             button: true,
             child: InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const StatsScreen()),
-                );
-              },
+              onTap: () => _showDocuments(context),
               borderRadius: BorderRadius.circular(12),
               child: Card(
                 elevation: 2,
