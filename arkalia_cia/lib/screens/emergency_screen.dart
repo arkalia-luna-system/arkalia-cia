@@ -156,21 +156,26 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
             isPrimary: contactData['is_primary'] ?? false,
           );
           
-          if (backendResult['success'] == false || backendResult['error'] != null) {
+          // Le backend retourne soit un objet avec 'id' (succès) soit un objet avec 'error' (échec)
+          if (backendResult.containsKey('error') || backendResult['success'] == false) {
             // Erreur backend, afficher message détaillé
-            final errorMsg = backendResult['error'] ?? 'Erreur lors de la sauvegarde sur le serveur';
+            final errorMsg = backendResult['error'] ?? 
+                           backendResult['technical_error'] ?? 
+                           'Erreur lors de la sauvegarde sur le serveur';
             _showError('Erreur serveur: $errorMsg');
             return;
           }
           
-          // Si le backend retourne un ID, l'utiliser
+          // Si le backend retourne un ID, l'utiliser (succès)
           if (backendResult['id'] != null) {
             contactData['id'] = backendResult['id'];
           }
         } catch (e) {
-          // Erreur backend, continuer avec stockage local uniquement
+          // Erreur backend, afficher message détaillé et arrêter
           ErrorHelper.logError('EmergencyScreen._addContact (backend)', e);
-          // Ne pas bloquer, continuer avec stockage local
+          final errorMsg = ErrorHelper.getUserFriendlyMessage(e);
+          _showError('Erreur serveur: $errorMsg');
+          return;
         }
       }
       

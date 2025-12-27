@@ -275,17 +275,33 @@ class ApiService {
         }),
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Succès : retourner la réponse du backend (contient id, name, phone, etc.)
         return json.decode(response.body);
       } else {
-        final errorMsg = ErrorHelper.getUserFriendlyMessage(
-          Exception('HTTP ${response.statusCode}'),
-        );
-        return {
-          'success': false,
-          'error': errorMsg,
-          'status_code': response.statusCode,
-        };
+        // Erreur : essayer de parser le message d'erreur du backend
+        try {
+          final errorData = json.decode(response.body);
+          final errorMsg = errorData['detail'] ?? 
+                          errorData['message'] ?? 
+                          errorData['error'] ??
+                          'Erreur HTTP ${response.statusCode}';
+          return {
+            'success': false,
+            'error': errorMsg,
+            'status_code': response.statusCode,
+          };
+        } catch (e) {
+          // Si le parsing échoue, retourner un message générique
+          final errorMsg = ErrorHelper.getUserFriendlyMessage(
+            Exception('HTTP ${response.statusCode}'),
+          );
+          return {
+            'success': false,
+            'error': errorMsg,
+            'status_code': response.statusCode,
+          };
+        }
       }
     } catch (e) {
       ErrorHelper.logError('ApiService.createEmergencyContact', e);
