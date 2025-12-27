@@ -5,6 +5,7 @@ import '../home_page.dart';
 import '../onboarding/welcome_screen.dart';
 import '../../services/google_auth_service.dart';
 import '../../services/onboarding_service.dart';
+import '../../services/backend_config_service.dart';
 
 /// Écran d'accueil pour l'authentification
 /// Propose plusieurs options : Gmail/Google, créer un compte, ou continuer sans compte
@@ -19,6 +20,7 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
+  bool _backendEnabled = false;
 
   @override
   void initState() {
@@ -34,6 +36,17 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
       ),
     );
     _animationController.forward();
+    _checkBackendStatus();
+  }
+  
+  /// SIMPLIFIÉ : Vérifier si backend est configuré pour afficher/masquer Login/Register
+  Future<void> _checkBackendStatus() async {
+    final enabled = await BackendConfigService.isBackendEnabled();
+    if (mounted) {
+      setState(() {
+        _backendEnabled = enabled;
+      });
+    }
   }
 
   @override
@@ -111,13 +124,19 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
           );
         }
       } else {
-        // Afficher l'erreur seulement si ce n'est pas une annulation
+        // SIMPLIFIÉ : Afficher l'erreur seulement si ce n'est pas une annulation
         if (result['error'] != 'Connexion annulée' && context.mounted) {
-          // Afficher un dialog avec l'erreur détaillée pour débogage
+          // Afficher un dialog avec l'erreur détaillée et actionnable
           showDialog(
             context: context,
             builder: (context) => AlertDialog(
-              title: const Text('Erreur de connexion Google'),
+              title: const Row(
+                children: [
+                  Icon(Icons.error_outline, color: Colors.red),
+                  SizedBox(width: 8),
+                  Text('Erreur de connexion Google'),
+                ],
+              ),
               content: SingleChildScrollView(
                 child: Text(
                   result['error'] ?? 'Erreur lors de la connexion',
@@ -127,17 +146,18 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('OK'),
+                  child: const Text('Fermer'),
                 ),
+                if (result['error']?.contains('Configuration') == true ||
+                    result['error']?.contains('not registered') == true)
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      // Optionnel : ouvrir l'URL Google Cloud Console
+                    },
+                    child: const Text('Voir la config'),
+                  ),
               ],
-            ),
-          );
-          // Aussi afficher un snackbar pour visibilité
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(result['error'] ?? 'Erreur lors de la connexion'),
-              backgroundColor: Colors.red,
-              duration: const Duration(seconds: 5),
             ),
           );
         }
@@ -317,79 +337,115 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                     ),
                   ),
                   
-                  const SizedBox(height: 24),
-                  
-                  // Séparateur
-                  Row(
-                    children: [
-                      Expanded(child: Divider(color: Colors.white.withValues(alpha: 0.3))),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Text(
-                          'OU',
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.8),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
+                  // SIMPLIFIÉ : Afficher Login/Register seulement si backend configuré
+                  if (_backendEnabled) ...[
+                    const SizedBox(height: 24),
+                    
+                    // Séparateur
+                    Row(
+                      children: [
+                        Expanded(child: Divider(color: Colors.white.withValues(alpha: 0.3))),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            'OU',
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.8),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
                           ),
                         ),
-                      ),
-                      Expanded(child: Divider(color: Colors.white.withValues(alpha: 0.3))),
-                    ],
-                  ),
-                  
-                  const SizedBox(height: 24),
-                  
-                  // Bouton Créer un compte
-                  OutlinedButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const RegisterScreen(),
+                        Expanded(child: Divider(color: Colors.white.withValues(alpha: 0.3))),
+                      ],
+                    ),
+                    
+                    const SizedBox(height: 24),
+                    
+                    // Bouton Créer un compte (seulement si backend configuré)
+                    OutlinedButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const RegisterScreen(),
+                          ),
+                        );
+                      },
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        side: const BorderSide(color: Colors.white, width: 2),
+                        padding: const EdgeInsets.symmetric(vertical: 18),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      );
-                    },
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      side: const BorderSide(color: Colors.white, width: 2),
-                      padding: const EdgeInsets.symmetric(vertical: 18),
-                      shape: RoundedRectangleBorder(
+                      ),
+                      child: const Text(
+                        'CRÉER UN COMPTE',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 12),
+                    
+                    // Bouton Se connecter (seulement si backend configuré)
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const LoginScreen(),
+                          ),
+                        );
+                      },
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.white70,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      child: const Text(
+                        'J\'ai déjà un compte',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ] else ...[
+                    // Message informatif si backend non configuré
+                    const SizedBox(height: 24),
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text(
-                      'CRÉER UN COMPTE',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.2,
-                      ),
-                    ),
-                  ),
-                  
-                  const SizedBox(height: 12),
-                  
-                  // Bouton Se connecter (plus petit, moins visible)
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const LoginScreen(),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.3),
+                          width: 1,
                         ),
-                      );
-                    },
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.white70,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
-                    child: const Text(
-                      'J\'ai déjà un compte',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.info_outline,
+                            color: Colors.white.withValues(alpha: 0.9),
+                            size: 20,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              'Pour créer un compte avec backend, configurez l\'URL dans les paramètres (⚙️ > Backend API)',
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.9),
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
+                  ],
                   
                   const SizedBox(height: 24),
                   

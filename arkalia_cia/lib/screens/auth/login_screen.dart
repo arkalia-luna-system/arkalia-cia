@@ -40,11 +40,13 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      // Vérifier si le backend est configuré
+      // SIMPLIFIÉ : Backend optionnel - suggérer Google Sign-In si non configuré
       final backendConfigured = await BackendConfigService.isBackendEnabled();
       if (!backendConfigured) {
         setState(() {
-          _errorMessage = 'Backend non configuré. Veuillez configurer l\'URL du backend dans les paramètres.';
+          _errorMessage = '⚙️ Backend non configuré.\n\n'
+              'Pour vous connecter avec un compte, utilisez "Continuer avec Gmail" sur l\'écran précédent.\n\n'
+              'Ou configurez l\'URL du backend dans les paramètres (⚙️ > Backend API).';
           _isLoading = false;
         });
         return;

@@ -9,15 +9,15 @@
 
 ### Problème
 
-Sur le web (PWA), l'authentification biométrique ne fonctionne pas car `local_auth` n'est pas disponible.  
-Si le navigateur ne propose pas de s'enregistrer mais propose directement un code, ça pose problème.
+Sur le web (PWA), l'authentification biométrique n'est pas disponible.  
+Solution : Authentification PIN local pour le web.
 
 ### Solution
 
 **Système d'authentification PIN local pour le web** :
 - ✅ Détection automatique web vs mobile
 - ✅ Sur web : PIN local (4-6 chiffres, hashé SHA-256)
-- ✅ Sur mobile : Biométrie/PIN système (inchangé)
+- ✅ Sur mobile : Authentification désactivée (accès direct)
 
 ---
 
@@ -63,10 +63,10 @@ Lancements suivants:
 LockScreen → PIN configuré → PinEntryScreen → Vérifier PIN → HomePage
 ```
 
-### Sur Mobile (inchangé)
+### Sur Mobile (authentification désactivée)
 
 ```
-LockScreen → AuthService.authenticate() → Biométrie/PIN système → HomePage
+LockScreen → Accès direct → HomePage
 ```
 
 ---
@@ -100,7 +100,7 @@ LockScreen → AuthService.authenticate() → Biométrie/PIN système → HomePa
 **✅ TOUT EST PARFAIT !**
 
 - ✅ Sur web : Authentification PIN local fonctionnelle
-- ✅ Sur mobile : Authentification biométrique inchangée
+- ✅ Sur mobile : Authentification désactivée (accès direct)
 - ✅ Sécurité : PIN hashé SHA-256
 - ✅ Tests : 16 tests passent
 - ✅ Aucune erreur de lint

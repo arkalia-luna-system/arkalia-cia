@@ -144,7 +144,7 @@ graph TB
 | **Santé** | Portails médicaux | Accès rapide aux services | 2 | Opérationnel |
 | **Rappels** | Intégration calendrier | Calendrier natif, notifications | 2 | Opérationnel |
 | **Urgence** | Contacts ICE | Appel rapide, informations médicales | 2 | Opérationnel |
-| **Authentification** | Sécurité biométrique | Empreinte digitale/Face ID | 2 | Opérationnel |
+| **Authentification** | Sécurité PIN | Code PIN (web uniquement) | 2 | Opérationnel |
 | **ARIA** | Intégration labo santé | Suivi douleur, analyse patterns | 2 | Opérationnel |
 | **API Backend** | Sync cloud (optionnel) | Sync documents, partage famille | 2 | Connecté |
 
@@ -193,8 +193,8 @@ graph TB
 #### 🔐 Authentification
 - **Connexion Google/Gmail** : Authentification gratuite via Google Sign In
 - **Mode offline-first** : Stockage local des informations utilisateur
-- **Biométrie** : Empreinte digitale/Face ID sur mobile
 - **PIN local** : Code PIN pour le web (4-6 chiffres, hashé SHA-256)
+- **Mobile** : Authentification désactivée (accès direct)
 
 #### ❤️ ARIA Integration
 - **Laboratory health integration** with Arkalia ARIA
@@ -377,7 +377,7 @@ make deps-update        # Update dependencies
 | Couche Sécurité | Implémentation | Statut |
 |-----------------|-----------------|--------|
 | **Chiffrement données** | AES-256-GCM | Actif |
-| **Authentification biométrique** | Empreinte/Face ID | Actif |
+| **Authentification PIN** | Code PIN (web uniquement) | Actif |
 | **Gestion clés** | Keychain/Keystore | Actif |
 | **Sécurité réseau** | Sync backend optionnel | Actif |
 | **Analyse code** | Scan sécurité statique | Actif |
@@ -414,7 +414,7 @@ make deps-update        # Update dependencies
 - Gestion d'erreurs robuste
 - Support timezone pour notifications
 - Composants widgets pour fonctionnalités urgence
-- Authentification biométrique (local_auth)
+- Authentification PIN (web uniquement)
 - Connexion API backend (FastAPI)
 - Intégration ARIA (détection serveur)
 - Numéros urgence belges (112, 100, 101)

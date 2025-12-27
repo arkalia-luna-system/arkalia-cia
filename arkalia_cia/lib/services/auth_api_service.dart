@@ -121,9 +121,27 @@ class AuthApiService {
       }
     } catch (e) {
       AppLogger.error('Erreur inscription', e);
+      
+      // SIMPLIFIÉ : Messages d'erreur plus précis
+      final errorString = e.toString().toLowerCase();
+      String errorMsg;
+      
+      if (errorString.contains('timeout') || errorString.contains('timed out')) {
+        errorMsg = 'Le serveur met trop de temps à répondre. Vérifiez votre connexion.';
+      } else if (errorString.contains('connection refused') || 
+                 errorString.contains('failed host lookup') ||
+                 errorString.contains('socketexception')) {
+        errorMsg = 'Impossible de se connecter au serveur. Vérifiez l\'URL du backend.';
+      } else if (errorString.contains('format exception') ||
+                 errorString.contains('invalid json')) {
+        errorMsg = 'Erreur de communication avec le serveur. Réessayez.';
+      } else {
+        errorMsg = ErrorHelper.getUserFriendlyMessage(e);
+      }
+      
       return {
         'success': false,
-        'error': ErrorHelper.getUserFriendlyMessage(e),
+        'error': errorMsg,
       };
     }
   }

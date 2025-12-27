@@ -33,7 +33,7 @@ LockScreen
 │  ├─ NON → Accès direct
 │  └─ OUI → Authentification requise ?
 │     ├─ Web → PIN configuré ?
-│     └─ Mobile → Biométrie
+│     └─ Mobile → Accès direct (authentification désactivée)
 ```
 
 **Problèmes** :
@@ -59,7 +59,7 @@ WelcomeAuthScreen
 LockScreen
 └─ Authentification requise ? (SIMPLIFIÉ - pas de vérification connexion)
    ├─ Web → PIN configuré ?
-   └─ Mobile → Biométrie
+   └─ Mobile → Accès direct (authentification désactivée)
 ```
 
 **Avantages** :
@@ -91,7 +91,7 @@ Future<void> _initializeAuth() async {
 Future<void> _initializeAuth() async {
   // SIMPLIFIÉ : LockScreen s'affiche seulement si auth activée
   // La vérification de connexion est faite dans main.dart
-  await _checkBiometricAvailability();
+  // Vérification de l'authentification (web uniquement)
   await _authenticateOnStartup();
 }
 ```
@@ -139,8 +139,8 @@ Future<bool> _shouldShowLockScreen() async {
     return await PinAuthService.isPinConfigured();
   }
   
-  // Sur mobile, vérifier si biométrie disponible
-  return await AuthService.isBiometricAvailable();
+  // Sur mobile, authentification désactivée
+  return false;
 }
 ```
 
@@ -162,8 +162,8 @@ Future<bool> _shouldShowLockScreen() async {
    - Clés : `google_signed_in`, `google_user_id`, `google_user_email`, etc.
    - Stockage : `SharedPreferences`
 
-3. **`AuthService`** (Biométrie/PIN système)
-   - Clés : `biometric_auth_enabled`, `auth_on_startup`
+3. **`AuthService`** (Authentification PIN web)
+   - Clés : `pin_auth_enabled`, `auth_on_startup`
    - Stockage : `SharedPreferences`
 
 4. **`PinAuthService`** (PIN local web)

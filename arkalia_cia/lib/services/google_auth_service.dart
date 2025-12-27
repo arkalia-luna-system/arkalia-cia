@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/app_logger.dart';
@@ -10,22 +11,32 @@ import '../utils/app_logger.dart';
 /// - Aucun backend requis, 100% gratuit
 /// - Les données restent sur l'appareil
 class GoogleAuthService {
+  // Configuration Google Sign-In avec clientId pour le web
+  // Sur mobile : utilise automatiquement la config Google Cloud Console via package name et SHA-1
+  // Sur web : nécessite le clientId explicite
   static final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: ['email', 'profile'],
+    // Client ID Web pour le web (nécessaire sur web)
+    // Client ID: 1062485264410-mc24cenl8rq8qj71enrrp36mibrsep79.apps.googleusercontent.com
+    clientId: kIsWeb 
+        ? '1062485264410-mc24cenl8rq8qj71enrrp36mibrsep79.apps.googleusercontent.com'
+        : null, // Sur mobile, null = détection automatique
   );
 
   /// Connecte l'utilisateur avec Google
   /// 
+  /// SIMPLIFIÉ : Gestion d'erreurs améliorée et plus claire
   /// Retourne un Map avec :
   /// - 'success': bool
   /// - 'user': GoogleSignInAccount? (si succès)
   /// - 'error': String? (si erreur)
   static Future<Map<String, dynamic>> signIn() async {
     try {
+      // SIMPLIFIÉ : Tentative de connexion directe
       final GoogleSignInAccount? account = await _googleSignIn.signIn();
       
       if (account == null) {
-        // L'utilisateur a annulé la connexion
+        // L'utilisateur a annulé la connexion (pas une erreur)
         return {
           'success': false,
           'error': 'Connexion annulée',
@@ -33,7 +44,7 @@ class GoogleAuthService {
         };
       }
 
-      // Sauvegarder les informations de l'utilisateur localement
+      // SIMPLIFIÉ : Sauvegarder les informations localement
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('google_user_id', account.id);
       await prefs.setString('google_user_email', account.email);
@@ -50,40 +61,44 @@ class GoogleAuthService {
       // Log détaillé pour débogage
       AppLogger.error('Erreur Google Sign-In', e, stackTrace);
       
-      // Gestion d'erreurs spécifiques pour messages utilisateur clairs
+      // SIMPLIFIÉ : Messages d'erreur plus clairs et actionnables
       final errorMessage = e.toString();
       String userFriendlyMessage;
       
       if (errorMessage.contains('DEVELOPER_ERROR') ||
           errorMessage.contains('10:') ||
+          errorMessage.contains('not registered') ||
+          errorMessage.contains('OAuth2.0') ||
           errorMessage.contains('configuration') ||
           errorMessage.contains('SignInException')) {
         userFriendlyMessage = 
-            'Erreur de configuration Google Sign-In.\n'
-            'Vérifiez que le SHA-1 est correctement configuré dans Google Cloud Console.\n'
-            'Erreur technique: ${e.toString()}';
+            '⚠️ Configuration Google Sign-In manquante.\n\n'
+            'Vérifiez dans Google Cloud Console :\n'
+            '1. Package name : com.arkalia.cia\n'
+            '2. SHA-1 Debug : 2C:68:D5:C0:92:A8:7F:59:E7:6A:7C:5B:7C:F9:77:54:9E:68:14:6E\n\n'
+            'URL : https://console.cloud.google.com/apis/credentials?project=arkalia-cia';
       } else if (errorMessage.contains('NETWORK_ERROR') ||
                  errorMessage.contains('7:') ||
                  errorMessage.contains('network') ||
-                 errorMessage.contains('SocketException')) {
+                 errorMessage.contains('SocketException') ||
+                 errorMessage.contains('timeout')) {
         userFriendlyMessage = 
-            'Erreur de connexion réseau.\n'
-            'Vérifiez votre connexion internet.';
+            '🌐 Erreur de connexion réseau.\n\n'
+            'Vérifiez votre connexion internet et réessayez.';
       } else if (errorMessage.contains('SIGN_IN_CANCELLED') ||
                  errorMessage.contains('12501') ||
-                 errorMessage.contains('cancelled') ||
-                 errorMessage.contains('PlatformException') && errorMessage.contains('12501')) {
+                 errorMessage.contains('cancelled')) {
         userFriendlyMessage = 'Connexion annulée';
       } else if (errorMessage.contains('PlatformException')) {
         // Extraire le code d'erreur de PlatformException
         final codeMatch = RegExp(r'code:\s*([^,]+)').firstMatch(errorMessage);
-        final messageMatch = RegExp(r'message:\s*([^,]+)').firstMatch(errorMessage);
-        final code = codeMatch?.group(1) ?? 'UNKNOWN';
-        final message = messageMatch?.group(1) ?? errorMessage;
+        final messageMatch = RegExp(r'message:\s*([^,}]+)').firstMatch(errorMessage);
+        final code = codeMatch?.group(1)?.trim() ?? 'UNKNOWN';
+        final message = messageMatch?.group(1)?.trim() ?? errorMessage;
         
-        userFriendlyMessage = 'Erreur Google Sign-In (Code: $code)\n$message';
+        userFriendlyMessage = 'Erreur Google Sign-In\nCode: $code\n$message';
       } else {
-        userFriendlyMessage = 'Erreur lors de la connexion: ${e.toString()}';
+        userFriendlyMessage = 'Erreur lors de la connexion\n${e.toString()}';
       }
       
       return {

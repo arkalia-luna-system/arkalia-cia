@@ -70,7 +70,7 @@ Nous **NE collectons PAS** :
 - **Chiffrement bout-en-bout** pour le partage familial
 
 ### 4.2 Authentification
-- **Authentification biométrique** (Face ID, Touch ID, empreinte digitale)
+- **Authentification PIN** (code PIN local sur web uniquement)
 - **Authentification PIN** pour le web
 - **Tokens JWT** avec rotation automatique et blacklist
 
@@ -184,7 +184,7 @@ Pour exercer vos droits, contactez-nous à : **arkalia.luna.system@gmail.com**
 
 ### 10.1 Mesures de Sécurité
 - ✅ Chiffrement AES-256-GCM
-- ✅ Authentification biométrique
+- ✅ Authentification PIN (web uniquement)
 - ✅ Tokens JWT avec rotation
 - ✅ Blacklist de tokens révoqués
 - ✅ Audit log complet

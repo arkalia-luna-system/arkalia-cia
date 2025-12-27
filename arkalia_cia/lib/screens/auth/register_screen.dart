@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../../services/auth_api_service.dart';
 import '../../services/backend_config_service.dart';
 import '../../services/onboarding_service.dart';
-import '../../services/auth_service.dart';
+import '../../utils/app_logger.dart';
 import 'login_screen.dart';
 import '../onboarding/welcome_screen.dart';
 import '../home_page.dart';
@@ -49,11 +49,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
 
     try {
-      // Vérifier si le backend est configuré
+      // SIMPLIFIÉ : Backend optionnel - suggérer Google Sign-In si non configuré
       final backendConfigured = await BackendConfigService.isBackendEnabled();
       if (!backendConfigured) {
         setState(() {
-          _errorMessage = 'Backend non configuré. Veuillez configurer l\'URL du backend dans les paramètres.';
+          _errorMessage = '⚙️ Backend non configuré.\n\n'
+              'Pour créer un compte avec backend, configurez l\'URL dans les paramètres (⚙️ > Backend API).\n\n'
+              '💡 Alternative : Utilisez "Continuer avec Gmail" sur l\'écran précédent pour vous connecter sans backend.';
+          _isLoading = false;
+        });
+        return;
+      }
+      
+      // Vérifier que l'URL du backend est valide (seulement si backend activé)
+      final backendUrl = await BackendConfigService.getBackendURL();
+      if (backendUrl.isEmpty || (backendUrl.contains('localhost') && !kIsWeb) || backendUrl.contains('127.0.0.1')) {
+        setState(() {
+          _errorMessage = '⚙️ URL du backend invalide.\n\n'
+              'L\'URL du backend doit être une adresse valide.\n\n'
+              '💡 Alternative : Utilisez "Continuer avec Gmail" pour vous connecter sans backend.';
           _isLoading = false;
         });
         return;
@@ -102,17 +116,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
             return;
           }
           
-          // Connexion réussie, proposer biométrie si disponible (mobile uniquement)
-          if (!kIsWeb && mounted) {
-            final biometricAvailable = await AuthService.isBiometricAvailable();
-            if (biometricAvailable) {
-              final shouldEnable = await _showBiometricDialog();
-              if (shouldEnable == true) {
-                await AuthService.setAuthEnabled(true);
-              }
-            }
-          }
-          
           // Vérifier l'onboarding
           final onboardingCompleted = await OnboardingService.isOnboardingCompleted();
           
@@ -152,46 +155,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
         });
       }
     } catch (e) {
+      // SIMPLIFIÉ : Messages d'erreur plus précis et actionnables
+      final errorString = e.toString().toLowerCase();
+      String errorMsg;
+      
+      if (errorString.contains('timeout') || errorString.contains('timed out')) {
+        errorMsg = '⏱️ Le serveur met trop de temps à répondre.\n\n'
+            'Vérifiez votre connexion internet et réessayez.';
+      } else if (errorString.contains('connection refused') || 
+                 errorString.contains('failed host lookup') ||
+                 errorString.contains('network')) {
+        errorMsg = '🌐 Problème de connexion réseau.\n\n'
+            'Vérifiez votre connexion internet et que le backend est accessible.';
+      } else if (errorString.contains('backend non configuré') ||
+                 errorString.contains('url')) {
+        errorMsg = '⚙️ Backend non configuré.\n\n'
+            'Veuillez configurer l\'URL du backend dans les paramètres de l\'application.';
+      } else {
+        // Afficher l'erreur réelle pour débogage
+        errorMsg = '❌ Erreur lors de l\'inscription.\n\n'
+            'Détails: ${e.toString()}';
+      }
+      
       setState(() {
-        _errorMessage = 'Erreur: $e';
+        _errorMessage = errorMsg;
         _isLoading = false;
       });
+      
+      // Log pour débogage
+      AppLogger.error('Erreur inscription', e);
     }
   }
 
-  /// Affiche un dialog pour proposer l'activation de la biométrie
-  Future<bool?> _showBiometricDialog() async {
-    if (!mounted) return false;
-    
-    return showDialog<bool>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Row(
-            children: [
-              Icon(Icons.fingerprint, size: 28),
-              SizedBox(width: 12),
-              Text('Activer l\'empreinte digitale'),
-            ],
-          ),
-          content: const Text(
-            'Voulez-vous activer l\'authentification par empreinte digitale pour sécuriser votre accès à Arkalia CIA ?\n\n'
-            'Vous pourrez toujours utiliser le code PIN de votre téléphone si l\'empreinte ne fonctionne pas.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Plus tard'),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Activer'),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {

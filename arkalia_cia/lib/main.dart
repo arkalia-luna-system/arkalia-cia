@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'screens/lock_screen.dart';
 import 'screens/auth/welcome_auth_screen.dart';
 import 'screens/home_page.dart';
+import 'screens/onboarding/welcome_screen.dart';
 import 'services/local_storage_service.dart';
 import 'services/calendar_service.dart';
 import 'services/theme_service.dart';
@@ -12,6 +13,7 @@ import 'services/backend_config_service.dart';
 import 'services/google_auth_service.dart';
 import 'services/auth_service.dart';
 import 'services/pin_auth_service.dart';
+import 'services/onboarding_service.dart';
 import 'services/offline_cache_service.dart';
 import 'services/notification_service.dart';
 import 'services/runtime_security_service.dart';
@@ -168,7 +170,7 @@ class _InitialScreenState extends State<_InitialScreen> {
           
           // Token valide ou erreur réseau (on garde le token) : vérifier si auth activée
           // SIMPLIFIÉ : Aller à LockScreen seulement si authentification activée ET configurée
-          // Sinon, aller directement à HomePage
+          // Sinon, vérifier onboarding et aller à WelcomeScreen ou HomePage
           final shouldShowLock = await _shouldShowLockScreen();
           if (mounted) {
             if (shouldShowLock) {
@@ -176,9 +178,19 @@ class _InitialScreenState extends State<_InitialScreen> {
                 MaterialPageRoute(builder: (context) => const LockScreen()),
               );
             } else {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const HomePage()),
-              );
+              // Pas de LockScreen : vérifier onboarding avant d'aller à HomePage
+              final onboardingCompleted = await OnboardingService.isOnboardingCompleted();
+              if (mounted) {
+                if (!onboardingCompleted) {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+                  );
+                } else {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const HomePage()),
+                  );
+                }
+              }
             }
           }
         } else {
@@ -202,9 +214,19 @@ class _InitialScreenState extends State<_InitialScreen> {
                 MaterialPageRoute(builder: (context) => const LockScreen()),
               );
             } else {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const HomePage()),
-              );
+              // Pas de LockScreen : vérifier onboarding avant d'aller à HomePage
+              final onboardingCompleted = await OnboardingService.isOnboardingCompleted();
+              if (mounted) {
+                if (!onboardingCompleted) {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+                  );
+                } else {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const HomePage()),
+                  );
+                }
+              }
             }
           }
         } else {
@@ -233,9 +255,8 @@ class _InitialScreenState extends State<_InitialScreen> {
       return pinConfigured;
     }
     
-    // Sur mobile, vérifier si biométrie disponible
-    final biometricAvailable = await AuthService.isBiometricAvailable();
-    return biometricAvailable;
+    // Sur mobile, authentification désactivée - pas de LockScreen
+    return false;
   }
 
   @override

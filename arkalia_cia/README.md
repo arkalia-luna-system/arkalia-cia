@@ -38,7 +38,7 @@ Arkalia CIA est une application mobile Flutter conçue pour les seniors et leurs
 - **Framework** : Flutter 3.35.3
 - **Langage** : Dart 3.0+
 - **Stockage** : SQLite local avec chiffrement
-- **Sécurité** : AES-256-GCM, authentification biométrique
+- **Sécurité** : AES-256-GCM, authentification PIN (web uniquement)
 - **Intégration** : APIs natives iOS/Android
 
 ### **Structure du Projet**

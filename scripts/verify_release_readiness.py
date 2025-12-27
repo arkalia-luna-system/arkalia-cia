@@ -203,17 +203,6 @@ def check_security_checklist() -> dict[str, Any]:
     else:
         checks["aes256"] = {"status": "❌", "passed": False}
 
-    # Vérifier authentification biométrique
-    auth_file = ARKALIA_CIA_DIR / "lib" / "services" / "auth_service.dart"
-    if auth_file.exists():
-        content = auth_file.read_text()
-        checks["biometric"] = {
-            "status": "✅" if "LocalAuthentication" in content else "❌",
-            "passed": "LocalAuthentication" in content,
-        }
-    else:
-        checks["biometric"] = {"status": "❌", "passed": False}
-
     # Vérifier Privacy Policy
     privacy_file = PROJECT_ROOT / "PRIVACY_POLICY.txt"
     checks["privacy_policy"] = {

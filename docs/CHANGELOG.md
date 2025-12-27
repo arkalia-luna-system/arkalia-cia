@@ -572,11 +572,11 @@ Passer de 6/10 à 10/10 - Zéro défaut, zéro erreur
   - **Rappels récurrents**: Support des rappels quotidiens, hebdomadaires et mensuels avec création automatique d'événements dans le calendrier
   - **Prévisualisation PDF**: Ouverture des documents PDF avec une application externe via `url_launcher`
   - **Partage documents**: Partage de fichiers PDF via `share_plus` avec texte personnalisé
-- **🔐 Authentification Biométrique**: Protection complète de l'application avec local_auth
-  - Écran de verrouillage au démarrage
-  - Authentification par empreinte digitale ou reconnaissance faciale
+- **🔐 Authentification PIN (Web)**: Protection de l'application sur web avec code PIN
+  - Écran de verrouillage au démarrage (web uniquement)
+  - Authentification par code PIN local (4-6 chiffres, hashé SHA-256)
   - Configuration activable/désactivable dans les préférences
-  - Sécurité renforcée pour données médicales sensibles
+  - Sur mobile : accès direct (authentification désactivée)
 - **🌐 Backend API Connecté**: Intégration complète du backend Python FastAPI
   - Service de configuration backend avec URL dynamique
   - Connexion hybride backend/local storage
@@ -606,7 +606,7 @@ Passer de 6/10 à 10/10 - Zéro défaut, zéro erreur
   - Nombre de tests: 61 → **218** (+157 tests)
   - Tous les tests passent: 100% ✅
   - Formatage: Black + Ruff parfait
-- **Sécurité**: Passage de 30% à 100% avec authentification biométrique active
+- **Sécurité**: Passage de 30% à 100% avec authentification PIN active (web)
 - **Backend**: De 0% à 100% d'exploitation avec connexion complète
 - **ARIA**: De 40% à 100% avec module fonctionnel et configurable
 - **Synchronisation**: De 0% à 100% avec module Sync complet
@@ -625,7 +625,7 @@ Passer de 6/10 à 10/10 - Zéro défaut, zéro erreur
 - **Cache Offline**: Support offline avec cache intelligent pour meilleure expérience utilisateur
 - **ARIA**: Module maintenant fonctionnel avec détection serveur et configuration IP
 - **Backend**: API maintenant connectée et utilisable depuis l'application mobile
-- **Sécurité**: Authentification biométrique implémentée et active
+- **Sécurité**: Authentification PIN implémentée et active (web)
 - **Calendrier**: Récupération des rappels depuis le calendrier système maintenant fonctionnelle
 - **Recherche**: Filtres par catégorie ajoutés dans l'écran Documents
 - **Thèmes**: Support complet des thèmes clair/sombre avec écran Paramètres
@@ -684,7 +684,7 @@ Passer de 6/10 à 10/10 - Zéro défaut, zéro erreur
 - **Frontend**: Flutter 3.35.3, Dart 3.0+
 - **Backend**: Python 3.10.14, FastAPI 0.116.1
 - **Database**: SQLite with encryption
-- **Security**: AES-256-GCM, biometric authentication
+- **Security**: AES-256-GCM, PIN authentication (web)
 - **Testing**: 61 tests passing, comprehensive coverage
 
 ### Quality Assurance

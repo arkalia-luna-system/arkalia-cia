@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import '../services/theme_service.dart';
 import '../services/auth_service.dart';
 import '../services/auth_api_service.dart';
@@ -24,7 +25,6 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   String _currentTheme = 'system';
-  bool _biometricEnabled = true;
   bool _authOnStartup = true;
   bool _autoSyncEnabled = true;
   bool _syncOnStartup = true;
@@ -53,7 +53,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _loadSettings() async {
     final theme = await ThemeService.getTheme();
-    final biometricEnabled = await AuthService.isAuthEnabled();
     final authOnStartup = await AuthService.shouldAuthenticateOnStartup();
     final autoSyncEnabled = await AutoSyncService.isAutoSyncEnabled();
     final syncOnStartup = await AutoSyncService.isSyncOnStartupEnabled();
@@ -69,7 +68,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (mounted) {
       setState(() {
         _currentTheme = theme;
-        _biometricEnabled = biometricEnabled;
         _authOnStartup = authOnStartup;
         _autoSyncEnabled = autoSyncEnabled;
         _syncOnStartup = syncOnStartup;
@@ -162,18 +160,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Card(
             child: Column(
               children: [
-                SwitchListTile(
-                  secondary: const Icon(Icons.fingerprint),
-                  title: const Text('Authentification biométrique'),
-                  subtitle: const Text('Protéger l\'application avec empreinte/visage'),
-                  value: _biometricEnabled,
-                  onChanged: (value) async {
-                    await AuthService.setAuthEnabled(value);
-                    setState(() {
-                      _biometricEnabled = value;
-                    });
-                  },
-                ),
+                if (kIsWeb)
+                  SwitchListTile(
+                    secondary: const Icon(Icons.lock),
+                    title: const Text('Authentification PIN'),
+                    subtitle: const Text('Protéger l\'application avec code PIN'),
+                    value: _authOnStartup,
+                    onChanged: (value) async {
+                      await AuthService.setAuthEnabled(value);
+                      await AuthService.setAuthOnStartup(value);
+                      setState(() {
+                        _authOnStartup = value;
+                      });
+                    },
+                  ),
                 SwitchListTile(
                   secondary: const Icon(Icons.lock),
                   title: const Text('Verrouillage au démarrage'),

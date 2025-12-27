@@ -42,7 +42,6 @@ dependencies:
 
   # NOUVEAUX PLUGINS POUR PHASE 1 - STOCKAGE LOCAL
   shared_preferences: ^2.5.4
-  local_auth: ^2.3.0
   device_calendar: ^4.3.2
   flutter_contacts: ^1.1.7
   crypto: ^3.0.3

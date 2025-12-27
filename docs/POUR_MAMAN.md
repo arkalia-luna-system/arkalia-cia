@@ -422,7 +422,7 @@ Quand tu ouvres l'app, tu vois une grille avec **14 boutons** :
 
 **Ce que tu pourras faire** :
 - ✅ Changer le thème (clair, sombre, système)
-- ✅ Activer/désactiver l'authentification biométrique
+- ✅ Activer/désactiver l'authentification PIN (web uniquement)
 - ✅ Configurer la synchronisation automatique
 - ✅ Configurer le backend (URL)
 - ✅ Configurer les portails santé (OAuth)
@@ -435,10 +435,10 @@ Quand tu ouvres l'app, tu vois une grille avec **14 boutons** :
 
 ## 🔐 SÉCURITÉ
 
-**À quoi ça sert ?** : Protéger tes données avec ton empreinte/Face ID
+**À quoi ça sert ?** : Protéger tes données avec un code PIN (sur web uniquement)
 
 **Comment ça marchera ?** :
-- Au démarrage, l'app demande ton empreinte ou Face ID
+- Sur web : Au démarrage, l'app demande ton code PIN si configuré
 - Toutes tes données sont chiffrées localement
 - Personne ne peut accéder sans ton autorisation
 
@@ -453,9 +453,9 @@ Quand tu ouvres l'app, tu vois une grille avec **14 boutons** :
 2. Si c'est la première fois, tu vois l'écran de bienvenue
 3. Tu peux choisir d'importer tes PDF ou commencer vide
 
-### Étape 2 : Authentification
-1. L'app demande ton empreinte/Face ID
-2. Tu déverrouilles avec ton empreinte
+### Étape 2 : Authentification (web uniquement)
+1. Si tu utilises l'app sur le web et que tu as configuré un PIN, l'app demande ton code PIN
+2. Sur mobile, accès direct (pas d'authentification)
 
 ### Étape 3 : Écran d'accueil
 1. Tu vois la grille avec tous les boutons
@@ -661,7 +661,7 @@ J'ai fait tester l'application par un expert et voici ce qui a été **validé c
 
 - ✅ **Onboarding bien structuré** : Les 3 options d'import sont claires et faciles à comprendre
 - ✅ **Paramètres bien organisés** : Les sections (Apparence, Sécurité, Synchronisation) sont logiques et faciles à trouver
-- ✅ **Authentification biométrique** : Fonctionne correctement et peut être activée facilement
+- ✅ **Authentification PIN** : Fonctionne correctement sur le web (mobile : accès direct)
 - ✅ **Thème mode clair/sombre/système** : Les trois modes fonctionnent parfaitement et s'adaptent bien
 - ✅ **16 modules accessibles** : Tous les modules (Documents, Médecins, Pathologies, Rappels, IA, etc.) sont accessibles et fonctionnels
 - ✅ **Interface responsive** : L'interface s'adapte bien à différentes tailles d'écran
@@ -677,7 +677,7 @@ J'ai fait tester l'application par un expert et voici ce qui a été **validé c
 | Paramètres | ✅ OK | Bien structuré, sections logiques |
 | Thème | ✅ OK | Modes clair/sombre/système fonctionnent parfaitement |
 | Onboarding | ✅ OK | 3 options claires et faciles à comprendre |
-| Authentification | ✅ OK | Biométrie fonctionnelle |
+| Authentification | ✅ OK | PIN web fonctionnel (mobile: accès direct) |
 
 **L'expert a confirmé que l'interface est bien conçue et accessible !** ✨
 

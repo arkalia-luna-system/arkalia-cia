@@ -41,13 +41,24 @@ class _PinEntryScreenState extends State<PinEntryScreen> {
     });
 
     try {
-      final isValid = await PinAuthService.verifyPin(pin);
+      final isValid = await PinAuthService.verifyPin(pin).timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          // Timeout après 10 secondes pour éviter les blocages
+          return false;
+        },
+      );
+
+      if (!mounted) {
+        setState(() {
+          _isAuthenticating = false;
+        });
+        return;
+      }
 
       if (isValid) {
         // PIN correct, retourner true
-        if (mounted) {
-          Navigator.of(context).pop(true);
-        }
+        Navigator.of(context).pop(true);
       } else {
         _attempts++;
         setState(() {
@@ -61,16 +72,21 @@ class _PinEntryScreenState extends State<PinEntryScreen> {
         if (_attempts >= _maxAttempts) {
           // Bloquer temporairement (30 secondes)
           await Future.delayed(const Duration(seconds: 30));
-          setState(() {
-            _attempts = 0;
-          });
+          if (mounted) {
+            setState(() {
+              _attempts = 0;
+              _isAuthenticating = false;
+            });
+          }
         }
       }
     } catch (e) {
-      setState(() {
-        _errorMessage = 'Erreur: $e';
-        _isAuthenticating = false;
-      });
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'Erreur: $e';
+          _isAuthenticating = false;
+        });
+      }
     }
   }
 

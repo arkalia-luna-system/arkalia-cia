@@ -21,7 +21,7 @@ Voir [AUDIT_QUALITE_CODE_12_DECEMBRE_2025.md](./audits/AUDIT_QUALITE_CODE_12_DEC
 - Tests : 54+ tests créés (services, modèles, utils, écrans)
 
 **Corrections appliquées le 12 décembre 2025** :
-- Biométrie : `biometricOnly: true` + dialog après inscription
+- Authentification PIN : Configuration PIN pour le web
 - Permissions PDF : `READ_EXTERNAL_STORAGE` + demande runtime
 - Bug connexion après création compte : réinitialisation session + vérification état
 - Page connexion/inscription : `welcome_auth_screen.dart` + amélioration layout + boutons Gmail/Google prioritaires
@@ -93,15 +93,13 @@ Pour audit ARIA : Voir `docs/PROMPT_AUDIT_ARIA_12_DECEMBRE_2025.md`
 
 ## NOUVEAUX PROBLÈMES IDENTIFIÉS (12 décembre 2025)
 
-### Biométrie ne s'affiche pas - CORRIGÉ
+### Authentification PIN - CONFIGURÉ
 
-**Problème** : Empreinte notifiée dans paramètres mais ne s'affiche pas
+**Statut** : Authentification PIN configurée pour le web uniquement
 
-**Solution appliquée** :
-- ✅ Changement `biometricOnly: false` → `true` dans `auth_service.dart`
-- ✅ Amélioration `_checkBiometricAvailability()` dans `lock_screen.dart`
-- ✅ Dialog après inscription pour proposer biométrie dans `register_screen.dart`
-- ✅ Ajout `permission_handler` dans `pubspec.yaml`
+**Implémentation** :
+- ✅ Authentification PIN pour le web (4-6 chiffres, hashé SHA-256)
+- ✅ Sur mobile : Authentification désactivée (accès direct)
 
 **Fichiers modifiés** :
 - `arkalia_cia/lib/services/auth_service.dart`

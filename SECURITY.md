@@ -125,7 +125,7 @@ graph TB
 | **Code Obfuscation** | Flutter build flags | ✅ |
 | **Certificate Pinning** | HTTP client configuration | ✅ |
 | **Local Encryption** | AES-256-GCM | ✅ |
-| **Biometric Auth** | System authentication | ✅ |
+| **PIN Auth** | PIN local (web uniquement) | ✅ |
 | **Runtime Security** | Anti-tampering checks | ✅ |
 
 #### Backend Services
@@ -171,7 +171,7 @@ We publish security advisories for all significant vulnerabilities:
 ```markdown
 ✅ **Recommended Practices**
 - Keep the app updated to the latest version
-- Use device lock (PIN/biometric) protection
+- Use device lock (PIN) protection
 - Enable automatic security updates
 - Report suspicious behavior immediately
 - Use official app stores only

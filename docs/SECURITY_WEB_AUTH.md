@@ -9,7 +9,7 @@
 
 ### Problème Initial
 
-Sur le web (PWA), l'authentification biométrique ne fonctionne pas car `local_auth` n'est pas disponible sur le web.  
+Sur le web (PWA), l'authentification PIN local est utilisée car `local_auth` n'est pas disponible sur le web.  
 Si le navigateur ne propose pas de s'enregistrer mais propose directement un code, ça pose problème.
 
 ### Solution Implémentée
@@ -17,7 +17,7 @@ Si le navigateur ne propose pas de s'enregistrer mais propose directement un cod
 **Système d'authentification PIN local pour le web** :
 - ✅ Détection automatique web vs mobile
 - ✅ Sur web : Authentification PIN local (4-6 chiffres)
-- ✅ Sur mobile : Authentification biométrique/PIN système (comme avant)
+- ✅ Sur mobile : Authentification désactivée (accès direct)
 - ✅ PIN hashé avec SHA-256 (sécurité)
 - ✅ Configuration PIN au premier lancement (web)
 - ✅ Écran de saisie PIN pour authentification
@@ -48,23 +48,23 @@ Si le navigateur ne propose pas de s'enregistrer mais propose directement un cod
 
 1. **`AuthService`** (`lib/services/auth_service.dart`)
    - Détection web vs mobile
-   - Sur web : Retourne false (indique d'utiliser PinEntryScreen)
-   - Sur mobile : Fonctionne comme avant (biométrie/PIN système)
+   - Sur web : Gestion PIN via PinAuthService
+   - Sur mobile : Authentification désactivée (accès direct)
 
 2. **`LockScreen`** (`lib/screens/lock_screen.dart`)
    - Détection web vs mobile
    - Sur web : Affiche PinSetupScreen ou PinEntryScreen
-   - Sur mobile : Fonctionne comme avant (biométrie)
+   - Sur mobile : Authentification désactivée (accès direct)
    - **SIMPLIFIÉ (25 janvier 2025)** : Suppression vérifications redondantes, logique centralisée dans main.dart
 
 ---
 
 ## 🔄 FLUX D'AUTHENTIFICATION
 
-### Sur Mobile (comme avant)
+### Sur Mobile (authentification désactivée)
 
 ```
-LockScreen → AuthService.authenticate() → Biométrie/PIN système → HomePage
+LockScreen → Accès direct → HomePage
 ```
 
 **Note (25 janvier 2025)** : Simplification du flux - LockScreen s'affiche seulement si authentification activée ET configurée. Voir `docs/SIMPLIFICATION_AUTHENTIFICATION.md` pour plus de détails.
@@ -175,7 +175,7 @@ final isConfigured = await PinAuthService.isPinConfigured();
 **✅ Problème résolu !**
 
 - ✅ Sur web : Authentification PIN local fonctionnelle
-- ✅ Sur mobile : Authentification biométrique inchangée
+- ✅ Sur mobile : Authentification désactivée (accès direct)
 - ✅ Sécurité : PIN hashé SHA-256
 - ✅ Tests : 16 tests passent
 - ✅ Aucune erreur de lint

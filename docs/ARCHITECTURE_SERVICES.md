@@ -417,16 +417,16 @@ Ce document décrit l'architecture et les responsabilités de tous les services 
 **Fichier** : `lib/services/auth_service.dart`
 
 **Responsabilité** :
-- Authentification biométrique système (mobile)
-- Détection disponibilité biométrie (Face ID, Touch ID, empreinte)
+- Gestion authentification PIN (web uniquement)
+- Sur mobile : authentification désactivée (accès direct)
 
 **Fonctionnalités** :
-- `isBiometricAvailable()` : Vérifie disponibilité biométrie
-- `getAvailableBiometrics()` : Liste types biométrie disponibles
-- `authenticate()` : Authentification biométrique
-- `stopAuthentication()` : Arrêt authentification
+- `isAuthEnabled()` : Vérifie si authentification activée
+- `setAuthEnabled()` : Active/désactive authentification
+- `shouldAuthenticateOnStartup()` : Vérifie si auth nécessaire au démarrage
+- `setAuthOnStartup()` : Configure auth au démarrage
 
-**Note** : Sur web, utilise `PinAuthService` à la place
+**Note** : Sur web, utilise `PinAuthService` pour le PIN. Sur mobile, pas d'authentification.
 
 ---
 
@@ -434,7 +434,7 @@ Ce document décrit l'architecture et les responsabilités de tous les services 
 **Fichier** : `lib/services/pin_auth_service.dart`
 
 **Responsabilité** :
-- Authentification PIN pour le web (quand biométrie indisponible)
+- Authentification PIN pour le web
 - Stockage sécurisé hash PIN
 
 **Fonctionnalités** :
@@ -444,7 +444,7 @@ Ce document décrit l'architecture et les responsabilités de tous les services 
 - `changePin()` : Change PIN existant
 - `clearPin()` : Supprime PIN
 
-**Note** : Utilisé uniquement sur web, mobile utilise `AuthService` (biométrie)
+**Note** : Utilisé uniquement sur web. Sur mobile, pas d'authentification (accès direct).
 
 ---
 
@@ -495,7 +495,7 @@ Ce document décrit l'architecture et les responsabilités de tous les services 
 | `FamilySharingService` | Partage familial | - |
 | `HealthPortalAuthService` | OAuth portails santé | `AuthApiService` |
 | `HealthPortalImportService` | Import manuel portails | `AuthApiService` |
-| `AuthService` | Authentification biométrique | - |
+| `AuthService` | Authentification PIN (web uniquement) | - |
 | `PinAuthService` | Authentification PIN (web) | - |
 | `RuntimeSecurityService` | Sécurité runtime | - |
 

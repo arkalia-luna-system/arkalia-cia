@@ -22,7 +22,7 @@ Fonctionne entièrement sur l'appareil, sans dépendances externes.
 
 1. **Local-First** : Données stockées localement
 2. **Offline-First** : Fonctionnalités hors ligne
-3. **Sécurité** : AES-256, JWT, biométrie
+3. **Sécurité** : AES-256, JWT, PIN (web)
 4. **Intégration native** : Calendrier, contacts
 5. **Performance** : Cache, pagination, optimisations
 
@@ -66,7 +66,7 @@ graph TB
         AA[AES-256]
         AB[Keychain]
         AC[JWT]
-        AD[Biométrie]
+        AD[PIN Web]
     end
 
     B --> H

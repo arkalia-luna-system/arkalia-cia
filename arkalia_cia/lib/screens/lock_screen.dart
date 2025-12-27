@@ -3,11 +3,12 @@ import 'package:flutter/foundation.dart';
 import '../services/auth_service.dart';
 import '../services/pin_auth_service.dart';
 import '../services/onboarding_service.dart';
+import '../utils/app_logger.dart';
 import 'home_page.dart';
 import 'onboarding/welcome_screen.dart';
 import 'pin_entry_screen.dart';
 
-/// Écran de verrouillage avec authentification biométrique
+/// Écran de verrouillage avec authentification PIN (web uniquement)
 class LockScreen extends StatefulWidget {
   const LockScreen({super.key});
 
@@ -17,7 +18,6 @@ class LockScreen extends StatefulWidget {
 
 class _LockScreenState extends State<LockScreen> {
   bool _isAuthenticating = false;
-  bool _isBiometricAvailable = false;
   String _errorMessage = '';
 
   @override
@@ -26,15 +26,12 @@ class _LockScreenState extends State<LockScreen> {
     _initializeAuth();
   }
 
-  /// Initialise l'authentification : vérifie la disponibilité, puis lance l'auth
-  /// SIMPLIFIÉ : LockScreen s'affiche seulement si authentification activée ET configurée
-  /// La vérification de connexion est faite dans main.dart, pas besoin de la refaire ici
+  /// Initialise l'authentification
+  /// LockScreen s'affiche seulement si authentification activée ET configurée (web uniquement)
   Future<void> _initializeAuth() async {
-    // Vérifier la disponibilité biométrique
-    await _checkBiometricAvailability();
+    AppLogger.debug('LockScreen: Initialisation authentification');
     
     // VÉRIFICATION FINALE : Si l'auth n'est pas vraiment disponible/configurée, aller directement à HomePage
-    // (au cas où l'utilisateur arrive quand même sur LockScreen)
     final authEnabled = await AuthService.isAuthEnabled();
     if (!authEnabled) {
       _unlockApp();
@@ -50,45 +47,22 @@ class _LockScreenState extends State<LockScreen> {
     if (kIsWeb) {
       final pinConfigured = await PinAuthService.isPinConfigured();
       if (!pinConfigured) {
+        // Pas de PIN configuré sur web : permettre accès direct
         _unlockApp();
         return;
       }
     } else {
-      if (!_isBiometricAvailable) {
-        // Biométrie non disponible : permettre l'accès direct
-        _unlockApp();
-        return;
-      }
-    }
-    
-    // Lancer l'authentification au démarrage
-    await _authenticateOnStartup();
-  }
-
-  Future<void> _checkBiometricAvailability() async {
-    if (kIsWeb) {
-      setState(() {
-        _isBiometricAvailable = false;
-      });
+      // Sur mobile, authentification désactivée - accès direct
+      _unlockApp();
       return;
     }
     
-    try {
-      final available = await AuthService.isBiometricAvailable();
-      final biometrics = await AuthService.getAvailableBiometrics();
-      
-      setState(() {
-        _isBiometricAvailable = available && biometrics.isNotEmpty;
-      });
-    } catch (e) {
-      setState(() {
-        _isBiometricAvailable = false;
-      });
-    }
+    // Lancer l'authentification au démarrage (web uniquement)
+    await _authenticateOnStartup();
   }
 
   Future<void> _authenticateOnStartup() async {
-    // Sur web, gérer l'authentification PIN
+    // Sur web uniquement, gérer l'authentification PIN
     if (kIsWeb) {
       final pinConfigured = await PinAuthService.isPinConfigured();
       final shouldAuth = await AuthService.shouldAuthenticateOnStartup();
@@ -107,10 +81,7 @@ class _LockScreenState extends State<LockScreen> {
       }
       
       // Si aucun PIN n'est configuré, permettre l'accès direct
-      // L'utilisateur est déjà connecté (vérifié dans _initializeAuth)
-      // Le PIN est optionnel pour la sécurité supplémentaire
       if (!pinConfigured) {
-        // Pas de PIN configuré mais utilisateur connecté : permettre l'accès direct
         _unlockApp();
         return;
       }
@@ -121,76 +92,45 @@ class _LockScreenState extends State<LockScreen> {
       return;
     }
     
-    // Sur mobile, utiliser l'authentification biométrique
-    final shouldAuth = await AuthService.shouldAuthenticateOnStartup();
-    final authEnabled = await AuthService.isAuthEnabled();
-    
-    // Si l'authentification est désactivée, permettre l'accès direct
-    if (!authEnabled) {
-      _unlockApp();
-      return;
-    }
-    
-    // Si l'authentification au démarrage est désactivée, permettre l'accès direct
-    if (!shouldAuth) {
-      _unlockApp();
-      return;
-    }
-    
-    // Authentification requise : lancer l'authentification
-    // Même si la biométrie n'est pas disponible, le système proposera un code PIN
-    // (biometricOnly: false dans AuthService.authenticate)
-    await Future.delayed(const Duration(milliseconds: 500));
-    await _authenticate();
+    // Sur mobile, authentification désactivée - accès direct
+    _unlockApp();
   }
 
   Future<void> _authenticate() async {
     if (_isAuthenticating) return;
 
-    // Sur web, utiliser l'écran de saisie PIN
+    // Sur web uniquement, utiliser l'écran de saisie PIN
     if (kIsWeb) {
       if (mounted) {
-        final result = await Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const PinEntryScreen()),
-        );
-        if (result == true) {
-          // PIN correct, déverrouiller l'app
-          _unlockApp();
-        } else {
-          // PIN incorrect ou annulé
-          setState(() {
-            _errorMessage = 'Authentification échouée. Réessayez.';
-          });
+        try {
+          final result = await Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const PinEntryScreen()),
+          );
+          if (result == true) {
+            // PIN correct, déverrouiller l'app
+            _unlockApp();
+          } else {
+            // PIN incorrect ou annulé
+            if (mounted) {
+              setState(() {
+                _errorMessage = '';
+              });
+            }
+          }
+        } catch (e) {
+          AppLogger.error('Erreur navigation PinEntryScreen', e);
+          if (mounted) {
+            setState(() {
+              _errorMessage = '';
+            });
+          }
         }
       }
       return;
     }
 
-    // Sur mobile, utiliser l'authentification biométrique
-    setState(() {
-      _isAuthenticating = true;
-      _errorMessage = '';
-    });
-
-    try {
-      final authenticated = await AuthService.authenticate(
-        reason: 'Authentification requise pour accéder à Arkalia CIA',
-      );
-
-      if (authenticated) {
-        _unlockApp();
-      } else {
-        setState(() {
-          _errorMessage = 'Authentification échouée. Réessayez.';
-          _isAuthenticating = false;
-        });
-      }
-    } catch (e) {
-      setState(() {
-        _errorMessage = 'Erreur: $e';
-        _isAuthenticating = false;
-      });
-    }
+    // Sur mobile, authentification désactivée - accès direct
+    _unlockApp();
   }
 
   Future<void> _unlockApp() async {
@@ -278,9 +218,7 @@ class _LockScreenState extends State<LockScreen> {
                   Text(
                     kIsWeb
                         ? 'Authentification requise\n(Code PIN)'
-                        : _isBiometricAvailable
-                            ? 'Authentification requise\n(Empreinte ou code PIN de votre téléphone)'
-                            : 'Authentification requise\n(Code PIN de votre téléphone)',
+                        : 'Authentification désactivée',
                     style: const TextStyle(
                       fontSize: 18,
                       color: Colors.white70,
@@ -305,31 +243,26 @@ class _LockScreenState extends State<LockScreen> {
                       ),
                     ),
                   
-                  // Bouton d'authentification
-                  // Toujours afficher le bouton, même si la biométrie n'est pas disponible
-                  // Le système proposera automatiquement le PIN du téléphone
-                  ElevatedButton.icon(
-                    onPressed: _isAuthenticating ? null : _authenticate,
-                    icon: _isAuthenticating
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                            ),
-                          )
-                        : Icon(_isBiometricAvailable ? Icons.fingerprint : Icons.lock),
-                    label: Text(
-                      _isAuthenticating
-                          ? 'Authentification...'
-                          : kIsWeb
-                              ? 'S\'authentifier (code PIN)'
-                              : _isBiometricAvailable
-                                  ? 'S\'authentifier (empreinte ou PIN)'
-                                  : 'S\'authentifier (code PIN)',
-                      style: const TextStyle(fontSize: 18),
-                    ),
+                  // Bouton d'authentification (web uniquement)
+                  if (kIsWeb)
+                    ElevatedButton.icon(
+                      onPressed: _isAuthenticating ? null : _authenticate,
+                      icon: _isAuthenticating
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              ),
+                            )
+                          : const Icon(Icons.lock),
+                      label: Text(
+                        _isAuthenticating
+                            ? 'Authentification...'
+                            : 'S\'authentifier (code PIN)',
+                        style: const TextStyle(fontSize: 18),
+                      ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.blue[800],
