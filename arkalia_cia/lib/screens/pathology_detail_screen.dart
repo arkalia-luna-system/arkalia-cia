@@ -237,6 +237,40 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
                           Text(entry.notes!),
                       ],
                     ),
+                    trailing: PopupMenuButton(
+                      itemBuilder: (context) => [
+                        const PopupMenuItem(
+                          value: 'edit',
+                          child: Row(
+                            children: [
+                              Icon(Icons.edit, color: Colors.blue),
+                              SizedBox(width: 8),
+                              Text('Modifier'),
+                            ],
+                          ),
+                        ),
+                        const PopupMenuItem(
+                          value: 'delete',
+                          child: Row(
+                            children: [
+                              Icon(Icons.delete, color: Colors.red),
+                              SizedBox(width: 8),
+                              Text('Supprimer'),
+                            ],
+                          ),
+                        ),
+                      ],
+                      onSelected: (value) async {
+                        if (value == 'edit') {
+                          await _editTrackingEntry(entry);
+                        } else if (value == 'delete') {
+                          await _deleteTrackingEntry(entry);
+                        }
+                      },
+                    ),
+                    onTap: () async {
+                      await _editTrackingEntry(entry);
+                    },
                   ),
                 );
               }),
@@ -398,6 +432,60 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
       return list.join(', ');
     }
     return list.toString();
+  }
+
+  Future<void> _editTrackingEntry(PathologyTracking entry) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PathologyTrackingScreen(
+          pathologyId: widget.pathologyId,
+          existingEntry: entry,
+        ),
+      ),
+    );
+    _loadData();
+  }
+
+  Future<void> _deleteTrackingEntry(PathologyTracking entry) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Supprimer l\'entrée'),
+        content: Text(
+          'Êtes-vous sûr de vouloir supprimer l\'entrée du ${_formatDate(entry.date)} ?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Annuler'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Supprimer'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && entry.id != null) {
+      try {
+        await _pathologyService.deleteTracking(entry.id!);
+        if (mounted) {
+          _loadData();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Entrée supprimée')),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Erreur: $e')),
+          );
+        }
+      }
+    }
   }
 }
 

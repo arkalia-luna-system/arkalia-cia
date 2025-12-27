@@ -4,13 +4,17 @@ class ValidationHelper {
   static bool isValidPhone(String phone) {
     if (phone.isEmpty) return false;
     
-    // Nettoyer le numéro (enlever espaces, tirets, etc.)
-    final cleaned = phone.replaceAll(RegExp(r'[\s\-\(\)]'), '');
+    // Nettoyer le numéro (enlever espaces, tirets, points, etc.)
+    final cleaned = phone.replaceAll(RegExp(r'[\s\-\(\)\.]'), '');
     
     // Format belge : 04XX XX XX XX ou +32 4XX XX XX XX
+    // Après nettoyage, on doit avoir soit:
+    // - 04XXXXXXXX (10 chiffres) -> 0 + 4 + 8 chiffres
+    // - 4XXXXXXXX (9 chiffres) -> 4 + 8 chiffres  
+    // - +324XXXXXXXX (12 caractères) -> +32 + 4 + 8 chiffres
     final belgianPattern = RegExp(r'^(?:\+32|0)?4[0-9]{8}$');
     
-    // Format international : +XX...
+    // Format international : +XX... (8-15 chiffres après le +)
     final internationalPattern = RegExp(r'^\+\d{8,15}$');
     
     return belgianPattern.hasMatch(cleaned) || internationalPattern.hasMatch(cleaned);
@@ -54,8 +58,8 @@ class ValidationHelper {
     if (name.length < 2) return false;
     if (name.length > 100) return false;
     
-    // Autoriser lettres, espaces, tirets, apostrophes
-    final namePattern = RegExp(r"^[a-zA-ZÀ-ÿ\s\-']+$");
+    // Autoriser lettres, espaces, tirets, apostrophes, points (pour Dr., Mme., etc.)
+    final namePattern = RegExp(r"^[a-zA-ZÀ-ÿ\s\-'\.]+$");
     return namePattern.hasMatch(name);
   }
 

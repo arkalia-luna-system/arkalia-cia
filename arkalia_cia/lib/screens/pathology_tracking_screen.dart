@@ -5,10 +5,12 @@ import '../models/pathology_tracking.dart';
 
 class PathologyTrackingScreen extends StatefulWidget {
   final int pathologyId;
+  final PathologyTracking? existingEntry;
 
   const PathologyTrackingScreen({
     super.key,
     required this.pathologyId,
+    this.existingEntry,
   });
 
   @override
@@ -29,6 +31,14 @@ class _PathologyTrackingScreenState extends State<PathologyTrackingScreen> {
   @override
   void initState() {
     super.initState();
+    if (widget.existingEntry != null) {
+      // Mode édition : pré-remplir les champs
+      _selectedDate = widget.existingEntry!.date;
+      _trackingData.addAll(widget.existingEntry!.data);
+      if (widget.existingEntry!.notes != null) {
+        _notesController.text = widget.existingEntry!.notes!;
+      }
+    }
     _loadPathology();
   }
 
@@ -83,19 +93,37 @@ class _PathologyTrackingScreenState extends State<PathologyTrackingScreen> {
 
     setState(() => _isSaving = true);
     try {
-      final tracking = PathologyTracking(
-        pathologyId: widget.pathologyId,
-        date: _selectedDate,
-        data: _trackingData,
-        notes: _notesController.text.isEmpty ? null : _notesController.text,
-      );
-
-      await _pathologyService.insertTracking(tracking);
-      if (mounted) {
-        Navigator.pop(context, true);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Entrée enregistrée avec succès')),
+      if (widget.existingEntry != null && widget.existingEntry!.id != null) {
+        // Mode édition
+        final tracking = PathologyTracking(
+          id: widget.existingEntry!.id,
+          pathologyId: widget.pathologyId,
+          date: _selectedDate,
+          data: _trackingData,
+          notes: _notesController.text.isEmpty ? null : _notesController.text,
         );
+        await _pathologyService.updateTracking(tracking);
+        if (mounted) {
+          Navigator.pop(context, true);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Entrée modifiée avec succès')),
+          );
+        }
+      } else {
+        // Mode création
+        final tracking = PathologyTracking(
+          pathologyId: widget.pathologyId,
+          date: _selectedDate,
+          data: _trackingData,
+          notes: _notesController.text.isEmpty ? null : _notesController.text,
+        );
+        await _pathologyService.insertTracking(tracking);
+        if (mounted) {
+          Navigator.pop(context, true);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Entrée enregistrée avec succès')),
+          );
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -133,7 +161,9 @@ class _PathologyTrackingScreenState extends State<PathologyTrackingScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Suivi - ${_pathology!.name}'),
+        title: Text(widget.existingEntry != null 
+            ? 'Modifier l\'entrée - ${_pathology!.name}'
+            : 'Suivi - ${_pathology!.name}'),
         backgroundColor: _pathology!.color,
         foregroundColor: Colors.white,
       ),
@@ -206,7 +236,7 @@ class _PathologyTrackingScreenState extends State<PathologyTrackingScreen> {
                           width: 20,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Text('Enregistrer'),
+                      : Text(widget.existingEntry != null ? 'Modifier' : 'Enregistrer'),
                 ),
               ),
             ],
