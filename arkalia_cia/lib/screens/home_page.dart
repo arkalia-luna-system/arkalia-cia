@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'documents_screen.dart';
 import 'reminders_screen.dart';
@@ -94,11 +95,27 @@ class _HomePageState extends State<HomePage> {
   Future<void> _loadStats() async {
     try {
       final documents = await LocalStorageService.getDocuments();
-      final reminders = await CalendarService.getUpcomingReminders();
+      
+      // Compter les rappels locaux (stockés dans LocalStorageService)
+      final localReminders = await LocalStorageService.getReminders();
+      
+      // Compter les rappels du calendrier système (mobile seulement)
+      List<Map<String, dynamic>> calendarReminders = [];
+      if (!kIsWeb) {
+        try {
+          calendarReminders = await CalendarService.getUpcomingReminders();
+        } catch (e) {
+          // Ignorer les erreurs de calendrier
+        }
+      }
+      
+      // Total = rappels locaux + rappels calendrier
+      final totalReminders = localReminders.length + calendarReminders.length;
+      
       if (mounted) {
         setState(() {
           _documentCount = documents.length;
-          _upcomingRemindersCount = reminders.length;
+          _upcomingRemindersCount = totalReminders;
           _isLoadingStats = false;
         });
       }

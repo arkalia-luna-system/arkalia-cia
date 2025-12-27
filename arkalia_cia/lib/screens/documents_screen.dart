@@ -14,6 +14,7 @@ import '../services/doctor_detection_service.dart';
 import '../services/doctor_service.dart';
 import '../models/doctor.dart';
 import '../utils/app_logger.dart';
+import '../utils/input_sanitizer.dart';
 import '../widgets/exam_type_badge.dart';
 
 class DocumentsScreen extends StatefulWidget {
@@ -1120,20 +1121,15 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   Future<void> _showManageCategoriesDialog() async {
     if (!mounted) return;
     
-    final categories = await CategoryService.getCategories();
-    if (!mounted) return;
-    
-    final customCategories = categories.where((c) => 
-      !['Médical', 'Administratif', 'Autre'].contains(c)
-    ).toList();
-    
     final controller = TextEditingController();
+    int refreshKey = 0; // Clé pour forcer le FutureBuilder à se reconstruire
+    
     if (!mounted) return;
     
     await showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
+        builder: (context, setDialogState) => AlertDialog(
           title: const Text('Gérer les catégories'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -1149,9 +1145,13 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
               ElevatedButton(
                 onPressed: () async {
                   if (controller.text.trim().isNotEmpty) {
-                    await CategoryService.addCategory(controller.text.trim());
+                    // Sanitizer la catégorie avant ajout pour prévenir XSS
+                    final sanitizedCategory = InputSanitizer.sanitizeForStorage(controller.text.trim());
+                    await CategoryService.addCategory(sanitizedCategory);
                     controller.clear();
-                    setState(() {});
+                    // Incrémenter la clé pour forcer le FutureBuilder à se reconstruire
+                    refreshKey++;
+                    setDialogState(() {});
                   }
                 },
                 child: const Text('Ajouter'),
@@ -1159,22 +1159,43 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
               const SizedBox(height: 16),
               const Text('Catégories personnalisées:', style: TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
-              if (customCategories.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text('Aucune catégorie personnalisée', style: TextStyle(color: Colors.grey)),
-                )
-              else
-                ...customCategories.map((category) => ListTile(
-                  title: Text(category),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () async {
-                      await CategoryService.deleteCategory(category);
-                      setState(() {});
-                    },
-                  ),
-                )),
+              // Utiliser FutureBuilder avec une clé pour rafraîchir après ajout/suppression
+              FutureBuilder<List<String>>(
+                key: ValueKey(refreshKey), // Clé pour forcer la reconstruction
+                future: CategoryService.getCategories(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  
+                  final allCategories = snapshot.data ?? [];
+                  final currentCustomCategories = allCategories.where((c) => 
+                    !['Médical', 'Administratif', 'Autre'].contains(c)
+                  ).toList();
+                  
+                  if (currentCustomCategories.isEmpty) {
+                    return const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text('Aucune catégorie personnalisée', style: TextStyle(color: Colors.grey)),
+                    );
+                  }
+                  
+                  return Column(
+                    children: currentCustomCategories.map((category) => ListTile(
+                      title: Text(category),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () async {
+                          await CategoryService.deleteCategory(category);
+                          // Incrémenter la clé pour forcer le FutureBuilder à se reconstruire
+                          refreshKey++;
+                          setDialogState(() {});
+                        },
+                      ),
+                    )).toList(),
+                  );
+                },
+              ),
             ],
           ),
           actions: [
