@@ -37,7 +37,10 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
       await tester.pump(const Duration(milliseconds: 100));
       await tester.pump(const Duration(milliseconds: 100));
-      await tester.pump(const Duration(seconds: 1));
+      // Attendre que le timeout de CalendarService (2 secondes) soit passé
+      await tester.pump(const Duration(seconds: 2));
+      // Un dernier pump pour s'assurer que tout est stable
+      await tester.pump();
 
       expect(find.text('Rappels'), findsOneWidget);
     });
@@ -55,7 +58,10 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
       await tester.pump(const Duration(milliseconds: 100));
       await tester.pump(const Duration(milliseconds: 100));
-      await tester.pump(const Duration(seconds: 1));
+      // Attendre que le timeout de CalendarService (2 secondes) soit passé
+      await tester.pump(const Duration(seconds: 2));
+      // Un dernier pump pour s'assurer que tout est stable
+      await tester.pump();
 
       // L'icône notifications_none est affichée dans l'état vide
       expect(find.byIcon(Icons.notifications_none), findsOneWidget);
@@ -70,19 +76,19 @@ void main() {
 
       // Attendre le chargement complet avec plusieurs pumps
       // Ne pas utiliser pumpAndSettle car CalendarService peut bloquer en test
-      // Utiliser plusieurs petits pumps pour permettre au timeout de fonctionner
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 50));
-      await tester.pump(const Duration(milliseconds: 50));
-      await tester.pump(const Duration(milliseconds: 50));
-      await tester.pump(const Duration(milliseconds: 50));
-      await tester.pump(const Duration(milliseconds: 50));
-      await tester.pump(const Duration(milliseconds: 50));
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pump(const Duration(milliseconds: 100));
       // Attendre que le timeout de CalendarService (2 secondes) soit passé
       await tester.pump(const Duration(seconds: 2));
+      // Un dernier pump pour s'assurer que tout est stable
+      await tester.pump();
 
-      // Le bouton add est dans le FloatingActionButton
-      expect(find.byIcon(Icons.add), findsOneWidget);
+      // Le bouton add est dans le FloatingActionButton (plus spécifique)
+      // Il y a aussi un bouton "Créer un rappel" dans l'état vide, donc on cherche le FloatingActionButton
+      expect(find.byType(FloatingActionButton), findsOneWidget);
+      expect(find.byIcon(Icons.add), findsWidgets); // Il y en a plusieurs, c'est normal
     });
 
     testWidgets('Affiche les rappels existants', (WidgetTester tester) async {

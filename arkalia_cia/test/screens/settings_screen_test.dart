@@ -18,6 +18,15 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
       await tester.pump(const Duration(seconds: 1));
 
+      // Scroller jusqu'à la section Statistiques (elle est en bas de la liste)
+      final listView = find.byType(ListView);
+      expect(listView, findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.text('Statistiques'),
+        500.0,
+        scrollable: listView,
+      );
+
       // Vérifier que la section Statistiques est présente
       expect(find.text('Statistiques'), findsOneWidget);
       expect(find.text('Statistiques détaillées'), findsOneWidget);
@@ -38,6 +47,14 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
       await tester.pump(const Duration(seconds: 1));
 
+      // Scroller jusqu'à la section Statistiques
+      final listView = find.byType(ListView);
+      await tester.scrollUntilVisible(
+        find.text('Statistiques'),
+        500.0,
+        scrollable: listView,
+      );
+
       // Vérifier que l'icône est présente
       expect(find.byIcon(Icons.bar_chart), findsWidgets);
     });
@@ -55,6 +72,14 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
       await tester.pump(const Duration(milliseconds: 100));
       await tester.pump(const Duration(seconds: 1));
+
+      // Scroller jusqu'à la section Statistiques
+      final listView = find.byType(ListView);
+      await tester.scrollUntilVisible(
+        find.text('Statistiques détaillées'),
+        500.0,
+        scrollable: listView,
+      );
 
       // Trouver le ListTile des statistiques
       final statsTile = find.text('Statistiques détaillées');
