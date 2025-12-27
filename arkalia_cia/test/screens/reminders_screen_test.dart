@@ -92,11 +92,6 @@ void main() {
     });
 
     testWidgets('Affiche les rappels existants', (WidgetTester tester) async {
-      // SKIP: Ce test cause des timeouts car _loadReminders() appelé dans initState() bloque
-      // Le problème vient de LocalStorageService.getReminders() qui peut bloquer indéfiniment
-      // Solution temporaire: skip le test jusqu'à ce que le problème soit résolu
-      // TODO: Corriger en mockant LocalStorageService ou en refactorant _loadReminders()
-      return;
       // Créer et sauvegarder un rappel de test AVANT de construire le widget
       final testReminder = {
         'id': 'test_reminder_1',
@@ -116,18 +111,21 @@ void main() {
         ),
       );
 
-      // Un seul pump pour construire le widget initial
-      // On ne vérifie que la construction du widget, pas le chargement complet
-      // car _loadReminders() appelé dans initState() peut bloquer en test
+      // Attendre que le widget soit construit et que _loadReminders() soit appelé
       await tester.pump();
       
-      // Vérifier que le widget se construit correctement
-      // Le widget doit afficher le titre de l'AppBar (toujours présent immédiatement)
-      expect(find.text('Rappels'), findsOneWidget, reason: 'Le titre de l\'écran doit être affiché');
+      // Attendre que le Future de getReminders() soit résolu
+      // Maintenant que FlutterSecureStorage est bypassé en mode test, c'est rapide
+      await tester.pump(const Duration(milliseconds: 50));
+      await tester.pump(const Duration(milliseconds: 50));
+      await tester.pump();
       
-      // Note: On ne vérifie pas le contenu des rappels car _loadReminders() peut bloquer
-      // Le test vérifie seulement que le widget se construit correctement
-    });
+      // Vérifier que le ListView est présent (signe que les rappels sont chargés)
+      expect(find.byType(ListView), findsOneWidget, reason: 'Le ListView doit être présent quand il y a des rappels');
+      
+      // Vérifier qu'il y a au moins une Card (les rappels sont dans des Cards)
+      expect(find.byType(Card), findsWidgets, reason: 'Il doit y avoir au moins une Card pour le rappel');
+    }, timeout: const Timeout(Duration(seconds: 2)));
 
     testWidgets('Affiche le bouton Modifier sur les rappels non terminés', (WidgetTester tester) async {
       // Créer un rappel de test non terminé
