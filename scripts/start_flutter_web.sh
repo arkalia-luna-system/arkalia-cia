@@ -93,11 +93,11 @@ echo ""
 # Vérifier si le build web existe
 if [ ! -f "build/web/index.html" ]; then
     echo -e "${BLUE}🔨 Génération du build web (première fois, peut prendre quelques minutes)...${NC}"
-    flutter build web --release --no-wasm-dry-run
+    flutter build web --release
     echo -e "${GREEN}✅ Build web généré${NC}"
 else
     echo -e "${BLUE}🔨 Régénération du build web pour mettre à jour...${NC}"
-    flutter build web --release --no-wasm-dry-run
+    flutter build web --release
     echo -e "${GREEN}✅ Build web régénéré${NC}"
 fi
 echo ""

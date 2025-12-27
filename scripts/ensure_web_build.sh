@@ -35,7 +35,7 @@ else
 
     # Générer le build web
     echo "🏗️  Build web en cours..."
-    flutter build web --release --no-wasm-dry-run
+    flutter build web --release
 
     echo "✅ Build web généré avec succès"
 fi
