@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'login_screen.dart';
 import 'register_screen.dart';
 import '../home_page.dart';
@@ -168,12 +169,35 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                   onPressed: () => Navigator.of(context).pop(),
                   child: const Text('Fermer'),
                 ),
+                if (result['error']?.contains('People API') == true ||
+                    result['error']?.contains('403') == true ||
+                    result['error']?.contains('SERVICE_DISABLED') == true)
+                  TextButton.icon(
+                    onPressed: () async {
+                      Navigator.of(context).pop();
+                      // Ouvrir le lien d'activation de l'API People
+                      final url = Uri.parse(
+                        'https://console.developers.google.com/apis/api/people.googleapis.com/overview?project=1062485264410',
+                      );
+                      if (await canLaunchUrl(url)) {
+                        await launchUrl(url, mode: LaunchMode.externalApplication);
+                      }
+                    },
+                    icon: const Icon(Icons.open_in_new, size: 18),
+                    label: const Text('Activer l\'API'),
+                  ),
                 if (result['error']?.contains('Configuration') == true ||
                     result['error']?.contains('not registered') == true)
                   TextButton(
-                    onPressed: () {
+                    onPressed: () async {
                       Navigator.of(context).pop();
-                      // Optionnel : ouvrir l'URL Google Cloud Console
+                      // Ouvrir Google Cloud Console
+                      final url = Uri.parse(
+                        'https://console.cloud.google.com/apis/credentials?project=arkalia-cia',
+                      );
+                      if (await canLaunchUrl(url)) {
+                        await launchUrl(url, mode: LaunchMode.externalApplication);
+                      }
                     },
                     child: const Text('Voir la config'),
                   ),
