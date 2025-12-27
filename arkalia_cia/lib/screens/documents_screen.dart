@@ -409,9 +409,21 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: Row(
+          children: [
+            const Icon(Icons.check_circle, color: Colors.white),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                message,
+                style: const TextStyle(fontSize: 14), // Minimum 14px pour accessibilité seniors
+              ),
+            ),
+          ],
+        ),
         backgroundColor: Colors.green,
         duration: const Duration(seconds: 3),
+        behavior: SnackBarBehavior.floating,
       ),
     );
   }
@@ -420,9 +432,21 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: Row(
+          children: [
+            const Icon(Icons.error_outline, color: Colors.white),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                message,
+                style: const TextStyle(fontSize: 14), // Minimum 14px pour accessibilité seniors
+              ),
+            ),
+          ],
+        ),
         backgroundColor: Colors.red,
         duration: const Duration(seconds: 4),
+        behavior: SnackBarBehavior.floating,
       ),
     );
   }
