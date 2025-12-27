@@ -57,8 +57,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     // Annuler le timer précédent s'il existe
     _debounceTimer?.cancel();
     
-    // Créer un nouveau timer avec un délai de 300ms
-    _debounceTimer = Timer(const Duration(milliseconds: 300), () {
+    // Créer un nouveau timer avec un délai de 500ms (uniformisé pour meilleure performance)
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () {
       _filterDocuments();
     });
   }
