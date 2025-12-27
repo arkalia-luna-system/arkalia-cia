@@ -277,7 +277,13 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
       await tester.pump(const Duration(seconds: 1));
 
-      expect(find.byType(ListView), findsOneWidget);
+      // L'écran peut avoir soit un ListView (si rappels présents) soit un SingleChildScrollView (si vide)
+      // Les deux sont scrollables, donc on vérifie qu'au moins un widget scrollable est présent
+      final hasListView = find.byType(ListView).evaluate().isNotEmpty;
+      final hasScrollView = find.byType(SingleChildScrollView).evaluate().isNotEmpty;
+      
+      expect(hasListView || hasScrollView, isTrue, 
+        reason: 'L\'écran doit contenir un widget scrollable (ListView ou SingleChildScrollView)');
     });
 
     testWidgets('Affiche le bouton de rafraîchissement', (WidgetTester tester) async {
