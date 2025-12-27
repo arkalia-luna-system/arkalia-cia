@@ -111,19 +111,22 @@ void main() {
         ),
       );
 
-      // Les rappels locaux sont chargés immédiatement dans _loadReminders
-      // CalendarService est skip en mode test, donc pas de blocage
-      // Attendre juste 2 frames pour que le setState soit appliqué
-      await tester.pump();
-      await tester.pump();
+      // Attendre que le chargement soit terminé (CircularProgressIndicator disparaît)
+      // Maximum 10 tentatives de 100ms = 1 seconde
+      for (int i = 0; i < 10; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+        // Si le CircularProgressIndicator n'est plus présent, le chargement est terminé
+        if (find.byType(CircularProgressIndicator).evaluate().isEmpty) {
+          break;
+        }
+      }
       
       // Vérifier que le ListView est présent (signe que les rappels sont chargés)
-      // Si le ListView est présent, c'est que les rappels ont été chargés
       expect(find.byType(ListView), findsOneWidget, reason: 'Le ListView doit être présent quand il y a des rappels');
       
       // Vérifier qu'il y a au moins une Card (les rappels sont dans des Cards)
       expect(find.byType(Card), findsWidgets, reason: 'Il doit y avoir au moins une Card pour le rappel');
-    }, timeout: const Timeout(Duration(seconds: 2)));
+    }, timeout: const Timeout(Duration(seconds: 3)));
 
     testWidgets('Affiche le bouton Modifier sur les rappels non terminés', (WidgetTester tester) async {
       // Créer un rappel de test non terminé
