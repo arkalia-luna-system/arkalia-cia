@@ -117,11 +117,14 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
       await tester.pump(const Duration(milliseconds: 100));
       await tester.pump(const Duration(milliseconds: 100));
-      await tester.pump(const Duration(seconds: 1));
+      // Attendre que le timeout de CalendarService (2 secondes) soit passé
+      await tester.pump(const Duration(seconds: 2));
+      // Un dernier pump pour s'assurer que tout est stable
+      await tester.pump();
 
       expect(find.text('Test Rappel'), findsOneWidget);
       expect(find.text('Description test'), findsOneWidget);
-    });
+    }, timeout: const Timeout(Duration(seconds: 30)));
 
     testWidgets('Affiche le bouton Modifier sur les rappels non terminés', (WidgetTester tester) async {
       // Créer un rappel de test non terminé
