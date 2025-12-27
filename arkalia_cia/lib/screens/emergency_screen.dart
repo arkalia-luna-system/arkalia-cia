@@ -243,12 +243,11 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
               for (final entry in controllers.entries) {
                 data[entry.key] = entry.value.text.trim();
               }
+              Navigator.of(context).pop(data);
             },
             style: ElevatedButton.styleFrom(
               minimumSize: const Size(120, 48), // Minimum 48px pour accessibilité seniors
             ),
-              Navigator.of(context).pop(data);
-            },
             child: const Text('Sauvegarder'),
           ),
         ],
