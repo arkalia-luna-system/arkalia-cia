@@ -116,40 +116,22 @@ void main() {
         ),
       );
 
-      // Attendre que le chargement soit terminé (CircularProgressIndicator disparaît)
-      // Ne pas utiliser pumpAndSettle car CalendarService peut bloquer en test
+      // Attendre que les rappels locaux soient chargés (sans attendre CalendarService)
+      // Les rappels locaux sont chargés immédiatement, CalendarService peut bloquer
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
+      await tester.pump();
       
-      // Attendre que le CircularProgressIndicator disparaisse (max 2.5 secondes pour timeout CalendarService)
-      // Le timeout de CalendarService est de 2 secondes, donc on attend max 2.5 secondes
+      // Attendre que le texte apparaisse (les rappels locaux sont chargés rapidement)
+      // Ne pas attendre CalendarService qui peut bloquer
       int attempts = 0;
-      const maxAttempts = 25; // 25 * 100ms = 2.5 secondes max
-      while (find.byType(CircularProgressIndicator).evaluate().isNotEmpty && attempts < maxAttempts) {
-        await tester.pump(const Duration(milliseconds: 100));
+      const maxAttempts = 20; // 20 * 50ms = 1 seconde max (suffisant pour rappels locaux)
+      while (find.text('Test Rappel').evaluate().isEmpty && attempts < maxAttempts) {
+        await tester.pump(const Duration(milliseconds: 50));
         attempts++;
       }
       
-      // Si le CircularProgressIndicator est toujours présent après 2.5 secondes,
-      // cela signifie que CalendarService bloque. On continue quand même le test
-      // car les rappels locaux devraient être chargés.
-      
-      // Attendre quelques frames supplémentaires pour que le widget soit construit
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 100));
-      await tester.pump();
-      
-      // Vérifier directement que le texte est présent (plus fiable que d'attendre le ListView)
-      // Le texte "Test Rappel" doit être présent si les rappels sont chargés
-      // Si le texte n'est pas trouvé immédiatement, attendre un peu plus
-      if (find.text('Test Rappel').evaluate().isEmpty) {
-        // Attendre encore un peu si le texte n'est pas trouvé
-        for (int i = 0; i < 5; i++) {
-          await tester.pump(const Duration(milliseconds: 100));
-          if (find.text('Test Rappel').evaluate().isNotEmpty) break;
-        }
-      }
-      
+      // Vérifier que le texte est présent
       expect(find.text('Test Rappel'), findsOneWidget, reason: 'Le titre du rappel doit être affiché');
       expect(find.text('Description test'), findsOneWidget, reason: 'La description du rappel doit être affichée');
     }, timeout: const Timeout(Duration(seconds: 30)));
@@ -174,13 +156,18 @@ void main() {
         ),
       );
 
-      // Attendre le chargement complet avec plusieurs pumps
-      // Ne pas utiliser pumpAndSettle car CalendarService peut bloquer en test
+      // Attendre que les rappels locaux soient chargés (sans attendre CalendarService)
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
-      await tester.pump(const Duration(milliseconds: 100));
-      await tester.pump(const Duration(milliseconds: 100));
-      await tester.pump(const Duration(seconds: 1));
+      await tester.pump();
+      
+      // Attendre que l'icône apparaisse (max 1 seconde)
+      int attempts = 0;
+      const maxAttempts = 20; // 20 * 50ms = 1 seconde max
+      while (find.byIcon(Icons.edit).evaluate().isEmpty && attempts < maxAttempts) {
+        await tester.pump(const Duration(milliseconds: 50));
+        attempts++;
+      }
 
       // Vérifier que le bouton Modifier (icône edit) est présent
       expect(find.byIcon(Icons.edit), findsOneWidget);
