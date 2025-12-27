@@ -29,8 +29,9 @@ Erreur 400 : redirect_uri_mismatch
 
 1. Dans la liste des **OAuth 2.0 Client IDs**, trouver **"Client Web 1"**
 2. Cliquer sur **"Client Web 1"** pour l'éditer
-3. Dans la section **"URIs de redirection autorisées"**, cliquer sur **"+ AJOUTER UN URI"**
-4. Ajouter les URI suivantes (une par une) :
+3. Faire défiler jusqu'à la section **"URIs de redirection autorisées"**
+4. Cliquer sur **"+ AJOUTER UN URI"** (bouton en bas de la liste)
+5. Ajouter les URI suivantes (une par une, en cliquant sur "+ AJOUTER UN URI" pour chaque) :
 
 #### Pour développement local :
 ```

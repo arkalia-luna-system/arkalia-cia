@@ -85,6 +85,22 @@ class GoogleAuthService {
             '1. Package name : com.arkalia.cia\n'
             '2. SHA-1 Debug : 2C:68:D5:C0:92:A8:7F:59:E7:6A:7C:5B:7C:F9:77:54:9E:68:14:6E\n\n'
             'URL : https://console.cloud.google.com/apis/credentials?project=arkalia-cia';
+      } else if (errorMessage.contains('redirect_uri_mismatch') ||
+                 errorMessage.contains('redirect') ||
+                 errorMessage.contains('400')) {
+        // Erreur spécifique redirect_uri_mismatch pour le web
+        userFriendlyMessage = 
+            '🔧 Erreur redirect_uri_mismatch (Erreur 400)\n\n'
+            '⚠️ Les URI de redirection ne sont pas configurées dans Google Cloud Console.\n\n'
+            '📋 ACTION REQUISE :\n'
+            '1. Aller sur : https://console.cloud.google.com/apis/credentials?project=arkalia-cia\n'
+            '2. Cliquer sur "Client Web 1"\n'
+            '3. Dans "URIs de redirection autorisées", ajouter :\n'
+            '   • http://localhost:8080\n'
+            '   • http://localhost:8080/\n'
+            '4. Cliquer sur "ENREGISTRER"\n'
+            '5. Attendre 1-2 minutes puis réessayer\n\n'
+            '📖 Guide complet : docs/guides/FIX_REDIRECT_URI_MISMATCH.md';
       } else if (errorMessage.contains('NETWORK_ERROR') ||
                  errorMessage.contains('7:') ||
                  errorMessage.contains('network') ||
