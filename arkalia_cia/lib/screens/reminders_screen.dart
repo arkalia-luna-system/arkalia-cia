@@ -63,7 +63,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
             onTimeout: () => <Map<String, dynamic>>[],
           );
           // Convertir les événements calendrier en format local
-          calendarReminders = calendarEvents.map((event) => {
+          final calendarReminders = calendarEvents.map((event) => {
             'id': event['id'] ?? '',
             'title': (event['title'] ?? '').replaceFirst('[Santé] ', ''),
             'description': event['description'] ?? '',

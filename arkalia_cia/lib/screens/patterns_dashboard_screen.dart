@@ -126,8 +126,27 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
         return;
       }
 
-      // Analyser patterns avec authentification et gestion automatique du refresh token
+      // Vérifier si le backend est configuré
       final url = await BackendConfigService.getBackendURL();
+      if (url.isEmpty) {
+        setState(() {
+          _error = 'Backend non configuré.\n\nVeuillez configurer l\'URL du backend dans les paramètres (⚙️ > Backend API).';
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // Vérifier si le backend est activé
+      final backendEnabled = await BackendConfigService.isBackendEnabled();
+      if (!backendEnabled) {
+        setState(() {
+          _error = 'Backend non activé.\n\nVeuillez activer le backend dans les paramètres (⚙️ > Backend API).';
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // Analyser patterns avec authentification et gestion automatique du refresh token
       final response = await _makeAuthenticatedPatternRequest(() async {
         final patternHeaders = <String, String>{
           'Content-Type': 'application/json',
