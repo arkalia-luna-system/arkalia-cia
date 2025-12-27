@@ -4,6 +4,7 @@ import '../models/device.dart';
 import '../services/user_profile_service.dart';
 import '../services/multi_device_sync_service.dart';
 import '../utils/app_logger.dart';
+import '../utils/error_helper.dart';
 
 /// Écran de gestion du profil utilisateur et des appareils connectés
 class UserProfileScreen extends StatefulWidget {
@@ -36,14 +37,14 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         _isLoading = false;
       });
     } catch (e) {
-      AppLogger.error('Erreur chargement profil', e);
+      ErrorHelper.logError('UserProfileScreen._loadProfile', e);
       setState(() {
         _isLoading = false;
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erreur chargement profil: $e'),
+            content: Text(ErrorHelper.getUserFriendlyMessage(e)),
             backgroundColor: Colors.red,
           ),
         );

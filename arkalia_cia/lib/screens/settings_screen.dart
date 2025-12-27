@@ -877,7 +877,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               subtitle: Text(
                 'Exemple de texte avec cette taille',
-                style: TextStyle(fontSize: (12 * size.multiplier)),
+                style: TextStyle(fontSize: (14 * size.multiplier)), // Minimum 14px pour accessibilité seniors
               ),
               value: size,
               groupValue: _textSize,

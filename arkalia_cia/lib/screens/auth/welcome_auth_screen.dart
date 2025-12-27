@@ -106,7 +106,7 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
               'Si la page de consentement reste bloquée,\n'
               'attendez 1-2 minutes puis réessayez.',
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 14, // Minimum 14px pour accessibilité seniors
                 color: Colors.grey[600],
               ),
               textAlign: TextAlign.center,
@@ -425,7 +425,7 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                               'Pour créer un compte avec backend, configurez l\'URL dans les paramètres (⚙️ > Backend API)',
                               style: TextStyle(
                                 color: Colors.white.withOpacity(0.9),
-                                fontSize: 13,
+                                fontSize: 14, // Minimum 14px pour accessibilité seniors
                               ),
                             ),
                           ),

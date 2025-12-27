@@ -234,7 +234,7 @@ class BBIAIntegrationScreen extends StatelessWidget {
                       'est en cours de développement et sera disponible dans une future version.',
                       style: TextStyle(
                         color: isDark ? Colors.blue[200] : Colors.blue[900],
-                        fontSize: 15,
+                        fontSize: 14, // Minimum 14px pour accessibilité seniors
                       ),
                     ),
                     const SizedBox(height: 16),

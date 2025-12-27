@@ -46,7 +46,7 @@ class AdvancedPatternAnalyzer:
                     "predictions": {},
                     "error": "Aucune donnée disponible pour l'analyse",
                 }
-            
+
             if len(data) < 3:
                 logger.warning(f"Données insuffisantes pour l'analyse: {len(data)} point(s)")
                 return {

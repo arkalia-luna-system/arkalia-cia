@@ -1824,14 +1824,14 @@ async def analyze_patterns(
             )
 
         patterns = pattern_analyzer.detect_temporal_patterns(pattern_request.data)
-        
+
         # Vérifier si l'analyse a retourné une erreur
         if isinstance(patterns, dict) and "error" in patterns:
             error_msg = patterns.get("error", "Erreur inconnue lors de l'analyse")
             logger.warning(f"Analyse patterns retournée avec erreur: {error_msg}")
             # Retourner quand même les résultats partiels si disponibles
             return patterns
-        
+
         return patterns
     except HTTPException:
         # Ré-élever les HTTPException sans les transformer en 500

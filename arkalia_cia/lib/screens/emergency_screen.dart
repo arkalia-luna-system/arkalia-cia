@@ -4,6 +4,7 @@ import '../services/local_storage_service.dart';
 import '../widgets/emergency_contact_dialog.dart';
 import '../widgets/emergency_contact_card.dart';
 import '../widgets/emergency_info_card.dart';
+import '../utils/error_helper.dart';
 
 /// Écran de gestion des contacts et informations d'urgence
 class EmergencyScreen extends StatefulWidget {
@@ -253,7 +254,8 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
       await _loadData();
       _showSuccess('Informations sauvegardées');
     } catch (e) {
-      _showError('Erreur lors de la sauvegarde: $e');
+      ErrorHelper.logError('EmergencyScreen._saveEmergencyInfo', e);
+      _showError(ErrorHelper.getUserFriendlyMessage(e));
     }
   }
 
