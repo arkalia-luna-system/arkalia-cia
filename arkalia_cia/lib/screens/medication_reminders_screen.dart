@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/medication.dart';
 import '../services/medication_service.dart';
+import '../utils/input_sanitizer.dart';
 import '../widgets/medication_reminder_widget.dart';
 
 // MedicationTaken est défini dans medication.dart
