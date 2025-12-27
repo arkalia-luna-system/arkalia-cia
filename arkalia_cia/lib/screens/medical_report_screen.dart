@@ -390,4 +390,3 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
   }
 }
 
-// Force CI refresh
