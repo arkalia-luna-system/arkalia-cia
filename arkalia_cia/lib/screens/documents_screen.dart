@@ -704,10 +704,23 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                             ),
                             const SizedBox(height: 8),
                             const Text(
-                              'Utilisez le bouton ci-dessus pour uploader un PDF',
+                              'Commencez par uploader votre premier document PDF',
                               style: TextStyle(
                                 color: Colors.grey,
                                 fontSize: 14,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 24),
+                            ElevatedButton.icon(
+                              onPressed: _uploadDocument,
+                              icon: const Icon(Icons.upload),
+                              label: const Text('Uploader un PDF'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                foregroundColor: Colors.white,
+                                minimumSize: const Size(200, 48), // Minimum 48px pour accessibilité seniors
+                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                               ),
                             ),
                           ],

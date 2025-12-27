@@ -463,10 +463,23 @@ class _RemindersScreenState extends State<RemindersScreen> {
                             ),
                             const SizedBox(height: 8),
                             const Text(
-                              'Appuyez sur + pour créer un rappel',
+                              'Créez votre premier rappel pour ne rien oublier',
                               style: TextStyle(
                                 color: Colors.grey,
                                 fontSize: 14,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 24),
+                            ElevatedButton.icon(
+                              onPressed: () => _showAddReminderDialog(),
+                              icon: const Icon(Icons.add),
+                              label: const Text('Créer un rappel'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.orange,
+                                foregroundColor: Colors.white,
+                                minimumSize: const Size(200, 48), // Minimum 48px pour accessibilité seniors
+                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                               ),
                             ),
                           ],
