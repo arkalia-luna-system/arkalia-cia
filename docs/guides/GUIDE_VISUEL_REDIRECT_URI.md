@@ -28,27 +28,36 @@ Dans la liste **"OAuth 2.0 Client IDs"**, vous verrez :
 
 ---
 
-### Étape 3 : Ajouter les URI de redirection
+### Étape 3 : Configurer les Origines JavaScript (IMPORTANT)
 
 1. **Cliquer sur "Client Web 1"** pour l'éditer
-2. **Faire défiler** jusqu'à la section **"URIs de redirection autorisées"**
-3. **Cliquer sur "+ AJOUTER UN URI"** (bouton en bas de la liste)
-4. **Ajouter cette URI** : `http://localhost:8080`
-5. **Cliquer à nouveau sur "+ AJOUTER UN URI"**
-6. **Ajouter cette URI** : `http://localhost:8080/`
+2. **Faire défiler** jusqu'à la section **"Origines JavaScript autorisées"**
+3. **Cliquer sur "+ AJOUTER UNE ORIGINE"**
+4. **Ajouter** : `http://localhost:8080`
+5. (Optionnel) Ajouter aussi : `https://arkalia-luna-system.github.io` (pour production)
+
+---
+
+### Étape 4 : Ajouter les URI de redirection
+
+1. **Faire défiler** jusqu'à la section **"URIs de redirection autorisées"**
+2. **Cliquer sur "+ AJOUTER UN URI"** (bouton en bas de la liste)
+3. **Ajouter cette URI** : `http://localhost:8080`
+4. **Cliquer à nouveau sur "+ AJOUTER UN URI"**
+5. **Ajouter cette URI** : `http://localhost:8080/`
 
 **Important** : Ajouter les DEUX (avec et sans slash final)
 
 ---
 
-### Étape 4 : Enregistrer
+### Étape 5 : Enregistrer
 
 1. **Cliquer sur "ENREGISTRER"** (bouton bleu en bas de la page)
 2. **Attendre 1-2 minutes** pour que les changements soient propagés
 
 ---
 
-### Étape 5 : Tester
+### Étape 6 : Tester
 
 1. **Recharger complètement** l'application web (Ctrl+F5 ou Cmd+Shift+R)
 2. **Cliquer sur "Continuer avec Google"**
