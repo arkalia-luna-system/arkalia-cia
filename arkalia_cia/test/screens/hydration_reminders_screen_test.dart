@@ -69,7 +69,7 @@ void main() {
     test('Les icônes doivent avoir une taille minimale de 24px', () {
       const iconSize = 24.0;
       expect(iconSize, greaterThanOrEqualTo(24.0));
-    });
+    }, timeout: const Timeout(Duration(seconds: 10)));
   });
 }
 
