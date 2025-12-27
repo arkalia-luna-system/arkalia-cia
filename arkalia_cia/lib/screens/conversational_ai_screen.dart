@@ -104,9 +104,11 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
                    errorMessage.contains('Failed host lookup') || 
                    errorMessage.contains('Connection refused') ||
                    errorMessage.contains('NetworkError')) {
-          userMessage = '⚠️ Erreur de connexion au backend.\n\n'
-              'Détails : Failed to fetch\n\n'
-              'Vérifiez la configuration du backend dans les paramètres.';
+          userMessage = '⚠️ Impossible de se connecter au serveur.\n\n'
+              'Vérifiez que :\n'
+              '• Votre connexion internet fonctionne\n'
+              '• Le serveur est démarré\n'
+              '• L\'adresse du serveur est correcte dans les paramètres (⚙️ > Backend API)';
         } else {
           // Utiliser ErrorHelper pour un message utilisateur clair
           userMessage = '⚠️ ${ErrorHelper.getUserFriendlyMessage(e)}';

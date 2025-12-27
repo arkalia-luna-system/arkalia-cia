@@ -104,19 +104,20 @@ class ConversationalAIService {
           errorMessage.contains('Connection refused') ||
           errorMessage.contains('NetworkError')) {
         final baseUrl = await BackendConfigService.getBackendURL();
-        userMessage = '⚠️ Erreur de connexion au backend.\n\n'
-            'Détails : Failed to fetch, uri=$baseUrl/api/v1/ai/chat\n\n'
+        userMessage = '⚠️ Impossible de se connecter au serveur.\n\n'
             'Vérifiez que :\n'
-            '• Le backend est démarré\n'
-            '• L\'URL est correctement configurée dans les paramètres (⚙️ > Backend API)\n'
-            '• Votre connexion réseau fonctionne';
+            '• Votre connexion internet fonctionne\n'
+            '• Le serveur est démarré\n'
+            '• L\'adresse du serveur est correcte dans les paramètres (⚙️ > Backend API)';
       } else if (errorMessage.contains('timeout')) {
         userMessage = '⏱️ Le backend met trop de temps à répondre.\n\n'
             'Vérifiez que le backend est bien démarré et accessible.';
       } else {
-        userMessage = '⚠️ Erreur de connexion au backend.\n\n'
-            'Détails : ${errorMessage.contains("Exception:") ? errorMessage.split("Exception:")[1].trim() : errorMessage}\n\n'
-            'Vérifiez la configuration du backend dans les paramètres (⚙️ > Backend API).';
+        userMessage = '⚠️ Impossible de se connecter au serveur.\n\n'
+            'Vérifiez que :\n'
+            '• Votre connexion internet fonctionne\n'
+            '• Le serveur est démarré\n'
+            '• L\'adresse du serveur est correcte dans les paramètres (⚙️ > Backend API)';
       }
       
       return AIResponse(

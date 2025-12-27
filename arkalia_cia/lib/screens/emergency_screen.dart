@@ -70,7 +70,8 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
       }
       // Ne pas afficher d'erreur si c'est juste une permission refusée
       if (!e.toString().contains('Permission')) {
-        _showError('Erreur lors du chargement: $e');
+        ErrorHelper.logError('EmergencyScreen._loadData', e);
+        _showError(ErrorHelper.getUserFriendlyMessage(e));
       }
     }
   }
@@ -147,10 +148,11 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
         await _loadData();
         _showSuccess('Contact d\'urgence ajouté avec succès');
       } else {
-        _showError('Erreur lors de l\'ajout du contact');
+        _showError('Impossible d\'ajouter le contact. Veuillez réessayer.');
       }
     } catch (e) {
-      _showError('Erreur: $e');
+      ErrorHelper.logError('EmergencyScreen._addContact', e);
+      _showError(ErrorHelper.getUserFriendlyMessage(e));
     }
   }
 
@@ -160,7 +162,8 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
       await _loadData();
       _showSuccess('Contact modifié avec succès');
     } catch (e) {
-      _showError('Erreur lors de la modification: $e');
+      ErrorHelper.logError('EmergencyScreen._updateContact', e);
+      _showError(ErrorHelper.getUserFriendlyMessage(e));
     }
   }
 
@@ -176,7 +179,8 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
         await _loadData();
         _showSuccess('Contact supprimé');
       } catch (e) {
-        _showError('Erreur lors de la suppression: $e');
+        ErrorHelper.logError('EmergencyScreen._deleteContact', e);
+        _showError(ErrorHelper.getUserFriendlyMessage(e));
       }
     }
   }
@@ -501,7 +505,8 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
       // Note: Utilisation d'URL launcher sera gérée par EmergencyContactCard
       _showSuccess('Appel vers le $number...');
     } catch (e) {
-      _showError('Impossible d\'appeler: $e');
+      ErrorHelper.logError('EmergencyScreen._callEmergency', e);
+      _showError(ErrorHelper.getUserFriendlyMessage(e));
     }
   }
 }
