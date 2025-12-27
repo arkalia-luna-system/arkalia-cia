@@ -95,12 +95,18 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
             onPressed: () {
               Navigator.of(context).pop(false);
             },
+            style: TextButton.styleFrom(
+              minimumSize: const Size(100, 48), // Minimum 48px pour accessibilité seniors
+            ),
             child: const Text('Annuler'),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.of(context).pop(true);
             },
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size(120, 48), // Minimum 48px pour accessibilité seniors
+            ),
             child: const Text('Autoriser'),
           ),
         ],
@@ -226,6 +232,9 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
+            style: TextButton.styleFrom(
+              minimumSize: const Size(100, 48), // Minimum 48px pour accessibilité seniors
+            ),
             child: const Text('Annuler'),
           ),
           ElevatedButton(
@@ -234,6 +243,10 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
               for (final entry in controllers.entries) {
                 data[entry.key] = entry.value.text.trim();
               }
+            },
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size(120, 48), // Minimum 48px pour accessibilité seniors
+            ),
               Navigator.of(context).pop(data);
             },
             child: const Text('Sauvegarder'),
@@ -276,7 +289,10 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(true),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              minimumSize: const Size(120, 48), // Minimum 48px pour accessibilité seniors
+            ),
             child: const Text('Confirmer'),
           ),
         ],

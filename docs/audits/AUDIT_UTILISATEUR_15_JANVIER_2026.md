@@ -1,5 +1,5 @@
 # 🔍 Audit Utilisateur - Arkalia CIA
-## Test comme utilisateur réel (15 janvier 2026)
+## Test comme utilisateur réel
 
 **Date** : 27 décembre 2025  
 **Type** : Audit utilisateur complet (comme si j'étais un utilisateur senior)  
