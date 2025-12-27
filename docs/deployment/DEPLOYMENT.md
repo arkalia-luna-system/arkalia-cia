@@ -771,10 +771,8 @@ kubectl apply -f canary-deployment.yaml
 
 ## Voir aussi
 
-- **[BUILD_RELEASE_ANDROID.md](./BUILD_RELEASE_ANDROID.md)** — Guide build Android
-- **[IOS_DEPLOYMENT_GUIDE.md](./IOS_DEPLOYMENT_GUIDE.md)** — Guide déploiement iOS
-- **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture système
-- **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
+- **[ARCHITECTURE.md](../ARCHITECTURE.md)** — Architecture système
+- **[INDEX_DOCUMENTATION.md](../INDEX_DOCUMENTATION.md)** — Index complet de la documentation
 
 ---
 
