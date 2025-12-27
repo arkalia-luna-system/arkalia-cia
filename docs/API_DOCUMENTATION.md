@@ -806,8 +806,6 @@ graph TB
 
 - **[API.md](./API.md)** — Documentation API (version simplifiée)
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture système détaillée
-- **[guides/GUIDE_MISE_A_JOUR_FLUTTER.md](./guides/GUIDE_MISE_A_JOUR_FLUTTER.md)** — Guide mise à jour Flutter
-- **[audits/CHECKLIST_FINALE_SECURITE.md](./audits/CHECKLIST_FINALE_SECURITE.md)** — Checklist sécurité
 - **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
 
 ---

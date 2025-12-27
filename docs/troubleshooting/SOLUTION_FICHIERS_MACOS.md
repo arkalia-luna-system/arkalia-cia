@@ -201,7 +201,7 @@ flutter build apk --release
 ## 📚 Related Documentation
 
 - **[GRADLE_FIX_GUIDE.md](GRADLE_FIX_GUIDE.md)** - Complete Gradle troubleshooting guide
-- **[BUILD_RELEASE_ANDROID.md](BUILD_RELEASE_ANDROID.md)** - Android build guide
+- **** - Android build guide
 - **[INDEX_DOCUMENTATION.md](INDEX_DOCUMENTATION.md)** - Full documentation index
 
 ---

@@ -34,8 +34,8 @@ make test                   # Via Makefile
 
 ## Voir aussi
 
-- [OPTIMISATIONS_TESTS.md](../OPTIMISATIONS_TESTS.md) - Document complet des optimisations de tests
-- [OPTIMISATIONS_COMPLETE.md](../OPTIMISATIONS_COMPLETE.md) - Document complet des optimisations
+-  - Document complet des optimisations de tests
+-  - Document complet des optimisations
 - [troubleshooting/TESTS_DOUBLONS_SOLUTION.md](troubleshooting/TESTS_DOUBLONS_SOLUTION.md) - Solution aux doublons de tests
 - [INDEX_DOCUMENTATION.md](../INDEX_DOCUMENTATION.md) - Index de la documentation
 

@@ -214,7 +214,7 @@ ps aux | sort -rk 3,3 | head -10
 
 ## Voir aussi
 
-- **[OPTIMISATIONS_COMPLETE.md](./OPTIMISATIONS_COMPLETE.md)** — Optimisations complètes
+- **** — Optimisations complètes
 - **[troubleshooting/](../troubleshooting/)** — Guides de dépannage
 - **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
 

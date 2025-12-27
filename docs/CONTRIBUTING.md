@@ -696,7 +696,6 @@ Contributors are recognized in:
 
 ### Autres guides
 
-- **[guides/MIGRATION.md](./guides/MIGRATION.md)** — Guide de migration
 - **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
 
 ---

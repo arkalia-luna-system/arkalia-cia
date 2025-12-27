@@ -4,7 +4,7 @@
 **Version** : 2.2 (Condensée)  
 **Dernière mise à jour** : 10 décembre 2025
 
-> **Note** : Version condensée. Pour les détails complets, voir `BESOINS_MERE_23_NOVEMBRE_2025.md`
+> **Note** : Version condensée de l'analyse complète des besoins utilisateur.
 
 ---
 
@@ -88,8 +88,7 @@
 
 ## 🔗 Voir aussi
 
-- **[BESOINS_MERE_23_NOVEMBRE_2025.md](./BESOINS_MERE_23_NOVEMBRE_2025.md)** — Détails complets
-- **[status/STATUT_FINAL_PROJET.md](./../status/STATUT_FINAL_PROJET.md)** — Statut projet
+- **[plans/STATUT_COMPLET_27_DECEMBRE_2025.md](./../plans/STATUT_COMPLET_27_DECEMBRE_2025.md)** — Statut projet
 - **[ARCHITECTURE.md](./../ARCHITECTURE.md)** — Architecture système
 
 ---

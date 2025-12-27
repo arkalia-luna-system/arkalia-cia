@@ -132,7 +132,7 @@ Aucune migration nécessaire. Cette version est rétrocompatible avec v1.3.0.
 ## Voir aussi
 
 - **[CHANGELOG.md](../CHANGELOG.md)** — Historique complet des changements
-- **[STATUT_FINAL_PROJET.md](../status/STATUT_FINAL_PROJET.md)** — Statut final consolidé
+- **[plans/STATUT_COMPLET_27_DECEMBRE_2025.md](../plans/STATUT_COMPLET_27_DECEMBRE_2025.md)** — Statut complet consolidé
 - **[INSTRUCTIONS_RELEASE_V1.3.1.md](../deployment/INSTRUCTIONS_RELEASE_V1.3.1.md)** — Instructions de release
 - **[TODO_RESTANT_1.3.1.md](../meta/TODO_RESTANT_1.3.1.md)** — TODOs restants
 

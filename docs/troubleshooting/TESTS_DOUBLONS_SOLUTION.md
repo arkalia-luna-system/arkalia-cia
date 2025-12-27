@@ -42,7 +42,7 @@ make test                   # Via Makefile
 
 - [audits/AUDIT_ET_OPTIMISATIONS.md](../audits/AUDIT_ET_OPTIMISATIONS.md) - Documentation complète de l'audit et des optimisations
 - [troubleshooting/TESTS_PROBLEMATIQUES.md](troubleshooting/TESTS_PROBLEMATIQUES.md) - Tests problématiques
-- [OPTIMISATIONS_TESTS.md](../OPTIMISATIONS_TESTS.md) - Optimisations des tests
+-  - Optimisations des tests
 - [INDEX_DOCUMENTATION.md](../INDEX_DOCUMENTATION.md) - Index de la documentation
 
 ---

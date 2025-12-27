@@ -358,7 +358,7 @@ sequenceDiagram
 
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture technique détaillée
 - **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** — Documentation complète de l'API
-- **[status/STATUT_FINAL_PROJET.md](./status/STATUT_FINAL_PROJET.md)** — Statut final consolidé du projet
+- **[plans/STATUT_COMPLET_27_DECEMBRE_2025.md](./plans/STATUT_COMPLET_27_DECEMBRE_2025.md)** — Statut complet consolidé du projet
 - **[analysis/ANALYSE_COMPLETE_BESOINS_MERE.md](./analysis/ANALYSE_COMPLETE_BESOINS_MERE.md)** — Analyse complète des besoins
 - **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de la documentation
 

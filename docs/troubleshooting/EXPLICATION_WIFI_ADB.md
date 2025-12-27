@@ -181,7 +181,7 @@ cd /Volumes/T7/arkalia-cia/arkalia_cia
 ## 📚 Related Documentation
 
 - **[TESTER_ET_METTRE_A_JOUR.md](TESTER_ET_METTRE_A_JOUR.md)** - Testing and update guide
-- **[BUILD_RELEASE_ANDROID.md](BUILD_RELEASE_ANDROID.md)** - Android build guide
+- **** - Android build guide
 - **[INDEX_DOCUMENTATION.md](INDEX_DOCUMENTATION.md)** - Full documentation index
 
 ---
