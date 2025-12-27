@@ -18,6 +18,8 @@ on:
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
   issues: write
   pull-requests: write
 
@@ -200,3 +202,56 @@ jobs:
         run: |
           cd arkalia_cia
           dart format --output=none --set-exit-if-changed . || echo "Format check completed with warnings"
+
+  # ========================================
+  # DÉPLOIEMENT AUTOMATIQUE GITHUB PAGES
+  # ========================================
+  deploy-pages:
+    name: "Deploy to GitHub Pages"
+    runs-on: ubuntu-latest
+    needs: flutter-test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+
+    steps:
+      - name: "Checkout Code"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: "Setup Flutter"
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.0"
+          channel: "stable"
+          cache: true
+
+      - name: "Install Flutter Dependencies"
+        run: |
+          cd arkalia_cia
+          flutter pub get
+
+      - name: "Build Web for GitHub Pages"
+        run: |
+          cd arkalia_cia
+          echo "📦 Building Flutter web for GitHub Pages..."
+          flutter clean
+          flutter pub get
+          # Base-href nécessaire pour GitHub Pages (repo non-racine)
+          flutter build web --release --no-wasm-dry-run --base-href "/arkalia-cia/"
+
+      - name: "Setup Pages"
+        uses: actions/configure-pages@v5
+
+      - name: "Upload artifact"
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: arkalia_cia/build/web
+
+      - name: "Deploy to GitHub Pages"
+        id: deployment
+        uses: actions/deploy-pages@v4
