@@ -221,13 +221,13 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.2),
+                              color: Colors.black.withOpacity(0.2),
                               blurRadius: 20,
                               spreadRadius: 2,
                               offset: const Offset(0, 4),
                             ),
                             BoxShadow(
-                              color: Colors.white.withValues(alpha: 0.1),
+                              color: Colors.white.withOpacity(0.1),
                               blurRadius: 10,
                               spreadRadius: -2,
                               offset: const Offset(0, -2),
@@ -311,19 +311,19 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                     // Séparateur
                     Row(
                       children: [
-                        Expanded(child: Divider(color: Colors.white.withValues(alpha: 0.3))),
+                        Expanded(child: Divider(color: Colors.white.withOpacity(0.3))),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Text(
                             'OU',
                             style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.8),
+                              color: Colors.white.withOpacity(0.8),
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
                             ),
                           ),
                         ),
-                        Expanded(child: Divider(color: Colors.white.withValues(alpha: 0.3))),
+                        Expanded(child: Divider(color: Colors.white.withOpacity(0.3))),
                       ],
                     ),
                     
@@ -385,10 +385,10 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.1),
+                        color: Colors.white.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.3),
+                          color: Colors.white.withOpacity(0.3),
                           width: 1,
                         ),
                       ),
@@ -396,7 +396,7 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                         children: [
                           Icon(
                             Icons.info_outline,
-                            color: Colors.white.withValues(alpha: 0.9),
+                            color: Colors.white.withOpacity(0.9),
                             size: 20,
                           ),
                           const SizedBox(width: 12),
@@ -404,7 +404,7 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                             child: Text(
                               'Pour créer un compte avec backend, configurez l\'URL dans les paramètres (⚙️ > Backend API)',
                               style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.9),
+                                color: Colors.white.withOpacity(0.9),
                                 fontSize: 13,
                               ),
                             ),

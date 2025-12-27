@@ -340,7 +340,7 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
                               Container(
                                 padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
-                                  color: Colors.grey.withValues(alpha: 0.1),
+                                  color: Colors.grey.withOpacity(0.1),
                                   shape: BoxShape.circle,
                                 ),
                                 child: Icon(Icons.search_off, size: 64, color: Colors.grey[400]),

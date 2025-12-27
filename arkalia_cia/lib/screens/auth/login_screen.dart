@@ -113,13 +113,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
+                          color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
                           blurRadius: 20,
                           spreadRadius: 2,
                           offset: const Offset(0, 4),
                         ),
                         BoxShadow(
-                          color: Colors.white.withValues(alpha: 0.8),
+                          color: Colors.white.withOpacity(0.8),
                           blurRadius: 10,
                           spreadRadius: -2,
                           offset: const Offset(0, -2),

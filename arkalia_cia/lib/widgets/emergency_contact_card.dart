@@ -89,7 +89,7 @@ class EmergencyContactCard extends StatelessWidget {
 
     return Card(
       elevation: isPrimary ? 8 : 2,
-      color: isPrimary ? color.withValues(alpha:0.1) : null,
+      color: isPrimary ? color.withOpacity(0.1) : null,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -101,7 +101,7 @@ class EmergencyContactCard extends StatelessWidget {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: color.withValues(alpha:0.2),
+                    color: color.withOpacity(0.2),
                     shape: BoxShape.circle,
                   ),
                   child: Center(

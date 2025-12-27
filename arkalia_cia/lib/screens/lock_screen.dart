@@ -177,17 +177,17 @@ class _LockScreenState extends State<LockScreen> {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha:0.1),
+                      color: Colors.white.withOpacity(0.1),
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha:0.2),
+                          color: Colors.black.withOpacity(0.2),
                           blurRadius: 20,
                           spreadRadius: 2,
                           offset: const Offset(0, 4),
                         ),
                         BoxShadow(
-                          color: Colors.white.withValues(alpha:0.1),
+                          color: Colors.white.withOpacity(0.1),
                           blurRadius: 10,
                           spreadRadius: -2,
                           offset: const Offset(0, -2),
