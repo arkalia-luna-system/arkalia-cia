@@ -22,7 +22,7 @@ echo "📦 Build web en cours..."
 flutter clean 2>&1 | grep -v "Failed to remove" || true
 flutter pub get
 # Base-href nécessaire pour GitHub Pages (repo non-racine)
-flutter build web --release --no-wasm-dry-run --base-href "/arkalia-cia/"
+flutter build web --release --base-href "/arkalia-cia/"
 
 echo ""
 echo "✅ Build web réussi"
