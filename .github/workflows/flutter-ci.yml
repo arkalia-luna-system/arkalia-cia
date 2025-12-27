@@ -242,7 +242,7 @@ jobs:
           flutter clean
           flutter pub get
           # Base-href nécessaire pour GitHub Pages (repo non-racine)
-          flutter build web --release --no-wasm-dry-run --base-href "/arkalia-cia/"
+          flutter build web --release --base-href "/arkalia-cia/"
 
       - name: "Setup Pages"
         uses: actions/configure-pages@v5
