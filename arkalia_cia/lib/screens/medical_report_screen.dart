@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import '../services/api_service.dart';
 import '../utils/error_helper.dart';
+import '../utils/input_sanitizer.dart';
 
 class MedicalReportScreen extends StatefulWidget {
   final String? consultationDate;
