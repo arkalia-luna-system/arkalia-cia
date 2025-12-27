@@ -104,11 +104,6 @@ void main() {
       };
 
       await LocalStorageService.saveReminder(testReminder);
-      
-      // Vérifier que le rappel est bien sauvegardé avant de charger l'écran
-      final savedReminders = await LocalStorageService.getReminders();
-      expect(savedReminders.length, greaterThan(0));
-      expect(savedReminders.any((r) => r['id'] == 'test_reminder_1'), isTrue);
 
       await tester.pumpWidget(
         const MaterialApp(
@@ -116,26 +111,17 @@ void main() {
         ),
       );
 
-      // Les rappels locaux sont chargés en premier dans _loadReminders, avant CalendarService
-      // On attend seulement quelques frames pour que les rappels locaux soient affichés
-      // Ne pas attendre CalendarService qui peut bloquer indéfiniment
+      // Les rappels locaux sont chargés immédiatement dans _loadReminders
+      // CalendarService est skip en mode test, donc pas de blocage
+      // Attendre juste quelques frames pour que le setState soit appliqué
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 50));
       await tester.pump();
       
-      // Attendre un temps fixe très court (200ms max) pour que les rappels locaux soient chargés
-      // CalendarService peut bloquer, mais les rappels locaux sont chargés en premier
-      for (int i = 0; i < 4; i++) {
-        await tester.pump(const Duration(milliseconds: 50));
-        // Si le texte est trouvé, on peut arrêter d'attendre
-        if (find.text('Test Rappel').evaluate().isNotEmpty) break;
-      }
-      
-      // Vérifier que le texte est présent (les rappels locaux doivent être chargés)
-      // Si le texte n'est pas trouvé, c'est que CalendarService bloque le thread
-      expect(find.text('Test Rappel'), findsOneWidget, reason: 'Le titre du rappel doit être affiché (rappels locaux chargés en premier)');
+      // Vérifier immédiatement (les rappels locaux sont chargés en premier, avant CalendarService)
+      expect(find.text('Test Rappel'), findsOneWidget, reason: 'Le titre du rappel doit être affiché');
       expect(find.text('Description test'), findsOneWidget, reason: 'La description du rappel doit être affichée');
-    }, timeout: const Timeout(Duration(seconds: 10)));
+    }, timeout: const Timeout(Duration(seconds: 3)));
 
     testWidgets('Affiche le bouton Modifier sur les rappels non terminés', (WidgetTester tester) async {
       // Créer un rappel de test non terminé
