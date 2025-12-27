@@ -15,7 +15,7 @@ class AccessibleText extends StatelessWidget {
   final StrutStyle? strutStyle;
   final TextWidthBasis? textWidthBasis;
   final TextHeightBehavior? textHeightBehavior;
-  final double? textScaleFactor;
+  final TextScaler? textScaler;
 
   const AccessibleText(
     this.text, {
@@ -30,7 +30,7 @@ class AccessibleText extends StatelessWidget {
     this.strutStyle,
     this.textWidthBasis,
     this.textHeightBehavior,
-    this.textScaleFactor,
+    this.textScaler,
   });
 
   @override
@@ -57,7 +57,7 @@ class AccessibleText extends StatelessWidget {
           strutStyle: strutStyle,
           textWidthBasis: textWidthBasis,
           textHeightBehavior: textHeightBehavior,
-          textScaleFactor: textScaleFactor,
+          textScaler: textScaler,
         );
       },
     );

@@ -4,7 +4,7 @@ import 'package:arkalia_cia/utils/input_sanitizer.dart';
 void main() {
   group('InputSanitizer Tests', () {
     test('sanitize should escape HTML characters', () {
-      final input = '<script>alert("XSS")</script>';
+      const input = '<script>alert("XSS")</script>';
       final result = InputSanitizer.sanitize(input);
       
       // Vérifier que les balises HTML sont échappées (ne peuvent pas s'exécuter)
@@ -16,14 +16,14 @@ void main() {
     });
 
     test('sanitize should remove JavaScript patterns', () {
-      final input = 'javascript:alert("XSS")';
+      const input = 'javascript:alert("XSS")';
       final result = InputSanitizer.sanitize(input);
       
       expect(result, isNot(contains('javascript:')));
     });
 
     test('sanitize should remove event handlers', () {
-      final input = '<img src=x onerror=alert("XSS")>';
+      const input = '<img src=x onerror=alert("XSS")>';
       final result = InputSanitizer.sanitize(input);
       
       expect(result, isNot(contains('onerror')));
@@ -31,7 +31,7 @@ void main() {
     });
 
     test('sanitizeForStorage should remove script tags', () {
-      final input = '<script>alert("XSS")</script>Hello';
+      const input = '<script>alert("XSS")</script>Hello';
       final result = InputSanitizer.sanitizeForStorage(input);
       
       expect(result, isNot(contains('<script>')));
@@ -39,7 +39,7 @@ void main() {
     });
 
     test('sanitizeForStorage should remove iframe tags', () {
-      final input = '<iframe src="evil.com"></iframe>Content';
+      const input = '<iframe src="evil.com"></iframe>Content';
       final result = InputSanitizer.sanitizeForStorage(input);
       
       expect(result, isNot(contains('<iframe>')));

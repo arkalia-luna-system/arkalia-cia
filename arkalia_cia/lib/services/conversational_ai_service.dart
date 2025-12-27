@@ -103,7 +103,6 @@ class ConversationalAIService {
           errorMessage.contains('Failed host lookup') || 
           errorMessage.contains('Connection refused') ||
           errorMessage.contains('NetworkError')) {
-        final baseUrl = await BackendConfigService.getBackendURL();
         userMessage = '⚠️ Impossible de se connecter au serveur.\n\n'
             'Vérifiez que :\n'
             '• Votre connexion internet fonctionne\n'

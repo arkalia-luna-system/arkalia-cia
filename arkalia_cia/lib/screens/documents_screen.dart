@@ -1128,10 +1128,12 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     // Charger les catégories initiales
     List<String> customCategories = [];
     final allCategories = await CategoryService.getCategories();
+    if (!mounted) return;
     customCategories = allCategories.where((c) => 
       !['Médical', 'Administratif', 'Autre'].contains(c)
     ).toList();
     
+    if (!mounted) return;
     await showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
