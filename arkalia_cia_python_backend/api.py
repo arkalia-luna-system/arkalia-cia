@@ -411,13 +411,24 @@ async def add_security_headers(request: Request, call_next):
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
     response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
     # Content Security Policy basique
-    response.headers["Content-Security-Policy"] = (
-        "default-src 'self'; "
-        "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
-        "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
-        "img-src 'self' data:; "
-        "font-src 'self' https://cdn.jsdelivr.net;"
-    )
+    # En développement, permettre l'accès depuis le réseau local (IP locales)
+    if _ENVIRONMENT == "development":
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self' http://localhost:* http://127.0.0.1:* http://192.168.*:*; "
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:* http://127.0.0.1:* http://192.168.*:* https://cdn.jsdelivr.net; "
+            "style-src 'self' 'unsafe-inline' http://localhost:* http://127.0.0.1:* http://192.168.*:* https://cdn.jsdelivr.net; "
+            "img-src 'self' data: http://localhost:* http://127.0.0.1:* http://192.168.*:*; "
+            "font-src 'self' http://localhost:* http://127.0.0.1:* http://192.168.*:* https://cdn.jsdelivr.net; "
+            "connect-src 'self' http://localhost:* http://127.0.0.1:* http://192.168.*:* ws://localhost:* ws://127.0.0.1:* ws://192.168.*:*;"
+        )
+    else:
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self'; "
+            "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+            "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+            "img-src 'self' data:; "
+            "font-src 'self' https://cdn.jsdelivr.net;"
+        )
     # HSTS seulement en HTTPS
     if request.url.scheme == "https":
         response.headers["Strict-Transport-Security"] = (
@@ -433,22 +444,36 @@ if cors_origins_env:
     cors_origins = [origin.strip() for origin in cors_origins_env.split(",")]
 else:
     # Valeurs par défaut pour développement
+    # Permettre toutes les IP locales (192.168.x.x) pour accès mobile
     cors_origins = [
         "http://localhost:8080",
         "http://127.0.0.1:8080",
         "http://localhost:3000",
         "http://127.0.0.1:3000",
     ]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=cors_origins,
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allow_headers=["Content-Type", "Authorization", "Accept"],
-    expose_headers=["Content-Type"],
-    max_age=3600,  # Cache CORS preflight pour 1 heure
-)
+# Configuration CORS avec support IP locales en développement
+if _ENVIRONMENT != "production":
+    # En développement, accepter les IP locales (192.168.x.x) pour accès mobile
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=cors_origins,
+        allow_origin_regex=r"http://192\.168\.\d+\.\d+:\d+",  # Pattern pour IP locales
+        allow_credentials=True,
+        allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allow_headers=["Content-Type", "Authorization", "Accept"],
+        expose_headers=["Content-Type"],
+        max_age=3600,  # Cache CORS preflight pour 1 heure
+    )
+else:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=cors_origins,
+        allow_credentials=True,
+        allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allow_headers=["Content-Type", "Authorization", "Accept"],
+        expose_headers=["Content-Type"],
+        max_age=3600,  # Cache CORS preflight pour 1 heure
+    )
 
 # Montage du router ARIA
 app.include_router(aria_router, prefix="/api/aria", tags=["ARIA Integration"])
