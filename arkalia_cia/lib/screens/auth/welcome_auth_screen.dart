@@ -176,14 +176,6 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
     }
   }
 
-  /// Gestion de la connexion Gmail Sign In
-  /// 
-  /// Gmail utilise le même système que Google Sign In
-  /// (Gmail est un service Google)
-  Future<void> _handleGmailSignIn(BuildContext context) async {
-    // Gmail et Google utilisent le même système d'authentification
-    await _handleGoogleSignIn(context);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -289,32 +281,7 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                   
                   const SizedBox(height: 48),
                   
-                  // Bouton Gmail (prioritaire, bien visible)
-                  ElevatedButton.icon(
-                    onPressed: () => _handleGmailSignIn(context),
-                    icon: const Icon(Icons.email, size: 24),
-                    label: const Text(
-                      'Continuer avec Gmail',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.0,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.blue[800],
-                      padding: const EdgeInsets.symmetric(vertical: 18),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 4,
-                    ),
-                  ),
-                  
-                  const SizedBox(height: 12),
-                  
-                  // Bouton Google
+                  // Bouton Google (unique, fonctionne avec Gmail aussi)
                   ElevatedButton.icon(
                     onPressed: () => _handleGoogleSignIn(context),
                     icon: const Icon(Icons.account_circle, size: 24),

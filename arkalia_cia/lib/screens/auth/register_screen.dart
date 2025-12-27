@@ -55,7 +55,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         setState(() {
           _errorMessage = '⚙️ Backend non configuré.\n\n'
               'Pour créer un compte avec backend, configurez l\'URL dans les paramètres (⚙️ > Backend API).\n\n'
-              '💡 Alternative : Utilisez "Continuer avec Gmail" sur l\'écran précédent pour vous connecter sans backend.';
+              '💡 Alternative : Utilisez "Continuer avec Google" sur l\'écran précédent pour vous connecter sans backend.';
           _isLoading = false;
         });
         return;
@@ -67,7 +67,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         setState(() {
           _errorMessage = '⚙️ URL du backend invalide.\n\n'
               'L\'URL du backend doit être une adresse valide.\n\n'
-              '💡 Alternative : Utilisez "Continuer avec Gmail" pour vous connecter sans backend.';
+              '💡 Alternative : Utilisez "Continuer avec Google" pour vous connecter sans backend.';
           _isLoading = false;
         });
         return;

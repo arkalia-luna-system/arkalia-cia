@@ -14,6 +14,14 @@ class GoogleAuthService {
   // Configuration Google Sign-In avec clientId pour le web
   // Sur mobile : utilise automatiquement la config Google Cloud Console via package name et SHA-1
   // Sur web : nécessite le clientId explicite
+  // 
+  // ⚠️ IMPORTANT pour le web : Les URI de redirection doivent être configurées dans Google Cloud Console
+  // Aller dans : https://console.cloud.google.com/apis/credentials?project=arkalia-cia
+  // Cliquer sur "Client Web 1" > "URIs de redirection autorisées" > Ajouter :
+  //   - http://localhost:8080
+  //   - http://localhost:8080/
+  //   - http://localhost:8081 (si port alternatif)
+  //   - https://votre-domaine.com (pour production)
   static final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: ['email', 'profile'],
     // Client ID Web pour le web (nécessaire sur web)

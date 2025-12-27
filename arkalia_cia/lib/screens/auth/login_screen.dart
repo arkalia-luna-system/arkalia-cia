@@ -45,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!backendConfigured) {
         setState(() {
           _errorMessage = '⚙️ Backend non configuré.\n\n'
-              'Pour vous connecter avec un compte, utilisez "Continuer avec Gmail" sur l\'écran précédent.\n\n'
+              'Pour vous connecter avec un compte, utilisez "Continuer avec Google" sur l\'écran précédent.\n\n'
               'Ou configurez l\'URL du backend dans les paramètres (⚙️ > Backend API).';
           _isLoading = false;
         });
