@@ -48,7 +48,9 @@ class AdvancedPatternAnalyzer:
                 }
 
             if len(data) < 3:
-                logger.warning(f"Données insuffisantes pour l'analyse: {len(data)} point(s)")
+                logger.warning(
+                    f"Données insuffisantes pour l'analyse: {len(data)} point(s)"
+                )
                 return {
                     "recurring_patterns": [],
                     "trends": {},
@@ -92,7 +94,9 @@ class AdvancedPatternAnalyzer:
             elif not PROPHET_AVAILABLE:
                 logger.debug("Prophet non disponible, prédictions désactivées")
             elif len(data) < 7:
-                logger.debug(f"Données insuffisantes pour Prophet: {len(data)} point(s), minimum 7 requis")
+                logger.debug(
+                    f"Données insuffisantes pour Prophet: {len(data)} point(s), minimum 7 requis"
+                )
 
             return {
                 "recurring_patterns": recurring,

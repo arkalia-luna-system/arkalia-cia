@@ -299,9 +299,28 @@ class ApiService {
       }
     } catch (e) {
       ErrorHelper.logError('ApiService.createEmergencyContact', e);
+      
+      // Extraire le message d'erreur de l'exception
+      String errorMsg;
+      final errorString = e.toString();
+      
+      // Si l'exception contient un message détaillé (venant de _makeAuthenticatedRequest)
+      if (errorString.startsWith('Exception: ')) {
+        errorMsg = errorString.substring(11); // Enlever "Exception: "
+      } else {
+        errorMsg = ErrorHelper.getUserFriendlyMessage(e);
+      }
+      
+      // Vérifier si c'est une erreur de timeout ou de connexion
+      if (errorString.contains('TimeoutException') || errorString.contains('timeout')) {
+        errorMsg = 'Délai d\'attente dépassé. Vérifiez votre connexion.';
+      } else if (errorString.contains('SocketException') || errorString.contains('Failed host lookup')) {
+        errorMsg = 'Impossible de se connecter au serveur. Vérifiez votre connexion internet.';
+      }
+      
       return {
         'success': false,
-        'error': ErrorHelper.getUserFriendlyMessage(e),
+        'error': errorMsg,
         'technical_error': e.toString(),
       };
     }

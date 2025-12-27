@@ -61,7 +61,9 @@ class UserCreate(BaseModel):
     username: str = Field(..., min_length=3, max_length=50)
     password: str = Field(..., min_length=8, max_length=100)
     email: str | None = None
-    role: str = Field(default="user", pattern="^(admin|user|family_viewer|family_editor)$")
+    role: str = Field(
+        default="user", pattern="^(admin|user|family_viewer|family_editor)$"
+    )
 
 
 class UserLogin(BaseModel):

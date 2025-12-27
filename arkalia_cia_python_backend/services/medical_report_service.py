@@ -154,13 +154,15 @@ class MedicalReportService:
             consultations = []
             for consult in consultations_data:
                 doctor_name = f"{consult.get('first_name', '')} {consult.get('last_name', '')}".strip()
-                consultations.append({
-                    "date": consult.get("date", ""),
-                    "doctor": doctor_name,
-                    "specialty": consult.get("specialty", ""),
-                    "reason": consult.get("reason", ""),
-                    "notes": consult.get("notes", ""),
-                })
+                consultations.append(
+                    {
+                        "date": consult.get("date", ""),
+                        "doctor": doctor_name,
+                        "specialty": consult.get("specialty", ""),
+                        "reason": consult.get("reason", ""),
+                        "notes": consult.get("notes", ""),
+                    }
+                )
 
             return consultations
         except Exception as e:
@@ -448,6 +450,7 @@ class MedicalReportService:
             # Créer le document PDF
             if output_path is None:
                 import tempfile
+
                 output_path = tempfile.mktemp(suffix=".pdf")
 
             doc = SimpleDocTemplate(output_path, pagesize=letter)
@@ -557,7 +560,9 @@ class MedicalReportService:
                             )
                     else:
                         story.append(
-                            Paragraph("Aucune donnée douleur disponible", styles["Normal"])
+                            Paragraph(
+                                "Aucune donnée douleur disponible", styles["Normal"]
+                            )
                         )
                     story.append(Spacer(1, 0.1 * inch))
 
@@ -568,11 +573,17 @@ class MedicalReportService:
                     if isinstance(patterns, dict):
                         for key, value in patterns.items():
                             if isinstance(value, dict):
-                                desc = value.get("description", value.get("pattern", ""))
+                                desc = value.get(
+                                    "description", value.get("pattern", "")
+                                )
                                 if desc:
-                                    story.append(Paragraph(f"• {desc}", styles["Normal"]))
+                                    story.append(
+                                        Paragraph(f"• {desc}", styles["Normal"])
+                                    )
                             else:
-                                story.append(Paragraph(f"• {key}: {value}", styles["Normal"]))
+                                story.append(
+                                    Paragraph(f"• {key}: {value}", styles["Normal"])
+                                )
                     story.append(Spacer(1, 0.1 * inch))
 
             # Pied de page
@@ -583,7 +594,9 @@ class MedicalReportService:
                     styles["Normal"],
                 )
             )
-            story.append(Paragraph("Arkalia CIA - Assistant Santé Personnel", styles["Normal"]))
+            story.append(
+                Paragraph("Arkalia CIA - Assistant Santé Personnel", styles["Normal"])
+            )
 
             # Générer le PDF
             doc.build(story)

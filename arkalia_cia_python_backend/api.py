@@ -699,6 +699,7 @@ async def refresh_token_endpoint(
         from datetime import datetime
 
         import jwt
+
         old_payload = jwt.decode(
             token_request.refresh_token, SECRET_KEY, algorithms=[ALGORITHM]
         )
@@ -733,10 +734,10 @@ async def refresh_token_endpoint(
                 user_id=int(token_data.user_id),
                 action="token_refresh",
                 resource_type="auth",
-            ip_address=get_remote_address(request),
-            user_agent=request.headers.get("user-agent"),
-            success=True,
-        )
+                ip_address=get_remote_address(request),
+                user_agent=request.headers.get("user-agent"),
+                success=True,
+            )
 
         return Token(
             access_token=access_token,
@@ -769,6 +770,7 @@ async def logout(
             from datetime import datetime
 
             import jwt
+
             try:
                 payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
                 jti = payload.get("jti")
@@ -850,10 +852,10 @@ async def upload_document(
                 action="document_upload",
                 resource_type="document",
                 resource_id=str(doc_id),
-            ip_address=get_remote_address(request),
-            user_agent=request.headers.get("user-agent"),
-            success=True,
-        )
+                ip_address=get_remote_address(request),
+                user_agent=request.headers.get("user-agent"),
+                success=True,
+            )
 
         return {
             "success": True,
@@ -971,10 +973,10 @@ async def get_documents(
                 user_id=int(current_user.user_id),
                 action="documents_list",
                 resource_type="document",
-            ip_address=get_remote_address(request),
-            user_agent=request.headers.get("user-agent"),
-            success=True,
-        )
+                ip_address=get_remote_address(request),
+                user_agent=request.headers.get("user-agent"),
+                success=True,
+            )
     else:
         documents = []
     return [DocumentResponse(**doc) for doc in documents]
@@ -1376,7 +1378,9 @@ async def import_health_portal_manual(
 
             # Sauvegarder document principal avec métadonnées parsées
             if not current_user.user_id:
-                raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
+                raise HTTPException(
+                    status_code=401, detail="Utilisateur non authentifié"
+                )
             doc_id = doc_service.save_document_with_metadata(
                 process_result,
                 int(current_user.user_id),
@@ -1758,9 +1762,7 @@ async def export_medical_report_pdf(
             )
         except RuntimeError as e:
             # Si reportlab n'est pas disponible
-            logger.error(
-                f"Export PDF non disponible: {sanitize_log_message(str(e))}"
-            )
+            logger.error(f"Export PDF non disponible: {sanitize_log_message(str(e))}")
             # Nettoyer le fichier temporaire en cas d'erreur
             if os.path.exists(pdf_path):
                 try:
@@ -1814,13 +1816,13 @@ async def analyze_patterns(
         if not pattern_request.data:
             raise HTTPException(
                 status_code=400,
-                detail="Aucune donnée fournie pour l'analyse. Ajoutez des documents, pathologies ou médicaments pour voir des patterns."
+                detail="Aucune donnée fournie pour l'analyse. Ajoutez des documents, pathologies ou médicaments pour voir des patterns.",
             )
 
         if len(pattern_request.data) < 3:
             raise HTTPException(
                 status_code=400,
-                detail=f"Données insuffisantes ({len(pattern_request.data)} point(s)). Minimum 3 points requis pour l'analyse."
+                detail=f"Données insuffisantes ({len(pattern_request.data)} point(s)). Minimum 3 points requis pour l'analyse.",
             )
 
         patterns = pattern_analyzer.detect_temporal_patterns(pattern_request.data)
@@ -1837,16 +1839,18 @@ async def analyze_patterns(
         # Ré-élever les HTTPException sans les transformer en 500
         raise
     except ValueError as e:
-        logger.error(f"Erreur validation données patterns: {sanitize_log_message(str(e))}")
+        logger.error(
+            f"Erreur validation données patterns: {sanitize_log_message(str(e))}"
+        )
         raise HTTPException(
-            status_code=400,
-            detail=f"Erreur de validation des données: {str(e)}"
+            status_code=400, detail=f"Erreur de validation des données: {str(e)}"
         ) from e
     except Exception as e:
-        logger.error(f"Erreur analyse patterns: {sanitize_log_message(str(e))}", exc_info=True)
+        logger.error(
+            f"Erreur analyse patterns: {sanitize_log_message(str(e))}", exc_info=True
+        )
         raise HTTPException(
-            status_code=500,
-            detail=f"Erreur lors de l'analyse des patterns: {str(e)}"
+            status_code=500, detail=f"Erreur lors de l'analyse des patterns: {str(e)}"
         ) from e
 
 
