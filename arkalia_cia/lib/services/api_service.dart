@@ -254,7 +254,7 @@ class ApiService {
 
   // === CONTACTS D'URGENCE ===
 
-  /// Crée un contact d'urgence
+  /// Crée un contact d'urgence avec gestion automatique du refresh token
   static Future<Map<String, dynamic>> createEmergencyContact({
     required String name,
     required String phone,
@@ -263,45 +263,39 @@ class ApiService {
   }) async {
     try {
       final url = await baseUrl;
-      final headers = await _headers;
-      final response = await http.post(
-        Uri.parse('$url/api/v1/emergency-contacts'),
-        headers: headers,
-        body: json.encode({
-          'name': name,
-          'phone': phone,
-          'relationship': relationship,
-          'is_primary': isPrimary,
-        }),
-      );
+      if (url.isEmpty) {
+        return {
+          'success': false,
+          'error': 'Backend non configuré. Configurez l\'URL du backend dans les paramètres.',
+          'backend_not_configured': true,
+        };
+      }
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
+      final response = await _makeAuthenticatedRequest(() async {
+        final headers = await _headers;
+        return await http.post(
+          Uri.parse('$url/api/v1/emergency-contacts'),
+          headers: headers,
+          body: json.encode({
+            'name': name,
+            'phone': phone,
+            'relationship': relationship,
+            'is_primary': isPrimary,
+          }),
+        ).timeout(const Duration(seconds: 10));
+      });
+
+      // _makeAuthenticatedRequest retourne un Map décodé en cas de succès
+      // ou lance une Exception en cas d'erreur (géré par le catch)
+      if (response is Map<String, dynamic>) {
         // Succès : retourner la réponse du backend (contient id, name, phone, etc.)
-        return json.decode(response.body);
+        return response;
       } else {
-        // Erreur : essayer de parser le message d'erreur du backend
-        try {
-          final errorData = json.decode(response.body);
-          final errorMsg = errorData['detail'] ?? 
-                          errorData['message'] ?? 
-                          errorData['error'] ??
-                          'Erreur HTTP ${response.statusCode}';
-          return {
-            'success': false,
-            'error': errorMsg,
-            'status_code': response.statusCode,
-          };
-        } catch (e) {
-          // Si le parsing échoue, retourner un message générique
-          final errorMsg = ErrorHelper.getUserFriendlyMessage(
-            Exception('HTTP ${response.statusCode}'),
-          );
-          return {
-            'success': false,
-            'error': errorMsg,
-            'status_code': response.statusCode,
-          };
-        }
+        // Réponse inattendue
+        return {
+          'success': false,
+          'error': 'Réponse inattendue du serveur',
+        };
       }
     } catch (e) {
       ErrorHelper.logError('ApiService.createEmergencyContact', e);
@@ -510,8 +504,34 @@ class ApiService {
         // Pour les erreurs, essayer de décoder le message d'erreur
         try {
           final errorData = json.decode(response.body);
-          throw Exception(errorData['detail'] ?? 'Erreur HTTP ${response.statusCode}');
-        } catch (_) {
+          // FastAPI peut retourner 'detail' comme string ou liste (pour erreurs de validation)
+          dynamic detail = errorData['detail'];
+          String errorMsg;
+          
+          if (detail is List && detail.isNotEmpty) {
+            // Si detail est une liste (erreurs de validation FastAPI)
+            // Extraire le message de la première erreur
+            final firstError = detail.first;
+            if (firstError is Map && firstError.containsKey('msg')) {
+              errorMsg = firstError['msg'] as String;
+            } else {
+              errorMsg = firstError.toString();
+            }
+          } else if (detail is String) {
+            errorMsg = detail;
+          } else {
+            errorMsg = errorData['message'] ?? 
+                      errorData['error'] ??
+                      'Erreur HTTP ${response.statusCode}';
+          }
+          
+          AppLogger.debug('Erreur API (${response.statusCode}): $errorMsg');
+          throw Exception(errorMsg);
+        } catch (e) {
+          // Si le parsing échoue ou si c'est déjà une Exception, la relancer
+          if (e is Exception) {
+            rethrow;
+          }
           throw Exception('Erreur HTTP ${response.statusCode}');
         }
       }
