@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import '../services/api_service.dart';
+import '../services/backend_config_service.dart';
 import '../utils/error_helper.dart';
 import '../utils/input_sanitizer.dart';
 
@@ -48,8 +49,18 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
       // Vérifier si le backend est configuré
       final backendConfigured = await ApiService.isBackendConfigured();
       if (!backendConfigured) {
+        final url = await BackendConfigService.getBackendURL();
+        final enabled = await BackendConfigService.isBackendEnabled();
+        String errorMessage;
+        if (url.isEmpty) {
+          errorMessage = 'Backend non configuré.\n\nVeuillez configurer l\'URL du backend dans les paramètres (⚙️ > Backend API).';
+        } else if (!enabled) {
+          errorMessage = 'Backend non activé.\n\nVeuillez activer le backend dans les paramètres (⚙️ > Backend API).';
+        } else {
+          errorMessage = 'Backend non configuré.\n\nVeuillez configurer le backend dans les paramètres (⚙️ > Backend API).';
+        }
         setState(() {
-          _error = 'Backend non configuré.\n\nVeuillez configurer l\'URL du backend dans les paramètres (⚙️ > Backend API).';
+          _error = errorMessage;
           _isLoading = false;
         });
         return;
@@ -279,7 +290,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
+                  color: Colors.grey.withValues(alpha: 0.2),
                   spreadRadius: 1,
                   blurRadius: 4,
                   offset: const Offset(0, -2),
@@ -355,7 +366,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: color.withOpacity(0.8),
+            color: color.withValues(alpha: 0.8),
           ),
         ),
         Text(
