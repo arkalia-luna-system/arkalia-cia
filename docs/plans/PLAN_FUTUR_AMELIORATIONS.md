@@ -203,9 +203,9 @@
    - [ ] Nettoyage automatique cache (LRU)
 
 3. **Optimiser requêtes** (2h)
-   - [ ] Index SQLite pour recherches rapides
-   - [ ] Requêtes optimisées avec `LIMIT` et `OFFSET`
-   - [ ] Debounce uniformisé à 500ms partout
+   - [ ] Index SQLite pour recherches rapides (optionnel)
+   - [ ] Requêtes optimisées avec `LIMIT` et `OFFSET` (optionnel)
+   - [x] Debounce uniformisé à 500ms partout ✅
 
 **Livrables** :
 - ✅ Pagination fonctionnelle sur toutes les listes
@@ -259,9 +259,9 @@
 
 **Tâches** :
 1. **Améliorer animations** (4h)
-   - [ ] Transitions fluides entre écrans
-   - [ ] Animations subtiles pour feedback
-   - [ ] Micro-interactions
+   - [x] Transitions fluides entre écrans ✅ (PageTransitions helper créé)
+   - [x] Animations subtiles pour feedback ✅ (SnackBar avec icônes)
+   - [ ] Micro-interactions (optionnel)
 
 2. **Améliorer design** (4h)
    - [ ] Cohérence visuelle partout
