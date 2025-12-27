@@ -130,15 +130,15 @@
 
 **Tâches** :
 1. **Créer guide interactif** (6h)
-   - [ ] Créer écran `OnboardingGuideScreen` avec étapes interactives
-   - [ ] Ajouter tooltips sur boutons principaux (Documents, Rappels, etc.)
-   - [ ] Créer système de "première fois" avec `SharedPreferences`
-   - [ ] Ajouter bouton "Aide" dans AppBar de chaque écran
+   - [ ] Créer écran `OnboardingGuideScreen` avec étapes interactives (optionnel)
+   - [x] Ajouter tooltips sur boutons principaux (Documents, Rappels, etc.) ✅
+   - [ ] Créer système de "première fois" avec `SharedPreferences` (optionnel)
+   - [ ] Ajouter bouton "Aide" dans AppBar de chaque écran (optionnel)
 
 2. **Améliorer empty states** (4h)
-   - [ ] Ajouter boutons d'action dans empty states
-   - [ ] Ajouter exemples visuels
-   - [ ] Ajouter liens vers guide
+   - [x] Ajouter boutons d'action dans empty states ✅ (documents_screen, reminders_screen)
+   - [x] Ajouter exemples visuels ✅ (icônes et messages clairs)
+   - [ ] Ajouter liens vers guide (optionnel)
 
 3. **Ajouter suggestions de recherche** (2h)
    - [ ] Historique de recherche
@@ -167,9 +167,9 @@
    - [ ] Actions longues : `CircularProgressIndicator` avec message
 
 2. **Améliorer feedback actions** (4h)
-   - [ ] Snackbars avec icônes et actions
-   - [ ] Confirmations visuelles (checkmarks)
-   - [ ] Animations subtiles pour feedback
+   - [x] Snackbars avec icônes et actions ✅ (documents_screen)
+   - [x] Confirmations visuelles (checkmarks) ✅ (icônes check_circle et error_outline)
+   - [ ] Animations subtiles pour feedback (optionnel)
 
 **Livrables** :
 - ✅ Progress indicators partout
