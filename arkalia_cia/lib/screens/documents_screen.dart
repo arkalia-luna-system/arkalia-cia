@@ -32,6 +32,11 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   String _selectedCategory = 'Tous';
   String? _selectedExamType; // Filtre par type d'examen
   Timer? _debounceTimer;
+  
+  // Pagination pour performance
+  static const int _itemsPerPage = 20;
+  int _currentPage = 0;
+  bool _hasMoreItems = true;
 
   @override
   void initState() {
@@ -63,7 +68,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     
     final query = _searchController.text.toLowerCase();
     setState(() {
-      filteredDocuments = documents.where((doc) {
+      // Filtrer tous les documents
+      final allFiltered = documents.where((doc) {
         final name = (doc['original_name'] ?? '').toLowerCase();
         final matchesSearch = name.contains(query);
         final matchesCategory = _selectedCategory == 'Tous' ||
@@ -88,6 +94,58 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         
         return matchesSearch && matchesCategory && matchesExamType;
       }).toList();
+      
+      // Pagination : Limiter à la première page
+      _currentPage = 0;
+      _hasMoreItems = allFiltered.length > _itemsPerPage;
+      filteredDocuments = allFiltered.take(_itemsPerPage).toList();
+    });
+  }
+  
+  /// Charge la page suivante pour la pagination
+  void _loadNextPage() {
+    if (!_hasMoreItems || isLoading) return;
+    
+    final query = _searchController.text.toLowerCase();
+    final allFiltered = documents.where((doc) {
+      final name = (doc['original_name'] ?? '').toLowerCase();
+      final matchesSearch = name.contains(query);
+      final matchesCategory = _selectedCategory == 'Tous' ||
+          (doc['category'] ?? 'Non catégorisé') == _selectedCategory;
+      
+      bool matchesExamType = true;
+      if (_selectedExamType != null) {
+        matchesExamType = false;
+        final metadata = doc['metadata'];
+        if (metadata != null && metadata is Map) {
+          final examType = metadata['exam_type']?.toString().toLowerCase();
+          if (examType == _selectedExamType!.toLowerCase()) {
+            matchesExamType = true;
+          }
+        }
+        if (!matchesExamType) {
+          matchesExamType = name.contains(_selectedExamType!.toLowerCase());
+        }
+      }
+      
+      return matchesSearch && matchesCategory && matchesExamType;
+    }).toList();
+    
+    final nextPage = _currentPage + 1;
+    final startIndex = nextPage * _itemsPerPage;
+    final endIndex = (startIndex + _itemsPerPage).clamp(0, allFiltered.length);
+    
+    if (startIndex >= allFiltered.length) {
+      setState(() {
+        _hasMoreItems = false;
+      });
+      return;
+    }
+    
+    setState(() {
+      filteredDocuments.addAll(allFiltered.sublist(startIndex, endIndex));
+      _currentPage = nextPage;
+      _hasMoreItems = endIndex < allFiltered.length;
     });
   }
   
@@ -215,7 +273,10 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       
       setState(() {
         documents = docs;
-        filteredDocuments = docs;
+        // Pagination : Charger seulement les 20 premiers
+        _currentPage = 0;
+        _hasMoreItems = docs.length > _itemsPerPage;
+        filteredDocuments = docs.take(_itemsPerPage).toList();
         isLoading = false;
       });
     } catch (e) {
@@ -787,8 +848,26 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                             ),
                           )
                         : ListView.builder(
-                            itemCount: filteredDocuments.length,
+                            itemCount: filteredDocuments.length + (_hasMoreItems ? 1 : 0),
                             itemBuilder: (context, index) {
+                              // Bouton "Charger plus" à la fin
+                              if (index == filteredDocuments.length) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Center(
+                                    child: ElevatedButton.icon(
+                                      onPressed: _loadNextPage,
+                                      icon: const Icon(Icons.expand_more),
+                                      label: const Text('Charger plus'),
+                                      style: ElevatedButton.styleFrom(
+                                        minimumSize: const Size(200, 48), // Minimum 48px pour accessibilité seniors
+                                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }
+                              
                               final doc = filteredDocuments[index];
                           return Card(
                             margin: const EdgeInsets.symmetric(

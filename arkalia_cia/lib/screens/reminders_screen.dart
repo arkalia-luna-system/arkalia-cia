@@ -13,7 +13,13 @@ class RemindersScreen extends StatefulWidget {
 
 class _RemindersScreenState extends State<RemindersScreen> {
   List<Map<String, dynamic>> reminders = [];
+  List<Map<String, dynamic>> displayedReminders = []; // Pour pagination
   bool isLoading = false;
+  
+  // Pagination pour performance
+  static const int _itemsPerPage = 20;
+  int _currentPage = 0;
+  bool _hasMoreItems = true;
 
   @override
   void initState() {
@@ -53,6 +59,10 @@ class _RemindersScreenState extends State<RemindersScreen> {
       if (mounted) {
         setState(() {
           reminders = [...localReminders, ...calendarReminders];
+          // Pagination : Charger seulement les 20 premiers
+          _currentPage = 0;
+          _hasMoreItems = reminders.length > _itemsPerPage;
+          displayedReminders = reminders.take(_itemsPerPage).toList();
           isLoading = false;
         });
       }
@@ -374,6 +384,28 @@ class _RemindersScreenState extends State<RemindersScreen> {
     }
   }
 
+  /// Charge la page suivante pour la pagination
+  void _loadNextPage() {
+    if (!_hasMoreItems || isLoading) return;
+    
+    final nextPage = _currentPage + 1;
+    final startIndex = nextPage * _itemsPerPage;
+    final endIndex = (startIndex + _itemsPerPage).clamp(0, reminders.length);
+    
+    if (startIndex >= reminders.length) {
+      setState(() {
+        _hasMoreItems = false;
+      });
+      return;
+    }
+    
+    setState(() {
+      displayedReminders.addAll(reminders.sublist(startIndex, endIndex));
+      _currentPage = nextPage;
+      _hasMoreItems = endIndex < reminders.length;
+    });
+  }
+
   void _showSuccess(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -488,9 +520,27 @@ class _RemindersScreenState extends State<RemindersScreen> {
                     ),
                   )
                 : ListView.builder(
-                  itemCount: reminders.length,
+                  itemCount: displayedReminders.length + (_hasMoreItems ? 1 : 0),
                   itemBuilder: (context, index) {
-                    final reminder = reminders[index];
+                    // Bouton "Charger plus" à la fin
+                    if (index == displayedReminders.length) {
+                      return Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Center(
+                          child: ElevatedButton.icon(
+                            onPressed: _loadNextPage,
+                            icon: const Icon(Icons.expand_more),
+                            label: const Text('Charger plus'),
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: const Size(200, 48), // Minimum 48px pour accessibilité seniors
+                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                    
+                    final reminder = displayedReminders[index];
                     final isCompleted = reminder['is_completed'] == true;
 
                     return Card(
