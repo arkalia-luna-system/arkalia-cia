@@ -134,19 +134,30 @@ void main() {
       
       // Vérifier que le ListView est présent (indique que les rappels sont chargés)
       // Si reminders.isEmpty, on aura un SingleChildScrollView, sinon un ListView
-      final hasListView = find.byType(ListView).evaluate().isNotEmpty;
-      final hasScrollView = find.byType(SingleChildScrollView).evaluate().isNotEmpty;
-      expect(hasListView || hasScrollView, isTrue);
+      final listViewFinder = find.byType(ListView);
+      final scrollViewFinder = find.byType(SingleChildScrollView);
+      
+      // Attendre que l'un des deux soit présent (avec timeout court)
+      bool hasListView = false;
+      bool hasScrollView = false;
+      for (int i = 0; i < 10; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+        hasListView = listViewFinder.evaluate().isNotEmpty;
+        hasScrollView = scrollViewFinder.evaluate().isNotEmpty;
+        if (hasListView || hasScrollView) break;
+      }
+      
+      expect(hasListView || hasScrollView, isTrue, reason: 'L\'écran doit être scrollable');
       
       // Si ListView est présent, les rappels sont chargés
       if (hasListView) {
         // Vérifier que le texte est présent (après sanitization, "Test Rappel" reste "Test Rappel")
-        // Utiliser find.textContaining pour être plus flexible
-        expect(find.textContaining('Test Rappel'), findsOneWidget);
-        expect(find.textContaining('Description test'), findsOneWidget);
+        // Utiliser find.text pour chercher le texte exact (sanitization ne modifie pas "Test Rappel")
+        expect(find.text('Test Rappel'), findsOneWidget);
+        expect(find.text('Description test'), findsOneWidget);
       } else {
         // Si SingleChildScrollView, l'écran est vide (problème de chargement)
-        fail('Les rappels ne sont pas chargés - ListView non trouvé');
+        fail('Les rappels ne sont pas chargés - ListView non trouvé, seulement SingleChildScrollView (écran vide)');
       }
     }, timeout: const Timeout(Duration(seconds: 10)));
 
