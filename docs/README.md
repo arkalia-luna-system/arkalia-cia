@@ -2,7 +2,7 @@
 
 <div align="center">
 
-**Version** : 1.3.1+6 | **Dernière mise à jour** : 12 décembre 2025  
+**Version** : 1.3.1 | **Dernière mise à jour** : 27 décembre 2025  
 **Statut** : Production-Ready
 
 </div>
@@ -17,7 +17,7 @@
 
 | Corrections | Audits | Sécurité | Contribuer |
 |:---:|:---:|:---:|:---:|
-| [Toutes Corrections](./deployment/CORRECTIONS_NAVIGATION_AUTH_10_DEC.md) | [Audit 12 déc](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md) | [Sécurité](../SECURITY.md) | [Guide](./CONTRIBUTING.md) |
+| [Statut Complet](./plans/STATUT_COMPLET_27_DECEMBRE_2025.md) | [Audit Utilisateur](./audits/AUDIT_UTILISATEUR_15_JANVIER_2026.md) | [Sécurité](./SECURITE_VERIFICATION.md) | [Guide](./CONTRIBUTING.md) |
 
 ---
 
@@ -27,7 +27,7 @@
 
 - **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index complet de toute la documentation
 - **[VUE_ENSEMBLE_PROJET.md](./VUE_ENSEMBLE_PROJET.md)** — Vue d'ensemble visuelle du projet
-- **[status/STATUT_FINAL_PROJET.md](./status/STATUT_FINAL_PROJET.md)** — Statut final consolidé du projet
+- **[plans/STATUT_COMPLET_27_DECEMBRE_2025.md](./plans/STATUT_COMPLET_27_DECEMBRE_2025.md)** ⭐ **STATUT ACTUEL** — Statut complet consolidé
 - **[CHANGELOG.md](./CHANGELOG.md)** — Historique complet des versions
 
 ### Architecture et technique
@@ -38,11 +38,10 @@
 
 ### Corrections et audits
 
-- **[audits/AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md)** — Audit complet basé sur tests utilisateur (20 problèmes identifiés)
-- **[deployment/CORRECTIONS_NAVIGATION_AUTH_10_DEC.md](./deployment/CORRECTIONS_NAVIGATION_AUTH_10_DEC.md)** — Toutes les corrections (novembre-décembre 2025)
+- **[audits/AUDIT_UTILISATEUR_15_JANVIER_2026.md](./audits/AUDIT_UTILISATEUR_15_JANVIER_2026.md)** ⭐ **AUDIT RÉCENT** — Audit utilisateur complet
+- **[audits/RESUME_AMELIORATIONS_27_DECEMBRE_2025.md](./audits/RESUME_AMELIORATIONS_27_DECEMBRE_2025.md)** — Résumé améliorations 27 décembre
 - **[audits/AUDIT_SECURITE_PERFECTION_DECEMBRE_2025.md](./audits/AUDIT_SECURITE_PERFECTION_DECEMBRE_2025.md)** — Audit sécurité & perfection (10/10)
-- **[audits/AUDIT_COMPLET_27_NOVEMBRE_2025.md](./audits/AUDIT_COMPLET_27_NOVEMBRE_2025.md)** — Audit complet consolidé (8.5/10)
-- **[audits/CORRECTIONS_AUDIT_CONSOLIDEES.md](./audits/CORRECTIONS_AUDIT_CONSOLIDEES.md)** — Corrections d'audit (novembre 2025)
+- **[audits/AUDIT_QUALITE_CODE_12_DECEMBRE_2025.md](./audits/AUDIT_QUALITE_CODE_12_DECEMBRE_2025.md)** — Audit qualité code
 
 ### Sécurité et politiques
 
