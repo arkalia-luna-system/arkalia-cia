@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.3.1+7] - 2025-12-27
+
+### Corrections Critiques de Sécurité
+- ✅ **Protection XSS complète** : InputSanitizer créé et appliqué partout
+  - Sanitization dans Rappels (title, description)
+  - Sanitization dans Pathologies (name, description)
+  - Sanitization dans Contacts d'urgence (name, relationship, display_name)
+  - Sanitization dans Catégories personnalisées
+  - Tests complets créés (9 tests, tous passent ✅)
+
+### Corrections Fonctionnelles
+- ✅ **Compteur rappels corrigé** : Inclut maintenant rappels locaux + rappels calendrier
+  - Synchronisation correcte avec données réelles
+  - Plus d'incohérence entre compteur et statistiques
+  
+- ✅ **Modale catégories mise à jour en temps réel** : 
+  - Utilisation FutureBuilder avec ValueKey pour rafraîchir automatiquement
+  - Liste se met à jour immédiatement après ajout/suppression
+  - Plus besoin de fermer/réouvrir la modale
+
+### Tests
+- ✅ **Tests InputSanitizer** : 9 tests créés et passent tous
+  - Vérification échappement HTML
+  - Vérification suppression patterns JavaScript
+  - Vérification validation contenu dangereux
+
 ## [1.3.1+6] - 2025-12-12
 
 ### Fonctionnalités Majeures
