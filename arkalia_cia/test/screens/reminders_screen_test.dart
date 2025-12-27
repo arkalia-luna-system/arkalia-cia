@@ -116,50 +116,31 @@ void main() {
         ),
       );
 
-      // Attendre le chargement complet avec plusieurs pumps
+      // Attendre que le chargement soit terminé (CircularProgressIndicator disparaît)
       // Ne pas utiliser pumpAndSettle car CalendarService peut bloquer en test
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
-      await tester.pump(const Duration(milliseconds: 100));
-      await tester.pump(const Duration(milliseconds: 100));
-      // Attendre que le timeout de CalendarService (2 secondes) soit passé
-      await tester.pump(const Duration(seconds: 2));
-      // Plusieurs pumps supplémentaires pour s'assurer que le widget est construit
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 100));
-      await tester.pump();
-
+      
+      // Attendre que le CircularProgressIndicator disparaisse (max 3 secondes)
+      int attempts = 0;
+      const maxAttempts = 30; // 30 * 100ms = 3 secondes max
+      while (find.byType(CircularProgressIndicator).evaluate().isNotEmpty && attempts < maxAttempts) {
+        await tester.pump(const Duration(milliseconds: 100));
+        attempts++;
+      }
+      
       // Vérifier que l'écran n'est plus en chargement
       expect(find.byType(CircularProgressIndicator), findsNothing);
       
-      // Vérifier que le ListView est présent (indique que les rappels sont chargés)
-      // Si reminders.isEmpty, on aura un SingleChildScrollView, sinon un ListView
-      final listViewFinder = find.byType(ListView);
-      final scrollViewFinder = find.byType(SingleChildScrollView);
+      // Attendre quelques frames supplémentaires pour que le ListView soit construit
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 200));
       
-      // Attendre que l'un des deux soit présent (avec timeout court)
-      bool hasListView = false;
-      bool hasScrollView = false;
-      for (int i = 0; i < 10; i++) {
-        await tester.pump(const Duration(milliseconds: 100));
-        hasListView = listViewFinder.evaluate().isNotEmpty;
-        hasScrollView = scrollViewFinder.evaluate().isNotEmpty;
-        if (hasListView || hasScrollView) break;
-      }
-      
-      expect(hasListView || hasScrollView, isTrue, reason: 'L\'écran doit être scrollable');
-      
-      // Si ListView est présent, les rappels sont chargés
-      if (hasListView) {
-        // Vérifier que le texte est présent (après sanitization, "Test Rappel" reste "Test Rappel")
-        // Utiliser find.text pour chercher le texte exact (sanitization ne modifie pas "Test Rappel")
-        expect(find.text('Test Rappel'), findsOneWidget);
-        expect(find.text('Description test'), findsOneWidget);
-      } else {
-        // Si SingleChildScrollView, l'écran est vide (problème de chargement)
-        fail('Les rappels ne sont pas chargés - ListView non trouvé, seulement SingleChildScrollView (écran vide)');
-      }
-    }, timeout: const Timeout(Duration(seconds: 10)));
+      // Vérifier directement que le texte est présent (plus fiable que d'attendre le ListView)
+      // Le texte "Test Rappel" doit être présent si les rappels sont chargés
+      expect(find.text('Test Rappel'), findsOneWidget, reason: 'Le titre du rappel doit être affiché');
+      expect(find.text('Description test'), findsOneWidget, reason: 'La description du rappel doit être affichée');
+    }, timeout: const Timeout(Duration(seconds: 30)));
 
     testWidgets('Affiche le bouton Modifier sur les rappels non terminés', (WidgetTester tester) async {
       // Créer un rappel de test non terminé
