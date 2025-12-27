@@ -33,7 +33,9 @@ class _StatsScreenState extends State<StatsScreen> {
       // Récupérer les rappels du calendrier (mobile seulement)
       List<Map<String, dynamic>> calendarReminders = [];
       try {
-        calendarReminders = await CalendarService.getUpcomingReminders();
+        // Ajouter un timeout pour éviter les blocages
+        calendarReminders = await CalendarService.getUpcomingReminders()
+            .timeout(const Duration(seconds: 2), onTimeout: () => <Map<String, dynamic>>[]);
       } catch (e) {
         // Ignorer les erreurs de calendrier
       }

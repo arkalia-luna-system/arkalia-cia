@@ -3,6 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import '../services/pathology_service.dart';
 import '../models/pathology.dart';
 import '../models/pathology_tracking.dart';
+import '../utils/input_sanitizer.dart';
 import 'pathology_tracking_screen.dart';
 
 class PathologyDetailScreen extends StatefulWidget {
@@ -120,7 +121,10 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
-                  child: Text(_pathology!.description!),
+                  child: Text(
+                    // Sanitizer à l'affichage pour prévenir XSS
+                    InputSanitizer.sanitize(_pathology!.description ?? ''),
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
@@ -146,7 +150,10 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
                 runSpacing: 8,
                 children: _pathology!.symptoms.map((symptom) {
                   return Chip(
-                    label: Text(symptom),
+                    label: Text(
+                      // Sanitizer à l'affichage pour prévenir XSS
+                      InputSanitizer.sanitize(symptom),
+                    ),
                     backgroundColor: _pathology!.color.withOpacity(0.1),
                   );
                 }).toList(),
@@ -162,7 +169,10 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
                 runSpacing: 8,
                 children: _pathology!.treatments.map((treatment) {
                   return Chip(
-                    label: Text(treatment),
+                    label: Text(
+                      // Sanitizer à l'affichage pour prévenir XSS
+                      InputSanitizer.sanitize(treatment),
+                    ),
                     backgroundColor: Colors.green.withOpacity(0.1),
                   );
                 }).toList(),

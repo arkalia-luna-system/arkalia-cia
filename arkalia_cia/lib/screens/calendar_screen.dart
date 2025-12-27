@@ -4,6 +4,7 @@ import '../services/calendar_service.dart';
 import '../services/doctor_service.dart';
 import '../services/medication_service.dart';
 import '../models/doctor.dart'; // Contient aussi Consultation
+import '../utils/input_sanitizer.dart';
 
 /// Écran calendrier avec affichage des rappels médicaments et hydratation
 class CalendarScreen extends StatefulWidget {
@@ -111,7 +112,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
       }
 
       // Récupérer aussi les rappels du calendrier système
-      final reminders = await CalendarService.getUpcomingReminders();
+      // Ajouter un timeout pour éviter les blocages
+      final reminders = await CalendarService.getUpcomingReminders()
+          .timeout(const Duration(seconds: 2), onTimeout: () => <Map<String, dynamic>>[]);
       for (final reminder in reminders) {
         final dateStr = reminder['reminder_date'] as String?;
         if (dateStr != null) {
@@ -356,7 +359,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
         ),
         subtitle: type == 'consultation'
             ? _buildConsultationSubtitle(event)
-            : Text(event['description'] as String? ?? ''),
+            : Text(
+                // Sanitizer à l'affichage pour prévenir XSS
+                InputSanitizer.sanitize(event['description']?.toString() ?? ''),
+              ),
         onTap: () {
           _showEventDetails(event);
         },
@@ -392,7 +398,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
         ),
         content: event['type'] == 'consultation'
             ? _buildConsultationDetails(event)
-            : Text(event['description'] as String? ?? ''),
+            : Text(
+                // Sanitizer à l'affichage pour prévenir XSS
+                InputSanitizer.sanitize(event['description']?.toString() ?? ''),
+              ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),

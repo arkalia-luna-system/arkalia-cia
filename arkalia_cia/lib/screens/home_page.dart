@@ -119,7 +119,9 @@ class _HomePageState extends State<HomePage> {
       List<Map<String, dynamic>> calendarReminders = [];
       if (!kIsWeb) {
         try {
-          calendarReminders = await CalendarService.getUpcomingReminders();
+          // Ajouter un timeout pour éviter les blocages
+          calendarReminders = await CalendarService.getUpcomingReminders()
+              .timeout(const Duration(seconds: 2), onTimeout: () => <Map<String, dynamic>>[]);
         } catch (e) {
           // Ignorer les erreurs de calendrier
         }

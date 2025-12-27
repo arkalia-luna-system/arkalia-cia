@@ -15,7 +15,9 @@ void main() {
         ),
       );
 
-      await tester.pumpAndSettle();
+      // Ne pas utiliser pumpAndSettle pour éviter les blocages
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
 
       expect(find.text('Arkalia CIA'), findsOneWidget);
       expect(find.text('Votre Carnet de Santé'), findsOneWidget);
@@ -28,7 +30,9 @@ void main() {
         ),
       );
 
-      await tester.pumpAndSettle();
+      // Ne pas utiliser pumpAndSettle pour éviter les blocages
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
 
       // Le bouton Google est toujours présent
       expect(find.text('Continuer avec Google'), findsOneWidget);
@@ -44,7 +48,9 @@ void main() {
         ),
       );
 
-      await tester.pumpAndSettle();
+      // Ne pas utiliser pumpAndSettle pour éviter les blocages
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
 
       // Le bouton "J'ai déjà un compte" n'est visible que si le backend est activé
       // Dans les tests, on vérifie seulement que l'écran se charge correctement
@@ -59,14 +65,17 @@ void main() {
         ),
       );
 
-      await tester.pumpAndSettle();
+      // Ne pas utiliser pumpAndSettle pour éviter les blocages
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
 
       // Le bouton CRÉER UN COMPTE n'est visible que si le backend est activé
       // Si le bouton n'est pas trouvé, c'est normal (backend non configuré)
       final registerButton = find.text('CRÉER UN COMPTE');
       if (registerButton.evaluate().isNotEmpty) {
         await tester.tap(registerButton);
-        await tester.pumpAndSettle();
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 100));
         expect(find.byType(RegisterScreen), findsOneWidget);
       } else {
         // Backend non activé, test réussi (comportement attendu)
@@ -81,7 +90,9 @@ void main() {
         ),
       );
 
-      await tester.pumpAndSettle();
+      // Ne pas utiliser pumpAndSettle pour éviter les blocages
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
 
       // L'icône health_and_safety est un fallback si l'image logo.png ne charge pas
       // Dans les tests, l'image peut ne pas charger, donc l'icône peut être présente

@@ -226,7 +226,8 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
                     Icon(Icons.medical_services, color: Colors.green[700]),
                     const SizedBox(width: 8),
                     Text(
-                      'Rapport pour: ${widget.doctorName}',
+                      // Sanitizer à l'affichage pour prévenir XSS
+                      'Rapport pour: ${InputSanitizer.sanitize(widget.doctorName ?? '')}',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,

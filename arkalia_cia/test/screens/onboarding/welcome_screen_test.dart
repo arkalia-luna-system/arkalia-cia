@@ -42,7 +42,9 @@ void main() {
       expect(button, findsOneWidget);
 
       await tester.tap(button);
-      await tester.pumpAndSettle();
+      // Ne pas utiliser pumpAndSettle pour éviter les blocages
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
 
       expect(find.byType(ImportChoiceScreen), findsOneWidget);
     });

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/family_sharing_service.dart';
 import '../services/local_storage_service.dart';
 import '../utils/app_logger.dart';
+import '../utils/input_sanitizer.dart';
 import 'manage_family_members_screen.dart';
 
 class FamilySharingScreen extends StatefulWidget {
@@ -419,7 +420,10 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
                       final isShared = _sharedDocuments.any((sd) => sd.documentId == docId);
                       
                       return CheckboxListTile(
-                        title: Text(doc['original_name'] ?? doc['name'] ?? 'Sans titre'),
+                        title: Text(
+                          // Sanitizer à l'affichage pour prévenir XSS
+                          InputSanitizer.sanitize(doc['original_name']?.toString() ?? doc['name']?.toString() ?? 'Sans titre'),
+                        ),
                         subtitle: Text(
                           '${doc['category'] ?? 'Non catégorisé'}${isShared ? ' • Déjà partagé' : ''}',
                         ),
@@ -509,7 +513,10 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
                   margin: const EdgeInsets.only(bottom: 8),
                   child: ListTile(
                     leading: const Icon(Icons.description),
-                    title: Text(doc['original_name'] ?? doc['name'] ?? 'Sans titre'),
+                    title: Text(
+                      // Sanitizer à l'affichage pour prévenir XSS
+                      InputSanitizer.sanitize(doc['original_name']?.toString() ?? doc['name']?.toString() ?? 'Sans titre'),
+                    ),
                     subtitle: Text(
                       'Partagé avec ${sharedDoc.memberIds.length} membre(s) • ${_formatDate(sharedDoc.sharedAt)}',
                     ),

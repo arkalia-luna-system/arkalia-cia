@@ -33,12 +33,14 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
         for (var conv in history.reversed) {
           if (!_messages.any((m) => m.text == conv['question'])) {
             _messages.insert(1, ChatMessage(
-              text: conv['question'],
+              // Sanitizer les données historiques pour prévenir XSS
+              text: InputSanitizer.sanitize(conv['question']?.toString() ?? ''),
               isUser: true,
               timestamp: DateTime.parse(conv['created_at']),
             ));
             _messages.insert(2, ChatMessage(
-              text: conv['answer'],
+              // Sanitizer les données historiques pour prévenir XSS
+              text: InputSanitizer.sanitize(conv['answer']?.toString() ?? ''),
               isUser: false,
               timestamp: DateTime.parse(conv['created_at']),
             ));

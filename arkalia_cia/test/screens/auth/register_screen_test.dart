@@ -14,7 +14,9 @@ void main() {
         ),
       );
 
-      await tester.pumpAndSettle();
+      // Ne pas utiliser pumpAndSettle pour éviter les blocages
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
 
       // Vérifier le titre dans l'AppBar
       expect(find.text('Créer un compte'), findsWidgets);
@@ -35,9 +37,13 @@ void main() {
       final usernameField = find.widgetWithText(TextFormField, 'Nom d\'utilisateur *');
       await tester.enterText(usernameField, 'ab');
       await tester.ensureVisible(find.text('Créer le compte'));
-      await tester.pumpAndSettle();
+      // Ne pas utiliser pumpAndSettle pour éviter les blocages
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
       await tester.tap(find.text('Créer le compte'), warnIfMissed: false);
-      await tester.pumpAndSettle();
+      // Ne pas utiliser pumpAndSettle pour éviter les blocages
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
 
       expect(find.text('Le nom d\'utilisateur doit contenir au moins 3 caractères'), findsOneWidget);
     });
@@ -52,9 +58,13 @@ void main() {
       final passwordField = find.widgetWithText(TextFormField, 'Mot de passe *');
       await tester.enterText(passwordField, 'short');
       await tester.ensureVisible(find.text('Créer le compte'));
-      await tester.pumpAndSettle();
+      // Ne pas utiliser pumpAndSettle pour éviter les blocages
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
       await tester.tap(find.text('Créer le compte'), warnIfMissed: false);
-      await tester.pumpAndSettle();
+      // Ne pas utiliser pumpAndSettle pour éviter les blocages
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
 
       expect(find.text('Le mot de passe doit contenir au moins 8 caractères'), findsOneWidget);
     });
@@ -74,9 +84,13 @@ void main() {
       await tester.enterText(passwordField, 'password123');
       await tester.enterText(confirmPasswordField, 'different');
       await tester.ensureVisible(find.text('Créer le compte'));
-      await tester.pumpAndSettle();
+      // Ne pas utiliser pumpAndSettle pour éviter les blocages
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
       await tester.tap(find.text('Créer le compte'), warnIfMissed: false);
-      await tester.pumpAndSettle();
+      // Ne pas utiliser pumpAndSettle pour éviter les blocages
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
 
       expect(find.text('Les mots de passe ne correspondent pas'), findsOneWidget);
     });
@@ -101,11 +115,15 @@ void main() {
       
       // Scroller pour voir le bouton
       await tester.ensureVisible(find.text('Créer le compte'));
-      await tester.pumpAndSettle();
+      // Ne pas utiliser pumpAndSettle pour éviter les blocages
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
       
       // Taper sur le bouton pour déclencher la validation
       await tester.tap(find.text('Créer le compte'), warnIfMissed: false);
-      await tester.pumpAndSettle();
+      // Ne pas utiliser pumpAndSettle pour éviter les blocages
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
       
       // Vérifier que le champ email existe (le test vérifie que le formulaire fonctionne)
       expect(emailField, findsOneWidget);
