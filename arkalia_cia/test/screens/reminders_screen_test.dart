@@ -104,6 +104,11 @@ void main() {
       };
 
       await LocalStorageService.saveReminder(testReminder);
+      
+      // Vérifier que le rappel est bien sauvegardé avant de charger l'écran
+      final savedReminders = await LocalStorageService.getReminders();
+      expect(savedReminders.length, greaterThan(0));
+      expect(savedReminders.any((r) => r['id'] == 'test_reminder_1'), isTrue);
 
       await tester.pumpWidget(
         const MaterialApp(
@@ -128,12 +133,21 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsNothing);
       
       // Vérifier que le ListView est présent (indique que les rappels sont chargés)
-      expect(find.byType(ListView), findsOneWidget);
+      // Si reminders.isEmpty, on aura un SingleChildScrollView, sinon un ListView
+      final hasListView = find.byType(ListView).evaluate().isNotEmpty;
+      final hasScrollView = find.byType(SingleChildScrollView).evaluate().isNotEmpty;
+      expect(hasListView || hasScrollView, isTrue);
       
-      // Vérifier que le texte est présent (après sanitization, "Test Rappel" reste "Test Rappel")
-      // Utiliser find.textContaining pour être plus flexible
-      expect(find.textContaining('Test Rappel'), findsOneWidget);
-      expect(find.textContaining('Description test'), findsOneWidget);
+      // Si ListView est présent, les rappels sont chargés
+      if (hasListView) {
+        // Vérifier que le texte est présent (après sanitization, "Test Rappel" reste "Test Rappel")
+        // Utiliser find.textContaining pour être plus flexible
+        expect(find.textContaining('Test Rappel'), findsOneWidget);
+        expect(find.textContaining('Description test'), findsOneWidget);
+      } else {
+        // Si SingleChildScrollView, l'écran est vide (problème de chargement)
+        fail('Les rappels ne sont pas chargés - ListView non trouvé');
+      }
     }, timeout: const Timeout(Duration(seconds: 10)));
 
     testWidgets('Affiche le bouton Modifier sur les rappels non terminés', (WidgetTester tester) async {
