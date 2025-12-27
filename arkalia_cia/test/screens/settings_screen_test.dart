@@ -12,9 +12,11 @@ void main() {
       );
 
       // Attendre que l'écran soit chargé avec plusieurs pumps pour les appels async
+      // Ne pas utiliser pumpAndSettle car les appels async peuvent prendre du temps
       await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pump(const Duration(milliseconds: 100));
       await tester.pump(const Duration(seconds: 1));
-      await tester.pumpAndSettle();
 
       // Vérifier que la section Statistiques est présente
       expect(find.text('Statistiques'), findsOneWidget);
@@ -30,9 +32,11 @@ void main() {
       );
 
       // Attendre que l'écran soit chargé avec plusieurs pumps
+      // Ne pas utiliser pumpAndSettle car les appels async peuvent prendre du temps
       await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pump(const Duration(milliseconds: 100));
       await tester.pump(const Duration(seconds: 1));
-      await tester.pumpAndSettle();
 
       // Vérifier que l'icône est présente
       expect(find.byIcon(Icons.bar_chart), findsWidgets);
@@ -46,9 +50,11 @@ void main() {
       );
 
       // Attendre que l'écran soit chargé avec plusieurs pumps
+      // Ne pas utiliser pumpAndSettle car les appels async peuvent prendre du temps
       await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pump(const Duration(milliseconds: 100));
       await tester.pump(const Duration(seconds: 1));
-      await tester.pumpAndSettle();
 
       // Trouver le ListTile des statistiques
       final statsTile = find.text('Statistiques détaillées');

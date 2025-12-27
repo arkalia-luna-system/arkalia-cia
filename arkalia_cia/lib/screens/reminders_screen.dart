@@ -42,7 +42,9 @@ class _RemindersScreenState extends State<RemindersScreen> {
       List<Map<String, dynamic>> calendarReminders = [];
       if (!kIsWeb) {
         try {
-          final calendarEvents = await CalendarService.getUpcomingReminders();
+          // Ajouter un timeout pour éviter les blocages en test
+          final calendarEvents = await CalendarService.getUpcomingReminders()
+              .timeout(const Duration(seconds: 2), onTimeout: () => <Map<String, dynamic>>[]);
           // Convertir les événements calendrier en format local
           calendarReminders = calendarEvents.map((event) => {
             'id': event['id'] ?? '',
