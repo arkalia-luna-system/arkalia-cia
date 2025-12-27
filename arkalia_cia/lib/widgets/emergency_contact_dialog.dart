@@ -74,9 +74,13 @@ class _EmergencyContactDialogState extends State<EmergencyContactDialog> {
           children: [
             TextField(
               controller: nameController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Nom du contact',
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
+                errorText: nameController.text.isNotEmpty && 
+                    !ValidationHelper.isValidName(nameController.text.trim())
+                    ? 'Nom invalide (min 2 caractères, lettres uniquement)'
+                    : null,
               ),
               onChanged: (_) => setState(() {}),
             ),
@@ -190,7 +194,7 @@ class _EmergencyContactDialogState extends State<EmergencyContactDialog> {
                     'relationship': sanitizedRelationship,
                     'display_name': sanitizedDisplayName,
                     'emoji': sanitizedEmoji,
-                    'color': selectedColor.value, // Utilisation de .value pour obtenir la valeur entière ARGB
+                    'color': selectedColor.toARGB32(), // Conversion en valeur entière ARGB
                     'is_primary': isPrimary,
                     if (isEditing) 'id': widget.existingContact!['id'],
                   };

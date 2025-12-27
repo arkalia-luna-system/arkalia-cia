@@ -11,6 +11,9 @@ void main() {
         expect(ValidationHelper.isValidPhone('(04) 12 34 56 78'), isTrue);
         expect(ValidationHelper.isValidPhone('+32412345678'), isTrue);
         expect(ValidationHelper.isValidPhone('+32 4 12 34 56 78'), isTrue);
+        expect(ValidationHelper.isValidPhone('0470 12 34 56'), isTrue);
+        expect(ValidationHelper.isValidPhone('+32470123456'), isTrue);
+        expect(ValidationHelper.isValidPhone('+32 470 12 34 56'), isTrue);
       });
 
       test('should validate international phone numbers', () {
@@ -87,6 +90,9 @@ void main() {
         expect(ValidationHelper.isValidName("Jean d'Orient"), isTrue);
         expect(ValidationHelper.isValidName('Marie-Claire'), isTrue);
         expect(ValidationHelper.isValidName('José'), isTrue);
+        expect(ValidationHelper.isValidName('Dr. Martin Durand'), isTrue);
+        expect(ValidationHelper.isValidName('Dr Martin Durand'), isTrue);
+        expect(ValidationHelper.isValidName('Mme. Sophie Bernard'), isTrue);
       });
 
       test('should reject invalid names', () {

@@ -154,7 +154,7 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
                       // Sanitizer à l'affichage pour prévenir XSS
                       InputSanitizer.sanitize(symptom),
                     ),
-                    backgroundColor: _pathology!.color.withOpacity(0.1),
+                    backgroundColor: _pathology!.color.withValues(alpha: 0.1),
                   );
                 }).toList(),
               ),
@@ -173,7 +173,7 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
                       // Sanitizer à l'affichage pour prévenir XSS
                       InputSanitizer.sanitize(treatment),
                     ),
-                    backgroundColor: Colors.green.withOpacity(0.1),
+                    backgroundColor: Colors.green.withValues(alpha: 0.1),
                   );
                 }).toList(),
               ),
@@ -189,7 +189,7 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
                 children: _pathology!.exams.map((exam) {
                   return Chip(
                     label: Text(exam),
-                    backgroundColor: Colors.blue.withOpacity(0.1),
+                    backgroundColor: Colors.blue.withValues(alpha: 0.1),
                   );
                 }).toList(),
               ),
@@ -237,36 +237,20 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
                           Text(entry.notes!),
                       ],
                     ),
-                    trailing: PopupMenuButton(
-                      itemBuilder: (context) => [
-                        const PopupMenuItem(
-                          value: 'edit',
-                          child: Row(
-                            children: [
-                              Icon(Icons.edit, color: Colors.blue),
-                              SizedBox(width: 8),
-                              Text('Modifier'),
-                            ],
-                          ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.edit, color: Colors.blue),
+                          onPressed: () => _editTrackingEntry(entry),
+                          tooltip: 'Modifier l\'entrée',
                         ),
-                        const PopupMenuItem(
-                          value: 'delete',
-                          child: Row(
-                            children: [
-                              Icon(Icons.delete, color: Colors.red),
-                              SizedBox(width: 8),
-                              Text('Supprimer'),
-                            ],
-                          ),
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () => _deleteTrackingEntry(entry),
+                          tooltip: 'Supprimer l\'entrée',
                         ),
                       ],
-                      onSelected: (value) async {
-                        if (value == 'edit') {
-                          await _editTrackingEntry(entry);
-                        } else if (value == 'delete') {
-                          await _deleteTrackingEntry(entry);
-                        }
-                      },
                     ),
                     onTap: () async {
                       await _editTrackingEntry(entry);
