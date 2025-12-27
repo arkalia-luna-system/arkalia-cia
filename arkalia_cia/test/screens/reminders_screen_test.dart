@@ -123,17 +123,17 @@ void main() {
       await tester.pump(const Duration(milliseconds: 50));
       await tester.pump();
       
-      // Vérifier directement que le texte est présent
-      // Si le texte n'est pas trouvé, attendre encore un peu (max 500ms)
-      int attempts = 0;
-      const maxAttempts = 10; // 10 * 50ms = 500ms max
-      while (find.text('Test Rappel').evaluate().isEmpty && attempts < maxAttempts) {
+      // Attendre un temps fixe très court (200ms max) pour que les rappels locaux soient chargés
+      // CalendarService peut bloquer, mais les rappels locaux sont chargés en premier
+      for (int i = 0; i < 4; i++) {
         await tester.pump(const Duration(milliseconds: 50));
-        attempts++;
+        // Si le texte est trouvé, on peut arrêter d'attendre
+        if (find.text('Test Rappel').evaluate().isNotEmpty) break;
       }
       
       // Vérifier que le texte est présent (les rappels locaux doivent être chargés)
-      expect(find.text('Test Rappel'), findsOneWidget, reason: 'Le titre du rappel doit être affiché');
+      // Si le texte n'est pas trouvé, c'est que CalendarService bloque le thread
+      expect(find.text('Test Rappel'), findsOneWidget, reason: 'Le titre du rappel doit être affiché (rappels locaux chargés en premier)');
       expect(find.text('Description test'), findsOneWidget, reason: 'La description du rappel doit être affichée');
     }, timeout: const Timeout(Duration(seconds: 10)));
 
