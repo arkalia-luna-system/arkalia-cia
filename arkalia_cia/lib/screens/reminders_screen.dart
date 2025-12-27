@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import '../services/calendar_service.dart';
 import '../services/local_storage_service.dart';
+import '../utils/input_sanitizer.dart';
 import 'medication_reminders_screen.dart';
 
 class RemindersScreen extends StatefulWidget {
@@ -241,10 +242,16 @@ class _RemindersScreenState extends State<RemindersScreen> {
             ElevatedButton(
               onPressed: () {
                 if (titleController.text.isNotEmpty) {
+                  // Sanitizer les entrées utilisateur pour prévenir XSS
+                  final sanitizedTitle = InputSanitizer.sanitizeForStorage(titleController.text.trim());
+                  final sanitizedDescription = descriptionController.text.trim().isNotEmpty
+                      ? InputSanitizer.sanitizeForStorage(descriptionController.text.trim())
+                      : '';
+                  
                   Navigator.pop(context, {
                     'id': reminder?['id'],
-                    'title': titleController.text,
-                    'description': descriptionController.text,
+                    'title': sanitizedTitle,
+                    'description': sanitizedDescription,
                     'reminder_date': selectedDate.toIso8601String(),
                     'recurrence': recurrenceType,
                     'is_editing': isEditing,
@@ -570,9 +577,9 @@ class _RemindersScreenState extends State<RemindersScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              if (reminder['description'] != null)
+                              if (reminder['description'] != null && reminder['description'].toString().isNotEmpty)
                                 Text(
-                                  reminder['description'],
+                                  reminder['description'].toString(),
                                   style: const TextStyle(fontSize: 14),
                                 ),
                               if (reminder['description'] != null)

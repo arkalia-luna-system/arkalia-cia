@@ -134,11 +134,15 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
       );
 
       if (result == true && nameController.text.isNotEmpty) {
+        // Sanitizer les entrées utilisateur pour prévenir XSS
+        final sanitizedName = InputSanitizer.sanitizeForStorage(nameController.text.trim());
+        final sanitizedDescription = descriptionController.text.trim().isNotEmpty
+            ? InputSanitizer.sanitizeForStorage(descriptionController.text.trim())
+            : null;
+        
         newPathology = Pathology(
-          name: nameController.text,
-          description: descriptionController.text.isEmpty
-              ? null
-              : descriptionController.text,
+          name: sanitizedName,
+          description: sanitizedDescription,
           color: Colors.blue,
         );
       }

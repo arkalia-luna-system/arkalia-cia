@@ -97,11 +97,13 @@ class SearchService {
 
       // Recherche dans les rappels (limiter à 50 pour la recherche)
       final reminders = await LocalStorageService.getReminders();
+      final queryLower = query.toLowerCase().trim();
       for (var reminder in reminders.take(50)) {
         if (results['reminders']!.length >= maxResults) break;
-        final title = (reminder['title'] ?? '').toLowerCase();
-        final description = (reminder['description'] ?? '').toLowerCase();
-        if (title.contains(query.toLowerCase()) || description.contains(query.toLowerCase())) {
+        final title = (reminder['title'] ?? '').toLowerCase().trim();
+        final description = (reminder['description'] ?? '').toLowerCase().trim();
+        // Recherche dans le titre ET la description (même si description est vide)
+        if (title.isNotEmpty && (title.contains(queryLower) || (description.isNotEmpty && description.contains(queryLower)))) {
           results['reminders']!.add(reminder);
         }
       }
