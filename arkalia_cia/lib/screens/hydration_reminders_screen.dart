@@ -133,7 +133,7 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
           SnackBar(
             content: Row(
               children: [
-                const Icon(Icons.check_circle, color: Colors.white),
+                const Icon(Icons.check_circle, color: Colors.white, size: 24),
                 const SizedBox(width: 8),
                 Text('$amount ml enregistrés'),
               ],
@@ -280,7 +280,7 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.close),
+                        icon: const Icon(Icons.close, size: 24),
                         onPressed: () => Navigator.pop(context),
                       ),
                     ],
@@ -428,7 +428,7 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                 color: theme.colorScheme.primary.withOpacity(0.2),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(icon, color: theme.colorScheme.primary),
+            child: Icon(icon, color: theme.colorScheme.primary, size: 24),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -480,7 +480,7 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, size: 24),
           onPressed: () => Navigator.pop(context),
           tooltip: 'Retour',
         ),
@@ -490,12 +490,12 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.bar_chart),
+            icon: const Icon(Icons.bar_chart, size: 24),
             onPressed: _showWeeklyChart,
             tooltip: 'Statistiques',
           ),
           IconButton(
-            icon: const Icon(Icons.settings),
+            icon: const Icon(Icons.settings, size: 24),
             onPressed: _showGoalDialog,
             tooltip: 'Objectif',
           ),
@@ -575,7 +575,7 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                         ),
                       ),
                       trailing: IconButton(
-                        icon: Icon(Icons.edit, color: theme.colorScheme.primary),
+                        icon: Icon(Icons.edit, color: theme.colorScheme.primary, size: 24),
                         onPressed: () async {
                           final date = await showDatePicker(
                             context: context,
@@ -816,6 +816,7 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                                   child: Icon(
                                     Icons.water_drop,
                                     color: theme.colorScheme.primary,
+                                    size: 24,
                                   ),
                                 ),
                                 title: Text(
@@ -832,6 +833,7 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                                   icon: Icon(
                                     Icons.delete_outline,
                                     color: theme.colorScheme.error,
+                                    size: 24,
                                   ),
                                   onPressed: () async {
                                     final confirm = await showDialog<bool>(
@@ -915,6 +917,7 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                       Icon(
                         Icons.edit,
                         color: theme.colorScheme.primary,
+                        size: 24,
                       ),
                       const SizedBox(width: 8),
                       const Text('Quantité personnalisée'),
@@ -930,7 +933,7 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          prefixIcon: const Icon(Icons.water_drop),
+                          prefixIcon: const Icon(Icons.water_drop, size: 24),
                         ),
                         keyboardType: TextInputType.number,
                         autofocus: true,
