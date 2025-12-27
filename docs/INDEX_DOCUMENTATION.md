@@ -1,205 +1,150 @@
-# 📑 Index de la Documentation
+# 📚 Index Documentation - Arkalia CIA
 
-<div align="center">
-
-**Version** : 1.3.1 | **Dernière mise à jour** : 12 décembre 2025  
-**Statut** : ✅ Production-Ready
-
-</div>
-
-Guide de navigation dans la documentation du projet Arkalia CIA.
+**Dernière mise à jour** : 27 décembre 2025  
+**Version** : 1.3.1
 
 ---
 
-## Documents principaux
+## 🎯 DOCUMENTS PRINCIPAUX (À LIRE EN PREMIER)
 
-### Statut et état du projet
+### 📊 Statut et Plans
+- **`plans/STATUT_COMPLET_27_DECEMBRE_2025.md`** ⭐ **DOCUMENT PRINCIPAL**
+  - Statut complet du projet
+  - Ce qui est fait (Phases 1, 2, 3, 4)
+  - Ce qui reste à faire
+- **`plans/PLAN_FUTUR_AMELIORATIONS.md`** - Plan détaillé par phases
+- **`plans/CE_QUI_RESTE_A_FAIRE.md`** - Résumé rapide
 
-- **[status/STATUT_FINAL_PROJET.md](./status/STATUT_FINAL_PROJET.md)** — Document principal
-  - Statut complet d'exploitation
-  - Fonctionnalités implémentées
-  - Métriques et conclusion
-- **[analysis/BESOINS_MERE_23_NOVEMBRE_2025.md](./analysis/BESOINS_MERE_23_NOVEMBRE_2025.md)** — Analyse complète des nouveaux besoins
-  - Besoins exprimés par votre mère
-  - Ce qui existe déjà vs ce qui manque
-  - Plan d'implémentation détaillé
-  - Pathologies familiales et besoins spécifiques
-- **[plans/PROMPTS_IMPLEMENTATION_4_PHASES.md](./plans/PROMPTS_IMPLEMENTATION_4_PHASES.md)** — Prompts détaillés pour implémentation
-  - 4 prompts complets, un par phase
-  - Instructions détaillées pour chaque tâche
-  - Tests à créer, vérifications, documentation
-  - Prêts à être utilisés par une IA
-
-### Architecture et conception
-
-- **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture générale avec schémas Mermaid
-- **[VUE_ENSEMBLE_PROJET.md](./VUE_ENSEMBLE_PROJET.md)** — Vue d'ensemble visuelle complète
-- **[analysis/ANALYSE_COMPLETE_BESOINS_MERE.md](./analysis/ANALYSE_COMPLETE_BESOINS_MERE.md)** — Analyse des besoins utilisateur
-
-### API et intégration
-
-- **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** — Documentation API complète (36 endpoints)
-- **[API.md](./API.md)** — Documentation API (version simplifiée)
-- **[integrations/ARIA_IMPLEMENTATION_GUIDE.md](./integrations/ARIA_IMPLEMENTATION_GUIDE.md)** — Guide d'intégration ARIA
+### 🔍 Audits
+- **`audits/AUDIT_UTILISATEUR_15_JANVIER_2026.md`** ⭐ **AUDIT RÉCENT**
+  - Audit utilisateur complet
+  - Problèmes identifiés
+- **`audits/RESUME_AMELIORATIONS_27_DECEMBRE_2025.md`** - Résumé améliorations
+- **`audits/AUDIT_CONSOMMATION_RAM.md`** - Analyse performance
 
 ---
 
-## Guides
+## 📖 DOCUMENTS PAR CATÉGORIE
 
-### Guides utilisateur
+### 🏗️ Architecture
+- `ARCHITECTURE.md` - Architecture générale
+- `ARCHITECTURE_SERVICES.md` - Architecture services
+- `VUE_ENSEMBLE_PROJET.md` - Vue d'ensemble
 
-- **[guides/GUIDE_UTILISATION_MERE.md](./guides/GUIDE_UTILISATION_MERE.md)** — Guide utilisateur complet
-- **[plans/GUIDE_TEST_VISUEL_LIVE.md](./plans/GUIDE_TEST_VISUEL_LIVE.md)** — Guide test visuel
+### 🔒 Sécurité
+- `SECURITY_WEB_AUTH.md` - Sécurité authentification web
+- `SECURITE_VERIFICATION.md` - Vérification sécurité
+- `POLITIQUE_CONFIDENTIALITE.md` - Politique confidentialité
+- `POLITIQUE_GRATUITE_100_PERCENT.md` - Politique gratuité
 
-### Guides développeur
+### 📱 Déploiement
+- `deployment/` - Guides déploiement (39 fichiers)
+- `deployment/PLAY_STORE_METADATA.md` - Métadonnées Play Store
+- `deployment/DEPLOYMENT.md` - Guide déploiement principal
 
-- **[guides/GUIDE_MISE_A_JOUR_FLUTTER.md](./guides/GUIDE_MISE_A_JOUR_FLUTTER.md)** — Guide mise à jour Flutter (Authentification JWT)
-- **[CONTRIBUTING.md](./CONTRIBUTING.md)** — Guide contributeur
-- **[guides/MIGRATION.md](./guides/MIGRATION.md)** — Guide migration
+### 🔌 Intégrations
+- `integrations/ARIA_INTEGRATION.md` - Intégration ARIA
+- `integrations/PORTAILS_SANTE.md` - Portails santé belges
+- `integrations/ECOSYSTEM_VISION.md` - Vision écosystème
 
----
+### 📋 Guides
+- `guides/` - Guides utilisateur (36 fichiers)
+- `POUR_MAMAN.md` - Guide pour votre mère
+- `CONTRIBUTING.md` - Guide contribution
 
-## Plans d'implémentation
+### 📊 Analyses
+- `analysis/ANALYSE_COMPLETE_BESOINS_MERE.md` - Analyse besoins
+- `analysis/IMPORTS_ANALYSIS.md` - Analyse imports
+- `analysis/USE_CASES.md` - Cas d'usage
 
-Tous les plans sont dans le dossier **[plans/](./plans/)** :
+### 🚀 Releases
+- `releases/RELEASE_NOTES_V1.3.1.md` - Notes de version
+- `releases/RELEASE_CHECKLIST.md` - Checklist release
 
-- **[plans/README.md](./plans/README.md)** — Index des plans
-- **[plans/PLAN_00_ONBOARDING_INTELLIGENT.md](./plans/PLAN_00_ONBOARDING_INTELLIGENT.md)** — Onboarding
-- **[plans/PLAN_01_PARSER_PDF_MEDICAUX.md](./plans/PLAN_01_PARSER_PDF_MEDICAUX.md)** — Parser PDF
-- **[plans/PLAN_02_HISTORIQUE_MEDECINS.md](./plans/PLAN_02_HISTORIQUE_MEDECINS.md)** — Historique médecins
-- **[plans/PLAN_03_RECHERCHE_AVANCEE.md](./plans/PLAN_03_RECHERCHE_AVANCEE.md)** — Recherche avancée
-- **[plans/PLAN_04_IA_PATTERNS.md](./plans/PLAN_04_IA_PATTERNS.md)** — IA Patterns
-- **[plans/PLAN_05_PARTAGE_FAMILIAL.md](./plans/PLAN_05_PARTAGE_FAMILIAL.md)** — Partage familial
-- **[plans/PLAN_06_IA_CONVERSATIONNELLE.md](./plans/PLAN_06_IA_CONVERSATIONNELLE.md)** — IA Conversationnelle
-- **[plans/STATUS_IMPLEMENTATION.md](./plans/STATUS_IMPLEMENTATION.md)** — Statut détaillé d'implémentation
+### 🐛 Troubleshooting
+- `troubleshooting/` - Guides dépannage (17 fichiers)
 
----
+### 📈 Optimisations
+- `optimizations/OPTIMISATIONS_COMPLETE.md` - Optimisations complètes
+- `optimizations/OPTIMISATIONS_TESTS.md` - Optimisations tests
 
-## Déploiement
+### 📝 Métadonnées
+- `meta/TESTS_DOCUMENTATION_COMPLETE.md` - Documentation tests
+- `meta/SCREENSHOTS_CHECKLIST.md` - Checklist screenshots
 
-- **[deployment/CHECKLIST_RELEASE_CONSOLIDEE.md](./deployment/CHECKLIST_RELEASE_CONSOLIDEE.md)** — Checklist complète avant release
-- **[deployment/BUILD_RELEASE_ANDROID.md](./deployment/BUILD_RELEASE_ANDROID.md)** — Guide build Android
-- **[deployment/IOS_DEPLOYMENT_GUIDE.md](./deployment/IOS_DEPLOYMENT_GUIDE.md)** — Guide déploiement iOS
-- **[deployment/DEPLOYMENT.md](./deployment/DEPLOYMENT.md)** — Guide déploiement général
-- **[deployment/CONFIGURATION_BACKEND_WIFI.md](./deployment/CONFIGURATION_BACKEND_WIFI.md)** — Configuration backend WiFi
-- **[deployment/CONNECTER_S25_ANDROID.md](./deployment/CONNECTER_S25_ANDROID.md)** — Connexion Android
-- **[deployment/DEPLOIEMENT_WIFI_IOS.md](./deployment/DEPLOIEMENT_WIFI_IOS.md)** — Déploiement WiFi iOS
-- **[releases/RELEASE_NOTES_V1.2.0.md](./releases/RELEASE_NOTES_V1.2.0.md)** — Notes de release
-
----
-
-## Sécurité et audits
-
-- **[audits/AUDIT_QUALITE_CODE_12_DECEMBRE_2025.md](./audits/AUDIT_QUALITE_CODE_12_DECEMBRE_2025.md)** — Audit qualité code, maintenabilité, tests, documentation (12 déc 2025)
-- **[audits/AUDIT_COMPLET_12_DECEMBRE_2025.md](./audits/AUDIT_COMPLET_12_DECEMBRE_2025.md)** — Audit fonctionnel complet (12 déc 2025)
-- **[audits/CHECKLIST_FINALE_SECURITE.md](./audits/CHECKLIST_FINALE_SECURITE.md)** — Checklist sécurité complète
-- **[CORRECTIONS_SECURITE_EFFECTUEES.md](./CORRECTIONS_SECURITE_EFFECTUEES.md)** — Détails des corrections sécurité
-- **[audits/AUDIT_SECURITE_SENIOR.md](./audits/AUDIT_SECURITE_SENIOR.md)** — Audit sécurité
-- **[audits/AUDIT_POST_CORRECTIONS.md](./audits/AUDIT_POST_CORRECTIONS.md)** — Audit après corrections
-- **[audits/ANALYSE_EXPLOITATION_PROJET.md](./audits/ANALYSE_EXPLOITATION_PROJET.md)** — Audit d'exploitation
+### 📊 Statut
+- `status/STATUT_FINAL_PROJET.md` - Statut final projet
+- `status/VERSIONS_UNIFIEES.md` - Versions unifiées
 
 ---
 
-## Dépannage
-
-- **[troubleshooting/TESTS_PROBLEMATIQUES.md](./troubleshooting/TESTS_PROBLEMATIQUES.md)** — Problèmes tests
-- **[troubleshooting/TESTS_DOUBLONS_SOLUTION.md](./troubleshooting/TESTS_DOUBLONS_SOLUTION.md)** — Solution doublons tests
-- **[troubleshooting/ERREURS_STALE_FILES.md](./troubleshooting/ERREURS_STALE_FILES.md)** — Erreurs fichiers stale
-- **[troubleshooting/CORRECTION_SQFLITE_IOS.md](./troubleshooting/CORRECTION_SQFLITE_IOS.md)** — Correction SQFLite iOS
-- **[troubleshooting/GRADLE_FIX_GUIDE.md](./troubleshooting/GRADLE_FIX_GUIDE.md)** — Fix Gradle
-- **[troubleshooting/EXPLICATION_WIFI_ADB.md](./troubleshooting/EXPLICATION_WIFI_ADB.md)** — Explication WiFi ADB
-- **[troubleshooting/TROUVER_CONNECT_VIA_NETWORK.md](./troubleshooting/TROUVER_CONNECT_VIA_NETWORK.md)** — Trouver et connecter via réseau
-- **[troubleshooting/SOLUTION_FICHIERS_MACOS.md](./troubleshooting/SOLUTION_FICHIERS_MACOS.md)** — Solution fichiers macOS
-
----
-
-## Optimisations et analyses
-
-- **[OPTIMISATIONS_COMPLETE.md](./OPTIMISATIONS_COMPLETE.md)** — Optimisations complètes
-- **[OPTIMISATIONS_TESTS.md](./OPTIMISATIONS_TESTS.md)** — Optimisations tests
-- **[audits/ANALYSE_PERFORMANCE_TESTS.md](./audits/ANALYSE_PERFORMANCE_TESTS.md)** — Analyse performance tests
-- **[audits/ANALYSE_BIOMETRIE.md](./audits/ANALYSE_BIOMETRIE.md)** — Analyse biométrie
-- **[audits/AUDIT_ET_OPTIMISATIONS.md](./audits/AUDIT_ET_OPTIMISATIONS.md)** — Audit et optimisations
-
----
-
-## Changelog et historique
-
-- **[CHANGELOG.md](./CHANGELOG.md)** — Historique des changements
-
----
-
-## Recherche rapide
-
-| Sujet | Document principal |
-|-------|-------------------|
-| Statut projet | `status/STATUT_FINAL_PROJET.md` |
-| API | `API_DOCUMENTATION.md` |
-| Architecture | `ARCHITECTURE.md` |
-| Vue d'ensemble | `VUE_ENSEMBLE_PROJET.md` |
-| Sécurité | `audits/CHECKLIST_FINALE_SECURITE.md` |
-| Release | `deployment/CHECKLIST_RELEASE_CONSOLIDEE.md` |
-| Plans | `plans/README.md` |
-| Guide utilisateur | `guides/GUIDE_UTILISATION_MERE.md` |
-| Dépannage | `troubleshooting/` |
-
----
-
-## Structure des dossiers
+## 🗂️ STRUCTURE DOCUMENTATION
 
 ```
 docs/
-├── INDEX_DOCUMENTATION.md          # Ce fichier
-├── status/STATUT_FINAL_PROJET.md         # Statut principal
-├── ARCHITECTURE.md                 # Architecture système
-├── VUE_ENSEMBLE_PROJET.md         # Vue d'ensemble visuelle
-├── API_DOCUMENTATION.md           # Documentation API complète
-├── guides/                        # Guides utilisateur et développeur
-├── deployment/                    # Guides de déploiement
-├── troubleshooting/               # Dépannage
-├── audits/                        # Audits et analyses
-├── plans/                         # Plans d'implémentation
-└── archive/                       # Archives
+├── INDEX_DOCUMENTATION.md (ce fichier)
+├── README.md
+├── plans/ ⭐ Documents principaux
+│   ├── STATUT_COMPLET_27_DECEMBRE_2025.md
+│   ├── PLAN_FUTUR_AMELIORATIONS.md
+│   └── CE_QUI_RESTE_A_FAIRE.md
+├── audits/ ⭐ Audits récents
+│   ├── AUDIT_UTILISATEUR_15_JANVIER_2026.md
+│   └── RESUME_AMELIORATIONS_27_DECEMBRE_2025.md
+├── deployment/ (39 fichiers)
+├── guides/ (36 fichiers)
+├── integrations/ (9 fichiers)
+├── troubleshooting/ (17 fichiers)
+├── analysis/ (4 fichiers)
+├── optimizations/ (3 fichiers)
+├── releases/ (4 fichiers)
+├── status/ (2 fichiers)
+├── meta/ (3 fichiers)
+└── archive/ (documents obsolètes)
 ```
 
 ---
 
-## Navigation rapide
+## 📌 NAVIGATION RAPIDE
 
-### Par type de document
+### Pour connaître le statut actuel
+1. Lire `plans/STATUT_COMPLET_27_DECEMBRE_2025.md`
 
-| Type | Documents principaux |
-|------|---------------------|
-| **Statut** | `status/STATUT_FINAL_PROJET.md` |
-| **Architecture** | `ARCHITECTURE.md`, `VUE_ENSEMBLE_PROJET.md` |
-| **API** | `API_DOCUMENTATION.md`, `API.md` |
-| **Sécurité** | `audits/CHECKLIST_FINALE_SECURITE.md`, `audits/AUDIT_SECURITE_SENIOR.md` |
-| **Release** | `deployment/CHECKLIST_RELEASE_CONSOLIDEE.md`, `releases/RELEASE_NOTES_V1.2.0.md` |
-| **Guides** | `guides/GUIDE_UTILISATION_MERE.md`, `guides/GUIDE_MISE_A_JOUR_FLUTTER.md` |
+### Pour voir les problèmes actuels
+1. Lire `audits/AUDIT_UTILISATEUR_15_JANVIER_2026.md`
 
-### Par besoin
+### Pour planifier les prochaines étapes
+1. Lire `plans/CE_QUI_RESTE_A_FAIRE.md`
+2. Lire `plans/PLAN_FUTUR_AMELIORATIONS.md`
 
-| Besoin | Document recommandé |
-|--------|---------------------|
-| Comprendre le projet | `status/STATUT_FINAL_PROJET.md` |
-| Démarrer le développement | `ARCHITECTURE.md`, `CONTRIBUTING.md` |
-| Utiliser l'API | `API_DOCUMENTATION.md` |
-| Déployer | `deployment/DEPLOYMENT.md`, `deployment/BUILD_RELEASE_ANDROID.md` |
-| Comprendre la sécurité | `audits/CHECKLIST_FINALE_SECURITE.md` |
-| Utiliser l'application | `guides/GUIDE_UTILISATION_MERE.md` |
+### Pour comprendre l'architecture
+1. Lire `ARCHITECTURE.md`
+2. Lire `ARCHITECTURE_SERVICES.md`
+
+### Pour déployer
+1. Lire `deployment/DEPLOYMENT.md`
+2. Lire `deployment/PLAY_STORE_METADATA.md`
 
 ---
 
-## Voir aussi
+## 📊 STATISTIQUES
 
-- [status/STATUT_FINAL_PROJET.md](status/STATUT_FINAL_PROJET.md) - Statut final consolidé du projet
-- [VALIDATION.md](VALIDATION.md) - Checklist de validation
-- [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) - Checklist de release
+- **Total fichiers MD** : ~161 (hors archive)
+- **Fichiers archivés** : ~50+ (dans `archive/`)
+- **Dernière mise à jour** : 27 décembre 2025
 
 ---
 
-<div align="center">
+## 🗑️ ARCHIVES
 
-*Dernière mise à jour : 10 décembre 2025*
+Les documents obsolètes sont dans `docs/archive/` :
+- Audits anciens (novembre/décembre 2025)
+- Plans obsolètes
+- Métadonnées anciennes
 
-</div>
+**Ne pas utiliser les documents archivés** - Ils sont conservés pour référence historique uniquement.
+
+---
+
+**Date de création** : 27 décembre 2025  
+**Dernière mise à jour** : 27 décembre 2025
