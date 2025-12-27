@@ -91,7 +91,6 @@ class GoogleAuthService {
         // Erreur spécifique redirect_uri_mismatch pour le web
         // Sur le web, Flutter utilise automatiquement l'origine de la page comme redirect_uri
         // Il faut donc ajouter exactement cette URI dans Google Cloud Console
-        final currentOrigin = kIsWeb ? 'http://localhost:8080' : 'N/A';
         userFriendlyMessage = 
             '🔧 Erreur redirect_uri_mismatch (Erreur 400)\n\n'
             '⚠️ Les URI de redirection ne sont pas configurées dans Google Cloud Console.\n\n'
