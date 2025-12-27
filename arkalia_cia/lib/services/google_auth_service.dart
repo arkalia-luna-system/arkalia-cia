@@ -87,20 +87,26 @@ class GoogleAuthService {
             'URL : https://console.cloud.google.com/apis/credentials?project=arkalia-cia';
       } else if (errorMessage.contains('redirect_uri_mismatch') ||
                  errorMessage.contains('redirect') ||
-                 errorMessage.contains('400')) {
+                 (errorMessage.contains('400') && kIsWeb)) {
         // Erreur spécifique redirect_uri_mismatch pour le web
+        // Sur le web, Flutter utilise automatiquement l'origine de la page comme redirect_uri
+        // Il faut donc ajouter exactement cette URI dans Google Cloud Console
+        final currentOrigin = kIsWeb ? 'http://localhost:8080' : 'N/A';
         userFriendlyMessage = 
             '🔧 Erreur redirect_uri_mismatch (Erreur 400)\n\n'
             '⚠️ Les URI de redirection ne sont pas configurées dans Google Cloud Console.\n\n'
-            '📋 ACTION REQUISE :\n'
-            '1. Aller sur : https://console.cloud.google.com/apis/credentials?project=arkalia-cia\n'
-            '2. Cliquer sur "Client Web 1"\n'
-            '3. Dans "URIs de redirection autorisées", ajouter :\n'
-            '   • http://localhost:8080\n'
-            '   • http://localhost:8080/\n'
-            '4. Cliquer sur "ENREGISTRER"\n'
-            '5. Attendre 1-2 minutes puis réessayer\n\n'
-            '📖 Guide complet : docs/guides/FIX_REDIRECT_URI_MISMATCH.md';
+            '📋 ACTION REQUISE (2 minutes) :\n\n'
+            '1️⃣ Ouvrir Google Cloud Console :\n'
+            '   👉 https://console.cloud.google.com/apis/credentials?project=arkalia-cia\n\n'
+            '2️⃣ Cliquer sur "Client Web 1" (dans la liste OAuth 2.0 Client IDs)\n\n'
+            '3️⃣ Faire défiler jusqu\'à "URIs de redirection autorisées"\n\n'
+            '4️⃣ Cliquer sur "+ AJOUTER UN URI" et ajouter (une par une) :\n'
+            '   ✅ http://localhost:8080\n'
+            '   ✅ http://localhost:8080/\n'
+            '   (Si vous utilisez un autre port, ajoutez aussi http://localhost:PORT)\n\n'
+            '5️⃣ Cliquer sur "ENREGISTRER" (en bas de la page)\n\n'
+            '6️⃣ Attendre 1-2 minutes puis recharger cette page (Ctrl+F5)\n\n'
+            '📖 Guide détaillé : docs/guides/FIX_REDIRECT_URI_MISMATCH.md';
       } else if (errorMessage.contains('NETWORK_ERROR') ||
                  errorMessage.contains('7:') ||
                  errorMessage.contains('network') ||
