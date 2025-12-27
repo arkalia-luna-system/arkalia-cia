@@ -93,7 +93,7 @@ void main() {
 
     testWidgets('Affiche les rappels existants', (WidgetTester tester) async {
       // SKIP: Ce test cause des timeouts car _loadReminders() appelé dans initState() bloque
-      // Le problème vient de LocalStorageService.getReminders() qui peut bloquer en test
+      // Le problème vient de LocalStorageService.getReminders() qui peut bloquer indéfiniment
       // Solution temporaire: skip le test jusqu'à ce que le problème soit résolu
       // TODO: Corriger en mockant LocalStorageService ou en refactorant _loadReminders()
       return;
@@ -116,14 +116,17 @@ void main() {
         ),
       );
 
-      // Un seul pump pour construire le widget
+      // Un seul pump pour construire le widget initial
       // On ne vérifie que la construction du widget, pas le chargement complet
-      // car _loadReminders() peut prendre du temps et causer des timeouts
+      // car _loadReminders() appelé dans initState() peut bloquer en test
       await tester.pump();
       
       // Vérifier que le widget se construit correctement
-      // Le widget doit afficher le titre de l'AppBar (toujours présent)
+      // Le widget doit afficher le titre de l'AppBar (toujours présent immédiatement)
       expect(find.text('Rappels'), findsOneWidget, reason: 'Le titre de l\'écran doit être affiché');
+      
+      // Note: On ne vérifie pas le contenu des rappels car _loadReminders() peut bloquer
+      // Le test vérifie seulement que le widget se construit correctement
     });
 
     testWidgets('Affiche le bouton Modifier sur les rappels non terminés', (WidgetTester tester) async {
