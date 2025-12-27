@@ -52,36 +52,42 @@ class _RemindersScreenState extends State<RemindersScreen> {
       
       // Charger CalendarService en arrière-plan (ne bloque pas l'UI)
       // Essayer de charger depuis le calendrier natif (mobile seulement)
+      // IMPORTANT: Utiliser un Future.delayed pour s'assurer que cela ne bloque jamais
+      // même si CalendarService bloque de manière synchrone
       if (!kIsWeb && mounted) {
-        try {
-          // Ajouter un timeout très court pour éviter les blocages en test
-          // Utiliser un Future avec timeout plutôt qu'un Timer pour éviter les timers en attente
-          // Timeout court (100ms) car CalendarService peut bloquer indéfiniment en test
-          final calendarEventsFuture = CalendarService.getUpcomingReminders();
-          final calendarEvents = await calendarEventsFuture.timeout(
-            const Duration(milliseconds: 100),
-            onTimeout: () => <Map<String, dynamic>>[],
-          );
-          // Convertir les événements calendrier en format local
-          final calendarReminders = calendarEvents.map((event) => {
-            'id': event['id'] ?? '',
-            'title': (event['title'] ?? '').replaceFirst('[Santé] ', ''),
-            'description': event['description'] ?? '',
-            'reminder_date': event['reminder_date'] ?? '',
-            'is_completed': false,
-            'source': 'calendar',
-          }).toList();
-          // Mettre à jour avec les rappels calendrier si disponibles
-          if (mounted && calendarReminders.isNotEmpty) {
-            setState(() {
-              reminders = [...localReminders, ...calendarReminders];
-              _hasMoreItems = reminders.length > _itemsPerPage;
-              displayedReminders = reminders.take(_itemsPerPage).toList();
-            });
+        // Exécuter de manière asynchrone sans bloquer, avec un délai pour éviter les blocages en test
+        Future.delayed(const Duration(milliseconds: 100), () async {
+          if (!mounted) return;
+          try {
+            // Ajouter un timeout très court pour éviter les blocages
+            // Timeout court (50ms) car CalendarService peut bloquer indéfiniment en test
+            final calendarEventsFuture = CalendarService.getUpcomingReminders();
+            final calendarEvents = await calendarEventsFuture.timeout(
+              const Duration(milliseconds: 50),
+              onTimeout: () => <Map<String, dynamic>>[],
+            );
+            if (!mounted) return;
+            // Convertir les événements calendrier en format local
+            final calendarReminders = calendarEvents.map((event) => {
+              'id': event['id'] ?? '',
+              'title': (event['title'] ?? '').replaceFirst('[Santé] ', ''),
+              'description': event['description'] ?? '',
+              'reminder_date': event['reminder_date'] ?? '',
+              'is_completed': false,
+              'source': 'calendar',
+            }).toList();
+            // Mettre à jour avec les rappels calendrier si disponibles
+            if (mounted && calendarReminders.isNotEmpty) {
+              setState(() {
+                reminders = [...localReminders, ...calendarReminders];
+                _hasMoreItems = reminders.length > _itemsPerPage;
+                displayedReminders = reminders.take(_itemsPerPage).toList();
+              });
+            }
+          } catch (e) {
+            // Ignorer les erreurs de calendrier, on a déjà les rappels locaux
           }
-        } catch (e) {
-          // Ignorer les erreurs de calendrier, on a déjà les rappels locaux
-        }
+        });
       }
     } catch (e) {
       if (mounted) {
