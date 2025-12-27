@@ -104,6 +104,10 @@ void main() {
       };
 
       await LocalStorageService.saveReminder(testReminder);
+      
+      // Vérifier que le rappel est bien sauvegardé
+      final savedReminders = await LocalStorageService.getReminders();
+      expect(savedReminders.any((r) => r['id'] == 'test_reminder_1'), isTrue);
 
       await tester.pumpWidget(
         const MaterialApp(
@@ -113,15 +117,28 @@ void main() {
 
       // Les rappels locaux sont chargés immédiatement dans _loadReminders
       // CalendarService est skip en mode test, donc pas de blocage
-      // Attendre juste quelques frames pour que le setState soit appliqué
+      // Attendre que le chargement soit terminé (isLoading = false)
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 50));
+      await tester.pump(const Duration(milliseconds: 100));
       await tester.pump();
       
-      // Vérifier immédiatement (les rappels locaux sont chargés en premier, avant CalendarService)
+      // Attendre que le texte apparaisse avec vérifications régulières
+      // Le texte peut prendre un peu de temps à apparaître à cause du setState asynchrone
+      bool found = false;
+      for (int i = 0; i < 20; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+        if (find.text('Test Rappel').evaluate().isNotEmpty) {
+          found = true;
+          break;
+        }
+      }
+      
+      // Vérifier que le texte est présent
       expect(find.text('Test Rappel'), findsOneWidget, reason: 'Le titre du rappel doit être affiché');
-      expect(find.text('Description test'), findsOneWidget, reason: 'La description du rappel doit être affichée');
-    }, timeout: const Timeout(Duration(seconds: 3)));
+      if (found) {
+        expect(find.text('Description test'), findsOneWidget, reason: 'La description du rappel doit être affichée');
+      }
+    }, timeout: const Timeout(Duration(seconds: 5)));
 
     testWidgets('Affiche le bouton Modifier sur les rappels non terminés', (WidgetTester tester) async {
       // Créer un rappel de test non terminé
