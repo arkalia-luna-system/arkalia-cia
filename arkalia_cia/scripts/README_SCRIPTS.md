@@ -6,7 +6,39 @@
 
 ## 🚀 Scripts Disponibles
 
-### 1. `run-web.sh` - Lancer sur Web
+### 1. `dev-web-fast.sh` - Développement Rapide (⭐ RECOMMANDÉ)
+Lance l'app en mode développement avec **hot reload** et **preview en temps réel**.
+
+```bash
+cd arkalia_cia
+bash scripts/dev-web-fast.sh
+```
+
+**Fonctionnalités** :
+- ✅ **Hot reload** activé (appuyez sur `r` pour recharger)
+- ✅ **Skip nettoyage** (démarrage rapide)
+- ✅ **Skip pub get** si déjà à jour
+- ✅ **Vérification lint** avant lancement (non bloquant)
+- ✅ **Accès mobile** via réseau local (même WiFi)
+- ✅ **Mode Device Emulation** dans Chrome (mini télé sur écran)
+- ✅ **Démarrage ultra-rapide** (< 10 secondes)
+
+**Pour avoir la "mini télé" sur l'écran** :
+1. Lancez le script
+2. Chrome s'ouvre automatiquement
+3. Appuyez sur `F12` ou `Cmd+Option+I` (DevTools)
+4. Cliquez sur l'icône "Toggle device toolbar" (`Cmd+Shift+M`)
+5. Sélectionnez un appareil (iPhone 14 Pro, Galaxy S21, etc.)
+6. L'app s'affiche dans une fenêtre type téléphone sur votre écran
+7. Modifiez le code → appuyez sur `r` dans le terminal → voir les changements instantanément !
+
+**URLs** :
+- Mac : `http://localhost:8080`
+- Mobile (même WiFi) : `http://<votre-ip>:8080`
+
+---
+
+### 2. `run-web.sh` - Lancer sur Web
 Lance l'app sur le navigateur web (Chrome ou web-server).
 
 ```bash
