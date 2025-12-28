@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
+import 'dart:typed_data';
 // ignore: avoid_web_libraries_in_flutter, deprecated_member_use
+// Ce fichier n'est exporté que sur web (via web_file_helper.dart), donc dart:html est toujours disponible
 import 'dart:html' as html;
 
 /// Helper pour créer un Blob URL sur web
