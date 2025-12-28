@@ -93,7 +93,7 @@ class FilenameValidator:
             raise ValueError("Le nom de fichier contient des caractères interdits")
 
         # Vérifier qu'il ne se termine pas par un point ou espace (Windows)
-        if safe_filename.endswith((" ", ".")):  # type: ignore[unreachable]
+        if safe_filename.endswith((" ", ".")):
             raise ValueError(
                 "Le nom de fichier ne peut pas se terminer par un espace ou un point"
             )

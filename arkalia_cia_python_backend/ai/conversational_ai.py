@@ -15,6 +15,8 @@ try:
 except ImportError:
     ARIA_AVAILABLE = False
 
+from arkalia_cia_python_backend.config import get_settings
+
 logger = logging.getLogger(__name__)
 
 
@@ -22,8 +24,11 @@ class ConversationalAI:
     """IA conversationnelle pour santé"""
 
     def __init__(
-        self, max_memory_size: int = 50, aria_base_url: str = "http://localhost:8001"
+        self, max_memory_size: int = 50, aria_base_url: str | None = None
     ):
+        # Utiliser la config par défaut si non spécifié
+        if aria_base_url is None:
+            aria_base_url = get_settings().aria_base_url
         self.context_memory: list[dict[str, Any]] = []
         self.max_memory_size = max_memory_size  # Limiter la taille de la mémoire
         # Intégration ARIA si disponible

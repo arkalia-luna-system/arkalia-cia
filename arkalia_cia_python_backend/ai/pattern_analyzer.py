@@ -125,7 +125,7 @@ class AdvancedPatternAnalyzer:
 
     def _detect_recurrence(self, data: list[dict]) -> list[dict]:
         """Détecte patterns récurrents"""
-        patterns = []
+        patterns: list[dict[str, Any]] = []
 
         if not data:
             return patterns

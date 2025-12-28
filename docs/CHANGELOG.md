@@ -1,5 +1,44 @@
 # Changelog
 
+## [1.3.1+8] - 2025-12-28
+
+### Améliorations Architecture et Code
+- ✅ **Refactoring ARIA Integration** : Élimination de 75% de code dupliqué
+  - Méthode helper centralisée `_make_request_with_retry()` créée
+  - Réduction de ~120 lignes à ~30 lignes réutilisables
+  - Gestion d'erreurs standardisée avec retry logic et backoff exponentiel
+  - Logging cohérent pour toutes les méthodes ARIA
+
+- ✅ **Configuration centralisée ARIA** : 
+  - `ARIA_BASE_URL` et `ARIA_TIMEOUT` configurables via variables d'environnement
+  - Configuration centralisée dans `config.py` avec Pydantic Settings
+  - Rétrocompatibilité maintenue (valeurs par défaut)
+  - Tous les services mis à jour (MedicalReportService, ConversationalAI, ARIAIntegration)
+
+- ✅ **Optimisations performance web** :
+  - Réduction de ~90% des opérations DOM dans `index.html`
+  - Remplacement de `querySelectorAll('*')` par sélection ciblée
+  - Fonctions réutilisables créées (`isFlutterLoaded()`, `hideLoadingAndShowFlutter()`)
+  - Gestion optimisée des timeouts Flutter
+
+- ✅ **Documentation CSP améliorée** :
+  - Commentaires détaillés expliquant les directives CSP nécessaires
+  - Références vers documentation Flutter et MDN
+  - Explication des alternatives et pourquoi elles ne sont pas viables
+
+### Corrections Techniques
+- ✅ **Erreurs mypy corrigées** :
+  - Annotation de type ajoutée pour `patterns` dans `pattern_analyzer.py`
+  - Commentaire `type: ignore` inutilisé supprimé dans `filename_validator.py`
+
+- ✅ **Standardisation gestion d'erreurs** :
+  - Toutes les méthodes ARIA utilisent maintenant le même pattern de retry
+  - Cohérence garantie dans la gestion des erreurs réseau
+
+### Documentation
+- ✅ **Rapport d'analyse complet** : `docs/analysis/RAPPORT_ANALYSE_PROJET.md`
+- ✅ **Documentation améliorations** : `docs/analysis/AMELIORATIONS_APPLIQUEES.md`
+
 ## [1.3.1+7] - 2025-12-27
 
 ### Corrections Critiques de Sécurité

@@ -14,6 +14,7 @@ try:
 except ImportError:
     ARIA_AVAILABLE = False
 
+from arkalia_cia_python_backend.config import get_settings
 from arkalia_cia_python_backend.database import CIADatabase
 
 logger = logging.getLogger(__name__)
@@ -25,8 +26,11 @@ class MedicalReportService:
     def __init__(
         self,
         db: CIADatabase,
-        aria_base_url: str = "http://localhost:8001",
+        aria_base_url: str | None = None,
     ):
+        # Utiliser la config par défaut si non spécifié
+        if aria_base_url is None:
+            aria_base_url = get_settings().aria_base_url
         self.db = db
         self.aria: ARIAIntegration | None = None
         if ARIA_AVAILABLE:

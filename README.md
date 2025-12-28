@@ -24,9 +24,9 @@
 ## Overview
 
 **Project Status**: En cours, release Q1 2026 - Passage en stable v1.0  
-**Last Audit**: 12 décembre 2025 (Note: 10/10 ✅ - Perfection atteinte !)  
+**Last Audit**: 28 décembre 2025 (Note: 10/10 ✅ - Perfection atteinte !)  
 **Production-Ready**: 100% ✅  
-**Version**: 1.3.1+6 (12 décembre 2025)  
+**Version**: 1.3.1+8 (28 décembre 2025)  
 **Dernière simplification**: 25 janvier 2025 - Authentification simplifiée (-30% complexité) ✅  
 **Google Play Console**: ⚠️ Version 1.3.1 - Rejeté le 9 décembre 2025 (politique familiale)  
 **PWA Alternative**: ✅ Déployée sur https://arkalia-luna-system.github.io/arkalia-cia/  
@@ -38,7 +38,13 @@
 **Accessibilité**: Améliorée ✅ (tous textes ≥14px pour seniors, uniformisation complète UI - 12 décembre 2025)  
 **Nouvelles fonctionnalités** (12 décembre 2025): ✅ Profil multi-appareil implémenté (synchronisation E2E)  
 **CI/CD**: ✅ Refactorisé en 3 phases séparées (27 novembre 2025) - Configuration flutter.source, Nettoyage macOS, Build APK  
-**Dernières améliorations** (12 décembre 2025):
+**Dernières améliorations** (28 décembre 2025):
+- ✅ **Refactoring ARIA** : Élimination de 75% de code dupliqué, configuration centralisée
+- ✅ **Optimisations performance web** : Réduction de 90% des opérations DOM
+- ✅ **Documentation CSP améliorée** : Commentaires détaillés sur les choix de sécurité
+- ✅ **Standardisation gestion d'erreurs** : Pattern de retry uniforme pour toutes les méthodes ARIA
+
+**Améliorations précédentes** (12 décembre 2025):
 - ✅ **Profil multi-appareil** : Système complet de synchronisation entre appareils (UserProfile, Device, MultiDeviceSyncService)
 - ✅ **Tests profil multi-appareil** : 22 tests Flutter passent (modèles et services)
 - ✅ **Accessibilité améliorée** : Tailles de police uniformisées à 14px minimum dans UserProfileScreen

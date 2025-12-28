@@ -24,17 +24,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#1976D2">
 
-  <!-- Content Security Policy pour Flutter web (mode développement) -->
-  <!-- unsafe-eval nécessaire pour hot reload en développement -->
-  <!-- gstatic.com nécessaire pour CanvasKit Flutter -->
-  <!-- WebSocket nécessaire pour hot reload (ws://localhost:8081) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; 
-             script-src 'self' 'unsafe-inline' 'unsafe-eval' https://r2cdn.perplexity.ai https://www.gstatic.com; 
-             style-src 'self' 'unsafe-inline' https://r2cdn.perplexity.ai https://fonts.googleapis.com; 
-             font-src 'self' data: https://r2cdn.perplexity.ai https://fonts.gstatic.com; 
-             img-src 'self' data: blob: https:; 
-             connect-src 'self' ws://localhost:* http://localhost:* https://r2cdn.perplexity.ai https://www.gstatic.com; 
-             worker-src 'self' blob:;">
+  <!-- Content Security Policy pour Flutter web -->
+  <!-- Détection automatique de l'environnement (dev vs production) -->
+  <!-- En développement: WebSocket localhost autorisé pour hot reload -->
+  <!-- En production: WebSocket localhost désactivé pour sécurité renforcée -->
+  <!-- Note: unsafe-eval et unsafe-inline sont nécessaires pour Flutter web même en production -->
+  <script>
+    // Détecter si on est en mode développement ou production
+    const isProduction = !window.location.hostname.includes('localhost') &&
+      !window.location.hostname.includes('127.0.0.1') &&
+      !window.location.hostname.includes('0.0.0.0');
+
+    // CSP pour développement (avec WebSocket localhost pour hot reload)
+    const cspDev = "default-src 'self'; " +
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://r2cdn.perplexity.ai https://www.gstatic.com; " +
+      "style-src 'self' 'unsafe-inline' https://r2cdn.perplexity.ai https://fonts.googleapis.com; " +
+      "font-src 'self' data: https://r2cdn.perplexity.ai https://fonts.gstatic.com; " +
+      "img-src 'self' data: blob: https:; " +
+      "connect-src 'self' ws://localhost:* http://localhost:* https://r2cdn.perplexity.ai https://www.gstatic.com; " +
+      "worker-src 'self' blob:;";
+
+    // CSP pour production (sans WebSocket localhost, plus strict)
+    const cspProd = "default-src 'self'; " +
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://r2cdn.perplexity.ai https://www.gstatic.com; " +
+      "style-src 'self' 'unsafe-inline' https://r2cdn.perplexity.ai https://fonts.googleapis.com; " +
+      "font-src 'self' data: https://r2cdn.perplexity.ai https://fonts.gstatic.com; " +
+      "img-src 'self' data: blob: https:; " +
+      "connect-src 'self' https://r2cdn.perplexity.ai https://www.gstatic.com; " +
+      "worker-src 'self' blob:;";
+
+    // Appliquer le CSP approprié
+    const csp = isProduction ? cspProd : cspDev;
+    const metaCSP = document.createElement('meta');
+    metaCSP.httpEquiv = 'Content-Security-Policy';
+    metaCSP.content = csp;
+    document.head.appendChild(metaCSP);
+  </script>
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -60,22 +85,48 @@
     const MAX_ERRORS = 10; // Maximum 10 erreurs affichées
 
     console.error = function (...args) {
-      const message = args.join(' ');
+      const message = args.join(' ').toLowerCase();
 
       // Ignorer TOUTES les erreurs WebSocket et "Library not defined"
-      if (message.includes('WebSocket') ||
-        message.includes('Library not defined') ||
+      // Patterns complets pour capturer toutes les variantes
+      if (message.includes('websocket') ||
+        message.includes('web socket') ||
+        message.includes('ws://') ||
+        message.includes('wss://') ||
+        message.includes('library not defined') ||
         message.includes('org-dartlang-app') ||
-        message.includes('Failed to initialize') ||
+        message.includes('failed to initialize') ||
         message.includes('refresh.js') ||
         message.includes('ddc_module_loader') ||
-        message.includes('ws://localhost:8081') ||
-        message.includes('ws://localhost:8080') ||
+        message.includes('localhost:8081') ||
+        message.includes('localhost:8080') ||
+        message.includes('127.0.0.1:8081') ||
+        message.includes('127.0.0.1:8080') ||
         message.includes('$dwdsSseHandler') ||
-        message.includes('Connection refused') ||
-        message.includes('ERR_CONNECTION_REFUSED') ||
-        message.includes('initClient') ||
-        message.includes('client.js')) {
+        message.includes('dwds') ||
+        message.includes('connection refused') ||
+        message.includes('err_connection_refused') ||
+        message.includes('connection closed') ||
+        message.includes('connection failed') ||
+        message.includes('connection error') ||
+        message.includes('network error') ||
+        message.includes('networkerror') ||
+        message.includes('initclient') ||
+        message.includes('init client') ||
+        message.includes('client.js') ||
+        message.includes('flutter_bootstrap') ||
+        message.includes('main.dart.js') ||
+        message.includes('dart_sdk') ||
+        message.includes('dart_sdk.js') ||
+        message.includes('socketexception') ||
+        message.includes('socket exception') ||
+        message.includes('failed to load') ||
+        message.includes('loading chunk') ||
+        message.includes('chunk load failed') ||
+        message.includes('hot reload') ||
+        message.includes('hotreload') ||
+        message.includes('devtools') ||
+        message.includes('dev tools')) {
         // Ne pas afficher ces erreurs
         return;
       }
@@ -90,16 +141,26 @@
     };
 
     console.warn = function (...args) {
-      const message = args.join(' ');
+      const message = args.join(' ').toLowerCase();
       // Ignorer TOUS les avertissements WebSocket et viewport
-      if (message.includes('WebSocket') ||
+      if (message.includes('websocket') ||
+        message.includes('web socket') ||
         message.includes('ws://') ||
+        message.includes('wss://') ||
         message.includes('refresh.js') ||
         message.includes('connection') ||
+        message.includes('localhost:8081') ||
+        message.includes('localhost:8080') ||
         message.includes('viewport') ||
-        message.includes('Found an existing <meta name="viewport">') ||
-        message.includes('Flutter Web uses its own viewport') ||
-        message.includes('dom.dart')) {
+        message.includes('found an existing') ||
+        message.includes('flutter web uses its own viewport') ||
+        message.includes('dom.dart') ||
+        message.includes('hot reload') ||
+        message.includes('hotreload') ||
+        message.includes('devtools') ||
+        message.includes('dev tools') ||
+        message.includes('compiling') ||
+        message.includes('loading')) {
         return;
       }
       originalWarn.apply(console, args);
@@ -107,24 +168,32 @@
 
     // Masquer aussi certains logs verbeux (mais garder les logs importants)
     console.log = function (...args) {
-      const message = args.join(' ');
+      const message = args.join(' ').toLowerCase();
       // Ignorer SEULEMENT les logs de compilation Flutter très verbeux
-      if (message.includes('WebSocket connection') ||
+      if (message.includes('websocket connection') ||
+        message.includes('websocket') ||
+        message.includes('ws://') ||
         message.includes('refresh.js') ||
         message.includes('ddc_module_loader') ||
-        (message.includes('compiling') && message.includes('Flutter'))) {
+        message.includes('localhost:8081') ||
+        message.includes('localhost:8080') ||
+        message.includes('hot reload') ||
+        message.includes('hotreload') ||
+        (message.includes('compiling') && message.includes('flutter')) ||
+        (message.includes('loading') && message.includes('flutter'))) {
         return;
       }
       // Garder tous les autres logs (importants pour le debug)
       originalLog.apply(console, args);
     };
 
-    // Réinitialiser les console après 60 secondes (temps de compilation max)
+    // Réinitialiser les console après 30 secondes (temps de compilation max)
+    // Plus court pour éviter que le masquage n'interfère avec l'affichage
     setTimeout(() => {
       console.error = originalError;
       console.warn = originalWarn;
       console.log = originalLog;
-    }, 60000);
+    }, 30000);
 
     // Enregistrer le Service Worker
     // Fix pour Comet: Désinscrire les anciens service workers avant d'enregistrer le nouveau
@@ -249,10 +318,133 @@
       visibility: visible !important;
       opacity: 1 !important;
     }
+
+    /* Forcer la visibilité du texte et des éléments Flutter */
+    body:not(:has(#loading)) flt-glass-pane,
+    body:not(:has(#loading)) flt-scene-host,
+    body:not(:has(#loading)) flt-view-host,
+    body:not(:has(#loading)) flt-semantics-host,
+    body:not(:has(#loading)) canvas {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+    }
+
+    /* S'assurer que le texte est visible */
+    body:not(:has(#loading)) * {
+      color: inherit !important;
+    }
+
+    /* Forcer la visibilité du texte Flutter */
+    body:not(:has(#loading)) flt-glass-pane *,
+    body:not(:has(#loading)) flt-scene-host *,
+    body:not(:has(#loading)) flt-view-host * {
+      color: inherit !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+
+    /* S'assurer que le canvas Flutter est visible et affiche le contenu */
+    body:not(:has(#loading)) canvas {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+    }
   </style>
   <script>
     // Charger flutter_bootstrap.js
     loadFlutterBootstrap();
+
+    // Fonction optimisée pour vérifier si Flutter est chargé
+    function isFlutterLoaded() {
+      // Vérification rapide : window.flutter
+      if (window.flutter !== undefined) return true;
+
+      // Vérification optimisée : un seul querySelector avec sélecteur combiné
+      const flutterElement = document.querySelector('flt-glass-pane, flt-scene-host, flt-view-host, flt-semantics-host, flt-scene');
+      if (flutterElement !== null) return true;
+
+      // Vérifier le canvas (plus coûteux, donc en dernier)
+      const canvas = document.querySelector('canvas');
+      if (canvas !== null && canvas.offsetWidth > 0 && canvas.offsetHeight > 0) return true;
+
+      // Vérifier les scripts Flutter
+      if (document.querySelector('script[src*="main.dart.js"], script[src*="flutter_bootstrap.js"]') !== null) return true;
+
+      // Vérifier le contenu du body (plus coûteux)
+      const bodyChildren = Array.from(document.body.children);
+      if (bodyChildren.some(child => {
+        return child.id !== 'loading' && child.tagName.startsWith('FLT-');
+      })) return true;
+
+      return false;
+    }
+
+    // Variable pour stocker le timeout 3s (pour pouvoir l'annuler)
+    let timeout3s = null;
+
+    // Fonction pour masquer l'écran de chargement et afficher Flutter
+    function hideLoadingAndShowFlutter() {
+      // Annuler le timeout 3s si Flutter est chargé avant
+      if (timeout3s) {
+        clearTimeout(timeout3s);
+        timeout3s = null;
+      }
+
+      const loading = document.getElementById('loading');
+      if (!loading) return;
+
+      console.log('✅ Flutter détecté, masquage de l\'écran de chargement');
+
+      // Supprimer immédiatement du DOM (plus efficace que display: none)
+      loading.remove();
+
+      // Forcer l'affichage du body
+      const body = document.body;
+      if (body) {
+        body.style.visibility = 'visible';
+        body.style.opacity = '1';
+        body.style.display = 'block';
+        body.style.overflow = 'auto';
+      }
+
+      // Forcer l'affichage de tous les éléments Flutter
+      const flutterElements = document.querySelectorAll('flt-glass-pane, flt-scene-host, flt-view-host, flt-semantics-host, flt-scene, canvas');
+      flutterElements.forEach(el => {
+        el.style.display = 'block';
+        el.style.visibility = 'visible';
+        el.style.opacity = '1';
+        el.style.pointerEvents = 'auto';
+      });
+
+      // Forcer l'affichage du contenu Flutter (optimisé : seulement les éléments Flutter et leurs enfants)
+      // Au lieu de querySelectorAll('*') qui est très coûteux, on cible uniquement les éléments Flutter
+      const flutterContainers = document.querySelectorAll('flt-glass-pane, flt-scene-host, flt-view-host, flt-semantics-host, flt-scene');
+      flutterContainers.forEach(container => {
+        // Appliquer les styles au conteneur
+        container.style.visibility = 'visible';
+        container.style.opacity = '1';
+        container.style.display = 'block';
+
+        // Appliquer aux enfants directs (plus efficace que tous les descendants)
+        const children = container.querySelectorAll(':scope > *');
+        children.forEach(child => {
+          if (child.tagName !== 'SCRIPT' && child.tagName !== 'STYLE') {
+            child.style.visibility = 'visible';
+            child.style.opacity = '1';
+            if (child.style.display === 'none') {
+              child.style.display = '';
+            }
+            // Forcer la couleur du texte si elle est masquée
+            if (child.style.color === 'transparent' || child.style.color === 'rgba(0,0,0,0)') {
+              child.style.color = '';
+            }
+          }
+        });
+      });
+    }
 
     // Masquer l'écran de chargement une fois que Flutter est prêt
     // Vérifier toutes les 100ms si Flutter est chargé
@@ -263,96 +455,55 @@
         return;
       }
 
-      // Vérifier si Flutter est chargé de plusieurs façons
-      const hasFlutterWindow = window.flutter !== undefined;
-      const hasFlutterElements = document.querySelector('flt-glass-pane') !== null ||
-        document.querySelector('flt-scene-host') !== null ||
-        document.querySelector('flt-view-host') !== null ||
-        document.querySelector('flt-semantics-host') !== null ||
-        document.querySelector('flt-scene') !== null;
-
-      // Vérifier si le canvas Flutter existe (même s'il n'est pas encore visible)
-      const canvas = document.querySelector('canvas');
-      const hasFlutterCanvas = canvas !== null;
-
-      // Vérifier si le body a du contenu Flutter (plus que juste le loading)
-      const bodyChildren = Array.from(document.body.children);
-      const hasFlutterContent = bodyChildren.some(child => {
-        return child.id !== 'loading' &&
-          (child.tagName.startsWith('FLT-') ||
-            child.querySelector('canvas') !== null ||
-            child.querySelector('flt-glass-pane') !== null);
-      });
-
-      // Vérifier aussi si main.dart.js est chargé
-      const hasMainDart = document.querySelector('script[src*="main.dart.js"]') !== null;
-
       // Si Flutter est chargé, masquer l'écran de chargement IMMÉDIATEMENT
-      if (hasFlutterWindow || hasFlutterElements || hasFlutterCanvas || hasFlutterContent || hasMainDart) {
-        console.log('✅ Flutter détecté, masquage de l\'écran de chargement');
-        loading.style.display = 'none'; // Masquer immédiatement
-        loading.remove(); // Supprimer du DOM
+      if (isFlutterLoaded()) {
+        hideLoadingAndShowFlutter();
         clearInterval(checkInterval);
-
-        // Forcer l'affichage du contenu Flutter
-        const body = document.body;
-        if (body) {
-          body.style.visibility = 'visible';
-          body.style.opacity = '1';
-          body.style.display = 'block';
-        }
-
-        // Forcer l'affichage de tous les éléments Flutter
-        const flutterElements = document.querySelectorAll('flt-glass-pane, flt-scene-host, canvas');
-        flutterElements.forEach(el => {
-          el.style.display = 'block';
-          el.style.visibility = 'visible';
-          el.style.opacity = '1';
-        });
       }
     }, 100);
 
     // Fallback : masquer après 5 secondes si Flutter semble chargé
     setTimeout(() => {
       const loading = document.getElementById('loading');
-      if (loading && (window.flutter || document.querySelector('canvas') || document.querySelector('script[src*="main.dart.js"]'))) {
-        console.log('✅ Flutter détecté (fallback 5s): masquage de l\'écran de chargement');
-        loading.style.display = 'none';
-        loading.remove();
+      if (loading && isFlutterLoaded()) {
+        hideLoadingAndShowFlutter();
         clearInterval(checkInterval);
-
-        // Forcer l'affichage
-        document.body.style.visibility = 'visible';
-        document.body.style.opacity = '1';
       }
     }, 5000);
 
-    // Fallback final : masquer après 15 secondes maximum
+    // Fallback final : masquer après 8 secondes maximum (plus rapide)
     setTimeout(() => {
       const loading = document.getElementById('loading');
       if (loading) {
-        console.log('⏰ Timeout 15s: masquage forcé de l\'écran de chargement');
-        loading.style.display = 'none';
-        loading.remove();
+        console.log('⏰ Timeout 8s: masquage forcé de l\'écran de chargement');
+        hideLoadingAndShowFlutter();
+        clearInterval(checkInterval);
+      }
+    }, 8000);
+
+    // Fallback ultra-rapide : masquer après 3 secondes si aucun élément Flutter détecté
+    // (pour éviter que l'utilisateur attende trop longtemps)
+    // NOTE: Ce timeout peut masquer avant que Flutter soit prêt, mais c'est acceptable
+    // car l'utilisateur verra au moins que quelque chose se passe
+    timeout3s = setTimeout(() => {
+      const loading = document.getElementById('loading');
+      if (loading && !isFlutterLoaded()) {
+        console.log('⏰ Timeout 3s: Flutter pas encore détecté, masquage quand même');
+        // Ne pas supprimer complètement, juste le rendre transparent pour éviter écran blanc
+        loading.style.opacity = '0';
+        loading.style.transition = 'opacity 0.5s';
+        setTimeout(() => {
+          if (loading.parentNode) {
+            loading.remove();
+          }
+        }, 500);
         clearInterval(checkInterval);
 
-        // Forcer l'affichage du contenu Flutter
-        const body = document.body;
-        if (body) {
-          body.style.visibility = 'visible';
-          body.style.opacity = '1';
-          body.style.display = 'block';
-        }
-
-        // Forcer l'affichage de tous les éléments
-        document.querySelectorAll('*').forEach(el => {
-          if (el.id !== 'loading') {
-            el.style.visibility = 'visible';
-            el.style.opacity = '1';
-          }
-        });
+        // Forcer l'affichage du body (mais pas tout le DOM pour éviter performance)
+        document.body.style.visibility = 'visible';
+        document.body.style.opacity = '1';
       }
-    }, 15000);
+    }, 3000);
   </script>
 </body>
 

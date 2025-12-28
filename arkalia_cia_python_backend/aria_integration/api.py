@@ -10,13 +10,15 @@ import requests
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
+from arkalia_cia_python_backend.config import get_settings
 from arkalia_cia_python_backend.utils.retry import retry_with_backoff
 
 router = APIRouter()
 
-# Configuration ARIA
-ARIA_BASE_URL = "http://127.0.0.1:8001"  # Port différent de CIA
-ARIA_TIMEOUT = 10  # Timeout augmenté pour plus de stabilité
+# Configuration ARIA (depuis config.py, configurable via variable d'environnement ARIA_BASE_URL)
+_settings = get_settings()
+ARIA_BASE_URL = _settings.aria_base_url
+ARIA_TIMEOUT = _settings.aria_timeout
 
 # Schémas pour la compatibilité CIA
 

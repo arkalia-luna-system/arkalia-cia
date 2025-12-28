@@ -17,14 +17,73 @@ logger = logging.getLogger(__name__)
 class ARIAIntegration:
     """Intégration avec ARIA pour données douleurs"""
 
-    def __init__(self, aria_base_url: str = "http://localhost:8001"):
+    def __init__(self, aria_base_url: str | None = None, aria_timeout: int | None = None):
+        # Utiliser la configuration centralisée si non fournie
+        settings = get_settings()
+        if aria_base_url is None:
+            aria_base_url = settings.aria_base_url
+        if aria_timeout is None:
+            aria_timeout = settings.aria_timeout
         self.aria_base_url = aria_base_url
+        self.aria_timeout = aria_timeout
         self.session = requests.Session()
         # Note: timeout doit être défini via adapter, pas directement sur session
 
+    def _make_request_with_retry(
+        self,
+        endpoint: str,
+        params: dict[str, Any] | None = None,
+        operation_name: str = "ARIA request",
+    ) -> requests.Response | None:
+        """
+        Helper pour effectuer une requête ARIA avec retry logic
+
+        Args:
+            endpoint: Endpoint ARIA (ex: "/api/pain-records")
+            params: Paramètres de la requête
+            operation_name: Nom de l'opération pour le logging
+
+        Returns:
+            Response si succès, None si échec après tous les retries
+        """
+        settings = get_settings()
+        max_retries = settings.max_retries
+        backoff_factor = settings.retry_backoff_factor
+
+        for attempt in range(max_retries):
+            try:
+                response = self.session.get(
+                    f"{self.aria_base_url}{endpoint}",
+                    params=params,
+                    timeout=self.aria_timeout,
+                )
+
+                if response.status_code == 200:
+                    return response
+                else:
+                    # Si erreur HTTP et pas de retry possible, logger warning
+                    if attempt >= max_retries - 1:
+                        logger.warning(f"{operation_name}: HTTP {response.status_code}")
+                    return None
+            except requests.RequestException as e:
+                if attempt < max_retries - 1:
+                    wait_time = backoff_factor**attempt
+                    logger.debug(
+                        f"Tentative {attempt + 1}/{max_retries} échouée "
+                        f"{operation_name}: {e}. Retry dans {wait_time:.2f}s"
+                    )
+                    time.sleep(wait_time)
+                else:
+                    logger.debug(f"{operation_name} non accessible: {e}")
+                    return None
+            except Exception as e:
+                logger.warning(f"Erreur inattendue {operation_name}: {e}")
+                return None
+        return None
+
     def get_pain_records(self, user_id: str, limit: int = 10) -> list[dict[str, Any]]:
         """
-        Récupère les enregistrements de douleur depuis ARIA
+        Récupère les enregistrements de douleur depuis ARIA avec retry logic
 
         Args:
             user_id: ID utilisateur
@@ -33,23 +92,22 @@ class ARIAIntegration:
         Returns:
             Liste d'enregistrements douleur
         """
-        try:
-            response = self.session.get(
-                f"{self.aria_base_url}/api/pain-records",
-                params={"user_id": str(user_id), "limit": str(limit)},
-                timeout=5,
-            )
+        response = self._make_request_with_retry(
+            "/api/pain-records",
+            params={"user_id": str(user_id), "limit": str(limit)},
+            operation_name="ARIA pain records",
+        )
 
-            if response.status_code == 200:
-                data = response.json()
-                records = data.get("records", [])
-                return [dict(r) for r in records] if records else []
-            else:
-                logger.warning(f"ARIA non disponible: {response.status_code}")
-                return []
+        if response is None:
+            return []
+
+        try:
+            data = response.json()
+            records = data.get("records", [])
+            return [dict(r) for r in records] if records else []
         except Exception as e:
-            logger.debug(f"ARIA non accessible: {e}")
-            return []  # Retourner liste vide si ARIA non disponible
+            logger.warning(f"Erreur parsing ARIA pain records: {e}")
+            return []
 
     def get_patterns(self, user_id: str) -> dict[str, Any]:
         """
@@ -61,38 +119,21 @@ class ARIAIntegration:
         Returns:
             Dict avec patterns détectés
         """
-        settings = get_settings()
-        max_retries = settings.max_retries
-        backoff_factor = settings.retry_backoff_factor
+        response = self._make_request_with_retry(
+            "/api/patterns",
+            params={"user_id": str(user_id)},
+            operation_name="ARIA patterns",
+        )
 
-        for attempt in range(max_retries):
-            try:
-                response = self.session.get(
-                    f"{self.aria_base_url}/api/patterns",
-                    params={"user_id": str(user_id)},
-                    timeout=5,
-                )
+        if response is None:
+            return {}
 
-                if response.status_code == 200:
-                    data = response.json()
-                    return dict(data) if isinstance(data, dict) else {}
-                else:
-                    return {}
-            except requests.RequestException as e:
-                if attempt < max_retries - 1:
-                    wait_time = backoff_factor**attempt
-                    logger.debug(
-                        f"Tentative {attempt + 1}/{max_retries} échouée "
-                        f"ARIA patterns: {e}. Retry dans {wait_time:.2f}s"
-                    )
-                    time.sleep(wait_time)
-                else:
-                    logger.debug(f"ARIA patterns non accessible: {e}")
-                    return {}
-            except Exception as e:
-                logger.warning(f"Erreur inattendue ARIA patterns: {e}")
-                return {}
-        return {}
+        try:
+            data = response.json()
+            return dict(data) if isinstance(data, dict) else {}
+        except Exception as e:
+            logger.warning(f"Erreur parsing ARIA patterns: {e}")
+            return {}
 
     def get_health_metrics(self, user_id: str, days: int = 30) -> dict[str, Any]:
         """
@@ -105,35 +146,18 @@ class ARIAIntegration:
         Returns:
             Dict avec métriques (sommeil, activité, stress, etc.)
         """
-        settings = get_settings()
-        max_retries = settings.max_retries
-        backoff_factor = settings.retry_backoff_factor
+        response = self._make_request_with_retry(
+            "/api/health-metrics",
+            params={"user_id": str(user_id), "days": str(days)},
+            operation_name="ARIA health metrics",
+        )
 
-        for attempt in range(max_retries):
-            try:
-                response = self.session.get(
-                    f"{self.aria_base_url}/api/health-metrics",
-                    params={"user_id": str(user_id), "days": str(days)},
-                    timeout=5,
-                )
+        if response is None:
+            return {}
 
-                if response.status_code == 200:
-                    data = response.json()
-                    return dict(data) if isinstance(data, dict) else {}
-                else:
-                    return {}
-            except requests.RequestException as e:
-                if attempt < max_retries - 1:
-                    wait_time = backoff_factor**attempt
-                    logger.debug(
-                        f"Tentative {attempt + 1}/{max_retries} échouée "
-                        f"ARIA métriques: {e}. Retry dans {wait_time:.2f}s"
-                    )
-                    time.sleep(wait_time)
-                else:
-                    logger.debug(f"ARIA métriques non accessible: {e}")
-                    return {}
-            except Exception as e:
-                logger.warning(f"Erreur inattendue ARIA métriques: {e}")
-                return {}
-        return {}
+        try:
+            data = response.json()
+            return dict(data) if isinstance(data, dict) else {}
+        except Exception as e:
+            logger.warning(f"Erreur parsing ARIA health metrics: {e}")
+            return {}

@@ -36,6 +36,10 @@ class Settings(BaseSettings):
     # Health checks
     health_check_timeout_seconds: int = 5
 
+    # ARIA Integration
+    aria_base_url: str = "http://127.0.0.1:8001"  # URL du serveur ARIA (configurable via ARIA_BASE_URL)
+    aria_timeout: int = 10  # Timeout pour les requêtes ARIA en secondes
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
