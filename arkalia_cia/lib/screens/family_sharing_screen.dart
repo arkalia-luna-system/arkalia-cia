@@ -113,11 +113,20 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
       );
     }
 
-    // Partager avec tous les membres actifs
-    final memberIds = _members.asMap().entries
-        .where((e) => e.value.isActive)
-        .map((e) => e.key)
+    // Partager avec tous les membres actifs (utiliser les IDs des membres, pas les indices)
+    final memberIds = _members
+        .where((m) => m.isActive && m.id != null)
+        .map((m) => m.id!)
         .toList();
+    
+    if (memberIds.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Aucun membre actif disponible pour le partage')),
+        );
+      }
+      return;
+    }
     
     int successCount = 0;
     int errorCount = 0;

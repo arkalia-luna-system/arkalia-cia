@@ -3,8 +3,12 @@ import 'package:crypto/crypto.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
 import '../services/local_storage_service.dart';
+import '../services/backend_config_service.dart';
+import '../services/api_service.dart';
+import '../services/auth_api_service.dart';
 import 'notification_service.dart';
 import '../utils/app_logger.dart';
+import 'package:http/http.dart' as http;
 
 class FamilyMember {
   final int? id;
@@ -172,12 +176,60 @@ class FamilySharingService {
 
   Future<void> addFamilyMember(FamilyMember member) async {
     final members = await getFamilyMembers();
-    members.add(member);
+    
+    // Générer un ID unique si non fourni
+    if (member.id == null) {
+      final maxId = members.isEmpty 
+          ? 0 
+          : members.map((m) => m.id ?? 0).reduce((a, b) => a > b ? a : b);
+      final newMember = FamilyMember(
+        id: maxId + 1,
+        name: member.name,
+        email: member.email,
+        phone: member.phone,
+        relationship: member.relationship,
+        isActive: member.isActive,
+        createdAt: member.createdAt,
+      );
+      members.add(newMember);
+    } else {
+      members.add(member);
+    }
+    
     final prefs = await SharedPreferences.getInstance();
     await prefs.setStringList(
       _membersKey,
       members.map((m) => '${m.id}|${m.name}|${m.email}|${m.phone ?? ''}|${m.relationship}|${m.isActive}|${m.createdAt.toIso8601String()}').toList(),
     );
+    
+    // Synchroniser avec le backend si configuré
+    await _syncMemberToBackend(members.last);
+  }
+  
+  /// Synchronise un membre famille avec le backend
+  Future<void> _syncMemberToBackend(FamilyMember member) async {
+    try {
+      final backendConfigured = await ApiService.isBackendConfigured();
+      if (!backendConfigured) {
+        AppLogger.debug('Backend non configuré, synchronisation membre famille ignorée');
+        return;
+      }
+      
+      final baseUrl = await BackendConfigService.getBackendURL();
+      final token = await AuthApiService.getAccessToken();
+      if (token == null) {
+        AppLogger.debug('Non authentifié, synchronisation membre famille ignorée');
+        return;
+      }
+      
+      // Note: Le backend n'a pas encore d'endpoint pour les membres famille
+      // On log juste pour l'instant
+      AppLogger.debug('Membre famille à synchroniser: ${member.name} (${member.email})');
+      // TODO: Implémenter endpoint backend pour membres famille
+    } catch (e) {
+      AppLogger.error('Erreur synchronisation membre famille', e);
+      // Ne pas bloquer l'ajout local en cas d'erreur backend
+    }
   }
 
   Future<void> removeFamilyMember(int memberId) async {
@@ -198,6 +250,22 @@ class FamilySharingService {
     bool sendNotification = true,
     String? permissionLevel, // 'view', 'download', 'full'
   }) async {
+    if (memberIds.isEmpty) {
+      AppLogger.warning('Aucun membre sélectionné pour le partage');
+      throw Exception('Aucun membre sélectionné pour le partage');
+    }
+    
+    // Vérifier que les membres existent
+    final members = await getFamilyMembers();
+    final validMemberIds = memberIds.where((id) => 
+      members.any((m) => m.id == id && m.isActive)
+    ).toList();
+    
+    if (validMemberIds.isEmpty) {
+      AppLogger.warning('Aucun membre actif trouvé pour le partage');
+      throw Exception('Aucun membre actif trouvé pour le partage');
+    }
+    
     if (encrypt) {
       await _initializeEncryption();
     }
@@ -205,35 +273,54 @@ class FamilySharingService {
     final prefs = await SharedPreferences.getInstance();
     final sharedJson = prefs.getStringList(_sharedDocumentsKey) ?? [];
     
+    // Vérifier si le document n'est pas déjà partagé avec ces membres
+    final existingShare = sharedJson.firstWhere(
+      (entry) => entry.startsWith('$documentId:'),
+      orElse: () => '',
+    );
+    
     final sharedDoc = SharedDocument(
       documentId: documentId,
-      memberIds: memberIds,
+      memberIds: validMemberIds,
       sharedAt: DateTime.now(),
       isEncrypted: encrypt,
     );
     
     // Format: documentId:memberIds:sharedAt:encrypt:permissionLevel
     final permission = permissionLevel ?? 'view';
-    sharedJson.add('$documentId:${memberIds.join(",")}:${sharedDoc.sharedAt.toIso8601String()}:$encrypt:$permission');
+    final shareEntry = '$documentId:${validMemberIds.join(",")}:${sharedDoc.sharedAt.toIso8601String()}:$encrypt:$permission';
+    
+    if (existingShare.isNotEmpty) {
+      // Mettre à jour le partage existant
+      final index = sharedJson.indexOf(existingShare);
+      sharedJson[index] = shareEntry;
+    } else {
+      // Ajouter un nouveau partage
+      sharedJson.add(shareEntry);
+    }
+    
     await prefs.setStringList(_sharedDocumentsKey, sharedJson);
+    AppLogger.info('Partage enregistré localement: document $documentId avec ${validMemberIds.length} membre(s)');
     
     // Enregistrer dans audit log
-    await _addAuditLog(documentId, memberIds, 'shared');
+    await _addAuditLog(documentId, validMemberIds, 'shared');
+    
+    // Synchroniser avec le backend si configuré
+    await _syncShareToBackend(documentId, validMemberIds, permission);
     
     // Envoyer notification si demandé
     if (sendNotification) {
       // S'assurer que NotificationService est initialisé
       await NotificationService.initialize();
       
-      final members = await getFamilyMembers();
       final doc = await LocalStorageService.getDocuments();
       final docData = doc.firstWhere(
-        (d) => d['id'] == documentId,
+        (d) => d['id']?.toString() == documentId || d['id'] == documentId,
         orElse: () => {'name': 'Document', 'original_name': 'Document'},
       );
       final docName = docData['original_name'] ?? docData['name'] ?? 'Document';
       
-      for (final memberId in memberIds) {
+      for (final memberId in validMemberIds) {
         final member = members.firstWhere(
           (m) => m.id == memberId,
           orElse: () => FamilyMember(name: 'Membre', email: '', relationship: ''),
@@ -251,7 +338,53 @@ class FamilySharingService {
       }
       
       // Confirmation visuelle supplémentaire (sera affichée dans l'UI)
-      AppLogger.info('Document $docName partagé avec ${memberIds.length} membre(s)');
+      AppLogger.info('Document $docName partagé avec ${validMemberIds.length} membre(s)');
+    }
+  }
+  
+  /// Synchronise un partage avec le backend
+  Future<void> _syncShareToBackend(String documentId, List<int> memberIds, String permissionLevel) async {
+    try {
+      final backendConfigured = await ApiService.isBackendConfigured();
+      if (!backendConfigured) {
+        AppLogger.debug('Backend non configuré, synchronisation partage ignorée');
+        return;
+      }
+      
+      final baseUrl = await BackendConfigService.getBackendURL();
+      final token = await AuthApiService.getAccessToken();
+      if (token == null) {
+        AppLogger.debug('Non authentifié, synchronisation partage ignorée');
+        return;
+      }
+      
+      final members = await getFamilyMembers();
+      final memberEmails = memberIds.map((id) {
+        final member = members.firstWhere(
+          (m) => m.id == id,
+          orElse: () => FamilyMember(name: '', email: '', relationship: ''),
+        );
+        return member.email;
+      }).where((email) => email.isNotEmpty).toList();
+      
+      if (memberEmails.isEmpty) {
+        AppLogger.warning('Aucun email de membre trouvé pour la synchronisation');
+        return;
+      }
+      
+      // Note: Le backend n'a pas encore d'endpoint pour le partage familial
+      // On log juste pour l'instant
+      AppLogger.debug('Partage à synchroniser: document $documentId avec ${memberEmails.length} membre(s)');
+      // TODO: Implémenter endpoint backend pour partage familial
+      // POST /api/v1/family-sharing/share
+      // {
+      //   "document_id": documentId,
+      //   "member_emails": memberEmails,
+      //   "permission_level": permissionLevel
+      // }
+    } catch (e) {
+      AppLogger.error('Erreur synchronisation partage backend', e);
+      // Ne pas bloquer le partage local en cas d'erreur backend
     }
   }
   
