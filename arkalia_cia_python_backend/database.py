@@ -1033,17 +1033,18 @@ class CIADatabase:
                     (user_id, document_id, member_email),
                 )
                 existing = cursor.fetchone()
-                if existing:
+                if existing and existing[0] is not None:
                     # Mettre à jour le partage existant
+                    existing_id = int(existing[0])
                     cursor.execute(
                         """
                         UPDATE shared_documents
                         SET permission_level = ?, is_encrypted = ?, shared_at = CURRENT_TIMESTAMP
                         WHERE id = ?
                         """,
-                        (permission_level, is_encrypted, existing[0]),
+                        (permission_level, is_encrypted, existing_id),
                     )
-                    return int(existing[0])
+                    return existing_id
                 else:
                     # Créer un nouveau partage
                     cursor.execute(
