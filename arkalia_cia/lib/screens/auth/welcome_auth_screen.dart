@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'login_screen.dart';
 import 'register_screen.dart';
 import '../home_page.dart';
@@ -132,14 +133,15 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
         if (!context.mounted) return;
         
         // Auto-remplir le profil utilisateur depuis Google Sign-In
+        // Utiliser directement les données du compte Google retourné
         try {
-          final googleUser = await GoogleAuthService.getCurrentUser();
-          if (googleUser != null) {
-            final googleEmail = googleUser['email']?.trim();
-            final googleName = googleUser['name']?.trim();
+          final googleAccount = result['user'] as GoogleSignInAccount?;
+          if (googleAccount != null) {
+            final googleEmail = googleAccount.email.trim();
+            final googleName = googleAccount.displayName?.trim();
             
             // Ne créer/mettre à jour le profil que si l'email est valide
-            if (googleEmail != null && googleEmail.isNotEmpty) {
+            if (googleEmail.isNotEmpty) {
               final existingProfile = await UserProfileService.getProfile();
               if (existingProfile == null) {
                 // Créer automatiquement le profil depuis Google
@@ -147,7 +149,7 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                   email: googleEmail,
                   displayName: googleName?.isNotEmpty == true ? googleName : null,
                 );
-                AppLogger.debug('Profil utilisateur créé depuis Google Sign-In');
+                AppLogger.info('✅ Profil utilisateur créé depuis Google Sign-In: $googleEmail');
               } else {
                 // Mettre à jour le profil existant avec les infos Google si nécessaire
                 final emailChanged = existingProfile.email != googleEmail;
@@ -159,16 +161,20 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                     displayName: googleName?.isNotEmpty == true ? googleName : existingProfile.displayName,
                   );
                   await UserProfileService.saveProfile(updatedProfile);
-                  AppLogger.debug('Profil utilisateur mis à jour depuis Google Sign-In');
+                  AppLogger.info('✅ Profil utilisateur mis à jour depuis Google Sign-In: $googleEmail');
+                } else {
+                  AppLogger.debug('Profil utilisateur déjà à jour');
                 }
               }
             } else {
-              AppLogger.warning('Email Google invalide ou vide, profil non créé');
+              AppLogger.warning('⚠️ Email Google invalide ou vide, profil non créé');
             }
+          } else {
+            AppLogger.warning('⚠️ Compte Google non disponible dans le résultat');
           }
-        } catch (e) {
-          // Erreur silencieuse - ne pas bloquer la connexion
-          AppLogger.debug('Erreur création profil depuis Google: $e');
+        } catch (e, stackTrace) {
+          // Logger l'erreur mais ne pas bloquer la connexion
+          AppLogger.error('Erreur création profil depuis Google', e, stackTrace);
         }
         
         // Vérifier l'onboarding

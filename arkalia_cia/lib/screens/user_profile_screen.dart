@@ -3,6 +3,7 @@ import '../models/user_profile.dart';
 import '../models/device.dart';
 import '../services/user_profile_service.dart';
 import '../services/multi_device_sync_service.dart';
+import '../services/google_auth_service.dart';
 import '../utils/app_logger.dart';
 import '../utils/error_helper.dart';
 
@@ -31,6 +32,21 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     });
 
     try {
+      // Vérifier d'abord si l'utilisateur est connecté avec Google
+      // Si oui, créer automatiquement le profil s'il n'existe pas
+      final googleUser = await GoogleAuthService.getCurrentUser();
+      if (googleUser != null && googleUser['email']?.isNotEmpty == true) {
+        final existingProfile = await UserProfileService.getProfile();
+        if (existingProfile == null) {
+          // Créer automatiquement le profil depuis Google
+          await UserProfileService.createProfile(
+            email: googleUser['email']!,
+            displayName: googleUser['name']?.isNotEmpty == true ? googleUser['name'] : null,
+          );
+          AppLogger.info('✅ Profil utilisateur créé automatiquement depuis Google');
+        }
+      }
+      
       final profile = await UserProfileService.getProfile();
       setState(() {
         _profile = profile;
