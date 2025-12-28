@@ -2328,7 +2328,6 @@ async def unshare_document(
     Si member_email est fourni, retire seulement pour ce membre.
     Sinon, retire tous les partages du document.
     """
-    """Retire le partage d'un document"""
     try:
         if not current_user.user_id:
             raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
