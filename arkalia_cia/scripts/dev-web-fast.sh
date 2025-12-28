@@ -108,18 +108,13 @@ fi
 echo -e "${YELLOW}🧹 Nettoyage complet du build web...${NC}"
 rm -rf build/web 2>/dev/null || true
 rm -rf .dart_tool/build 2>/dev/null || true
+rm -rf .dart_tool/flutter_build 2>/dev/null || true
 flutter clean > /dev/null 2>&1 || true
 echo -e "${GREEN}✅ Nettoyage terminé${NC}"
 echo ""
 
-# Forcer une compilation initiale pour s'assurer que tout est prêt
-echo -e "${YELLOW}🔨 Compilation initiale Flutter web (première fois)...${NC}"
-# Compiler en mode debug pour développement (plus rapide que release)
-flutter build web --debug --no-pub > /dev/null 2>&1 || {
-    echo -e "${YELLOW}⚠️  Build initial échoué, on continue quand même...${NC}"
-}
-echo -e "${GREEN}✅ Compilation initiale terminée${NC}"
-echo ""
+# Note: flutter run compile automatiquement, pas besoin de build initial
+# Un build initial peut causer des conflits avec flutter run
 
 # Vérifier les devices disponibles et les navigateurs installés
 DEVICES_OUTPUT=$(flutter devices 2>&1)
