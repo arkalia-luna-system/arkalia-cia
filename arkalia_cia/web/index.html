@@ -26,13 +26,14 @@
 
   <!-- Content Security Policy pour Flutter web (mode développement) -->
   <!-- unsafe-eval nécessaire pour hot reload en développement -->
-  <!-- font-src permet les polices externes si nécessaire -->
+  <!-- gstatic.com nécessaire pour CanvasKit Flutter -->
+  <!-- WebSocket nécessaire pour hot reload (ws://localhost:8081) -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; 
-             script-src 'self' 'unsafe-inline' 'unsafe-eval' https://r2cdn.perplexity.ai; 
-             style-src 'self' 'unsafe-inline' https://r2cdn.perplexity.ai; 
-             font-src 'self' data: https://r2cdn.perplexity.ai; 
+             script-src 'self' 'unsafe-inline' 'unsafe-eval' https://r2cdn.perplexity.ai https://www.gstatic.com; 
+             style-src 'self' 'unsafe-inline' https://r2cdn.perplexity.ai https://fonts.googleapis.com; 
+             font-src 'self' data: https://r2cdn.perplexity.ai https://fonts.gstatic.com; 
              img-src 'self' data: blob: https:; 
-             connect-src 'self' ws://localhost:* http://localhost:* https://r2cdn.perplexity.ai; 
+             connect-src 'self' ws://localhost:* http://localhost:* https://r2cdn.perplexity.ai https://www.gstatic.com; 
              worker-src 'self' blob:;">
 
   <!-- iOS meta tags & icons -->
