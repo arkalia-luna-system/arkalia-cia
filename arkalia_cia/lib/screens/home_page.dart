@@ -150,18 +150,30 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.asset(
-              'assets/images/logo.png',
-              width: 32,
-              height: 32,
-              filterQuality: FilterQuality.high,
-            ),
-            const SizedBox(width: 12),
-            const Text('Arkalia CIA'),
-          ],
+        title: Semantics(
+          label: 'Arkalia CIA - Assistant Santé Personnel',
+          header: true,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Semantics(
+                label: 'Logo Arkalia CIA',
+                image: true,
+                child: Image.asset(
+                  'assets/images/logo.png',
+                  width: 32,
+                  height: 32,
+                  filterQuality: FilterQuality.high,
+                  errorBuilder: (context, error, stackTrace) {
+                    // Fallback si l'image ne se charge pas
+                    return const Icon(Icons.health_and_safety, size: 32);
+                  },
+                ),
+              ),
+              const SizedBox(width: 12),
+              const Text('Arkalia CIA'),
+            ],
+          ),
         ),
         backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
         foregroundColor: Theme.of(context).colorScheme.onSurface,
@@ -178,107 +190,115 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            // Barre de recherche globale
-            Row(
+      body: Semantics(
+        label: 'Page d\'accueil Arkalia CIA',
+        hint: 'Assistant santé personnel avec recherche et modules',
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Semantics(
-                    label: 'Barre de recherche globale',
-                    hint: 'Rechercher dans tous les modules',
-                    child: TextField(
-                      controller: _searchController,
-                      decoration: InputDecoration(
-                        hintText: 'Rechercher dans documents, rappels, contacts...',
-                        prefixIcon: const Icon(Icons.search),
-                        suffixIcon: _searchController.text.isNotEmpty
-                            ? Semantics(
-                                label: 'Effacer la recherche',
-                                hint: 'Supprime le texte de recherche',
-                                button: true,
-                                child: IconButton(
-                                  icon: const Icon(Icons.clear),
-                                  onPressed: () {
-                                    _searchController.clear();
-                                  },
-                                  tooltip: 'Effacer',
-                                ),
-                              )
-                            : null,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                // Barre de recherche globale
+                Row(
+                  children: [
+                    Expanded(
+                      child: Semantics(
+                        label: 'Barre de recherche globale',
+                        hint: 'Rechercher dans tous les modules',
+                        child: TextField(
+                          controller: _searchController,
+                          decoration: InputDecoration(
+                            hintText: 'Rechercher dans documents, rappels, contacts...',
+                            prefixIcon: const Icon(Icons.search),
+                            suffixIcon: _searchController.text.isNotEmpty
+                                ? Semantics(
+                                    label: 'Effacer la recherche',
+                                    hint: 'Supprime le texte de recherche',
+                                    button: true,
+                                    child: IconButton(
+                                      icon: const Icon(Icons.clear),
+                                      onPressed: () {
+                                        _searchController.clear();
+                                      },
+                                      tooltip: 'Effacer',
+                                    ),
+                                  )
+                                : null,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                    const SizedBox(width: 8),
+                    Semantics(
+                      label: 'Recherche avancée',
+                      hint: 'Ouvre les options de recherche avancée',
+                      button: true,
+                      child: IconButton(
+                        icon: const Icon(Icons.tune),
+                        tooltip: 'Recherche avancée',
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            PageTransitions.slideRight(const AdvancedSearchScreen()),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 8),
-                Semantics(
-                  label: 'Recherche avancée',
-                  hint: 'Ouvre les options de recherche avancée',
-                  button: true,
-                  child: IconButton(
-                    icon: const Icon(Icons.tune),
-                    tooltip: 'Recherche avancée',
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        PageTransitions.slideRight(const AdvancedSearchScreen()),
-                      );
-                    },
+                const SizedBox(height: 16),
+                // Résultats de recherche ou contenu normal
+                if (_searchController.text.trim().isNotEmpty)
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.7,
+                    child: _buildSearchResults(),
+                  )
+                else ...[
+                  // Titre principal avec accessibilité
+                  Semantics(
+                    header: true,
+                    child: Text(
+                      'Assistant Santé Personnel',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            // Résultats de recherche ou contenu normal
-            if (_searchController.text.trim().isNotEmpty)
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.7,
-                child: _buildSearchResults(),
-              )
-            else ...[
-              // Titre principal avec accessibilité
-              Semantics(
-                header: true,
-                child: Text(
-                  'Assistant Santé Personnel',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
+                  const SizedBox(height: 8),
+                  Semantics(
+                    label: 'Sous-titre: Votre santé au quotidien',
+                    child: Text(
+                      'Votre santé au quotidien',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Semantics(
-                label: 'Sous-titre: Votre santé au quotidien',
-                child: Text(
-                  'Votre santé au quotidien',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              // Widgets informatifs
-              if (!_isLoadingStats) _buildStatsWidgets(),
-              const SizedBox(height: 24),
+                  const SizedBox(height: 16),
+                  // Widgets informatifs
+                  if (!_isLoadingStats) _buildStatsWidgets(),
+                  const SizedBox(height: 24),
 
-              // 7 boutons principaux (ajout Stats)
-              Expanded(
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  children: [
+                  // Grille de modules principaux avec accessibilité
+                  Semantics(
+                    label: 'Modules de l\'application',
+                    hint: 'Sélectionnez un module pour accéder à ses fonctionnalités',
+                    child: GridView.count(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      children: [
                     // Bouton 1: Import/voir doc
                     _buildActionButton(
                       context,
@@ -418,10 +438,10 @@ class _HomePageState extends State<HomePage> {
                       color: Colors.cyan,
                       onTap: () => _showHydration(context),
                     ),
-                  ],
-                ),
-              ),
-            ],
+                      ],
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
