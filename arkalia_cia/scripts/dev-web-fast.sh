@@ -218,12 +218,36 @@ open_browser() {
             # Comet devrait automatiquement détecter Flutter et afficher la vue mobile
             osascript -e 'tell application "Comet" to activate' 2>/dev/null || true
             
+            # Ouvrir aussi Chrome avec l'émulation de device pour avoir la "mini télé"
+            # Chrome avec DevTools en mode device est plus fiable pour la vue mobile
+            if [ -d "/Applications/Google Chrome.app" ]; then
+                # Ouvrir Chrome avec DevTools et émulation de device
+                # Utiliser les flags Chrome pour ouvrir directement en mode device
+                /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
+                    --new-window \
+                    --auto-open-devtools-for-tabs \
+                    --user-data-dir=/tmp/chrome-dev-session \
+                    "$COMET_URL" > /dev/null 2>&1 &
+                
+                # Attendre un peu puis envoyer les touches pour activer device emulation
+                sleep 4
+                # Envoyer Cmd+Shift+M pour activer device toolbar (nécessite que Chrome soit actif)
+                osascript -e 'tell application "Google Chrome" to activate' 2>/dev/null || true
+                sleep 1
+                # Note: L'activation automatique du device toolbar nécessite une extension ou un script plus complexe
+                # Pour l'instant, l'utilisateur devra appuyer manuellement sur Cmd+Shift+M
+            fi
+            
             echo ""
             echo -e "${GREEN}✅ Comet ouvert avec l'app${NC}"
-            echo -e "${CYAN}📱 La vue mobile devrait s'afficher automatiquement${NC}"
-            echo -e "${CYAN}💡 Si la 'mini télé' n'apparaît pas :${NC}"
-            echo -e "   ${YELLOW}1. Dans Comet, cherchez l'icône de device/phone${NC}"
-            echo -e "   ${YELLOW}2. Ou utilisez Chrome : ${GREEN}Cmd+Option+I${YELLOW} puis ${GREEN}Cmd+Shift+M${NC}"
+            if [ -d "/Applications/Google Chrome.app" ]; then
+                echo -e "${GREEN}✅ Chrome ouvert aussi (pour la vue mobile)${NC}"
+            fi
+            echo -e "${CYAN}📱 Pour voir la 'mini télé' dans Chrome :${NC}"
+            echo -e "   ${YELLOW}1. Appuyez sur ${GREEN}Cmd+Option+I${YELLOW} (DevTools)${NC}"
+            echo -e "   ${YELLOW}2. Appuyez sur ${GREEN}Cmd+Shift+M${YELLOW} (Toggle device toolbar)${NC}"
+            echo -e "   ${YELLOW}3. Sélectionnez un appareil (iPhone 14 Pro, etc.)${NC}"
+            echo -e "${CYAN}💡 Dans Comet, cherchez l'icône de device/phone pour la vue mobile${NC}"
         elif [ "${USE_CHROME:-false}" = true ]; then
             # Ouvrir Chrome
             if [ -d "/Applications/Google Chrome.app" ]; then
