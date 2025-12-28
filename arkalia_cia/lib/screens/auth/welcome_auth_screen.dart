@@ -108,8 +108,11 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
             ),
             const SizedBox(height: 8),
             Text(
-              'Si la page de consentement reste bloquée,\n'
-              'attendez 1-2 minutes puis réessayez.',
+              '💡 IMPORTANT :\n'
+              'Si une page Google s\'ouvre :\n'
+              '• Cliquez sur votre compte pour vous connecter\n'
+              '• NE cliquez PAS sur "Envoyer un mail" ou Gmail\n'
+              '• Attendez que la page se ferme automatiquement',
               style: TextStyle(
                 fontSize: 14, // Minimum 14px pour accessibilité seniors
                 color: Colors.grey[600],

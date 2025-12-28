@@ -41,19 +41,38 @@ class GoogleAuthService {
   /// - 'error': String? (si erreur)
   static Future<Map<String, dynamic>> signIn() async {
     try {
-      // SIMPLIFIÉ : Tentative de connexion directe avec timeout
-      // Sur le web, la page de consentement peut rester bloquée, donc on ajoute un timeout
-      final GoogleSignInAccount? account = await _googleSignIn.signIn().timeout(
-        const Duration(minutes: 2), // Timeout de 2 minutes pour éviter blocage infini
-        onTimeout: () {
-          AppLogger.warning('Google Sign-In timeout après 2 minutes');
-          throw TimeoutException(
-            'La connexion Google a pris trop de temps. '
-            'Vérifiez votre connexion internet et réessayez.',
-            const Duration(minutes: 2),
-          );
-        },
-      );
+      // CORRECTION : Essayer d'abord signInSilently() pour éviter le sélecteur de compte
+      // Si l'utilisateur est déjà connecté, on récupère directement le compte
+      // Sinon, on utilise signIn() pour afficher le sélecteur
+      GoogleSignInAccount? account;
+      
+      try {
+        // Essayer d'abord une connexion silencieuse (sans popup)
+        account = await _googleSignIn.signInSilently();
+        if (account != null) {
+          AppLogger.info('✅ Connexion Google silencieuse réussie: ${account.email}');
+        }
+      } catch (e) {
+        // signInSilently() a échoué, on va utiliser signIn() normalement
+        AppLogger.debug('signInSilently() échoué, utilisation de signIn(): $e');
+      }
+      
+      // Si signInSilently() n'a pas fonctionné, utiliser signIn() normalement
+      if (account == null) {
+        // SIMPLIFIÉ : Tentative de connexion avec sélecteur de compte
+        // Sur le web, la page de consentement peut rester bloquée, donc on ajoute un timeout
+        account = await _googleSignIn.signIn().timeout(
+          const Duration(minutes: 2), // Timeout de 2 minutes pour éviter blocage infini
+          onTimeout: () {
+            AppLogger.warning('Google Sign-In timeout après 2 minutes');
+            throw TimeoutException(
+              'La connexion Google a pris trop de temps. '
+              'Vérifiez votre connexion internet et réessayez.',
+              const Duration(minutes: 2),
+            );
+          },
+        );
+      }
       
       if (account == null) {
         // L'utilisateur a annulé la connexion (pas une erreur)
