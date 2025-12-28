@@ -1,22 +1,27 @@
-// Stub pour dart:html utilisé uniquement pour éviter erreurs compilation web
-// Ce fichier n'est jamais réellement utilisé car le code est protégé par kIsWeb
+// Stub pour dart:html utilisé uniquement pour éviter erreurs compilation web/tests
+// Ce fichier est utilisé lors des tests ou sur mobile (quand dart:html n'est pas disponible)
 // ignore_for_file: unused_import, unused_element, avoid_types_on_closure_parameters
 
-/// Stub pour Blob de dart:html (jamais utilisé sur mobile/tests)
+/// Stub pour Blob de dart:html (utilisé uniquement lors des tests)
 class Blob {
   Blob(List<dynamic> data, [String? mimeType]) {
-    throw UnsupportedError('Blob stub - ne doit jamais être appelé sur mobile/tests');
+    // Ne sera jamais appelé car le code est protégé par kIsWeb
+    // Mais nécessaire pour la compilation lors des tests
   }
 }
 
-/// Stub pour Url de dart:html (jamais utilisé sur mobile/tests)
+/// Stub pour Url de dart:html (utilisé uniquement lors des tests)
 class Url {
   static String createObjectUrlFromBlob(Blob blob) {
-    throw UnsupportedError('Url.createObjectUrlFromBlob stub - ne doit jamais être appelé sur mobile/tests');
+    // Ne sera jamais appelé car le code est protégé par kIsWeb
+    // Mais nécessaire pour la compilation lors des tests
+    throw UnsupportedError('Url.createObjectUrlFromBlob stub - ne doit jamais être appelé');
   }
   
   static void revokeObjectUrl(String url) {
-    throw UnsupportedError('Url.revokeObjectUrl stub - ne doit jamais être appelé sur mobile/tests');
+    // Ne sera jamais appelé car le code est protégé par kIsWeb
+    // Mais nécessaire pour la compilation lors des tests
+    throw UnsupportedError('Url.revokeObjectUrl stub - ne doit jamais être appelé');
   }
 }
 
