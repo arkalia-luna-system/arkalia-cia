@@ -259,7 +259,9 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                                 backgroundColor: Theme.of(context).colorScheme.primary,
                                 radius: 24,
                                 child: Text(
-                                  doctor.firstName[0].toUpperCase(),
+                                  doctor.firstName.isNotEmpty 
+                                      ? doctor.firstName[0].toUpperCase()
+                                      : '?',
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 18,
