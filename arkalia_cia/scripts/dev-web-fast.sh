@@ -144,9 +144,33 @@ cleanup() {
 
 trap cleanup SIGINT SIGTERM
 
+# Fonction pour vérifier que le serveur Flutter répond
+wait_for_flutter() {
+    local max_attempts=30
+    local attempt=0
+    echo -e "${YELLOW}⏳ Attente du démarrage de Flutter...${NC}"
+    
+    while [ $attempt -lt $max_attempts ]; do
+        if curl -s "http://localhost:${PORT}" > /dev/null 2>&1; then
+            echo -e "${GREEN}✅ Flutter est prêt !${NC}"
+            return 0
+        fi
+        attempt=$((attempt + 1))
+        sleep 1
+        printf "."
+    done
+    
+    echo -e "${YELLOW}⚠️  Flutter prend du temps à démarrer, ouverture du navigateur quand même...${NC}"
+    return 1
+}
+
 # Fonction pour ouvrir le navigateur automatiquement
 open_browser() {
-    sleep 5  # Attendre que Flutter démarre complètement
+    # Attendre que Flutter soit prêt (vérifie que le serveur répond)
+    wait_for_flutter
+    
+    sleep 2  # Petit délai supplémentaire pour être sûr
+    
     if command -v open &> /dev/null; then
         if [ "${USE_COMET:-false}" = true ]; then
             # Ouvrir Comet
@@ -157,7 +181,12 @@ open_browser() {
             else
                 open -a "Comet" "http://localhost:${PORT}" 2>/dev/null || true
             fi
-            echo -e "${GREEN}✅ Comet ouvert automatiquement${NC}"
+            echo ""
+            echo -e "${GREEN}✅ Comet ouvert avec l'app${NC}"
+            echo -e "${CYAN}💡 Pour voir la 'mini télé' :${NC}"
+            echo -e "   ${YELLOW}1. Appuyez sur ${GREEN}F12${YELLOW} ou ${GREEN}Cmd+Option+I${YELLOW} (DevTools)${NC}"
+            echo -e "   ${YELLOW}2. Appuyez sur ${GREEN}Cmd+Shift+M${YELLOW} (Toggle device toolbar)${NC}"
+            echo -e "   ${YELLOW}3. Sélectionnez un appareil dans le menu${NC}"
         elif [ "${USE_CHROME:-false}" = true ]; then
             # Ouvrir Chrome
             if [ -d "/Applications/Google Chrome.app" ]; then
@@ -177,36 +206,9 @@ open_browser() {
     fi
 }
 
-# Afficher les instructions AVANT de lancer (pour que l'utilisateur les voie)
+# Afficher les informations de démarrage
 echo ""
-echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${GREEN}📱 POUR VOIR LA 'MINI TÉLÉ' SUR VOTRE ÉCRAN :${NC}"
-echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo ""
-echo -e "${CYAN}1️⃣  ${BROWSER_NAME} va s'ouvrir automatiquement${NC}"
-echo ""
-if [ "$DEVICE" = "web-server" ]; then
-    echo -e "${CYAN}2️⃣  Dans votre navigateur, appuyez sur :${NC}"
-    echo -e "   ${GREEN}   F12${NC} ${YELLOW}ou${NC} ${GREEN}Cmd+Option+I${NC} ${YELLOW}(DevTools)${NC}"
-    echo ""
-    echo -e "${YELLOW}   ⚠️  Note: Certains navigateurs n'ont pas de mode Device Emulation${NC}"
-    echo -e "${YELLOW}   Utilisez Chrome ou Comet pour la meilleure expérience${NC}"
-else
-    echo -e "${CYAN}2️⃣  Dans ${BROWSER_NAME}, appuyez sur :${NC}"
-    echo -e "   ${GREEN}   F12${NC} ${YELLOW}ou${NC} ${GREEN}Cmd+Option+I${NC} ${YELLOW}(DevTools)${NC}"
-    echo ""
-    echo -e "${CYAN}3️⃣  Dans DevTools, appuyez sur :${NC}"
-    echo -e "   ${GREEN}   Cmd+Shift+M${NC} ${YELLOW}(Toggle device toolbar)${NC}"
-    echo ""
-    echo -e "${CYAN}4️⃣  Sélectionnez un appareil dans le menu :${NC}"
-    echo -e "   ${GREEN}   • iPhone 14 Pro${NC}"
-    echo -e "   ${GREEN}   • Galaxy S21${NC}"
-    echo -e "   ${GREEN}   • Ou un autre appareil${NC}"
-fi
-echo ""
-echo -e "${CYAN}✅ Résultat : L'app s'affiche dans une fenêtre type téléphone !${NC}"
-echo ""
-echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${CYAN}📱 ${BROWSER_NAME} s'ouvrira automatiquement quand Flutter sera prêt${NC}"
 echo ""
 
 # Ouvrir le navigateur en arrière-plan
