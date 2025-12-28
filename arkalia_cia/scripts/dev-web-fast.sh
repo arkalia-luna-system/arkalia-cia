@@ -66,22 +66,40 @@ else
     echo ""
 fi
 
-# Vérifier les devices disponibles
+# Vérifier les devices disponibles et les navigateurs installés
 DEVICES_OUTPUT=$(flutter devices 2>&1)
 
-# Priorité : Chrome > Comet > web-server
+# Vérifier si Comet est installé
+COMET_INSTALLED=false
+if [ -d "/Applications/Comet.app" ] || [ -d "$HOME/Applications/Comet.app" ]; then
+    COMET_INSTALLED=true
+fi
+
+# Vérifier si Chrome est installé
+CHROME_INSTALLED=false
+if [ -d "/Applications/Google Chrome.app" ] || [ -d "$HOME/Applications/Google Chrome.app" ]; then
+    CHROME_INSTALLED=true
+fi
+
+# Priorité : Chrome détecté par Flutter > Comet installé > Chrome installé > web-server
 if echo "$DEVICES_OUTPUT" | grep -qi "chrome"; then
     DEVICE="chrome"
     BROWSER_NAME="Chrome"
-    echo -e "${GREEN}✅ Chrome détecté${NC}"
-elif echo "$DEVICES_OUTPUT" | grep -qi "comet"; then
-    DEVICE="comet"
+    echo -e "${GREEN}✅ Chrome détecté par Flutter${NC}"
+elif [ "$COMET_INSTALLED" = true ]; then
+    DEVICE="web-server"
     BROWSER_NAME="Comet"
-    echo -e "${GREEN}✅ Comet détecté${NC}"
+    USE_COMET=true
+    echo -e "${GREEN}✅ Comet détecté (sera ouvert automatiquement)${NC}"
+elif [ "$CHROME_INSTALLED" = true ]; then
+    DEVICE="web-server"
+    BROWSER_NAME="Chrome"
+    USE_CHROME=true
+    echo -e "${GREEN}✅ Chrome détecté (sera ouvert automatiquement)${NC}"
 else
     DEVICE="web-server"
     BROWSER_NAME="Navigateur par défaut"
-    echo -e "${YELLOW}⚠️  Chrome/Comet non trouvé, utilisation de web-server${NC}"
+    echo -e "${YELLOW}⚠️  Utilisation de web-server${NC}"
     echo -e "${YELLOW}   Le navigateur par défaut s'ouvrira automatiquement${NC}"
 fi
 
@@ -128,16 +146,33 @@ trap cleanup SIGINT SIGTERM
 
 # Fonction pour ouvrir le navigateur automatiquement
 open_browser() {
-    sleep 4  # Attendre que Flutter démarre
+    sleep 5  # Attendre que Flutter démarre complètement
     if command -v open &> /dev/null; then
-        if [ "$DEVICE" = "chrome" ]; then
-            open -a "Google Chrome" "http://localhost:${PORT}" 2>/dev/null || true
-        elif [ "$DEVICE" = "comet" ]; then
-            open -a "Comet" "http://localhost:${PORT}" 2>/dev/null || \
-            open -a "comet" "http://localhost:${PORT}" 2>/dev/null || true
+        if [ "${USE_COMET:-false}" = true ]; then
+            # Ouvrir Comet
+            if [ -d "/Applications/Comet.app" ]; then
+                open -a "/Applications/Comet.app" "http://localhost:${PORT}" 2>/dev/null || true
+            elif [ -d "$HOME/Applications/Comet.app" ]; then
+                open -a "$HOME/Applications/Comet.app" "http://localhost:${PORT}" 2>/dev/null || true
+            else
+                open -a "Comet" "http://localhost:${PORT}" 2>/dev/null || true
+            fi
+            echo -e "${GREEN}✅ Comet ouvert automatiquement${NC}"
+        elif [ "${USE_CHROME:-false}" = true ]; then
+            # Ouvrir Chrome
+            if [ -d "/Applications/Google Chrome.app" ]; then
+                open -a "/Applications/Google Chrome.app" "http://localhost:${PORT}" 2>/dev/null || true
+            else
+                open -a "Google Chrome" "http://localhost:${PORT}" 2>/dev/null || true
+            fi
+            echo -e "${GREEN}✅ Chrome ouvert automatiquement${NC}"
+        elif [ "$DEVICE" = "chrome" ]; then
+            # Chrome détecté par Flutter (s'ouvre automatiquement)
+            echo -e "${GREEN}✅ Chrome devrait s'ouvrir automatiquement${NC}"
         else
             # web-server : ouvrir avec le navigateur par défaut
             open "http://localhost:${PORT}" 2>/dev/null || true
+            echo -e "${GREEN}✅ Navigateur ouvert automatiquement${NC}"
         fi
     fi
 }
