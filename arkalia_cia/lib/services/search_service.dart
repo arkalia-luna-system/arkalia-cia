@@ -170,18 +170,35 @@ class SearchService {
     if (filters.query != null && filters.query!.isNotEmpty) {
       final doctorService = DoctorService();
       List<dynamic> doctors;
-      if (useSemantic) {
-        doctors = await _semanticSearch.semanticSearchDoctors(filters.query!);
-      } else {
-        doctors = await doctorService.searchDoctors(filters.query!);
-      }
-      for (var doctor in doctors) {
-        results.add(SearchResult(
-          id: doctor.id?.toString() ?? '',
-          title: doctor.fullName,
-          type: 'doctor',
-          preview: doctor.specialty,
-        ));
+      try {
+        if (useSemantic && filters.query!.length > 3) {
+          doctors = await _semanticSearch.semanticSearchDoctors(filters.query!);
+        } else {
+          doctors = await doctorService.searchDoctors(filters.query!);
+        }
+        for (var doctor in doctors) {
+          results.add(SearchResult(
+            id: doctor.id?.toString() ?? '',
+            title: doctor.fullName,
+            type: 'doctor',
+            preview: doctor.specialty,
+          ));
+        }
+      } catch (e) {
+        // En cas d'erreur, essayer la recherche normale
+        try {
+          doctors = await doctorService.searchDoctors(filters.query!);
+          for (var doctor in doctors) {
+            results.add(SearchResult(
+              id: doctor.id?.toString() ?? '',
+              title: doctor.fullName,
+              type: 'doctor',
+              preview: doctor.specialty,
+            ));
+          }
+        } catch (e2) {
+          // Ignorer l'erreur et continuer
+        }
       }
     }
 

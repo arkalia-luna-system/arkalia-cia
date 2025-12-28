@@ -158,24 +158,36 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
           
           // Le backend retourne soit un objet avec 'id' (succès) soit un objet avec 'error' (échec)
           if (backendResult.containsKey('error') || backendResult['success'] == false) {
-            // Erreur backend, afficher message détaillé
-            final errorMsg = backendResult['error'] ?? 
-                           backendResult['technical_error'] ?? 
-                           'Erreur lors de la sauvegarde sur le serveur';
-            _showError('Erreur serveur: $errorMsg');
-            return;
-          }
-          
-          // Si le backend retourne un ID, l'utiliser (succès)
-          if (backendResult['id'] != null) {
-            contactData['id'] = backendResult['id'];
+            // Si le backend n'est pas configuré, continuer avec stockage local sans erreur
+            if (backendResult['backend_not_configured'] == true || 
+                backendResult['backend_disabled'] == true) {
+              // Backend non configuré, continuer avec stockage local
+            } else {
+              // Erreur backend réelle, afficher message détaillé mais continuer avec stockage local
+              final errorMsg = backendResult['error'] ?? 
+                             backendResult['technical_error'] ?? 
+                             'Erreur lors de la sauvegarde sur le serveur';
+              // Ne pas bloquer, juste logger l'erreur et continuer avec stockage local
+              ErrorHelper.logError('EmergencyScreen._addContact (backend)', 
+                Exception('Erreur serveur: $errorMsg'));
+            }
+          } else {
+            // Si le backend retourne un ID, l'utiliser (succès)
+            if (backendResult['id'] != null) {
+              contactData['id'] = backendResult['id'];
+            }
           }
         } catch (e) {
-          // Erreur backend, afficher message détaillé et arrêter
-          ErrorHelper.logError('EmergencyScreen._addContact (backend)', e);
-          final errorMsg = ErrorHelper.getUserFriendlyMessage(e);
-          _showError('Erreur serveur: $errorMsg');
-          return;
+          // Erreur backend, continuer avec stockage local sans bloquer
+          // Ne pas afficher d'erreur si c'est juste que le backend n'est pas disponible
+          final errorString = e.toString();
+          if (!errorString.contains('Backend non configuré') && 
+              !errorString.contains('Backend non disponible') &&
+              !errorString.contains('backend_not_configured')) {
+            // Erreur réelle, logger mais continuer
+            ErrorHelper.logError('EmergencyScreen._addContact (backend)', e);
+          }
+          // Continuer avec stockage local même en cas d'erreur backend
         }
       }
       

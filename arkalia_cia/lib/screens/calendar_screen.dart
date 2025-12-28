@@ -3,6 +3,7 @@ import 'package:table_calendar/table_calendar.dart';
 import '../services/calendar_service.dart';
 import '../services/doctor_service.dart';
 import '../services/medication_service.dart';
+import '../services/local_storage_service.dart';
 import '../models/doctor.dart'; // Contient aussi Consultation
 import '../utils/input_sanitizer.dart';
 
@@ -114,29 +115,66 @@ class _CalendarScreenState extends State<CalendarScreen> {
         }
       }
 
+      // Récupérer les rappels depuis LocalStorageService (rappels locaux)
+      final localReminders = await LocalStorageService.getReminders();
+      for (final reminder in localReminders) {
+        try {
+          final reminderDateStr = reminder['reminder_date'] as String?;
+          if (reminderDateStr == null || reminderDateStr.isEmpty) continue;
+          
+          final reminderDate = DateTime.parse(reminderDateStr);
+          final dateOnly = DateTime(reminderDate.year, reminderDate.month, reminderDate.day);
+          
+          // Ne charger que les rappels du mois visible
+          if (dateOnly.year == _focusedDay.year && dateOnly.month == _focusedDay.month) {
+            // Ne pas afficher les rappels terminés dans le calendrier
+            final isCompleted = reminder['is_completed'] == true;
+            if (!isCompleted) {
+              if (!eventsMap.containsKey(dateOnly)) {
+                eventsMap[dateOnly] = [];
+              }
+
+              eventsMap[dateOnly]!.add({
+                'type': 'reminder',
+                'title': reminder['title'] ?? 'Rappel',
+                'description': reminder['description'] ?? '',
+                'reminder': reminder,
+                'color': Colors.orange,
+              });
+            }
+          }
+        } catch (e) {
+          // Ignorer les rappels avec date invalide
+          continue;
+        }
+      }
+
       // Récupérer aussi les rappels du calendrier système
       // Ajouter un timeout pour éviter les blocages
-      final reminders = await CalendarService.getUpcomingReminders()
-          .timeout(const Duration(seconds: 2), onTimeout: () => <Map<String, dynamic>>[]);
-      for (final reminder in reminders) {
-        final dateStr = reminder['reminder_date'] as String?;
-        if (dateStr != null) {
-          try {
-            final date = DateTime.parse(dateStr);
-            final dateOnly = DateTime(date.year, date.month, date.day);
+      try {
+        final calendarReminders = await CalendarService.getUpcomingReminders()
+            .timeout(const Duration(seconds: 2), onTimeout: () => <Map<String, dynamic>>[]);
+        for (final reminder in calendarReminders) {
+          final dateStr = reminder['reminder_date'] as String?;
+          if (dateStr != null) {
+            try {
+              final date = DateTime.parse(dateStr);
+              final dateOnly = DateTime(date.year, date.month, date.day);
 
-            if (!eventsMap.containsKey(dateOnly)) {
-              eventsMap[dateOnly] = [];
-            }
+              // Ne charger que les rappels du mois visible
+              if (dateOnly.year == _focusedDay.year && dateOnly.month == _focusedDay.month) {
+                if (!eventsMap.containsKey(dateOnly)) {
+                  eventsMap[dateOnly] = [];
+                }
 
-            // Détecter le type de rappel par le titre
-            final title = reminder['title'] as String? ?? 'Rappel';
-            final isMedication = title.contains('💊');
-            final isHydration = title.contains('💧');
+                // Détecter le type de rappel par le titre
+                final title = reminder['title'] as String? ?? 'Rappel';
+                final isMedication = title.contains('💊');
+                final isHydration = title.contains('💧');
 
-            eventsMap[dateOnly]!.add({
-              'type': isMedication ? 'medication' : (isHydration ? 'hydration' : 'reminder'),
-              'title': title,
+                eventsMap[dateOnly]!.add({
+                  'type': isMedication ? 'medication' : (isHydration ? 'hydration' : 'reminder'),
+                  'title': title,
               'description': reminder['description'] as String? ?? '',
               'color': isMedication ? Colors.blue : (isHydration ? Colors.cyan : Colors.orange),
             });

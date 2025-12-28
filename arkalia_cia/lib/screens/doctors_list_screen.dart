@@ -59,10 +59,15 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
     setState(() {
       // Réinitialiser la pagination lors du filtrage
       _currentPage = 0;
+      final queryLower = _searchQuery.toLowerCase().trim();
       _filteredDoctors = _doctors.where((doctor) {
-        final matchesSearch = _searchQuery.isEmpty ||
-            doctor.fullName.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-            (doctor.specialty?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false);
+        // Recherche améliorée : dans nom complet, prénom, nom, spécialité, téléphone
+        final matchesSearch = queryLower.isEmpty ||
+            doctor.fullName.toLowerCase().contains(queryLower) ||
+            doctor.firstName.toLowerCase().contains(queryLower) ||
+            doctor.lastName.toLowerCase().contains(queryLower) ||
+            (doctor.specialty?.toLowerCase().contains(queryLower) ?? false) ||
+            (doctor.phone?.toLowerCase().contains(queryLower) ?? false);
         
         final matchesSpecialty = _selectedSpecialty == null ||
             doctor.specialty == _selectedSpecialty;
