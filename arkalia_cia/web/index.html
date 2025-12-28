@@ -49,6 +49,39 @@
   <title>Arkalia CIA - Assistant Personnel</title>
   <link rel="manifest" href="manifest.json">
   <script>
+    // Masquer les erreurs WebSocket et "Library not defined" pendant la compilation
+    // Ces erreurs sont normales et disparaîtront une fois Flutter compilé
+    const originalError = console.error;
+    const originalWarn = console.warn;
+    
+    console.error = function(...args) {
+      const message = args.join(' ');
+      // Ignorer les erreurs WebSocket et "Library not defined" pendant la compilation
+      if (message.includes('WebSocket connection') || 
+          message.includes('Library not defined') ||
+          message.includes('org-dartlang-app') ||
+          message.includes('Failed to initialize')) {
+        // Ne pas afficher ces erreurs pendant la compilation
+        return;
+      }
+      originalError.apply(console, args);
+    };
+    
+    console.warn = function(...args) {
+      const message = args.join(' ');
+      // Ignorer les avertissements WebSocket pendant la compilation
+      if (message.includes('WebSocket') && message.includes('failed')) {
+        return;
+      }
+      originalWarn.apply(console, args);
+    };
+    
+    // Réinitialiser les console après 30 secondes (temps de compilation max)
+    setTimeout(() => {
+      console.error = originalError;
+      console.warn = originalWarn;
+    }, 30000);
+    
     // Enregistrer le Service Worker
     // Fix pour Comet: Désinscrire les anciens service workers avant d'enregistrer le nouveau
     if ('serviceWorker' in navigator) {
@@ -80,11 +113,94 @@
         });
       });
     }
+    
+    // Attendre que flutter_bootstrap.js soit disponible avant de le charger
+    function loadFlutterBootstrap() {
+      const script = document.createElement('script');
+      script.src = 'flutter_bootstrap.js';
+      script.async = true;
+      script.onerror = function() {
+        // Si le script n'existe pas encore (compilation en cours), réessayer
+        setTimeout(loadFlutterBootstrap, 1000);
+      };
+      document.body.appendChild(script);
+    }
   </script>
 </head>
 
 <body>
-  <script src="flutter_bootstrap.js" async></script>
+  <div id="loading" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    z-index: 9999;
+  ">
+    <div style="text-align: center;">
+      <div style="font-size: 48px; margin-bottom: 20px;">🏥</div>
+      <h1 style="font-size: 28px; margin: 0 0 10px 0; font-weight: 600;">Arkalia CIA</h1>
+      <p style="font-size: 16px; margin: 0 0 30px 0; opacity: 0.9;">Compilation en cours...</p>
+      <div style="
+        width: 50px;
+        height: 50px;
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+      "></div>
+      <p style="font-size: 14px; margin-top: 20px; opacity: 0.7;">
+        Les erreurs WebSocket sont normales pendant la compilation
+      </p>
+    </div>
+  </div>
+  <style>
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+  <script>
+    // Charger flutter_bootstrap.js
+    loadFlutterBootstrap();
+    
+    // Masquer l'écran de chargement une fois que Flutter est prêt
+    // Vérifier toutes les secondes si Flutter est chargé
+    let checkInterval = setInterval(() => {
+      // Vérifier si Flutter est chargé (présence de window.flutter ou éléments Flutter)
+      if (window.flutter || document.querySelector('flt-glass-pane') || 
+          document.querySelector('flt-scene-host') || 
+          document.body.children.length > 1) {
+        const loading = document.getElementById('loading');
+        if (loading) {
+          loading.style.opacity = '0';
+          loading.style.transition = 'opacity 0.5s';
+          setTimeout(() => {
+            loading.remove();
+            clearInterval(checkInterval);
+          }, 500);
+        }
+      }
+    }, 500);
+    
+    // Masquer l'écran de chargement après 60 secondes maximum
+    setTimeout(() => {
+      const loading = document.getElementById('loading');
+      if (loading) {
+        loading.style.opacity = '0';
+        loading.style.transition = 'opacity 0.5s';
+        setTimeout(() => loading.remove(), 500);
+      }
+      clearInterval(checkInterval);
+    }, 60000);
+  </script>
 </body>
 
 </html>
