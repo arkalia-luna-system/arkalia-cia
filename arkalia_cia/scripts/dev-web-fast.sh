@@ -149,19 +149,28 @@ fi
 # Port
 PORT=8080
 
-# Afficher les informations
-echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${GREEN}🌟 Démarrage du serveur de développement${NC}"
-echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+# Afficher les informations de manière claire et organisée
 echo ""
+echo -e "${GREEN}╔══════════════════════════════════════════════════════════╗${NC}"
+echo -e "${GREEN}║     🌟  ARKALIA CIA - SERVEUR DE DÉVELOPPEMENT  🌟      ║${NC}"
+echo -e "${GREEN}╚══════════════════════════════════════════════════════════╝${NC}"
+echo ""
+echo -e "${CYAN}📱 ${BROWSER_NAME} sera ouvert automatiquement${NC}"
+echo ""
+echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${YELLOW}📍  ACCÈS À L'APPLICATION${NC}"
+echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo -e "${CYAN}💻 Sur votre Mac:${NC}"
-echo -e "   ${BLUE}http://localhost:${PORT}${NC}"
+echo -e "   ${BLUE}👉 http://localhost:${PORT}${NC}"
 echo ""
 echo -e "${CYAN}📱 Sur votre mobile (même WiFi):${NC}"
-echo -e "   ${BLUE}http://${LOCAL_IP}:${PORT}${NC}"
+echo -e "   ${BLUE}👉 http://${LOCAL_IP}:${PORT}${NC}"
 echo ""
-echo -e "${CYAN}🎯 Hot Reload:${NC}"
-echo -e "   ${GREEN}Appuyez sur 'r' dans le terminal pour hot reload${NC}"
+echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${YELLOW}⚡  COMMANDES RAPIDES${NC}"
+echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${GREEN}🎯 Hot Reload:${NC}"
+echo -e "   ${GREEN}Appuyez sur 'r' dans le terminal${NC}"
 echo -e "   ${GREEN}Appuyez sur 'R' pour hot restart${NC}"
 echo ""
 echo -e "${CYAN}📱 Mode Device Emulation (Chrome):${NC}"
@@ -251,30 +260,50 @@ open_browser() {
             APPLE_SCRIPT="$SCRIPT_DIR/open_comet_devtools.applescript"
             
             echo ""
-            echo -e "${GREEN}✅ Comet ouvert avec l'app${NC}"
+            echo -e "${GREEN}✅ Comet ouvert avec l'application${NC}"
+            echo ""
             
             if [ -f "$APPLE_SCRIPT" ]; then
                 echo -e "${CYAN}🔧 Activation automatique du mode Device Emulation...${NC}"
                 osascript "$APPLE_SCRIPT" 2>/dev/null && {
                     sleep 1
-                    echo -e "${GREEN}✅ DevTools et Device Emulation activés !${NC}"
-                    echo -e "${CYAN}📱 Le 'mini téléphone' devrait maintenant être visible sur votre écran${NC}"
+                    echo ""
+                    echo -e "${GREEN}╔══════════════════════════════════════════════════════════╗${NC}"
+                    echo -e "${GREEN}║  ✅  DevTools et Device Emulation activés avec succès !  ║${NC}"
+                    echo -e "${GREEN}╚══════════════════════════════════════════════════════════╝${NC}"
+                    echo ""
+                    echo -e "${GREEN}📱 Le 'mini téléphone' devrait maintenant être visible sur votre écran${NC}"
+                    echo ""
                 } || {
-                    echo -e "${YELLOW}⚠️  Activation automatique échouée, instructions manuelles ci-dessous${NC}"
+                    echo -e "${YELLOW}⚠️  Activation automatique échouée${NC}"
+                    echo ""
                 }
             else
-                echo -e "${YELLOW}⚠️  Script AppleScript non trouvé, instructions manuelles ci-dessous${NC}"
+                echo -e "${YELLOW}⚠️  Script AppleScript non trouvé${NC}"
+                echo ""
             fi
             
-            echo ""
-            echo -e "${CYAN}💡 Si le 'mini téléphone' n'apparaît toujours pas, faites manuellement :${NC}"
-            echo -e "   ${YELLOW}1. Dans Comet, appuyez sur ${GREEN}F12${YELLOW} ou ${GREEN}Cmd+Option+I${YELLOW} (ouvre DevTools)${NC}"
-            echo -e "   ${YELLOW}2. Dans DevTools, appuyez sur ${GREEN}Cmd+Shift+M${YELLOW} (Toggle device toolbar)${NC}"
-            echo -e "   ${YELLOW}3. Sélectionnez un appareil dans le menu en haut :${NC}"
-            echo -e "      ${GREEN}• iPhone 14 Pro${NC}"
-            echo -e "      ${GREEN}• Galaxy S21${NC}"
-            echo -e "      ${GREEN}• Ou un autre appareil${NC}"
-            echo -e "   ${YELLOW}4. Le téléphone devrait apparaître sur votre écran !${NC}"
+            if [ ! -f "$APPLE_SCRIPT" ] || ! osascript "$APPLE_SCRIPT" 2>/dev/null; then
+                echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+                echo -e "${YELLOW}💡  ACTIVATION MANUELLE DU MINI TÉLÉPHONE${NC}"
+                echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+                echo ""
+                echo -e "${CYAN}Si le 'mini téléphone' n'apparaît pas, suivez ces étapes :${NC}"
+                echo ""
+                echo -e "   ${YELLOW}1.${NC} Dans Comet, appuyez sur ${GREEN}F12${NC} ou ${GREEN}Cmd+Option+I${NC}"
+                echo -e "      ${CYAN}(Ouvre les DevTools)${NC}"
+                echo ""
+                echo -e "   ${YELLOW}2.${NC} Dans DevTools, appuyez sur ${GREEN}Cmd+Shift+M${NC}"
+                echo -e "      ${CYAN}(Toggle device toolbar)${NC}"
+                echo ""
+                echo -e "   ${YELLOW}3.${NC} Sélectionnez un appareil dans le menu en haut :"
+                echo -e "      ${GREEN}• iPhone 14 Pro${NC}"
+                echo -e "      ${GREEN}• Galaxy S21${NC}"
+                echo -e "      ${GREEN}• Ou un autre appareil${NC}"
+                echo ""
+                echo -e "   ${YELLOW}4.${NC} Le téléphone devrait apparaître sur votre écran !"
+                echo ""
+            fi
             
             # Ne pas ouvrir Chrome, l'utilisateur veut utiliser Comet
             if false; then
@@ -304,21 +333,61 @@ open_browser() {
             else
                 open -a "Google Chrome" "http://localhost:${PORT}" 2>/dev/null || true
             fi
+            echo ""
             echo -e "${GREEN}✅ Chrome ouvert automatiquement${NC}"
+            echo ""
+            echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+            echo -e "${YELLOW}💡  ACTIVATION DU MINI TÉLÉPHONE DANS CHROME${NC}"
+            echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+            echo ""
+            echo -e "${CYAN}Pour voir la 'mini télé' dans Chrome :${NC}"
+            echo ""
+            echo -e "   ${YELLOW}1.${NC} Appuyez sur ${GREEN}Cmd+Option+I${NC} (DevTools)"
+            echo ""
+            echo -e "   ${YELLOW}2.${NC} Appuyez sur ${GREEN}Cmd+Shift+M${NC} (Toggle device toolbar)"
+            echo ""
+            echo -e "   ${YELLOW}3.${NC} Sélectionnez un appareil (iPhone 14 Pro, etc.)"
+            echo ""
         elif [ "$DEVICE" = "chrome" ]; then
             # Chrome détecté par Flutter (s'ouvre automatiquement)
+            echo ""
             echo -e "${GREEN}✅ Chrome devrait s'ouvrir automatiquement${NC}"
+            echo ""
         else
             # web-server : ouvrir avec le navigateur par défaut
             open "http://localhost:${PORT}" 2>/dev/null || true
+            echo ""
             echo -e "${GREEN}✅ Navigateur ouvert automatiquement${NC}"
+            echo ""
         fi
     fi
 }
 
 # Afficher les informations de démarrage
 echo ""
+echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${YELLOW}🚀  DÉMARRAGE DE FLUTTER${NC}"
+echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo ""
 echo -e "${CYAN}📱 ${BROWSER_NAME} s'ouvrira automatiquement quand Flutter sera prêt${NC}"
+echo ""
+echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${RED}⚠️   MESSAGE IMPORTANT - À LIRE${NC}"
+echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo ""
+echo -e "${YELLOW}📋 Pendant la compilation Flutter :${NC}"
+echo -e "${GREEN}   ✅ Les erreurs WebSocket sont NORMALES${NC}"
+echo -e "${GREEN}   ✅ L'erreur 'Library not defined' est NORMALE${NC}"
+echo -e "${GREEN}   ✅ Ces erreurs disparaîtront automatiquement${NC}"
+echo ""
+echo -e "${YELLOW}⏳ Attendez que Flutter affiche :${NC}"
+echo -e "${GREEN}   'Flutter run key commands.'${NC}"
+echo -e "${GREEN}   'r Hot reload. 🔥🔥🔥'${NC}"
+echo ""
+echo -e "${GREEN}✅ Une fois ce message affiché, l'app est prête !${NC}"
+echo -e "${GREEN}   Les erreurs dans la console du navigateur disparaîtront.${NC}"
+echo ""
+echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 
 # Ouvrir le navigateur en arrière-plan
@@ -329,24 +398,6 @@ open_browser &
 # Note: Flutter ouvre Chrome automatiquement si DEVICE=chrome
 # Note: CanvasKit est utilisé par défaut dans Flutter 3.35.3
 echo -e "${CYAN}🚀 Lancement Flutter en mode développement...${NC}"
-echo ""
-echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${YELLOW}⚠️  ATTENTION - LISEZ CE MESSAGE IMPORTANT :${NC}"
-echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo ""
-echo -e "${CYAN}📋 Pendant la compilation Flutter :${NC}"
-echo -e "${GREEN}   ✅ Les erreurs WebSocket sont NORMALES${NC}"
-echo -e "${GREEN}   ✅ L'erreur 'Library not defined' est NORMALE${NC}"
-echo -e "${GREEN}   ✅ Ces erreurs disparaîtront automatiquement${NC}"
-echo ""
-echo -e "${CYAN}⏳ Attendez que Flutter affiche :${NC}"
-echo -e "${GREEN}   'Flutter run key commands.'${NC}"
-echo -e "${GREEN}   'r Hot reload. 🔥🔥🔥'${NC}"
-echo ""
-echo -e "${CYAN}✅ Une fois ce message affiché, l'app est prête !${NC}"
-echo -e "${CYAN}   Les erreurs dans la console du navigateur disparaîtront.${NC}"
-echo ""
-echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 
 # Lancer Flutter (compile automatiquement)
