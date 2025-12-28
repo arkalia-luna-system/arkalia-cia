@@ -69,7 +69,7 @@ class GoogleAuthService {
       await prefs.setString('google_user_id', account.id);
       // email peut être null selon GoogleSignInAccount, donc on vérifie
       await prefs.setString('google_user_email', account.email ?? '');
-      await prefs.setString('google_user_name', account.displayName ?? '');
+      await prefs.setString('google_user_name', account.displayName ?? ''); // displayName peut être null
       await prefs.setString('google_user_photo', account.photoUrl ?? '');
       await prefs.setBool('google_signed_in', true);
 

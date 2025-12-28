@@ -137,12 +137,12 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
         try {
           final googleAccount = result['user'] as GoogleSignInAccount?;
           if (googleAccount != null) {
-            // email peut être null selon GoogleSignInAccount, donc on vérifie
-            final googleEmail = googleAccount.email?.trim();
+            // email est non-null selon GoogleSignInAccount, mais on vérifie quand même
+            final googleEmail = googleAccount.email.trim();
             final googleName = googleAccount.displayName?.trim();
             
             // Ne créer/mettre à jour le profil que si l'email est valide
-            if (googleEmail != null && googleEmail.isNotEmpty) {
+            if (googleEmail.isNotEmpty) {
               final existingProfile = await UserProfileService.getProfile();
               if (existingProfile == null) {
                 // Créer automatiquement le profil depuis Google
@@ -158,11 +158,11 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                 
                 if (emailChanged || nameChanged) {
                   final updatedProfile = existingProfile.copyWith(
-                    email: googleEmail ?? existingProfile.email,
+                    email: googleEmail,
                     displayName: googleName?.isNotEmpty == true ? googleName : existingProfile.displayName,
                   );
                   await UserProfileService.saveProfile(updatedProfile);
-                  AppLogger.info('✅ Profil utilisateur mis à jour depuis Google Sign-In: ${googleEmail ?? existingProfile.email}');
+                  AppLogger.info('✅ Profil utilisateur mis à jour depuis Google Sign-In: $googleEmail');
                 } else {
                   AppLogger.debug('Profil utilisateur déjà à jour');
                 }
