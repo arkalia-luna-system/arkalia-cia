@@ -330,15 +330,27 @@ open_browser &
 # Note: CanvasKit est utilisé par défaut dans Flutter 3.35.3
 echo -e "${CYAN}🚀 Lancement Flutter en mode développement...${NC}"
 echo ""
-echo -e "${YELLOW}💡 IMPORTANT:${NC}"
-echo -e "${YELLOW}   - La première compilation peut prendre 1-2 minutes${NC}"
-echo -e "${YELLOW}   - Les erreurs WebSocket sont NORMALES pendant la compilation${NC}"
-echo -e "${YELLOW}   - Attendez le message 'Flutter run key commands' avant d'utiliser l'app${NC}"
-echo -e "${YELLOW}   - Les erreurs disparaîtront une fois la compilation terminée${NC}"
+echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${YELLOW}⚠️  ATTENTION - LISEZ CE MESSAGE IMPORTANT :${NC}"
+echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo ""
+echo -e "${CYAN}📋 Pendant la compilation Flutter :${NC}"
+echo -e "${GREEN}   ✅ Les erreurs WebSocket sont NORMALES${NC}"
+echo -e "${GREEN}   ✅ L'erreur 'Library not defined' est NORMALE${NC}"
+echo -e "${GREEN}   ✅ Ces erreurs disparaîtront automatiquement${NC}"
+echo ""
+echo -e "${CYAN}⏳ Attendez que Flutter affiche :${NC}"
+echo -e "${GREEN}   'Flutter run key commands.'${NC}"
+echo -e "${GREEN}   'r Hot reload. 🔥🔥🔥'${NC}"
+echo ""
+echo -e "${CYAN}✅ Une fois ce message affiché, l'app est prête !${NC}"
+echo -e "${CYAN}   Les erreurs dans la console du navigateur disparaîtront.${NC}"
+echo ""
+echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 
 # Lancer Flutter (compile automatiquement)
-# Ne pas utiliser --verbose car cela génère trop de logs
 # Le WebSocket 8081 est géré automatiquement par Flutter
+# Les erreurs WebSocket pendant la compilation sont normales
 flutter run -d "$DEVICE" --web-port=$PORT --web-hostname=0.0.0.0
 
