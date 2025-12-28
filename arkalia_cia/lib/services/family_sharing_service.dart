@@ -2,13 +2,13 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
+import 'package:http/http.dart' as http;
 import '../services/local_storage_service.dart';
 import '../services/backend_config_service.dart';
 import '../services/api_service.dart';
 import '../services/auth_api_service.dart';
 import 'notification_service.dart';
 import '../utils/app_logger.dart';
-import 'package:http/http.dart' as http;
 
 class FamilyMember {
   final int? id;
@@ -222,10 +222,34 @@ class FamilySharingService {
         return;
       }
       
-      // Note: Le backend n'a pas encore d'endpoint pour les membres famille
-      // On log juste pour l'instant
-      AppLogger.debug('Membre famille à synchroniser: ${member.name} (${member.email})');
-      // TODO: Implémenter endpoint backend pour membres famille
+      final headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+      
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/v1/family-sharing/members'),
+        headers: headers,
+        body: jsonEncode({
+          'name': member.name,
+          'email': member.email,
+          'phone': member.phone,
+          'relationship': member.relationship,
+          'is_active': member.isActive,
+        }),
+      );
+      
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        AppLogger.info('Membre famille synchronisé avec backend: ${member.name}');
+        // Mettre à jour l'ID local avec l'ID backend si disponible
+        if (data['id'] != null) {
+          // Note: L'ID local reste prioritaire, on ne le remplace pas
+          AppLogger.debug('ID backend reçu: ${data['id']}');
+        }
+      } else {
+        AppLogger.warning('Erreur synchronisation membre famille: ${response.statusCode}');
+      }
     } catch (e) {
       AppLogger.error('Erreur synchronisation membre famille', e);
       // Ne pas bloquer l'ajout local en cas d'erreur backend
@@ -372,16 +396,34 @@ class FamilySharingService {
         return;
       }
       
-      // Note: Le backend n'a pas encore d'endpoint pour le partage familial
-      // On log juste pour l'instant
-      AppLogger.debug('Partage à synchroniser: document $documentId avec ${memberEmails.length} membre(s)');
-      // TODO: Implémenter endpoint backend pour partage familial
-      // POST /api/v1/family-sharing/share
-      // {
-      //   "document_id": documentId,
-      //   "member_emails": memberEmails,
-      //   "permission_level": permissionLevel
-      // }
+      final headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+      
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/v1/family-sharing/share'),
+        headers: headers,
+        body: jsonEncode({
+          'document_id': documentId,
+          'member_emails': memberEmails,
+          'permission_level': permissionLevel,
+        }),
+      );
+      
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        AppLogger.info('Document $documentId partagé avec backend: ${data['shared_count'] ?? memberEmails.length} membre(s)');
+      } else {
+        AppLogger.warning('Erreur synchronisation partage backend: ${response.statusCode}');
+        // Logger le body de l'erreur pour debug
+        try {
+          final errorData = jsonDecode(response.body);
+          AppLogger.debug('Détails erreur: ${errorData['detail'] ?? response.body}');
+        } catch (_) {
+          AppLogger.debug('Erreur réponse: ${response.body}');
+        }
+      }
     } catch (e) {
       AppLogger.error('Erreur synchronisation partage backend', e);
       // Ne pas bloquer le partage local en cas d'erreur backend
