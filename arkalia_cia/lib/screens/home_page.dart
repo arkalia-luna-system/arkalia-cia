@@ -209,14 +209,12 @@ class _HomePageState extends State<HomePage> {
                     Expanded(
                       child: Semantics(
                         label: 'Barre de recherche globale',
-                        hint: 'Rechercher dans tous les modules: documents, rappels, contacts. Tapez votre recherche et les résultats apparaîtront automatiquement.',
+                        hint: 'Rechercher dans tous les modules',
                         textField: true,
                         child: TextField(
                           controller: _searchController,
                           decoration: InputDecoration(
                             hintText: 'Rechercher dans documents, rappels, contacts...',
-                            helperText: 'La recherche est automatique, tapez pour commencer',
-                            helperMaxLines: 2,
                             prefixIcon: const Icon(Icons.search),
                             suffixIcon: _searchController.text.isNotEmpty
                                 ? Semantics(
