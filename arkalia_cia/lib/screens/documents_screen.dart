@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 // dart:io n'est pas disponible sur web
 // Utiliser un stub pour dart:html qui ne sera jamais utilisé (code protégé par kIsWeb)
-import 'dart:io' if (dart.library.html) 'dart:html' as io;
+import 'dart:io' if (dart.library.html) '../stubs/html_stub.dart' as io;
 import 'package:file_picker/file_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
