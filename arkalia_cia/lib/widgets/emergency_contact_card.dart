@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../utils/app_logger.dart';
 
 /// Widget pour afficher un contact d'urgence
 class EmergencyContactCard extends StatelessWidget {
@@ -72,7 +73,9 @@ class EmergencyContactCard extends StatelessWidget {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       }
     } catch (e) {
-      // Gestion d'erreur sera faite par le parent
+      // Logger l'erreur mais ne pas bloquer l'interface
+      // L'utilisateur peut réessayer manuellement
+      AppLogger.debug('Erreur ouverture WhatsApp: $e');
     }
   }
 
