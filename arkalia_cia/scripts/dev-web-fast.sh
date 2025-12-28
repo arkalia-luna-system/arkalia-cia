@@ -85,6 +85,13 @@ if [ ! -d "web" ]; then
     echo ""
 fi
 
+# Nettoyer le build web pour éviter les erreurs de compilation
+echo -e "${YELLOW}🧹 Nettoyage du build web...${NC}"
+rm -rf build/web 2>/dev/null || true
+flutter clean > /dev/null 2>&1 || true
+echo -e "${GREEN}✅ Nettoyage terminé${NC}"
+echo ""
+
 # Vérifier les devices disponibles et les navigateurs installés
 DEVICES_OUTPUT=$(flutter devices 2>&1)
 
