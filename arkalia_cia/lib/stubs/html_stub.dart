@@ -4,13 +4,19 @@
 
 /// Stub pour Blob de dart:html (jamais utilisé)
 class Blob {
-  Blob(List<dynamic> data);
+  Blob(List<dynamic> data, [String? mimeType]) {
+    throw UnsupportedError('Blob stub - ne doit jamais être appelé');
+  }
 }
 
 /// Stub pour Url de dart:html (jamais utilisé)
 class Url {
   static String createObjectUrlFromBlob(Blob blob) {
     throw UnsupportedError('Url.createObjectUrlFromBlob stub - ne doit jamais être appelé');
+  }
+  
+  static void revokeObjectUrl(String url) {
+    throw UnsupportedError('Url.revokeObjectUrl stub - ne doit jamais être appelé');
   }
 }
 
@@ -73,27 +79,9 @@ abstract class FileSystemEntity {
 /// Stub pour FileMode de dart:io (jamais utilisé)
 enum FileMode { read, write, append, writeOnly, writeOnlyAppend }
 
-/// Stub pour Platform de dart:html (jamais utilisé)
+/// Stub pour Platform de dart:io (jamais utilisé)
 class Platform {
   static bool get isAndroid => throw UnsupportedError('Platform.isAndroid stub - ne doit jamais être appelé');
   static bool get isIOS => throw UnsupportedError('Platform.isIOS stub - ne doit jamais être appelé');
-}
-
-/// Stub pour Blob de dart:html (jamais utilisé)
-class Blob {
-  Blob(List<dynamic> data, [String? mimeType]) {
-    throw UnsupportedError('Blob stub - ne doit jamais être appelé');
-  }
-}
-
-/// Stub pour Url de dart:html (jamais utilisé)
-class Url {
-  static String createObjectUrlFromBlob(Blob blob) {
-    throw UnsupportedError('Url.createObjectUrlFromBlob stub - ne doit jamais être appelé');
-  }
-  
-  static void revokeObjectUrl(String url) {
-    throw UnsupportedError('Url.revokeObjectUrl stub - ne doit jamais être appelé');
-  }
 }
 

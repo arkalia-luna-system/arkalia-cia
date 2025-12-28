@@ -4,9 +4,9 @@ import 'package:flutter/foundation.dart';
 // dart:io n'est pas disponible sur web
 // Utiliser un stub pour dart:html qui ne sera jamais utilisé (code protégé par kIsWeb)
 import 'dart:io' if (dart.library.html) '../stubs/html_stub.dart' as io;
-// Ne pas importer dart:html directement pour éviter erreurs compilation tests
-// Utiliser seulement le stub - le code est protégé par kIsWeb
-import '../stubs/html_stub.dart' as html;
+// dart:html n'est pas disponible sur toutes les plateformes (tests)
+// Utiliser un import conditionnel avec stub pour éviter erreurs compilation tests
+import 'dart:html' if (dart.library.html) 'dart:html' if (!dart.library.html) '../stubs/html_stub.dart' as html;
 import 'package:file_picker/file_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
