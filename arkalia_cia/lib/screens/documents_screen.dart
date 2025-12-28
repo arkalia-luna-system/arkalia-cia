@@ -26,6 +26,16 @@ class DocumentsScreen extends StatefulWidget {
   State<DocumentsScreen> createState() => _DocumentsScreenState();
 }
 
+enum DocumentSortOrder {
+  recent,      // Plus récent d'abord
+  oldest,      // Plus ancien d'abord
+  alphabetical, // A-Z
+  alphabeticalReverse, // Z-A
+  sizeLargest,  // Plus grand d'abord
+  sizeSmallest, // Plus petit d'abord
+  category,     // Par catégorie
+}
+
 class _DocumentsScreenState extends State<DocumentsScreen> {
   List<Map<String, dynamic>> documents = [];
   List<Map<String, dynamic>> filteredDocuments = [];
@@ -34,6 +44,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _selectedCategory = 'Tous';
   String? _selectedExamType; // Filtre par type d'examen
+  DocumentSortOrder _sortOrder = DocumentSortOrder.recent; // Tri par défaut
   Timer? _debounceTimer;
   
   // Pagination pour performance
@@ -64,6 +75,80 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     _debounceTimer = Timer(const Duration(milliseconds: 500), () {
       _filterDocuments();
     });
+  }
+
+  /// Trie une liste de documents selon l'ordre sélectionné
+  List<Map<String, dynamic>> _sortDocuments(List<Map<String, dynamic>> docs) {
+    final sorted = List<Map<String, dynamic>>.from(docs);
+    
+    switch (_sortOrder) {
+      case DocumentSortOrder.recent:
+        sorted.sort((a, b) {
+          final dateA = _parseDate(a['created_at']);
+          final dateB = _parseDate(b['created_at']);
+          return dateB.compareTo(dateA); // Plus récent d'abord
+        });
+        break;
+      case DocumentSortOrder.oldest:
+        sorted.sort((a, b) {
+          final dateA = _parseDate(a['created_at']);
+          final dateB = _parseDate(b['created_at']);
+          return dateA.compareTo(dateB); // Plus ancien d'abord
+        });
+        break;
+      case DocumentSortOrder.alphabetical:
+        sorted.sort((a, b) {
+          final nameA = (a['original_name'] ?? '').toLowerCase();
+          final nameB = (b['original_name'] ?? '').toLowerCase();
+          return nameA.compareTo(nameB); // A-Z
+        });
+        break;
+      case DocumentSortOrder.alphabeticalReverse:
+        sorted.sort((a, b) {
+          final nameA = (a['original_name'] ?? '').toLowerCase();
+          final nameB = (b['original_name'] ?? '').toLowerCase();
+          return nameB.compareTo(nameA); // Z-A
+        });
+        break;
+      case DocumentSortOrder.sizeLargest:
+        sorted.sort((a, b) {
+          final sizeA = (a['file_size'] as int?) ?? 0;
+          final sizeB = (b['file_size'] as int?) ?? 0;
+          return sizeB.compareTo(sizeA); // Plus grand d'abord
+        });
+        break;
+      case DocumentSortOrder.sizeSmallest:
+        sorted.sort((a, b) {
+          final sizeA = (a['file_size'] as int?) ?? 0;
+          final sizeB = (b['file_size'] as int?) ?? 0;
+          return sizeA.compareTo(sizeB); // Plus petit d'abord
+        });
+        break;
+      case DocumentSortOrder.category:
+        sorted.sort((a, b) {
+          final catA = (a['category'] ?? 'Non catégorisé').toLowerCase();
+          final catB = (b['category'] ?? 'Non catégorisé').toLowerCase();
+          final catCompare = catA.compareTo(catB);
+          if (catCompare != 0) return catCompare;
+          // Si même catégorie, trier par date (plus récent d'abord)
+          final dateA = _parseDate(a['created_at']);
+          final dateB = _parseDate(b['created_at']);
+          return dateB.compareTo(dateA);
+        });
+        break;
+    }
+    
+    return sorted;
+  }
+  
+  /// Parse une date ISO8601 en DateTime
+  DateTime _parseDate(dynamic dateStr) {
+    if (dateStr == null) return DateTime(1970);
+    try {
+      return DateTime.parse(dateStr.toString());
+    } catch (e) {
+      return DateTime(1970);
+    }
   }
 
   void _filterDocuments() {
@@ -98,10 +183,13 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         return matchesSearch && matchesCategory && matchesExamType;
       }).toList();
       
+      // Trier les documents filtrés
+      final sorted = _sortDocuments(allFiltered);
+      
       // Pagination : Limiter à la première page
       _currentPage = 0;
-      _hasMoreItems = allFiltered.length > _itemsPerPage;
-      filteredDocuments = allFiltered.take(_itemsPerPage).toList();
+      _hasMoreItems = sorted.length > _itemsPerPage;
+      filteredDocuments = sorted.take(_itemsPerPage).toList();
     });
   }
   
@@ -134,11 +222,14 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       return matchesSearch && matchesCategory && matchesExamType;
     }).toList();
     
+    // Trier les documents filtrés
+    final sorted = _sortDocuments(allFiltered);
+    
     final nextPage = _currentPage + 1;
     final startIndex = nextPage * _itemsPerPage;
-    final endIndex = (startIndex + _itemsPerPage).clamp(0, allFiltered.length);
+    final endIndex = (startIndex + _itemsPerPage).clamp(0, sorted.length);
     
-    if (startIndex >= allFiltered.length) {
+    if (startIndex >= sorted.length) {
       setState(() {
         _hasMoreItems = false;
       });
@@ -146,9 +237,9 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     }
     
     setState(() {
-      filteredDocuments.addAll(allFiltered.sublist(startIndex, endIndex));
+      filteredDocuments.addAll(sorted.sublist(startIndex, endIndex));
       _currentPage = nextPage;
-      _hasMoreItems = endIndex < allFiltered.length;
+      _hasMoreItems = endIndex < sorted.length;
     });
   }
   
@@ -276,10 +367,12 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       
       setState(() {
         documents = docs;
+        // Trier les documents
+        final sorted = _sortDocuments(docs);
         // Pagination : Charger seulement les 20 premiers
         _currentPage = 0;
-        _hasMoreItems = docs.length > _itemsPerPage;
-        filteredDocuments = docs.take(_itemsPerPage).toList();
+        _hasMoreItems = sorted.length > _itemsPerPage;
+        filteredDocuments = sorted.take(_itemsPerPage).toList();
         isLoading = false;
       });
     } catch (e) {
@@ -550,10 +643,39 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
 
       // Sur web, essayer d'ouvrir le document via url_launcher
       if (kIsWeb) {
-        // Sur web, les fichiers sont stockés dans LocalStorageService
-        // Note: Pour éviter erreurs compilation tests, on n'utilise pas dart:html directement
-        // Sur web, suggérer d'utiliser le bouton de partage
-        _showError('Sur le web, veuillez utiliser le bouton de partage pour ouvrir le document dans une autre application.');
+        // Sur web, les fichiers ne sont pas stockés avec leurs bytes (limite SharedPreferences)
+        // Pour ouvrir un document sur web, il faut le ré-uploader ou utiliser le bouton de partage
+        // Note: Une future amélioration pourrait utiliser IndexedDB pour stocker les bytes
+        if (!mounted) return;
+        final shouldShare = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Ouvrir le document'),
+            content: const Text(
+              'Sur le web, les fichiers ne peuvent pas être ouverts directement.\n\n'
+              'Voulez-vous utiliser le bouton de partage pour télécharger ou ouvrir le document dans une autre application ?',
+              style: TextStyle(fontSize: 14),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Annuler'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context, true),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Partager'),
+              ),
+            ],
+          ),
+        );
+        
+        if (shouldShare == true && mounted) {
+          await _shareDocument(doc);
+        }
         return;
       }
 
@@ -646,10 +768,13 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
 
       // Sur web, on ne peut pas utiliser File de dart:io
       if (kIsWeb) {
-        // Sur web, essayer de télécharger le fichier
-        // Note: Les bytes ne sont pas stockés sur web pour éviter de saturer SharedPreferences
-        // Il faudrait implémenter IndexedDB pour stocker les fichiers volumineux
-        _showError('Le partage de fichiers PDF n\'est pas encore disponible sur le web. Cette fonctionnalité sera ajoutée prochainement.');
+        // Sur web, les bytes ne sont pas stockés (limite SharedPreferences)
+        // On ne peut pas partager le fichier car on n'a pas les bytes
+        // Note: Une future amélioration pourrait utiliser IndexedDB pour stocker les bytes
+        _showError(
+          'Le partage de fichiers n\'est pas disponible sur le web car les fichiers ne sont pas stockés localement.\n\n'
+          'Pour partager un document, veuillez le ré-uploader depuis votre appareil.',
+        );
         return;
       }
 
@@ -689,9 +814,93 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         backgroundColor: Colors.green[600],
         foregroundColor: Colors.white,
         actions: [
+          // Menu de tri
+          PopupMenuButton<DocumentSortOrder>(
+            icon: const Icon(Icons.sort),
+            tooltip: 'Trier les documents',
+            onSelected: (order) {
+              setState(() {
+                _sortOrder = order;
+              });
+              _filterDocuments();
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: DocumentSortOrder.recent,
+                child: Row(
+                  children: [
+                    Icon(Icons.access_time, size: 20),
+                    SizedBox(width: 8),
+                    Text('Plus récent'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: DocumentSortOrder.oldest,
+                child: Row(
+                  children: [
+                    Icon(Icons.history, size: 20),
+                    SizedBox(width: 8),
+                    Text('Plus ancien'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: DocumentSortOrder.alphabetical,
+                child: Row(
+                  children: [
+                    Icon(Icons.sort_by_alpha, size: 20),
+                    SizedBox(width: 8),
+                    Text('Alphabétique (A-Z)'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: DocumentSortOrder.alphabeticalReverse,
+                child: Row(
+                  children: [
+                    Icon(Icons.sort_by_alpha, size: 20),
+                    SizedBox(width: 8),
+                    Text('Alphabétique (Z-A)'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: DocumentSortOrder.sizeLargest,
+                child: Row(
+                  children: [
+                    Icon(Icons.arrow_downward, size: 20),
+                    SizedBox(width: 8),
+                    Text('Taille (plus grand)'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: DocumentSortOrder.sizeSmallest,
+                child: Row(
+                  children: [
+                    Icon(Icons.arrow_upward, size: 20),
+                    SizedBox(width: 8),
+                    Text('Taille (plus petit)'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: DocumentSortOrder.category,
+                child: Row(
+                  children: [
+                    Icon(Icons.category, size: 20),
+                    SizedBox(width: 8),
+                    Text('Par catégorie'),
+                  ],
+                ),
+              ),
+            ],
+          ),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _loadDocuments,
+            tooltip: 'Actualiser',
           ),
         ],
       ),
@@ -822,7 +1031,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                             Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: Colors.green.withOpacity(0.1),
+                                color: Colors.green.withValues(alpha: 0.1),
                                 shape: BoxShape.circle,
                               ),
                               child: const Icon(
@@ -871,7 +1080,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                                 Container(
                                   padding: const EdgeInsets.all(16),
                                   decoration: BoxDecoration(
-                                    color: Colors.grey.withOpacity(0.1),
+                                    color: Colors.grey.withValues(alpha: 0.1),
                                     shape: BoxShape.circle,
                                   ),
                                   child: const Icon(
