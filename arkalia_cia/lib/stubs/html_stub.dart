@@ -2,21 +2,21 @@
 // Ce fichier n'est jamais réellement utilisé car le code est protégé par kIsWeb
 // ignore_for_file: unused_import, unused_element, avoid_types_on_closure_parameters
 
-/// Stub pour Blob de dart:html (jamais utilisé)
+/// Stub pour Blob de dart:html (jamais utilisé sur mobile/tests)
 class Blob {
   Blob(List<dynamic> data, [String? mimeType]) {
-    throw UnsupportedError('Blob stub - ne doit jamais être appelé');
+    throw UnsupportedError('Blob stub - ne doit jamais être appelé sur mobile/tests');
   }
 }
 
-/// Stub pour Url de dart:html (jamais utilisé)
+/// Stub pour Url de dart:html (jamais utilisé sur mobile/tests)
 class Url {
   static String createObjectUrlFromBlob(Blob blob) {
-    throw UnsupportedError('Url.createObjectUrlFromBlob stub - ne doit jamais être appelé');
+    throw UnsupportedError('Url.createObjectUrlFromBlob stub - ne doit jamais être appelé sur mobile/tests');
   }
   
   static void revokeObjectUrl(String url) {
-    throw UnsupportedError('Url.revokeObjectUrl stub - ne doit jamais être appelé');
+    throw UnsupportedError('Url.revokeObjectUrl stub - ne doit jamais être appelé sur mobile/tests');
   }
 }
 

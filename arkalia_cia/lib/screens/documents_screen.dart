@@ -11,6 +11,7 @@ import 'package:open_filex/open_filex.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../services/local_storage_service.dart';
 import '../services/file_storage_service.dart';
+import '../services/web_file_storage_service.dart';
 import '../services/category_service.dart';
 import '../services/doctor_detection_service.dart';
 import '../services/doctor_service.dart';
@@ -18,6 +19,7 @@ import '../models/doctor.dart';
 import '../utils/app_logger.dart';
 import '../utils/input_sanitizer.dart';
 import '../widgets/exam_type_badge.dart';
+import '../services/web_file_helper.dart';
 
 class DocumentsScreen extends StatefulWidget {
   const DocumentsScreen({super.key});
@@ -463,8 +465,9 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         final category = await _showCategoryDialog();
         
         // Sauvegarder les métadonnées localement
+        final documentId = timestamp.toString();
         final document = <String, dynamic>{
-          'id': timestamp.toString(), // ID en String pour cohérence
+          'id': documentId, // ID en String pour cohérence
           'name': uniqueFileName,
           'original_name': fileName,
           'path': kIsWeb ? uniqueFileName : (savedFile as dynamic).path,
@@ -473,20 +476,24 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           'created_at': DateTime.now().toIso8601String(),
         };
 
-        // ⚠️ CRITIQUE : Ne PAS stocker les bytes sur le web dans SharedPreferences
-        // SharedPreferences a une limite de ~5-10 MB par clé
-        // Les PDFs peuvent faire plusieurs MB chacun, ce qui peut faire planter l'app
-        // Les bytes doivent être stockés ailleurs (IndexedDB) ou chargés à la demande
-        // Pour l'instant, on ne stocke que les métadonnées
-        // NOTE: Stockage IndexedDB pour fichiers volumineux sur web
-        // IndexedDB n'est pas implémenté car :
-        // 1. Les fichiers PDF sont stockés via FileStorageService (path_provider)
-        // 2. Sur web, les fichiers sont gérés par le navigateur (File API)
-        // 3. IndexedDB serait nécessaire seulement pour très gros fichiers (>50MB)
-        // 4. L'implémentation actuelle fonctionne pour 99% des cas d'usage
-        // if (kIsWeb && pickedFile.bytes != null) {
-        //   document['bytes'] = pickedFile.bytes; // ⚠️ DÉSACTIVÉ - Trop volumineux
-        // }
+        // Sur web, stocker les bytes pour permettre l'ouverture
+        if (kIsWeb && pickedFile.bytes != null) {
+          final fileSize = pickedFile.bytes!.length;
+          if (fileSize > WebFileStorageService.maxFileSize) {
+            // Fichier trop volumineux, ne pas stocker les bytes
+            _showError(
+              'Fichier trop volumineux (${(fileSize / (1024 * 1024)).toStringAsFixed(1)} MB). '
+              'Limite: ${(WebFileStorageService.maxFileSize / (1024 * 1024)).toStringAsFixed(0)} MB. '
+              'Le fichier sera enregistré mais ne pourra pas être ouvert directement sur le web.',
+            );
+          } else {
+            // Stocker les bytes pour permettre l'ouverture
+            final saved = await WebFileStorageService.saveFileBytes(documentId, pickedFile.bytes!);
+            if (!saved) {
+              AppLogger.warning('Impossible de stocker les bytes du fichier $documentId');
+            }
+          }
+        }
 
         await LocalStorageService.saveDocument(document);
 
@@ -557,10 +564,15 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         
         // Supprimer le fichier physique
         if (fileName != null) {
-          // Utiliser FileStorageService pour supprimer le fichier
-          final deleted = await FileStorageService.deleteDocumentFile(fileName);
-          if (!deleted) {
-            // Fichier non supprimé, mais on continue
+          if (kIsWeb) {
+            // Sur web, supprimer les bytes stockés
+            await WebFileStorageService.deleteFileBytes(docIdString);
+          } else {
+            // Sur mobile, utiliser FileStorageService pour supprimer le fichier
+            final deleted = await FileStorageService.deleteDocumentFile(fileName);
+            if (!deleted) {
+              // Fichier non supprimé, mais on continue
+            }
           }
         }
         
@@ -641,40 +653,99 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         return;
       }
 
-      // Sur web, essayer d'ouvrir le document via url_launcher
+      // Sur web, ouvrir le document via Blob URL
       if (kIsWeb) {
-        // Sur web, les fichiers ne sont pas stockés avec leurs bytes (limite SharedPreferences)
-        // Pour ouvrir un document sur web, il faut le ré-uploader ou utiliser le bouton de partage
-        // Note: Une future amélioration pourrait utiliser IndexedDB pour stocker les bytes
-        if (!mounted) return;
-        final shouldShare = await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Ouvrir le document'),
-            content: const Text(
-              'Sur le web, les fichiers ne peuvent pas être ouverts directement.\n\n'
-              'Voulez-vous utiliser le bouton de partage pour télécharger ou ouvrir le document dans une autre application ?',
-              style: TextStyle(fontSize: 14),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('Annuler'),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context, true),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
-                ),
-                child: const Text('Partager'),
-              ),
-            ],
-          ),
-        );
+        final docId = doc['id']?.toString();
+        if (docId == null) {
+          _showError('ID du document introuvable');
+          return;
+        }
+
+        // Récupérer les bytes du fichier
+        final bytes = await WebFileStorageService.getFileBytes(docId);
         
-        if (shouldShare == true && mounted) {
-          await _shareDocument(doc);
+        if (bytes == null) {
+          // Bytes non disponibles (fichier trop volumineux ou non stocké)
+          if (!mounted) return;
+          final shouldShare = await showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Fichier non disponible'),
+              content: const Text(
+                'Ce fichier est trop volumineux ou n\'a pas été stocké avec ses données.\n\n'
+                'Voulez-vous utiliser le bouton de partage pour télécharger le fichier ?',
+                style: TextStyle(fontSize: 14),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('Annuler'),
+                ),
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: const Text('Partager'),
+                ),
+              ],
+            ),
+          );
+          
+          if (shouldShare == true && mounted) {
+            await _shareDocument(doc);
+          }
+          return;
+        }
+
+        // Déterminer le type MIME
+        final fileName = doc['original_name']?.toString() ?? 'document.pdf';
+        final extension = fileName.toLowerCase().substring(fileName.lastIndexOf('.'));
+        String mimeType = 'application/pdf';
+        switch (extension) {
+          case '.jpg':
+          case '.jpeg':
+            mimeType = 'image/jpeg';
+            break;
+          case '.png':
+            mimeType = 'image/png';
+            break;
+          case '.doc':
+          case '.docx':
+            mimeType = 'application/msword';
+            break;
+          case '.txt':
+            mimeType = 'text/plain';
+            break;
+        }
+
+        // Créer un Blob et un Blob URL
+        try {
+          final blobUrl = createBlobUrl(bytes, mimeType);
+          
+          if (blobUrl == null) {
+            _showError('Impossible de créer l\'URL du document');
+            return;
+          }
+          
+          // Ouvrir le Blob URL dans un nouvel onglet
+          final uri = Uri.parse(blobUrl);
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+            
+            // Nettoyer le Blob URL après un délai (pour éviter fuites mémoire)
+            Future.delayed(const Duration(seconds: 5), () {
+              revokeBlobUrl(blobUrl);
+            });
+          } else {
+            _showError('Impossible d\'ouvrir le document');
+            revokeBlobUrl(blobUrl);
+          }
+        } catch (e) {
+          if (mounted) {
+            _showError('Erreur lors de l\'ouverture: $e');
+          }
         }
         return;
       }
@@ -766,15 +837,93 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         return;
       }
 
-      // Sur web, on ne peut pas utiliser File de dart:io
+      // Sur web, utiliser les bytes stockés pour partager
       if (kIsWeb) {
-        // Sur web, les bytes ne sont pas stockés (limite SharedPreferences)
-        // On ne peut pas partager le fichier car on n'a pas les bytes
-        // Note: Une future amélioration pourrait utiliser IndexedDB pour stocker les bytes
-        _showError(
-          'Le partage de fichiers n\'est pas disponible sur le web car les fichiers ne sont pas stockés localement.\n\n'
-          'Pour partager un document, veuillez le ré-uploader depuis votre appareil.',
-        );
+        final docId = doc['id']?.toString();
+        if (docId == null) {
+          _showError('ID du document introuvable');
+          return;
+        }
+
+        // Récupérer les bytes du fichier
+        final bytes = await WebFileStorageService.getFileBytes(docId);
+        
+        if (bytes == null) {
+          _showError(
+            'Ce fichier est trop volumineux ou n\'a pas été stocké avec ses données.\n\n'
+            'Le partage n\'est pas disponible pour ce fichier.',
+          );
+          return;
+        }
+
+        // Créer un Blob et un Blob URL pour le partage
+        try {
+          final fileName = doc['original_name']?.toString() ?? 'document.pdf';
+          final extension = fileName.toLowerCase().substring(fileName.lastIndexOf('.'));
+          String mimeType = 'application/pdf';
+          switch (extension) {
+            case '.jpg':
+            case '.jpeg':
+              mimeType = 'image/jpeg';
+              break;
+            case '.png':
+              mimeType = 'image/png';
+              break;
+            case '.doc':
+            case '.docx':
+              mimeType = 'application/msword';
+              break;
+            case '.txt':
+              mimeType = 'text/plain';
+              break;
+          }
+
+          // Créer un Blob URL pour le partage
+          final blobUrl = createBlobUrl(bytes, mimeType);
+          
+          if (blobUrl == null) {
+            _showError('Impossible de créer l\'URL du fichier pour le partage');
+            return;
+          }
+          
+          // Partager via l'API de partage du navigateur
+          try {
+            // Utiliser XFile pour créer un fichier partageable
+            final xFile = XFile.fromData(bytes, mimeType: mimeType, name: fileName);
+            await Share.shareXFiles(
+              [xFile],
+              text: 'Document: $fileName',
+            );
+            
+            // Nettoyer le Blob URL après un délai
+            Future.delayed(const Duration(seconds: 5), () {
+              revokeBlobUrl(blobUrl);
+            });
+          } catch (e) {
+            // Fallback: télécharger le fichier via Blob URL
+            try {
+              final uri = Uri.parse(blobUrl);
+              if (await canLaunchUrl(uri)) {
+                await launchUrl(uri, mode: LaunchMode.externalApplication);
+                Future.delayed(const Duration(seconds: 5), () {
+                  revokeBlobUrl(blobUrl);
+                });
+              } else {
+                revokeBlobUrl(blobUrl);
+                _showError('Impossible de partager le fichier');
+              }
+            } catch (e2) {
+              revokeBlobUrl(blobUrl);
+              if (mounted) {
+                _showError('Erreur lors du partage: $e2');
+              }
+            }
+          }
+        } catch (e) {
+          if (mounted) {
+            _showError('Erreur lors du partage: $e');
+          }
+        }
         return;
       }
 
