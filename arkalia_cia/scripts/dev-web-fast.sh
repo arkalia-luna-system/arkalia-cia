@@ -33,7 +33,13 @@ LINT_OUTPUT=$(timeout 15 flutter analyze --no-pub 2>&1 || echo "")
 ERROR_COUNT=$(echo "$LINT_OUTPUT" | grep -c "error •" || echo "0")
 
 # Convertir en nombre (éviter les erreurs de comparaison)
+# Nettoyer la variable pour éviter les problèmes avec les retours à la ligne
+ERROR_COUNT=$(echo "$ERROR_COUNT" | tr -d '\n' | head -c 10)
 ERROR_COUNT=${ERROR_COUNT:-0}
+# S'assurer que c'est un nombre valide
+if ! [ "$ERROR_COUNT" -eq "$ERROR_COUNT" ] 2>/dev/null; then
+    ERROR_COUNT=0
+fi
 
 if [ "$ERROR_COUNT" -gt 0 ] 2>/dev/null; then
     echo -e "${RED}⚠️  ${ERROR_COUNT} erreur(s) trouvée(s)${NC}"
@@ -195,20 +201,29 @@ open_browser() {
     
     if command -v open &> /dev/null; then
         if [ "${USE_COMET:-false}" = true ]; then
-            # Ouvrir Comet
+            # Ouvrir Comet avec l'URL
+            COMET_URL="http://localhost:${PORT}"
             if [ -d "/Applications/Comet.app" ]; then
-                open -a "/Applications/Comet.app" "http://localhost:${PORT}" 2>/dev/null || true
+                open -a "/Applications/Comet.app" "$COMET_URL" 2>/dev/null || true
             elif [ -d "$HOME/Applications/Comet.app" ]; then
-                open -a "$HOME/Applications/Comet.app" "http://localhost:${PORT}" 2>/dev/null || true
+                open -a "$HOME/Applications/Comet.app" "$COMET_URL" 2>/dev/null || true
             else
-                open -a "Comet" "http://localhost:${PORT}" 2>/dev/null || true
+                open -a "Comet" "$COMET_URL" 2>/dev/null || true
             fi
+            
+            # Attendre un peu pour que Comet s'ouvre
+            sleep 3
+            
+            # Essayer d'activer la vue mobile via AppleScript (si possible)
+            # Comet devrait automatiquement détecter Flutter et afficher la vue mobile
+            osascript -e 'tell application "Comet" to activate' 2>/dev/null || true
+            
             echo ""
             echo -e "${GREEN}✅ Comet ouvert avec l'app${NC}"
-            echo -e "${CYAN}💡 Pour voir la 'mini télé' :${NC}"
-            echo -e "   ${YELLOW}1. Appuyez sur ${GREEN}F12${YELLOW} ou ${GREEN}Cmd+Option+I${YELLOW} (DevTools)${NC}"
-            echo -e "   ${YELLOW}2. Appuyez sur ${GREEN}Cmd+Shift+M${YELLOW} (Toggle device toolbar)${NC}"
-            echo -e "   ${YELLOW}3. Sélectionnez un appareil dans le menu${NC}"
+            echo -e "${CYAN}📱 La vue mobile devrait s'afficher automatiquement${NC}"
+            echo -e "${CYAN}💡 Si la 'mini télé' n'apparaît pas :${NC}"
+            echo -e "   ${YELLOW}1. Dans Comet, cherchez l'icône de device/phone${NC}"
+            echo -e "   ${YELLOW}2. Ou utilisez Chrome : ${GREEN}Cmd+Option+I${YELLOW} puis ${GREEN}Cmd+Shift+M${NC}"
         elif [ "${USE_CHROME:-false}" = true ]; then
             # Ouvrir Chrome
             if [ -d "/Applications/Google Chrome.app" ]; then
