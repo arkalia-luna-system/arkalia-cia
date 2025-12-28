@@ -326,5 +326,17 @@ open_browser &
 # Note: CanvasKit est utilisé par défaut dans Flutter 3.35.3
 echo -e "${CYAN}🚀 Lancement Flutter en mode développement...${NC}"
 echo ""
-flutter run -d "$DEVICE" --web-port=$PORT --web-hostname=0.0.0.0
+echo -e "${YELLOW}💡 Si vous voyez des erreurs WebSocket, attendez que Flutter finisse de compiler${NC}"
+echo -e "${YELLOW}   (La première compilation peut prendre 1-2 minutes)${NC}"
+echo ""
+
+# Lancer Flutter (compile automatiquement)
+# Utiliser --no-sound-null-safety si nécessaire pour compatibilité
+flutter run -d "$DEVICE" --web-port=$PORT --web-hostname=0.0.0.0 --verbose 2>&1 | tee /tmp/flutter_run.log || {
+    echo ""
+    echo -e "${RED}❌ Erreur lors du lancement de Flutter${NC}"
+    echo -e "${YELLOW}📋 Dernières lignes du log:${NC}"
+    tail -20 /tmp/flutter_run.log 2>/dev/null || true
+    exit 1
+}
 
