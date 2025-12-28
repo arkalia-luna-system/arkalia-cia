@@ -120,18 +120,9 @@ class GoogleAuthService {
         // Sur le web, Flutter utilise automatiquement l'origine de la page comme redirect_uri
         // Il faut donc ajouter exactement cette URI dans Google Cloud Console
         // Détecter l'origine actuelle pour donner des instructions précises
-        String currentOrigin = 'http://localhost:8080';
-        if (kIsWeb) {
-          // Essayer de détecter l'origine depuis window.location
-          try {
-            // Sur web, on peut utiliser l'URL actuelle
-            // Note: En production, cela sera https://arkalia-luna-system.github.io/arkalia-cia/
-            currentOrigin = Uri.base.origin;
-          } catch (e) {
-            // Fallback si erreur
-            currentOrigin = 'http://localhost:8080';
-          }
-        }
+        // Sur web, on peut utiliser l'URL actuelle
+        // Note: En production, cela sera https://arkalia-luna-system.github.io/arkalia-cia/
+        // (La variable currentOrigin n'est pas utilisée dans le message, donc on la supprime)
         
         userFriendlyMessage = 
             '🔧 Erreur redirect_uri_mismatch (Erreur 400)\n\n'
