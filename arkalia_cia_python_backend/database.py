@@ -261,6 +261,56 @@ class CIADatabase:
                 "CREATE INDEX IF NOT EXISTS idx_audit_logs_created ON audit_logs(created_at)"
             )
 
+            # Table des membres famille
+            cursor.execute(
+                """
+                CREATE TABLE IF NOT EXISTS family_members (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id INTEGER NOT NULL,
+                    name TEXT NOT NULL,
+                    email TEXT NOT NULL,
+                    phone TEXT,
+                    relationship TEXT,
+                    is_active BOOLEAN DEFAULT TRUE,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                )
+            """
+            )
+
+            # Table des documents partagés
+            cursor.execute(
+                """
+                CREATE TABLE IF NOT EXISTS shared_documents (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id INTEGER NOT NULL,
+                    document_id TEXT NOT NULL,
+                    member_email TEXT NOT NULL,
+                    permission_level TEXT DEFAULT 'view',
+                    is_encrypted BOOLEAN DEFAULT TRUE,
+                    shared_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                )
+            """
+            )
+
+            # Index pour partage familial
+            cursor.execute(
+                "CREATE INDEX IF NOT EXISTS idx_family_members_user ON family_members(user_id)"
+            )
+            cursor.execute(
+                "CREATE INDEX IF NOT EXISTS idx_family_members_email ON family_members(email)"
+            )
+            cursor.execute(
+                "CREATE INDEX IF NOT EXISTS idx_shared_documents_user ON shared_documents(user_id)"
+            )
+            cursor.execute(
+                "CREATE INDEX IF NOT EXISTS idx_shared_documents_doc ON shared_documents(document_id)"
+            )
+            cursor.execute(
+                "CREATE INDEX IF NOT EXISTS idx_shared_documents_member ON shared_documents(member_email)"
+            )
+
             conn.commit()
 
     def add_document(
@@ -829,6 +879,267 @@ class CIADatabase:
                 params,
             )
             return [dict(row) for row in cursor.fetchall()]
+
+    # === GESTION PARTAGE FAMILIAL ===
+
+    def add_family_member(
+        self,
+        user_id: int,
+        name: str,
+        email: str,
+        phone: str | None = None,
+        relationship: str | None = None,
+        is_active: bool = True,
+    ) -> int | None:
+        """Ajoute un membre famille"""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            try:
+                cursor.execute(
+                    """
+                    INSERT INTO family_members (
+                        user_id, name, email, phone, relationship, is_active
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?)
+                    """,
+                    (user_id, name, email, phone, relationship, is_active),
+                )
+                return cursor.lastrowid
+            except sqlite3.IntegrityError:
+                return None
+
+    def get_family_members(
+        self, user_id: int, skip: int = 0, limit: int | None = None
+    ) -> list[dict[str, Any]]:
+        """Récupère les membres famille d'un utilisateur"""
+        with sqlite3.connect(self.db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            if limit is not None:
+                cursor.execute(
+                    """
+                    SELECT * FROM family_members
+                    WHERE user_id = ?
+                    ORDER BY is_active DESC, name ASC
+                    LIMIT ? OFFSET ?
+                    """,
+                    (user_id, limit, skip),
+                )
+            else:
+                cursor.execute(
+                    """
+                    SELECT * FROM family_members
+                    WHERE user_id = ?
+                    ORDER BY is_active DESC, name ASC
+                    """,
+                    (user_id,),
+                )
+            return [dict(row) for row in cursor.fetchall()]
+
+    def get_family_member(
+        self, user_id: int, member_id: int
+    ) -> dict[str, Any] | None:
+        """Récupère un membre famille par ID"""
+        with sqlite3.connect(self.db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            cursor.execute(
+                """
+                SELECT * FROM family_members
+                WHERE id = ? AND user_id = ?
+                """,
+                (member_id, user_id),
+            )
+            row = cursor.fetchone()
+            return dict(row) if row else None
+
+    def update_family_member(
+        self,
+        user_id: int,
+        member_id: int,
+        name: str | None = None,
+        email: str | None = None,
+        phone: str | None = None,
+        relationship: str | None = None,
+        is_active: bool | None = None,
+    ) -> bool:
+        """Met à jour un membre famille"""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            updates: list[str] = []
+            params: list[Any] = []
+
+            if name is not None:
+                updates.append("name = ?")
+                params.append(name)
+            if email is not None:
+                updates.append("email = ?")
+                params.append(email)
+            if phone is not None:
+                updates.append("phone = ?")
+                params.append(phone)
+            if relationship is not None:
+                updates.append("relationship = ?")
+                params.append(relationship)
+            if is_active is not None:
+                updates.append("is_active = ?")
+                params.append(is_active)
+
+            if not updates:
+                return False
+
+            params.extend([member_id, user_id])
+            cursor.execute(
+                f"""
+                UPDATE family_members
+                SET {', '.join(updates)}
+                WHERE id = ? AND user_id = ?
+                """,
+                params,
+            )
+            return cursor.rowcount > 0
+
+    def delete_family_member(self, user_id: int, member_id: int) -> bool:
+        """Supprime un membre famille"""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                """
+                DELETE FROM family_members
+                WHERE id = ? AND user_id = ?
+                """,
+                (member_id, user_id),
+            )
+            return cursor.rowcount > 0
+
+    def share_document_with_member(
+        self,
+        user_id: int,
+        document_id: str,
+        member_email: str,
+        permission_level: str = "view",
+        is_encrypted: bool = True,
+    ) -> int | None:
+        """Partage un document avec un membre famille"""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            try:
+                # Vérifier si le partage existe déjà
+                cursor.execute(
+                    """
+                    SELECT id FROM shared_documents
+                    WHERE user_id = ? AND document_id = ? AND member_email = ?
+                    """,
+                    (user_id, document_id, member_email),
+                )
+                existing = cursor.fetchone()
+                if existing:
+                    # Mettre à jour le partage existant
+                    cursor.execute(
+                        """
+                        UPDATE shared_documents
+                        SET permission_level = ?, is_encrypted = ?, shared_at = CURRENT_TIMESTAMP
+                        WHERE id = ?
+                        """,
+                        (permission_level, is_encrypted, existing[0]),
+                    )
+                    return existing[0]
+                else:
+                    # Créer un nouveau partage
+                    cursor.execute(
+                        """
+                        INSERT INTO shared_documents (
+                            user_id, document_id, member_email, permission_level, is_encrypted
+                        )
+                        VALUES (?, ?, ?, ?, ?)
+                        """,
+                        (user_id, document_id, member_email, permission_level, is_encrypted),
+                    )
+                    return cursor.lastrowid
+            except sqlite3.IntegrityError:
+                return None
+
+    def get_shared_documents(
+        self, user_id: int, skip: int = 0, limit: int | None = None
+    ) -> list[dict[str, Any]]:
+        """Récupère les documents partagés par un utilisateur"""
+        with sqlite3.connect(self.db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            if limit is not None:
+                cursor.execute(
+                    """
+                    SELECT * FROM shared_documents
+                    WHERE user_id = ?
+                    ORDER BY shared_at DESC
+                    LIMIT ? OFFSET ?
+                    """,
+                    (user_id, limit, skip),
+                )
+            else:
+                cursor.execute(
+                    """
+                    SELECT * FROM shared_documents
+                    WHERE user_id = ?
+                    ORDER BY shared_at DESC
+                    """,
+                    (user_id,),
+                )
+            return [dict(row) for row in cursor.fetchall()]
+
+    def get_shared_documents_for_member(
+        self, member_email: str, skip: int = 0, limit: int | None = None
+    ) -> list[dict[str, Any]]:
+        """Récupère les documents partagés avec un membre"""
+        with sqlite3.connect(self.db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            if limit is not None:
+                cursor.execute(
+                    """
+                    SELECT * FROM shared_documents
+                    WHERE member_email = ?
+                    ORDER BY shared_at DESC
+                    LIMIT ? OFFSET ?
+                    """,
+                    (member_email, limit, skip),
+                )
+            else:
+                cursor.execute(
+                    """
+                    SELECT * FROM shared_documents
+                    WHERE member_email = ?
+                    ORDER BY shared_at DESC
+                    """,
+                    (member_email,),
+                )
+            return [dict(row) for row in cursor.fetchall()]
+
+    def unshare_document(
+        self, user_id: int, document_id: str, member_email: str | None = None
+    ) -> bool:
+        """Retire le partage d'un document"""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            if member_email:
+                # Retirer le partage pour un membre spécifique
+                cursor.execute(
+                    """
+                    DELETE FROM shared_documents
+                    WHERE user_id = ? AND document_id = ? AND member_email = ?
+                    """,
+                    (user_id, document_id, member_email),
+                )
+            else:
+                # Retirer tous les partages du document
+                cursor.execute(
+                    """
+                    DELETE FROM shared_documents
+                    WHERE user_id = ? AND document_id = ?
+                    """,
+                    (user_id, document_id),
+                )
+            return cursor.rowcount > 0
 
 
 # NOTE: Instance globale supprimée - utiliser get_database() via Depends() dans api.py

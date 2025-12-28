@@ -1879,6 +1879,488 @@ async def analyze_patterns(
         ) from e
 
 
+# === PARTAGE FAMILIAL ===
+
+
+class FamilyMemberCreate(BaseModel):
+    name: str = Field(..., min_length=1, max_length=100, description="Nom du membre")
+    email: str = Field(..., description="Email du membre")
+    phone: str | None = Field(None, description="Téléphone du membre")
+    relationship: str | None = Field(None, description="Relation avec le membre")
+    is_active: bool = Field(default=True, description="Membre actif")
+
+
+class FamilyMemberUpdate(BaseModel):
+    name: str | None = Field(None, min_length=1, max_length=100)
+    email: str | None = None
+    phone: str | None = None
+    relationship: str | None = None
+    is_active: bool | None = None
+
+
+class FamilyMemberResponse(BaseModel):
+    id: int
+    name: str
+    email: str
+    phone: str | None
+    relationship: str | None
+    is_active: bool
+    created_at: str
+
+
+class ShareDocumentRequest(BaseModel):
+    document_id: str = Field(..., description="ID du document à partager")
+    member_emails: list[str] = Field(..., min_length=1, description="Emails des membres")
+    permission_level: str = Field(
+        default="view", pattern="^(view|download|full)$", description="Niveau de permission"
+    )
+
+
+class SharedDocumentResponse(BaseModel):
+    id: int
+    document_id: str
+    member_email: str
+    permission_level: str
+    is_encrypted: bool
+    shared_at: str
+
+
+@app.post(f"{API_PREFIX}/family-sharing/members", response_model=FamilyMemberResponse)
+@limiter.limit("20/minute")
+async def create_family_member(
+    request: Request,
+    member_data: FamilyMemberCreate,
+    current_user: TokenData = Depends(get_current_active_user),
+    db: CIADatabase = Depends(get_database),
+):
+    """Ajoute un membre famille"""
+    try:
+        if not current_user.user_id:
+            raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
+
+        user_id = int(current_user.user_id)
+
+        # Valider l'email
+        if not member_data.email or "@" not in member_data.email:
+            raise HTTPException(status_code=400, detail="Email invalide")
+
+        # Sanitizer les entrées
+        sanitized_name = sanitize_html(member_data.name)
+        sanitized_email = member_data.email.lower().strip()
+        sanitized_phone = (
+            validate_phone_number(member_data.phone) if member_data.phone else None
+        )
+
+        member_id = db.add_family_member(
+            user_id=user_id,
+            name=sanitized_name,
+            email=sanitized_email,
+            phone=sanitized_phone,
+            relationship=member_data.relationship,
+            is_active=member_data.is_active,
+        )
+
+        if not member_id:
+            raise HTTPException(
+                status_code=400, detail="Impossible d'ajouter le membre famille"
+            )
+
+        # Récupérer le membre créé
+        member = db.get_family_member(user_id, member_id)
+        if not member:
+            raise HTTPException(status_code=404, detail="Membre famille non trouvé")
+
+        # Audit log
+        db.add_audit_log(
+            user_id=user_id,
+            action="family_member_added",
+            resource_type="family_member",
+            resource_id=str(member_id),
+            ip_address=get_remote_address(request),
+            user_agent=request.headers.get("user-agent"),
+            success=True,
+        )
+
+        return FamilyMemberResponse(
+            id=member["id"],
+            name=member["name"],
+            email=member["email"],
+            phone=member.get("phone"),
+            relationship=member.get("relationship"),
+            is_active=bool(member.get("is_active", True)),
+            created_at=member["created_at"],
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(
+            f"Erreur création membre famille: {sanitize_log_message(str(e))}"
+        )
+        raise HTTPException(
+            status_code=500, detail="Erreur lors de l'ajout du membre famille"
+        ) from e
+
+
+@app.get(f"{API_PREFIX}/family-sharing/members", response_model=list[FamilyMemberResponse])
+@limiter.limit("30/minute")
+async def get_family_members(
+    request: Request,
+    skip: int = 0,
+    limit: int = 100,
+    current_user: TokenData = Depends(get_current_active_user),
+    db: CIADatabase = Depends(get_database),
+):
+    """Récupère les membres famille"""
+    try:
+        if not current_user.user_id:
+            raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
+
+        user_id = int(current_user.user_id)
+        members = db.get_family_members(user_id, skip=skip, limit=limit)
+
+        return [
+            FamilyMemberResponse(
+                id=m["id"],
+                name=m["name"],
+                email=m["email"],
+                phone=m.get("phone"),
+                relationship=m.get("relationship"),
+                is_active=bool(m.get("is_active", True)),
+                created_at=m["created_at"],
+            )
+            for m in members
+        ]
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(
+            f"Erreur récupération membres famille: {sanitize_log_message(str(e))}"
+        )
+        raise HTTPException(
+            status_code=500, detail="Erreur lors de la récupération des membres famille"
+        ) from e
+
+
+@app.put(f"{API_PREFIX}/family-sharing/members/{{member_id}}", response_model=FamilyMemberResponse)
+@limiter.limit("20/minute")
+async def update_family_member(
+    request: Request,
+    member_id: int,
+    member_data: FamilyMemberUpdate,
+    current_user: TokenData = Depends(get_current_active_user),
+    db: CIADatabase = Depends(get_database),
+):
+    """Met à jour un membre famille"""
+    try:
+        if not current_user.user_id:
+            raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
+
+        user_id = int(current_user.user_id)
+
+        # Vérifier que le membre existe et appartient à l'utilisateur
+        existing_member = db.get_family_member(user_id, member_id)
+        if not existing_member:
+            raise HTTPException(status_code=404, detail="Membre famille non trouvé")
+
+        # Préparer les données à mettre à jour
+        update_data: dict[str, Any] = {}
+        if member_data.name is not None:
+            update_data["name"] = sanitize_html(member_data.name)
+        if member_data.email is not None:
+            if "@" not in member_data.email:
+                raise HTTPException(status_code=400, detail="Email invalide")
+            update_data["email"] = member_data.email.lower().strip()
+        if member_data.phone is not None:
+            update_data["phone"] = (
+                validate_phone_number(member_data.phone) if member_data.phone else None
+            )
+        if member_data.relationship is not None:
+            update_data["relationship"] = member_data.relationship
+        if member_data.is_active is not None:
+            update_data["is_active"] = member_data.is_active
+
+        if not update_data:
+            # Aucune mise à jour nécessaire, retourner le membre existant
+            return FamilyMemberResponse(
+                id=existing_member["id"],
+                name=existing_member["name"],
+                email=existing_member["email"],
+                phone=existing_member.get("phone"),
+                relationship=existing_member.get("relationship"),
+                is_active=bool(existing_member.get("is_active", True)),
+                created_at=existing_member["created_at"],
+            )
+
+        # Mettre à jour
+        success = db.update_family_member(
+            user_id=user_id,
+            member_id=member_id,
+            **update_data,
+        )
+
+        if not success:
+            raise HTTPException(
+                status_code=500, detail="Erreur lors de la mise à jour du membre"
+            )
+
+        # Récupérer le membre mis à jour
+        updated_member = db.get_family_member(user_id, member_id)
+        if not updated_member:
+            raise HTTPException(status_code=404, detail="Membre famille non trouvé")
+
+        # Audit log
+        db.add_audit_log(
+            user_id=user_id,
+            action="family_member_updated",
+            resource_type="family_member",
+            resource_id=str(member_id),
+            ip_address=get_remote_address(request),
+            user_agent=request.headers.get("user-agent"),
+            success=True,
+        )
+
+        return FamilyMemberResponse(
+            id=updated_member["id"],
+            name=updated_member["name"],
+            email=updated_member["email"],
+            phone=updated_member.get("phone"),
+            relationship=updated_member.get("relationship"),
+            is_active=bool(updated_member.get("is_active", True)),
+            created_at=updated_member["created_at"],
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(
+            f"Erreur mise à jour membre famille: {sanitize_log_message(str(e))}"
+        )
+        raise HTTPException(
+            status_code=500, detail="Erreur lors de la mise à jour du membre famille"
+        ) from e
+
+
+@app.delete(f"{API_PREFIX}/family-sharing/members/{{member_id}}")
+@limiter.limit("20/minute")
+async def delete_family_member(
+    request: Request,
+    member_id: int,
+    current_user: TokenData = Depends(get_current_active_user),
+    db: CIADatabase = Depends(get_database),
+):
+    """Supprime un membre famille"""
+    try:
+        if not current_user.user_id:
+            raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
+
+        user_id = int(current_user.user_id)
+
+        # Vérifier que le membre existe
+        existing_member = db.get_family_member(user_id, member_id)
+        if not existing_member:
+            raise HTTPException(status_code=404, detail="Membre famille non trouvé")
+
+        success = db.delete_family_member(user_id, member_id)
+        if not success:
+            raise HTTPException(
+                status_code=500, detail="Erreur lors de la suppression du membre"
+            )
+
+        # Audit log
+        db.add_audit_log(
+            user_id=user_id,
+            action="family_member_deleted",
+            resource_type="family_member",
+            resource_id=str(member_id),
+            ip_address=get_remote_address(request),
+            user_agent=request.headers.get("user-agent"),
+            success=True,
+        )
+
+        return {"success": True, "message": "Membre famille supprimé avec succès"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(
+            f"Erreur suppression membre famille: {sanitize_log_message(str(e))}"
+        )
+        raise HTTPException(
+            status_code=500, detail="Erreur lors de la suppression du membre famille"
+        ) from e
+
+
+@app.post(f"{API_PREFIX}/family-sharing/share")
+@limiter.limit("30/minute")
+async def share_document(
+    request: Request,
+    share_request: ShareDocumentRequest,
+    current_user: TokenData = Depends(get_current_active_user),
+    db: CIADatabase = Depends(get_database),
+):
+    """Partage un document avec des membres famille"""
+    try:
+        if not current_user.user_id:
+            raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
+
+        user_id = int(current_user.user_id)
+
+        # Vérifier que le document existe
+        # Note: document_id peut être un string (ID local Flutter)
+        # On vérifie juste qu'il y a des membres valides
+        if not share_request.member_emails:
+            raise HTTPException(
+                status_code=400, detail="Aucun membre spécifié pour le partage"
+            )
+
+        # Vérifier que les membres existent et appartiennent à l'utilisateur
+        user_members = db.get_family_members(user_id)
+        user_member_emails = {m["email"].lower() for m in user_members if m.get("is_active")}
+
+        valid_emails = [
+            email.lower().strip()
+            for email in share_request.member_emails
+            if email.lower().strip() in user_member_emails
+        ]
+
+        if not valid_emails:
+            raise HTTPException(
+                status_code=400,
+                detail="Aucun membre actif valide trouvé pour le partage",
+            )
+
+        # Partager avec chaque membre
+        shared_ids = []
+        for email in valid_emails:
+            share_id = db.share_document_with_member(
+                user_id=user_id,
+                document_id=share_request.document_id,
+                member_email=email,
+                permission_level=share_request.permission_level,
+                is_encrypted=True,
+            )
+            if share_id:
+                shared_ids.append(share_id)
+
+        if not shared_ids:
+            raise HTTPException(
+                status_code=500, detail="Erreur lors du partage du document"
+            )
+
+        # Audit log
+        db.add_audit_log(
+            user_id=user_id,
+            action="document_shared",
+            resource_type="document",
+            resource_id=share_request.document_id,
+            ip_address=get_remote_address(request),
+            user_agent=request.headers.get("user-agent"),
+            success=True,
+        )
+
+        return {
+            "success": True,
+            "message": f"Document partagé avec {len(shared_ids)} membre(s)",
+            "shared_count": len(shared_ids),
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(
+            f"Erreur partage document: {sanitize_log_message(str(e))}"
+        )
+        raise HTTPException(
+            status_code=500, detail="Erreur lors du partage du document"
+        ) from e
+
+
+@app.get(f"{API_PREFIX}/family-sharing/shared", response_model=list[SharedDocumentResponse])
+@limiter.limit("30/minute")
+async def get_shared_documents(
+    request: Request,
+    skip: int = 0,
+    limit: int = 100,
+    current_user: TokenData = Depends(get_current_active_user),
+    db: CIADatabase = Depends(get_database),
+):
+    """Récupère les documents partagés par l'utilisateur"""
+    try:
+        if not current_user.user_id:
+            raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
+
+        user_id = int(current_user.user_id)
+        shared_docs = db.get_shared_documents(user_id, skip=skip, limit=limit)
+
+        return [
+            SharedDocumentResponse(
+                id=sd["id"],
+                document_id=sd["document_id"],
+                member_email=sd["member_email"],
+                permission_level=sd["permission_level"],
+                is_encrypted=bool(sd.get("is_encrypted", True)),
+                shared_at=sd["shared_at"],
+            )
+            for sd in shared_docs
+        ]
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(
+            f"Erreur récupération documents partagés: {sanitize_log_message(str(e))}"
+        )
+        raise HTTPException(
+            status_code=500, detail="Erreur lors de la récupération des documents partagés"
+        ) from e
+
+
+@app.delete(f"{API_PREFIX}/family-sharing/share/{{document_id}}")
+@limiter.limit("20/minute")
+async def unshare_document(
+    request: Request,
+    document_id: str,
+    member_email: str | None = None,
+    current_user: TokenData = Depends(get_current_active_user),
+    db: CIADatabase = Depends(get_database),
+):
+    """Retire le partage d'un document"""
+    try:
+        if not current_user.user_id:
+            raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
+
+        user_id = int(current_user.user_id)
+
+        success = db.unshare_document(
+            user_id=user_id,
+            document_id=document_id,
+            member_email=member_email.lower().strip() if member_email else None,
+        )
+
+        if not success:
+            raise HTTPException(
+                status_code=404, detail="Partage non trouvé ou déjà supprimé"
+            )
+
+        # Audit log
+        db.add_audit_log(
+            user_id=user_id,
+            action="document_unshared",
+            resource_type="document",
+            resource_id=document_id,
+            ip_address=get_remote_address(request),
+            user_agent=request.headers.get("user-agent"),
+            success=True,
+        )
+
+        return {"success": True, "message": "Partage retiré avec succès"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(
+            f"Erreur retrait partage: {sanitize_log_message(str(e))}"
+        )
+        raise HTTPException(
+            status_code=500, detail="Erreur lors du retrait du partage"
+        ) from e
+
+
 class PredictEventsRequest(BaseModel):
     data: list[dict] = Field(..., description="Liste des données historiques")
     event_type: str = Field(
