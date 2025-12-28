@@ -172,6 +172,13 @@ class _InitialScreenState extends State<_InitialScreen> {
           // (mode offline-first : on garde le token même si le backend est temporairement inaccessible)
           final backendUrl = await BackendConfigService.getBackendURL();
           if (backendUrl.isNotEmpty && !backendUrl.contains('localhost') && !backendUrl.contains('127.0.0.1')) {
+            // Sur web, attendre encore un peu avant de vérifier le token
+            // pour éviter les erreurs pendant la compilation Flutter
+            if (kIsWeb) {
+              await Future.delayed(const Duration(milliseconds: 1000));
+              if (!mounted) return;
+            }
+            
             try {
               // Tenter un refresh silencieux (sans déconnecter en cas d'erreur réseau)
               final refreshResult = await AuthApiService.refreshToken();
