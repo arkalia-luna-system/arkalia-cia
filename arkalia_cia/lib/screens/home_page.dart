@@ -205,11 +205,14 @@ class _HomePageState extends State<HomePage> {
                     Expanded(
                       child: Semantics(
                         label: 'Barre de recherche globale',
-                        hint: 'Rechercher dans tous les modules',
+                        hint: 'Rechercher dans tous les modules: documents, rappels, contacts. Tapez votre recherche et les résultats apparaîtront automatiquement.',
+                        textField: true,
                         child: TextField(
                           controller: _searchController,
                           decoration: InputDecoration(
                             hintText: 'Rechercher dans documents, rappels, contacts...',
+                            helperText: 'La recherche est automatique, tapez pour commencer',
+                            helperMaxLines: 2,
                             prefixIcon: const Icon(Icons.search),
                             suffixIcon: _searchController.text.isNotEmpty
                                 ? Semantics(
@@ -284,11 +287,25 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  // Widgets informatifs
-                  if (!_isLoadingStats) _buildStatsWidgets(),
+                  // Widgets informatifs (afficher même pendant le chargement avec un indicateur)
+                  if (_isLoadingStats)
+                    const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  else
+                    _buildStatsWidgets(),
                   const SizedBox(height: 24),
 
-                  // Grille de modules principaux avec accessibilité
+                  // Grille de modules principaux avec accessibilité (toujours visible)
+                  Semantics(
+                    label: 'Instructions: Sélectionnez un module ci-dessous pour accéder à ses fonctionnalités',
+                    hint: 'Les modules sont organisés en grille, utilisez la navigation clavier ou tactile',
+                    child: Container(),
+                  ),
+                  const SizedBox(height: 8),
                   Semantics(
                     label: 'Modules de l\'application',
                     hint: 'Sélectionnez un module pour accéder à ses fonctionnalités',
