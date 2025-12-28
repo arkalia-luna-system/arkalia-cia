@@ -354,6 +354,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
             return;
           }
           // Sur mobile, utiliser dart:io.File
+          // Note: Ce code n'est jamais exécuté sur web (protégé par kIsWeb)
+          // Utiliser dynamic pour éviter conflit de types entre stub et dart:io
           final sourceFile = io.File(pickedFile.path!);
           savedFile = await FileStorageService.copyToDocumentsDirectory(
             sourceFile,

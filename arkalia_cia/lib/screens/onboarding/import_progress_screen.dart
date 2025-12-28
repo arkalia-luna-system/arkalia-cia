@@ -1,6 +1,7 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+// Import conditionnel pour éviter conflit avec stub web
+import 'dart:io' if (dart.library.html) '../../stubs/html_stub.dart' as io;
 import '../../services/onboarding_service.dart';
 import '../../services/file_storage_service.dart';
 import '../../services/local_storage_service.dart';
@@ -167,7 +168,7 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
 
     for (int i = 0; i < filePaths.length; i++) {
       final filePath = filePaths[i];
-      final file = File(filePath);
+      final file = io.File(filePath);
       
       if (!await file.exists()) {
         continue;

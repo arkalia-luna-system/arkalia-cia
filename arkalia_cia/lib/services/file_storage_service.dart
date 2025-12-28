@@ -1,14 +1,16 @@
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 
+// Import conditionnel pour éviter conflit avec stub web
+import 'dart:io' if (dart.library.html) 'stubs/html_stub.dart' as io;
+
 /// Service de gestion des fichiers avec path_provider
 class FileStorageService {
   /// Récupère le répertoire documents de l'application
-  static Future<Directory> getDocumentsDirectory() async {
+  static Future<io.Directory> getDocumentsDirectory() async {
     final appDir = await getApplicationDocumentsDirectory();
-    final documentsDir = Directory(path.join(appDir.path, 'arkalia_cia', 'documents'));
+    final documentsDir = io.Directory(path.join(appDir.path, 'arkalia_cia', 'documents'));
     
     if (!await documentsDir.exists()) {
       await documentsDir.create(recursive: true);
@@ -18,9 +20,9 @@ class FileStorageService {
   }
 
   /// Récupère le répertoire temporaire
-  static Future<Directory> getTempDirectory() async {
+  static Future<io.Directory> getTempDirectory() async {
     final tempDir = await getTemporaryDirectory();
-    final arkaliaTempDir = Directory(path.join(tempDir.path, 'arkalia_cia'));
+    final arkaliaTempDir = io.Directory(path.join(tempDir.path, 'arkalia_cia'));
     
     if (!await arkaliaTempDir.exists()) {
       await arkaliaTempDir.create(recursive: true);
@@ -30,9 +32,9 @@ class FileStorageService {
   }
 
   /// Copie un fichier vers le répertoire documents
-  static Future<File> copyToDocumentsDirectory(File sourceFile, String fileName) async {
+  static Future<io.File> copyToDocumentsDirectory(io.File sourceFile, String fileName) async {
     final documentsDir = await getDocumentsDirectory();
-    final destFile = File(path.join(documentsDir.path, fileName));
+    final destFile = io.File(path.join(documentsDir.path, fileName));
     
     return await sourceFile.copy(destFile.path);
   }
@@ -41,7 +43,7 @@ class FileStorageService {
   static Future<bool> deleteDocumentFile(String fileName) async {
     try {
       final documentsDir = await getDocumentsDirectory();
-      final file = File(path.join(documentsDir.path, fileName));
+      final file = io.File(path.join(documentsDir.path, fileName));
       
       if (await file.exists()) {
         await file.delete();
@@ -68,7 +70,7 @@ class FileStorageService {
   /// Vérifie si un fichier existe dans le répertoire documents
   static Future<bool> documentExists(String fileName) async {
     final documentsDir = await getDocumentsDirectory();
-    final file = File(path.join(documentsDir.path, fileName));
+    final file = io.File(path.join(documentsDir.path, fileName));
     return await file.exists();
   }
 
@@ -88,7 +90,7 @@ class FileStorageService {
     }
     
     final documentsDir = await getDocumentsDirectory();
-    final destFile = File(path.join(documentsDir.path, fileName));
+    final destFile = io.File(path.join(documentsDir.path, fileName));
     await destFile.writeAsBytes(bytes);
     return destFile;
   }
