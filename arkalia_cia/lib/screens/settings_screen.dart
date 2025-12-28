@@ -160,27 +160,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Card(
             child: Column(
               children: [
-                if (kIsWeb)
-                  SwitchListTile(
-                    secondary: const Icon(Icons.lock),
-                    title: const Text('Authentification PIN'),
-                    subtitle: const Text('Protéger l\'application avec code PIN'),
-                    value: _authOnStartup,
-                    onChanged: (value) async {
-                      await AuthService.setAuthEnabled(value);
-                      await AuthService.setAuthOnStartup(value);
-                      setState(() {
-                        _authOnStartup = value;
-                      });
-                    },
-                  ),
+                // PIN au démarrage retiré - seulement verrouillage auto disponible
+                // L'utilisateur peut activer le verrouillage auto s'il le souhaite
                 SwitchListTile(
                   secondary: const Icon(Icons.lock),
-                  title: const Text('Verrouillage au démarrage'),
-                  subtitle: const Text('Demander authentification à l\'ouverture'),
+                  title: const Text('Verrouillage automatique'),
+                  subtitle: const Text('Demander authentification à l\'ouverture de l\'application'),
                   value: _authOnStartup,
                   onChanged: (value) async {
                     await AuthService.setAuthOnStartup(value);
+                    // Si verrouillage activé, activer aussi l'auth
+                    if (value) {
+                      await AuthService.setAuthEnabled(true);
+                    }
                     setState(() {
                       _authOnStartup = value;
                     });

@@ -7,6 +7,9 @@ import '../onboarding/welcome_screen.dart';
 import '../../services/google_auth_service.dart';
 import '../../services/onboarding_service.dart';
 import '../../services/backend_config_service.dart';
+import '../../services/user_profile_service.dart';
+import '../../utils/app_logger.dart';
+import '../../utils/error_helper.dart';
 
 /// Écran d'accueil pour l'authentification
 /// Propose plusieurs options : Gmail/Google, créer un compte, ou continuer sans compte
@@ -127,6 +130,34 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
         // SIMPLIFIÉ : Connexion réussie, aller directement à HomePage
         // LockScreen s'affichera automatiquement au prochain démarrage si authentification activée
         if (!context.mounted) return;
+        
+        // Auto-remplir le profil utilisateur depuis Google Sign-In
+        try {
+          final googleUser = await GoogleAuthService.getCurrentUser();
+          if (googleUser != null) {
+            final existingProfile = await UserProfileService.getProfile();
+            if (existingProfile == null) {
+              // Créer automatiquement le profil depuis Google
+              await UserProfileService.createProfile(
+                email: googleUser['email'] ?? '',
+                displayName: googleUser['name'] ?? '',
+              );
+            } else {
+              // Mettre à jour le profil existant avec les infos Google si nécessaire
+              if (existingProfile.email != googleUser['email'] || 
+                  existingProfile.displayName != googleUser['name']) {
+                final updatedProfile = existingProfile.copyWith(
+                  email: googleUser['email'] ?? existingProfile.email,
+                  displayName: googleUser['name'] ?? existingProfile.displayName,
+                );
+                await UserProfileService.saveProfile(updatedProfile);
+              }
+            }
+          }
+        } catch (e) {
+          // Erreur silencieuse - ne pas bloquer la connexion
+          AppLogger.debug('Erreur création profil depuis Google: $e');
+        }
         
         // Vérifier l'onboarding
         final onboardingCompleted = await OnboardingService.isOnboardingCompleted();

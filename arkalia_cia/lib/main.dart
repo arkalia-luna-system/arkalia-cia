@@ -17,6 +17,7 @@ import 'services/onboarding_service.dart';
 import 'services/offline_cache_service.dart';
 import 'services/notification_service.dart';
 import 'services/runtime_security_service.dart';
+import 'services/accessibility_service.dart';
 import 'utils/app_logger.dart';
 
 void main() async {
@@ -104,13 +105,27 @@ class _ArkaliaCIAAppState extends State<ArkaliaCIAApp> with WidgetsBindingObserv
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Arkalia CIA',
-      theme: ThemeService.getThemeData('light', MediaQuery.platformBrightnessOf(context)),
-      darkTheme: ThemeService.getThemeData('dark', Brightness.dark),
-      themeMode: _themeMode,
-      home: const _InitialScreen(),
-      debugShowCheckedModeBanner: false,
+    return FutureBuilder<AccessibilityTextSize>(
+      future: AccessibilityService.getTextSize(),
+      builder: (context, snapshot) {
+        final textSize = snapshot.data ?? AccessibilityTextSize.normal;
+        final textScaler = TextScaler.linear(textSize.multiplier);
+        
+        return MaterialApp(
+          title: 'Arkalia CIA',
+          theme: ThemeService.getThemeData('light', MediaQuery.platformBrightnessOf(context)),
+          darkTheme: ThemeService.getThemeData('dark', Brightness.dark),
+          themeMode: _themeMode,
+          builder: (context, child) {
+            return MediaQuery(
+              data: MediaQuery.of(context).copyWith(textScaler: textScaler),
+              child: child!,
+            );
+          },
+          home: const _InitialScreen(),
+          debugShowCheckedModeBanner: false,
+        );
+      },
     );
   }
 }

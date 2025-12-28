@@ -63,12 +63,36 @@ class ConversationalAIService {
       
       // Récupérer URL backend configurée
       final baseUrl = await BackendConfigService.getBackendURL();
-      if (baseUrl.isEmpty) {
+      final backendEnabled = await BackendConfigService.isBackendEnabled();
+      
+      // Mode offline : Si backend non configuré ou désactivé, utiliser mode basique
+      if (baseUrl.isEmpty || !backendEnabled) {
+        // Mode offline : Réponse basique avec données locales
+        final userData = await _getUserData();
+        final docCount = userData['documents']?.length ?? 0;
+        final doctorCount = userData['doctors']?.length ?? 0;
+        
+        // Réponse simple basée sur les données locales
+        String answer = 'Bonjour ! Je suis votre assistant santé intelligent.\n\n';
+        if (docCount > 0) {
+          answer += '📄 Vous avez $docCount document(s) dans votre coffre-fort.\n';
+        }
+        if (doctorCount > 0) {
+          answer += '👨‍⚕️ Vous avez $doctorCount médecin(s) enregistré(s).\n';
+        }
+        answer += '\n💡 Pour une assistance IA complète, configurez le backend dans les paramètres (⚙️ > Backend API).\n\n';
+        answer += 'En attendant, je peux vous aider avec :\n';
+        answer += '• Vos documents médicaux\n';
+        answer += '• Vos médecins\n';
+        answer += '• Vos rappels médicaments\n';
+        answer += '• Vos consultations';
+        
         return AIResponse(
-          answer: '⚠️ Backend non configuré.\n\nPour utiliser l\'assistant IA complet, veuillez configurer l\'URL du backend dans les paramètres (⚙️ > Backend API > URL du backend).\n\nExemple : http://localhost:8000 (sur Mac) ou http://192.168.1.100:8000 (sur iPad).',
+          answer: answer,
           suggestions: [
-            'Configurer le backend dans les paramètres',
-            'Vérifier que le backend est démarré',
+            'Voir mes documents',
+            'Voir mes médecins',
+            'Configurer le backend',
           ],
         );
       }
