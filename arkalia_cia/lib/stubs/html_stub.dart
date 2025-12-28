@@ -22,6 +22,30 @@ class File {
   }
 }
 
+/// Stub pour Directory de dart:io (jamais utilisé)
+class Directory {
+  final String path;
+  
+  Directory(this.path);
+  
+  Future<bool> exists() async {
+    throw UnsupportedError('Directory.exists stub - ne doit jamais être appelé');
+  }
+  
+  Future<Directory> create({bool recursive = false}) async {
+    throw UnsupportedError('Directory.create stub - ne doit jamais être appelé');
+  }
+  
+  Stream<FileSystemEntity> list() {
+    throw UnsupportedError('Directory.list stub - ne doit jamais être appelé');
+  }
+}
+
+/// Stub pour FileSystemEntity de dart:io (jamais utilisé)
+abstract class FileSystemEntity {
+  String get path => throw UnsupportedError('FileSystemEntity.path stub - ne doit jamais être appelé');
+}
+
 /// Stub pour Platform de dart:html (jamais utilisé)
 class Platform {
   static bool get isAndroid => throw UnsupportedError('Platform.isAndroid stub - ne doit jamais être appelé');

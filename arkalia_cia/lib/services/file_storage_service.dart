@@ -3,7 +3,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 
 // Import conditionnel pour éviter conflit avec stub web
-import 'dart:io' if (dart.library.html) 'stubs/html_stub.dart' as io;
+import 'dart:io' if (dart.library.html) '../stubs/html_stub.dart' as io;
 
 /// Service de gestion des fichiers avec path_provider
 class FileStorageService {
@@ -62,7 +62,7 @@ class FileStorageService {
   }
 
   /// Liste tous les fichiers dans le répertoire documents
-  static Future<List<FileSystemEntity>> listDocumentFiles() async {
+  static Future<List<io.FileSystemEntity>> listDocumentFiles() async {
     final documentsDir = await getDocumentsDirectory();
     return documentsDir.list().toList();
   }
@@ -75,7 +75,7 @@ class FileStorageService {
   }
 
   /// Sauvegarde des bytes vers le répertoire documents (pour le web)
-  static Future<File> saveBytesToDocumentsDirectory(
+  static Future<io.File> saveBytesToDocumentsDirectory(
     Uint8List bytes,
     String fileName,
   ) async {
