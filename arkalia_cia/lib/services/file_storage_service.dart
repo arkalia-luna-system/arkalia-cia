@@ -39,20 +39,28 @@ class FileStorageService {
       throw UnsupportedError('copyToDocumentsDirectory n\'est pas supporté sur le web');
     }
     // Caster en File pour mobile
-    final file = sourceFile as io.File;
+    // ignore: avoid_dynamic_calls
+    final file = sourceFile as dynamic;
     final documentsDir = await getDocumentsDirectory();
     final destFile = io.File(path.join(documentsDir.path, fileName));
     
-    return await file.copy(destFile.path);
+    // ignore: avoid_dynamic_calls
+    return await file.copy(destFile.path) as io.File;
   }
 
   /// Supprime un fichier du répertoire documents
   static Future<bool> deleteDocumentFile(String fileName) async {
+    // Sur web, cette fonction n'est jamais appelée (protégé par kIsWeb)
+    if (kIsWeb) {
+      throw UnsupportedError('deleteDocumentFile n\'est pas supporté sur le web');
+    }
     try {
       final documentsDir = await getDocumentsDirectory();
-      final file = io.File(path.join(documentsDir.path, fileName));
+      final file = io.File(path.join(documentsDir.path, fileName)) as dynamic;
       
+      // ignore: avoid_dynamic_calls
       if (await file.exists()) {
+        // ignore: avoid_dynamic_calls
         await file.delete();
         return true;
       }
@@ -97,9 +105,10 @@ class FileStorageService {
     }
     
     final documentsDir = await getDocumentsDirectory();
-    final destFile = io.File(path.join(documentsDir.path, fileName));
+    final destFile = io.File(path.join(documentsDir.path, fileName)) as dynamic;
+    // ignore: avoid_dynamic_calls
     await destFile.writeAsBytes(bytes);
-    return destFile;
+    return destFile as io.File;
   }
 }
 
