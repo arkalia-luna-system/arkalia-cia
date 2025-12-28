@@ -2,12 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 // dart:io n'est pas disponible sur web
-// Utiliser un stub pour dart:html qui ne sera jamais utilisé (code protégé par kIsWeb)
+// Utiliser un stub pour éviter erreurs compilation web
 import 'dart:io' if (dart.library.html) '../stubs/html_stub.dart' as io;
-// dart:html n'est pas disponible sur toutes les plateformes (tests)
-// Ne pas importer dart:html directement pour éviter erreurs compilation tests
-// Utiliser seulement le stub - le code est protégé par kIsWeb
-import '../stubs/html_stub.dart' as html;
 import 'package:file_picker/file_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
