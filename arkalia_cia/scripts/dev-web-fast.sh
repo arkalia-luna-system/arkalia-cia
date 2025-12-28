@@ -98,9 +98,10 @@ echo ""
 
 # Forcer un build web initial en mode debug pour s'assurer que tout compile
 # Cela évite les erreurs "Library not defined" et WebSocket
+# Note: On n'utilise PAS --no-pub car package_config.json doit exister
 echo -e "${YELLOW}🔨 Compilation initiale Flutter web (mode debug)...${NC}"
 echo -e "${CYAN}   (Cela peut prendre 30-60 secondes la première fois)${NC}"
-if flutter build web --debug --no-pub 2>&1 | tee /tmp/flutter_build.log; then
+if flutter build web --debug 2>&1 | tee /tmp/flutter_build.log; then
     echo -e "${GREEN}✅ Build web initial réussi${NC}"
     echo ""
 else
