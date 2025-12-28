@@ -890,9 +890,11 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           try {
             // Utiliser XFile pour créer un fichier partageable
             final xFile = XFile.fromData(bytes, mimeType: mimeType, name: fileName);
-            await Share.shareXFiles(
-              [xFile],
-              text: 'Document: $fileName',
+            await SharePlus.instance.share(
+              ShareParams(
+                files: [xFile],
+                text: 'Document: $fileName',
+              ),
             );
             
             // Nettoyer le Blob URL après un délai
@@ -1180,7 +1182,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                             Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: Colors.green.withValues(alpha: 0.1),
+                                color: Color(Colors.green.value).withValues(alpha: 0.1),
                                 shape: BoxShape.circle,
                               ),
                               child: const Icon(
@@ -1229,7 +1231,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                                 Container(
                                   padding: const EdgeInsets.all(16),
                                   decoration: BoxDecoration(
-                                    color: Colors.grey.withValues(alpha: 0.1),
+                                    color: Color(Colors.grey.value).withValues(alpha: 0.1),
                                     shape: BoxShape.circle,
                                   ),
                                   child: const Icon(
