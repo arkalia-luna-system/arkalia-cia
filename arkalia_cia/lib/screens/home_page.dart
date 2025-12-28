@@ -166,10 +166,15 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
         foregroundColor: Theme.of(context).colorScheme.onSurface,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () => _showSettings(context),
-            tooltip: 'Paramètres',
+          Semantics(
+            label: 'Paramètres',
+            hint: 'Ouvre les paramètres de l\'application',
+            button: true,
+            child: IconButton(
+              icon: const Icon(Icons.settings),
+              onPressed: () => _showSettings(context),
+              tooltip: 'Paramètres',
+            ),
           ),
         ],
       ),
@@ -191,11 +196,17 @@ class _HomePageState extends State<HomePage> {
                         hintText: 'Rechercher dans documents, rappels, contacts...',
                         prefixIcon: const Icon(Icons.search),
                         suffixIcon: _searchController.text.isNotEmpty
-                            ? IconButton(
-                                icon: const Icon(Icons.clear),
-                                onPressed: () {
-                                  _searchController.clear();
-                                },
+                            ? Semantics(
+                                label: 'Effacer la recherche',
+                                hint: 'Supprime le texte de recherche',
+                                button: true,
+                                child: IconButton(
+                                  icon: const Icon(Icons.clear),
+                                  onPressed: () {
+                                    _searchController.clear();
+                                  },
+                                  tooltip: 'Effacer',
+                                ),
                               )
                             : null,
                         border: OutlineInputBorder(
@@ -206,42 +217,54 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                IconButton(
-                  icon: const Icon(Icons.tune),
-                  tooltip: 'Recherche avancée',
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      PageTransitions.slideRight(const AdvancedSearchScreen()),
-                    );
-                  },
+                Semantics(
+                  label: 'Recherche avancée',
+                  hint: 'Ouvre les options de recherche avancée',
+                  button: true,
+                  child: IconButton(
+                    icon: const Icon(Icons.tune),
+                    tooltip: 'Recherche avancée',
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        PageTransitions.slideRight(const AdvancedSearchScreen()),
+                      );
+                    },
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 16),
             // Résultats de recherche ou contenu normal
             if (_searchController.text.trim().isNotEmpty)
-              Expanded(
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.7,
                 child: _buildSearchResults(),
               )
             else ...[
-              // Titre principal
-              Text(
-                'Assistant Santé Personnel',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
+              // Titre principal avec accessibilité
+              Semantics(
+                header: true,
+                child: Text(
+                  'Assistant Santé Personnel',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
-              Text(
-                'Votre santé au quotidien',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  fontStyle: FontStyle.italic,
+              Semantics(
+                label: 'Sous-titre: Votre santé au quotidien',
+                child: Text(
+                  'Votre santé au quotidien',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    fontStyle: FontStyle.italic,
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
@@ -399,7 +422,9 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ],
-          ],
+              ],
+            ),
+          ),
         ),
       ),
     );

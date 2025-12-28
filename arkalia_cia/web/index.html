@@ -53,35 +53,79 @@
     // Ces erreurs sont normales et disparaîtront une fois Flutter compilé
     const originalError = console.error;
     const originalWarn = console.warn;
-    
-    console.error = function(...args) {
+    const originalLog = console.log;
+
+    // Compteur pour limiter les erreurs affichées
+    let errorCount = 0;
+    const MAX_ERRORS = 10; // Maximum 10 erreurs affichées
+
+    console.error = function (...args) {
       const message = args.join(' ');
-      // Ignorer les erreurs WebSocket et "Library not defined" pendant la compilation
-      if (message.includes('WebSocket connection') || 
-          message.includes('Library not defined') ||
-          message.includes('org-dartlang-app') ||
-          message.includes('Failed to initialize')) {
-        // Ne pas afficher ces erreurs pendant la compilation
+
+      // Ignorer TOUTES les erreurs WebSocket et "Library not defined"
+      if (message.includes('WebSocket') ||
+        message.includes('Library not defined') ||
+        message.includes('org-dartlang-app') ||
+        message.includes('Failed to initialize') ||
+        message.includes('refresh.js') ||
+        message.includes('ddc_module_loader') ||
+        message.includes('ws://localhost:8081') ||
+        message.includes('ws://localhost:8080') ||
+        message.includes('$dwdsSseHandler') ||
+        message.includes('Connection refused') ||
+        message.includes('ERR_CONNECTION_REFUSED') ||
+        message.includes('initClient') ||
+        message.includes('client.js')) {
+        // Ne pas afficher ces erreurs
         return;
       }
-      originalError.apply(console, args);
+
+      // Limiter le nombre d'erreurs affichées
+      errorCount++;
+      if (errorCount <= MAX_ERRORS) {
+        originalError.apply(console, args);
+      } else if (errorCount === MAX_ERRORS + 1) {
+        originalError.apply(console, ['⚠️ Trop d\'erreurs dans la console. Les erreurs suivantes sont masquées.']);
+      }
     };
-    
-    console.warn = function(...args) {
+
+    console.warn = function (...args) {
       const message = args.join(' ');
-      // Ignorer les avertissements WebSocket pendant la compilation
-      if (message.includes('WebSocket') && message.includes('failed')) {
+      // Ignorer TOUS les avertissements WebSocket et viewport
+      if (message.includes('WebSocket') ||
+        message.includes('ws://') ||
+        message.includes('refresh.js') ||
+        message.includes('connection') ||
+        message.includes('viewport') ||
+        message.includes('Found an existing <meta name="viewport">') ||
+        message.includes('Flutter Web uses its own viewport') ||
+        message.includes('dom.dart')) {
         return;
       }
       originalWarn.apply(console, args);
     };
-    
-    // Réinitialiser les console après 30 secondes (temps de compilation max)
+
+    // Masquer aussi certains logs verbeux (mais garder les logs importants)
+    console.log = function (...args) {
+      const message = args.join(' ');
+      // Ignorer SEULEMENT les logs de compilation Flutter très verbeux
+      if (message.includes('WebSocket connection') ||
+        message.includes('refresh.js') ||
+        message.includes('ddc_module_loader') ||
+        (message.includes('compiling') && message.includes('Flutter'))) {
+        return;
+      }
+      // Garder tous les autres logs (importants pour le debug)
+      originalLog.apply(console, args);
+    };
+
+    // Réinitialiser les console après 60 secondes (temps de compilation max)
     setTimeout(() => {
       console.error = originalError;
       console.warn = originalWarn;
-    }, 30000);
-    
+      console.log = originalLog;
+    }, 60000);
+
     // Enregistrer le Service Worker
     // Fix pour Comet: Désinscrire les anciens service workers avant d'enregistrer le nouveau
     if ('serviceWorker' in navigator) {
@@ -113,13 +157,13 @@
         });
       });
     }
-    
+
     // Attendre que flutter_bootstrap.js soit disponible avant de le charger
     function loadFlutterBootstrap() {
       const script = document.createElement('script');
       script.src = 'flutter_bootstrap.js';
       script.async = true;
-      script.onerror = function() {
+      script.onerror = function () {
         // Si le script n'existe pas encore (compilation en cours), réessayer
         setTimeout(loadFlutterBootstrap, 1000);
       };
@@ -135,71 +179,180 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e8ba3 100%);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     color: white;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    z-index: 9999;
+    z-index: 99999;
   ">
-    <div style="text-align: center;">
-      <div style="font-size: 48px; margin-bottom: 20px;">🏥</div>
-      <h1 style="font-size: 28px; margin: 0 0 10px 0; font-weight: 600;">Arkalia CIA</h1>
-      <p style="font-size: 16px; margin: 0 0 30px 0; opacity: 0.9;">Compilation en cours...</p>
+    <div style="text-align: center; padding: 40px;">
+      <div style="font-size: 64px; margin-bottom: 30px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">🏥</div>
+      <h1 style="font-size: 32px; margin: 0 0 15px 0; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">Arkalia
+        CIA</h1>
+      <p style="font-size: 18px; margin: 0 0 40px 0; opacity: 0.95; font-weight: 500;">Compilation en cours...</p>
       <div style="
-        width: 50px;
-        height: 50px;
-        border: 4px solid rgba(255, 255, 255, 0.3);
+        width: 60px;
+        height: 60px;
+        border: 5px solid rgba(255, 255, 255, 0.2);
         border-top-color: white;
         border-radius: 50%;
         animation: spin 1s linear infinite;
         margin: 0 auto;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
       "></div>
-      <p style="font-size: 14px; margin-top: 20px; opacity: 0.7;">
+      <p style="font-size: 15px; margin-top: 30px; opacity: 0.85; font-weight: 400;">
         Les erreurs WebSocket sont normales pendant la compilation
+      </p>
+      <p style="font-size: 13px; margin-top: 15px; opacity: 0.7; font-style: italic;">
+        Veuillez patienter...
       </p>
     </div>
   </div>
   <style>
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* S'assurer que le body est visible une fois Flutter chargé */
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: auto;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+
+    /* S'assurer que les éléments Flutter sont visibles */
+    flt-glass-pane,
+    flt-scene-host,
+    flt-view-host,
+    flt-semantics-host,
+    flt-scene,
+    canvas {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+
+    /* S'assurer que le contenu Flutter n'est pas caché */
+    #loading {
+      z-index: 99999;
+    }
+
+    /* Une fois que #loading est supprimé, tout doit être visible */
+    body:not(:has(#loading)) * {
+      visibility: visible !important;
+      opacity: 1 !important;
     }
   </style>
   <script>
     // Charger flutter_bootstrap.js
     loadFlutterBootstrap();
-    
+
     // Masquer l'écran de chargement une fois que Flutter est prêt
-    // Vérifier toutes les secondes si Flutter est chargé
+    // Vérifier toutes les 100ms si Flutter est chargé
     let checkInterval = setInterval(() => {
-      // Vérifier si Flutter est chargé (présence de window.flutter ou éléments Flutter)
-      if (window.flutter || document.querySelector('flt-glass-pane') || 
-          document.querySelector('flt-scene-host') || 
-          document.body.children.length > 1) {
-        const loading = document.getElementById('loading');
-        if (loading) {
-          loading.style.opacity = '0';
-          loading.style.transition = 'opacity 0.5s';
-          setTimeout(() => {
-            loading.remove();
-            clearInterval(checkInterval);
-          }, 500);
-        }
+      const loading = document.getElementById('loading');
+      if (!loading) {
+        clearInterval(checkInterval);
+        return;
       }
-    }, 500);
-    
-    // Masquer l'écran de chargement après 60 secondes maximum
+
+      // Vérifier si Flutter est chargé de plusieurs façons
+      const hasFlutterWindow = window.flutter !== undefined;
+      const hasFlutterElements = document.querySelector('flt-glass-pane') !== null ||
+        document.querySelector('flt-scene-host') !== null ||
+        document.querySelector('flt-view-host') !== null ||
+        document.querySelector('flt-semantics-host') !== null ||
+        document.querySelector('flt-scene') !== null;
+
+      // Vérifier si le canvas Flutter existe (même s'il n'est pas encore visible)
+      const canvas = document.querySelector('canvas');
+      const hasFlutterCanvas = canvas !== null;
+
+      // Vérifier si le body a du contenu Flutter (plus que juste le loading)
+      const bodyChildren = Array.from(document.body.children);
+      const hasFlutterContent = bodyChildren.some(child => {
+        return child.id !== 'loading' &&
+          (child.tagName.startsWith('FLT-') ||
+            child.querySelector('canvas') !== null ||
+            child.querySelector('flt-glass-pane') !== null);
+      });
+
+      // Vérifier aussi si main.dart.js est chargé
+      const hasMainDart = document.querySelector('script[src*="main.dart.js"]') !== null;
+
+      // Si Flutter est chargé, masquer l'écran de chargement IMMÉDIATEMENT
+      if (hasFlutterWindow || hasFlutterElements || hasFlutterCanvas || hasFlutterContent || hasMainDart) {
+        console.log('✅ Flutter détecté, masquage de l\'écran de chargement');
+        loading.style.display = 'none'; // Masquer immédiatement
+        loading.remove(); // Supprimer du DOM
+        clearInterval(checkInterval);
+
+        // Forcer l'affichage du contenu Flutter
+        const body = document.body;
+        if (body) {
+          body.style.visibility = 'visible';
+          body.style.opacity = '1';
+          body.style.display = 'block';
+        }
+
+        // Forcer l'affichage de tous les éléments Flutter
+        const flutterElements = document.querySelectorAll('flt-glass-pane, flt-scene-host, canvas');
+        flutterElements.forEach(el => {
+          el.style.display = 'block';
+          el.style.visibility = 'visible';
+          el.style.opacity = '1';
+        });
+      }
+    }, 100);
+
+    // Fallback : masquer après 5 secondes si Flutter semble chargé
+    setTimeout(() => {
+      const loading = document.getElementById('loading');
+      if (loading && (window.flutter || document.querySelector('canvas') || document.querySelector('script[src*="main.dart.js"]'))) {
+        console.log('✅ Flutter détecté (fallback 5s): masquage de l\'écran de chargement');
+        loading.style.display = 'none';
+        loading.remove();
+        clearInterval(checkInterval);
+
+        // Forcer l'affichage
+        document.body.style.visibility = 'visible';
+        document.body.style.opacity = '1';
+      }
+    }, 5000);
+
+    // Fallback final : masquer après 15 secondes maximum
     setTimeout(() => {
       const loading = document.getElementById('loading');
       if (loading) {
-        loading.style.opacity = '0';
-        loading.style.transition = 'opacity 0.5s';
-        setTimeout(() => loading.remove(), 500);
+        console.log('⏰ Timeout 15s: masquage forcé de l\'écran de chargement');
+        loading.style.display = 'none';
+        loading.remove();
+        clearInterval(checkInterval);
+
+        // Forcer l'affichage du contenu Flutter
+        const body = document.body;
+        if (body) {
+          body.style.visibility = 'visible';
+          body.style.opacity = '1';
+          body.style.display = 'block';
+        }
+
+        // Forcer l'affichage de tous les éléments
+        document.querySelectorAll('*').forEach(el => {
+          if (el.id !== 'loading') {
+            el.style.visibility = 'visible';
+            el.style.opacity = '1';
+          }
+        });
       }
-      clearInterval(checkInterval);
-    }, 60000);
+    }, 15000);
   </script>
 </body>
 
