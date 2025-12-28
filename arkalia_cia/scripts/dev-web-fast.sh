@@ -116,7 +116,34 @@ cleanup() {
 
 trap cleanup SIGINT SIGTERM
 
+# Afficher les instructions AVANT de lancer (pour que l'utilisateur les voie)
+if [ "$DEVICE" = "chrome" ]; then
+    echo ""
+    echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${GREEN}📱 POUR VOIR LA 'MINI TÉLÉ' SUR VOTRE ÉCRAN :${NC}"
+    echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+    echo -e "${CYAN}1️⃣  Chrome va s'ouvrir automatiquement${NC}"
+    echo ""
+    echo -e "${CYAN}2️⃣  Dans Chrome, appuyez sur :${NC}"
+    echo -e "   ${GREEN}   F12${NC} ${YELLOW}ou${NC} ${GREEN}Cmd+Option+I${NC}"
+    echo ""
+    echo -e "${CYAN}3️⃣  Dans DevTools, appuyez sur :${NC}"
+    echo -e "   ${GREEN}   Cmd+Shift+M${NC} ${YELLOW}(Toggle device toolbar)${NC}"
+    echo ""
+    echo -e "${CYAN}4️⃣  Sélectionnez un appareil dans le menu :${NC}"
+    echo -e "   ${GREEN}   • iPhone 14 Pro${NC}"
+    echo -e "   ${GREEN}   • Galaxy S21${NC}"
+    echo -e "   ${GREEN}   • Ou un autre appareil${NC}"
+    echo ""
+    echo -e "${CYAN}✅ Résultat : L'app s'affiche dans une fenêtre type téléphone !${NC}"
+    echo ""
+    echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+fi
+
 # Lancer Flutter en mode développement (hot reload activé)
 # --web-hostname=0.0.0.0 permet l'accès depuis le réseau local
+# Note: Flutter ouvre Chrome automatiquement si DEVICE=chrome
 flutter run -d "$DEVICE" --web-port=$PORT --web-hostname=0.0.0.0
 
