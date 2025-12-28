@@ -2323,6 +2323,11 @@ async def unshare_document(
     current_user: TokenData = Depends(get_current_active_user),
     db: CIADatabase = Depends(get_database),
 ):
+    """
+    Retire le partage d'un document.
+    Si member_email est fourni, retire seulement pour ce membre.
+    Sinon, retire tous les partages du document.
+    """
     """Retire le partage d'un document"""
     try:
         if not current_user.user_id:
