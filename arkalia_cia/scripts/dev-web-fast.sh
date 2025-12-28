@@ -66,13 +66,23 @@ else
     echo ""
 fi
 
-# Vérifier si Chrome est disponible
-if flutter devices 2>&1 | grep -qi "chrome"; then
+# Vérifier les devices disponibles
+DEVICES_OUTPUT=$(flutter devices 2>&1)
+
+# Priorité : Chrome > Comet > web-server
+if echo "$DEVICES_OUTPUT" | grep -qi "chrome"; then
     DEVICE="chrome"
+    BROWSER_NAME="Chrome"
     echo -e "${GREEN}✅ Chrome détecté${NC}"
+elif echo "$DEVICES_OUTPUT" | grep -qi "comet"; then
+    DEVICE="comet"
+    BROWSER_NAME="Comet"
+    echo -e "${GREEN}✅ Comet détecté${NC}"
 else
     DEVICE="web-server"
-    echo -e "${YELLOW}⚠️  Chrome non trouvé, utilisation de web-server${NC}"
+    BROWSER_NAME="Navigateur par défaut"
+    echo -e "${YELLOW}⚠️  Chrome/Comet non trouvé, utilisation de web-server${NC}"
+    echo -e "${YELLOW}   Le navigateur par défaut s'ouvrira automatiquement${NC}"
 fi
 
 # Obtenir l'IP locale pour l'accès mobile
@@ -116,17 +126,39 @@ cleanup() {
 
 trap cleanup SIGINT SIGTERM
 
+# Fonction pour ouvrir le navigateur automatiquement
+open_browser() {
+    sleep 4  # Attendre que Flutter démarre
+    if command -v open &> /dev/null; then
+        if [ "$DEVICE" = "chrome" ]; then
+            open -a "Google Chrome" "http://localhost:${PORT}" 2>/dev/null || true
+        elif [ "$DEVICE" = "comet" ]; then
+            open -a "Comet" "http://localhost:${PORT}" 2>/dev/null || \
+            open -a "comet" "http://localhost:${PORT}" 2>/dev/null || true
+        else
+            # web-server : ouvrir avec le navigateur par défaut
+            open "http://localhost:${PORT}" 2>/dev/null || true
+        fi
+    fi
+}
+
 # Afficher les instructions AVANT de lancer (pour que l'utilisateur les voie)
-if [ "$DEVICE" = "chrome" ]; then
+echo ""
+echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${GREEN}📱 POUR VOIR LA 'MINI TÉLÉ' SUR VOTRE ÉCRAN :${NC}"
+echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo ""
+echo -e "${CYAN}1️⃣  ${BROWSER_NAME} va s'ouvrir automatiquement${NC}"
+echo ""
+if [ "$DEVICE" = "web-server" ]; then
+    echo -e "${CYAN}2️⃣  Dans votre navigateur, appuyez sur :${NC}"
+    echo -e "   ${GREEN}   F12${NC} ${YELLOW}ou${NC} ${GREEN}Cmd+Option+I${NC} ${YELLOW}(DevTools)${NC}"
     echo ""
-    echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-    echo -e "${GREEN}📱 POUR VOIR LA 'MINI TÉLÉ' SUR VOTRE ÉCRAN :${NC}"
-    echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-    echo ""
-    echo -e "${CYAN}1️⃣  Chrome va s'ouvrir automatiquement${NC}"
-    echo ""
-    echo -e "${CYAN}2️⃣  Dans Chrome, appuyez sur :${NC}"
-    echo -e "   ${GREEN}   F12${NC} ${YELLOW}ou${NC} ${GREEN}Cmd+Option+I${NC}"
+    echo -e "${YELLOW}   ⚠️  Note: Certains navigateurs n'ont pas de mode Device Emulation${NC}"
+    echo -e "${YELLOW}   Utilisez Chrome ou Comet pour la meilleure expérience${NC}"
+else
+    echo -e "${CYAN}2️⃣  Dans ${BROWSER_NAME}, appuyez sur :${NC}"
+    echo -e "   ${GREEN}   F12${NC} ${YELLOW}ou${NC} ${GREEN}Cmd+Option+I${NC} ${YELLOW}(DevTools)${NC}"
     echo ""
     echo -e "${CYAN}3️⃣  Dans DevTools, appuyez sur :${NC}"
     echo -e "   ${GREEN}   Cmd+Shift+M${NC} ${YELLOW}(Toggle device toolbar)${NC}"
@@ -135,12 +167,15 @@ if [ "$DEVICE" = "chrome" ]; then
     echo -e "   ${GREEN}   • iPhone 14 Pro${NC}"
     echo -e "   ${GREEN}   • Galaxy S21${NC}"
     echo -e "   ${GREEN}   • Ou un autre appareil${NC}"
-    echo ""
-    echo -e "${CYAN}✅ Résultat : L'app s'affiche dans une fenêtre type téléphone !${NC}"
-    echo ""
-    echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-    echo ""
 fi
+echo ""
+echo -e "${CYAN}✅ Résultat : L'app s'affiche dans une fenêtre type téléphone !${NC}"
+echo ""
+echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo ""
+
+# Ouvrir le navigateur en arrière-plan
+open_browser &
 
 # Lancer Flutter en mode développement (hot reload activé)
 # --web-hostname=0.0.0.0 permet l'accès depuis le réseau local
