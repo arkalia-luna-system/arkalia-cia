@@ -71,7 +71,8 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
         setState(() => isLoading = false);
       }
       // Ne pas afficher d'erreur si c'est juste une permission refusée
-      if (!e.toString().contains('Permission')) {
+      final errorString = e.toString().toLowerCase();
+      if (!errorString.contains('permission') && !errorString.contains('denied')) {
         ErrorHelper.logError('EmergencyScreen._loadData', e);
         _showError(ErrorHelper.getUserFriendlyMessage(e));
       }

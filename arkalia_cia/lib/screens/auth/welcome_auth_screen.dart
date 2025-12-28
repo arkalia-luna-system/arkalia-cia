@@ -209,9 +209,12 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
     } catch (e) {
       if (context.mounted) {
         Navigator.of(context).pop(); // Fermer le dialog de chargement
+        // Utiliser ErrorHelper pour un message utilisateur cohérent
+        final errorMessage = ErrorHelper.getUserFriendlyMessage(e);
+        ErrorHelper.logError('WelcomeAuthScreen._handleGoogleSignIn', e);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erreur: ${e.toString()}'),
+            content: Text('Erreur: $errorMessage'),
             backgroundColor: Colors.red,
             duration: const Duration(seconds: 3),
           ),

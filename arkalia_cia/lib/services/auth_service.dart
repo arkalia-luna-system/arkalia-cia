@@ -7,11 +7,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthService {
   /// Vérifie si l'authentification est activée dans les préférences
   /// Sur web, vérifie l'authentification PIN
+  /// Par défaut, désactivé (false) - l'utilisateur peut l'activer manuellement
   static Future<bool> isAuthEnabled() async {
     if (kIsWeb) {
       // Sur web, vérifier l'authentification PIN
+      // Par défaut, désactivé (false) - l'utilisateur peut l'activer manuellement
       final prefs = await SharedPreferences.getInstance();
-      return prefs.getBool('pin_auth_enabled') ?? true;
+      return prefs.getBool('pin_auth_enabled') ?? false;
     }
     // Sur mobile, authentification désactivée
     return false;
@@ -28,11 +30,13 @@ class AuthService {
 
   /// Vérifie si l'authentification est nécessaire au démarrage
   /// Sur web, vérifie l'authentification PIN
+  /// Par défaut, désactivé (false) - l'utilisateur peut l'activer manuellement
   static Future<bool> shouldAuthenticateOnStartup() async {
     if (kIsWeb) {
       // Sur web, vérifier l'authentification PIN
+      // Par défaut, désactivé (false) - l'utilisateur peut l'activer manuellement
       final prefs = await SharedPreferences.getInstance();
-      return prefs.getBool('pin_auth_on_startup') ?? true;
+      return prefs.getBool('pin_auth_on_startup') ?? false;
     }
     // Sur mobile, authentification désactivée
     return false;
