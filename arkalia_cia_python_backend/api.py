@@ -1947,9 +1947,10 @@ async def create_family_member(
         # Sanitizer les entrées
         sanitized_name = sanitize_html(member_data.name)
         sanitized_email = member_data.email.lower().strip()
-        sanitized_phone = (
-            validate_phone_number(member_data.phone) if member_data.phone else None
-        )
+        sanitized_phone = None
+        if member_data.phone:
+            is_valid, normalized_phone = validate_phone_number(member_data.phone)
+            sanitized_phone = normalized_phone if is_valid else None
 
         member_id = db.add_family_member(
             user_id=user_id,
@@ -2071,9 +2072,11 @@ async def update_family_member(
                 raise HTTPException(status_code=400, detail="Email invalide")
             update_data["email"] = member_data.email.lower().strip()
         if member_data.phone is not None:
-            update_data["phone"] = (
-                validate_phone_number(member_data.phone) if member_data.phone else None
-            )
+            if member_data.phone:
+                is_valid, normalized_phone = validate_phone_number(member_data.phone)
+                update_data["phone"] = normalized_phone if is_valid else None
+            else:
+                update_data["phone"] = None
         if member_data.relationship is not None:
             update_data["relationship"] = member_data.relationship
         if member_data.is_active is not None:

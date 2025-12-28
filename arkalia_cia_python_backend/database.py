@@ -1043,7 +1043,7 @@ class CIADatabase:
                         """,
                         (permission_level, is_encrypted, existing[0]),
                     )
-                    return existing[0]
+                    return int(existing[0])
                 else:
                     # Créer un nouveau partage
                     cursor.execute(
