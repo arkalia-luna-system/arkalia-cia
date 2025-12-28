@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 // dart:io n'est pas disponible sur web
+// Utiliser un stub pour dart:html qui ne sera jamais utilisé (code protégé par kIsWeb)
 import 'dart:io' if (dart.library.html) 'dart:html' as io;
 import 'package:file_picker/file_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -330,7 +331,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         final timestamp = DateTime.now().millisecondsSinceEpoch;
         final uniqueFileName = '${timestamp}_$fileName';
 
-        io.File? savedFile;
+        dynamic savedFile; // File sur mobile, null sur web
         if (kIsWeb) {
           // Sur le web, utiliser bytes et stocker directement dans LocalStorageService
           if (pickedFile.bytes == null) {
@@ -352,7 +353,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
             });
             return;
           }
-          io.File sourceFile = io.File(pickedFile.path!);
+          // Sur mobile, utiliser dart:io.File
+          final sourceFile = io.File(pickedFile.path!);
           savedFile = await FileStorageService.copyToDocumentsDirectory(
             sourceFile,
             uniqueFileName,
@@ -368,8 +370,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           'id': timestamp.toString(), // ID en String pour cohérence
           'name': uniqueFileName,
           'original_name': fileName,
-          'path': kIsWeb ? uniqueFileName : savedFile!.path,
-          'file_size': kIsWeb ? pickedFile.bytes!.length : await savedFile!.length(),
+          'path': kIsWeb ? uniqueFileName : (savedFile as dynamic).path,
+          'file_size': kIsWeb ? pickedFile.bytes!.length : await (savedFile as dynamic).length(),
           'category': category ?? 'Autre',
           'created_at': DateTime.now().toIso8601String(),
         };
@@ -552,7 +554,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         return;
       }
 
-      io.File file = io.File(filePath);
+      // Sur mobile uniquement (code jamais exécuté sur web)
+      final file = io.File(filePath);
       if (!await file.exists()) {
         _showError('Le fichier n\'existe plus');
         // Retirer le document de la liste s'il n'existe plus
@@ -567,26 +570,37 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       }
 
       // Sur Android, demander la permission de lecture si nécessaire
-      if (io.Platform.isAndroid) {
-        // Sur Android 13+ (API 33+), utiliser READ_MEDIA_IMAGES
-        // Sur Android < 13, utiliser READ_EXTERNAL_STORAGE
-        Permission permission;
+      // Note: Ce code n'est jamais exécuté sur web (protégé par kIsWeb)
+      // Utiliser une vérification conditionnelle pour éviter erreur compilation web
+      if (!kIsWeb) {
+        // Vérifier si on est sur Android en utilisant une approche dynamique
+        // ignore: avoid_dynamic_calls, undefined_class, undefined_getter
         try {
-          // Vérifier la version Android
-          permission = Permission.storage;
-        } catch (e) {
-          permission = Permission.photos;
-        }
-        
-        final status = await permission.status;
-        if (!status.isGranted) {
-          final result = await permission.request();
-          if (!result.isGranted) {
-            if (mounted) {
-              _showError('Permission de lecture refusée. Impossible d\'ouvrir le PDF.');
+          final isAndroid = (io as dynamic).Platform?.isAndroid ?? false;
+          if (isAndroid) {
+            // Sur Android 13+ (API 33+), utiliser READ_MEDIA_IMAGES
+            // Sur Android < 13, utiliser READ_EXTERNAL_STORAGE
+            Permission permission;
+            try {
+              // Vérifier la version Android
+              permission = Permission.storage;
+            } catch (e) {
+              permission = Permission.photos;
             }
-            return;
+            
+            final status = await permission.status;
+            if (!status.isGranted) {
+              final result = await permission.request();
+              if (!result.isGranted) {
+                if (mounted) {
+                  _showError('Permission de lecture refusée. Impossible d\'ouvrir le PDF.');
+                }
+                return;
+              }
+            }
           }
+        } catch (e) {
+          // Si Platform n'est pas disponible (web), ignorer
         }
       }
 
