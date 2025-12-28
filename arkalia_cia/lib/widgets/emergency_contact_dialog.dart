@@ -218,6 +218,13 @@ class _EmergencyContactDialogState extends State<EmergencyContactDialog> {
               ],
             ),
             const SizedBox(height: 16),
+            if (!kIsWeb)
+              TextButton.icon(
+                onPressed: _importFromContacts,
+                icon: const Icon(Icons.contact_phone),
+                label: const Text('Importer depuis les contacts'),
+              ),
+            const SizedBox(height: 16),
             CheckboxListTile(
               title: const Text('Contact principal'),
               subtitle: const Text('Ce contact sera affiché en premier'),
