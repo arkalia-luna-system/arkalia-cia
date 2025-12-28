@@ -562,10 +562,18 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           if (docBytes != null && docBytes.isNotEmpty) {
             // ignore: avoid_web_libraries_in_flutter
             // Créer une URL blob pour visualisation (web uniquement)
-            // Sur web, html pointe vers dart:html. Sur autres plateformes, html_stub est utilisé mais ne sera jamais appelé car kIsWeb protège
-            dynamic htmlLib = kIsWeb ? html : html_stub;
-            final blob = htmlLib.Blob([docBytes]);
-            final url = htmlLib.Url.createObjectUrlFromBlob(blob);
+            // Sur web, html est disponible. Sur autres plateformes, html_stub est utilisé mais ne sera jamais appelé car kIsWeb protège
+            // Utiliser des if/else séparés car on ne peut pas utiliser des préfixes d'import dans des expressions ternaires
+            dynamic blob;
+            dynamic url;
+            if (kIsWeb) {
+              blob = html.Blob([docBytes]);
+              url = html.Url.createObjectUrlFromBlob(blob);
+            } else {
+              blob = html_stub.Blob([docBytes]);
+              url = html_stub.Url.createObjectUrlFromBlob(blob);
+            }
+            final uri = Uri.parse(url as String);
             final uri = Uri.parse(url);
             if (await canLaunchUrl(uri)) {
               await launchUrl(uri, mode: LaunchMode.externalApplication);
