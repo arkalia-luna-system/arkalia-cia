@@ -32,11 +32,18 @@ class FileStorageService {
   }
 
   /// Copie un fichier vers le répertoire documents
-  static Future<io.File> copyToDocumentsDirectory(io.File sourceFile, String fileName) async {
+  /// Note: sourceFile peut être dynamic sur web (stub) mais n'est jamais utilisé
+  static Future<io.File> copyToDocumentsDirectory(dynamic sourceFile, String fileName) async {
+    // Sur web, cette fonction n'est jamais appelée (protégé par kIsWeb)
+    if (kIsWeb) {
+      throw UnsupportedError('copyToDocumentsDirectory n\'est pas supporté sur le web');
+    }
+    // Caster en File pour mobile
+    final file = sourceFile as io.File;
     final documentsDir = await getDocumentsDirectory();
     final destFile = io.File(path.join(documentsDir.path, fileName));
     
-    return await sourceFile.copy(destFile.path);
+    return await file.copy(destFile.path);
   }
 
   /// Supprime un fichier du répertoire documents
