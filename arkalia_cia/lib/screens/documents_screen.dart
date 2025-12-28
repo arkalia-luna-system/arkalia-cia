@@ -301,11 +301,11 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     if (!mounted) return;
     
     try {
-      // Sur mobile web, FileType.custom peut ne pas fonctionner correctement
-      // Utiliser FileType.any et vérifier l'extension manuellement
+      // Sur mobile web, utiliser FileType.custom avec allowedExtensions pour forcer PDF
+      // FileType.any peut ouvrir le sélecteur d'images au lieu de fichiers
       FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: kIsWeb ? FileType.any : FileType.custom,
-        allowedExtensions: kIsWeb ? null : ['pdf'],
+        type: FileType.custom,
+        allowedExtensions: ['pdf'],
       );
 
       if (result != null) {

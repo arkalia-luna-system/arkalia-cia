@@ -175,13 +175,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 eventsMap[dateOnly]!.add({
                   'type': isMedication ? 'medication' : (isHydration ? 'hydration' : 'reminder'),
                   'title': title,
-              'description': reminder['description'] as String? ?? '',
-              'color': isMedication ? Colors.blue : (isHydration ? Colors.cyan : Colors.orange),
-            });
-          } catch (e) {
-            // Ignorer dates invalides
+                  'description': reminder['description'] as String? ?? '',
+                  'color': isMedication ? Colors.blue : (isHydration ? Colors.cyan : Colors.orange),
+                });
+            } catch (e) {
+              // Ignorer dates invalides
+            }
           }
         }
+      } catch (e) {
+        // Ignorer erreurs calendrier système
       }
 
       if (mounted) {

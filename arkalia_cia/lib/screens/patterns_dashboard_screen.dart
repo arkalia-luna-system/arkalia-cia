@@ -175,8 +175,37 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
       );
     } catch (e) {
       ErrorHelper.logError('PatternsDashboardScreen._loadPatterns', e);
+      final errorString = e.toString().toLowerCase();
+      String userMessage;
+      
+      // Messages d'erreur plus spécifiques
+      if (errorString.contains('backend non configuré') || 
+          errorString.contains('backend non activé')) {
+        userMessage = ErrorHelper.getUserFriendlyMessage(e);
+      } else if (errorString.contains('session expirée') || 
+                 errorString.contains('401') ||
+                 errorString.contains('unauthorized')) {
+        userMessage = 'Session expirée. Veuillez vous reconnecter.';
+      } else if (errorString.contains('timeout') || 
+                 errorString.contains('timed out')) {
+        userMessage = 'Le serveur met trop de temps à répondre.\n\nVérifiez votre connexion et réessayez.';
+      } else if (errorString.contains('failed host lookup') || 
+                 errorString.contains('connection refused') ||
+                 errorString.contains('network')) {
+        userMessage = 'Impossible de se connecter au serveur.\n\nVérifiez que :\n'
+            '• Votre connexion internet fonctionne\n'
+            '• Le backend est démarré\n'
+            '• L\'adresse du backend est correcte dans les paramètres (⚙️ > Backend API)';
+      } else if (errorString.contains('aucune donnée') || 
+                 errorString.contains('données insuffisantes')) {
+        userMessage = 'Aucune donnée disponible pour l\'analyse.\n\n'
+            'Ajoutez des documents, pathologies ou médicaments pour voir des patterns.';
+      } else {
+        userMessage = ErrorHelper.getUserFriendlyMessage(e);
+      }
+      
       setState(() {
-        _error = ErrorHelper.getUserFriendlyMessage(e);
+        _error = userMessage;
         _isLoading = false;
       });
     }

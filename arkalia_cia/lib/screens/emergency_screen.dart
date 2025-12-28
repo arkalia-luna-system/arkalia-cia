@@ -168,9 +168,10 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
               final errorMsg = backendResult['error'] ?? 
                              backendResult['technical_error'] ?? 
                              'Erreur lors de la sauvegarde sur le serveur';
-              // Ne pas bloquer, juste logger l'erreur et continuer avec stockage local
+              // Logger l'erreur mais ne pas afficher à l'utilisateur (le contact sera sauvegardé localement)
               ErrorHelper.logError('EmergencyScreen._addContact (backend)', 
                 Exception('Erreur serveur: $errorMsg'));
+              // Ne pas afficher l'erreur à l'utilisateur car le contact sera sauvegardé localement
             }
           } else {
             // Si le backend retourne un ID, l'utiliser (succès)
