@@ -1,7 +1,8 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+// dart:io n'est pas disponible sur web
+import 'dart:io' if (dart.library.html) 'dart:html' as io;
 import 'package:file_picker/file_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
@@ -300,9 +301,11 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     if (!mounted) return;
     
     try {
+      // Sur mobile web, FileType.custom peut ne pas fonctionner correctement
+      // Utiliser FileType.any et vérifier l'extension manuellement
       FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['pdf'],
+        type: kIsWeb ? FileType.any : FileType.custom,
+        allowedExtensions: kIsWeb ? null : ['pdf'],
       );
 
       if (result != null) {
@@ -314,10 +317,20 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
 
         final pickedFile = result.files.single;
         final fileName = pickedFile.name;
+        
+        // Vérifier que c'est bien un PDF (surtout sur web où FileType.any est utilisé)
+        if (!fileName.toLowerCase().endsWith('.pdf')) {
+          _showError('Veuillez sélectionner un fichier PDF');
+          setState(() {
+            isUploading = false;
+          });
+          return;
+        }
+        
         final timestamp = DateTime.now().millisecondsSinceEpoch;
         final uniqueFileName = '${timestamp}_$fileName';
 
-        File? savedFile;
+        io.File? savedFile;
         if (kIsWeb) {
           // Sur le web, utiliser bytes et stocker directement dans LocalStorageService
           if (pickedFile.bytes == null) {
@@ -339,7 +352,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
             });
             return;
           }
-          File sourceFile = File(pickedFile.path!);
+          io.File sourceFile = io.File(pickedFile.path!);
           savedFile = await FileStorageService.copyToDocumentsDirectory(
             sourceFile,
             uniqueFileName,
@@ -529,7 +542,17 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         return;
       }
 
-      final file = File(filePath);
+      // Sur web, on ne peut pas utiliser File de dart:io
+      if (kIsWeb) {
+        // Sur web, essayer d'ouvrir le PDF via url_launcher ou afficher un message
+        // Les fichiers PDF sur web sont stockés dans IndexedDB ou via File API
+        // Pour l'instant, on affiche un message indiquant que la prévisualisation
+        // nécessite de télécharger le fichier
+        _showError('Sur le web, veuillez utiliser le bouton de partage pour ouvrir le PDF dans une autre application.');
+        return;
+      }
+
+      io.File file = io.File(filePath);
       if (!await file.exists()) {
         _showError('Le fichier n\'existe plus');
         // Retirer le document de la liste s'il n'existe plus
@@ -544,7 +567,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       }
 
       // Sur Android, demander la permission de lecture si nécessaire
-      if (!kIsWeb && Platform.isAndroid) {
+      if (io.Platform.isAndroid) {
         // Sur Android 13+ (API 33+), utiliser READ_MEDIA_IMAGES
         // Sur Android < 13, utiliser READ_EXTERNAL_STORAGE
         Permission permission;
@@ -602,7 +625,16 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         return;
       }
 
-      final file = File(filePath);
+      // Sur web, on ne peut pas utiliser File de dart:io
+      if (kIsWeb) {
+        // Sur web, essayer de télécharger le fichier
+        // Note: Les bytes ne sont pas stockés sur web pour éviter de saturer SharedPreferences
+        // Il faudrait implémenter IndexedDB pour stocker les fichiers volumineux
+        _showError('Le partage de fichiers PDF n\'est pas encore disponible sur le web. Cette fonctionnalité sera ajoutée prochainement.');
+        return;
+      }
+
+      io.File file = io.File(filePath);
       if (!await file.exists()) {
         _showError('Le fichier n\'existe plus');
         // Retirer le document de la liste s'il n'existe plus
@@ -820,7 +852,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                                 Container(
                                   padding: const EdgeInsets.all(16),
                                   decoration: BoxDecoration(
-                                    color: Colors.grey.withOpacity(0.1),
+                                    color: Colors.grey.withValues(alpha: 0.1),
                                     shape: BoxShape.circle,
                                   ),
                                   child: const Icon(

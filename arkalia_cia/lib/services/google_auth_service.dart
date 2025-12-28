@@ -118,6 +118,20 @@ class GoogleAuthService {
         // Erreur spécifique redirect_uri_mismatch pour le web
         // Sur le web, Flutter utilise automatiquement l'origine de la page comme redirect_uri
         // Il faut donc ajouter exactement cette URI dans Google Cloud Console
+        // Détecter l'origine actuelle pour donner des instructions précises
+        String currentOrigin = 'http://localhost:8080';
+        if (kIsWeb) {
+          // Essayer de détecter l'origine depuis window.location
+          try {
+            // Sur web, on peut utiliser l'URL actuelle
+            // Note: En production, cela sera https://arkalia-luna-system.github.io/arkalia-cia/
+            currentOrigin = Uri.base.origin;
+          } catch (e) {
+            // Fallback si erreur
+            currentOrigin = 'http://localhost:8080';
+          }
+        }
+        
         userFriendlyMessage = 
             '🔧 Erreur redirect_uri_mismatch (Erreur 400)\n\n'
             '⚠️ Les URI de redirection ne sont pas configurées OU pas encore propagées.\n\n'
@@ -126,10 +140,13 @@ class GoogleAuthService {
             '   👉 https://console.cloud.google.com/apis/credentials?project=arkalia-cia\n\n'
             '2️⃣ Cliquer sur "Client Web 1"\n\n'
             '3️⃣ Vérifier "Origines JavaScript autorisées" contient :\n'
-            '   ✅ http://localhost:8080\n\n'
+            '   ✅ http://localhost:8080\n'
+            '   ✅ https://arkalia-luna-system.github.io\n\n'
             '4️⃣ Vérifier "URIs de redirection autorisées" contient :\n'
             '   ✅ http://localhost:8080\n'
-            '   ✅ http://localhost:8080/\n\n'
+            '   ✅ http://localhost:8080/\n'
+            '   ✅ https://arkalia-luna-system.github.io/arkalia-cia/\n'
+            '   ✅ https://arkalia-luna-system.github.io/arkalia-cia\n\n'
             '5️⃣ Si manquant, ajouter puis "ENREGISTRER"\n\n'
             '6️⃣ ⏰ ATTENDRE 5-10 minutes (propagation Google)\n\n'
             '7️⃣ Vider le cache navigateur (Cmd+Shift+Delete) puis réessayer\n\n'
