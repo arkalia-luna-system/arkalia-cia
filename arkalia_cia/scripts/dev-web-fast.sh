@@ -75,6 +75,16 @@ else
     echo ""
 fi
 
+# Vérifier et créer le répertoire web si nécessaire
+if [ ! -d "web" ]; then
+    echo -e "${YELLOW}📁 Création du répertoire web...${NC}"
+    flutter create --platforms=web . 2>/dev/null || {
+        mkdir -p web
+        echo -e "${GREEN}✅ Répertoire web créé${NC}"
+    }
+    echo ""
+fi
+
 # Vérifier les devices disponibles et les navigateurs installés
 DEVICES_OUTPUT=$(flutter devices 2>&1)
 
