@@ -178,6 +178,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   'description': reminder['description'] as String? ?? '',
                   'color': isMedication ? Colors.blue : (isHydration ? Colors.cyan : Colors.orange),
                 });
+              }
             } catch (e) {
               // Ignorer dates invalides
             }
