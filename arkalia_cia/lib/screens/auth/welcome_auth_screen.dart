@@ -135,23 +135,35 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
         try {
           final googleUser = await GoogleAuthService.getCurrentUser();
           if (googleUser != null) {
-            final existingProfile = await UserProfileService.getProfile();
-            if (existingProfile == null) {
-              // Créer automatiquement le profil depuis Google
-              await UserProfileService.createProfile(
-                email: googleUser['email'] ?? '',
-                displayName: googleUser['name'] ?? '',
-              );
-            } else {
-              // Mettre à jour le profil existant avec les infos Google si nécessaire
-              if (existingProfile.email != googleUser['email'] || 
-                  existingProfile.displayName != googleUser['name']) {
-                final updatedProfile = existingProfile.copyWith(
-                  email: googleUser['email'] ?? existingProfile.email,
-                  displayName: googleUser['name'] ?? existingProfile.displayName,
+            final googleEmail = googleUser['email']?.trim();
+            final googleName = googleUser['name']?.trim();
+            
+            // Ne créer/mettre à jour le profil que si l'email est valide
+            if (googleEmail != null && googleEmail.isNotEmpty) {
+              final existingProfile = await UserProfileService.getProfile();
+              if (existingProfile == null) {
+                // Créer automatiquement le profil depuis Google
+                await UserProfileService.createProfile(
+                  email: googleEmail,
+                  displayName: googleName?.isNotEmpty == true ? googleName : null,
                 );
-                await UserProfileService.saveProfile(updatedProfile);
+                AppLogger.debug('Profil utilisateur créé depuis Google Sign-In');
+              } else {
+                // Mettre à jour le profil existant avec les infos Google si nécessaire
+                final emailChanged = existingProfile.email != googleEmail;
+                final nameChanged = existingProfile.displayName != googleName;
+                
+                if (emailChanged || nameChanged) {
+                  final updatedProfile = existingProfile.copyWith(
+                    email: googleEmail,
+                    displayName: googleName?.isNotEmpty == true ? googleName : existingProfile.displayName,
+                  );
+                  await UserProfileService.saveProfile(updatedProfile);
+                  AppLogger.debug('Profil utilisateur mis à jour depuis Google Sign-In');
+                }
               }
+            } else {
+              AppLogger.warning('Email Google invalide ou vide, profil non créé');
             }
           }
         } catch (e) {
