@@ -330,17 +330,15 @@ open_browser &
 # Note: CanvasKit est utilisé par défaut dans Flutter 3.35.3
 echo -e "${CYAN}🚀 Lancement Flutter en mode développement...${NC}"
 echo ""
-echo -e "${YELLOW}💡 Si vous voyez des erreurs WebSocket, attendez que Flutter finisse de compiler${NC}"
-echo -e "${YELLOW}   (La première compilation peut prendre 1-2 minutes)${NC}"
+echo -e "${YELLOW}💡 IMPORTANT:${NC}"
+echo -e "${YELLOW}   - La première compilation peut prendre 1-2 minutes${NC}"
+echo -e "${YELLOW}   - Les erreurs WebSocket sont NORMALES pendant la compilation${NC}"
+echo -e "${YELLOW}   - Attendez le message 'Flutter run key commands' avant d'utiliser l'app${NC}"
+echo -e "${YELLOW}   - Les erreurs disparaîtront une fois la compilation terminée${NC}"
 echo ""
 
 # Lancer Flutter (compile automatiquement)
-# Utiliser --no-sound-null-safety si nécessaire pour compatibilité
-flutter run -d "$DEVICE" --web-port=$PORT --web-hostname=0.0.0.0 --verbose 2>&1 | tee /tmp/flutter_run.log || {
-    echo ""
-    echo -e "${RED}❌ Erreur lors du lancement de Flutter${NC}"
-    echo -e "${YELLOW}📋 Dernières lignes du log:${NC}"
-    tail -20 /tmp/flutter_run.log 2>/dev/null || true
-    exit 1
-}
+# Ne pas utiliser --verbose car cela génère trop de logs
+# Le WebSocket 8081 est géré automatiquement par Flutter
+flutter run -d "$DEVICE" --web-port=$PORT --web-hostname=0.0.0.0
 
