@@ -1182,7 +1182,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                             Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: Color(Colors.green.toARGB32()).withValues(alpha: 0.1),
+                                color: Colors.green.shade500.withOpacity(0.1),
                                 shape: BoxShape.circle,
                               ),
                               child: const Icon(
@@ -1231,7 +1231,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                                 Container(
                                   padding: const EdgeInsets.all(16),
                                   decoration: BoxDecoration(
-                                    color: Color(Colors.grey.toARGB32()).withValues(alpha: 0.1),
+                                    color: Colors.grey.shade500.withOpacity(0.1),
                                     shape: BoxShape.circle,
                                   ),
                                   child: const Icon(
