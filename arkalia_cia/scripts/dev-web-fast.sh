@@ -27,31 +27,6 @@ if ! command -v flutter &> /dev/null; then
     exit 1
 fi
 
-# Vérification rapide du lint (non bloquant mais informatif)
-echo -e "${YELLOW}🔍 Vérification rapide du code...${NC}"
-LINT_OUTPUT=$(timeout 15 flutter analyze --no-pub 2>&1 || echo "")
-ERROR_COUNT=$(echo "$LINT_OUTPUT" | grep -c "error •" || echo "0")
-
-# Convertir en nombre (éviter les erreurs de comparaison)
-# Nettoyer la variable pour éviter les problèmes avec les retours à la ligne
-ERROR_COUNT=$(echo "$ERROR_COUNT" | tr -d '\n' | head -c 10)
-ERROR_COUNT=${ERROR_COUNT:-0}
-# S'assurer que c'est un nombre valide
-if ! [ "$ERROR_COUNT" -eq "$ERROR_COUNT" ] 2>/dev/null; then
-    ERROR_COUNT=0
-fi
-
-if [ "$ERROR_COUNT" -gt 0 ] 2>/dev/null; then
-    echo -e "${RED}⚠️  ${ERROR_COUNT} erreur(s) trouvée(s)${NC}"
-    echo "$LINT_OUTPUT" | grep "error •" | head -3
-    echo ""
-    echo -e "${YELLOW}💡 Le lancement continuera, mais corrigez ces erreurs${NC}"
-    echo ""
-else
-    echo -e "${GREEN}✅ Aucune erreur critique${NC}"
-    echo ""
-fi
-
 # Vérifier si pubspec.yaml a changé (skip pub get si non)
 NEEDS_PUB_GET=true
 if [ -f "pubspec.yaml" ] && [ -f ".dart_tool/package_config.json" ]; then
