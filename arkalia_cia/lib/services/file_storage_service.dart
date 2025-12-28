@@ -36,7 +36,7 @@ class FileStorageService {
     final documentsDir = await getDocumentsDirectory();
     final destFile = io.File(path.join(documentsDir.path, fileName));
     
-    return await sourceFile.copy(destFile.path);
+    return await file.copy(destFile.path);
   }
 
   /// Supprime un fichier du répertoire documents

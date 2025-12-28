@@ -20,6 +20,18 @@ class File {
   Future<int> length() async {
     throw UnsupportedError('File.length stub - ne doit jamais être appelé');
   }
+  
+  Future<File> copy(String newPath) async {
+    throw UnsupportedError('File.copy stub - ne doit jamais être appelé');
+  }
+  
+  Future<void> delete({bool recursive = false}) async {
+    throw UnsupportedError('File.delete stub - ne doit jamais être appelé');
+  }
+  
+  Future<File> writeAsBytes(List<int> bytes, {FileMode mode = FileMode.write}) async {
+    throw UnsupportedError('File.writeAsBytes stub - ne doit jamais être appelé');
+  }
 }
 
 /// Stub pour Directory de dart:io (jamais utilisé)
@@ -45,6 +57,9 @@ class Directory {
 abstract class FileSystemEntity {
   String get path => throw UnsupportedError('FileSystemEntity.path stub - ne doit jamais être appelé');
 }
+
+/// Stub pour FileMode de dart:io (jamais utilisé)
+enum FileMode { read, write, append, writeOnly, writeOnlyAppend }
 
 /// Stub pour Platform de dart:html (jamais utilisé)
 class Platform {
