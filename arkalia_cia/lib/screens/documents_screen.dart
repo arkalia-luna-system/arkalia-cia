@@ -576,7 +576,9 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         // Vérifier si on est sur Android en utilisant une approche dynamique
         // ignore: avoid_dynamic_calls, undefined_class, undefined_getter
         try {
-          final isAndroid = (io as dynamic).Platform?.isAndroid ?? false;
+          // ignore: undefined_class
+          final platformClass = io.Platform;
+          final isAndroid = (platformClass as dynamic).isAndroid ?? false;
           if (isAndroid) {
             // Sur Android 13+ (API 33+), utiliser READ_MEDIA_IMAGES
             // Sur Android < 13, utiliser READ_EXTERNAL_STORAGE
