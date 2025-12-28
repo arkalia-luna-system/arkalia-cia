@@ -96,8 +96,19 @@ flutter clean > /dev/null 2>&1 || true
 echo -e "${GREEN}✅ Nettoyage terminé${NC}"
 echo ""
 
-# Note: flutter run compile automatiquement, pas besoin de build initial
-# Un build initial peut causer des conflits avec flutter run
+# Forcer un build web initial en mode debug pour s'assurer que tout compile
+# Cela évite les erreurs "Library not defined" et WebSocket
+echo -e "${YELLOW}🔨 Compilation initiale Flutter web (mode debug)...${NC}"
+echo -e "${CYAN}   (Cela peut prendre 30-60 secondes la première fois)${NC}"
+if flutter build web --debug --no-pub 2>&1 | tee /tmp/flutter_build.log; then
+    echo -e "${GREEN}✅ Build web initial réussi${NC}"
+    echo ""
+else
+    BUILD_EXIT_CODE=${PIPESTATUS[0]}
+    echo -e "${YELLOW}⚠️  Build initial échoué (code: $BUILD_EXIT_CODE), on continue quand même...${NC}"
+    echo -e "${YELLOW}   Flutter run compilera automatiquement${NC}"
+    echo ""
+fi
 
 # Vérifier les devices disponibles et les navigateurs installés
 DEVICES_OUTPUT=$(flutter devices 2>&1)
