@@ -574,7 +574,6 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
               url = html_stub.Url.createObjectUrlFromBlob(blob);
             }
             final uri = Uri.parse(url as String);
-            final uri = Uri.parse(url);
             if (await canLaunchUrl(uri)) {
               await launchUrl(uri, mode: LaunchMode.externalApplication);
               return;
