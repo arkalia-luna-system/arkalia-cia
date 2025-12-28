@@ -143,7 +143,7 @@ class _InitialScreenState extends State<_InitialScreen> {
   void initState() {
     super.initState();
     // Délai réduit pour chargement plus rapide
-    final delay = kIsWeb ? const Duration(milliseconds: 1500) : const Duration(milliseconds: 300);
+    const delay = kIsWeb ? Duration(milliseconds: 1500) : Duration(milliseconds: 300);
     Future.delayed(delay, () {
       if (mounted) {
         _checkAuth();
