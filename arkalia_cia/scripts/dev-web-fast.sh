@@ -64,7 +64,7 @@ if [ -f "pubspec.yaml" ] && [ -f ".dart_tool/package_config.json" ]; then
     fi
 fi
 
-# Pub get seulement si nécessaire
+# Pub get seulement si nécessaire (AVANT l'analyse pour éviter erreurs)
 if [ "$NEEDS_PUB_GET" = true ]; then
     echo -e "${YELLOW}📦 Mise à jour des dépendances...${NC}"
     flutter pub get > /dev/null 2>&1 || exit 1
@@ -72,6 +72,25 @@ if [ "$NEEDS_PUB_GET" = true ]; then
     echo ""
 else
     echo -e "${CYAN}⏭️  Dépendances déjà à jour${NC}"
+    echo ""
+fi
+
+# Vérification rapide du lint (APRÈS pub get pour éviter erreurs de packages manquants)
+echo -e "${YELLOW}🔍 Vérification rapide du code...${NC}"
+LINT_OUTPUT=$(timeout 15 flutter analyze --no-pub 2>&1 || echo "")
+ERROR_COUNT=$(echo "$LINT_OUTPUT" | grep -c "error •" || echo "0")
+
+# Convertir en nombre (éviter les erreurs de comparaison)
+ERROR_COUNT=${ERROR_COUNT:-0}
+
+if [ "$ERROR_COUNT" -gt 0 ] 2>/dev/null; then
+    echo -e "${RED}⚠️  ${ERROR_COUNT} erreur(s) trouvée(s)${NC}"
+    echo "$LINT_OUTPUT" | grep "error •" | head -3
+    echo ""
+    echo -e "${YELLOW}💡 Le lancement continuera, mais corrigez ces erreurs${NC}"
+    echo ""
+else
+    echo -e "${GREEN}✅ Aucune erreur critique${NC}"
     echo ""
 fi
 
