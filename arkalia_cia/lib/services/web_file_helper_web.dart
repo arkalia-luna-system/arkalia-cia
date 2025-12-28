@@ -1,9 +1,8 @@
 import 'package:flutter/foundation.dart';
-import 'dart:typed_data';
 // ignore: avoid_web_libraries_in_flutter, deprecated_member_use
-// Import conditionnel : dart:html sur web, stub ailleurs (pour éviter erreurs lors des tests)
-// Si dart.library.io est disponible (mobile/tests), utiliser le stub, sinon dart:html (web)
-import 'dart:html' if (dart.library.io) '../stubs/html_stub.dart' as html;
+// Ce fichier n'est exporté que sur web (via export conditionnel dans web_file_helper.dart)
+// Donc dart:html est toujours disponible ici
+import 'dart:html' as html;
 
 /// Helper pour créer un Blob URL sur web
 /// Retourne null si pas sur web ou en cas d'erreur
