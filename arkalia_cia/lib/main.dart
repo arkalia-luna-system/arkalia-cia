@@ -142,9 +142,11 @@ class _InitialScreenState extends State<_InitialScreen> {
   @override
   void initState() {
     super.initState();
-    // Attendre un peu que Flutter soit complètement prêt avant de vérifier l'auth
+    // Attendre que Flutter soit complètement prêt avant de vérifier l'auth
     // Cela évite les erreurs WebSocket et "Library not defined" pendant la compilation
-    Future.delayed(const Duration(milliseconds: 500), () {
+    // Sur web, attendre plus longtemps car la compilation peut prendre du temps
+    final delay = kIsWeb ? const Duration(milliseconds: 3000) : const Duration(milliseconds: 500);
+    Future.delayed(delay, () {
       if (mounted) {
         _checkAuth();
       }
@@ -153,8 +155,9 @@ class _InitialScreenState extends State<_InitialScreen> {
 
   Future<void> _checkAuth() async {
     // Attendre un peu supplémentaire sur web pour laisser Flutter finir de compiler
+    // Les erreurs WebSocket sont normales pendant la compilation, on attend qu'elles disparaissent
     if (kIsWeb) {
-      await Future.delayed(const Duration(milliseconds: 1000));
+      await Future.delayed(const Duration(milliseconds: 2000));
       if (!mounted) return;
     }
     
@@ -175,7 +178,7 @@ class _InitialScreenState extends State<_InitialScreen> {
             // Sur web, attendre encore un peu avant de vérifier le token
             // pour éviter les erreurs pendant la compilation Flutter
             if (kIsWeb) {
-              await Future.delayed(const Duration(milliseconds: 1000));
+              await Future.delayed(const Duration(milliseconds: 2000));
               if (!mounted) return;
             }
             
@@ -239,7 +242,7 @@ class _InitialScreenState extends State<_InitialScreen> {
       // Sur web, attendre un peu avant de vérifier Google Sign-In
       // pour éviter les erreurs pendant la compilation Flutter
       if (kIsWeb) {
-        await Future.delayed(const Duration(milliseconds: 1000));
+        await Future.delayed(const Duration(milliseconds: 2000));
         if (!mounted) return;
       }
       
@@ -329,12 +332,28 @@ class _InitialScreenState extends State<_InitialScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Cela peut prendre quelques instants',
+              kIsWeb 
+                ? 'Compilation en cours...\nLes erreurs WebSocket sont normales'
+                : 'Cela peut prendre quelques instants',
               style: TextStyle(
                 fontSize: 14,
                 color: isDark ? Colors.grey[400] : Colors.grey[600],
               ),
+              textAlign: TextAlign.center,
             ),
+            if (kIsWeb) ...[
+              const SizedBox(height: 8),
+              Text(
+                '⏳ Attendez que la compilation se termine\n'
+                'Les erreurs disparaîtront automatiquement',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: isDark ? Colors.grey[500] : Colors.grey[500],
+                  fontStyle: FontStyle.italic,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ],
         ),
       ),
