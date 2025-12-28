@@ -4,6 +4,17 @@
 
 /// Stub pour File de dart:html (jamais utilisé)
 /// Compatible avec dart:io.File pour éviter erreurs compilation
+// Stub pour dart:html sur plateformes non-web
+class Blob {
+  Blob(List<dynamic> data);
+}
+
+class Url {
+  static String createObjectUrlFromBlob(Blob blob) {
+    throw UnsupportedError('Url.createObjectUrlFromBlob stub - ne doit jamais être appelé');
+  }
+}
+
 class File {
   final String _path;
   
