@@ -725,7 +725,7 @@ class FamilySharingService {
       };
       
       final url = memberEmail != null
-          ? '$baseUrl/api/v1/family-sharing/share/$documentId?member_email=$memberEmail'
+          ? '$baseUrl/api/v1/family-sharing/share/$documentId?member_email=${Uri.encodeComponent(memberEmail)}'
           : '$baseUrl/api/v1/family-sharing/share/$documentId';
       
       final response = await http.delete(
