@@ -126,21 +126,28 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
         return;
       }
 
-      // Vérifier si le backend est configuré
+      // Vérifier si le backend est configuré et activé
       final url = await BackendConfigService.getBackendURL();
-      if (url.isEmpty) {
-        setState(() {
-          _error = 'Backend non configuré.\n\nVeuillez configurer l\'URL du backend dans les paramètres (⚙️ > Backend API).';
-          _isLoading = false;
-        });
-        return;
-      }
-
-      // Vérifier si le backend est activé
       final backendEnabled = await BackendConfigService.isBackendEnabled();
-      if (!backendEnabled) {
+      
+      if (url.isEmpty || !backendEnabled) {
+        // Mode offline : Afficher un résumé basique des données
+        final docCount = data.where((d) => d['type'] == 'document').length;
+        final pathoCount = data.where((d) => d['type'] == 'pathologie').length;
+        final medCount = data.where((d) => d['type'] == 'medicament').length;
+        final painCount = data.where((d) => d['type'] == 'douleur').length;
+        
         setState(() {
-          _error = 'Backend non activé.\n\nVeuillez activer le backend dans les paramètres (⚙️ > Backend API).';
+          _patterns = {
+            'summary': {
+              'total_documents': docCount,
+              'total_pathologies': pathoCount,
+              'total_medications': medCount,
+              'total_pain_records': painCount,
+            },
+            'offline_mode': true,
+            'message': 'Mode offline activé. Configurez le backend pour une analyse avancée.',
+          };
           _isLoading = false;
         });
         return;
