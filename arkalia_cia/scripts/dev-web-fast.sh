@@ -196,9 +196,10 @@ trap cleanup SIGINT SIGTERM
 
 # Fonction pour vérifier que Flutter est vraiment prêt (app chargée, pas juste serveur)
 wait_for_flutter() {
-    local max_attempts=60  # Augmenté à 60 secondes
+    local max_attempts=90  # Augmenté à 90 secondes pour laisser Flutter compiler
     local attempt=0
     echo -e "${YELLOW}⏳ Attente du démarrage complet de Flutter (compilation + chargement)...${NC}"
+    echo -e "${CYAN}   (La première compilation peut prendre 30-60 secondes)${NC}"
     
     while [ $attempt -lt $max_attempts ]; do
         # Vérifier que le serveur répond
@@ -209,16 +210,19 @@ wait_for_flutter() {
             continue
         fi
         
-        # Vérifier que la page contient du contenu (pas juste une page blanche)
-        # Flutter web génère du HTML avec des balises spécifiques
+        # Vérifier que la page contient du contenu Flutter (pas juste une page blanche)
         PAGE_CONTENT=$(curl -s "http://localhost:${PORT}" 2>/dev/null || echo "")
         
-        # Vérifier la présence de contenu Flutter (balises canvas, script, etc.)
-        if echo "$PAGE_CONTENT" | grep -qiE "(canvas|flutter|main\.dart|\.js)" || [ ${#PAGE_CONTENT} -gt 1000 ]; then
-            echo ""
-            echo -e "${GREEN}✅ Flutter est prêt et l'app est chargée !${NC}"
-            sleep 2  # Délai supplémentaire pour être sûr que tout est prêt
-            return 0
+        # Vérifier la présence de fichiers Flutter compilés
+        # Flutter web génère flutter_bootstrap.js, main.dart.js, etc.
+        if echo "$PAGE_CONTENT" | grep -qiE "(flutter_bootstrap|main\.dart|canvaskit)" || [ ${#PAGE_CONTENT} -gt 2000 ]; then
+            # Vérifier aussi que les fichiers JS sont accessibles
+            if curl -s "http://localhost:${PORT}/flutter_bootstrap.js" > /dev/null 2>&1; then
+                echo ""
+                echo -e "${GREEN}✅ Flutter est prêt et l'app est chargée !${NC}"
+                sleep 3  # Délai supplémentaire pour être sûr que tout est prêt
+                return 0
+            fi
         fi
         
         attempt=$((attempt + 1))
@@ -229,7 +233,7 @@ wait_for_flutter() {
     echo ""
     echo -e "${YELLOW}⚠️  Flutter prend du temps à démarrer, ouverture du navigateur quand même...${NC}"
     echo -e "${YELLOW}   (L'app peut prendre quelques secondes supplémentaires à charger)${NC}"
-    sleep 3  # Attendre un peu quand même
+    sleep 5  # Attendre un peu plus quand même
     return 1
 }
 
