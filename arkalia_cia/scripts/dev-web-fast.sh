@@ -32,7 +32,10 @@ echo -e "${YELLOW}🔍 Vérification rapide du code...${NC}"
 LINT_OUTPUT=$(timeout 15 flutter analyze --no-pub 2>&1 || echo "")
 ERROR_COUNT=$(echo "$LINT_OUTPUT" | grep -c "error •" || echo "0")
 
-if [ "$ERROR_COUNT" -gt 0 ]; then
+# Convertir en nombre (éviter les erreurs de comparaison)
+ERROR_COUNT=${ERROR_COUNT:-0}
+
+if [ "$ERROR_COUNT" -gt 0 ] 2>/dev/null; then
     echo -e "${RED}⚠️  ${ERROR_COUNT} erreur(s) trouvée(s)${NC}"
     echo "$LINT_OUTPUT" | grep "error •" | head -3
     echo ""
@@ -144,23 +147,42 @@ cleanup() {
 
 trap cleanup SIGINT SIGTERM
 
-# Fonction pour vérifier que le serveur Flutter répond
+# Fonction pour vérifier que Flutter est vraiment prêt (app chargée, pas juste serveur)
 wait_for_flutter() {
-    local max_attempts=30
+    local max_attempts=60  # Augmenté à 60 secondes
     local attempt=0
-    echo -e "${YELLOW}⏳ Attente du démarrage de Flutter...${NC}"
+    echo -e "${YELLOW}⏳ Attente du démarrage complet de Flutter (compilation + chargement)...${NC}"
     
     while [ $attempt -lt $max_attempts ]; do
-        if curl -s "http://localhost:${PORT}" > /dev/null 2>&1; then
-            echo -e "${GREEN}✅ Flutter est prêt !${NC}"
+        # Vérifier que le serveur répond
+        if ! curl -s "http://localhost:${PORT}" > /dev/null 2>&1; then
+            attempt=$((attempt + 1))
+            sleep 1
+            printf "."
+            continue
+        fi
+        
+        # Vérifier que la page contient du contenu (pas juste une page blanche)
+        # Flutter web génère du HTML avec des balises spécifiques
+        PAGE_CONTENT=$(curl -s "http://localhost:${PORT}" 2>/dev/null || echo "")
+        
+        # Vérifier la présence de contenu Flutter (balises canvas, script, etc.)
+        if echo "$PAGE_CONTENT" | grep -qiE "(canvas|flutter|main\.dart|\.js)" || [ ${#PAGE_CONTENT} -gt 1000 ]; then
+            echo ""
+            echo -e "${GREEN}✅ Flutter est prêt et l'app est chargée !${NC}"
+            sleep 2  # Délai supplémentaire pour être sûr que tout est prêt
             return 0
         fi
+        
         attempt=$((attempt + 1))
         sleep 1
         printf "."
     done
     
+    echo ""
     echo -e "${YELLOW}⚠️  Flutter prend du temps à démarrer, ouverture du navigateur quand même...${NC}"
+    echo -e "${YELLOW}   (L'app peut prendre quelques secondes supplémentaires à charger)${NC}"
+    sleep 3  # Attendre un peu quand même
     return 1
 }
 
