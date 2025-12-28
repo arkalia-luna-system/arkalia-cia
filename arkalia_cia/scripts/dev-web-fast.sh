@@ -105,10 +105,20 @@ if [ ! -d "web" ]; then
 fi
 
 # Nettoyer le build web pour éviter les erreurs de compilation
-echo -e "${YELLOW}🧹 Nettoyage du build web...${NC}"
+echo -e "${YELLOW}🧹 Nettoyage complet du build web...${NC}"
 rm -rf build/web 2>/dev/null || true
+rm -rf .dart_tool/build 2>/dev/null || true
 flutter clean > /dev/null 2>&1 || true
 echo -e "${GREEN}✅ Nettoyage terminé${NC}"
+echo ""
+
+# Forcer une compilation initiale pour s'assurer que tout est prêt
+echo -e "${YELLOW}🔨 Compilation initiale Flutter web (première fois)...${NC}"
+# Compiler en mode debug pour développement (plus rapide que release)
+flutter build web --debug --no-pub > /dev/null 2>&1 || {
+    echo -e "${YELLOW}⚠️  Build initial échoué, on continue quand même...${NC}"
+}
+echo -e "${GREEN}✅ Compilation initiale terminée${NC}"
 echo ""
 
 # Vérifier les devices disponibles et les navigateurs installés
