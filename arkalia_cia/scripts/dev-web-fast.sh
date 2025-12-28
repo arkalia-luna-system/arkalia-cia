@@ -19,6 +19,14 @@ echo ""
 # Obtenir le répertoire du script
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# Vérifier qu'on est dans le bon répertoire
+if [ ! -f "$PROJECT_DIR/pubspec.yaml" ]; then
+    echo -e "${RED}❌ Erreur: Ce script doit être exécuté depuis arkalia_cia/scripts/${NC}"
+    echo -e "${YELLOW}   Utilisez: cd arkalia_cia && bash scripts/dev-web-fast.sh${NC}"
+    exit 1
+fi
+
 cd "$PROJECT_DIR"
 
 # Vérifier Flutter
