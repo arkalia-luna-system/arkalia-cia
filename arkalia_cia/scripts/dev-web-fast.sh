@@ -340,6 +340,9 @@ open_browser &
 
 # Lancer Flutter en mode développement (hot reload activé)
 # --web-hostname=0.0.0.0 permet l'accès depuis le réseau local
+# --web-renderer=canvaskit pour utiliser CanvasKit (plus stable)
 # Note: Flutter ouvre Chrome automatiquement si DEVICE=chrome
-flutter run -d "$DEVICE" --web-port=$PORT --web-hostname=0.0.0.0
+echo -e "${CYAN}🚀 Lancement Flutter en mode développement...${NC}"
+echo ""
+flutter run -d "$DEVICE" --web-port=$PORT --web-hostname=0.0.0.0 --web-renderer=canvaskit
 
