@@ -4,7 +4,8 @@ import 'package:flutter/foundation.dart';
 // dart:io n'est pas disponible sur web
 // Utiliser un stub pour dart:html qui ne sera jamais utilisé (code protégé par kIsWeb)
 import 'dart:io' if (dart.library.html) '../stubs/html_stub.dart' as io;
-import 'dart:html' if (dart.library.html) 'dart:html' else '../stubs/html_stub.dart' as html;
+import 'dart:html' if (dart.library.html) 'dart:html' as html;
+import '../stubs/html_stub.dart' if (dart.library.html) 'dart:html' as html_stub;
 import 'package:file_picker/file_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
@@ -558,8 +559,9 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           if (docBytes != null && docBytes.isNotEmpty) {
             // ignore: avoid_web_libraries_in_flutter
             // Créer une URL blob pour visualisation (web uniquement)
-            final blob = html.Blob([docBytes]);
-            final url = html.Url.createObjectUrlFromBlob(blob);
+            // Utiliser html si disponible, sinon html_stub (mais ne sera jamais appelé car kIsWeb protège)
+            final blob = (kIsWeb ? html : html_stub).Blob([docBytes]);
+            final url = (kIsWeb ? html : html_stub).Url.createObjectUrlFromBlob(blob);
             final uri = Uri.parse(url);
             if (await canLaunchUrl(uri)) {
               await launchUrl(uri, mode: LaunchMode.externalApplication);

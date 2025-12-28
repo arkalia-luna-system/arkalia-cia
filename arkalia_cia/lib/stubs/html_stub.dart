@@ -2,6 +2,18 @@
 // Ce fichier n'est jamais réellement utilisé car le code est protégé par kIsWeb
 // ignore_for_file: unused_import, unused_element, avoid_types_on_closure_parameters
 
+/// Stub pour Blob de dart:html (jamais utilisé)
+class Blob {
+  Blob(List<dynamic> data);
+}
+
+/// Stub pour Url de dart:html (jamais utilisé)
+class Url {
+  static String createObjectUrlFromBlob(Blob blob) {
+    throw UnsupportedError('Url.createObjectUrlFromBlob stub - ne doit jamais être appelé');
+  }
+}
+
 /// Stub pour File de dart:html (jamais utilisé)
 /// Compatible avec dart:io.File pour éviter erreurs compilation
 // Stub pour dart:html sur plateformes non-web
