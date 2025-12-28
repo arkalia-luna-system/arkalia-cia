@@ -142,10 +142,22 @@ class _InitialScreenState extends State<_InitialScreen> {
   @override
   void initState() {
     super.initState();
-    _checkAuth();
+    // Attendre un peu que Flutter soit complètement prêt avant de vérifier l'auth
+    // Cela évite les erreurs WebSocket et "Library not defined" pendant la compilation
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (mounted) {
+        _checkAuth();
+      }
+    });
   }
 
   Future<void> _checkAuth() async {
+    // Attendre un peu supplémentaire sur web pour laisser Flutter finir de compiler
+    if (kIsWeb) {
+      await Future.delayed(const Duration(milliseconds: 1000));
+      if (!mounted) return;
+    }
+    
     // Vérifier si le backend est configuré et activé
     final backendEnabled = await BackendConfigService.isBackendEnabled();
     
@@ -217,6 +229,13 @@ class _InitialScreenState extends State<_InitialScreen> {
       }
     } else {
       // Backend non activé : vérifier Google Sign-In ou proposer WelcomeAuthScreen
+      // Sur web, attendre un peu avant de vérifier Google Sign-In
+      // pour éviter les erreurs pendant la compilation Flutter
+      if (kIsWeb) {
+        await Future.delayed(const Duration(milliseconds: 1000));
+        if (!mounted) return;
+      }
+      
       final isGoogleSignedIn = await GoogleAuthService.isSignedIn();
       
       if (mounted) {

@@ -193,23 +193,41 @@ class GoogleAuthService {
   }
 
   /// Vérifie si l'utilisateur est connecté avec Google
+  /// 
+  /// Mode web : Évite signInSilently() au démarrage pour éviter erreurs WebSocket
+  /// Utilise uniquement SharedPreferences pour une vérification rapide
   static Future<bool> isSignedIn() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final isSignedIn = prefs.getBool('google_signed_in') ?? false;
       
-      // Vérifier aussi avec Google Sign In
+      // Sur web, éviter signInSilently() au démarrage car Flutter peut ne pas être prêt
+      // On vérifie uniquement SharedPreferences pour une réponse rapide
+      // La vérification réelle avec Google sera faite plus tard si nécessaire
+      if (kIsWeb) {
+        return isSignedIn;
+      }
+      
+      // Sur mobile, on peut vérifier avec Google Sign In
       if (isSignedIn) {
-        final account = await _googleSignIn.signInSilently();
-        if (account == null) {
-          // L'utilisateur n'est plus connecté, mettre à jour les préférences
-          await prefs.setBool('google_signed_in', false);
-          return false;
+        try {
+          final account = await _googleSignIn.signInSilently();
+          if (account == null) {
+            // L'utilisateur n'est plus connecté, mettre à jour les préférences
+            await prefs.setBool('google_signed_in', false);
+            return false;
+          }
+          return true;
+        } catch (e) {
+          // En cas d'erreur, on assume que l'utilisateur est connecté (basé sur SharedPreferences)
+          // Cela évite de déconnecter l'utilisateur en cas d'erreur réseau temporaire
+          AppLogger.debug('GoogleAuthService.isSignedIn: Erreur signInSilently, utilisation SharedPreferences: $e');
+          return isSignedIn;
         }
-        return true;
       }
       return false;
     } catch (e) {
+      AppLogger.debug('GoogleAuthService.isSignedIn: Erreur, retour false: $e');
       return false;
     }
   }
