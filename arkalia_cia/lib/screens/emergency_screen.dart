@@ -56,12 +56,43 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
         }
       }
 
-      final contactsList = await ContactsService.getEmergencyContacts();
+      // Charger depuis les deux sources : contacts système et stockage local
+      final systemContacts = await ContactsService.getEmergencyContacts();
+      final localContacts = await LocalStorageService.getEmergencyContacts();
       final info = await LocalStorageService.getEmergencyInfo();
+
+      // Fusionner les contacts système et locaux
+      final allContacts = <Map<String, dynamic>>[];
+      
+      // Ajouter les contacts locaux (priorité)
+      for (final localContact in localContacts) {
+        allContacts.add(localContact);
+      }
+      
+      // Ajouter les contacts système qui ne sont pas déjà dans la liste locale
+      for (final systemContact in systemContacts) {
+        final systemPhone = systemContact.phones.isNotEmpty 
+            ? systemContact.phones.first.number 
+            : '';
+        final existsInLocal = localContacts.any((local) => 
+            local['phone'] == systemPhone || 
+            local['name'] == '${systemContact.name.first} ${systemContact.name.last}'.trim());
+        
+        if (!existsInLocal && systemPhone.isNotEmpty) {
+          allContacts.add({
+            'id': 'system_${systemContact.id}',
+            'name': '${systemContact.name.first} ${systemContact.name.last}'.trim(),
+            'phone': systemPhone,
+            'relationship': 'Contact système',
+            'is_primary': false,
+            'source': 'system',
+          });
+        }
+      }
 
       if (mounted) {
         setState(() {
-          emergencyContacts = contactsList;
+          emergencyContacts = allContacts;
           emergencyInfo = info ?? {};
           isLoading = false;
         });

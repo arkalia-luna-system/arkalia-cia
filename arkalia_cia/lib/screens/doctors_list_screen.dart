@@ -417,6 +417,7 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          color: Colors.black87, // Texte noir pour visibilité sur fond gris clair
                         ),
                       ),
                     ],

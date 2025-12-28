@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 // dart:io n'est pas disponible sur web
 // Utiliser un stub pour dart:html qui ne sera jamais utilisé (code protégé par kIsWeb)
 import 'dart:io' if (dart.library.html) '../stubs/html_stub.dart' as io;
+import 'dart:html' as html show Blob, Url;
 import 'package:file_picker/file_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
@@ -302,11 +303,11 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     if (!mounted) return;
     
     try {
-      // Sur mobile web, utiliser FileType.custom avec allowedExtensions pour forcer PDF
-      // FileType.any peut ouvrir le sélecteur d'images au lieu de fichiers
+      // Permettre PDF et autres types de documents médicaux
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
-        allowedExtensions: ['pdf'],
+        allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx', 'txt'],
+        allowMultiple: false,
       );
 
       if (result != null) {
@@ -319,9 +320,11 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         final pickedFile = result.files.single;
         final fileName = pickedFile.name;
         
-        // Vérifier que c'est bien un PDF (surtout sur web où FileType.any est utilisé)
-        if (!fileName.toLowerCase().endsWith('.pdf')) {
-          _showError('Veuillez sélectionner un fichier PDF');
+        // Vérifier que c'est un type de fichier supporté
+        final allowedExtensions = ['.pdf', '.jpg', '.jpeg', '.png', '.doc', '.docx', '.txt'];
+        final fileExtension = fileName.toLowerCase().substring(fileName.lastIndexOf('.'));
+        if (!allowedExtensions.contains(fileExtension)) {
+          _showError('Type de fichier non supporté. Formats acceptés: PDF, JPG, PNG, DOC, DOCX, TXT');
           setState(() {
             isUploading = false;
           });
@@ -546,13 +549,27 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         return;
       }
 
-      // Sur web, on ne peut pas utiliser File de dart:io
+      // Sur web, essayer d'ouvrir le document via url_launcher
       if (kIsWeb) {
-        // Sur web, essayer d'ouvrir le PDF via url_launcher ou afficher un message
-        // Les fichiers PDF sur web sont stockés dans IndexedDB ou via File API
-        // Pour l'instant, on affiche un message indiquant que la prévisualisation
-        // nécessite de télécharger le fichier
-        _showError('Sur le web, veuillez utiliser le bouton de partage pour ouvrir le PDF dans une autre application.');
+        // Sur web, les fichiers sont stockés dans LocalStorageService
+        // Essayer de créer une URL blob pour visualisation
+        try {
+          final docBytes = doc['bytes'] as Uint8List?;
+          if (docBytes != null && docBytes.isNotEmpty) {
+            // Créer une URL blob pour visualisation
+            final blob = html.Blob([docBytes]);
+            final url = html.Url.createObjectUrlFromBlob(blob);
+            final uri = Uri.parse(url);
+            if (await canLaunchUrl(uri)) {
+              await launchUrl(uri, mode: LaunchMode.externalApplication);
+              return;
+            }
+          }
+        } catch (e) {
+          // Si échec, continuer avec le message d'erreur
+        }
+        // Si pas de bytes ou échec, suggérer le partage
+        _showError('Sur le web, veuillez utiliser le bouton de partage pour ouvrir le document dans une autre application.');
         return;
       }
 
@@ -798,7 +815,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                           Icon(Icons.upload),
                           SizedBox(width: 8),
                           Text(
-                            'Uploader un PDF',
+                            'Uploader un document',
                             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                           ),
                         ],
@@ -840,7 +857,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                             ),
                             const SizedBox(height: 8),
                             const Text(
-                              'Commencez par uploader votre premier document PDF',
+                              'Commencez par uploader votre premier document (PDF, image, etc.)',
                               style: TextStyle(
                                 color: Colors.grey,
                                 fontSize: 14,
@@ -851,7 +868,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                             ElevatedButton.icon(
                               onPressed: _uploadDocument,
                               icon: const Icon(Icons.upload),
-                              label: const Text('Uploader un PDF'),
+                              label: const Text('Uploader un document'),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.green,
                                 foregroundColor: Colors.white,
