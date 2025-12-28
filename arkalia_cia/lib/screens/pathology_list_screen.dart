@@ -149,10 +149,12 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
       }
     } else {
       // Utiliser le template sélectionné
-      newPathology = templates.firstWhere(
-        (t) => t.name == selected,
-        orElse: () => templates.isNotEmpty ? templates.first : null,
-      );
+      try {
+        newPathology = templates.firstWhere((t) => t.name == selected);
+      } catch (e) {
+        // Template non trouvé, utiliser le premier si disponible
+        newPathology = templates.isNotEmpty ? templates.first : null;
+      }
     }
 
     if (newPathology != null) {
