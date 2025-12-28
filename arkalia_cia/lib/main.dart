@@ -142,10 +142,8 @@ class _InitialScreenState extends State<_InitialScreen> {
   @override
   void initState() {
     super.initState();
-    // Attendre que Flutter soit complètement prêt avant de vérifier l'auth
-    // Cela évite les erreurs WebSocket et "Library not defined" pendant la compilation
-    // Sur web, attendre plus longtemps car la compilation peut prendre du temps
-    final delay = kIsWeb ? const Duration(milliseconds: 3000) : const Duration(milliseconds: 500);
+    // Délai réduit pour chargement plus rapide
+    final delay = kIsWeb ? const Duration(milliseconds: 1500) : const Duration(milliseconds: 300);
     Future.delayed(delay, () {
       if (mounted) {
         _checkAuth();
@@ -154,10 +152,9 @@ class _InitialScreenState extends State<_InitialScreen> {
   }
 
   Future<void> _checkAuth() async {
-    // Attendre un peu supplémentaire sur web pour laisser Flutter finir de compiler
-    // Les erreurs WebSocket sont normales pendant la compilation, on attend qu'elles disparaissent
+    // Délai réduit pour chargement plus rapide
     if (kIsWeb) {
-      await Future.delayed(const Duration(milliseconds: 2000));
+      await Future.delayed(const Duration(milliseconds: 800));
       if (!mounted) return;
     }
     
@@ -175,10 +172,9 @@ class _InitialScreenState extends State<_InitialScreen> {
           // (mode offline-first : on garde le token même si le backend est temporairement inaccessible)
           final backendUrl = await BackendConfigService.getBackendURL();
           if (backendUrl.isNotEmpty && !backendUrl.contains('localhost') && !backendUrl.contains('127.0.0.1')) {
-            // Sur web, attendre encore un peu avant de vérifier le token
-            // pour éviter les erreurs pendant la compilation Flutter
+            // Délai réduit pour chargement plus rapide
             if (kIsWeb) {
-              await Future.delayed(const Duration(milliseconds: 2000));
+              await Future.delayed(const Duration(milliseconds: 800));
               if (!mounted) return;
             }
             

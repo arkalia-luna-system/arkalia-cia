@@ -109,33 +109,37 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _loadStats() async {
+    // Charger les stats rapidement sans bloquer l'affichage
     try {
+      // Charger les documents en premier (rapide)
       final documents = await LocalStorageService.getDocuments();
       
-      // Compter les rappels locaux (stockés dans LocalStorageService)
+      // Compter les rappels locaux (rapide)
       final localReminders = await LocalStorageService.getReminders();
       
-      // Compter les rappels du calendrier système (mobile seulement)
-      List<Map<String, dynamic>> calendarReminders = [];
-      if (!kIsWeb) {
-        try {
-          // Ajouter un timeout pour éviter les blocages
-          calendarReminders = await CalendarService.getUpcomingReminders()
-              .timeout(const Duration(seconds: 2), onTimeout: () => <Map<String, dynamic>>[]);
-        } catch (e) {
-          // Ignorer les erreurs de calendrier
-        }
-      }
-      
-      // Total = rappels locaux + rappels calendrier
-      final totalReminders = localReminders.length + calendarReminders.length;
-      
+      // Mettre à jour immédiatement avec les données locales
       if (mounted) {
         setState(() {
           _documentCount = documents.length;
-          _upcomingRemindersCount = totalReminders;
-          _isLoadingStats = false;
+          _upcomingRemindersCount = localReminders.length;
+          _isLoadingStats = false; // Afficher les stats même si le calendrier n'est pas encore chargé
         });
+      }
+      
+      // Charger le calendrier en arrière-plan (seulement sur mobile, avec timeout court)
+      if (!kIsWeb && mounted) {
+        try {
+          final calendarReminders = await CalendarService.getUpcomingReminders()
+              .timeout(const Duration(seconds: 1), onTimeout: () => <Map<String, dynamic>>[]);
+          
+          if (mounted) {
+            setState(() {
+              _upcomingRemindersCount = localReminders.length + calendarReminders.length;
+            });
+          }
+        } catch (e) {
+          // Ignorer les erreurs de calendrier, on garde les rappels locaux
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -271,6 +275,7 @@ class _HomePageState extends State<HomePage> {
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).colorScheme.primary,
                       ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -281,9 +286,10 @@ class _HomePageState extends State<HomePage> {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontStyle: FontStyle.italic,
                       ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -300,12 +306,6 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(height: 24),
 
                   // Grille de modules principaux avec accessibilité (toujours visible)
-                  Semantics(
-                    label: 'Instructions: Sélectionnez un module ci-dessous pour accéder à ses fonctionnalités',
-                    hint: 'Les modules sont organisés en grille, utilisez la navigation clavier ou tactile',
-                    child: Container(),
-                  ),
-                  const SizedBox(height: 8),
                   Semantics(
                     label: 'Modules de l\'application',
                     hint: 'Sélectionnez un module pour accéder à ses fonctionnalités',
