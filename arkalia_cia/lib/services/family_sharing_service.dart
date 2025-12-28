@@ -258,12 +258,56 @@ class FamilySharingService {
 
   Future<void> removeFamilyMember(int memberId) async {
     final members = await getFamilyMembers();
+    final memberToRemove = members.firstWhere(
+      (m) => m.id == memberId,
+      orElse: () => FamilyMember(name: '', email: '', relationship: ''),
+    );
+    
     members.removeWhere((m) => m.id == memberId);
     final prefs = await SharedPreferences.getInstance();
     await prefs.setStringList(
       _membersKey,
       members.map((m) => '${m.id}|${m.name}|${m.email}|${m.phone ?? ''}|${m.relationship}|${m.isActive}|${m.createdAt.toIso8601String()}').toList(),
     );
+    
+    // Synchroniser la suppression avec le backend
+    await _deleteMemberFromBackend(memberId);
+  }
+  
+  /// Supprime un membre famille du backend
+  Future<void> _deleteMemberFromBackend(int memberId) async {
+    try {
+      final backendConfigured = await ApiService.isBackendConfigured();
+      if (!backendConfigured) {
+        AppLogger.debug('Backend non configuré, suppression membre famille ignorée');
+        return;
+      }
+      
+      final baseUrl = await BackendConfigService.getBackendURL();
+      final token = await AuthApiService.getAccessToken();
+      if (token == null) {
+        AppLogger.debug('Non authentifié, suppression membre famille ignorée');
+        return;
+      }
+      
+      final headers = {
+        'Authorization': 'Bearer $token',
+      };
+      
+      final response = await http.delete(
+        Uri.parse('$baseUrl/api/v1/family-sharing/members/$memberId'),
+        headers: headers,
+      );
+      
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        AppLogger.info('Membre famille supprimé du backend: ID $memberId');
+      } else {
+        AppLogger.warning('Erreur suppression membre famille backend: ${response.statusCode}');
+      }
+    } catch (e) {
+      AppLogger.error('Erreur suppression membre famille backend', e);
+      // Ne pas bloquer la suppression locale en cas d'erreur backend
+    }
   }
 
   // Partage documents avec chiffrement et permissions granulaires
@@ -602,7 +646,7 @@ class FamilySharingService {
     return sharedDocs;
   }
 
-  Future<void> unshareDocument(String documentId) async {
+  Future<void> unshareDocument(String documentId, {String? memberEmail}) async {
     final prefs = await SharedPreferences.getInstance();
     final sharedJson = prefs.getStringList(_sharedDocumentsKey) ?? [];
     
@@ -618,8 +662,86 @@ class FamilySharingService {
       await _addAuditLog(documentId, doc.memberIds, 'unshared');
     }
     
-    sharedJson.removeWhere((entry) => entry.startsWith('$documentId:'));
+    // Retirer le partage local
+    if (memberEmail != null) {
+      // Retirer seulement pour ce membre
+      sharedJson.removeWhere((entry) {
+        final parts = entry.split(':');
+        if (parts.length >= 2 && parts[0] == documentId) {
+          final members = await getFamilyMembers();
+          final member = members.firstWhere(
+            (m) => m.email == memberEmail,
+            orElse: () => FamilyMember(name: '', email: '', relationship: ''),
+          );
+          if (member.id != null) {
+            final memberIds = parts[1].split(',').map((id) => int.tryParse(id) ?? -1).toList();
+            if (memberIds.contains(member.id)) {
+              // Retirer ce membre de la liste
+              memberIds.remove(member.id);
+              if (memberIds.isEmpty) {
+                return true; // Supprimer l'entrée complète
+              } else {
+                // Mettre à jour l'entrée
+                final index = sharedJson.indexOf(entry);
+                if (index >= 0) {
+                  sharedJson[index] = '${parts[0]}:${memberIds.join(",")}:${parts[2]}:${parts[3]}:${parts[4]}';
+                }
+                return false;
+              }
+            }
+          }
+        }
+        return false;
+      });
+    } else {
+      // Retirer tous les partages du document
+      sharedJson.removeWhere((entry) => entry.startsWith('$documentId:'));
+    }
+    
     await prefs.setStringList(_sharedDocumentsKey, sharedJson);
+    
+    // Synchroniser avec le backend
+    await _unshareFromBackend(documentId, memberEmail);
+  }
+  
+  /// Retire un partage du backend
+  Future<void> _unshareFromBackend(String documentId, String? memberEmail) async {
+    try {
+      final backendConfigured = await ApiService.isBackendConfigured();
+      if (!backendConfigured) {
+        AppLogger.debug('Backend non configuré, retrait partage ignoré');
+        return;
+      }
+      
+      final baseUrl = await BackendConfigService.getBackendURL();
+      final token = await AuthApiService.getAccessToken();
+      if (token == null) {
+        AppLogger.debug('Non authentifié, retrait partage ignoré');
+        return;
+      }
+      
+      final headers = {
+        'Authorization': 'Bearer $token',
+      };
+      
+      final url = memberEmail != null
+          ? '$baseUrl/api/v1/family-sharing/share/$documentId?member_email=$memberEmail'
+          : '$baseUrl/api/v1/family-sharing/share/$documentId';
+      
+      final response = await http.delete(
+        Uri.parse(url),
+        headers: headers,
+      );
+      
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        AppLogger.info('Partage retiré du backend: document $documentId');
+      } else {
+        AppLogger.warning('Erreur retrait partage backend: ${response.statusCode}');
+      }
+    } catch (e) {
+      AppLogger.error('Erreur retrait partage backend', e);
+      // Ne pas bloquer le retrait local en cas d'erreur backend
+    }
   }
 
   // Chiffrement/déchiffrement E2E amélioré
