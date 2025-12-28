@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 // dart:io n'est pas disponible sur web
 // Utiliser un stub pour dart:html qui ne sera jamais utilisé (code protégé par kIsWeb)
 import 'dart:io' if (dart.library.html) '../stubs/html_stub.dart' as io;
-import 'dart:html' as html show Blob, Url;
+import 'dart:html' as html show Blob, Url if (dart.library.html);
 import 'package:file_picker/file_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
@@ -596,7 +596,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         // ignore: avoid_dynamic_calls, undefined_class, undefined_getter
         try {
           // ignore: undefined_class
-          final platformClass = io.Platform;
+          const platformClass = io.Platform;
           final isAndroid = (platformClass as dynamic).isAndroid ?? false;
           if (isAndroid) {
             // Sur Android 13+ (API 33+), utiliser READ_MEDIA_IMAGES

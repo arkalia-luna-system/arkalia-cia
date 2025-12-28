@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import '../../utils/validation_helper.dart';
 import '../../utils/input_sanitizer.dart';
 import '../../services/contacts_service.dart';
@@ -78,6 +78,7 @@ class _EmergencyContactDialogState extends State<EmergencyContactDialog> {
       }
 
       // Afficher un dialog pour sélectionner un contact
+      if (!mounted) return;
       final selectedContact = await showDialog<contacts_api.Contact>(
         context: context,
         builder: (context) => AlertDialog(
@@ -102,67 +103,7 @@ class _EmergencyContactDialogState extends State<EmergencyContactDialog> {
         ),
       );
 
-      if (selectedContact != null) {
-        final name = '${selectedContact.name.first} ${selectedContact.name.last}'.trim();
-        final phone = selectedContact.phones.isNotEmpty 
-            ? selectedContact.phones.first.number 
-            : '';
-        
-        setState(() {
-          nameController.text = name;
-          phoneController.text = phone;
-          if (displayNameController.text.isEmpty) {
-            displayNameController.text = name;
-          }
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur lors de l\'import: $e')),
-        );
-      }
-    }
-  }
-
-  Future<void> _importFromContacts() async {
-    try {
-      final contacts = await ContactsService.getContacts();
-      if (contacts.isEmpty) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Aucun contact trouvé')),
-          );
-        }
-        return;
-      }
-
-      // Afficher un dialog pour sélectionner un contact
-      final selectedContact = await showDialog<contacts_api.Contact>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Sélectionner un contact'),
-          content: SizedBox(
-            width: double.maxFinite,
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: contacts.length,
-              itemBuilder: (context, index) {
-                final contact = contacts[index];
-                final name = '${contact.name.first} ${contact.name.last}'.trim();
-                final phone = contact.phones.isNotEmpty ? contact.phones.first.number : '';
-                return ListTile(
-                  title: Text(name),
-                  subtitle: phone.isNotEmpty ? Text(phone) : null,
-                  onTap: () => Navigator.of(context).pop(contact),
-                );
-              },
-            ),
-          ),
-        ),
-      );
-
-      if (selectedContact != null) {
+      if (selectedContact != null && mounted) {
         final name = '${selectedContact.name.first} ${selectedContact.name.last}'.trim();
         final phone = selectedContact.phones.isNotEmpty 
             ? selectedContact.phones.first.number 

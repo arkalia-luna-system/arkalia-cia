@@ -258,10 +258,6 @@ class FamilySharingService {
 
   Future<void> removeFamilyMember(int memberId) async {
     final members = await getFamilyMembers();
-    final memberToRemove = members.firstWhere(
-      (m) => m.id == memberId,
-      orElse: () => FamilyMember(name: '', email: '', relationship: ''),
-    );
     
     members.removeWhere((m) => m.id == memberId);
     final prefs = await SharedPreferences.getInstance();
@@ -665,34 +661,41 @@ class FamilySharingService {
     // Retirer le partage local
     if (memberEmail != null) {
       // Retirer seulement pour ce membre
-      sharedJson.removeWhere((entry) {
-        final parts = entry.split(':');
-        if (parts.length >= 2 && parts[0] == documentId) {
-          final members = await getFamilyMembers();
-          final member = members.firstWhere(
-            (m) => m.email == memberEmail,
-            orElse: () => FamilyMember(name: '', email: '', relationship: ''),
-          );
-          if (member.id != null) {
+      // Récupérer les membres avant le removeWhere (qui n'est pas async)
+      final members = await getFamilyMembers();
+      final member = members.firstWhere(
+        (m) => m.email == memberEmail,
+        orElse: () => FamilyMember(name: '', email: '', relationship: ''),
+      );
+      
+      if (member.id != null) {
+        final updatedJson = <String>[];
+        for (final entry in sharedJson) {
+          final parts = entry.split(':');
+          if (parts.length >= 2 && parts[0] == documentId) {
             final memberIds = parts[1].split(',').map((id) => int.tryParse(id) ?? -1).toList();
             if (memberIds.contains(member.id)) {
               // Retirer ce membre de la liste
               memberIds.remove(member.id);
-              if (memberIds.isEmpty) {
-                return true; // Supprimer l'entrée complète
-              } else {
-                // Mettre à jour l'entrée
-                final index = sharedJson.indexOf(entry);
-                if (index >= 0) {
-                  sharedJson[index] = '${parts[0]}:${memberIds.join(",")}:${parts[2]}:${parts[3]}:${parts[4]}';
-                }
-                return false;
+              if (memberIds.isNotEmpty) {
+                // Mettre à jour l'entrée avec les membres restants
+                updatedJson.add('${parts[0]}:${memberIds.join(",")}:${parts[2]}:${parts[3]}:${parts.length >= 5 ? parts[4] : 'view'}');
               }
+              // Si memberIds est vide, on ne l'ajoute pas (suppression)
+            } else {
+              // Garder l'entrée telle quelle
+              updatedJson.add(entry);
             }
+          } else {
+            // Garder l'entrée telle quelle
+            updatedJson.add(entry);
           }
         }
-        return false;
-      });
+        sharedJson.clear();
+        sharedJson.addAll(updatedJson);
+      } else {
+        // Membre non trouvé, ne rien faire
+      }
     } else {
       // Retirer tous les partages du document
       sharedJson.removeWhere((entry) => entry.startsWith('$documentId:'));
