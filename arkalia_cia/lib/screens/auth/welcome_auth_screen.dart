@@ -137,7 +137,7 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
         try {
           final googleAccount = result['user'] as GoogleSignInAccount?;
           if (googleAccount != null) {
-            // email est non-null selon GoogleSignInAccount, mais on vérifie quand même
+            // email est non-null selon GoogleSignInAccount
             final googleEmail = googleAccount.email.trim();
             final googleName = googleAccount.displayName?.trim();
             
