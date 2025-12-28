@@ -211,25 +211,42 @@ open_browser() {
                 open -a "Comet" "$COMET_URL" 2>/dev/null || true
             fi
             
-            # Attendre un peu pour que Comet s'ouvre
-            sleep 3
+            # Attendre un peu pour que Comet s'ouvre et charge la page
+            sleep 4
             
-            # Essayer d'activer la vue mobile via AppleScript (si possible)
-            # Comet devrait automatiquement détecter Flutter et afficher la vue mobile
-            osascript -e 'tell application "Comet" to activate' 2>/dev/null || true
+            # Essayer d'activer DevTools et Device Emulation automatiquement avec AppleScript
+            SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+            APPLE_SCRIPT="$SCRIPT_DIR/open_comet_devtools.applescript"
             
-            # Ouvrir aussi Chrome avec l'émulation de device pour avoir la "mini télé"
-            # Chrome avec DevTools en mode device est plus fiable pour la vue mobile
-            if [ -d "/Applications/Google Chrome.app" ]; then
-                # Ouvrir Chrome avec DevTools et émulation de device
-                # Utiliser les flags Chrome pour ouvrir directement en mode device
-                /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
-                    --new-window \
-                    --auto-open-devtools-for-tabs \
-                    --user-data-dir=/tmp/chrome-dev-session \
-                    "$COMET_URL" > /dev/null 2>&1 &
-                
-                # Attendre un peu puis envoyer les touches pour activer device emulation
+            echo ""
+            echo -e "${GREEN}✅ Comet ouvert avec l'app${NC}"
+            
+            if [ -f "$APPLE_SCRIPT" ]; then
+                echo -e "${CYAN}🔧 Activation automatique du mode Device Emulation...${NC}"
+                osascript "$APPLE_SCRIPT" 2>/dev/null && {
+                    sleep 1
+                    echo -e "${GREEN}✅ DevTools et Device Emulation activés !${NC}"
+                    echo -e "${CYAN}📱 Le 'mini téléphone' devrait maintenant être visible sur votre écran${NC}"
+                } || {
+                    echo -e "${YELLOW}⚠️  Activation automatique échouée, instructions manuelles ci-dessous${NC}"
+                }
+            else
+                echo -e "${YELLOW}⚠️  Script AppleScript non trouvé, instructions manuelles ci-dessous${NC}"
+            fi
+            
+            echo ""
+            echo -e "${CYAN}💡 Si le 'mini téléphone' n'apparaît toujours pas, faites manuellement :${NC}"
+            echo -e "   ${YELLOW}1. Dans Comet, appuyez sur ${GREEN}F12${YELLOW} ou ${GREEN}Cmd+Option+I${YELLOW} (ouvre DevTools)${NC}"
+            echo -e "   ${YELLOW}2. Dans DevTools, appuyez sur ${GREEN}Cmd+Shift+M${YELLOW} (Toggle device toolbar)${NC}"
+            echo -e "   ${YELLOW}3. Sélectionnez un appareil dans le menu en haut :${NC}"
+            echo -e "      ${GREEN}• iPhone 14 Pro${NC}"
+            echo -e "      ${GREEN}• Galaxy S21${NC}"
+            echo -e "      ${GREEN}• Ou un autre appareil${NC}"
+            echo -e "   ${YELLOW}4. Le téléphone devrait apparaître sur votre écran !${NC}"
+            
+            # Ne pas ouvrir Chrome, l'utilisateur veut utiliser Comet
+            if false; then
+                # Ancien code pour Chrome (désactivé)
                 sleep 4
                 # Envoyer Cmd+Shift+M pour activer device toolbar (nécessite que Chrome soit actif)
                 osascript -e 'tell application "Google Chrome" to activate' 2>/dev/null || true
