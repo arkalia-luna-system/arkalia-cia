@@ -21,7 +21,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   material_design_icons_flutter: ^7.0.7296
   table_calendar: ^3.1.2
-  fl_chart: ^1.0.0
+  fl_chart: 1.0.0 # Version exacte (1.1.0 nécessite vector_math 2.2.0, incompatible avec Flutter 3.29.0)
 
   # Notifications
   flutter_local_notifications: ^17.0.0
