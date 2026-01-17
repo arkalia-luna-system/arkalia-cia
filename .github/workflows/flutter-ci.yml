@@ -36,7 +36,7 @@ jobs:
       - name: "Setup Flutter"
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.24.0"
+          flutter-version: "3.27.0"  # Nécessaire pour Dart 3.7.0+ (google_sign_in 7.2.0)
           channel: "stable"
           cache: true
 
@@ -185,7 +185,7 @@ jobs:
       - name: "Setup Flutter"
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.24.0"
+          flutter-version: "3.27.0"  # Nécessaire pour Dart 3.7.0+ (google_sign_in 7.2.0)
           channel: "stable"
 
       - name: "Install Flutter Dependencies"
@@ -226,7 +226,7 @@ jobs:
       - name: "Setup Flutter"
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.24.0"
+          flutter-version: "3.27.0"  # Nécessaire pour Dart 3.7.0+ (google_sign_in 7.2.0)
           channel: "stable"
           cache: true
 
