@@ -43,7 +43,13 @@ jobs:
       - name: "Install Flutter Dependencies"
         run: |
           cd arkalia_cia
+          # Vérifier que pubspec.lock contient fl_chart 1.0.0
+          if ! grep -q 'version: "1.0.0"' pubspec.lock | grep -A 5 "fl_chart:"; then
+            echo "⚠️ Attention: pubspec.lock ne contient pas fl_chart 1.0.0"
+          fi
           flutter pub get
+          # Vérifier la version installée
+          flutter pub deps | grep "fl_chart" || echo "fl_chart non trouvé dans les dépendances"
 
       - name: "Flutter Analyze"
         run: |
@@ -191,7 +197,13 @@ jobs:
       - name: "Install Flutter Dependencies"
         run: |
           cd arkalia_cia
+          # Vérifier que pubspec.lock contient fl_chart 1.0.0
+          if ! grep -q 'version: "1.0.0"' pubspec.lock | grep -A 5 "fl_chart:"; then
+            echo "⚠️ Attention: pubspec.lock ne contient pas fl_chart 1.0.0"
+          fi
           flutter pub get
+          # Vérifier la version installée
+          flutter pub deps | grep "fl_chart" || echo "fl_chart non trouvé dans les dépendances"
 
       - name: "Flutter Lint"
         run: |
@@ -233,7 +245,13 @@ jobs:
       - name: "Install Flutter Dependencies"
         run: |
           cd arkalia_cia
+          # Vérifier que pubspec.lock contient fl_chart 1.0.0
+          if ! grep -q 'version: "1.0.0"' pubspec.lock | grep -A 5 "fl_chart:"; then
+            echo "⚠️ Attention: pubspec.lock ne contient pas fl_chart 1.0.0"
+          fi
           flutter pub get
+          # Vérifier la version installée
+          flutter pub deps | grep "fl_chart" || echo "fl_chart non trouvé dans les dépendances"
 
       - name: "Build Web for GitHub Pages"
         run: |
