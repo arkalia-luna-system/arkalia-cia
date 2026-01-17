@@ -23,14 +23,22 @@ class GoogleAuthService {
   //   - http://localhost:8080/
   //   - http://localhost:8081 (si port alternatif)
   //   - https://votre-domaine.com (pour production)
-  static final GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: ['email', 'profile'],
-    // Client ID Web pour le web (nécessaire sur web)
-    // Client ID: 1062485264410-mc24cenl8rq8qj71enrrp36mibrsep79.apps.googleusercontent.com
-    clientId: kIsWeb 
-        ? '1062485264410-mc24cenl8rq8qj71enrrp36mibrsep79.apps.googleusercontent.com'
-        : null, // Sur mobile, null = détection automatique
-  );
+  
+  // Nouvelle API google_sign_in 7.2.0 : utiliser le singleton
+  static final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
+  static bool _initialized = false;
+
+  /// Initialise Google Sign-In (nécessaire pour la version 7.2.0+)
+  static Future<void> _ensureInitialized() async {
+    if (_initialized) return;
+    
+    await _googleSignIn.initialize(
+      clientId: kIsWeb 
+          ? '1062485264410-mc24cenl8rq8qj71enrrp36mibrsep79.apps.googleusercontent.com'
+          : null, // Sur mobile, null = détection automatique
+    );
+    _initialized = true;
+  }
 
   /// Connecte l'utilisateur avec Google
   /// 
@@ -41,47 +49,43 @@ class GoogleAuthService {
   /// - 'error': String? (si erreur)
   static Future<Map<String, dynamic>> signIn() async {
     try {
-      // CORRECTION : Essayer d'abord signInSilently() pour éviter le sélecteur de compte
+      await _ensureInitialized();
+      
+      // CORRECTION : Essayer d'abord attemptLightweightAuthentication() pour éviter le sélecteur de compte
       // Si l'utilisateur est déjà connecté, on récupère directement le compte
-      // Sinon, on utilise signIn() pour afficher le sélecteur
+      // Sinon, on utilise authenticate() pour afficher le sélecteur
       GoogleSignInAccount? account;
       
       try {
         // Essayer d'abord une connexion silencieuse (sans popup)
-        account = await _googleSignIn.signInSilently();
-        if (account != null) {
+        // Nouvelle API 7.2.0 : attemptLightweightAuthentication() remplace signInSilently()
+        final lightweightResult = await _googleSignIn.attemptLightweightAuthentication();
+        if (lightweightResult != null) {
+          account = lightweightResult;
           AppLogger.info('✅ Connexion Google silencieuse réussie: ${account.email}');
         }
       } catch (e) {
-        // signInSilently() a échoué, on va utiliser signIn() normalement
-        AppLogger.debug('signInSilently() échoué, utilisation de signIn(): $e');
+        // attemptLightweightAuthentication() a échoué, on va utiliser authenticate() normalement
+        AppLogger.debug('attemptLightweightAuthentication() échoué, utilisation de authenticate(): $e');
       }
       
-      // Si signInSilently() n'a pas fonctionné, utiliser signIn() normalement
-      if (account == null) {
-        // SIMPLIFIÉ : Tentative de connexion avec sélecteur de compte
-        // Sur le web, la page de consentement peut rester bloquée, donc on ajoute un timeout
-        account = await _googleSignIn.signIn().timeout(
-          const Duration(minutes: 2), // Timeout de 2 minutes pour éviter blocage infini
-          onTimeout: () {
-            AppLogger.warning('Google Sign-In timeout après 2 minutes');
-            throw TimeoutException(
-              'La connexion Google a pris trop de temps. '
-              'Vérifiez votre connexion internet et réessayez.',
-              const Duration(minutes: 2),
-            );
-          },
-        );
-      }
-      
-      if (account == null) {
-        // L'utilisateur a annulé la connexion (pas une erreur)
-        return {
-          'success': false,
-          'error': 'Connexion annulée',
-          'user': null,
-        };
-      }
+      // Si attemptLightweightAuthentication() n'a pas fonctionné, utiliser authenticate() normalement
+      // SIMPLIFIÉ : Tentative de connexion avec sélecteur de compte
+      // Sur le web, la page de consentement peut rester bloquée, donc on ajoute un timeout
+      // Nouvelle API 7.2.0 : authenticate() remplace signIn()
+      account ??= await _googleSignIn.authenticate(
+        scopeHint: ['email', 'profile'],
+      ).timeout(
+        const Duration(minutes: 2), // Timeout de 2 minutes pour éviter blocage infini
+        onTimeout: () {
+          AppLogger.warning('Google Sign-In timeout après 2 minutes');
+          throw TimeoutException(
+            'La connexion Google a pris trop de temps. '
+            'Vérifiez votre connexion internet et réessayez.',
+            const Duration(minutes: 2),
+          );
+        },
+      );
 
       // SIMPLIFIÉ : Sauvegarder les informations localement
       final prefs = await SharedPreferences.getInstance();
@@ -199,6 +203,7 @@ class GoogleAuthService {
   /// Déconnecte l'utilisateur de Google
   static Future<void> signOut() async {
     try {
+      await _ensureInitialized();
       await _googleSignIn.signOut();
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('google_user_id');
@@ -230,7 +235,9 @@ class GoogleAuthService {
       // Sur mobile, on peut vérifier avec Google Sign In
       if (isSignedIn) {
         try {
-          final account = await _googleSignIn.signInSilently();
+          await _ensureInitialized();
+          // Nouvelle API 7.2.0 : attemptLightweightAuthentication() remplace signInSilently()
+          final account = await _googleSignIn.attemptLightweightAuthentication();
           if (account == null) {
             // L'utilisateur n'est plus connecté, mettre à jour les préférences
             await prefs.setBool('google_signed_in', false);
@@ -240,7 +247,7 @@ class GoogleAuthService {
         } catch (e) {
           // En cas d'erreur, on assume que l'utilisateur est connecté (basé sur SharedPreferences)
           // Cela évite de déconnecter l'utilisateur en cas d'erreur réseau temporaire
-          AppLogger.debug('GoogleAuthService.isSignedIn: Erreur signInSilently, utilisation SharedPreferences: $e');
+          AppLogger.debug('GoogleAuthService.isSignedIn: Erreur attemptLightweightAuthentication, utilisation SharedPreferences: $e');
           return isSignedIn;
         }
       }
@@ -275,7 +282,9 @@ class GoogleAuthService {
   /// Récupère le compte Google actuel (pour accès aux tokens si nécessaire)
   static Future<GoogleSignInAccount?> getCurrentAccount() async {
     try {
-      return await _googleSignIn.signInSilently();
+      await _ensureInitialized();
+      // Nouvelle API 7.2.0 : attemptLightweightAuthentication() remplace signInSilently()
+      return await _googleSignIn.attemptLightweightAuthentication();
     } catch (e) {
       return null;
     }
