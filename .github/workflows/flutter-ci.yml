@@ -43,7 +43,7 @@ jobs:
       - name: "Install Flutter Dependencies"
         run: |
           cd arkalia_cia
-          flutter pub get
+          flutter pub get --offline || flutter pub get
 
       - name: "Flutter Analyze"
         run: |
@@ -191,7 +191,7 @@ jobs:
       - name: "Install Flutter Dependencies"
         run: |
           cd arkalia_cia
-          flutter pub get
+          flutter pub get --offline || flutter pub get
 
       - name: "Flutter Lint"
         run: |
@@ -233,7 +233,7 @@ jobs:
       - name: "Install Flutter Dependencies"
         run: |
           cd arkalia_cia
-          flutter pub get
+          flutter pub get --offline || flutter pub get
 
       - name: "Build Web for GitHub Pages"
         run: |
