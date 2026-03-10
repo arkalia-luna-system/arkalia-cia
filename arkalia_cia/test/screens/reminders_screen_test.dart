@@ -65,6 +65,11 @@ void main() {
 
       // L'icône notifications_none est affichée dans l'état vide
       expect(find.byIcon(Icons.notifications_none), findsOneWidget);
+      // Le texte d'aide doit parler de "créer ton premier rappel"
+      expect(
+        find.textContaining('créer ton premier rappel', findRichText: true),
+        findsOneWidget,
+      );
     });
 
     testWidgets('Affiche le bouton d\'ajout de rappel', (WidgetTester tester) async {

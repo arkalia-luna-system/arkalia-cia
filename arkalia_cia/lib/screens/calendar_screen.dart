@@ -322,6 +322,32 @@ class _CalendarScreenState extends State<CalendarScreen> {
             ),
           ),
 
+          // Légende simple pour aider à comprendre les couleurs/icônes
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'Légende :  ',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+                Row(
+                  children: const [
+                    Icon(Icons.medical_services, size: 18, color: Colors.red),
+                    SizedBox(width: 4),
+                    Text('Consultation  ', style: TextStyle(fontSize: 14)),
+                    Icon(Icons.medication, size: 18, color: Colors.blue),
+                    SizedBox(width: 4),
+                    Text('Médicament  ', style: TextStyle(fontSize: 14)),
+                    Icon(Icons.water_drop, size: 18, color: Colors.cyan),
+                    SizedBox(width: 4),
+                    Text('Hydratation', style: TextStyle(fontSize: 14)),
+                  ],
+                ),
+              ],
+            ),
+          ),
           // Liste des événements sélectionnés
           Expanded(
             child: RefreshIndicator(
@@ -347,6 +373,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                     'Aucun événement ce jour',
                                     style: TextStyle(
                                       fontSize: 18,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Appuie sur un jour avec des petits points colorés pour voir tes rendez‑vous et rappels.',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 14,
                                       color: Colors.grey[600],
                                     ),
                                   ),

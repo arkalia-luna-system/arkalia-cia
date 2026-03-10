@@ -524,13 +524,16 @@ class _RemindersScreenState extends State<RemindersScreen> {
                               ),
                             ),
                             const SizedBox(height: 8),
-                            const Text(
-                              'Créez votre premier rappel pour ne rien oublier',
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 14,
+                            const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 24),
+                              child: Text(
+                                'Appuie sur le bouton ci‑dessous pour créer ton premier rappel (par exemple un rendez‑vous médical ou un examen).',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 14,
+                                ),
+                                textAlign: TextAlign.center,
                               ),
-                              textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 24),
                             ElevatedButton.icon(

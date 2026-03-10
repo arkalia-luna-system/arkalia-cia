@@ -436,6 +436,16 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Text(
+                'En cas de problème, tu peux appeler rapidement les services d\'urgence ou une personne de confiance.',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey.shade800,
+                ),
+              ),
+            ),
             // Boutons d'urgence
             _buildEmergencyButtons(),
             const SizedBox(height: 24),
@@ -574,9 +584,9 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Ajoutez des contacts pour les situations d\'urgence',
+                    'Ajoute ici 1 ou 2 personnes de confiance que tu peux appeler en cas de problème.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.grey.shade500),
+                    style: TextStyle(color: Colors.grey.shade500, fontSize: 14),
                   ),
                 ],
               ),

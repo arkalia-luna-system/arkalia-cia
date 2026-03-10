@@ -1175,54 +1175,57 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
               child: isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : documents.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: Colors.green.shade500.withOpacity(0.1),
-                                shape: BoxShape.circle,
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: Colors.green.shade500.withOpacity(0.1),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.folder_open,
+                                  size: 64,
+                                  color: Colors.green,
+                                ),
                               ),
-                              child: const Icon(
-                                Icons.folder_open,
-                                size: 64,
-                                color: Colors.green,
+                              const SizedBox(height: 16),
+                              const Text(
+                                'Aucun document médical enregistré',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.grey,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 16),
-                            const Text(
-                              'Aucun document',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.grey,
+                              const SizedBox(height: 8),
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 24),
+                                child: Text(
+                                  'Appuie sur le bouton ci‑dessous pour ajouter ton premier document médical (par exemple une ordonnance ou un résultat de prise de sang).',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 14,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 8),
-                            const Text(
-                              'Commencez par uploader votre premier document (PDF, image, etc.)',
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 14,
+                              const SizedBox(height: 24),
+                              ElevatedButton.icon(
+                                onPressed: _uploadDocument,
+                                icon: const Icon(Icons.upload),
+                                label: const Text('Ajouter un document médical'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.green,
+                                  foregroundColor: Colors.white,
+                                  minimumSize: const Size(220, 48), // Minimum 48px pour accessibilité seniors
+                                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                ),
                               ),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 24),
-                            ElevatedButton.icon(
-                              onPressed: _uploadDocument,
-                              icon: const Icon(Icons.upload),
-                              label: const Text('Uploader un document'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green,
-                                foregroundColor: Colors.white,
-                                minimumSize: const Size(200, 48), // Minimum 48px pour accessibilité seniors
-                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
+                            ],
+                          ),
+                        )
                     : filteredDocuments.isEmpty
                         ? Center(
                             child: Column(
