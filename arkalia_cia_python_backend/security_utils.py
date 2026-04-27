@@ -4,6 +4,7 @@ Fonctions helper pour la sécurité et la sanitization
 """
 
 import re
+from html.parser import HTMLParser
 from typing import Any
 
 try:
@@ -206,30 +207,29 @@ def sanitize_html(text: str, allowed_tags: list[str] | None = None) -> str:
         cleaned_text: str = bleach.clean(text, tags=allowed_tags, strip=True)
         return cleaned_text
     else:
-        # Fallback : supprimer tous les tags HTML
-        # Protection basique contre XSS
-        # Utiliser des regex plus robustes pour éviter les contournements
-        # Supprimer les balises script (y compris avec attributs malformés)
-        text = re.sub(
-            r"<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>",
-            "",
-            text,
-            flags=re.IGNORECASE | re.DOTALL,
-        )
-        # Supprimer les balises iframe
-        text = re.sub(
-            r"<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>",
-            "",
-            text,
-            flags=re.IGNORECASE | re.DOTALL,
-        )
-        # Supprimer les protocoles javascript: (y compris avec variations)
-        text = re.sub(r"javascript\s*:", "", text, flags=re.IGNORECASE)
-        # Supprimer les gestionnaires d'événements inline
-        text = re.sub(r"on\w+\s*=", "", text, flags=re.IGNORECASE)
-        # Supprimer tous les autres tags HTML
-        text = re.sub(r"<[^>]+>", "", text)
-        return text.strip()
+        # Fallback sans regex complexes pour éviter les risques de ReDoS.
+        # On retire tout balisage HTML et on neutralise les protocoles/event handlers courants.
+        class _SafeTextExtractor(HTMLParser):
+            def __init__(self) -> None:
+                super().__init__(convert_charrefs=True)
+                self.parts: list[str] = []
+
+            def handle_data(self, data: str) -> None:
+                if data:
+                    self.parts.append(data)
+
+            def get_text(self) -> str:
+                return "".join(self.parts)
+
+        parser = _SafeTextExtractor()
+        parser.feed(text)
+        parser.close()
+        plain_text = parser.get_text()
+
+        # Nettoyage léger des payloads textuels restants.
+        plain_text = re.sub(r"(?i)javascript\s*:", "", plain_text)
+        plain_text = re.sub(r"(?i)\bon\w+\s*=", "", plain_text)
+        return plain_text.strip()
 
 
 def validate_phone_number(phone: str, default_region: str = "BE") -> tuple[bool, str]:

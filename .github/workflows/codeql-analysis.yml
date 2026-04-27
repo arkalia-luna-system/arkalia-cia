@@ -57,8 +57,12 @@ jobs:
         if: matrix.language == 'python'
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install -e .
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
+          if [ -f pyproject.toml ] || [ -f setup.py ]; then
+            pip install -e .
+          fi
 
       # JavaScript/TypeScript analysis removed - not applicable for Flutter/Dart
 

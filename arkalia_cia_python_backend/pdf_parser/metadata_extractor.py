@@ -204,9 +204,9 @@ class MetadataExtractor:
                     0.8 if match_count == 1 else min(0.95, 0.8 + (match_count * 0.05))
                 )
 
-                # Bonus si le terme exact apparaît (pas juste dans un mot)
-                exact_match = re.search(rf"\b{pattern}\b", text_lower, re.IGNORECASE)
-                if exact_match:
+                # Bonus si le pattern matche en mot "isolé" (approximation sans interpolation regex)
+                first_match = str(matches[0]).strip() if matches else ""
+                if first_match and f" {first_match} " in f" {text_lower} ":
                     confidence = min(1.0, confidence + 0.1)
 
                 if confidence > best_confidence:

@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.3.1+9] - 2026-04-27
+
+### Security
+- ✅ **Réduction risque ReDoS** : fallback HTML sécurisé sans regex complexes dans `security_utils.py`
+- ✅ **Parsing portail borné** : taille texte limitée avant analyse regex dans `health_portal_parsers.py`
+- ✅ **Regex dynamique supprimée** : suppression interpolation regex dans `metadata_extractor.py`
+- ✅ **Fichier temporaire sécurisé** : remplacement `tempfile.mktemp()` par `NamedTemporaryFile` dans `medical_report_service.py`
+
+### CI/CD
+- ✅ **Dependabot renforcé** : planification quotidienne + suppression des règles `ignore` bloquantes
+- ✅ **CodeQL workflow durci** : installation dépendances conditionnelle selon fichiers présents
+
+### Documentation
+- ✅ **Runbook exploitation mis à jour** : opérations sécurité hebdomadaires + section conformité/positionnement
+- ✅ **Audit sécurité avril 2026** : nouveau rapport `docs/audits/AUDIT_SECURITE_27_AVRIL_2026.md`
+
 ## [1.3.1+8] - 2025-12-28
 
 ### Améliorations Architecture et Code

@@ -20,6 +20,18 @@ class HealthPortalParser:
     def __init__(self):
         self.pdf_processor = PDFProcessor()
         self.metadata_extractor = MetadataExtractor()
+        self.max_text_length = 200_000
+
+    def _limit_untrusted_text(self, text: str) -> str:
+        """Limite la taille du texte analysé pour réduire le risque de ReDoS."""
+        if len(text) <= self.max_text_length:
+            return text
+        logger.warning(
+            "Texte PDF tronqué pour parsing portail (%s > %s caractères)",
+            len(text),
+            self.max_text_length,
+        )
+        return text[: self.max_text_length]
 
     def parse_portal_pdf(
         self, file_path: str, portal: str, text: str | None = None
@@ -43,6 +55,7 @@ class HealthPortalParser:
             # Extraire texte si non fourni
             if text is None:
                 text = self.pdf_processor.extract_text_from_pdf(file_path)
+            text = self._limit_untrusted_text(text)
 
             # Parser selon portail
             if portal.lower() == "andaman7":
@@ -226,6 +239,7 @@ class HealthPortalParser:
     def _extract_lab_results(self, text: str) -> dict[str, str]:
         """Extraction des valeurs de laboratoire"""
         results = {}
+        bounded_text = self._limit_untrusted_text(text)
 
         # Patterns courants pour résultats labo belges
         patterns = {
@@ -240,7 +254,7 @@ class HealthPortalParser:
         }
 
         for key, pattern in patterns.items():
-            match = re.search(pattern, text, re.IGNORECASE)
+            match = re.search(pattern, bounded_text, re.IGNORECASE)
             if match:
                 value = match.group(1)
                 unit = (

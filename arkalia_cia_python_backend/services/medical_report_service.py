@@ -455,7 +455,8 @@ class MedicalReportService:
             if output_path is None:
                 import tempfile
 
-                output_path = tempfile.mktemp(suffix=".pdf")
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
+                    output_path = tmp_file.name
 
             doc = SimpleDocTemplate(output_path, pagesize=letter)
             story = []
