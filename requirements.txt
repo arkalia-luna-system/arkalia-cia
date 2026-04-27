@@ -28,7 +28,7 @@ phonenumbers==9.0.19  # Validation téléphone internationale
 
 # Utilitaires
 python-dotenv==1.1.1
-pydantic-settings==2.6.1  # Configuration avec Pydantic Settings
+pydantic-settings==2.14.0  # Configuration avec Pydantic Settings
 click==8.1.8  # Downgraded for semgrep compatibility
 rich==14.2.0  # Downgraded for semgrep compatibility
 
