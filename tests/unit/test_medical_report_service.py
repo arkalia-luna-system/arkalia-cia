@@ -137,6 +137,36 @@ class TestMedicalReportService:
         assert result["most_common_location"] == "Genou droit"
         assert result["total_entries"] == 3
 
+    def test_analyze_pain_data_with_enriched_aria_fields(self, report_service):
+        """Test analyse avec champs psycho-contextuels ARIA"""
+        pain_records = [
+            {
+                "intensity": 7,
+                "location": "Dos",
+                "physical_trigger": "Posture",
+                "mental_trigger": "Stress",
+                "who_present": "Conjoint",
+                "interactions": "Conversation tendue",
+                "emotions": "Anxiété",
+                "thoughts": "Peur d'aggravation",
+                "physical_symptoms": "Fatigue",
+                "timestamp": "2026-04-20T10:00:00Z",
+            },
+            {
+                "intensity": 6,
+                "location": "Dos",
+                "physical_trigger": "Posture",
+                "mental_trigger": "Stress",
+                "timestamp": "2026-04-21T10:00:00Z",
+            },
+        ]
+
+        result = report_service._analyze_pain_data(pain_records)
+        assert result["most_common_triggers"][0]["trigger"] == "Posture"
+        assert result["most_common_mental_triggers"][0]["trigger"] == "Stress"
+        assert result["psychosocial_signals"]["who_present_entries"] == 1
+        assert result["psychosocial_signals"]["emotions_entries"] == 1
+
     def test_format_report_text(self, report_service):
         """Test formatage rapport en texte"""
         report = {
@@ -176,7 +206,7 @@ class TestMedicalReportService:
 
     def test_export_report_to_text_empty(self, report_service):
         """Test export rapport vide"""
-        report = {}
+        report: dict[str, str] = {}
 
         result = report_service.export_report_to_text(report)
         assert result == ""

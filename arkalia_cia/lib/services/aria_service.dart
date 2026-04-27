@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ARIAService {
   static const String _ariaIpKey = 'aria_server_ip';
   static const String _ariaPortKey = 'aria_server_port';
-  static const String _defaultPort = '8080';
+  static const String _defaultPort = '8001';
 
   /// Récupère l'IP du serveur ARIA depuis les préférences
   static Future<String?> getARIAIP() async {

@@ -1,26 +1,26 @@
 # Intégration ARIA - Vision Clinique et Technique
 
-**Version** : 1.0.0  
-**Date** : 27 novembre 2025 | **Mise à jour** : 12 décembre 2025  
-**Statut** : Production Ready
+**Version** : 1.1.0  
+**Date** : 27 novembre 2025 | **Mise à jour** : 27 avril 2026  
+**Statut** : Transition vers fusion CIA (référentiel principal)
 
 ---
 
-## ⚠️ IMPORTANT - Architecture Séparée
+## ⚠️ IMPORTANT - Stratégie Avril 2026
 
-**ARIA est un projet SÉPARÉ de CIA** :
-- ✅ **CIA** : Projet principal (`arkalia-cia`) - Assistant santé généraliste
-- ✅ **ARIA** : Projet séparé (`arkalia-aria`) - Laboratoire personnel douleur/mental
-- ✅ **Communication** : Via API HTTP (CIA ↔ ARIA)
-- ✅ **Déploiement** : CIA sur GitHub Pages (PWA), ARIA sur Render.com (serveur Python)
+**La cible produit est désormais CIA comme référentiel unique** :
+- ✅ **CIA** reste le projet principal (`arkalia-cia`) et intègre les usages ARIA nécessaires.
+- ✅ **ARIA** (`arkalia-aria`) passe en mode archive progressive après migration des briques utiles.
+- ✅ **Communication** : les endpoints ARIA restent supportés pour compatibilité durant la transition.
+- ✅ **Déploiement recommandé** : CIA en priorité, ARIA seulement en mode historique/transition.
 
-**Pourquoi séparé ?**
-- Séparation des responsabilités (coffre-fort vs microscope)
-- Maintenance indépendante
-- Évolutivité indépendante
-- Déploiement indépendant
+**Conséquence pratique**
+- Toute nouvelle évolution fonctionnelle doit être faite dans CIA.
+- ARIA sert de source d'historique technique tant que l'archivage n'est pas finalisé.
 
-**⚠️ Ne pas développer ARIA dans le projet CIA** - Utiliser le projet ARIA séparé.
+**Décision d'architecture**
+- CIA devient la source de vérité fonctionnelle.
+- Les appels vers ARIA externe sont conservés uniquement comme couche de transition.
 
 
 ---
@@ -429,6 +429,6 @@ final response = await conversationalAI.ask(
 
 ---
 
-**Dernière mise à jour** : 27 novembre 2025  
+**Dernière mise à jour** : 27 avril 2026  
 **Maintenu par** : Arkalia Luna System
 

@@ -217,7 +217,16 @@ class MedicalReportService:
             if r.get("location") or r.get("body_part")
         ]
 
-        triggers = [r.get("trigger", "") for r in pain_records if r.get("trigger")]
+        triggers = [
+            r.get("trigger", r.get("physical_trigger", ""))
+            for r in pain_records
+            if r.get("trigger") or r.get("physical_trigger")
+        ]
+        mental_triggers = [
+            r.get("mental_trigger", "")
+            for r in pain_records
+            if isinstance(r.get("mental_trigger"), str) and r.get("mental_trigger")
+        ]
 
         # Calculer statistiques
         avg_intensity = sum(intensities) / len(intensities) if intensities else 0
@@ -250,6 +259,27 @@ class MedicalReportService:
             trigger_counts.items(), key=lambda x: x[1], reverse=True
         )[:3]
 
+        mental_trigger_counts: dict[str, int] = {}
+        for trigger in mental_triggers:
+            mental_trigger_counts[trigger] = mental_trigger_counts.get(trigger, 0) + 1
+
+        most_common_mental_triggers = sorted(
+            mental_trigger_counts.items(), key=lambda x: x[1], reverse=True
+        )[:3]
+
+        # Signaux psycho-contextuels (issus des champs ARIA enrichis)
+        psychosocial_signals = {
+            "who_present_entries": sum(1 for r in pain_records if r.get("who_present")),
+            "interactions_entries": sum(
+                1 for r in pain_records if r.get("interactions")
+            ),
+            "emotions_entries": sum(1 for r in pain_records if r.get("emotions")),
+            "thoughts_entries": sum(1 for r in pain_records if r.get("thoughts")),
+            "physical_symptoms_entries": sum(
+                1 for r in pain_records if r.get("physical_symptoms")
+            ),
+        }
+
         # Pic de douleur (dernière entrée avec intensité max)
         peak_pain = None
         if pain_records:
@@ -280,6 +310,15 @@ class MedicalReportService:
                 }
                 for t in most_common_triggers
             ],
+            "most_common_mental_triggers": [
+                {
+                    "trigger": t[0],
+                    "count": t[1],
+                    "percentage": round(t[1] / len(mental_triggers) * 100, 0),
+                }
+                for t in most_common_mental_triggers
+            ],
+            "psychosocial_signals": psychosocial_signals,
             "total_entries": len(pain_records),
         }
 
@@ -375,6 +414,27 @@ class MedicalReportService:
                             lines.append(
                                 f"  • {trigger_info['trigger']} ({trigger_info['percentage']:.0f}%)"
                             )
+                    if pain.get("most_common_mental_triggers"):
+                        lines.append("- Déclencheurs mentaux fréquents :")
+                        for trigger_info in pain["most_common_mental_triggers"]:
+                            lines.append(
+                                f"  • {trigger_info['trigger']} ({trigger_info['percentage']:.0f}%)"
+                            )
+                    psychosocial = pain.get("psychosocial_signals", {})
+                    if isinstance(psychosocial, dict) and psychosocial:
+                        lines.append("- Données psycho-contextuelles capturées :")
+                        lines.append(
+                            f"  • Présence entourage: {psychosocial.get('who_present_entries', 0)} entrées"
+                        )
+                        lines.append(
+                            f"  • Interactions: {psychosocial.get('interactions_entries', 0)} entrées"
+                        )
+                        lines.append(
+                            f"  • Emotions: {psychosocial.get('emotions_entries', 0)} entrées"
+                        )
+                        lines.append(
+                            f"  • Pensées: {psychosocial.get('thoughts_entries', 0)} entrées"
+                        )
                 else:
                     lines.append("Aucune donnée douleur disponible")
                 lines.append("")

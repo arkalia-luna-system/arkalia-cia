@@ -6,6 +6,9 @@
 
 # 📱❤️🔐 **Arkalia CIA** - Assistant Mobile Santé | Tests: 509, couverture: 72%
 
+> **Statut ARIA (27 avril 2026)**: les fonctionnalités ARIA sont désormais consolidées dans CIA.  
+> Le dépôt `arkalia-aria` est en archivage progressif (historique uniquement).
+
 > **🌍 English**: Health-focused mobile assistant (Flutter+Python) for secure document management and senior-friendly reminders - privacy-first, locally secured, complete CI/CD.
 
 > **🇫🇷 Français**: Assistant mobile santé (Flutter+Python) pour gestion docs sécurisée et rappels seniors - privacy-first, sécurisé local, CI/CD complète.
@@ -202,18 +205,18 @@ graph TB
 - **PIN local** : Code PIN pour le web (4-6 chiffres, hashé SHA-256)
 - **Mobile** : Authentification désactivée (accès direct)
 
-#### ❤️ ARIA Integration
-- **Laboratory health integration** with Arkalia ARIA
+#### ❤️ ARIA Integration (consolidée dans CIA)
+- **Laboratory health capabilities integrated in CIA backend**
 - **Pain tracking data** synchronization
 - **Pattern analysis** (psychological, pain triggers, correlations)
 - **Health metrics** (sleep, activity, stress) from ARIA
 - **Conversational AI enhancement** with pain context and patterns
 - **Medical report generation** for pre-consultation preparation
 
-**Data Flow CIA ↔ ARIA**:
-- **CIA → ARIA**: Documents médicaux, consultations, examens (agrégats)
-- **ARIA → CIA**: Données douleur fine-grain, patterns psychologiques, métriques santé
-- **Clinical Vision**: CIA = "coffre-fort santé généraliste", ARIA = "microscope douleur/mental"
+**Data Flow (transition)**:
+- **CIA (principal)**: Documents médicaux, consultations, examens, douleur/patterns consolidés
+- **ARIA externe (legacy)**: encore supporté temporairement via compat API pendant migration
+- **Clinical Vision**: CIA conserve le rôle "coffre-fort + microscope" dans une base unifiée
 
 **Example Use Cases**:
 1. **Before medical appointment**: Generate comprehensive medical report combining:
@@ -603,7 +606,7 @@ graph TB
 
 | Project | Rôle dans l'Écosystème | Intégration avec CIA | Statut |
 |---------|----------------------|---------------------|--------|
-| **❤️ [Arkalia ARIA](https://github.com/arkalia-luna-system/arkalia-aria)** | Laboratoire personnel douleur/psy | **Intégration principale** - Sync données santé fine-grain | ✅ Opérationnel |
+| **❤️ [Arkalia ARIA](https://github.com/arkalia-luna-system/arkalia-aria)** | Historique labo douleur/psy | **Archive en migration vers CIA** | 🗂️ Archivage progressif |
 | **🤖 [BBIA-SIM](https://github.com/arkalia-luna-system/bbia-sim)** | Robot cognitif Reachy Mini | Phase 4 - Robot compagnon avec contexte santé | 📋 Planifié |
 | **📊 [Metrics Collector](https://github.com/arkalia-luna-system/arkalia-metrics-collector)** | Analytics usage app | Monitoring santé et métriques | ✅ Opérationnel |
 | **🔧 [Athalia DevOps](https://github.com/arkalia-luna-system/athalia-dev-setup)** | Infrastructure déploiement | CI/CD pipeline automatisé | ✅ Opérationnel |

@@ -2,6 +2,17 @@
 
 ## [1.3.1+9] - 2026-04-27
 
+### Fusion ARIA -> CIA
+- ✅ **Contrat API aligné** : `quick-pain-entry` utilise désormais `physical_trigger` et `action_taken` (compatibilité ARIA réelle)
+- ✅ **Pagination ARIA supportée** : parsing robuste de `/api/pain/entries` avec support réponse paginée (`entries`)
+- ✅ **Port ARIA unifié** : valeur par défaut Flutter ajustée à `8001` pour cohérence CIA/ARIA
+- ✅ **Tests ARIA mis à jour** : validation des nouveaux payloads et format de réponse
+- ✅ **Documentation transition** : stratégie de fusion et archivage ARIA clarifiée dans la doc d'intégration et le runbook
+- ✅ **Champs ARIA enrichis migrés** : support CIA des champs `who_present`, `interactions`, `emotions`, `thoughts`, `physical_symptoms`
+- ✅ **Endpoints analytiques intégrés** : nouveaux proxys CIA `/api/aria/pain/summary` et `/api/aria/pain/suggestions`
+- ✅ **Rapport médical enrichi** : prise en compte des déclencheurs mentaux et signaux psycho-contextuels dans le résumé pré-consultation
+- ✅ **Gel documentaire ARIA** : README ARIA converti en mode archive, et README CIA aligné sur la consolidation ARIA -> CIA
+
 ### Security
 - ✅ **Réduction risque ReDoS** : fallback HTML sécurisé sans regex complexes dans `security_utils.py`
 - ✅ **Parsing portail borné** : taille texte limitée avant analyse regex dans `health_portal_parsers.py`

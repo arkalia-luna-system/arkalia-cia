@@ -36,6 +36,11 @@ class PainEntryIn(BaseModel):
     action_taken: ShortText | None = None
     effectiveness: Effectiveness | None = None
     notes: str | None = Field(default=None, max_length=2000)
+    who_present: str | None = Field(default=None, max_length=500)
+    interactions: str | None = Field(default=None, max_length=1000)
+    emotions: str | None = Field(default=None, max_length=1000)
+    thoughts: str | None = Field(default=None, max_length=2000)
+    physical_symptoms: str | None = Field(default=None, max_length=1000)
     timestamp: str | None = None
 
 
@@ -49,8 +54,8 @@ class QuickEntry(BaseModel):
     """Saisie ultra-rapide - 3 questions seulement"""
 
     intensity: Intensity
-    trigger: ShortText  # Déclencheur en un mot
-    action: ShortText  # Action immédiate
+    physical_trigger: ShortText  # Déclencheur en un mot
+    action_taken: ShortText  # Action immédiate
 
 
 @retry_with_backoff(
@@ -99,6 +104,8 @@ async def aria_integration_status() -> dict[str, Any]:
             "quick_pain_entry",
             "detailed_pain_entry",
             "pain_history",
+            "pain_summary",
+            "pain_suggestions",
             "export_to_psy",
             "pattern_analysis",
             "prediction_engine",
@@ -152,7 +159,13 @@ async def get_pain_entries() -> list[PainEntryOut]:
     response = _make_aria_request("GET", "/api/pain/entries")
 
     if response.status_code == 200:
-        return [PainEntryOut(**entry) for entry in response.json()]
+        payload = response.json()
+        entries = payload.get("entries", payload) if isinstance(payload, dict) else payload
+        if not isinstance(entries, list):
+            raise HTTPException(
+                status_code=502, detail="Réponse ARIA invalide pour /api/pain/entries"
+            )
+        return [PainEntryOut(**entry) for entry in entries]
     else:
         raise HTTPException(
             status_code=response.status_code, detail=f"Erreur ARIA: {response.text}"
@@ -207,6 +220,38 @@ async def get_recent_patterns() -> dict[str, Any]:
         raise HTTPException(
             status_code=response.status_code, detail=f"Erreur ARIA: {response.text}"
         )
+
+
+@router.get("/pain/summary")
+async def get_pain_summary(window: int = 30) -> dict[str, Any]:
+    """Récupère un résumé agrégé des douleurs depuis ARIA"""
+    if not _check_aria_connection():
+        raise HTTPException(status_code=503, detail="ARIA non disponible")
+
+    response = _make_aria_request("GET", "/api/pain/summary", params={"window": window})
+
+    if response.status_code == 200:
+        return cast(dict[str, Any], response.json())
+    raise HTTPException(
+        status_code=response.status_code, detail=f"Erreur ARIA: {response.text}"
+    )
+
+
+@router.get("/pain/suggestions")
+async def get_pain_suggestions(window: int = 30) -> dict[str, Any]:
+    """Récupère des suggestions ARIA basées sur les entrées douleur"""
+    if not _check_aria_connection():
+        raise HTTPException(status_code=503, detail="ARIA non disponible")
+
+    response = _make_aria_request(
+        "GET", "/api/pain/suggestions", params={"window": window}
+    )
+
+    if response.status_code == 200:
+        return cast(dict[str, Any], response.json())
+    raise HTTPException(
+        status_code=response.status_code, detail=f"Erreur ARIA: {response.text}"
+    )
 
 
 @router.get("/predictions/current")

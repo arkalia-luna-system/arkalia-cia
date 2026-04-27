@@ -99,11 +99,23 @@ class ARIAIntegration:
         )
 
         if response is None:
-            return []
+            # Fallback de compatibilité: certaines instances ARIA exposent /api/pain/entries
+            response = self._make_request_with_retry(
+                "/api/pain/entries",
+                params={"limit": str(limit), "offset": "0"},
+                operation_name="ARIA pain entries fallback",
+            )
+            if response is None:
+                return []
 
         try:
             data = response.json()
-            records = data.get("records", [])
+            records = []
+            if isinstance(data, dict):
+                if isinstance(data.get("records"), list):
+                    records = data.get("records", [])
+                elif isinstance(data.get("entries"), list):
+                    records = data.get("entries", [])
             return [dict(r) for r in records] if records else []
         except Exception as e:
             logger.warning(f"Erreur parsing ARIA pain records: {e}")

@@ -60,14 +60,18 @@ class TestARIAIntegration:
         mock_response.json.return_value = {
             "id": 1,
             "intensity": 5,
-            "trigger": "stress",
-            "action": "meditation",
+            "physical_trigger": "stress",
+            "action_taken": "meditation",
             "timestamp": "2024-01-01T00:00:00",
             "created_at": "2024-01-01T00:00:00",
         }
         mock_request.return_value = mock_response
 
-        entry_data = {"intensity": 5, "trigger": "stress", "action": "meditation"}
+        entry_data = {
+            "intensity": 5,
+            "physical_trigger": "stress",
+            "action_taken": "meditation",
+        }
         response = client.post("/quick-pain-entry", json=entry_data)
         assert response.status_code == 200
         data = response.json()
@@ -79,7 +83,11 @@ class TestARIAIntegration:
         """Test de saisie rapide quand ARIA n'est pas disponible"""
         mock_check.return_value = False
 
-        entry_data = {"intensity": 5, "trigger": "stress", "action": "meditation"}
+        entry_data = {
+            "intensity": 5,
+            "physical_trigger": "stress",
+            "action_taken": "meditation",
+        }
         response = client.post("/quick-pain-entry", json=entry_data)
         assert response.status_code == 503
 
@@ -118,14 +126,20 @@ class TestARIAIntegration:
         mock_check.return_value = True
         mock_response = Mock()
         mock_response.status_code = 200
-        mock_response.json.return_value = [
-            {
-                "id": 1,
-                "intensity": 5,
-                "timestamp": "2024-01-01T00:00:00",
-                "created_at": "2024-01-01T00:00:00",
-            }
-        ]
+        mock_response.json.return_value = {
+            "entries": [
+                {
+                    "id": 1,
+                    "intensity": 5,
+                    "timestamp": "2024-01-01T00:00:00",
+                    "created_at": "2024-01-01T00:00:00",
+                }
+            ],
+            "total": 1,
+            "limit": 50,
+            "offset": 0,
+            "has_more": False,
+        }
         mock_request.return_value = mock_response
 
         response = client.get("/pain-entries")
@@ -194,6 +208,36 @@ class TestARIAIntegration:
         data = response.json()
         assert "predictions" in data
 
+    @patch("arkalia_cia_python_backend.aria_integration.api._check_aria_connection")
+    @patch("arkalia_cia_python_backend.aria_integration.api._make_aria_request")
+    def test_get_pain_summary(self, mock_request, mock_check, client):
+        """Test de récupération du résumé douleur"""
+        mock_check.return_value = True
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {"stats": {"entries_count": 10}}
+        mock_request.return_value = mock_response
+
+        response = client.get("/pain/summary?window=30")
+        assert response.status_code == 200
+        data = response.json()
+        assert "stats" in data
+
+    @patch("arkalia_cia_python_backend.aria_integration.api._check_aria_connection")
+    @patch("arkalia_cia_python_backend.aria_integration.api._make_aria_request")
+    def test_get_pain_suggestions(self, mock_request, mock_check, client):
+        """Test de récupération des suggestions douleur"""
+        mock_check.return_value = True
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {"suggestions": ["test"]}
+        mock_request.return_value = mock_response
+
+        response = client.get("/pain/suggestions?window=30")
+        assert response.status_code == 200
+        data = response.json()
+        assert "suggestions" in data
+
 
 class TestARIAModels:
     """Tests pour les modèles ARIA"""
@@ -211,6 +255,11 @@ class TestARIAModels:
             action_taken="rest",
             effectiveness=7,
             notes="Test notes",
+            who_present="famille",
+            interactions="discussion calme",
+            emotions="anxiete",
+            thoughts="peur d'une crise",
+            physical_symptoms="fatigue",
         )
         assert entry.intensity == 5
         assert entry.physical_trigger == "movement"
@@ -219,10 +268,12 @@ class TestARIAModels:
         """Test du modèle QuickEntry"""
         from arkalia_cia_python_backend.aria_integration.api import QuickEntry
 
-        entry = QuickEntry(intensity=5, trigger="stress", action="meditation")
+        entry = QuickEntry(
+            intensity=5, physical_trigger="stress", action_taken="meditation"
+        )
         assert entry.intensity == 5
-        assert entry.trigger == "stress"
-        assert entry.action == "meditation"
+        assert entry.physical_trigger == "stress"
+        assert entry.action_taken == "meditation"
 
     def test_pain_entry_out(self):
         """Test du modèle PainEntryOut"""
