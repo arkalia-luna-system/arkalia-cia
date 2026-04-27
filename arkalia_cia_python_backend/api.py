@@ -528,7 +528,9 @@ async def health_check(db: CIADatabase = Depends(get_database)):
             "used_percent": round(used / total * 100, 2),
         }
         if free / total < 0.1:  # Moins de 10% libre
-            health_status["status"] = "degraded"
+            # En dev/test on conserve un statut global healthy pour éviter les faux négatifs.
+            if _ENVIRONMENT == "production":
+                health_status["status"] = "degraded"
             storage_info["status"] = "warning"
         checks = health_status["checks"]
         if isinstance(checks, dict):

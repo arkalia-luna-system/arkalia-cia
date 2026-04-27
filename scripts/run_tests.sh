@@ -7,7 +7,8 @@
 set +e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$SCRIPT_DIR"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+cd "$PROJECT_ROOT"
 
 echo "🧹 Nettoyage des processus pytest existants..."
 
@@ -60,7 +61,6 @@ fi
 # Nettoyage automatique après les tests (toujours exécuté, même si les tests échouent)
 echo ""
 echo "🧹 Nettoyage automatique après les tests..."
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$PROJECT_ROOT"
 
 # Utiliser cleanup_all.sh pour le nettoyage complet
