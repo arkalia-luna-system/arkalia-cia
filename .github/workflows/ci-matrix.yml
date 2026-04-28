@@ -159,6 +159,7 @@ jobs:
           mkdir -p test-results coverage
 
           # Tests avec couverture (+ JUnit)
+          set +e
           pytest \
             --junitxml=test-results/pytest-${{ matrix.python }}-${{ runner.os }}.xml \
             --cov=arkalia_cia_python_backend \
@@ -166,8 +167,9 @@ jobs:
             --cov-report=xml:coverage/coverage-${{ matrix.python }}-${{ runner.os }}.xml \
             --cov-report=html \
             --cov-fail-under=15 \
-            --maxfail=5 --durations=10 --tb=short -v \
-            || echo "WARNING  Certains tests ont échoué (vérification manuelle recommandée)"
+            --maxfail=5 --durations=10 --tb=short -v
+          PYTEST_EXIT=$?
+          set -e
 
           # Vérification de la génération des rapports
           echo ""
@@ -199,6 +201,26 @@ jobs:
             ls -la .coverage
           else
             echo "ERROR .coverage manquant"
+          fi
+
+          # Résumé lisible dans l'onglet Summary de GitHub Actions
+          if [ "$PYTEST_EXIT" -ne 0 ]; then
+            {
+              echo "### ❌ Échec des tests Python"
+              echo ""
+              echo "- Job: \`Tests Principaux\`"
+              echo "- Python: \`${{ matrix.python }}\`"
+              echo "- OS: \`${{ runner.os }}\`"
+              echo "- Détails: voir le log du step \`Tests avec Couverture\` (\`--tb=short\` activé)."
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit "$PYTEST_EXIT"
+          else
+            {
+              echo "### ✅ Tests Python passés"
+              echo ""
+              echo "- Python: \`${{ matrix.python }}\`"
+              echo "- OS: \`${{ runner.os }}\`"
+            } >> "$GITHUB_STEP_SUMMARY"
           fi
 
       - name: "Upload Test Results"
