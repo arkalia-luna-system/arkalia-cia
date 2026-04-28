@@ -224,33 +224,45 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
           title: const Text('Filtrer par catégorie'),
-          content: RadioGroup<String?>(
-            groupValue: tempSelected,
-            onChanged: (value) {
-              setState(() {
-                tempSelected = value;
-              });
-              Navigator.pop(context, value);
-            },
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ListTile(
-                    title: const Text('Toutes les catégories'),
-                    leading: const Radio<String?>(value: null),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  title: const Text('Toutes les catégories'),
+                  leading: Icon(
+                    tempSelected == null
+                        ? Icons.radio_button_checked
+                        : Icons.radio_button_off,
                   ),
-                  const Divider(),
-                  ...categories.map((category) {
-                    final count = _pathologiesByCategory[category]?.length ?? 0;
-                    return ListTile(
-                      title: Text(category),
-                      subtitle: Text('$count pathologie${count > 1 ? 's' : ''}'),
-                      leading: Radio<String?>(value: category),
-                    );
-                  }),
-                ],
-              ),
+                  onTap: () {
+                    setState(() {
+                      tempSelected = null;
+                    });
+                    Navigator.pop(context, null);
+                  },
+                ),
+                const Divider(),
+                ...categories.map((category) {
+                  final count = _pathologiesByCategory[category]?.length ?? 0;
+                  final isSelected = tempSelected == category;
+                  return ListTile(
+                    title: Text(category),
+                    subtitle: Text('$count pathologie${count > 1 ? 's' : ''}'),
+                    leading: Icon(
+                      isSelected
+                          ? Icons.radio_button_checked
+                          : Icons.radio_button_off,
+                    ),
+                    onTap: () {
+                      setState(() {
+                        tempSelected = category;
+                      });
+                      Navigator.pop(context, category);
+                    },
+                  );
+                }),
+              ],
             ),
           ),
         ),
