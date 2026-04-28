@@ -1870,14 +1870,16 @@ async def analyze_patterns(
             f"Erreur validation données patterns: {sanitize_log_message(str(e))}"
         )
         raise HTTPException(
-            status_code=400, detail=f"Erreur de validation des données: {str(e)}"
+            status_code=400,
+            detail="Erreur de validation des données fournies pour l'analyse.",
         ) from e
     except Exception as e:
         logger.error(
             f"Erreur analyse patterns: {sanitize_log_message(str(e))}", exc_info=True
         )
         raise HTTPException(
-            status_code=500, detail=f"Erreur lors de l'analyse des patterns: {str(e)}"
+            status_code=500,
+            detail="Erreur interne lors de l'analyse des patterns.",
         ) from e
 
 

@@ -45,7 +45,7 @@ jobs:
 
     steps:
       - name: "Checkout Code"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -109,7 +109,7 @@ jobs:
 
     steps:
       - name: "Checkout Code"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -202,7 +202,7 @@ jobs:
           fi
 
       - name: "Upload Test Results"
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: test-results-${{ matrix.python }}-${{ runner.os }}
           path: |
@@ -222,7 +222,7 @@ jobs:
         continue-on-error: true
 
       - name: "Upload Coverage to Codecov"
-        uses: codecov/codecov-action@v6
+        uses: codecov/codecov-action@v5
         with:
           files: coverage/*.xml
           flags: python
@@ -232,7 +232,7 @@ jobs:
         if: steps.check-coverage.outputs.exists == 'true'
 
       - name: "Upload Coverage HTML"
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-html-python-${{ matrix.python }}
           path: htmlcov/
@@ -260,7 +260,7 @@ jobs:
 
     steps:
       - name: "Checkout Code"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -299,7 +299,7 @@ jobs:
           python -m pytest tests/ --junitxml=test-results/pytest-compat-${{ matrix.os }}-${{ matrix.python }}.xml --cov=arkalia_cia_python_backend --cov-report=term-missing --cov-report=xml:coverage/coverage-compat-${{ matrix.os }}-${{ matrix.python }}.xml --maxfail=3 --tb=short -v || echo "WARNING: Tests de compatibilite partiellement echoues (non critique pour cross-platform)" && echo "SUCCESS: Continuation du pipeline CI/CD"
 
       - name: "Upload Rapport Compatibilité"
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: compatibility-${{ matrix.os }}-${{ matrix.python }}
           path: |
@@ -320,7 +320,7 @@ jobs:
 
     steps:
       - name: "Checkout Code"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: "Setup Python"
         uses: actions/setup-python@v5
@@ -354,7 +354,7 @@ jobs:
           safety check -r requirements.txt --text --output safety-report.txt || echo "WARNING  Safety check échoué - Rapport non généré"
 
       - name: "Upload Security Reports"
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: security-reports
           path: |
@@ -377,7 +377,7 @@ jobs:
 
     steps:
       - name: "Checkout Code"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: "Setup Python"
         uses: actions/setup-python@v5
@@ -447,7 +447,7 @@ jobs:
 
       - name: "Upload Artifacts (si succès)"
         if: success()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: "package-build"
           path: |
@@ -468,10 +468,10 @@ jobs:
 
     steps:
       - name: "Checkout Code"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: "Download all artifacts"
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@v4
         with:
           path: artifacts
           merge-multiple: true
@@ -487,7 +487,7 @@ jobs:
           python3 -c 'import glob,sys; junit=glob.glob("artifacts/test-results/*.xml"); cov=glob.glob("artifacts/coverage/*.xml"); ok=bool(junit) and bool(cov); print(f"JUnit: {len(junit)} fichiers, Coverage: {len(cov)} fichiers"); open("REPORT.md","w",encoding="utf-8").write("# Rapport CI\n\n"+f"- JUnit: {len(junit)} fichiers\n"+f"- Coverage: {len(cov)} fichiers\n"); print("Rapport généré avec succès")' || echo "WARNING: Échec de la génération du rapport, mais continuation du pipeline"
 
       - name: "Publier rapport final"
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: CI-REPORT
           path: REPORT.md
