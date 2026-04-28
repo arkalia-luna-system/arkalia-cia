@@ -138,7 +138,7 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
       }
 
       // Sinon, import PDF générique (comportement existant)
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
+      FilePickerResult? result = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['pdf'],
         allowMultiple: true,
@@ -219,7 +219,7 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
   Future<void> _importFromPortal(String portal) async {
     try {
       // Sélectionner fichier PDF
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
+      FilePickerResult? result = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['pdf'],
         allowMultiple: false, // Un seul fichier pour import portail

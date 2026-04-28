@@ -398,7 +398,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     
     try {
       // Permettre PDF et autres types de documents médicaux
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
+      FilePickerResult? result = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx', 'txt'],
         allowMultiple: false,

@@ -593,7 +593,7 @@ class _SyncScreenState extends State<SyncScreen> {
   Future<void> _importData() async {
     try {
       // Sélectionner un fichier JSON
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
+      FilePickerResult? result = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['json'],
       );
