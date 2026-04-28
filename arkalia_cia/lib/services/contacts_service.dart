@@ -7,14 +7,24 @@ class ContactsService {
   /// Récupère tous les contacts
   static Future<List<contacts_api.Contact>> getContacts() async {
     try {
-      // Vérifier d'abord le statut de la permission
-      final permissionStatus = await contacts_api.FlutterContacts.requestPermission();
-      if (permissionStatus) {
-        return await contacts_api.FlutterContacts.getContacts();
-      } else {
-        // Retourner une liste vide au lieu de lancer une exception
+      final hasPermission = await contacts_api.FlutterContacts.permissions.has(
+        contacts_api.PermissionType.read,
+      );
+      final permissionStatus = hasPermission
+          ? contacts_api.PermissionStatus.granted
+          : await contacts_api.FlutterContacts.permissions.request(
+              contacts_api.PermissionType.read,
+            );
+      if (permissionStatus != contacts_api.PermissionStatus.granted) {
         return [];
       }
+
+      return await contacts_api.FlutterContacts.getAll(
+        properties: {
+          contacts_api.ContactProperty.name,
+          contacts_api.ContactProperty.phone,
+        },
+      );
     } catch (e) {
       // En cas d'erreur, retourner une liste vide plutôt que de lancer une exception
       return [];
@@ -49,13 +59,12 @@ class ContactsService {
         name: contacts_api.Name(first: name),
         phones: [
           contacts_api.Phone(
-            phone,
-            label: contacts_api.PhoneLabel.other,
+            number: phone,
           ),
         ],
       );
 
-      await contact.insert();
+      await contacts_api.FlutterContacts.create(contact);
       return true;
     } catch (e) {
       throw Exception('Erreur lors de l\'ajout du contact d\'urgence: $e');
@@ -101,8 +110,8 @@ class ContactsService {
     try {
       final contacts = await getContacts();
       return contacts.where((contact) {
-        final name = contact.name.first.toLowerCase();
-        final familyName = contact.name.last.toLowerCase();
+        final name = (contact.name?.first ?? '').toLowerCase();
+        final familyName = (contact.name?.last ?? '').toLowerCase();
         final searchQuery = query.toLowerCase();
 
         return name.contains(searchQuery) ||
@@ -139,7 +148,10 @@ class ContactsService {
   /// Vérifie les permissions des contacts
   static Future<bool> hasContactsPermission() async {
     try {
-      return await contacts_api.FlutterContacts.requestPermission();
+      final status = await contacts_api.FlutterContacts.permissions.check(
+        contacts_api.PermissionType.read,
+      );
+      return status == contacts_api.PermissionStatus.granted;
     } catch (e) {
       return false;
     }
@@ -148,7 +160,10 @@ class ContactsService {
   /// Demande les permissions des contacts
   static Future<bool> requestContactsPermission() async {
     try {
-      return await contacts_api.FlutterContacts.requestPermission();
+      final status = await contacts_api.FlutterContacts.permissions.request(
+        contacts_api.PermissionType.read,
+      );
+      return status == contacts_api.PermissionStatus.granted;
     } catch (e) {
       return false;
     }
@@ -157,7 +172,11 @@ class ContactsService {
   /// Supprime un contact
   static Future<bool> deleteContact(contacts_api.Contact contact) async {
     try {
-      await contact.delete();
+      final contactId = contact.id;
+      if (contactId == null || contactId.isEmpty) {
+        return false;
+      }
+      await contacts_api.FlutterContacts.delete(contactId);
       return true;
     } catch (e) {
       throw Exception('Erreur lors de la suppression du contact: $e');
@@ -167,7 +186,7 @@ class ContactsService {
   /// Met à jour un contact
   static Future<bool> updateContact(contacts_api.Contact contact) async {
     try {
-      await contact.update();
+      await contacts_api.FlutterContacts.update(contact);
       return true;
     } catch (e) {
       throw Exception('Erreur lors de la mise à jour du contact: $e');
