@@ -114,9 +114,9 @@ class CalendarService {
       if (eventColor != null) {
         // Format: #RRGGBB (sans alpha)
         // Extraire les composants RGB depuis les accesseurs de couleur
-        final r = (eventColor.red * 255.0).round() & 0xff;
-        final g = (eventColor.green * 255.0).round() & 0xff;
-        final b = (eventColor.blue * 255.0).round() & 0xff;
+        final r = (eventColor.r * 255.0).round() & 0xff;
+        final g = (eventColor.g * 255.0).round() & 0xff;
+        final b = (eventColor.b * 255.0).round() & 0xff;
         final colorHex = '#${r.toRadixString(16).padLeft(2, '0').toUpperCase()}'
             '${g.toRadixString(16).padLeft(2, '0').toUpperCase()}'
             '${b.toRadixString(16).padLeft(2, '0').toUpperCase()}';
