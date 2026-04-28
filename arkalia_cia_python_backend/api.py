@@ -124,6 +124,13 @@ limiter = Limiter(key_func=get_rate_limit_key)
 # Utiliser get_database(), get_pdf_processor(), etc. via Depends() pour testabilité
 
 
+def require_authenticated_user_id(current_user: TokenData) -> int:
+    """Retourne un user_id valide ou lève 401."""
+    if not current_user.user_id:
+        raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
+    return int(current_user.user_id)
+
+
 # Modèles Pydantic
 class DocumentResponse(BaseModel):
     id: int
@@ -849,8 +856,7 @@ async def upload_document(
     document_service: DocumentService = Depends(get_document_service),
 ):
     """Upload un document PDF avec validation de sécurité"""
-    if not current_user.user_id:
-        raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
+    user_id = require_authenticated_user_id(current_user)
 
     try:
         # Lire le fichier en mémoire (limité à 50 MB)
@@ -865,24 +871,19 @@ async def upload_document(
         metadata = document_service.extract_metadata(result["file_path"])
 
         # Sauvegarder en base avec métadonnées
-        if not current_user.user_id:
-            raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
-        doc_id = document_service.save_document_with_metadata(
-            result, int(current_user.user_id), metadata
-        )
+        doc_id = document_service.save_document_with_metadata(result, user_id, metadata)
 
         # Audit log
-        if current_user.user_id:
-            db_instance = get_database()
-            db_instance.add_audit_log(
-                user_id=int(current_user.user_id),
-                action="document_upload",
-                resource_type="document",
-                resource_id=str(doc_id),
-                ip_address=get_remote_address(request),
-                user_agent=request.headers.get("user-agent"),
-                success=True,
-            )
+        db_instance = get_database()
+        db_instance.add_audit_log(
+            user_id=user_id,
+            action="document_upload",
+            resource_type="document",
+            resource_id=str(doc_id),
+            ip_address=get_remote_address(request),
+            user_agent=request.headers.get("user-agent"),
+            success=True,
+        )
 
         return {
             "success": True,
@@ -918,10 +919,7 @@ async def get_health_portal_documents(
     Récupérer tous les documents importés depuis les portails santé
     """
     try:
-        if not current_user.user_id:
-            raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
-
-        user_id = int(current_user.user_id)
+        user_id = require_authenticated_user_id(current_user)
 
         # Récupérer tous les documents de l'utilisateur via la base de données
         documents = db.get_user_documents(user_id, skip=0, limit=1000)
@@ -953,10 +951,7 @@ async def delete_health_portal_document(
     Supprimer un document importé (RGPD)
     """
     try:
-        if not current_user.user_id:
-            raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
-
-        user_id = int(current_user.user_id)
+        user_id = require_authenticated_user_id(current_user)
 
         # Vérifier que le document appartient à l'utilisateur
         user_docs = db.get_user_documents(user_id, skip=0, limit=1000)
@@ -1060,6 +1055,11 @@ async def delete_document(
     db: CIADatabase = Depends(get_database),
 ):
     """Supprime un document"""
+    user_id = require_authenticated_user_id(current_user)
+    user_docs = db.get_user_documents(user_id, skip=0, limit=1000)
+    if doc_id not in {doc["id"] for doc in user_docs}:
+        raise HTTPException(status_code=404, detail="Document non trouvé")
+
     document = db.get_document(doc_id)
     if not document:
         raise HTTPException(status_code=404, detail="Document non trouvé")
@@ -1094,25 +1094,21 @@ async def delete_document(
                 )
             )
 
-    if not current_user.user_id:
-        raise HTTPException(status_code=401, detail="Utilisateur non authentifié")
-
     # Supprimer de la base de données
     success = db.delete_document(doc_id)
     if not success:
         raise HTTPException(status_code=500, detail="Erreur lors de la suppression")
 
     # Audit log
-    if current_user.user_id:
-        db.add_audit_log(
-            user_id=int(current_user.user_id),
-            action="document_delete",
-            resource_type="document",
-            resource_id=str(doc_id),
-            ip_address=get_remote_address(request),
-            user_agent=request.headers.get("user-agent"),
-            success=True,
-        )
+    db.add_audit_log(
+        user_id=user_id,
+        action="document_delete",
+        resource_type="document",
+        resource_id=str(doc_id),
+        ip_address=get_remote_address(request),
+        user_agent=request.headers.get("user-agent"),
+        success=True,
+    )
 
     return {"success": True, "message": "Document supprimé avec succès"}
 
@@ -1858,6 +1854,7 @@ async def analyze_patterns(
     pattern_analyzer: AdvancedPatternAnalyzer = Depends(get_pattern_analyzer),
 ):
     """Analyse les patterns dans les données"""
+    require_authenticated_user_id(current_user)
     try:
         if not pattern_request.data:
             raise HTTPException(
@@ -1880,7 +1877,6 @@ async def analyze_patterns(
                 "Analyse patterns retournée avec erreur: %s",
                 sanitize_log_message(error_msg),
             )
-            # Retourner des résultats partiels sans exposer de détails internes.
             safe_patterns = dict(patterns)
             safe_patterns["error"] = "Analyse incomplète. Vérifiez les données fournies."
             safe_patterns.pop("traceback", None)
