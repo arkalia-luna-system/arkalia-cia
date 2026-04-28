@@ -90,7 +90,9 @@ class _EmergencyContactDialogState extends State<EmergencyContactDialog> {
               itemCount: contacts.length,
               itemBuilder: (context, index) {
                 final contact = contacts[index];
-                final name = '${contact.name.first} ${contact.name.last}'.trim();
+                final name =
+                    '${contact.name?.first ?? ''} ${contact.name?.last ?? ''}'
+                        .trim();
                 final phone = contact.phones.isNotEmpty ? contact.phones.first.number : '';
                 return ListTile(
                   title: Text(name),
@@ -104,7 +106,9 @@ class _EmergencyContactDialogState extends State<EmergencyContactDialog> {
       );
 
       if (selectedContact != null && mounted) {
-        final name = '${selectedContact.name.first} ${selectedContact.name.last}'.trim();
+        final name =
+            '${selectedContact.name?.first ?? ''} ${selectedContact.name?.last ?? ''}'
+                .trim();
         final phone = selectedContact.phones.isNotEmpty 
             ? selectedContact.phones.first.number 
             : '';

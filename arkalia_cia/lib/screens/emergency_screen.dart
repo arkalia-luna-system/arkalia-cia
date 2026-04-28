@@ -74,14 +74,17 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
         final systemPhone = systemContact.phones.isNotEmpty 
             ? systemContact.phones.first.number 
             : '';
+        final systemName =
+            '${systemContact.name?.first ?? ''} ${systemContact.name?.last ?? ''}'
+                .trim();
         final existsInLocal = localContacts.any((local) => 
             local['phone'] == systemPhone || 
-            local['name'] == '${systemContact.name.first} ${systemContact.name.last}'.trim());
+            local['name'] == systemName);
         
         if (!existsInLocal && systemPhone.isNotEmpty) {
           allContacts.add({
             'id': 'system_${systemContact.id}',
-            'name': '${systemContact.name.first} ${systemContact.name.last}'.trim(),
+            'name': systemName,
             'phone': systemPhone,
             'relationship': 'Contact système',
             'is_primary': false,
