@@ -22,6 +22,7 @@ class TestARIAIntegration:
         app.include_router(router)
         return TestClient(app)
 
+    @patch("arkalia_cia_python_backend.aria_integration.api.ARIA_ENABLED", True)
     @patch("arkalia_cia_python_backend.aria_integration.api.requests.get")
     def test_aria_status_connected(self, mock_get, client):
         """Test du statut ARIA quand connecté"""
@@ -35,6 +36,7 @@ class TestARIAIntegration:
         assert "aria_connected" in data
         assert data["aria_connected"] is True
 
+    @patch("arkalia_cia_python_backend.aria_integration.api.ARIA_ENABLED", True)
     @patch("arkalia_cia_python_backend.aria_integration.api.requests.get")
     def test_aria_status_disconnected(self, mock_get, client):
         """Test du statut ARIA quand déconnecté"""

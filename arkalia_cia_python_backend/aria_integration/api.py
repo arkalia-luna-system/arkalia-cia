@@ -4,7 +4,9 @@ Interface optimisée pour accéder aux fonctionnalités ARIA depuis CIA
 """
 
 import sqlite3
+from csv import DictWriter
 from datetime import datetime
+from io import StringIO
 from typing import Annotated, Any, cast
 
 import requests
@@ -19,6 +21,7 @@ router = APIRouter()
 
 # Configuration ARIA (depuis config.py, configurable via variable d'environnement ARIA_BASE_URL)
 _settings = get_settings()
+ARIA_ENABLED = _settings.aria_enabled
 ARIA_BASE_URL = _settings.aria_base_url
 ARIA_TIMEOUT = _settings.aria_timeout
 _db = CIADatabase()
@@ -217,6 +220,8 @@ class QuickEntry(BaseModel):
 )
 def _check_aria_connection() -> bool:
     """Vérifie si ARIA est accessible avec retry logic"""
+    if not ARIA_ENABLED or not ARIA_BASE_URL:
+        return False
     try:
         response = requests.get(f"{ARIA_BASE_URL}/health", timeout=ARIA_TIMEOUT)
         return bool(response.status_code == 200)
@@ -231,6 +236,11 @@ def _check_aria_connection() -> bool:
 )
 def _make_aria_request(method: str, endpoint: str, **kwargs) -> requests.Response:
     """Effectue une requête vers ARIA avec retry logic et gestion d'erreurs"""
+    if not ARIA_ENABLED or not ARIA_BASE_URL:
+        raise HTTPException(
+            status_code=503,
+            detail="ARIA externe désactivé dans la configuration CIA.",
+        )
     try:
         url = f"{ARIA_BASE_URL}{endpoint}"
         response = requests.request(method, url, timeout=ARIA_TIMEOUT, **kwargs)
@@ -260,6 +270,7 @@ async def aria_integration_status() -> dict[str, Any]:
         ),
         "timestamp": datetime.now().isoformat(),
         "aria_connected": aria_connected,
+        "aria_enabled": ARIA_ENABLED,
         "local_pain_storage": local_pain_available,
         "aria_url": ARIA_BASE_URL,
         "features": [
@@ -360,34 +371,82 @@ async def get_recent_pain_entries(limit: int = 20) -> list[PainEntryOut]:
 
 @router.get("/export/csv")
 async def export_csv() -> dict[str, Any]:
-    """Export CSV pour professionnels de santé via ARIA"""
-    if not _check_aria_connection():
-        raise HTTPException(status_code=503, detail="ARIA non disponible")
-
-    response = _make_aria_request("GET", "/api/pain/export/csv")
-
-    if response.status_code == 200:
-        return cast(dict[str, Any], response.json())
-    else:
+    """Export CSV local CIA (fallback ARIA si local indisponible)."""
+    try:
+        entries = _fetch_local_pain_entries()
+        output = StringIO()
+        fieldnames = [
+            "id",
+            "timestamp",
+            "created_at",
+            "intensity",
+            "physical_trigger",
+            "mental_trigger",
+            "activity",
+            "location",
+            "action_taken",
+            "effectiveness",
+            "notes",
+            "who_present",
+            "interactions",
+            "emotions",
+            "thoughts",
+            "physical_symptoms",
+        ]
+        writer = DictWriter(output, fieldnames=fieldnames)
+        writer.writeheader()
+        for entry in entries:
+            writer.writerow({k: entry.get(k) for k in fieldnames})
+        return {
+            "source": "cia_local",
+            "filename": f"cia_pain_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+            "csv_data": output.getvalue(),
+            "rows": len(entries),
+        }
+    except Exception as exc:
+        if not _check_aria_connection():
+            raise HTTPException(status_code=503, detail="CIA/ARIA indisponible") from exc
+        response = _make_aria_request("GET", "/api/pain/export/csv")
+        if response.status_code == 200:
+            return cast(dict[str, Any], response.json())
         raise HTTPException(
             status_code=response.status_code, detail=f"Erreur ARIA: {response.text}"
-        )
+        ) from exc
 
 
 @router.get("/patterns/recent")
 async def get_recent_patterns() -> dict[str, Any]:
-    """Récupère les patterns récents depuis ARIA"""
-    if not _check_aria_connection():
-        raise HTTPException(status_code=503, detail="ARIA non disponible")
-
-    response = _make_aria_request("GET", "/api/patterns/recent")
-
-    if response.status_code == 200:
-        return cast(dict[str, Any], response.json())
-    else:
+    """Récupère des patterns récents depuis CIA local (fallback ARIA)."""
+    try:
+        entries = _fetch_local_pain_entries(limit=200)
+        summary = _build_local_summary(entries, window=30)
+        patterns: list[dict[str, Any]] = []
+        if summary["top_triggers"]:
+            patterns.append(
+                {
+                    "type": "trigger_frequency",
+                    "description": f"Déclencheur dominant: {summary['top_triggers'][0]['trigger']}",
+                    "strength": summary["top_triggers"][0]["count"],
+                }
+            )
+        if summary["top_locations"]:
+            patterns.append(
+                {
+                    "type": "location_frequency",
+                    "description": f"Localisation dominante: {summary['top_locations'][0]['location']}",
+                    "strength": summary["top_locations"][0]["count"],
+                }
+            )
+        return {"source": "cia_local", "patterns": patterns, "stats": summary["stats"]}
+    except Exception as exc:
+        if not _check_aria_connection():
+            raise HTTPException(status_code=503, detail="CIA/ARIA indisponible") from exc
+        response = _make_aria_request("GET", "/api/patterns/recent")
+        if response.status_code == 200:
+            return cast(dict[str, Any], response.json())
         raise HTTPException(
             status_code=response.status_code, detail=f"Erreur ARIA: {response.text}"
-        )
+        ) from exc
 
 
 @router.get("/pain/summary")

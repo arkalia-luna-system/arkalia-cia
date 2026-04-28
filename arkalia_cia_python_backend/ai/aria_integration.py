@@ -26,6 +26,7 @@ class ARIAIntegration:
             aria_base_url = settings.aria_base_url
         if aria_timeout is None:
             aria_timeout = settings.aria_timeout
+        self.aria_enabled = settings.aria_enabled
         self.aria_base_url = aria_base_url
         self.aria_timeout = aria_timeout
         self._db = CIADatabase()
@@ -52,6 +53,8 @@ class ARIAIntegration:
         settings = get_settings()
         max_retries = settings.max_retries
         backoff_factor = settings.retry_backoff_factor
+        if not self.aria_enabled or not self.aria_base_url:
+            return None
 
         for attempt in range(max_retries):
             try:

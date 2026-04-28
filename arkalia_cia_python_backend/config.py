@@ -37,7 +37,8 @@ class Settings(BaseSettings):
     health_check_timeout_seconds: int = 5
 
     # ARIA Integration
-    aria_base_url: str = "http://127.0.0.1:8001"  # URL du serveur ARIA (configurable via ARIA_BASE_URL)
+    aria_enabled: bool = False  # Désactivé par défaut: CIA fonctionne en autonome
+    aria_base_url: str = "http://127.0.0.1:8001"  # URL du serveur ARIA (optionnel via ARIA_BASE_URL)
     aria_timeout: int = 10  # Timeout pour les requêtes ARIA en secondes
 
     model_config = SettingsConfigDict(
