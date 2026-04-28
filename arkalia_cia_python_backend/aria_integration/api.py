@@ -27,6 +27,15 @@ ARIA_TIMEOUT = _settings.aria_timeout
 _db = CIADatabase()
 
 
+def _safe_upstream_error_message(status_code: int) -> str:
+    """Retourne un message générique sans exposer les détails internes ARIA."""
+    if status_code >= 500:
+        return "Service ARIA indisponible temporairement."
+    if status_code >= 400:
+        return "Requête ARIA invalide ou refusée."
+    return "Erreur de communication avec ARIA."
+
+
 def _ensure_local_pain_table() -> None:
     """Crée la table locale CIA pour les entrées douleur si nécessaire."""
     with sqlite3.connect(_db.db_path) as conn:
@@ -109,7 +118,10 @@ def _save_local_pain_entry(payload: dict[str, Any]) -> dict[str, Any]:
                 normalized["created_at"],
             ),
         )
-        entry_id = int(cursor.lastrowid)
+        raw_entry_id = cursor.lastrowid
+        if raw_entry_id is None:
+            raise RuntimeError("Insertion locale douleur échouée (id absent).")
+        entry_id = int(raw_entry_id)
         conn.commit()
     return {"id": entry_id, **normalized}
 
@@ -246,9 +258,7 @@ def _make_aria_request(method: str, endpoint: str, **kwargs) -> requests.Respons
         response = requests.request(method, url, timeout=ARIA_TIMEOUT, **kwargs)
         return response
     except requests.RequestException as e:
-        raise HTTPException(
-            status_code=503, detail=f"Impossible de contacter ARIA: {str(e)}"
-        ) from e
+        raise HTTPException(status_code=503, detail="Impossible de contacter ARIA.") from e
 
 
 @router.get("/status")
@@ -303,7 +313,8 @@ async def quick_pain_entry(entry: QuickEntry) -> PainEntryOut:
         if response.status_code == 200:
             return PainEntryOut(**response.json())
         raise HTTPException(
-            status_code=response.status_code, detail=f"Erreur ARIA: {response.text}"
+            status_code=response.status_code,
+            detail=_safe_upstream_error_message(response.status_code),
         ) from exc
 
 
@@ -321,7 +332,8 @@ async def create_pain_entry(entry: PainEntryIn) -> PainEntryOut:
         if response.status_code == 200:
             return PainEntryOut(**response.json())
         raise HTTPException(
-            status_code=response.status_code, detail=f"Erreur ARIA: {response.text}"
+            status_code=response.status_code,
+            detail=_safe_upstream_error_message(response.status_code),
         ) from exc
 
 
@@ -345,7 +357,8 @@ async def get_pain_entries() -> list[PainEntryOut]:
                 ) from exc
             return [PainEntryOut(**entry) for entry in entries]
         raise HTTPException(
-            status_code=response.status_code, detail=f"Erreur ARIA: {response.text}"
+            status_code=response.status_code,
+            detail=_safe_upstream_error_message(response.status_code),
         ) from exc
 
 
@@ -365,7 +378,8 @@ async def get_recent_pain_entries(limit: int = 20) -> list[PainEntryOut]:
         if response.status_code == 200:
             return [PainEntryOut(**entry) for entry in response.json()]
         raise HTTPException(
-            status_code=response.status_code, detail=f"Erreur ARIA: {response.text}"
+            status_code=response.status_code,
+            detail=_safe_upstream_error_message(response.status_code),
         ) from exc
 
 
@@ -410,7 +424,8 @@ async def export_csv() -> dict[str, Any]:
         if response.status_code == 200:
             return cast(dict[str, Any], response.json())
         raise HTTPException(
-            status_code=response.status_code, detail=f"Erreur ARIA: {response.text}"
+            status_code=response.status_code,
+            detail=_safe_upstream_error_message(response.status_code),
         ) from exc
 
 
@@ -445,7 +460,8 @@ async def get_recent_patterns() -> dict[str, Any]:
         if response.status_code == 200:
             return cast(dict[str, Any], response.json())
         raise HTTPException(
-            status_code=response.status_code, detail=f"Erreur ARIA: {response.text}"
+            status_code=response.status_code,
+            detail=_safe_upstream_error_message(response.status_code),
         ) from exc
 
 
@@ -464,7 +480,8 @@ async def get_pain_summary(window: int = 30) -> dict[str, Any]:
         if response.status_code == 200:
             return cast(dict[str, Any], response.json())
         raise HTTPException(
-            status_code=response.status_code, detail=f"Erreur ARIA: {response.text}"
+            status_code=response.status_code,
+            detail=_safe_upstream_error_message(response.status_code),
         ) from exc
 
 
@@ -495,7 +512,8 @@ async def get_pain_suggestions(window: int = 30) -> dict[str, Any]:
         if response.status_code == 200:
             return cast(dict[str, Any], response.json())
         raise HTTPException(
-            status_code=response.status_code, detail=f"Erreur ARIA: {response.text}"
+            status_code=response.status_code,
+            detail=_safe_upstream_error_message(response.status_code),
         ) from exc
 
 
@@ -534,5 +552,6 @@ async def get_current_predictions() -> dict[str, Any]:
         if response.status_code == 200:
             return cast(dict[str, Any], response.json())
         raise HTTPException(
-            status_code=response.status_code, detail=f"Erreur ARIA: {response.text}"
+            status_code=response.status_code,
+            detail=_safe_upstream_error_message(response.status_code),
         ) from exc

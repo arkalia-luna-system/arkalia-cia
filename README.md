@@ -27,8 +27,8 @@
 ## Overview
 
 **Project Status**: En cours, release Q1 2026 - Passage en stable v1.0  
-**Last Audit**: 28 décembre 2025 (Note: 10/10 ✅ - Perfection atteinte !)  
-**Production-Ready**: 100% ✅  
+**Last Audit**: 28 décembre 2025 (audit interne - mise à jour externe en cours)  
+**Maturité produit**: Prototype avancé en phase de durcissement pré-production  
 **Version**: 1.3.1+8 (28 décembre 2025)  
 **Dernière simplification**: 25 janvier 2025 - Authentification simplifiée (-30% complexité) ✅  
 **Google Play Console**: ⚠️ Version 1.3.1 - Rejeté le 9 décembre 2025 (politique familiale)  
@@ -88,7 +88,7 @@
 | **Plateformes** | iOS + Android |
 | **Utilisateurs cibles** | Seniors et familles |
 | **CI/CD** | Workflows fonctionnels |
-| **Vulnérabilités** | 0 détectée |
+| **Vulnérabilités** | Suivi actif via CodeQL/Dependabot (voir Security tab) |
 | **Erreurs lint** | 0 (Flutter + Python) |
 
 ## Architecture
