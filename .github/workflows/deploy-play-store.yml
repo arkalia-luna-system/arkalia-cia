@@ -16,6 +16,7 @@ env:
   PACKAGE_NAME: "com.arkalia.cia"
   TRACK: "internal" # internal, alpha, beta, production
   PYTHON_VERSION: "3.11"
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 jobs:
   deploy:
