@@ -9,7 +9,7 @@ void main() {
       SharedPreferences.setMockInitialValues({});
     });
 
-    Future<void> _pumpHome(WidgetTester tester) async {
+    Future<void> pumpHome(WidgetTester tester) async {
       await tester.pumpWidget(const MaterialApp(home: HomePage()));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 200));
@@ -21,7 +21,7 @@ void main() {
     testWidgets('affiche les elements principaux de l ecran accueil', (
       WidgetTester tester,
     ) async {
-      await _pumpHome(tester);
+      await pumpHome(tester);
 
       expect(find.text('Arkalia CIA'), findsOneWidget);
       expect(find.text('Assistant Santé Personnel'), findsOneWidget);
@@ -34,7 +34,7 @@ void main() {
     testWidgets('affiche la recherche et son acces avance', (
       WidgetTester tester,
     ) async {
-      await _pumpHome(tester);
+      await pumpHome(tester);
 
       expect(
         find.text('Rechercher dans documents, rappels, contacts...'),
