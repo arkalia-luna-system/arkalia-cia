@@ -104,7 +104,8 @@ class _EmergencyContactDialogState extends State<EmergencyContactDialog> {
       );
 
       if (selectedContact != null && mounted) {
-        final name = '${selectedContact.name.first} ${selectedContact.name.last}'.trim();
+        final name =
+            '${selectedContact.name.first} ${selectedContact.name.last}'.trim();
         final phone = selectedContact.phones.isNotEmpty 
             ? selectedContact.phones.first.number 
             : '';
