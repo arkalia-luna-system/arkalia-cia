@@ -75,8 +75,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
             ? systemContact.phones.first.number 
             : '';
         final systemName =
-            '${systemContact.name?.first ?? ''} ${systemContact.name?.last ?? ''}'
-                .trim();
+            '${systemContact.name.first} ${systemContact.name.last}'.trim();
         final existsInLocal = localContacts.any((local) => 
             local['phone'] == systemPhone || 
             local['name'] == systemName);
@@ -568,7 +567,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.red.withOpacity(0.1),
+                      color: Colors.red.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(

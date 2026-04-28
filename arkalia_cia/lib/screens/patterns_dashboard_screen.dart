@@ -694,10 +694,10 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
               style: const TextStyle(fontSize: 16),
             ),
             backgroundColor: direction == 'increasing'
-                ? Colors.green.withOpacity(0.2)
+                ? Colors.green.withValues(alpha: 0.2)
                 : direction == 'decreasing'
-                    ? Colors.red.withOpacity(0.2)
-                    : Colors.grey.withOpacity(0.2),
+                    ? Colors.red.withValues(alpha: 0.2)
+                    : Colors.grey.withValues(alpha: 0.2),
           ),
         ],
       ),
