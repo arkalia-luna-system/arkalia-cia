@@ -16,12 +16,12 @@ on:
       - ".github/workflows/flutter-ci.yml"
   workflow_dispatch:
 
+concurrency:
+  group: flutter-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
-  pages: write
-  id-token: write
-  issues: write
-  pull-requests: write
 
 jobs:
   flutter-test:
@@ -44,7 +44,7 @@ jobs:
         run: |
           cd arkalia_cia
           # Vérifier que pubspec.lock contient fl_chart 1.0.0
-          if ! grep -q 'version: "1.0.0"' pubspec.lock | grep -A 5 "fl_chart:"; then
+          if ! awk '/fl_chart:/{flag=1;next}/^[^ ]/{flag=0}flag && /version: "1.0.0"/{found=1} END{exit !found}' pubspec.lock; then
             echo "⚠️ Attention: pubspec.lock ne contient pas fl_chart 1.0.0"
           fi
           flutter pub get
@@ -54,19 +54,20 @@ jobs:
       - name: "Flutter Analyze"
         run: |
           cd arkalia_cia
-          flutter analyze --no-fatal-infos || echo "Flutter analyze completed with warnings"
+          flutter analyze --no-fatal-infos
 
       - name: "Flutter Test with Coverage"
         run: |
+          set -euo pipefail
           cd arkalia_cia
           echo "🧪 Running Flutter tests with coverage..."
-          flutter test --coverage || echo "Flutter tests completed with warnings"
+          flutter test --coverage
 
           # Tests PWA si disponibles
           if [ -f "../tests/web/pwa_test.dart" ]; then
             echo "🧪 Running PWA tests..."
             cd ..
-            dart test tests/web/pwa_test.dart || echo "PWA tests completed with warnings"
+            dart test tests/web/pwa_test.dart
             cd arkalia_cia
           fi
 
@@ -80,52 +81,13 @@ jobs:
 
       - name: "Flutter Build Web"
         run: |
+          set -euo pipefail
           cd arkalia_cia
           echo "📦 Building Flutter web..."
           flutter clean
           flutter pub get
-
-          # Build web avec capture des erreurs détaillées
-          echo "🔨 Starting web build..."
-          if flutter build web --release 2>&1 | tee /tmp/flutter_web_build.log; then
-            echo "✅ Web build successful"
-          else
-            BUILD_EXIT_CODE=${PIPESTATUS[0]}
-            echo "⚠️ Web build exited with code: $BUILD_EXIT_CODE"
-            echo "📋 Last 50 lines of build output:"
-            tail -50 /tmp/flutter_web_build.log || echo "Could not read build log"
-            
-            # Vérifier si le build a quand même créé des fichiers
-            if [ -d "build/web" ]; then
-              echo "✅ build/web directory exists despite exit code $BUILD_EXIT_CODE"
-            else
-              echo "❌ build/web directory not created"
-              echo "Checking for any build artifacts:"
-              ls -la build/ 2>/dev/null || echo "No build/ directory found"
-            fi
-          fi
-
-          # Vérifier que index.html existe (avec plusieurs chemins possibles)
-          if [ -f "build/web/index.html" ]; then
-            echo "✅ index.html created successfully"
-            ls -lh build/web/index.html
-            echo "📊 Build web contents:"
-            ls -la build/web/ | head -20
-          elif [ -f "arkalia_cia/build/web/index.html" ]; then
-            echo "✅ index.html found at arkalia_cia/build/web/index.html"
-            ls -lh arkalia_cia/build/web/index.html
-          else
-            echo "❌ index.html missing"
-            echo "Current directory: $(pwd)"
-            echo "Checking for build directory:"
-            ls -la build/ 2>/dev/null || echo "build/ directory not found"
-            if [ -d "build" ]; then
-              echo "Contents of build/:"
-              ls -la build/
-            fi
-            echo "⚠️ Web build failed, but continuing (web build is optional for Android CI)..."
-          fi
-        continue-on-error: true
+          flutter build web --release
+          test -f build/web/index.html
 
       - name: "Phase 1: Configuration flutter.source"
         run: |
@@ -152,11 +114,10 @@ jobs:
       - name: "Upload Coverage to Codecov"
         if: hashFiles('arkalia_cia/coverage/lcov.info') != ''
         uses: codecov/codecov-action@v5
-        continue-on-error: true
         with:
           files: arkalia_cia/coverage/lcov.info
           flags: flutter
-          fail_ci_if_error: false
+          fail_ci_if_error: true
           verbose: true
           directory: arkalia_cia
         env:
@@ -198,7 +159,7 @@ jobs:
         run: |
           cd arkalia_cia
           # Vérifier que pubspec.lock contient fl_chart 1.0.0
-          if ! grep -q 'version: "1.0.0"' pubspec.lock | grep -A 5 "fl_chart:"; then
+          if ! awk '/fl_chart:/{flag=1;next}/^[^ ]/{flag=0}flag && /version: "1.0.0"/{found=1} END{exit !found}' pubspec.lock; then
             echo "⚠️ Attention: pubspec.lock ne contient pas fl_chart 1.0.0"
           fi
           flutter pub get
@@ -213,7 +174,7 @@ jobs:
       - name: "Dart Format Check"
         run: |
           cd arkalia_cia
-          dart format --output=none --set-exit-if-changed . || echo "Format check completed with warnings"
+          dart format --output=none --set-exit-if-changed .
 
   # ========================================
   # DÉPLOIEMENT AUTOMATIQUE GITHUB PAGES
@@ -246,7 +207,7 @@ jobs:
         run: |
           cd arkalia_cia
           # Vérifier que pubspec.lock contient fl_chart 1.0.0
-          if ! grep -q 'version: "1.0.0"' pubspec.lock | grep -A 5 "fl_chart:"; then
+          if ! awk '/fl_chart:/{flag=1;next}/^[^ ]/{flag=0}flag && /version: "1.0.0"/{found=1} END{exit !found}' pubspec.lock; then
             echo "⚠️ Attention: pubspec.lock ne contient pas fl_chart 1.0.0"
           fi
           flutter pub get
