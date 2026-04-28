@@ -323,17 +323,17 @@ class _CalendarScreenState extends State<CalendarScreen> {
           ),
 
           // Légende simple pour aider à comprendre les couleurs/icônes
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
+                Text(
                   'Légende :  ',
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                 ),
                 Row(
-                  children: const [
+                  children: [
                     Icon(Icons.medical_services, size: 18, color: Colors.red),
                     SizedBox(width: 4),
                     Text('Consultation  ', style: TextStyle(fontSize: 14)),
