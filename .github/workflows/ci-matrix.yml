@@ -45,7 +45,7 @@ jobs:
 
     steps:
       - name: "Checkout Code"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -109,7 +109,7 @@ jobs:
 
     steps:
       - name: "Checkout Code"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -282,7 +282,7 @@ jobs:
 
     steps:
       - name: "Checkout Code"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -342,7 +342,7 @@ jobs:
 
     steps:
       - name: "Checkout Code"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: "Setup Python"
         uses: actions/setup-python@v5
@@ -399,7 +399,7 @@ jobs:
 
     steps:
       - name: "Checkout Code"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: "Setup Python"
         uses: actions/setup-python@v5
@@ -490,7 +490,7 @@ jobs:
 
     steps:
       - name: "Checkout Code"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: "Download all artifacts"
         uses: actions/download-artifact@v4

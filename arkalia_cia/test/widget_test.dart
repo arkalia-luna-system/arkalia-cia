@@ -6,6 +6,7 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/widgets.dart';
 
 import 'package:arkalia_cia/main.dart';
 
@@ -13,9 +14,15 @@ void main() {
   testWidgets('Arkalia CIA App smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const ArkaliaCIAApp());
+    // L'écran initial crée un timer de 300ms: on le laisse se vider.
+    await tester.pump(const Duration(milliseconds: 400));
 
     // Verify that our app loads without crashing
     expect(find.byType(ArkaliaCIAApp), findsOneWidget);
+
+    // Démonte explicitement l'app pour éviter les timers orphelins.
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
   });
 
   testWidgets('App initialization test', (WidgetTester tester) async {
@@ -27,5 +34,9 @@ void main() {
 
     // Verify the app is running
     expect(find.byType(ArkaliaCIAApp), findsOneWidget);
+
+    // Démonte explicitement l'app pour éviter les timers orphelins.
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
   }, timeout: const Timeout(Duration(seconds: 30)));
 }

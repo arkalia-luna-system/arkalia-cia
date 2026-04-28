@@ -31,7 +31,24 @@ jobs:
 
     steps:
       - name: "Checkout Code"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+
+      - name: "Cleanup macOS metadata files"
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os
+          removed = 0
+          for dp, _, fns in os.walk("."):
+              for fn in fns:
+                  if fn.startswith("._") or fn == ".DS_Store":
+                      try:
+                          os.remove(os.path.join(dp, fn))
+                          removed += 1
+                      except FileNotFoundError:
+                          pass
+          print(f"Removed {removed} metadata files")
+          PY
 
       - name: "Setup Flutter"
         uses: subosito/flutter-action@v2
@@ -147,7 +164,24 @@ jobs:
 
     steps:
       - name: "Checkout Code"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+
+      - name: "Cleanup macOS metadata files"
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os
+          removed = 0
+          for dp, _, fns in os.walk("."):
+              for fn in fns:
+                  if fn.startswith("._") or fn == ".DS_Store":
+                      try:
+                          os.remove(os.path.join(dp, fn))
+                          removed += 1
+                      except FileNotFoundError:
+                          pass
+          print(f"Removed {removed} metadata files")
+          PY
 
       - name: "Setup Flutter"
         uses: subosito/flutter-action@v2
@@ -192,7 +226,7 @@ jobs:
 
     steps:
       - name: "Checkout Code"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
