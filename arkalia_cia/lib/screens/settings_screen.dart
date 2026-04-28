@@ -858,43 +858,42 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Taille du texte'),
-        content: RadioGroup<AccessibilityTextSize>(
-          groupValue: _textSize,
-          onChanged: (value) async {
-            if (value == null) return;
-            final navigator = Navigator.of(context);
-            final messenger = ScaffoldMessenger.of(context);
-            await AccessibilityService.setTextSize(value);
-            if (!mounted) return;
-            setState(() {
-              _textSize = value;
-            });
-            if (!mounted) return;
-            navigator.pop();
-            if (!mounted) return;
-            messenger.showSnackBar(
-              SnackBar(
-                content: Text('Taille du texte : ${value.label}'),
-                duration: const Duration(seconds: 2),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: AccessibilityTextSize.values.map((size) {
+            final isSelected = _textSize == size;
+            return ListTile(
+              title: Text(
+                size.label,
+                style: TextStyle(fontSize: (14 * size.multiplier)),
               ),
+              subtitle: Text(
+                'Exemple de texte avec cette taille',
+                style: TextStyle(fontSize: (14 * size.multiplier)), // Minimum 14px pour accessibilité seniors
+              ),
+              leading: Icon(
+                isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
+              ),
+              onTap: () async {
+                final navigator = Navigator.of(context);
+                final messenger = ScaffoldMessenger.of(context);
+                await AccessibilityService.setTextSize(size);
+                if (!mounted) return;
+                setState(() {
+                  _textSize = size;
+                });
+                if (!mounted) return;
+                navigator.pop();
+                if (!mounted) return;
+                messenger.showSnackBar(
+                  SnackBar(
+                    content: Text('Taille du texte : ${size.label}'),
+                    duration: const Duration(seconds: 2),
+                  ),
+                );
+              },
             );
-          },
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: AccessibilityTextSize.values.map((size) {
-              return RadioListTile<AccessibilityTextSize>(
-                title: Text(
-                  size.label,
-                  style: TextStyle(fontSize: (14 * size.multiplier)),
-                ),
-                subtitle: Text(
-                  'Exemple de texte avec cette taille',
-                  style: TextStyle(fontSize: (14 * size.multiplier)), // Minimum 14px pour accessibilité seniors
-                ),
-                value: size,
-              );
-            }).toList(),
-          ),
+          }).toList(),
         ),
         actions: [
           TextButton(
@@ -911,45 +910,44 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Taille des icônes'),
-        content: RadioGroup<AccessibilityIconSize>(
-          groupValue: _iconSize,
-          onChanged: (value) async {
-            if (value == null) return;
-            final navigator = Navigator.of(context);
-            final messenger = ScaffoldMessenger.of(context);
-            await AccessibilityService.setIconSize(value);
-            if (!mounted) return;
-            setState(() {
-              _iconSize = value;
-            });
-            if (!mounted) return;
-            navigator.pop();
-            if (!mounted) return;
-            messenger.showSnackBar(
-              SnackBar(
-                content: Text('Taille des icônes : ${value.label}'),
-                duration: const Duration(seconds: 2),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: AccessibilityIconSize.values.map((size) {
+            final isSelected = _iconSize == size;
+            return ListTile(
+              title: Text(size.label),
+              subtitle: Row(
+                children: [
+                  Icon(Icons.home, size: (24.0 * size.multiplier)),
+                  const SizedBox(width: 8),
+                  Icon(Icons.settings, size: (24.0 * size.multiplier)),
+                  const SizedBox(width: 8),
+                  Icon(Icons.favorite, size: (24.0 * size.multiplier)),
+                ],
               ),
+              leading: Icon(
+                isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
+              ),
+              onTap: () async {
+                final navigator = Navigator.of(context);
+                final messenger = ScaffoldMessenger.of(context);
+                await AccessibilityService.setIconSize(size);
+                if (!mounted) return;
+                setState(() {
+                  _iconSize = size;
+                });
+                if (!mounted) return;
+                navigator.pop();
+                if (!mounted) return;
+                messenger.showSnackBar(
+                  SnackBar(
+                    content: Text('Taille des icônes : ${size.label}'),
+                    duration: const Duration(seconds: 2),
+                  ),
+                );
+              },
             );
-          },
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: AccessibilityIconSize.values.map((size) {
-              return RadioListTile<AccessibilityIconSize>(
-                title: Text(size.label),
-                subtitle: Row(
-                  children: [
-                    Icon(Icons.home, size: (24.0 * size.multiplier)),
-                    const SizedBox(width: 8),
-                    Icon(Icons.settings, size: (24.0 * size.multiplier)),
-                    const SizedBox(width: 8),
-                    Icon(Icons.favorite, size: (24.0 * size.multiplier)),
-                  ],
-                ),
-                value: size,
-              );
-            }).toList(),
-          ),
+          }).toList(),
         ),
         actions: [
           TextButton(
