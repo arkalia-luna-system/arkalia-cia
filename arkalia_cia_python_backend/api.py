@@ -891,7 +891,14 @@ async def upload_document(
         }
 
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e)) from e
+        logger.warning(
+            "Validation upload document échouée: %s",
+            sanitize_log_message(str(e)),
+        )
+        raise HTTPException(
+            status_code=400,
+            detail="Données de document invalides pour l'upload.",
+        ) from e
     except Exception as e:
         logger.error(
             f"Erreur upload document: {sanitize_log_message(str(e))}",
@@ -1438,8 +1445,11 @@ async def import_health_portal_manual(
 
             try:
                 os.unlink(tmp_path)
-            except Exception:
-                pass
+            except OSError as cleanup_error:
+                logger.debug(
+                    "Nettoyage fichier portail temporaire échoué: %s",
+                    sanitize_log_message(str(cleanup_error)),
+                )
 
     except HTTPException:
         raise
@@ -1794,8 +1804,11 @@ async def export_medical_report_pdf(
             if os.path.exists(pdf_path):
                 try:
                     os.unlink(pdf_path)
-                except OSError:
-                    pass
+                except OSError as cleanup_error:
+                    logger.debug(
+                        "Nettoyage PDF temporaire échoué (runtime): %s",
+                        sanitize_log_message(str(cleanup_error)),
+                    )
             raise HTTPException(
                 status_code=503,
                 detail="Export PDF non disponible (reportlab requis)",
@@ -1805,8 +1818,11 @@ async def export_medical_report_pdf(
             if os.path.exists(pdf_path):
                 try:
                     os.unlink(pdf_path)
-                except OSError:
-                    pass
+                except OSError as cleanup_error:
+                    logger.debug(
+                        "Nettoyage PDF temporaire échoué (exception): %s",
+                        sanitize_log_message(str(cleanup_error)),
+                    )
             raise
 
     except HTTPException:
@@ -1819,8 +1835,11 @@ async def export_medical_report_pdf(
         if "pdf_path" in locals() and os.path.exists(pdf_path):
             try:
                 os.unlink(pdf_path)
-            except OSError:
-                pass
+            except OSError as cleanup_error:
+                logger.debug(
+                    "Nettoyage PDF temporaire final échoué: %s",
+                    sanitize_log_message(str(cleanup_error)),
+                )
         raise HTTPException(
             status_code=500, detail="Erreur lors de l'export PDF du rapport médical"
         ) from e
@@ -1856,10 +1875,17 @@ async def analyze_patterns(
 
         # Vérifier si l'analyse a retourné une erreur
         if isinstance(patterns, dict) and "error" in patterns:
-            error_msg = patterns.get("error", "Erreur inconnue lors de l'analyse")
-            logger.warning(f"Analyse patterns retournée avec erreur: {error_msg}")
-            # Retourner quand même les résultats partiels si disponibles
-            return patterns
+            error_msg = str(patterns.get("error", "Erreur inconnue lors de l'analyse"))
+            logger.warning(
+                "Analyse patterns retournée avec erreur: %s",
+                sanitize_log_message(error_msg),
+            )
+            # Retourner des résultats partiels sans exposer de détails internes.
+            safe_patterns = dict(patterns)
+            safe_patterns["error"] = "Analyse incomplète. Vérifiez les données fournies."
+            safe_patterns.pop("traceback", None)
+            safe_patterns.pop("exception", None)
+            return safe_patterns
 
         return patterns
     except HTTPException:

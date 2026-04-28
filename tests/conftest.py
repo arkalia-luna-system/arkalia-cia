@@ -56,8 +56,5 @@ def pytest_collection_modifyitems(config, items):
     Hook pour modifier la collection de tests si nécessaire.
     Peut être utilisé pour limiter le nombre de tests en parallèle.
     """
-    # Optionnel: limiter le nombre de tests si trop nombreux
-    # max_tests = int(os.getenv('PYTEST_MAX_TESTS', '0'))
-    # if max_tests > 0 and len(items) > max_tests:
-    #     items[:] = items[:max_tests]
+    # Hook conservé pour compatibilité future (pas de modification de collection pour l'instant).
     pass

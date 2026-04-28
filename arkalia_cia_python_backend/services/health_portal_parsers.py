@@ -113,8 +113,11 @@ class HealthPortalParser:
                             date_str = (
                                 f"{parts[2]}-{parts[1].zfill(2)}-{parts[0].zfill(2)}"
                             )
-                    except Exception:
-                        pass
+                    except (ValueError, TypeError) as date_error:
+                        logger.debug(
+                            "Normalisation date Andaman7 échouée: %s",
+                            date_error,
+                        )
 
                 # Extraire médecin
                 practitioner_match = re.search(practitioner_pattern, section)
@@ -179,8 +182,11 @@ class HealthPortalParser:
                             date_str = (
                                 f"{parts[2]}-{parts[1].zfill(2)}-{parts[0].zfill(2)}"
                             )
-                    except Exception:
-                        pass
+                    except (ValueError, TypeError) as date_error:
+                        logger.debug(
+                            "Normalisation date MaSante échouée: %s",
+                            date_error,
+                        )
 
                 # Extraire médecin
                 practitioner_match = re.search(practitioner_pattern, section)
