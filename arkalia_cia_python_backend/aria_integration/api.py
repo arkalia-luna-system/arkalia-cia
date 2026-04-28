@@ -166,6 +166,16 @@ def _build_local_summary(entries: list[dict[str, Any]], window: int) -> dict[str
         if location:
             location_counts[location] = location_counts.get(location, 0) + 1
 
+    top_triggers = sorted(
+        trigger_counts.items(),
+        key=lambda item: item[1],
+        reverse=True,
+    )[:5]
+    top_locations = sorted(
+        location_counts.items(),
+        key=lambda item: item[1],
+        reverse=True,
+    )[:5]
     return {
         "window_days": window,
         "stats": {
@@ -175,16 +185,10 @@ def _build_local_summary(entries: list[dict[str, Any]], window: int) -> dict[str
             else 0,
             "max_intensity": max(intensities) if intensities else 0,
         },
-        "top_triggers": sorted(
-            [{"trigger": k, "count": v} for k, v in trigger_counts.items()],
-            key=lambda item: item["count"],
-            reverse=True,
-        )[:5],
-        "top_locations": sorted(
-            [{"location": k, "count": v} for k, v in location_counts.items()],
-            key=lambda item: item["count"],
-            reverse=True,
-        )[:5],
+        "top_triggers": [{"trigger": key, "count": count} for key, count in top_triggers],
+        "top_locations": [
+            {"location": key, "count": count} for key, count in top_locations
+        ],
     }
 
 # Schémas pour la compatibilité CIA
@@ -470,7 +474,7 @@ async def get_pain_summary(window: int = 30) -> dict[str, Any]:
     """Résumé agrégé local CIA (fallback ARIA si besoin)."""
     try:
         summary = _build_local_summary(_fetch_local_pain_entries(), window=window)
-        return cast(dict[str, Any], summary)
+        return summary
     except Exception as exc:
         if not _check_aria_connection():
             raise HTTPException(status_code=503, detail="CIA/ARIA indisponible") from exc

@@ -506,10 +506,18 @@ class MedicalReportService:
     ) -> str:
         """Exporte le rapport en PDF (gratuit avec reportlab)"""
         try:
-            from reportlab.lib.pagesizes import letter
-            from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
-            from reportlab.lib.units import inch
-            from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
+            from reportlab.lib import colors  # type: ignore[import-untyped]
+            from reportlab.lib.pagesizes import letter  # type: ignore[import-untyped]
+            from reportlab.lib.styles import (  # type: ignore[import-untyped]
+                ParagraphStyle,
+                getSampleStyleSheet,
+            )
+            from reportlab.lib.units import inch  # type: ignore[import-untyped]
+            from reportlab.platypus import (  # type: ignore[import-untyped]
+                Paragraph,
+                SimpleDocTemplate,
+                Spacer,
+            )
 
             # Créer le document PDF
             if output_path is None:
@@ -527,7 +535,7 @@ class MedicalReportService:
                 "CustomTitle",
                 parent=styles["Heading1"],
                 fontSize=16,
-                textColor="black",
+                textColor=colors.black,
                 spaceAfter=12,
             )
 
@@ -536,7 +544,7 @@ class MedicalReportService:
                 "CustomSubtitle",
                 parent=styles["Heading2"],
                 fontSize=14,
-                textColor="black",
+                textColor=colors.black,
                 spaceAfter=8,
             )
 
