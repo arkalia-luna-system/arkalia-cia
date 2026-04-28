@@ -224,42 +224,33 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
           title: const Text('Filtrer par catégorie'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  title: const Text('Toutes les catégories'),
-                  leading: Radio<String?>(
-                    value: null,
-                    groupValue: tempSelected,
-                    onChanged: (value) {
-                      setState(() {
-                        tempSelected = value;
-                      });
-                      Navigator.pop(context, value);
-                    },
+          content: RadioGroup<String?>(
+            groupValue: tempSelected,
+            onChanged: (value) {
+              setState(() {
+                tempSelected = value;
+              });
+              Navigator.pop(context, value);
+            },
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ListTile(
+                    title: const Text('Toutes les catégories'),
+                    leading: const Radio<String?>(value: null),
                   ),
-                ),
-                const Divider(),
-                ...categories.map((category) {
-                  final count = _pathologiesByCategory[category]?.length ?? 0;
-                  return ListTile(
-                    title: Text(category),
-                    subtitle: Text('$count pathologie${count > 1 ? 's' : ''}'),
-                    leading: Radio<String?>(
-                      value: category,
-                      groupValue: tempSelected,
-                      onChanged: (value) {
-                        setState(() {
-                          tempSelected = value;
-                        });
-                        Navigator.pop(context, value);
-                      },
-                    ),
-                  );
-                }),
-              ],
+                  const Divider(),
+                  ...categories.map((category) {
+                    final count = _pathologiesByCategory[category]?.length ?? 0;
+                    return ListTile(
+                      title: Text(category),
+                      subtitle: Text('$count pathologie${count > 1 ? 's' : ''}'),
+                      leading: Radio<String?>(value: category),
+                    );
+                  }),
+                ],
+              ),
             ),
           ),
         ),
