@@ -20,17 +20,18 @@ on:
           - staging
           - production
 
+concurrency:
+  group: ci-matrix-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   PYTHON_VERSION: "3.10"
   PIP_CACHE_DIR: ~/.cache/pip
   PYTHONUNBUFFERED: 1
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
-  issues: write
-  pull-requests: write
 
 jobs:
   # ========================================
@@ -45,7 +46,7 @@ jobs:
 
     steps:
       - name: "Checkout Code"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -109,7 +110,7 @@ jobs:
 
     steps:
       - name: "Checkout Code"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -134,24 +135,26 @@ jobs:
 
       - name: "Lint & Format Check"
         run: |
+          set -euo pipefail
           echo "VÉRIFICATION QUALITÉ CODE"
           echo "============================"
 
           # Ruff linting
           echo "Ruff linting..."
-          ruff check . --output-format=github || echo "WARNING  Ruff a trouvé des problèmes (non bloquant)"
+          ruff check . --output-format=github
 
           # Black format check
           echo "Black format check..."
-          black --check --diff . || echo "WARNING  Black a trouvé des problèmes de format (non bloquant)"
+          black --check --diff .
 
           # MyPy type checking
           echo "MyPy type checking..."
-          mypy arkalia_cia_python_backend/ --ignore-missing-imports --no-error-summary --warn-unused-ignores || echo "WARNING  MyPy a trouvé des problèmes de type (non bloquant)"
+          mypy arkalia_cia_python_backend/ --ignore-missing-imports --no-error-summary --warn-unused-ignores
 
       - name: "Tests avec Couverture"
         shell: bash
         run: |
+          set -euo pipefail
           echo "LANCEMENT DES TESTS"
           echo "======================"
 
@@ -166,8 +169,7 @@ jobs:
             --cov-report=xml:coverage/coverage-${{ matrix.python }}-${{ runner.os }}.xml \
             --cov-report=html \
             --cov-fail-under=15 \
-            --maxfail=5 --durations=10 --tb=short -v \
-            || echo "WARNING  Certains tests ont échoué (vérification manuelle recommandée)"
+            --maxfail=5 --durations=10 --tb=short -v
 
           # Vérification de la génération des rapports
           echo ""
@@ -202,7 +204,7 @@ jobs:
           fi
 
       - name: "Upload Test Results"
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: test-results-${{ matrix.python }}-${{ runner.os }}
           path: |
@@ -214,25 +216,25 @@ jobs:
       - name: "Check Coverage Files"
         id: check-coverage
         run: |
+          set -euo pipefail
           if ls coverage/*.xml 1>/dev/null 2>&1; then
             echo "exists=true" >> $GITHUB_OUTPUT
           else
             echo "exists=false" >> $GITHUB_OUTPUT
           fi
-        continue-on-error: true
 
       - name: "Upload Coverage to Codecov"
-        uses: codecov/codecov-action@v6
+        uses: codecov/codecov-action@v5
         with:
           files: coverage/*.xml
           flags: python
-          fail_ci_if_error: false
+          fail_ci_if_error: true
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }}
         if: steps.check-coverage.outputs.exists == 'true'
 
       - name: "Upload Coverage HTML"
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-html-python-${{ matrix.python }}
           path: htmlcov/
@@ -260,7 +262,7 @@ jobs:
 
     steps:
       - name: "Checkout Code"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -286,6 +288,7 @@ jobs:
           PYTHONIOENCODING: utf-8
           PYTHONUTF8: 1
         run: |
+          set -euo pipefail
           echo "TESTS COMPATIBILITÉ ${{ matrix.os }}"
           echo "==============================="
 
@@ -296,10 +299,10 @@ jobs:
           echo "Lancement des tests de compatibilité..."
 
           # Commande compatible multi-OS - une seule ligne pour éviter les problèmes PowerShell
-          python -m pytest tests/ --junitxml=test-results/pytest-compat-${{ matrix.os }}-${{ matrix.python }}.xml --cov=arkalia_cia_python_backend --cov-report=term-missing --cov-report=xml:coverage/coverage-compat-${{ matrix.os }}-${{ matrix.python }}.xml --maxfail=3 --tb=short -v || echo "WARNING: Tests de compatibilite partiellement echoues (non critique pour cross-platform)" && echo "SUCCESS: Continuation du pipeline CI/CD"
+          python -m pytest tests/ --junitxml=test-results/pytest-compat-${{ matrix.os }}-${{ matrix.python }}.xml --cov=arkalia_cia_python_backend --cov-report=term-missing --cov-report=xml:coverage/coverage-compat-${{ matrix.os }}-${{ matrix.python }}.xml --maxfail=3 --tb=short -v
 
       - name: "Upload Rapport Compatibilité"
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: compatibility-${{ matrix.os }}-${{ matrix.python }}
           path: |
@@ -320,7 +323,7 @@ jobs:
 
     steps:
       - name: "Checkout Code"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: "Setup Python"
         uses: actions/setup-python@v5
@@ -334,27 +337,30 @@ jobs:
 
       - name: "Bandit Security Scan"
         run: |
+          set -euo pipefail
           echo "SCAN SÉCURITÉ BANDIT"
           echo "========================"
-          bandit -r arkalia_cia_python_backend/ -f json -o bandit-report.json || echo "WARNING  Bandit scan échoué - Rapport non généré"
-          bandit -r arkalia_cia_python_backend/ -f txt -o bandit-report.txt || echo "WARNING  Bandit scan échoué - Rapport non généré"
+          bandit -r arkalia_cia_python_backend/ -f json -o bandit-report.json
+          bandit -r arkalia_cia_python_backend/ -f txt -o bandit-report.txt
 
       - name: "Pip Audit"
         run: |
+          set -euo pipefail
           echo "AUDIT DÉPENDANCES PIP"
           echo "========================"
-          pip-audit -r requirements.txt --format json --output pip-audit.json || echo "WARNING  Pip audit échoué - Rapport non généré"
-          pip-audit -r requirements.txt --format text --output pip-audit.txt || echo "WARNING  Pip audit échoué - Rapport non généré"
+          pip-audit -r requirements.txt --format json --output pip-audit.json
+          pip-audit -r requirements.txt --format text --output pip-audit.txt
 
       - name: "Safety Check"
         run: |
+          set -euo pipefail
           echo "VÉRIFICATION SAFETY"
           echo "======================="
-          safety check -r requirements.txt --json --output safety-report.json || echo "WARNING  Safety check échoué - Rapport non généré"
-          safety check -r requirements.txt --text --output safety-report.txt || echo "WARNING  Safety check échoué - Rapport non généré"
+          safety check -r requirements.txt --json --output safety-report.json
+          safety check -r requirements.txt --text --output safety-report.txt
 
       - name: "Upload Security Reports"
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: security-reports
           path: |
@@ -370,14 +376,13 @@ jobs:
   build-package:
     name: "Build & Package"
     needs: [validate, test-main]
-    if: needs.validate.outputs.should-continue == 'true' && (needs.test-main.result == 'success' || needs.test-main.result == 'failure')
+    if: needs.validate.outputs.should-continue == 'true' && needs.test-main.result == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    continue-on-error: true # Continuer même en cas d'échec
 
     steps:
       - name: "Checkout Code"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: "Setup Python"
         uses: actions/setup-python@v5
@@ -447,7 +452,7 @@ jobs:
 
       - name: "Upload Artifacts (si succès)"
         if: success()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: "package-build"
           path: |
@@ -468,10 +473,10 @@ jobs:
 
     steps:
       - name: "Checkout Code"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: "Download all artifacts"
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@v4
         with:
           path: artifacts
           merge-multiple: true
@@ -487,7 +492,7 @@ jobs:
           python3 -c 'import glob,sys; junit=glob.glob("artifacts/test-results/*.xml"); cov=glob.glob("artifacts/coverage/*.xml"); ok=bool(junit) and bool(cov); print(f"JUnit: {len(junit)} fichiers, Coverage: {len(cov)} fichiers"); open("REPORT.md","w",encoding="utf-8").write("# Rapport CI\n\n"+f"- JUnit: {len(junit)} fichiers\n"+f"- Coverage: {len(cov)} fichiers\n"); print("Rapport généré avec succès")' || echo "WARNING: Échec de la génération du rapport, mais continuation du pipeline"
 
       - name: "Publier rapport final"
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: CI-REPORT
           path: REPORT.md
