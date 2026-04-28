@@ -266,7 +266,7 @@ class _EmergencyContactDialogState extends State<EmergencyContactDialog> {
                     'relationship': sanitizedRelationship,
                     'display_name': sanitizedDisplayName,
                     'emoji': sanitizedEmoji,
-                    'color': selectedColor.value, // Utilisation de .value pour obtenir la valeur entière ARGB
+                    'color': selectedColor.toARGB32(),
                     'is_primary': isPrimary,
                     if (isEditing) 'id': widget.existingContact!['id'],
                   };

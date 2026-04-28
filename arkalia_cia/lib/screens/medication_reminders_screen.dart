@@ -115,7 +115,7 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
-                  value: frequency,
+                  initialValue: frequency,
                   decoration: const InputDecoration(
                     labelText: 'Fréquence',
                     border: OutlineInputBorder(),
