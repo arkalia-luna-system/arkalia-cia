@@ -151,7 +151,7 @@ jobs:
 
       - name: "Upload Coverage to Codecov"
         if: hashFiles('arkalia_cia/coverage/lcov.info') != ''
-        uses: codecov/codecov-action@v6
+        uses: codecov/codecov-action@v5
         continue-on-error: true
         with:
           files: arkalia_cia/coverage/lcov.info
@@ -163,7 +163,7 @@ jobs:
           CODECOV_TOKEN: ${{ vars.CODECOV_TOKEN || secrets.CODECOV_TOKEN || '' }}
 
       - name: "Upload Build Artifacts"
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: flutter-builds
           path: |
@@ -172,7 +172,7 @@ jobs:
           retention-days: 7
 
       - name: "Upload Coverage Artifact"
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: flutter-coverage
           path: arkalia_cia/coverage/lcov.info
@@ -263,7 +263,7 @@ jobs:
           flutter build web --release --base-href "/arkalia-cia/"
 
       - name: "Setup Pages"
-        uses: actions/configure-pages@v6
+        uses: actions/configure-pages@v5
 
       - name: "Upload artifact"
         uses: actions/upload-pages-artifact@v4
@@ -272,4 +272,4 @@ jobs:
 
       - name: "Deploy to GitHub Pages"
         id: deployment
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@v4
