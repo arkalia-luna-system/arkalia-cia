@@ -451,21 +451,23 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
           title: const Text('Choisir catégorie'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: categories.map((cat) {
-              return RadioListTile<String>(
-                title: Text(cat),
-                value: cat,
-                groupValue: tempSelected,
-                onChanged: (value) {
-                  setState(() {
-                    tempSelected = value;
-                  });
-                  Navigator.pop(context, value);
-                },
-              );
-            }).toList(),
+          content: RadioGroup<String>(
+            groupValue: tempSelected,
+            onChanged: (value) {
+              setState(() {
+                tempSelected = value;
+              });
+              Navigator.pop(context, value);
+            },
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: categories.map((cat) {
+                return RadioListTile<String>(
+                  title: Text(cat),
+                  value: cat,
+                );
+              }).toList(),
+            ),
           ),
         ),
       ),
@@ -502,21 +504,23 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
           title: const Text('Choisir type d\'examen'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: _examTypes.map((type) {
-              return RadioListTile<String>(
-                title: Text(type),
-                value: type,
-                groupValue: tempSelected,
-                onChanged: (value) {
-                  setState(() {
-                    tempSelected = value;
-                  });
-                  Navigator.pop(context, value);
-                },
-              );
-            }).toList(),
+          content: RadioGroup<String>(
+            groupValue: tempSelected,
+            onChanged: (value) {
+              setState(() {
+                tempSelected = value;
+              });
+              Navigator.pop(context, value);
+            },
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: _examTypes.map((type) {
+                return RadioListTile<String>(
+                  title: Text(type),
+                  value: type,
+                );
+              }).toList(),
+            ),
           ),
           actions: [
             TextButton(
@@ -621,25 +625,27 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
           title: const Text('Choisir médecin'),
           content: SizedBox(
             width: double.maxFinite,
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: _doctors.length,
-              itemBuilder: (context, index) {
-                final doctor = _doctors[index];
-                if (doctor.id == null) return const SizedBox.shrink();
-                return RadioListTile<int>(
-                  title: Text(doctor.fullName),
-                  subtitle: doctor.specialty != null ? Text(doctor.specialty!) : null,
-                  value: doctor.id!,
-                  groupValue: tempSelected,
-                  onChanged: (value) {
-                    setState(() {
-                      tempSelected = value;
-                    });
-                    Navigator.pop(context, value);
-                  },
-                );
+            child: RadioGroup<int>(
+              groupValue: tempSelected,
+              onChanged: (value) {
+                setState(() {
+                  tempSelected = value;
+                });
+                Navigator.pop(context, value);
               },
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: _doctors.length,
+                itemBuilder: (context, index) {
+                  final doctor = _doctors[index];
+                  if (doctor.id == null) return const SizedBox.shrink();
+                  return RadioListTile<int>(
+                    title: Text(doctor.fullName),
+                    subtitle: doctor.specialty != null ? Text(doctor.specialty!) : null,
+                    value: doctor.id!,
+                  );
+                },
+              ),
             ),
           ),
         ),
