@@ -15,17 +15,16 @@ class ContactsService {
           : await contacts_api.FlutterContacts.permissions.request(
               contacts_api.PermissionType.read,
             );
-      if (permissionStatus == contacts_api.PermissionStatus.granted) {
-        return await contacts_api.FlutterContacts.getAll(
-          properties: {
-            contacts_api.ContactProperty.name,
-            contacts_api.ContactProperty.phone,
-          },
-        );
-      } else {
-        // Retourner une liste vide au lieu de lancer une exception
+      if (permissionStatus != contacts_api.PermissionStatus.granted) {
         return [];
       }
+
+      return await contacts_api.FlutterContacts.getAll(
+        properties: {
+          contacts_api.ContactProperty.name,
+          contacts_api.ContactProperty.phone,
+        },
+      );
     } catch (e) {
       // En cas d'erreur, retourner une liste vide plutôt que de lancer une exception
       return [];
@@ -58,12 +57,7 @@ class ContactsService {
     try {
       final contact = contacts_api.Contact(
         name: contacts_api.Name(first: name),
-        phones: [
-          contacts_api.Phone(
-            number: phone,
-            label: const contacts_api.Label(contacts_api.PhoneLabel.other),
-          ),
-        ],
+        phones: [contacts_api.Phone(number: phone)],
       );
 
       await contacts_api.FlutterContacts.create(contact);
@@ -174,10 +168,11 @@ class ContactsService {
   /// Supprime un contact
   static Future<bool> deleteContact(contacts_api.Contact contact) async {
     try {
-      if (contact.id == null || contact.id!.isEmpty) {
+      final contactId = contact.id;
+      if (contactId == null || contactId.isEmpty) {
         return false;
       }
-      await contacts_api.FlutterContacts.delete(contact.id!);
+      await contacts_api.FlutterContacts.delete(contactId);
       return true;
     } catch (e) {
       throw Exception('Erreur lors de la suppression du contact: $e');
