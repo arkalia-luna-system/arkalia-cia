@@ -16,7 +16,6 @@ from fastapi.testclient import TestClient
 
 from arkalia_cia_python_backend import api
 
-
 client = TestClient(api.app)
 
 
