@@ -4,12 +4,14 @@ Récupère données douleurs et patterns depuis ARIA
 """
 
 import logging
+import sqlite3
 import time
 from typing import Any
 
 import requests
 
 from arkalia_cia_python_backend.config import get_settings
+from arkalia_cia_python_backend.database import CIADatabase
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +28,7 @@ class ARIAIntegration:
             aria_timeout = settings.aria_timeout
         self.aria_base_url = aria_base_url
         self.aria_timeout = aria_timeout
+        self._db = CIADatabase()
         self.session = requests.Session()
         # Note: timeout doit être défini via adapter, pas directement sur session
 
@@ -106,7 +109,7 @@ class ARIAIntegration:
                 operation_name="ARIA pain entries fallback",
             )
             if response is None:
-                return []
+                return self._get_local_pain_records(limit=limit)
 
         try:
             data = response.json()
@@ -119,7 +122,7 @@ class ARIAIntegration:
             return [dict(r) for r in records] if records else []
         except Exception as e:
             logger.warning(f"Erreur parsing ARIA pain records: {e}")
-            return []
+            return self._get_local_pain_records(limit=limit)
 
     def get_patterns(self, user_id: str) -> dict[str, Any]:
         """
@@ -138,14 +141,14 @@ class ARIAIntegration:
         )
 
         if response is None:
-            return {}
+            return self._build_local_patterns(user_id)
 
         try:
             data = response.json()
             return dict(data) if isinstance(data, dict) else {}
         except Exception as e:
             logger.warning(f"Erreur parsing ARIA patterns: {e}")
-            return {}
+            return self._build_local_patterns(user_id)
 
     def get_health_metrics(self, user_id: str, days: int = 30) -> dict[str, Any]:
         """
@@ -165,11 +168,68 @@ class ARIAIntegration:
         )
 
         if response is None:
-            return {}
+            return self._build_local_health_metrics(days)
 
         try:
             data = response.json()
             return dict(data) if isinstance(data, dict) else {}
         except Exception as e:
             logger.warning(f"Erreur parsing ARIA health metrics: {e}")
+            return self._build_local_health_metrics(days)
+
+    def _get_local_pain_records(self, limit: int = 10) -> list[dict[str, Any]]:
+        """Fallback local CIA: lit les entrées douleur stockées localement."""
+        try:
+            with sqlite3.connect(self._db.db_path) as conn:
+                conn.row_factory = sqlite3.Row
+                cursor = conn.cursor()
+                cursor.execute(
+                    """
+                    SELECT * FROM pain_entries
+                    ORDER BY timestamp DESC
+                    LIMIT ?
+                    """,
+                    (limit,),
+                )
+                return [dict(row) for row in cursor.fetchall()]
+        except Exception as e:
+            logger.debug(f"Fallback local pain records indisponible: {e}")
+            return []
+
+    def _build_local_patterns(self, user_id: str) -> dict[str, Any]:
+        """Construit des patterns simples depuis les données locales CIA."""
+        records = self._get_local_pain_records(limit=100)
+        if len(records) < 3:
             return {}
+        trigger_counts: dict[str, int] = {}
+        for row in records:
+            trigger = str(row.get("physical_trigger") or "").strip()
+            if trigger:
+                trigger_counts[trigger] = trigger_counts.get(trigger, 0) + 1
+        if not trigger_counts:
+            return {}
+        top_trigger = max(trigger_counts.items(), key=lambda item: item[1])
+        return {
+            "source": "cia_local",
+            "user_id": user_id,
+            "top_trigger": top_trigger[0],
+            "top_trigger_count": top_trigger[1],
+        }
+
+    def _build_local_health_metrics(self, days: int) -> dict[str, Any]:
+        """Produit un minimum de métriques santé à partir des entrées douleur."""
+        records = self._get_local_pain_records(limit=max(days, 30))
+        if not records:
+            return {}
+        intensities = [int(r.get("intensity", 0)) for r in records if r.get("intensity") is not None]
+        if not intensities:
+            return {}
+        avg = round(sum(intensities) / len(intensities), 2)
+        return {
+            "source": "cia_local",
+            "pain": {
+                "avg_30d": avg,
+                "entries_count": len(intensities),
+                "trend": "stable",
+            },
+        }

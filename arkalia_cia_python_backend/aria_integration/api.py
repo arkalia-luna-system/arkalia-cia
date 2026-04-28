@@ -3,6 +3,7 @@ ARIA Integration API - Pont vers ARIA depuis CIA
 Interface optimisée pour accéder aux fonctionnalités ARIA depuis CIA
 """
 
+import sqlite3
 from datetime import datetime
 from typing import Annotated, Any, cast
 
@@ -11,6 +12,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 from arkalia_cia_python_backend.config import get_settings
+from arkalia_cia_python_backend.database import CIADatabase
 from arkalia_cia_python_backend.utils.retry import retry_with_backoff
 
 router = APIRouter()
@@ -19,6 +21,156 @@ router = APIRouter()
 _settings = get_settings()
 ARIA_BASE_URL = _settings.aria_base_url
 ARIA_TIMEOUT = _settings.aria_timeout
+_db = CIADatabase()
+
+
+def _ensure_local_pain_table() -> None:
+    """Crée la table locale CIA pour les entrées douleur si nécessaire."""
+    with sqlite3.connect(_db.db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS pain_entries (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                intensity INTEGER NOT NULL,
+                physical_trigger TEXT,
+                mental_trigger TEXT,
+                activity TEXT,
+                location TEXT,
+                action_taken TEXT,
+                effectiveness INTEGER,
+                notes TEXT,
+                who_present TEXT,
+                interactions TEXT,
+                emotions TEXT,
+                thoughts TEXT,
+                physical_symptoms TEXT,
+                timestamp TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            )
+            """
+        )
+        conn.commit()
+
+
+def _normalize_entry_payload(payload: dict[str, Any]) -> dict[str, Any]:
+    now_iso = datetime.now().isoformat()
+    timestamp = str(payload.get("timestamp") or now_iso)
+    return {
+        "intensity": int(payload["intensity"]),
+        "physical_trigger": payload.get("physical_trigger"),
+        "mental_trigger": payload.get("mental_trigger"),
+        "activity": payload.get("activity"),
+        "location": payload.get("location"),
+        "action_taken": payload.get("action_taken"),
+        "effectiveness": payload.get("effectiveness"),
+        "notes": payload.get("notes"),
+        "who_present": payload.get("who_present"),
+        "interactions": payload.get("interactions"),
+        "emotions": payload.get("emotions"),
+        "thoughts": payload.get("thoughts"),
+        "physical_symptoms": payload.get("physical_symptoms"),
+        "timestamp": timestamp,
+        "created_at": now_iso,
+    }
+
+
+def _save_local_pain_entry(payload: dict[str, Any]) -> dict[str, Any]:
+    _ensure_local_pain_table()
+    normalized = _normalize_entry_payload(payload)
+    with sqlite3.connect(_db.db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            INSERT INTO pain_entries (
+                intensity, physical_trigger, mental_trigger, activity, location,
+                action_taken, effectiveness, notes, who_present, interactions,
+                emotions, thoughts, physical_symptoms, timestamp, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                normalized["intensity"],
+                normalized["physical_trigger"],
+                normalized["mental_trigger"],
+                normalized["activity"],
+                normalized["location"],
+                normalized["action_taken"],
+                normalized["effectiveness"],
+                normalized["notes"],
+                normalized["who_present"],
+                normalized["interactions"],
+                normalized["emotions"],
+                normalized["thoughts"],
+                normalized["physical_symptoms"],
+                normalized["timestamp"],
+                normalized["created_at"],
+            ),
+        )
+        entry_id = int(cursor.lastrowid)
+        conn.commit()
+    return {"id": entry_id, **normalized}
+
+
+def _fetch_local_pain_entries(limit: int | None = None) -> list[dict[str, Any]]:
+    _ensure_local_pain_table()
+    query = "SELECT * FROM pain_entries ORDER BY timestamp DESC"
+    params: tuple[Any, ...] = ()
+    if limit is not None:
+        query += " LIMIT ?"
+        params = (limit,)
+
+    with sqlite3.connect(_db.db_path) as conn:
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute(query, params)
+        return [dict(row) for row in cursor.fetchall()]
+
+
+def _build_local_summary(entries: list[dict[str, Any]], window: int) -> dict[str, Any]:
+    if not entries:
+        return {
+            "window_days": window,
+            "stats": {
+                "entries_count": 0,
+                "average_intensity": 0,
+                "max_intensity": 0,
+            },
+            "top_triggers": [],
+            "top_locations": [],
+        }
+
+    intensities = [int(e["intensity"]) for e in entries if e.get("intensity") is not None]
+    trigger_counts: dict[str, int] = {}
+    location_counts: dict[str, int] = {}
+
+    for entry in entries:
+        trigger = str(entry.get("physical_trigger") or "").strip()
+        location = str(entry.get("location") or "").strip()
+        if trigger:
+            trigger_counts[trigger] = trigger_counts.get(trigger, 0) + 1
+        if location:
+            location_counts[location] = location_counts.get(location, 0) + 1
+
+    return {
+        "window_days": window,
+        "stats": {
+            "entries_count": len(entries),
+            "average_intensity": round(sum(intensities) / len(intensities), 2)
+            if intensities
+            else 0,
+            "max_intensity": max(intensities) if intensities else 0,
+        },
+        "top_triggers": sorted(
+            [{"trigger": k, "count": v} for k, v in trigger_counts.items()],
+            key=lambda item: item["count"],
+            reverse=True,
+        )[:5],
+        "top_locations": sorted(
+            [{"location": k, "count": v} for k, v in location_counts.items()],
+            key=lambda item: item["count"],
+            reverse=True,
+        )[:5],
+    }
 
 # Schémas pour la compatibilité CIA
 
@@ -93,12 +245,22 @@ def _make_aria_request(method: str, endpoint: str, **kwargs) -> requests.Respons
 async def aria_integration_status() -> dict[str, Any]:
     """Statut de l'intégration ARIA"""
     aria_connected = _check_aria_connection()
+    local_pain_available = True
+    try:
+        _ensure_local_pain_table()
+    except Exception:
+        local_pain_available = False
 
     return {
         "module": "aria_integration",
-        "status": "healthy" if aria_connected else "aria_unavailable",
+        "status": (
+            "healthy"
+            if (aria_connected or local_pain_available)
+            else "aria_and_local_unavailable"
+        ),
         "timestamp": datetime.now().isoformat(),
         "aria_connected": aria_connected,
+        "local_pain_storage": local_pain_available,
         "aria_url": ARIA_BASE_URL,
         "features": [
             "quick_pain_entry",
@@ -115,79 +277,85 @@ async def aria_integration_status() -> dict[str, Any]:
 
 @router.post("/quick-pain-entry", response_model=PainEntryOut)
 async def quick_pain_entry(entry: QuickEntry) -> PainEntryOut:
-    """Saisie ultra-rapide de douleur via ARIA"""
-    if not _check_aria_connection():
-        raise HTTPException(
-            status_code=503,
-            detail="ARIA non disponible. Vérifiez que le service ARIA est démarré.",
-        )
-
-    response = _make_aria_request(
-        "POST", "/api/pain/quick-entry", json=entry.model_dump()
-    )
-
-    if response.status_code == 200:
-        return PainEntryOut(**response.json())
-    else:
+    """Saisie ultra-rapide de douleur, locale CIA avec fallback ARIA."""
+    payload = entry.model_dump()
+    try:
+        local_entry = _save_local_pain_entry(payload)
+        return PainEntryOut(**local_entry)
+    except Exception as exc:
+        if not _check_aria_connection():
+            raise HTTPException(
+                status_code=503,
+                detail="CIA douleur locale indisponible et ARIA non disponible.",
+            ) from exc
+        response = _make_aria_request("POST", "/api/pain/quick-entry", json=payload)
+        if response.status_code == 200:
+            return PainEntryOut(**response.json())
         raise HTTPException(
             status_code=response.status_code, detail=f"Erreur ARIA: {response.text}"
-        )
+        ) from exc
 
 
 @router.post("/pain-entry", response_model=PainEntryOut)
 async def create_pain_entry(entry: PainEntryIn) -> PainEntryOut:
-    """Création d'une entrée détaillée via ARIA"""
-    if not _check_aria_connection():
-        raise HTTPException(status_code=503, detail="ARIA non disponible")
-
-    response = _make_aria_request("POST", "/api/pain/entry", json=entry.model_dump())
-
-    if response.status_code == 200:
-        return PainEntryOut(**response.json())
-    else:
+    """Création d'une entrée détaillée, locale CIA avec fallback ARIA."""
+    payload = entry.model_dump()
+    try:
+        local_entry = _save_local_pain_entry(payload)
+        return PainEntryOut(**local_entry)
+    except Exception as exc:
+        if not _check_aria_connection():
+            raise HTTPException(status_code=503, detail="CIA/ARIA indisponible") from exc
+        response = _make_aria_request("POST", "/api/pain/entry", json=payload)
+        if response.status_code == 200:
+            return PainEntryOut(**response.json())
         raise HTTPException(
             status_code=response.status_code, detail=f"Erreur ARIA: {response.text}"
-        )
+        ) from exc
 
 
 @router.get("/pain-entries", response_model=list[PainEntryOut])
 async def get_pain_entries() -> list[PainEntryOut]:
-    """Récupère toutes les entrées de douleur depuis ARIA"""
-    if not _check_aria_connection():
-        raise HTTPException(status_code=503, detail="ARIA non disponible")
-
-    response = _make_aria_request("GET", "/api/pain/entries")
-
-    if response.status_code == 200:
-        payload = response.json()
-        entries = payload.get("entries", payload) if isinstance(payload, dict) else payload
-        if not isinstance(entries, list):
-            raise HTTPException(
-                status_code=502, detail="Réponse ARIA invalide pour /api/pain/entries"
+    """Récupère les entrées douleur depuis CIA local, fallback ARIA."""
+    try:
+        return [PainEntryOut(**entry) for entry in _fetch_local_pain_entries()]
+    except Exception as exc:
+        if not _check_aria_connection():
+            raise HTTPException(status_code=503, detail="CIA/ARIA indisponible") from exc
+        response = _make_aria_request("GET", "/api/pain/entries")
+        if response.status_code == 200:
+            payload = response.json()
+            entries = (
+                payload.get("entries", payload) if isinstance(payload, dict) else payload
             )
-        return [PainEntryOut(**entry) for entry in entries]
-    else:
+            if not isinstance(entries, list):
+                raise HTTPException(
+                    status_code=502, detail="Réponse ARIA invalide pour /api/pain/entries"
+                ) from exc
+            return [PainEntryOut(**entry) for entry in entries]
         raise HTTPException(
             status_code=response.status_code, detail=f"Erreur ARIA: {response.text}"
-        )
+        ) from exc
 
 
 @router.get("/pain-entries/recent", response_model=list[PainEntryOut])
 async def get_recent_pain_entries(limit: int = 20) -> list[PainEntryOut]:
-    """Récupère les entrées récentes de douleur depuis ARIA"""
-    if not _check_aria_connection():
-        raise HTTPException(status_code=503, detail="ARIA non disponible")
-
-    response = _make_aria_request(
-        "GET", "/api/pain/entries/recent", params={"limit": limit}
-    )
-
-    if response.status_code == 200:
-        return [PainEntryOut(**entry) for entry in response.json()]
-    else:
+    """Récupère les entrées récentes de douleur (local CIA prioritaire)."""
+    try:
+        return [
+            PainEntryOut(**entry) for entry in _fetch_local_pain_entries(limit=limit)
+        ]
+    except Exception as exc:
+        if not _check_aria_connection():
+            raise HTTPException(status_code=503, detail="CIA/ARIA indisponible") from exc
+        response = _make_aria_request(
+            "GET", "/api/pain/entries/recent", params={"limit": limit}
+        )
+        if response.status_code == 200:
+            return [PainEntryOut(**entry) for entry in response.json()]
         raise HTTPException(
             status_code=response.status_code, detail=f"Erreur ARIA: {response.text}"
-        )
+        ) from exc
 
 
 @router.get("/export/csv")
@@ -224,47 +392,88 @@ async def get_recent_patterns() -> dict[str, Any]:
 
 @router.get("/pain/summary")
 async def get_pain_summary(window: int = 30) -> dict[str, Any]:
-    """Récupère un résumé agrégé des douleurs depuis ARIA"""
-    if not _check_aria_connection():
-        raise HTTPException(status_code=503, detail="ARIA non disponible")
-
-    response = _make_aria_request("GET", "/api/pain/summary", params={"window": window})
-
-    if response.status_code == 200:
-        return cast(dict[str, Any], response.json())
-    raise HTTPException(
-        status_code=response.status_code, detail=f"Erreur ARIA: {response.text}"
-    )
+    """Résumé agrégé local CIA (fallback ARIA si besoin)."""
+    try:
+        summary = _build_local_summary(_fetch_local_pain_entries(), window=window)
+        return cast(dict[str, Any], summary)
+    except Exception as exc:
+        if not _check_aria_connection():
+            raise HTTPException(status_code=503, detail="CIA/ARIA indisponible") from exc
+        response = _make_aria_request(
+            "GET", "/api/pain/summary", params={"window": window}
+        )
+        if response.status_code == 200:
+            return cast(dict[str, Any], response.json())
+        raise HTTPException(
+            status_code=response.status_code, detail=f"Erreur ARIA: {response.text}"
+        ) from exc
 
 
 @router.get("/pain/suggestions")
 async def get_pain_suggestions(window: int = 30) -> dict[str, Any]:
-    """Récupère des suggestions ARIA basées sur les entrées douleur"""
-    if not _check_aria_connection():
-        raise HTTPException(status_code=503, detail="ARIA non disponible")
-
-    response = _make_aria_request(
-        "GET", "/api/pain/suggestions", params={"window": window}
-    )
-
-    if response.status_code == 200:
-        return cast(dict[str, Any], response.json())
-    raise HTTPException(
-        status_code=response.status_code, detail=f"Erreur ARIA: {response.text}"
-    )
+    """Suggestions locales CIA basées sur l'historique douleur (fallback ARIA)."""
+    try:
+        entries = _fetch_local_pain_entries()
+        summary = _build_local_summary(entries, window=window)
+        suggestions: list[str] = []
+        avg_intensity = float(summary["stats"]["average_intensity"])
+        if avg_intensity >= 7:
+            suggestions.append("Intensité élevée: envisager un avis médical rapidement.")
+        if summary["top_triggers"]:
+            top_trigger = summary["top_triggers"][0]["trigger"]
+            suggestions.append(
+                f"Déclencheur fréquent détecté: {top_trigger}. Prévoir une stratégie d'évitement."
+            )
+        if not suggestions:
+            suggestions.append("Aucune alerte majeure: poursuivre le suivi régulier.")
+        return {"window_days": window, "suggestions": suggestions, "source": "cia_local"}
+    except Exception as exc:
+        if not _check_aria_connection():
+            raise HTTPException(status_code=503, detail="CIA/ARIA indisponible") from exc
+        response = _make_aria_request(
+            "GET", "/api/pain/suggestions", params={"window": window}
+        )
+        if response.status_code == 200:
+            return cast(dict[str, Any], response.json())
+        raise HTTPException(
+            status_code=response.status_code, detail=f"Erreur ARIA: {response.text}"
+        ) from exc
 
 
 @router.get("/predictions/current")
 async def get_current_predictions() -> dict[str, Any]:
-    """Récupère les prédictions actuelles depuis ARIA"""
-    if not _check_aria_connection():
-        raise HTTPException(status_code=503, detail="ARIA non disponible")
-
-    response = _make_aria_request("GET", "/api/predictions/current")
-
-    if response.status_code == 200:
-        return cast(dict[str, Any], response.json())
-    else:
+    """Prédictions légères locales CIA (fallback ARIA)."""
+    try:
+        entries = _fetch_local_pain_entries(limit=10)
+        intensities = [int(e["intensity"]) for e in entries if e.get("intensity") is not None]
+        if len(intensities) < 3:
+            return {
+                "predictions": [],
+                "risk_level": "unknown",
+                "source": "cia_local",
+                "reason": "données insuffisantes",
+            }
+        recent_avg = sum(intensities[:3]) / 3
+        baseline_avg = sum(intensities) / len(intensities)
+        risk_level = "high" if recent_avg - baseline_avg >= 1.5 else "moderate" if recent_avg >= 6 else "low"
+        return {
+            "predictions": [
+                {
+                    "type": "pain_risk_next_24h",
+                    "risk_level": risk_level,
+                    "recent_avg_intensity": round(recent_avg, 2),
+                    "baseline_avg_intensity": round(baseline_avg, 2),
+                }
+            ],
+            "risk_level": risk_level,
+            "source": "cia_local",
+        }
+    except Exception as exc:
+        if not _check_aria_connection():
+            raise HTTPException(status_code=503, detail="CIA/ARIA indisponible") from exc
+        response = _make_aria_request("GET", "/api/predictions/current")
+        if response.status_code == 200:
+            return cast(dict[str, Any], response.json())
         raise HTTPException(
             status_code=response.status_code, detail=f"Erreur ARIA: {response.text}"
-        )
+        ) from exc

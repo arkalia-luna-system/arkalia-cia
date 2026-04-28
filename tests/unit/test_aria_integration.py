@@ -80,7 +80,7 @@ class TestARIAIntegration:
 
     @patch("arkalia_cia_python_backend.aria_integration.api._check_aria_connection")
     def test_quick_pain_entry_aria_unavailable(self, mock_check, client):
-        """Test de saisie rapide quand ARIA n'est pas disponible"""
+        """Test de saisie rapide quand ARIA n'est pas disponible (fallback CIA local)."""
         mock_check.return_value = False
 
         entry_data = {
@@ -89,7 +89,9 @@ class TestARIAIntegration:
             "action_taken": "meditation",
         }
         response = client.post("/quick-pain-entry", json=entry_data)
-        assert response.status_code == 503
+        assert response.status_code == 200
+        data = response.json()
+        assert data["intensity"] == 5
 
     @patch("arkalia_cia_python_backend.aria_integration.api._check_aria_connection")
     @patch("arkalia_cia_python_backend.aria_integration.api._make_aria_request")
@@ -122,7 +124,7 @@ class TestARIAIntegration:
     @patch("arkalia_cia_python_backend.aria_integration.api._check_aria_connection")
     @patch("arkalia_cia_python_backend.aria_integration.api._make_aria_request")
     def test_get_pain_entries(self, mock_request, mock_check, client):
-        """Test de récupération des entrées de douleur"""
+        """Test de récupération des entrées de douleur (source locale ou ARIA)."""
         mock_check.return_value = True
         mock_response = Mock()
         mock_response.status_code = 200
@@ -146,7 +148,7 @@ class TestARIAIntegration:
         assert response.status_code == 200
         data = response.json()
         assert isinstance(data, list)
-        assert len(data) == 1
+        assert len(data) >= 1
 
     @patch("arkalia_cia_python_backend.aria_integration.api._check_aria_connection")
     @patch("arkalia_cia_python_backend.aria_integration.api._make_aria_request")
