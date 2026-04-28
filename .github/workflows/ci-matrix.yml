@@ -50,6 +50,17 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: "Clean macOS sidecar files"
+        run: |
+          python3 - <<'PY'
+          import pathlib
+          for p in pathlib.Path('.').rglob('._*'):
+              try:
+                  p.unlink()
+              except OSError:
+                  pass
+          PY
+
       - name: "Validation Structure"
         id: check-validation
         run: |
@@ -113,6 +124,17 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Clean macOS sidecar files"
+        run: |
+          python3 - <<'PY'
+          import pathlib
+          for p in pathlib.Path('.').rglob('._*'):
+              try:
+                  p.unlink()
+              except OSError:
+                  pass
+          PY
 
       - name: "Setup Python ${{ matrix.python }}"
         uses: actions/setup-python@v5
@@ -287,6 +309,17 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: "Clean macOS sidecar files"
+        run: |
+          python3 - <<'PY'
+          import pathlib
+          for p in pathlib.Path('.').rglob('._*'):
+              try:
+                  p.unlink()
+              except OSError:
+                  pass
+          PY
+
       - name: "Setup Python ${{ matrix.python }}"
         uses: actions/setup-python@v5
         with:
@@ -344,6 +377,17 @@ jobs:
       - name: "Checkout Code"
         uses: actions/checkout@v4
 
+      - name: "Clean macOS sidecar files"
+        run: |
+          python3 - <<'PY'
+          import pathlib
+          for p in pathlib.Path('.').rglob('._*'):
+              try:
+                  p.unlink()
+              except OSError:
+                  pass
+          PY
+
       - name: "Setup Python"
         uses: actions/setup-python@v5
         with:
@@ -400,6 +444,17 @@ jobs:
     steps:
       - name: "Checkout Code"
         uses: actions/checkout@v4
+
+      - name: "Clean macOS sidecar files"
+        run: |
+          python3 - <<'PY'
+          import pathlib
+          for p in pathlib.Path('.').rglob('._*'):
+              try:
+                  p.unlink()
+              except OSError:
+                  pass
+          PY
 
       - name: "Setup Python"
         uses: actions/setup-python@v5
