@@ -30,7 +30,7 @@ phonenumbers==9.0.29  # Validation téléphone internationale
 # Utilitaires
 python-dotenv==1.2.2
 pydantic-settings==2.14.0  # Configuration avec Pydantic Settings
-click==8.1.8  # Downgraded for semgrep compatibility
+click==8.3.3  # Downgraded for semgrep compatibility
 rich==15.0.0  # Downgraded for semgrep compatibility
 
 # Tests
