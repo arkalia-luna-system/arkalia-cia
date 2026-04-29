@@ -44,6 +44,6 @@ reportlab==4.0.9  # Génération PDFs de test
 loguru==0.7.3
 
 # Machine Learning
-prophet==1.1.5
+prophet==1.3.0
 numpy==1.26.4  # Gardé à 1.26.4 pour compatibilité avec mobile-base-sdk
 pandas==2.2.2
