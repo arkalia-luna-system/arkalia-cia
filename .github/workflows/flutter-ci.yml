@@ -130,7 +130,7 @@ jobs:
 
       - name: "Upload Coverage to Codecov"
         if: hashFiles('arkalia_cia/coverage/lcov.info') != ''
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           files: arkalia_cia/coverage/lcov.info
           flags: flutter
