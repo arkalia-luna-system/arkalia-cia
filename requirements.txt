@@ -46,4 +46,4 @@ loguru==0.7.3
 # Machine Learning
 prophet==1.1.5
 numpy==1.26.4  # Gardé à 1.26.4 pour compatibilité avec mobile-base-sdk
-pandas==2.2.2
+pandas==2.3.3
