@@ -12,10 +12,7 @@ void main() {
     });
 
     test('init should not throw', () async {
-      await expectLater(
-        LocalStorageService.init(),
-        completes,
-      );
+      await expectLater(LocalStorageService.init(), completes);
     });
 
     group('Documents', () {
@@ -141,7 +138,10 @@ void main() {
       test('should clear all data', () async {
         await LocalStorageService.saveDocument({'id': '1', 'name': 'Test'});
         await LocalStorageService.saveReminder({'id': '1', 'title': 'Test'});
-        await LocalStorageService.saveEmergencyContact({'id': '1', 'name': 'Test'});
+        await LocalStorageService.saveEmergencyContact({
+          'id': '1',
+          'name': 'Test',
+        });
         await LocalStorageService.saveEmergencyInfo({'info': 'test'});
 
         await LocalStorageService.clearAllData();
@@ -161,8 +161,14 @@ void main() {
 
       test('should export all data', () async {
         await LocalStorageService.saveDocument({'id': '1', 'name': 'Doc'});
-        await LocalStorageService.saveReminder({'id': '1', 'title': 'Reminder'});
-        await LocalStorageService.saveEmergencyContact({'id': '1', 'name': 'Contact'});
+        await LocalStorageService.saveReminder({
+          'id': '1',
+          'title': 'Reminder',
+        });
+        await LocalStorageService.saveEmergencyContact({
+          'id': '1',
+          'name': 'Contact',
+        });
         await LocalStorageService.saveEmergencyInfo({'info': 'test'});
 
         final exported = await LocalStorageService.exportAllData();
@@ -176,9 +182,15 @@ void main() {
 
       test('should import all data', () async {
         final backup = {
-          'documents': [{'id': '1', 'name': 'Imported Doc'}],
-          'reminders': [{'id': '1', 'title': 'Imported Reminder'}],
-          'emergency_contacts': [{'id': '1', 'name': 'Imported Contact'}],
+          'documents': [
+            {'id': '1', 'name': 'Imported Doc'},
+          ],
+          'reminders': [
+            {'id': '1', 'title': 'Imported Reminder'},
+          ],
+          'emergency_contacts': [
+            {'id': '1', 'name': 'Imported Contact'},
+          ],
           'emergency_info': {'info': 'imported'},
         };
 
@@ -200,7 +212,9 @@ void main() {
 
       test('should handle partial import', () async {
         final backup = {
-          'documents': [{'id': '1', 'name': 'Imported Doc'}],
+          'documents': [
+            {'id': '1', 'name': 'Imported Doc'},
+          ],
           // Pas de reminders, contacts ou info
         };
 
@@ -213,4 +227,3 @@ void main() {
     });
   });
 }
-

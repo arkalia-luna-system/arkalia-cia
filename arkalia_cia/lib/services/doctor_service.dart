@@ -124,7 +124,9 @@ class DoctorService {
   Future<List<Doctor>> getAllDoctors() async {
     if (kIsWeb) {
       final doctors = await _getDoctorsFromStorage();
-      return doctors.map((map) => Doctor.fromMap(_convertWebMapToSqliteMap(map))).toList()
+      return doctors
+          .map((map) => Doctor.fromMap(_convertWebMapToSqliteMap(map)))
+          .toList()
         ..sort((a, b) {
           final lastNameCompare = a.lastName.compareTo(b.lastName);
           if (lastNameCompare != 0) return lastNameCompare;
@@ -172,10 +174,10 @@ class DoctorService {
       final doctors = await getAllDoctors();
       final queryLower = query.toLowerCase();
       return doctors.where((doctor) {
-        return doctor.lastName.toLowerCase().contains(queryLower) ||
-            doctor.firstName.toLowerCase().contains(queryLower) ||
-            (doctor.specialty?.toLowerCase().contains(queryLower) ?? false);
-      }).toList()
+          return doctor.lastName.toLowerCase().contains(queryLower) ||
+              doctor.firstName.toLowerCase().contains(queryLower) ||
+              (doctor.specialty?.toLowerCase().contains(queryLower) ?? false);
+        }).toList()
         ..sort((a, b) => a.lastName.compareTo(b.lastName));
     }
     final db = await database;
@@ -249,11 +251,7 @@ class DoctorService {
       throw UnsupportedError('Base de données non disponible');
     }
     // Supprimer aussi les consultations associées (CASCADE)
-    return await db.delete(
-      'doctors',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    return await db.delete('doctors', where: 'id = ?', whereArgs: [id]);
   }
 
   // Méthodes helper pour le stockage web
@@ -270,9 +268,10 @@ class DoctorService {
     final converted = Map<String, dynamic>.from(map);
     // S'assurer que l'ID est un int
     if (converted['id'] != null) {
-      converted['id'] = converted['id'] is int 
-          ? converted['id'] 
-          : int.tryParse(converted['id'].toString()) ?? converted['id'];
+      converted['id'] =
+          converted['id'] is int
+              ? converted['id']
+              : int.tryParse(converted['id'].toString()) ?? converted['id'];
     }
     return converted;
   }
@@ -322,21 +321,21 @@ class DoctorService {
   /// Compare nom + spécialité avec tolérance aux variations d'orthographe
   Future<List<Doctor>> findSimilarDoctors(Doctor doctor) async {
     final allDoctors = await getAllDoctors();
-    
+
     final similarDoctors = <Doctor>[];
-    
+
     for (final existingDoctor in allDoctors) {
       // Ignorer le même médecin
       if (existingDoctor.id == doctor.id) {
         continue;
       }
-      
+
       // Comparer les noms (tolérance aux variations)
       final nameSimilarity = _calculateNameSimilarity(
         doctor.fullName.toLowerCase(),
         existingDoctor.fullName.toLowerCase(),
       );
-      
+
       // Comparer les spécialités si présentes
       bool specialtyMatch = false;
       if (doctor.specialty != null && existingDoctor.specialty != null) {
@@ -346,32 +345,32 @@ class DoctorService {
         );
         specialtyMatch = specialtySimilarity > 0.7;
       }
-      
+
       // Si nom très similaire (>80%) ou nom similaire (>60%) + spécialité identique
       if (nameSimilarity > 0.8 || (nameSimilarity > 0.6 && specialtyMatch)) {
         similarDoctors.add(existingDoctor);
       }
     }
-    
+
     return similarDoctors;
   }
-  
+
   /// Calcule la similarité entre deux chaînes (algorithme simple)
   double _calculateNameSimilarity(String str1, String str2) {
     if (str1 == str2) return 1.0;
     if (str1.isEmpty || str2.isEmpty) return 0.0;
-    
+
     // Vérifier si l'un contient l'autre
     if (str1.contains(str2) || str2.contains(str1)) {
       return 0.9;
     }
-    
+
     // Comparer les mots
     final words1 = str1.split(' ').where((w) => w.isNotEmpty).toList();
     final words2 = str2.split(' ').where((w) => w.isNotEmpty).toList();
-    
+
     if (words1.isEmpty || words2.isEmpty) return 0.0;
-    
+
     int commonWords = 0;
     for (final word1 in words1) {
       for (final word2 in words2) {
@@ -381,8 +380,9 @@ class DoctorService {
         }
       }
     }
-    
-    final maxWords = words1.length > words2.length ? words1.length : words2.length;
+
+    final maxWords =
+        words1.length > words2.length ? words1.length : words2.length;
     return commonWords / maxWords;
   }
 
@@ -402,14 +402,14 @@ class DoctorService {
     if (db == null) {
       throw UnsupportedError('Base de données non disponible');
     }
-    
+
     // Nombre consultations
     final countResult = await db.rawQuery(
       'SELECT COUNT(*) as count FROM consultations WHERE doctor_id = ?',
       [doctorId],
     );
     final count = Sqflite.firstIntValue(countResult) ?? 0;
-    
+
     // Dernière consultation
     final lastResult = await db.query(
       'consultations',
@@ -418,12 +418,12 @@ class DoctorService {
       orderBy: 'date DESC',
       limit: 1,
     );
-    
+
     DateTime? lastVisit;
     if (lastResult.isNotEmpty) {
       lastVisit = DateTime.parse(lastResult.first['date'] as String);
     }
-    
+
     return {
       'consultation_count': count,
       'last_visit': lastVisit?.toIso8601String(),
@@ -434,23 +434,28 @@ class DoctorService {
   Future<String> exportDoctors() async {
     final doctors = await getAllDoctors();
     final consultations = <int, List<Consultation>>{};
-    
+
     for (final doctor in doctors) {
       if (doctor.id != null) {
         consultations[doctor.id!] = await getConsultationsByDoctor(doctor.id!);
       }
     }
-    
+
     final exportData = {
       'version': '1.0',
       'export_date': DateTime.now().toIso8601String(),
       'doctors': doctors.map((d) => d.toMap()).toList(),
-      'consultations': consultations.entries.map((e) => {
-        'doctor_id': e.key,
-        'consultations': e.value.map((c) => c.toMap()).toList(),
-      }).toList(),
+      'consultations':
+          consultations.entries
+              .map(
+                (e) => {
+                  'doctor_id': e.key,
+                  'consultations': e.value.map((c) => c.toMap()).toList(),
+                },
+              )
+              .toList(),
     };
-    
+
     return jsonEncode(exportData);
   }
 
@@ -460,7 +465,7 @@ class DoctorService {
       final data = jsonDecode(jsonData) as Map<String, dynamic>;
       final doctorsData = data['doctors'] as List<dynamic>? ?? [];
       final consultationsData = data['consultations'] as List<dynamic>? ?? [];
-      
+
       // Importer médecins
       for (final doctorMap in doctorsData) {
         final doctor = Doctor.fromMap(Map<String, dynamic>.from(doctorMap));
@@ -478,22 +483,24 @@ class DoctorService {
           notes: doctor.notes,
         );
         final newId = await insertDoctor(newDoctor);
-        
+
         // Importer consultations pour ce médecin
         final doctorConsultations = consultationsData.firstWhere(
           (c) => c['doctor_id'] == (doctorMap['id'] as int?),
           orElse: () => <String, dynamic>{},
         );
-        
+
         if (doctorConsultations.isNotEmpty && newId != 0) {
-          final consultations = (doctorConsultations['consultations'] as List<dynamic>? ?? [])
-              .map((c) {
-                final consultationMap = Map<String, dynamic>.from(c);
-                consultationMap['doctor_id'] = newId; // Utiliser le nouvel ID
-                return Consultation.fromMap(consultationMap);
-              })
-              .toList();
-          
+          final consultations =
+              (doctorConsultations['consultations'] as List<dynamic>? ?? [])
+                  .map((c) {
+                    final consultationMap = Map<String, dynamic>.from(c);
+                    consultationMap['doctor_id'] =
+                        newId; // Utiliser le nouvel ID
+                    return Consultation.fromMap(consultationMap);
+                  })
+                  .toList();
+
           for (final consultation in consultations) {
             await insertConsultation(consultation);
           }
@@ -504,4 +511,3 @@ class DoctorService {
     }
   }
 }
-

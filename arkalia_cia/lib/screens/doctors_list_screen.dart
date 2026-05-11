@@ -20,7 +20,7 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
   String _searchQuery = '';
   String? _selectedSpecialty;
   Color? _selectedColor; // Filtre par couleur (spécialité)
-  
+
   // Pagination pour performance
   static const int _itemsPerPage = 20;
   int _currentPage = 0;
@@ -48,9 +48,9 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
     } catch (e) {
       setState(() => _isLoading = false);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur chargement: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Erreur chargement: $e')));
       }
     }
   }
@@ -60,46 +60,54 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
       // Réinitialiser la pagination lors du filtrage
       _currentPage = 0;
       final queryLower = _searchQuery.toLowerCase().trim();
-      _filteredDoctors = _doctors.where((doctor) {
-        // Recherche améliorée : dans nom complet, prénom, nom, spécialité, téléphone
-        final matchesSearch = queryLower.isEmpty ||
-            doctor.fullName.toLowerCase().contains(queryLower) ||
-            doctor.firstName.toLowerCase().contains(queryLower) ||
-            doctor.lastName.toLowerCase().contains(queryLower) ||
-            (doctor.specialty?.toLowerCase().contains(queryLower) ?? false) ||
-            (doctor.phone?.toLowerCase().contains(queryLower) ?? false);
-        
-        final matchesSpecialty = _selectedSpecialty == null ||
-            doctor.specialty == _selectedSpecialty;
-        
-        // Filtre par couleur (spécialité)
-        final matchesColor = _selectedColor == null ||
-            Doctor.getColorForSpecialty(doctor.specialty) == _selectedColor;
-        
-        return matchesSearch && matchesSpecialty && matchesColor;
-      }).toList();
-      
+      _filteredDoctors =
+          _doctors.where((doctor) {
+            // Recherche améliorée : dans nom complet, prénom, nom, spécialité, téléphone
+            final matchesSearch =
+                queryLower.isEmpty ||
+                doctor.fullName.toLowerCase().contains(queryLower) ||
+                doctor.firstName.toLowerCase().contains(queryLower) ||
+                doctor.lastName.toLowerCase().contains(queryLower) ||
+                (doctor.specialty?.toLowerCase().contains(queryLower) ??
+                    false) ||
+                (doctor.phone?.toLowerCase().contains(queryLower) ?? false);
+
+            final matchesSpecialty =
+                _selectedSpecialty == null ||
+                doctor.specialty == _selectedSpecialty;
+
+            // Filtre par couleur (spécialité)
+            final matchesColor =
+                _selectedColor == null ||
+                Doctor.getColorForSpecialty(doctor.specialty) == _selectedColor;
+
+            return matchesSearch && matchesSpecialty && matchesColor;
+          }).toList();
+
       // Pagination : Limiter à la première page
       _hasMoreItems = _filteredDoctors.length > _itemsPerPage;
       _displayedDoctors = _filteredDoctors.take(_itemsPerPage).toList();
     });
   }
-  
+
   /// Charge la page suivante pour la pagination
   void _loadNextPage() {
     if (!_hasMoreItems || _isLoading) return;
-    
+
     final nextPage = _currentPage + 1;
     final startIndex = nextPage * _itemsPerPage;
-    final endIndex = (startIndex + _itemsPerPage).clamp(0, _filteredDoctors.length);
-    
+    final endIndex = (startIndex + _itemsPerPage).clamp(
+      0,
+      _filteredDoctors.length,
+    );
+
     if (startIndex >= _filteredDoctors.length) {
       setState(() {
         _hasMoreItems = false;
       });
       return;
     }
-    
+
     setState(() {
       _displayedDoctors.addAll(_filteredDoctors.sublist(startIndex, endIndex));
       _currentPage = nextPage;
@@ -155,12 +163,13 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                   value: _selectedSpecialty,
                   hint: const Text('Toutes les spécialités'),
                   isExpanded: true,
-                  items: _getSpecialties().map((specialty) {
-                    return DropdownMenuItem(
-                      value: specialty,
-                      child: Text(specialty),
-                    );
-                  }).toList(),
+                  items:
+                      _getSpecialties().map((specialty) {
+                        return DropdownMenuItem(
+                          value: specialty,
+                          child: Text(specialty),
+                        );
+                      }).toList(),
                   onChanged: (value) {
                     setState(() {
                       _selectedSpecialty = value;
@@ -171,15 +180,16 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
               ],
             ),
           ),
-          
+
           // Liste médecins
           Expanded(
             child: RefreshIndicator(
               onRefresh: _loadDoctors,
-              child: _isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : _filteredDoctors.isEmpty
-                    ? Center(
+              child:
+                  _isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : _filteredDoctors.isEmpty
+                      ? Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -209,7 +219,9 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                                 final result = await Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const AddEditDoctorScreen(),
+                                    builder:
+                                        (context) =>
+                                            const AddEditDoctorScreen(),
                                   ),
                                 );
                                 if (result == true) {
@@ -220,14 +232,18 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                               label: const Text('Ajouter un médecin'),
                               style: ElevatedButton.styleFrom(
                                 minimumSize: const Size(200, 48),
-                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 12,
+                                ),
                               ),
                             ),
                           ],
                         ),
                       )
-                    : ListView.builder(
-                        itemCount: _displayedDoctors.length + (_hasMoreItems ? 1 : 0),
+                      : ListView.builder(
+                        itemCount:
+                            _displayedDoctors.length + (_hasMoreItems ? 1 : 0),
                         itemBuilder: (context, index) {
                           // Bouton "Charger plus" à la fin
                           if (index == _displayedDoctors.length) {
@@ -239,14 +255,20 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                                   icon: const Icon(Icons.expand_more),
                                   label: const Text('Charger plus'),
                                   style: ElevatedButton.styleFrom(
-                                    minimumSize: const Size(200, 48), // Minimum 48px pour accessibilité seniors
-                                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                    minimumSize: const Size(
+                                      200,
+                                      48,
+                                    ), // Minimum 48px pour accessibilité seniors
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 24,
+                                      vertical: 12,
+                                    ),
                                   ),
                                 ),
                               ),
                             );
                           }
-                          
+
                           final doctor = _displayedDoctors[index];
                           return Card(
                             margin: const EdgeInsets.symmetric(
@@ -254,12 +276,16 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                               vertical: 8,
                             ),
                             child: ListTile(
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
                               leading: CircleAvatar(
-                                backgroundColor: Theme.of(context).colorScheme.primary,
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.primary,
                                 radius: 24,
                                 child: Text(
-                                  doctor.firstName.isNotEmpty 
+                                  doctor.firstName.isNotEmpty
                                       ? doctor.firstName[0].toUpperCase()
                                       : '?',
                                   style: const TextStyle(
@@ -286,9 +312,14 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                                     width: 18,
                                     height: 18,
                                     decoration: BoxDecoration(
-                                      color: Doctor.getColorForSpecialty(doctor.specialty),
+                                      color: Doctor.getColorForSpecialty(
+                                        doctor.specialty,
+                                      ),
                                       shape: BoxShape.circle,
-                                      border: Border.all(color: Colors.white, width: 2),
+                                      border: Border.all(
+                                        color: Colors.white,
+                                        width: 2,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -318,9 +349,10 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                                 await Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => DoctorDetailScreen(
-                                      doctorId: doctor.id!,
-                                    ),
+                                    builder:
+                                        (context) => DoctorDetailScreen(
+                                          doctorId: doctor.id!,
+                                        ),
                                   ),
                                 );
                                 _loadDoctors();
@@ -331,7 +363,7 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                       ),
             ),
           ),
-          
+
           // Légende des couleurs
           _buildColorLegend(),
         ],
@@ -340,12 +372,13 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
   }
 
   List<String> _getSpecialties() {
-    final specialties = _doctors
-        .map((d) => d.specialty)
-        .where((s) => s != null && s.isNotEmpty)
-        .cast<String>()
-        .toSet()
-        .toList();
+    final specialties =
+        _doctors
+            .map((d) => d.specialty)
+            .where((s) => s != null && s.isNotEmpty)
+            .cast<String>()
+            .toSet()
+            .toList();
     specialties.sort();
     return specialties;
   }
@@ -354,7 +387,7 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
   Widget _buildColorLegend() {
     final specialties = _getSpecialties();
     if (specialties.isEmpty) return const SizedBox.shrink();
-    
+
     // Obtenir couleurs uniques
     final colorSpecialtyMap = <Color, String>{};
     for (var specialty in specialties) {
@@ -363,7 +396,7 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
         colorSpecialtyMap[color] = specialty;
       }
     }
-    
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -381,54 +414,65 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
           Wrap(
             spacing: 12,
             runSpacing: 8,
-            children: colorSpecialtyMap.entries.map((entry) {
-              final isSelected = _selectedColor == entry.key;
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _selectedColor = isSelected ? null : entry.key;
-                  });
-                  _filterDoctors();
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: isSelected ? entry.key.withValues(alpha: 0.3) : Colors.transparent,
-                    border: Border.all(
-                      color: isSelected ? entry.key : Colors.grey,
-                      width: isSelected ? 2 : 1,
+            children:
+                colorSpecialtyMap.entries.map((entry) {
+                  final isSelected = _selectedColor == entry.key;
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedColor = isSelected ? null : entry.key;
+                      });
+                      _filterDoctors();
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color:
+                            isSelected
+                                ? entry.key.withValues(alpha: 0.3)
+                                : Colors.transparent,
+                        border: Border.all(
+                          color: isSelected ? entry.key : Colors.grey,
+                          width: isSelected ? 2 : 1,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 12,
+                            height: 12,
+                            decoration: BoxDecoration(
+                              color: entry.key,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            entry.value,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight:
+                                  isSelected
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                              color:
+                                  Colors
+                                      .black87, // Texte noir pour visibilité sur fond gris clair
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 12,
-                        height: 12,
-                        decoration: BoxDecoration(
-                          color: entry.key,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        entry.value,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                          color: Colors.black87, // Texte noir pour visibilité sur fond gris clair
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }).toList(),
+                  );
+                }).toList(),
           ),
         ],
       ),
     );
   }
 }
-

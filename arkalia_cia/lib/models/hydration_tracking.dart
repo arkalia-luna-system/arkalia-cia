@@ -51,11 +51,8 @@ class HydrationGoal {
   final int dailyGoal; // en millilitres, default 2000ml = 8 verres de 250ml
   final DateTime updatedAt;
 
-  HydrationGoal({
-    this.id,
-    this.dailyGoal = 2000,
-    DateTime? updatedAt,
-  }) : updatedAt = updatedAt ?? DateTime.now();
+  HydrationGoal({this.id, this.dailyGoal = 2000, DateTime? updatedAt})
+    : updatedAt = updatedAt ?? DateTime.now();
 
   /// Retourne le nombre de verres équivalent (1 verre = 250ml)
   int get glasses => (dailyGoal / 250).round();
@@ -76,11 +73,7 @@ class HydrationGoal {
     );
   }
 
-  HydrationGoal copyWith({
-    int? id,
-    int? dailyGoal,
-    DateTime? updatedAt,
-  }) {
+  HydrationGoal copyWith({int? id, int? dailyGoal, DateTime? updatedAt}) {
     return HydrationGoal(
       id: id ?? this.id,
       dailyGoal: dailyGoal ?? this.dailyGoal,
@@ -88,4 +81,3 @@ class HydrationGoal {
     );
   }
 }
-

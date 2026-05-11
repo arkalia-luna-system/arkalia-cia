@@ -7,7 +7,8 @@ class ContactsService {
   /// Récupère tous les contacts
   static Future<List<contacts_api.Contact>> getContacts() async {
     try {
-      final hasPermission = await contacts_api.FlutterContacts.requestPermission();
+      final hasPermission =
+          await contacts_api.FlutterContacts.requestPermission();
       if (!hasPermission) {
         return [];
       }
@@ -48,10 +49,7 @@ class ContactsService {
       final contact = contacts_api.Contact(
         name: contacts_api.Name(first: name),
         phones: [
-          contacts_api.Phone(
-            phone,
-            label: contacts_api.PhoneLabel.other,
-          ),
+          contacts_api.Phone(phone, label: contacts_api.PhoneLabel.other),
         ],
       );
 
@@ -106,8 +104,8 @@ class ContactsService {
         final searchQuery = query.toLowerCase();
 
         return name.contains(searchQuery) ||
-               familyName.contains(searchQuery) ||
-               '$name $familyName'.contains(searchQuery);
+            familyName.contains(searchQuery) ||
+            '$name $familyName'.contains(searchQuery);
       }).toList();
     } catch (e) {
       throw Exception('Erreur lors de la recherche de contacts: $e');
@@ -123,16 +121,18 @@ class ContactsService {
         return contact.phones.any((phone) {
           final label = phone.label.toString().toLowerCase();
           return label.contains('médecin') ||
-                 label.contains('docteur') ||
-                 label.contains('hôpital') ||
-                 label.contains('pharmacie') ||
-                 label.contains('urgences') ||
-                 label.contains('cardio') ||
-                 label.contains('neuro');
+              label.contains('docteur') ||
+              label.contains('hôpital') ||
+              label.contains('pharmacie') ||
+              label.contains('urgences') ||
+              label.contains('cardio') ||
+              label.contains('neuro');
         });
       }).toList();
     } catch (e) {
-      throw Exception('Erreur lors de la récupération des contacts médicaux: $e');
+      throw Exception(
+        'Erreur lors de la récupération des contacts médicaux: $e',
+      );
     }
   }
 
@@ -186,7 +186,9 @@ class ContactsService {
         });
       }).toList();
     } catch (e) {
-      throw Exception('Erreur lors de la récupération des contacts favoris: $e');
+      throw Exception(
+        'Erreur lors de la récupération des contacts favoris: $e',
+      );
     }
   }
 }

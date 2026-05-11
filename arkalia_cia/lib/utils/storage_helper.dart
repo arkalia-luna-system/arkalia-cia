@@ -9,18 +9,24 @@ class StorageHelper {
   static bool get _useEncryption => !kIsWeb;
 
   /// Pattern générique pour sauvegarder une liste d'éléments (chiffrée)
-  static Future<void> saveList(String key, List<Map<String, dynamic>> items) async {
+  static Future<void> saveList(
+    String key,
+    List<Map<String, dynamic>> items,
+  ) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      
+
       if (_useEncryption) {
         // Chiffrer les données avant stockage
         final jsonString = json.encode(items);
         final encrypted = await EncryptionHelper.encryptString(jsonString);
         final hash = EncryptionHelper.generateHash(jsonString);
-        
+
         await prefs.setString(key, encrypted);
-        await prefs.setString('${key}_hash', hash); // Hash pour vérification intégrité
+        await prefs.setString(
+          '${key}_hash',
+          hash,
+        ); // Hash pour vérification intégrité
       } else {
         await prefs.setString(key, json.encode(items));
       }
@@ -34,7 +40,7 @@ class StorageHelper {
     try {
       final prefs = await SharedPreferences.getInstance();
       final encryptedData = prefs.getString(key);
-      
+
       if (encryptedData == null || encryptedData.isEmpty) {
         return [];
       }
@@ -42,8 +48,10 @@ class StorageHelper {
       if (_useEncryption) {
         try {
           // Déchiffrer les données
-          final jsonString = await EncryptionHelper.decryptString(encryptedData);
-          
+          final jsonString = await EncryptionHelper.decryptString(
+            encryptedData,
+          );
+
           // Vérifier l'intégrité
           final storedHash = prefs.getString('${key}_hash');
           if (storedHash != null) {
@@ -55,7 +63,7 @@ class StorageHelper {
               return [];
             }
           }
-          
+
           final List<dynamic> items = json.decode(jsonString);
           return items.cast<Map<String, dynamic>>();
         } catch (decryptError) {
@@ -107,7 +115,10 @@ class StorageHelper {
   }
 
   /// Pattern générique pour mettre à jour un élément dans une liste
-  static Future<void> updateInList(String key, Map<String, dynamic> updatedItem) async {
+  static Future<void> updateInList(
+    String key,
+    Map<String, dynamic> updatedItem,
+  ) async {
     try {
       final items = await getList(key);
       final id = updatedItem['id'];
@@ -140,15 +151,18 @@ class StorageHelper {
   }
 
   /// Pattern générique pour sauvegarder un objet simple (chiffré)
-  static Future<void> saveObject(String key, Map<String, dynamic> object) async {
+  static Future<void> saveObject(
+    String key,
+    Map<String, dynamic> object,
+  ) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      
+
       if (_useEncryption) {
         final encrypted = await EncryptionHelper.encryptMap(object);
         final jsonString = json.encode(object);
         final hash = EncryptionHelper.generateHash(jsonString);
-        
+
         await prefs.setString(key, encrypted);
         await prefs.setString('${key}_hash', hash);
       } else {
@@ -172,7 +186,7 @@ class StorageHelper {
       if (_useEncryption) {
         try {
           final decrypted = await EncryptionHelper.decryptMap(encryptedData);
-          
+
           // Vérifier l'intégrité
           final storedHash = prefs.getString('${key}_hash');
           if (storedHash != null) {
@@ -185,7 +199,7 @@ class StorageHelper {
               return null;
             }
           }
-          
+
           return decrypted;
         } catch (decryptError) {
           // Si le déchiffrement échoue, les données peuvent être corrompues

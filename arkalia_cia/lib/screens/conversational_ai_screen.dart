@@ -16,7 +16,8 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
   final List<ChatMessage> _messages = [];
   bool _isLoading = false;
   bool _showHistory = false;
-  static const int _maxMessagesInMemory = 50; // Limite pour éviter consommation mémoire excessive
+  static const int _maxMessagesInMemory =
+      50; // Limite pour éviter consommation mémoire excessive
 
   @override
   void initState() {
@@ -32,18 +33,26 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
         // Ajouter messages historiques (sans doublons)
         for (var conv in history.reversed) {
           if (!_messages.any((m) => m.text == conv['question'])) {
-            _messages.insert(1, ChatMessage(
-              // Sanitizer les données historiques pour prévenir XSS
-              text: InputSanitizer.sanitize(conv['question']?.toString() ?? ''),
-              isUser: true,
-              timestamp: DateTime.parse(conv['created_at']),
-            ));
-            _messages.insert(2, ChatMessage(
-              // Sanitizer les données historiques pour prévenir XSS
-              text: InputSanitizer.sanitize(conv['answer']?.toString() ?? ''),
-              isUser: false,
-              timestamp: DateTime.parse(conv['created_at']),
-            ));
+            _messages.insert(
+              1,
+              ChatMessage(
+                // Sanitizer les données historiques pour prévenir XSS
+                text: InputSanitizer.sanitize(
+                  conv['question']?.toString() ?? '',
+                ),
+                isUser: true,
+                timestamp: DateTime.parse(conv['created_at']),
+              ),
+            );
+            _messages.insert(
+              2,
+              ChatMessage(
+                // Sanitizer les données historiques pour prévenir XSS
+                text: InputSanitizer.sanitize(conv['answer']?.toString() ?? ''),
+                isUser: false,
+                timestamp: DateTime.parse(conv['created_at']),
+              ),
+            );
           }
         }
       });
@@ -51,11 +60,14 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
   }
 
   void _addWelcomeMessage() {
-    _messages.add(ChatMessage(
-      text: 'Bonjour ! Je suis votre assistant santé intelligent. Posez-moi une question sur vos médecins, examens, douleurs ou médicaments.',
-      isUser: false,
-      timestamp: DateTime.now(),
-    ));
+    _messages.add(
+      ChatMessage(
+        text:
+            'Bonjour ! Je suis votre assistant santé intelligent. Posez-moi une question sur vos médecins, examens, douleurs ou médicaments.',
+        isUser: false,
+        timestamp: DateTime.now(),
+      ),
+    );
   }
 
   Future<void> _sendMessage() async {
@@ -67,11 +79,13 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
 
     // Ajouter message utilisateur
     setState(() {
-      _messages.add(ChatMessage(
-        text: sanitizedQuestion,
-        isUser: true,
-        timestamp: DateTime.now(),
-      ));
+      _messages.add(
+        ChatMessage(
+          text: sanitizedQuestion,
+          isUser: true,
+          timestamp: DateTime.now(),
+        ),
+      );
       // Limiter le nombre de messages en mémoire pour éviter consommation excessive
       if (_messages.length > _maxMessagesInMemory) {
         // Supprimer les messages les plus anciens (garder le message de bienvenue)
@@ -84,14 +98,16 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
     // Obtenir réponse IA (utiliser la question sanitizée)
     try {
       final response = await _aiService.askQuestion(sanitizedQuestion);
-      
+
       setState(() {
-        _messages.add(ChatMessage(
-          text: response.answer,
-          isUser: false,
-          timestamp: DateTime.now(),
-          suggestions: response.suggestions,
-        ));
+        _messages.add(
+          ChatMessage(
+            text: response.answer,
+            isUser: false,
+            timestamp: DateTime.now(),
+            suggestions: response.suggestions,
+          ),
+        );
         // Limiter le nombre de messages en mémoire
         if (_messages.length > _maxMessagesInMemory) {
           _messages.removeRange(1, _messages.length - _maxMessagesInMemory + 1);
@@ -101,16 +117,18 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
     } catch (e) {
       setState(() {
         String userMessage;
-        
+
         // Utiliser ErrorHelper pour des messages utilisateur cohérents
         final errorMessage = e.toString();
         if (errorMessage.contains('Backend non configuré')) {
-          userMessage = '⚠️ Backend non configuré.\n\nVeuillez configurer l\'URL du backend dans les paramètres (⚙️ > Backend API).';
-        } else if (errorMessage.contains('Failed to fetch') || 
-                   errorMessage.contains('Failed host lookup') || 
-                   errorMessage.contains('Connection refused') ||
-                   errorMessage.contains('NetworkError')) {
-          userMessage = '⚠️ Impossible de se connecter au serveur.\n\n'
+          userMessage =
+              '⚠️ Backend non configuré.\n\nVeuillez configurer l\'URL du backend dans les paramètres (⚙️ > Backend API).';
+        } else if (errorMessage.contains('Failed to fetch') ||
+            errorMessage.contains('Failed host lookup') ||
+            errorMessage.contains('Connection refused') ||
+            errorMessage.contains('NetworkError')) {
+          userMessage =
+              '⚠️ Impossible de se connecter au serveur.\n\n'
               'Vérifiez que :\n'
               '• Votre connexion internet fonctionne\n'
               '• Le serveur est démarré\n'
@@ -119,17 +137,19 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
           // Utiliser ErrorHelper pour un message utilisateur clair
           userMessage = '⚠️ ${ErrorHelper.getUserFriendlyMessage(e)}';
         }
-        
-        _messages.add(ChatMessage(
-          text: userMessage,
-          isUser: false,
-          timestamp: DateTime.now(),
-          suggestions: [
-            'Vérifier la configuration du backend',
-            'Vérifier que le backend est démarré',
-            'Tester la connexion dans les paramètres',
-          ],
-        ));
+
+        _messages.add(
+          ChatMessage(
+            text: userMessage,
+            isUser: false,
+            timestamp: DateTime.now(),
+            suggestions: [
+              'Vérifier la configuration du backend',
+              'Vérifier que le backend est démarré',
+              'Tester la connexion dans les paramètres',
+            ],
+          ),
+        );
         // Limiter le nombre de messages en mémoire
         if (_messages.length > _maxMessagesInMemory) {
           _messages.removeRange(1, _messages.length - _maxMessagesInMemory + 1);
@@ -152,36 +172,32 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
                 _showHistory = !_showHistory;
               });
             },
-            tooltip: _showHistory ? 'Masquer historique' : 'Afficher historique',
-            constraints: const BoxConstraints(
-              minWidth: 48,
-              minHeight: 48,
-            ),
+            tooltip:
+                _showHistory ? 'Masquer historique' : 'Afficher historique',
+            constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
           ),
           IconButton(
             icon: const Icon(Icons.info_outline, size: 24),
             onPressed: () {
               showDialog(
                 context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text('À propos'),
-                  content: const Text(
-                    'Cet assistant analyse vos données de santé pour répondre à vos questions. '
-                    'Vos données restent privées et sécurisées.',
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('OK'),
+                builder:
+                    (context) => AlertDialog(
+                      title: const Text('À propos'),
+                      content: const Text(
+                        'Cet assistant analyse vos données de santé pour répondre à vos questions. '
+                        'Vos données restent privées et sécurisées.',
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('OK'),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
               );
             },
-            constraints: const BoxConstraints(
-              minWidth: 48,
-              minHeight: 48,
-            ),
+            constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
           ),
         ],
       ),
@@ -201,14 +217,14 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
               ),
             ),
           ),
-          
+
           // Indicateur chargement
           if (_isLoading)
             const Padding(
               padding: EdgeInsets.all(8.0),
               child: LinearProgressIndicator(),
             ),
-          
+
           // Barre saisie
           Container(
             padding: const EdgeInsets.all(8),
@@ -278,43 +294,49 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
           ],
           Flexible(
             child: Column(
-              crossAxisAlignment: message.isUser
-                  ? CrossAxisAlignment.end
-                  : CrossAxisAlignment.start,
+              crossAxisAlignment:
+                  message.isUser
+                      ? CrossAxisAlignment.end
+                      : CrossAxisAlignment.start,
               children: [
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: message.isUser
-                        ? Theme.of(context).colorScheme.primary
-                        : Theme.of(context).colorScheme.surfaceContainerHighest,
+                    color:
+                        message.isUser
+                            ? Theme.of(context).colorScheme.primary
+                            : Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Text(
                     message.text,
                     style: TextStyle(
-                      color: message.isUser
-                          ? Theme.of(context).colorScheme.onPrimary
-                          : Theme.of(context).colorScheme.onSurface,
+                      color:
+                          message.isUser
+                              ? Theme.of(context).colorScheme.onPrimary
+                              : Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                 ),
-                
+
                 // Suggestions
                 if (message.suggestions.isNotEmpty) ...[
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children: message.suggestions.map((suggestion) {
-                      return ActionChip(
-                        label: Text(suggestion),
-                        onPressed: () {
-                          _questionController.text = suggestion;
-                          _sendMessage();
-                        },
-                      );
-                    }).toList(),
+                    children:
+                        message.suggestions.map((suggestion) {
+                          return ActionChip(
+                            label: Text(suggestion),
+                            onPressed: () {
+                              _questionController.text = suggestion;
+                              _sendMessage();
+                            },
+                          );
+                        }).toList(),
                   ),
                 ],
               ],
@@ -349,4 +371,3 @@ class ChatMessage {
     this.suggestions = const [],
   });
 }
-

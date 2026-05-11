@@ -124,17 +124,20 @@ class _SyncScreenState extends State<SyncScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            ..._syncOptions.entries.map((entry) => CheckboxListTile(
-                  title: Text(entry.key),
-                  value: entry.value,
-                  onChanged: _isSyncing
-                      ? null
-                      : (value) {
+            ..._syncOptions.entries.map(
+              (entry) => CheckboxListTile(
+                title: Text(entry.key),
+                value: entry.value,
+                onChanged:
+                    _isSyncing
+                        ? null
+                        : (value) {
                           setState(() {
                             _syncOptions[entry.key] = value ?? false;
                           });
                         },
-                )),
+              ),
+            ),
           ],
         ),
       ),
@@ -174,10 +177,7 @@ class _SyncScreenState extends State<SyncScreen> {
               const SizedBox(height: 8),
               Text(
                 '${(_syncProgress * 100).toInt()}%',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
               ),
             ],
           ],
@@ -193,16 +193,17 @@ class _SyncScreenState extends State<SyncScreen> {
           width: double.infinity,
           child: ElevatedButton.icon(
             onPressed: _isSyncing ? null : _startSync,
-            icon: _isSyncing
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  )
-                : const Icon(Icons.sync),
+            icon:
+                _isSyncing
+                    ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                    : const Icon(Icons.sync),
             label: Text(_isSyncing ? 'Synchronisation...' : 'Synchroniser'),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.orange[600],
@@ -237,7 +238,7 @@ class _SyncScreenState extends State<SyncScreen> {
 
   Future<void> _startSync() async {
     if (!mounted) return;
-    
+
     setState(() {
       _isSyncing = true;
       _syncProgress = 0.0;
@@ -250,7 +251,7 @@ class _SyncScreenState extends State<SyncScreen> {
       final ariaConnected = await ARIAService.checkConnection();
 
       if (!mounted) return;
-      
+
       if (!backendEnabled && !ariaConnected) {
         _showError('Aucune connexion disponible. Activez le backend ou ARIA.');
         setState(() {
@@ -300,7 +301,7 @@ class _SyncScreenState extends State<SyncScreen> {
       }
 
       if (!mounted) return;
-      
+
       setState(() {
         _syncProgress = 1.0;
         _syncStatus = 'Synchronisation terminée avec succès !';
@@ -309,7 +310,7 @@ class _SyncScreenState extends State<SyncScreen> {
       await Future.delayed(const Duration(seconds: 1));
 
       if (!mounted) return;
-      
+
       setState(() {
         _isSyncing = false;
         _syncProgress = 0.0;
@@ -319,7 +320,7 @@ class _SyncScreenState extends State<SyncScreen> {
       _showSuccess('Synchronisation réussie');
     } catch (e) {
       if (!mounted) return;
-      
+
       setState(() {
         _isSyncing = false;
         _syncStatus = 'Erreur: $e';
@@ -335,7 +336,7 @@ class _SyncScreenState extends State<SyncScreen> {
 
       // Synchroniser vers le backend
       // Comparer les timestamps et synchroniser les différences
-      
+
       // Documents à envoyer au backend (nouveaux ou modifiés localement)
       final toSync = localDocs.where((doc) {
         final docId = doc['id'];
@@ -343,14 +344,20 @@ class _SyncScreenState extends State<SyncScreen> {
           (bd) => bd['id'] == docId,
           orElse: () => <String, dynamic>{},
         );
-        
+
         // Si nouveau document, synchroniser
         if (backendDoc.isEmpty) return true;
-        
+
         // Comparer les dates de mise à jour
         try {
-          final localUpdated = doc['updated_at'] as String? ?? doc['created_at'] as String? ?? '';
-          final backendUpdated = backendDoc['updated_at'] as String? ?? backendDoc['created_at'] as String? ?? '';
+          final localUpdated =
+              doc['updated_at'] as String? ??
+              doc['created_at'] as String? ??
+              '';
+          final backendUpdated =
+              backendDoc['updated_at'] as String? ??
+              backendDoc['created_at'] as String? ??
+              '';
           if (localUpdated.isNotEmpty && backendUpdated.isNotEmpty) {
             final localDate = DateTime.parse(localUpdated);
             final backendDate = DateTime.parse(backendUpdated);
@@ -362,12 +369,13 @@ class _SyncScreenState extends State<SyncScreen> {
         }
         return false;
       });
-      
+
       // Synchroniser chaque document
       for (final doc in toSync) {
         try {
           // Upload si c'est un nouveau document avec fichier
-          final filePath = doc['path'] as String? ?? doc['file_path'] as String?;
+          final filePath =
+              doc['path'] as String? ?? doc['file_path'] as String?;
           if (filePath != null) {
             final file = File(filePath);
             if (await file.exists()) {
@@ -385,9 +393,9 @@ class _SyncScreenState extends State<SyncScreen> {
     if (await BackendConfigService.isBackendEnabled()) {
       final localReminders = await LocalStorageService.getReminders();
       final backendReminders = await ApiService.getReminders();
-      
+
       // Synchronisation bidirectionnelle
-      
+
       // Rappels à envoyer au backend (nouveaux ou modifiés localement)
       final toSync = localReminders.where((reminder) {
         final reminderId = reminder['id'];
@@ -395,14 +403,20 @@ class _SyncScreenState extends State<SyncScreen> {
           (br) => br['id'] == reminderId,
           orElse: () => <String, dynamic>{},
         );
-        
+
         // Si nouveau rappel, synchroniser
         if (backendReminder.isEmpty) return true;
-        
+
         // Comparer les dates de mise à jour
         try {
-          final localUpdated = reminder['updated_at'] as String? ?? reminder['created_at'] as String? ?? '';
-          final backendUpdated = backendReminder['updated_at'] as String? ?? backendReminder['created_at'] as String? ?? '';
+          final localUpdated =
+              reminder['updated_at'] as String? ??
+              reminder['created_at'] as String? ??
+              '';
+          final backendUpdated =
+              backendReminder['updated_at'] as String? ??
+              backendReminder['created_at'] as String? ??
+              '';
           if (localUpdated.isNotEmpty && backendUpdated.isNotEmpty) {
             final localDate = DateTime.parse(localUpdated);
             final backendDate = DateTime.parse(backendUpdated);
@@ -414,7 +428,7 @@ class _SyncScreenState extends State<SyncScreen> {
         }
         return false;
       });
-      
+
       // Synchroniser chaque rappel
       for (final reminder in toSync) {
         try {
@@ -435,9 +449,9 @@ class _SyncScreenState extends State<SyncScreen> {
     if (await BackendConfigService.isBackendEnabled()) {
       final localContacts = await LocalStorageService.getEmergencyContacts();
       final backendContacts = await ApiService.getEmergencyContacts();
-      
+
       // Synchronisation bidirectionnelle
-      
+
       // Contacts à envoyer au backend (nouveaux ou modifiés localement)
       final toSync = localContacts.where((contact) {
         final contactId = contact['id'];
@@ -445,14 +459,20 @@ class _SyncScreenState extends State<SyncScreen> {
           (bc) => bc['id'] == contactId,
           orElse: () => <String, dynamic>{},
         );
-        
+
         // Si nouveau contact, synchroniser
         if (backendContact.isEmpty) return true;
-        
+
         // Comparer les dates de mise à jour
         try {
-          final localUpdated = contact['updated_at'] as String? ?? contact['created_at'] as String? ?? '';
-          final backendUpdated = backendContact['updated_at'] as String? ?? backendContact['created_at'] as String? ?? '';
+          final localUpdated =
+              contact['updated_at'] as String? ??
+              contact['created_at'] as String? ??
+              '';
+          final backendUpdated =
+              backendContact['updated_at'] as String? ??
+              backendContact['created_at'] as String? ??
+              '';
           if (localUpdated.isNotEmpty && backendUpdated.isNotEmpty) {
             final localDate = DateTime.parse(localUpdated);
             final backendDate = DateTime.parse(backendUpdated);
@@ -464,7 +484,7 @@ class _SyncScreenState extends State<SyncScreen> {
         }
         return false;
       });
-      
+
       // Synchroniser chaque contact
       for (final contact in toSync) {
         try {
@@ -488,7 +508,7 @@ class _SyncScreenState extends State<SyncScreen> {
 
   Future<void> _exportData() async {
     if (!mounted) return;
-    
+
     // Demander quels modules exporter
     final exportOptions = await showDialog<Map<String, bool>>(
       context: context,
@@ -499,33 +519,39 @@ class _SyncScreenState extends State<SyncScreen> {
           'Contacts d\'urgence': true,
           'Informations médicales': true,
         };
-        
+
         return StatefulBuilder(
-          builder: (context, setState) => AlertDialog(
-            title: const Text('Sélectionner les données à exporter'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: selected.keys.map((key) => CheckboxListTile(
-                title: Text(key),
-                value: selected[key],
-                onChanged: (value) {
-                  setState(() {
-                    selected[key] = value ?? false;
-                  });
-                },
-              )).toList(),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, null),
-                child: const Text('Annuler'),
+          builder:
+              (context, setState) => AlertDialog(
+                title: const Text('Sélectionner les données à exporter'),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children:
+                      selected.keys
+                          .map(
+                            (key) => CheckboxListTile(
+                              title: Text(key),
+                              value: selected[key],
+                              onChanged: (value) {
+                                setState(() {
+                                  selected[key] = value ?? false;
+                                });
+                              },
+                            ),
+                          )
+                          .toList(),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, null),
+                    child: const Text('Annuler'),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, selected),
+                    child: const Text('Exporter'),
+                  ),
+                ],
               ),
-              TextButton(
-                onPressed: () => Navigator.pop(context, selected),
-                child: const Text('Exporter'),
-              ),
-            ],
-          ),
         );
       },
     );
@@ -556,17 +582,20 @@ class _SyncScreenState extends State<SyncScreen> {
         filteredData['emergency_info'] = allData['emergency_info'];
       }
 
-      final jsonString = const JsonEncoder.withIndent('  ').convert(filteredData);
-      
+      final jsonString = const JsonEncoder.withIndent(
+        '  ',
+      ).convert(filteredData);
+
       // Obtenir le répertoire de téléchargement
       final directory = await getApplicationDocumentsDirectory();
-      final timestamp = DateTime.now().toIso8601String().replaceAll(':', '-').split('.')[0];
+      final timestamp =
+          DateTime.now().toIso8601String().replaceAll(':', '-').split('.')[0];
       final fileName = 'arkalia_cia_backup_$timestamp.json';
       final file = File('${directory.path}/$fileName');
-      
+
       // Sauvegarder le fichier
       await file.writeAsString(jsonString);
-      
+
       // Partager le fichier
       await SharePlus.instance.share(
         ShareParams(
@@ -574,12 +603,12 @@ class _SyncScreenState extends State<SyncScreen> {
           text: 'Sauvegarde Arkalia CIA - $timestamp',
         ),
       );
-      
+
       if (!mounted) return;
       setState(() {
         _syncStatus = 'Export réussi';
       });
-      
+
       _showSuccess('Données exportées dans $fileName');
     } catch (e) {
       if (!mounted) return;
@@ -632,12 +661,12 @@ class _SyncScreenState extends State<SyncScreen> {
         final file = File(filePath);
         jsonString = await file.readAsString();
       }
-      
+
       final data = jsonDecode(jsonString) as Map<String, dynamic>;
 
       // Valider le format
-      if (!data.containsKey('documents') && 
-          !data.containsKey('reminders') && 
+      if (!data.containsKey('documents') &&
+          !data.containsKey('reminders') &&
           !data.containsKey('emergency_contacts')) {
         _showError('Format de fichier invalide');
         setState(() {
@@ -650,23 +679,24 @@ class _SyncScreenState extends State<SyncScreen> {
       if (!mounted) return;
       final confirmed = await showDialog<bool>(
         context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Confirmer l\'import'),
-          content: const Text(
-            'Cette action va remplacer vos données actuelles par celles du fichier. '
-            'Voulez-vous continuer ?',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('Annuler'),
+        builder:
+            (context) => AlertDialog(
+              title: const Text('Confirmer l\'import'),
+              content: const Text(
+                'Cette action va remplacer vos données actuelles par celles du fichier. '
+                'Voulez-vous continuer ?',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('Annuler'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  child: const Text('Importer'),
+                ),
+              ],
             ),
-            TextButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text('Importer'),
-            ),
-          ],
-        ),
       );
 
       if (confirmed != true) {
@@ -684,7 +714,7 @@ class _SyncScreenState extends State<SyncScreen> {
       });
 
       _showSuccess('Données importées avec succès');
-      
+
       // Attendre un peu avant de réinitialiser le statut
       await Future.delayed(const Duration(seconds: 2));
       setState(() {
@@ -718,4 +748,3 @@ class _SyncScreenState extends State<SyncScreen> {
     );
   }
 }
-

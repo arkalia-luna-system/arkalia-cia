@@ -17,10 +17,7 @@ void main() {
     });
 
     test('Pathology sans catégorie (nullable)', () {
-      final pathology = Pathology(
-        name: 'Test Pathologie',
-        color: Colors.blue,
-      );
+      final pathology = Pathology(name: 'Test Pathologie', color: Colors.blue);
 
       expect(pathology.category, isNull);
       expect(pathology.subcategory, isNull);
@@ -91,4 +88,3 @@ void main() {
     });
   });
 }
-

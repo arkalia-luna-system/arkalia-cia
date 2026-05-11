@@ -16,7 +16,7 @@ void main() {
             'platform': 'iOS',
             'lastSeen': '2024-01-01T00:00:00.000Z',
             'isActive': true,
-          }
+          },
         ],
         'createdAt': '2024-01-01T00:00:00.000Z',
         'lastSync': '2024-01-02T00:00:00.000Z',
@@ -59,10 +59,7 @@ void main() {
     });
 
     test('copyWith crée une copie avec modifications', () {
-      final profile = UserProfile(
-        userId: 'test-id',
-        email: 'test@example.com',
-      );
+      final profile = UserProfile(userId: 'test-id', email: 'test@example.com');
 
       final updated = profile.copyWith(
         displayName: 'Updated Name',
@@ -101,10 +98,7 @@ void main() {
     });
 
     test('getCurrentDevice retourne null si device non trouvé', () {
-      final profile = UserProfile(
-        userId: 'test-id',
-        email: 'test@example.com',
-      );
+      final profile = UserProfile(userId: 'test-id', email: 'test@example.com');
 
       final current = profile.getCurrentDevice('non-existent');
       expect(current, isNull);
@@ -138,4 +132,3 @@ void main() {
     });
   });
 }
-

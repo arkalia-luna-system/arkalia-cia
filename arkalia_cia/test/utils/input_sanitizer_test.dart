@@ -6,7 +6,7 @@ void main() {
     test('sanitize should escape HTML characters', () {
       const input = '<script>alert("XSS")</script>';
       final result = InputSanitizer.sanitize(input);
-      
+
       // Vérifier que les balises HTML sont échappées (ne peuvent pas s'exécuter)
       expect(result, isNot(contains('<script>')));
       expect(result, isNot(contains('</script>')));
@@ -18,14 +18,14 @@ void main() {
     test('sanitize should remove JavaScript patterns', () {
       const input = 'javascript:alert("XSS")';
       final result = InputSanitizer.sanitize(input);
-      
+
       expect(result, isNot(contains('javascript:')));
     });
 
     test('sanitize should remove event handlers', () {
       const input = '<img src=x onerror=alert("XSS")>';
       final result = InputSanitizer.sanitize(input);
-      
+
       expect(result, isNot(contains('onerror')));
       expect(result, contains('&lt;'));
     });
@@ -33,7 +33,7 @@ void main() {
     test('sanitizeForStorage should remove script tags', () {
       const input = '<script>alert("XSS")</script>Hello';
       final result = InputSanitizer.sanitizeForStorage(input);
-      
+
       expect(result, isNot(contains('<script>')));
       expect(result, contains('Hello'));
     });
@@ -41,7 +41,7 @@ void main() {
     test('sanitizeForStorage should remove iframe tags', () {
       const input = '<iframe src="evil.com"></iframe>Content';
       final result = InputSanitizer.sanitizeForStorage(input);
-      
+
       expect(result, isNot(contains('<iframe>')));
       expect(result, contains('Content'));
     });
@@ -67,4 +67,3 @@ void main() {
     });
   });
 }
-

@@ -10,12 +10,14 @@ class FileStorageService {
   /// Récupère le répertoire documents de l'application
   static Future<io.Directory> getDocumentsDirectory() async {
     final appDir = await getApplicationDocumentsDirectory();
-    final documentsDir = io.Directory(path.join(appDir.path, 'arkalia_cia', 'documents'));
-    
+    final documentsDir = io.Directory(
+      path.join(appDir.path, 'arkalia_cia', 'documents'),
+    );
+
     if (!await documentsDir.exists()) {
       await documentsDir.create(recursive: true);
     }
-    
+
     return documentsDir;
   }
 
@@ -23,27 +25,32 @@ class FileStorageService {
   static Future<io.Directory> getTempDirectory() async {
     final tempDir = await getTemporaryDirectory();
     final arkaliaTempDir = io.Directory(path.join(tempDir.path, 'arkalia_cia'));
-    
+
     if (!await arkaliaTempDir.exists()) {
       await arkaliaTempDir.create(recursive: true);
     }
-    
+
     return arkaliaTempDir;
   }
 
   /// Copie un fichier vers le répertoire documents
   /// Note: sourceFile peut être dynamic sur web (stub) mais n'est jamais utilisé
-  static Future<io.File> copyToDocumentsDirectory(dynamic sourceFile, String fileName) async {
+  static Future<io.File> copyToDocumentsDirectory(
+    dynamic sourceFile,
+    String fileName,
+  ) async {
     // Sur web, cette fonction n'est jamais appelée (protégé par kIsWeb)
     if (kIsWeb) {
-      throw UnsupportedError('copyToDocumentsDirectory n\'est pas supporté sur le web');
+      throw UnsupportedError(
+        'copyToDocumentsDirectory n\'est pas supporté sur le web',
+      );
     }
     // Caster en File pour mobile
     // ignore: avoid_dynamic_calls
     final file = sourceFile as dynamic;
     final documentsDir = await getDocumentsDirectory();
     final destFile = io.File(path.join(documentsDir.path, fileName));
-    
+
     // ignore: avoid_dynamic_calls
     return await file.copy(destFile.path) as io.File;
   }
@@ -52,12 +59,14 @@ class FileStorageService {
   static Future<bool> deleteDocumentFile(String fileName) async {
     // Sur web, cette fonction n'est jamais appelée (protégé par kIsWeb)
     if (kIsWeb) {
-      throw UnsupportedError('deleteDocumentFile n\'est pas supporté sur le web');
+      throw UnsupportedError(
+        'deleteDocumentFile n\'est pas supporté sur le web',
+      );
     }
     try {
       final documentsDir = await getDocumentsDirectory();
       final file = io.File(path.join(documentsDir.path, fileName)) as dynamic;
-      
+
       // ignore: avoid_dynamic_calls
       if (await file.exists()) {
         // ignore: avoid_dynamic_calls
@@ -103,7 +112,7 @@ class FileStorageService {
         'Utilisez LocalStorageService pour stocker les données.',
       );
     }
-    
+
     final documentsDir = await getDocumentsDirectory();
     final destFile = io.File(path.join(documentsDir.path, fileName)) as dynamic;
     // ignore: avoid_dynamic_calls
@@ -111,4 +120,3 @@ class FileStorageService {
     return destFile as io.File;
   }
 }
-

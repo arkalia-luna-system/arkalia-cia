@@ -3,27 +3,28 @@ class ValidationHelper {
   /// Valide un numéro de téléphone (format belge ou international)
   static bool isValidPhone(String phone) {
     if (phone.isEmpty) return false;
-    
+
     // Nettoyer le numéro (enlever espaces, tirets, points, etc.)
     final cleaned = phone.replaceAll(RegExp(r'[\s\-\(\)\.]'), '');
-    
+
     // Format belge : 04XX XX XX XX ou +32 4XX XX XX XX
     // Après nettoyage, on doit avoir soit:
     // - 04XXXXXXXX (10 chiffres) -> 0 + 4 + 8 chiffres
-    // - 4XXXXXXXX (9 chiffres) -> 4 + 8 chiffres  
+    // - 4XXXXXXXX (9 chiffres) -> 4 + 8 chiffres
     // - +324XXXXXXXX (12 caractères) -> +32 + 4 + 8 chiffres
     final belgianPattern = RegExp(r'^(?:\+32|0)?4[0-9]{8}$');
-    
+
     // Format international : +XX... (8-15 chiffres après le +)
     final internationalPattern = RegExp(r'^\+\d{8,15}$');
-    
-    return belgianPattern.hasMatch(cleaned) || internationalPattern.hasMatch(cleaned);
+
+    return belgianPattern.hasMatch(cleaned) ||
+        internationalPattern.hasMatch(cleaned);
   }
 
   /// Valide une URL
   static bool isValidUrl(String url) {
     if (url.isEmpty) return false;
-    
+
     try {
       final uri = Uri.parse(url);
       return uri.hasScheme && (uri.scheme == 'http' || uri.scheme == 'https');
@@ -35,7 +36,7 @@ class ValidationHelper {
   /// Valide une date ISO 8601
   static bool isValidDate(String dateString) {
     if (dateString.isEmpty) return false;
-    
+
     try {
       DateTime.parse(dateString);
       return true;
@@ -47,8 +48,10 @@ class ValidationHelper {
   /// Valide un email (basique)
   static bool isValidEmail(String email) {
     if (email.isEmpty) return false;
-    
-    final emailPattern = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+
+    final emailPattern = RegExp(
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+    );
     return emailPattern.hasMatch(email);
   }
 
@@ -57,7 +60,7 @@ class ValidationHelper {
     if (name.trim().isEmpty) return false;
     if (name.length < 2) return false;
     if (name.length > 100) return false;
-    
+
     // Autoriser lettres, espaces, tirets, apostrophes, points (pour Dr., Mme., etc.)
     final namePattern = RegExp(r"^[a-zA-ZÀ-ÿ\s\-'\.]+$");
     return namePattern.hasMatch(name);
@@ -83,7 +86,7 @@ class ValidationHelper {
   /// Formate un numéro de téléphone belge pour affichage
   static String formatBelgianPhone(String phone) {
     final cleaned = phone.replaceAll(RegExp(r'[\s\-\(\)]'), '');
-    
+
     // Si commence par +32, remplacer par 0
     if (cleaned.startsWith('+32')) {
       final number = cleaned.substring(3);
@@ -91,13 +94,12 @@ class ValidationHelper {
         return '0$number';
       }
     }
-    
+
     // Format belge : 04XX XX XX XX
     if (cleaned.length == 10 && cleaned.startsWith('04')) {
       return '${cleaned.substring(0, 4)} ${cleaned.substring(4, 6)} ${cleaned.substring(6, 8)} ${cleaned.substring(8, 10)}';
     }
-    
+
     return phone; // Retourner tel quel si format non reconnu
   }
 }
-

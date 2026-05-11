@@ -66,7 +66,7 @@ class EmergencyContactCard extends StatelessWidget {
     // Nettoyer le numéro pour WhatsApp (enlever espaces, +, etc.)
     final cleanPhone = phone.replaceAll(RegExp(r'[^\d]'), '');
     final whatsappUrl = 'https://wa.me/$cleanPhone';
-    
+
     try {
       final uri = Uri.parse(whatsappUrl);
       if (await canLaunchUrl(uri)) {
@@ -108,10 +108,7 @@ class EmergencyContactCard extends StatelessWidget {
                     shape: BoxShape.circle,
                   ),
                   child: Center(
-                    child: Text(
-                      emoji,
-                      style: const TextStyle(fontSize: 24),
-                    ),
+                    child: Text(emoji, style: const TextStyle(fontSize: 24)),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -122,11 +119,7 @@ class EmergencyContactCard extends StatelessWidget {
                       Row(
                         children: [
                           if (isPrimary) ...[
-                            Icon(
-                              Icons.star,
-                              color: color,
-                              size: 16,
-                            ),
+                            Icon(Icons.star, color: color, size: 16),
                             const SizedBox(width: 4),
                           ],
                           Flexible(
@@ -165,24 +158,25 @@ class EmergencyContactCard extends StatelessWidget {
                         break;
                     }
                   },
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(
-                      value: 'edit',
-                      child: ListTile(
-                        leading: Icon(Icons.edit),
-                        title: Text('Modifier'),
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                    ),
-                    const PopupMenuItem(
-                      value: 'delete',
-                      child: ListTile(
-                        leading: Icon(Icons.delete, color: Colors.red),
-                        title: Text('Supprimer'),
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                    ),
-                  ],
+                  itemBuilder:
+                      (context) => [
+                        const PopupMenuItem(
+                          value: 'edit',
+                          child: ListTile(
+                            leading: Icon(Icons.edit),
+                            title: Text('Modifier'),
+                            contentPadding: EdgeInsets.zero,
+                          ),
+                        ),
+                        const PopupMenuItem(
+                          value: 'delete',
+                          child: ListTile(
+                            leading: Icon(Icons.delete, color: Colors.red),
+                            title: Text('Supprimer'),
+                            contentPadding: EdgeInsets.zero,
+                          ),
+                        ),
+                      ],
                 ),
               ],
             ),
@@ -190,20 +184,13 @@ class EmergencyContactCard extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 relationship,
-                style: TextStyle(
-                  color: Colors.grey.shade600,
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
               ),
             ],
             const SizedBox(height: 12),
             Row(
               children: [
-                Icon(
-                  Icons.phone,
-                  color: Colors.green.shade600,
-                  size: 20,
-                ),
+                Icon(Icons.phone, color: Colors.green.shade600, size: 20),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(

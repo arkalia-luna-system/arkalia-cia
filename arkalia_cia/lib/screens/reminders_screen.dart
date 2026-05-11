@@ -16,7 +16,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
   List<Map<String, dynamic>> reminders = [];
   List<Map<String, dynamic>> displayedReminders = []; // Pour pagination
   bool isLoading = false;
-  
+
   // Pagination pour performance
   static const int _itemsPerPage = 20;
   int _currentPage = 0;
@@ -37,7 +37,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
     try {
       // Charger depuis le stockage local (rapide, ne bloque pas)
       final localReminders = await LocalStorageService.getReminders();
-      
+
       // Afficher immédiatement les rappels locaux (ne pas attendre CalendarService)
       if (mounted) {
         setState(() {
@@ -49,7 +49,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
           isLoading = false;
         });
       }
-      
+
       // Charger CalendarService en arrière-plan (ne bloque pas l'UI)
       // Essayer de charger depuis le calendrier natif (mobile seulement)
       // IMPORTANT: En mode test (détecté via kDebugMode ou environnement), on skip CalendarService
@@ -69,14 +69,22 @@ class _RemindersScreenState extends State<RemindersScreen> {
             );
             if (!mounted) return;
             // Convertir les événements calendrier en format local
-            final calendarReminders = calendarEvents.map((event) => {
-              'id': event['id'] ?? '',
-              'title': (event['title'] ?? '').replaceFirst('[Santé] ', ''),
-              'description': event['description'] ?? '',
-              'reminder_date': event['reminder_date'] ?? '',
-              'is_completed': false,
-              'source': 'calendar',
-            }).toList();
+            final calendarReminders =
+                calendarEvents
+                    .map(
+                      (event) => {
+                        'id': event['id'] ?? '',
+                        'title': (event['title'] ?? '').replaceFirst(
+                          '[Santé] ',
+                          '',
+                        ),
+                        'description': event['description'] ?? '',
+                        'reminder_date': event['reminder_date'] ?? '',
+                        'is_completed': false,
+                        'source': 'calendar',
+                      },
+                    )
+                    .toList();
             // Mettre à jour avec les rappels calendrier si disponibles
             if (mounted && calendarReminders.isNotEmpty) {
               setState(() {
@@ -110,182 +118,202 @@ class _RemindersScreenState extends State<RemindersScreen> {
 
   Future<void> _showReminderDialog({Map<String, dynamic>? reminder}) async {
     final isEditing = reminder != null;
-    final titleController = TextEditingController(text: reminder?['title'] ?? '');
-    final descriptionController = TextEditingController(text: reminder?['description'] ?? '');
-    DateTime selectedDate = reminder != null && reminder['reminder_date'] != null
-        ? DateTime.parse(reminder['reminder_date'])
-        : DateTime.now().add(const Duration(days: 1));
-    String? recurrenceType = reminder?['recurrence'] as String?; // null = pas de récurrence
+    final titleController = TextEditingController(
+      text: reminder?['title'] ?? '',
+    );
+    final descriptionController = TextEditingController(
+      text: reminder?['description'] ?? '',
+    );
+    DateTime selectedDate =
+        reminder != null && reminder['reminder_date'] != null
+            ? DateTime.parse(reminder['reminder_date'])
+            : DateTime.now().add(const Duration(days: 1));
+    String? recurrenceType =
+        reminder?['recurrence'] as String?; // null = pas de récurrence
 
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
-      builder: (context) => StatefulBuilder(
-          builder: (context, setDialogState) => AlertDialog(
-          title: Text(isEditing ? 'Modifier le rappel' : 'Nouveau rappel'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: titleController,
-                  decoration: const InputDecoration(
-                    labelText: 'Titre du rappel',
-                    border: OutlineInputBorder(),
+      builder:
+          (context) => StatefulBuilder(
+            builder:
+                (context, setDialogState) => AlertDialog(
+                  title: Text(
+                    isEditing ? 'Modifier le rappel' : 'Nouveau rappel',
                   ),
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: descriptionController,
-                  decoration: const InputDecoration(
-                    labelText: 'Description (optionnel)',
-                    border: OutlineInputBorder(),
-                  ),
-                  maxLines: 3,
-                ),
-                const SizedBox(height: 16),
-                ListTile(
-                  title: const Text('Date du rappel'),
-                  subtitle: Text(
-                    '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
-                  ),
-                  trailing: const Icon(Icons.calendar_today),
-                  onTap: () async {
-                    final date = await showDatePicker(
-                      context: context,
-                      initialDate: selectedDate,
-                      firstDate: DateTime.now(),
-                      lastDate: DateTime.now().add(const Duration(days: 365)),
-                    );
-                    if (date != null) {
-                      setDialogState(() {
-                        selectedDate = date;
-                      });
-                    }
-                  },
-                ),
-                const SizedBox(height: 8),
-                ListTile(
-                  title: const Text('Heure du rappel'),
-                  subtitle: Text(
-                    '${selectedDate.hour.toString().padLeft(2, '0')}:${selectedDate.minute.toString().padLeft(2, '0')}',
-                  ),
-                  trailing: const Icon(Icons.access_time),
-                  onTap: () async {
-                    final time = await showTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay.fromDateTime(selectedDate),
-                      builder: (context, child) {
-                        return MediaQuery(
-                          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-                          child: child!,
-                        );
-                      },
-                    );
-                    if (time != null) {
-                      setDialogState(() {
-                        selectedDate = DateTime(
-                          selectedDate.year,
-                          selectedDate.month,
-                          selectedDate.day,
-                          time.hour,
-                          time.minute,
-                        );
-                      });
-                    }
-                  },
-                ),
-                const SizedBox(height: 16),
-                // Utiliser MenuAnchor au lieu de DropdownButtonFormField (API moderne Flutter)
-                MenuAnchor(
-                  builder: (context, controller, child) {
-                    return ListTile(
-                      title: const Text('Récurrence (optionnel)'),
-                      subtitle: Text(
-                        recurrenceType == null
-                            ? 'Aucune récurrence'
-                            : recurrenceType == 'daily'
-                                ? 'Quotidien'
-                                : recurrenceType == 'weekly'
+                  content: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextField(
+                          controller: titleController,
+                          decoration: const InputDecoration(
+                            labelText: 'Titre du rappel',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        TextField(
+                          controller: descriptionController,
+                          decoration: const InputDecoration(
+                            labelText: 'Description (optionnel)',
+                            border: OutlineInputBorder(),
+                          ),
+                          maxLines: 3,
+                        ),
+                        const SizedBox(height: 16),
+                        ListTile(
+                          title: const Text('Date du rappel'),
+                          subtitle: Text(
+                            '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
+                          ),
+                          trailing: const Icon(Icons.calendar_today),
+                          onTap: () async {
+                            final date = await showDatePicker(
+                              context: context,
+                              initialDate: selectedDate,
+                              firstDate: DateTime.now(),
+                              lastDate: DateTime.now().add(
+                                const Duration(days: 365),
+                              ),
+                            );
+                            if (date != null) {
+                              setDialogState(() {
+                                selectedDate = date;
+                              });
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 8),
+                        ListTile(
+                          title: const Text('Heure du rappel'),
+                          subtitle: Text(
+                            '${selectedDate.hour.toString().padLeft(2, '0')}:${selectedDate.minute.toString().padLeft(2, '0')}',
+                          ),
+                          trailing: const Icon(Icons.access_time),
+                          onTap: () async {
+                            final time = await showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay.fromDateTime(selectedDate),
+                              builder: (context, child) {
+                                return MediaQuery(
+                                  data: MediaQuery.of(
+                                    context,
+                                  ).copyWith(alwaysUse24HourFormat: true),
+                                  child: child!,
+                                );
+                              },
+                            );
+                            if (time != null) {
+                              setDialogState(() {
+                                selectedDate = DateTime(
+                                  selectedDate.year,
+                                  selectedDate.month,
+                                  selectedDate.day,
+                                  time.hour,
+                                  time.minute,
+                                );
+                              });
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        // Utiliser MenuAnchor au lieu de DropdownButtonFormField (API moderne Flutter)
+                        MenuAnchor(
+                          builder: (context, controller, child) {
+                            return ListTile(
+                              title: const Text('Récurrence (optionnel)'),
+                              subtitle: Text(
+                                recurrenceType == null
+                                    ? 'Aucune récurrence'
+                                    : recurrenceType == 'daily'
+                                    ? 'Quotidien'
+                                    : recurrenceType == 'weekly'
                                     ? 'Hebdomadaire'
                                     : 'Mensuel',
-                      ),
-                      trailing: const Icon(Icons.arrow_drop_down),
-                      onTap: () {
-                        if (controller.isOpen) {
-                          controller.close();
-                        } else {
-                          controller.open();
+                              ),
+                              trailing: const Icon(Icons.arrow_drop_down),
+                              onTap: () {
+                                if (controller.isOpen) {
+                                  controller.close();
+                                } else {
+                                  controller.open();
+                                }
+                              },
+                            );
+                          },
+                          menuChildren: [
+                            MenuItemButton(
+                              child: const Text('Aucune récurrence'),
+                              onPressed: () {
+                                setDialogState(() {
+                                  recurrenceType = null;
+                                });
+                              },
+                            ),
+                            MenuItemButton(
+                              child: const Text('Quotidien'),
+                              onPressed: () {
+                                setDialogState(() {
+                                  recurrenceType = 'daily';
+                                });
+                              },
+                            ),
+                            MenuItemButton(
+                              child: const Text('Hebdomadaire'),
+                              onPressed: () {
+                                setDialogState(() {
+                                  recurrenceType = 'weekly';
+                                });
+                              },
+                            ),
+                            MenuItemButton(
+                              child: const Text('Mensuel'),
+                              onPressed: () {
+                                setDialogState(() {
+                                  recurrenceType = 'monthly';
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Annuler'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (titleController.text.isNotEmpty) {
+                          // Sanitizer les entrées utilisateur pour prévenir XSS
+                          final sanitizedTitle =
+                              InputSanitizer.sanitizeForStorage(
+                                titleController.text.trim(),
+                              );
+                          final sanitizedDescription =
+                              descriptionController.text.trim().isNotEmpty
+                                  ? InputSanitizer.sanitizeForStorage(
+                                    descriptionController.text.trim(),
+                                  )
+                                  : '';
+
+                          Navigator.pop(context, {
+                            'id': reminder?['id'],
+                            'title': sanitizedTitle,
+                            'description': sanitizedDescription,
+                            'reminder_date': selectedDate.toIso8601String(),
+                            'recurrence': recurrenceType,
+                            'is_editing': isEditing,
+                          });
                         }
                       },
-                    );
-                  },
-                  menuChildren: [
-                    MenuItemButton(
-                      child: const Text('Aucune récurrence'),
-                      onPressed: () {
-                        setDialogState(() {
-                          recurrenceType = null;
-                        });
-                      },
-                    ),
-                    MenuItemButton(
-                      child: const Text('Quotidien'),
-                      onPressed: () {
-                        setDialogState(() {
-                          recurrenceType = 'daily';
-                        });
-                      },
-                    ),
-                    MenuItemButton(
-                      child: const Text('Hebdomadaire'),
-                      onPressed: () {
-                        setDialogState(() {
-                          recurrenceType = 'weekly';
-                        });
-                      },
-                    ),
-                    MenuItemButton(
-                      child: const Text('Mensuel'),
-                      onPressed: () {
-                        setDialogState(() {
-                          recurrenceType = 'monthly';
-                        });
-                      },
+                      child: Text(isEditing ? 'Modifier' : 'Créer'),
                     ),
                   ],
                 ),
-              ],
-            ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Annuler'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (titleController.text.isNotEmpty) {
-                  // Sanitizer les entrées utilisateur pour prévenir XSS
-                  final sanitizedTitle = InputSanitizer.sanitizeForStorage(titleController.text.trim());
-                  final sanitizedDescription = descriptionController.text.trim().isNotEmpty
-                      ? InputSanitizer.sanitizeForStorage(descriptionController.text.trim())
-                      : '';
-                  
-                  Navigator.pop(context, {
-                    'id': reminder?['id'],
-                    'title': sanitizedTitle,
-                    'description': sanitizedDescription,
-                    'reminder_date': selectedDate.toIso8601String(),
-                    'recurrence': recurrenceType,
-                    'is_editing': isEditing,
-                  });
-                }
-              },
-              child: Text(isEditing ? 'Modifier' : 'Créer'),
-            ),
-          ],
-        ),
-      ),
     );
 
     if (result != null) {
@@ -313,20 +341,23 @@ class _RemindersScreenState extends State<RemindersScreen> {
 
       // Sauvegarder localement (fonctionne sur web et mobile)
       await LocalStorageService.saveReminder(reminder);
-      
+
       // Essayer d'ajouter au calendrier natif (mobile seulement)
       if (!kIsWeb) {
         try {
           // Vérifier les permissions avant d'ajouter
           final hasPermission = await CalendarService.hasCalendarPermission();
           if (!hasPermission) {
-            final permissionGranted = await CalendarService.requestCalendarPermission();
+            final permissionGranted =
+                await CalendarService.requestCalendarPermission();
             if (!permissionGranted) {
               // Permission refusée, on continue quand même avec le stockage local
-              _showError('Permission calendrier refusée. Le rappel est sauvegardé localement uniquement.');
+              _showError(
+                'Permission calendrier refusée. Le rappel est sauvegardé localement uniquement.',
+              );
             }
           }
-          
+
           // Ajouter au calendrier si permission accordée
           if (hasPermission || await CalendarService.hasCalendarPermission()) {
             await CalendarService.addReminder(
@@ -417,18 +448,18 @@ class _RemindersScreenState extends State<RemindersScreen> {
   /// Charge la page suivante pour la pagination
   void _loadNextPage() {
     if (!_hasMoreItems || isLoading) return;
-    
+
     final nextPage = _currentPage + 1;
     final startIndex = nextPage * _itemsPerPage;
     final endIndex = (startIndex + _itemsPerPage).clamp(0, reminders.length);
-    
+
     if (startIndex >= reminders.length) {
       setState(() {
         _hasMoreItems = false;
       });
       return;
     }
-    
+
     setState(() {
       displayedReminders.addAll(reminders.sublist(startIndex, endIndex));
       _currentPage = nextPage;
@@ -438,19 +469,13 @@ class _RemindersScreenState extends State<RemindersScreen> {
 
   void _showSuccess(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.green,
-      ),
+      SnackBar(content: Text(message), backgroundColor: Colors.green),
     );
   }
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-      ),
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
     );
   }
 
@@ -492,68 +517,73 @@ class _RemindersScreenState extends State<RemindersScreen> {
       ),
       body: RefreshIndicator(
         onRefresh: _loadReminders,
-        child: isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : reminders.isEmpty
+        child:
+            isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : reminders.isEmpty
                 ? SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    child: SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.7,
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: Colors.orange.withValues(alpha: 0.1),
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(
-                                Icons.notifications_none,
-                                size: 64,
-                                color: Colors.orange,
-                              ),
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.7,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.orange.withValues(alpha: 0.1),
+                              shape: BoxShape.circle,
                             ),
-                            const SizedBox(height: 16),
-                            const Text(
-                              'Aucun rappel',
+                            child: const Icon(
+                              Icons.notifications_none,
+                              size: 64,
+                              color: Colors.orange,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          const Text(
+                            'Aucun rappel',
+                            style: TextStyle(fontSize: 18, color: Colors.grey),
+                          ),
+                          const SizedBox(height: 8),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 24),
+                            child: Text(
+                              'Appuie sur le bouton ci‑dessous pour créer ton premier rappel (par exemple un rendez‑vous médical ou un examen).',
                               style: TextStyle(
-                                fontSize: 18,
                                 color: Colors.grey,
+                                fontSize: 14,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          ElevatedButton.icon(
+                            onPressed: () => _showAddReminderDialog(),
+                            icon: const Icon(Icons.add),
+                            label: const Text('Créer un rappel'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.orange,
+                              foregroundColor: Colors.white,
+                              minimumSize: const Size(
+                                200,
+                                48,
+                              ), // Minimum 48px pour accessibilité seniors
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 12,
                               ),
                             ),
-                            const SizedBox(height: 8),
-                            const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 24),
-                              child: Text(
-                                'Appuie sur le bouton ci‑dessous pour créer ton premier rappel (par exemple un rendez‑vous médical ou un examen).',
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 14,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            const SizedBox(height: 24),
-                            ElevatedButton.icon(
-                              onPressed: () => _showAddReminderDialog(),
-                              icon: const Icon(Icons.add),
-                              label: const Text('Créer un rappel'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.orange,
-                                foregroundColor: Colors.white,
-                                minimumSize: const Size(200, 48), // Minimum 48px pour accessibilité seniors
-                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                  )
+                  ),
+                )
                 : ListView.builder(
-                  itemCount: displayedReminders.length + (_hasMoreItems ? 1 : 0),
+                  itemCount:
+                      displayedReminders.length + (_hasMoreItems ? 1 : 0),
                   itemBuilder: (context, index) {
                     // Bouton "Charger plus" à la fin
                     if (index == displayedReminders.length) {
@@ -565,14 +595,20 @@ class _RemindersScreenState extends State<RemindersScreen> {
                             icon: const Icon(Icons.expand_more),
                             label: const Text('Charger plus'),
                             style: ElevatedButton.styleFrom(
-                              minimumSize: const Size(200, 48), // Minimum 48px pour accessibilité seniors
-                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                              minimumSize: const Size(
+                                200,
+                                48,
+                              ), // Minimum 48px pour accessibilité seniors
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 12,
+                              ),
                             ),
                           ),
                         ),
                       );
                     }
-                    
+
                     final reminder = displayedReminders[index];
                     final isCompleted = reminder['is_completed'] == true;
 
@@ -582,7 +618,10 @@ class _RemindersScreenState extends State<RemindersScreen> {
                         vertical: 4,
                       ),
                       child: ListTile(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
                         leading: Icon(
                           isCompleted ? Icons.check_circle : Icons.schedule,
                           color: isCompleted ? Colors.green : Colors.orange,
@@ -590,13 +629,16 @@ class _RemindersScreenState extends State<RemindersScreen> {
                         ),
                         title: Text(
                           // Sanitizer à l'affichage pour prévenir XSS (défense en profondeur)
-                          InputSanitizer.sanitize(reminder['title']?.toString() ?? 'Rappel'),
+                          InputSanitizer.sanitize(
+                            reminder['title']?.toString() ?? 'Rappel',
+                          ),
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
-                            decoration: isCompleted
-                                ? TextDecoration.lineThrough
-                                : TextDecoration.none,
+                            decoration:
+                                isCompleted
+                                    ? TextDecoration.lineThrough
+                                    : TextDecoration.none,
                           ),
                         ),
                         subtitle: Padding(
@@ -604,18 +646,26 @@ class _RemindersScreenState extends State<RemindersScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              if (reminder['description'] != null && reminder['description'].toString().isNotEmpty)
+                              if (reminder['description'] != null &&
+                                  reminder['description'].toString().isNotEmpty)
                                 Text(
                                   // Sanitizer à l'affichage pour prévenir XSS (défense en profondeur)
-                                  InputSanitizer.sanitize(reminder['description'].toString()),
+                                  InputSanitizer.sanitize(
+                                    reminder['description'].toString(),
+                                  ),
                                   style: const TextStyle(fontSize: 14),
                                 ),
                               if (reminder['description'] != null)
                                 const SizedBox(height: 4),
                               Text(
-                                _formatDateTime(reminder['reminder_date'] ?? ''),
+                                _formatDateTime(
+                                  reminder['reminder_date'] ?? '',
+                                ),
                                 style: TextStyle(
-                                  color: isCompleted ? Colors.grey : Colors.orange[700],
+                                  color:
+                                      isCompleted
+                                          ? Colors.grey
+                                          : Colors.orange[700],
                                   fontWeight: FontWeight.w500,
                                   fontSize: 14,
                                 ),
@@ -623,35 +673,45 @@ class _RemindersScreenState extends State<RemindersScreen> {
                             ],
                           ),
                         ),
-                        trailing: isCompleted
-                            ? const Icon(Icons.check, color: Colors.green, size: 24)
-                            : Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(Icons.edit, size: 24),
-                                    onPressed: () async {
-                                      await _showEditReminderDialog(reminder);
-                                    },
-                                    tooltip: 'Modifier',
-                                    constraints: const BoxConstraints(
-                                      minWidth: 48,
-                                      minHeight: 48,
+                        trailing:
+                            isCompleted
+                                ? const Icon(
+                                  Icons.check,
+                                  color: Colors.green,
+                                  size: 24,
+                                )
+                                : Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.edit, size: 24),
+                                      onPressed: () async {
+                                        await _showEditReminderDialog(reminder);
+                                      },
+                                      tooltip: 'Modifier',
+                                      constraints: const BoxConstraints(
+                                        minWidth: 48,
+                                        minHeight: 48,
+                                      ),
                                     ),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.check_circle_outline, size: 24),
-                                    onPressed: () async {
-                                      await _markReminderComplete(reminder['id']);
-                                    },
-                                    tooltip: 'Marquer comme terminé',
-                                    constraints: const BoxConstraints(
-                                      minWidth: 48,
-                                      minHeight: 48,
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.check_circle_outline,
+                                        size: 24,
+                                      ),
+                                      onPressed: () async {
+                                        await _markReminderComplete(
+                                          reminder['id'],
+                                        );
+                                      },
+                                      tooltip: 'Marquer comme terminé',
+                                      constraints: const BoxConstraints(
+                                        minWidth: 48,
+                                        minHeight: 48,
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
+                                  ],
+                                ),
                       ),
                     );
                   },

@@ -14,14 +14,15 @@ class PathologyTrackingScreen extends StatefulWidget {
   });
 
   @override
-  State<PathologyTrackingScreen> createState() => _PathologyTrackingScreenState();
+  State<PathologyTrackingScreen> createState() =>
+      _PathologyTrackingScreenState();
 }
 
 class _PathologyTrackingScreenState extends State<PathologyTrackingScreen> {
   final PathologyService _pathologyService = PathologyService();
   final _formKey = GlobalKey<FormState>();
   final _notesController = TextEditingController();
-  
+
   Pathology? _pathology;
   DateTime _selectedDate = DateTime.now();
   final Map<String, dynamic> _trackingData = {};
@@ -51,7 +52,9 @@ class _PathologyTrackingScreenState extends State<PathologyTrackingScreen> {
   Future<void> _loadPathology() async {
     setState(() => _isLoading = true);
     try {
-      final pathology = await _pathologyService.getPathologyById(widget.pathologyId);
+      final pathology = await _pathologyService.getPathologyById(
+        widget.pathologyId,
+      );
       if (mounted) {
         setState(() {
           _pathology = pathology;
@@ -61,9 +64,9 @@ class _PathologyTrackingScreenState extends State<PathologyTrackingScreen> {
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Erreur: $e')));
       }
     }
   }
@@ -128,9 +131,9 @@ class _PathologyTrackingScreenState extends State<PathologyTrackingScreen> {
     } catch (e) {
       if (mounted) {
         setState(() => _isSaving = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Erreur: $e')));
       }
     }
   }
@@ -161,9 +164,11 @@ class _PathologyTrackingScreenState extends State<PathologyTrackingScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.existingEntry != null 
-            ? 'Modifier l\'entrée - ${_pathology!.name}'
-            : 'Suivi - ${_pathology!.name}'),
+        title: Text(
+          widget.existingEntry != null
+              ? 'Modifier l\'entrée - ${_pathology!.name}'
+              : 'Suivi - ${_pathology!.name}',
+        ),
         backgroundColor: _pathology!.color,
         foregroundColor: Colors.white,
       ),
@@ -230,13 +235,18 @@ class _PathologyTrackingScreenState extends State<PathologyTrackingScreen> {
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
-                  child: _isSaving
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : Text(widget.existingEntry != null ? 'Modifier' : 'Enregistrer'),
+                  child:
+                      _isSaving
+                          ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                          : Text(
+                            widget.existingEntry != null
+                                ? 'Modifier'
+                                : 'Enregistrer',
+                          ),
                 ),
               ),
             ],
@@ -259,10 +269,7 @@ class _PathologyTrackingScreenState extends State<PathologyTrackingScreen> {
             children: [
               const Text(
                 'Niveau de douleur (0-10)',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               Slider(
@@ -270,7 +277,8 @@ class _PathologyTrackingScreenState extends State<PathologyTrackingScreen> {
                 min: 0,
                 max: 10,
                 divisions: 10,
-                label: '${(_trackingData['painLevel'] as num?)?.toInt() ?? 0}/10',
+                label:
+                    '${(_trackingData['painLevel'] as num?)?.toInt() ?? 0}/10',
                 onChanged: (value) {
                   _updateTrackingData('painLevel', value.toInt());
                 },
@@ -294,127 +302,120 @@ class _PathologyTrackingScreenState extends State<PathologyTrackingScreen> {
 
     if (name.contains('endométriose') || name.contains('endometriose')) {
       // Cycle
-      fields.add(_buildTextField(
-        'Jour du cycle',
-        'cycle',
-        hint: 'Ex: 5',
-        keyboardType: TextInputType.number,
-      ));
+      fields.add(
+        _buildTextField(
+          'Jour du cycle',
+          'cycle',
+          hint: 'Ex: 5',
+          keyboardType: TextInputType.number,
+        ),
+      );
       fields.add(const SizedBox(height: 16));
 
       // Saignements
-      fields.add(_buildCheckboxField(
-        'Saignements',
-        'bleeding',
-      ));
+      fields.add(_buildCheckboxField('Saignements', 'bleeding'));
       fields.add(const SizedBox(height: 16));
 
       // Fatigue
-      fields.add(_buildSliderField(
-        'Fatigue (0-10)',
-        'fatigue',
-        min: 0,
-        max: 10,
-      ));
+      fields.add(
+        _buildSliderField('Fatigue (0-10)', 'fatigue', min: 0, max: 10),
+      );
       fields.add(const SizedBox(height: 16));
     }
 
-    if (name.contains('cancer') || name.contains('myélome') || name.contains('myelome')) {
+    if (name.contains('cancer') ||
+        name.contains('myélome') ||
+        name.contains('myelome')) {
       // Effets secondaires
-      fields.add(_buildMultiSelectField(
-        'Effets secondaires',
-        'sideEffects',
-        ['Nausées', 'Fatigue', 'Perte d\'appétit', 'Douleurs'],
-      ));
+      fields.add(
+        _buildMultiSelectField('Effets secondaires', 'sideEffects', [
+          'Nausées',
+          'Fatigue',
+          'Perte d\'appétit',
+          'Douleurs',
+        ]),
+      );
       fields.add(const SizedBox(height: 16));
 
       // Traitement
-      fields.add(_buildTextField(
-        'Traitement reçu',
-        'treatment',
-        hint: 'Ex: Chimiothérapie cycle 3',
-      ));
+      fields.add(
+        _buildTextField(
+          'Traitement reçu',
+          'treatment',
+          hint: 'Ex: Chimiothérapie cycle 3',
+        ),
+      );
       fields.add(const SizedBox(height: 16));
     }
 
     if (name.contains('ostéoporose') || name.contains('osteoporose')) {
       // Fracture
-      fields.add(_buildCheckboxField(
-        'Fracture',
-        'fracture',
-      ));
+      fields.add(_buildCheckboxField('Fracture', 'fracture'));
       fields.add(const SizedBox(height: 16));
 
       // Activité physique
-      fields.add(_buildTextField(
-        'Activité physique (minutes)',
-        'physicalActivity',
-        hint: 'Ex: 30',
-        keyboardType: TextInputType.number,
-      ));
+      fields.add(
+        _buildTextField(
+          'Activité physique (minutes)',
+          'physicalActivity',
+          hint: 'Ex: 30',
+          keyboardType: TextInputType.number,
+        ),
+      );
       fields.add(const SizedBox(height: 16));
     }
 
-    if (name.contains('arthr') || name.contains('tendinite') || name.contains('spondyl')) {
+    if (name.contains('arthr') ||
+        name.contains('tendinite') ||
+        name.contains('spondyl')) {
       // Localisation
-      fields.add(_buildTextField(
-        'Localisation de la douleur',
-        'location',
-        hint: 'Ex: Genou droit',
-      ));
+      fields.add(
+        _buildTextField(
+          'Localisation de la douleur',
+          'location',
+          hint: 'Ex: Genou droit',
+        ),
+      );
       fields.add(const SizedBox(height: 16));
 
       // Mobilité
-      fields.add(_buildSliderField(
-        'Mobilité (0-10)',
-        'mobility',
-        min: 0,
-        max: 10,
-      ));
+      fields.add(
+        _buildSliderField('Mobilité (0-10)', 'mobility', min: 0, max: 10),
+      );
       fields.add(const SizedBox(height: 16));
 
       // Médicaments pris
-      fields.add(_buildCheckboxField(
-        'Médicaments pris',
-        'medicationTaken',
-      ));
+      fields.add(_buildCheckboxField('Médicaments pris', 'medicationTaken'));
       fields.add(const SizedBox(height: 16));
     }
 
     if (name.contains('parkinson')) {
       // Tremblements
-      fields.add(_buildSliderField(
-        'Tremblements (0-10)',
-        'tremors',
-        min: 0,
-        max: 10,
-      ));
+      fields.add(
+        _buildSliderField('Tremblements (0-10)', 'tremors', min: 0, max: 10),
+      );
       fields.add(const SizedBox(height: 16));
 
       // Rigidité
-      fields.add(_buildSliderField(
-        'Rigidité (0-10)',
-        'rigidity',
-        min: 0,
-        max: 10,
-      ));
+      fields.add(
+        _buildSliderField('Rigidité (0-10)', 'rigidity', min: 0, max: 10),
+      );
       fields.add(const SizedBox(height: 16));
 
       // Médicaments pris
-      fields.add(_buildCheckboxField(
-        'Médicaments pris',
-        'medicationTaken',
-      ));
+      fields.add(_buildCheckboxField('Médicaments pris', 'medicationTaken'));
       fields.add(const SizedBox(height: 16));
     }
 
     // Symptômes génériques
     if (_pathology!.symptoms.isNotEmpty) {
-      fields.add(_buildMultiSelectField(
-        'Symptômes présents',
-        'symptoms',
-        _pathology!.symptoms,
-      ));
+      fields.add(
+        _buildMultiSelectField(
+          'Symptômes présents',
+          'symptoms',
+          _pathology!.symptoms,
+        ),
+      );
       fields.add(const SizedBox(height: 16));
     }
 
@@ -435,10 +436,7 @@ class _PathologyTrackingScreenState extends State<PathologyTrackingScreen> {
           children: [
             Text(
               label,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             TextFormField(
@@ -471,10 +469,7 @@ class _PathologyTrackingScreenState extends State<PathologyTrackingScreen> {
           children: [
             Text(
               label,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Slider(
@@ -520,35 +515,33 @@ class _PathologyTrackingScreenState extends State<PathologyTrackingScreen> {
           children: [
             Text(
               label,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Wrap(
               spacing: 8,
               runSpacing: 8,
-              children: options.map((option) {
-                final isSelected = selected.contains(option);
-                return FilterChip(
-                  label: Text(option),
-                  selected: isSelected,
-                  onSelected: (value) {
-                    setState(() {
-                      final newSelected = List<String>.from(selected);
-                      if (value) {
-                        if (!newSelected.contains(option)) {
-                          newSelected.add(option);
-                        }
-                      } else {
-                        newSelected.remove(option);
-                      }
-                      _updateTrackingData(key, newSelected);
-                    });
-                  },
-                );
-              }).toList(),
+              children:
+                  options.map((option) {
+                    final isSelected = selected.contains(option);
+                    return FilterChip(
+                      label: Text(option),
+                      selected: isSelected,
+                      onSelected: (value) {
+                        setState(() {
+                          final newSelected = List<String>.from(selected);
+                          if (value) {
+                            if (!newSelected.contains(option)) {
+                              newSelected.add(option);
+                            }
+                          } else {
+                            newSelected.remove(option);
+                          }
+                          _updateTrackingData(key, newSelected);
+                        });
+                      },
+                    );
+                  }).toList(),
             ),
           ],
         ),
@@ -556,4 +549,3 @@ class _PathologyTrackingScreenState extends State<PathologyTrackingScreen> {
     );
   }
 }
-

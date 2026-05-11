@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() {
   // Initialiser le binding Flutter pour les tests
   TestWidgetsFlutterBinding.ensureInitialized();
-  
+
   group('AuthService', () {
     setUp(() async {
       // Réinitialiser les préférences avant chaque test
@@ -22,7 +22,7 @@ void main() {
       final isEnabled = await AuthService.isAuthEnabled();
       // En environnement de test (mobile), l'authentification est désactivée
       expect(isEnabled, false);
-      
+
       // Note: Le comportement web (true par défaut) est testé dans les tests d'intégration
     });
 
@@ -39,7 +39,7 @@ void main() {
       final isEnabledAfterEnable = await AuthService.isAuthEnabled();
       // Sur mobile, reste false même après setAuthEnabled(true)
       expect(isEnabledAfterEnable, false);
-      
+
       // Note: Le comportement web (modification effective) est testé dans les tests d'intégration
     });
 
@@ -53,18 +53,18 @@ void main() {
 
       // Désactiver l'authentification au démarrage
       await AuthService.setAuthOnStartup(false);
-      final shouldAuthAfterDisable = await AuthService.shouldAuthenticateOnStartup();
+      final shouldAuthAfterDisable =
+          await AuthService.shouldAuthenticateOnStartup();
       expect(shouldAuthAfterDisable, false);
 
       // Réactiver l'authentification au démarrage
       await AuthService.setAuthOnStartup(true);
-      final shouldAuthAfterEnable = await AuthService.shouldAuthenticateOnStartup();
+      final shouldAuthAfterEnable =
+          await AuthService.shouldAuthenticateOnStartup();
       // Sur mobile, reste false même après setAuthOnStartup(true)
       expect(shouldAuthAfterEnable, false);
-      
+
       // Note: Le comportement web (true par défaut, modification effective) est testé dans les tests d'intégration
     });
-
   });
 }
-

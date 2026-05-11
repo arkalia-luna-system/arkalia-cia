@@ -9,14 +9,17 @@ void main() {
       SharedPreferences.setMockInitialValues({});
     });
 
-    test('getBackendURL should return empty string by default on mobile', () async {
-      // Note: Ce test nécessite un mock de kIsWeb, mais on teste le comportement par défaut
-      final url = await BackendConfigService.getBackendURL();
-      // Sur mobile (kIsWeb = false), devrait retourner '' si pas configuré
-      // Sur web (kIsWeb = true), devrait retourner 'http://localhost:8000'
-      // On teste juste que ça ne crash pas
-      expect(url, isA<String>());
-    });
+    test(
+      'getBackendURL should return empty string by default on mobile',
+      () async {
+        // Note: Ce test nécessite un mock de kIsWeb, mais on teste le comportement par défaut
+        final url = await BackendConfigService.getBackendURL();
+        // Sur mobile (kIsWeb = false), devrait retourner '' si pas configuré
+        // Sur web (kIsWeb = true), devrait retourner 'http://localhost:8000'
+        // On teste juste que ça ne crash pas
+        expect(url, isA<String>());
+      },
+    );
 
     test('setBackendURL should update backend URL', () async {
       const testUrl = 'http://192.168.1.100:8000';
@@ -47,4 +50,3 @@ void main() {
     });
   });
 }
-

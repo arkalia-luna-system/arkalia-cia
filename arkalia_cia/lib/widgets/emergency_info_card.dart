@@ -13,9 +13,11 @@ class EmergencyInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isEmpty = emergencyInfo.isEmpty ||
-        emergencyInfo.values.every((value) =>
-            value == null || value.toString().trim().isEmpty);
+    final isEmpty =
+        emergencyInfo.isEmpty ||
+        emergencyInfo.values.every(
+          (value) => value == null || value.toString().trim().isEmpty,
+        );
 
     if (isEmpty) {
       return Card(
@@ -31,19 +33,13 @@ class EmergencyInfoCard extends StatelessWidget {
               const SizedBox(height: 16),
               Text(
                 'Aucune information médicale',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey.shade600,
-                ),
+                style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
               ),
               const SizedBox(height: 8),
               Text(
                 'Ajoutez vos informations médicales importantes\npour les urgences',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.grey.shade500,
-                  fontSize: 16,
-                ),
+                style: TextStyle(color: Colors.grey.shade500, fontSize: 16),
               ),
               const SizedBox(height: 16),
               ElevatedButton.icon(
@@ -74,10 +70,7 @@ class EmergencyInfoCard extends StatelessWidget {
                 const Expanded(
                   child: Text(
                     'Informations médicales',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
                 IconButton(
@@ -143,11 +136,7 @@ class EmergencyInfoCard extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(
-          icon,
-          size: 20,
-          color: Colors.red.shade400,
-        ),
+        Icon(icon, size: 20, color: Colors.red.shade400),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
@@ -161,10 +150,7 @@ class EmergencyInfoCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 2),
-              Text(
-                value,
-                style: const TextStyle(fontSize: 16),
-              ),
+              Text(value, style: const TextStyle(fontSize: 16)),
             ],
           ),
         ),

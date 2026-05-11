@@ -14,7 +14,7 @@ void main() {
       SharedPreferences.setMockInitialValues({});
       final prefs = await SharedPreferences.getInstance();
       await prefs.clear();
-      
+
       // Réinitialiser les rappels
       final reminders = await LocalStorageService.getReminders();
       for (final reminder in reminders) {
@@ -25,11 +25,7 @@ void main() {
     });
 
     testWidgets('Affiche le titre de l\'écran', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: RemindersScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: RemindersScreen()));
 
       // Attendre le chargement complet avec plusieurs pumps
       // Ne pas utiliser pumpAndSettle car CalendarService peut bloquer en test
@@ -45,12 +41,10 @@ void main() {
       expect(find.text('Rappels'), findsOneWidget);
     });
 
-    testWidgets('Affiche un message quand il n\'y a pas de rappels', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: RemindersScreen(),
-        ),
-      );
+    testWidgets('Affiche un message quand il n\'y a pas de rappels', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(const MaterialApp(home: RemindersScreen()));
 
       // Attendre le chargement complet avec plusieurs pumps
       // Ne pas utiliser pumpAndSettle car CalendarService peut bloquer en test
@@ -72,12 +66,10 @@ void main() {
       );
     });
 
-    testWidgets('Affiche le bouton d\'ajout de rappel', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: RemindersScreen(),
-        ),
-      );
+    testWidgets('Affiche le bouton d\'ajout de rappel', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(const MaterialApp(home: RemindersScreen()));
 
       // Attendre le chargement complet avec plusieurs pumps
       // Ne pas utiliser pumpAndSettle car CalendarService peut bloquer en test
@@ -93,7 +85,10 @@ void main() {
       // Le bouton add est dans le FloatingActionButton (plus spécifique)
       // Il y a aussi un bouton "Créer un rappel" dans l'état vide, donc on cherche le FloatingActionButton
       expect(find.byType(FloatingActionButton), findsOneWidget);
-      expect(find.byIcon(Icons.add), findsWidgets); // Il y en a plusieurs, c'est normal
+      expect(
+        find.byIcon(Icons.add),
+        findsWidgets,
+      ); // Il y en a plusieurs, c'est normal
     });
 
     testWidgets('Affiche les rappels existants', (WidgetTester tester) async {
@@ -102,7 +97,8 @@ void main() {
         'id': 'test_reminder_1',
         'title': 'Test Rappel',
         'description': 'Description test',
-        'reminder_date': DateTime.now().add(const Duration(days: 1)).toIso8601String(),
+        'reminder_date':
+            DateTime.now().add(const Duration(days: 1)).toIso8601String(),
         'is_completed': false,
         'source': 'local',
         'created_at': DateTime.now().toIso8601String(),
@@ -110,35 +106,42 @@ void main() {
 
       await LocalStorageService.saveReminder(testReminder);
 
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: RemindersScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: RemindersScreen()));
 
       // Attendre que le widget soit construit et que _loadReminders() soit appelé
       await tester.pump();
-      
+
       // Attendre que le Future de getReminders() soit résolu
       // Maintenant que FlutterSecureStorage est bypassé en mode test, c'est rapide
       await tester.pump(const Duration(milliseconds: 50));
       await tester.pump(const Duration(milliseconds: 50));
       await tester.pump();
-      
+
       // Vérifier que le ListView est présent (signe que les rappels sont chargés)
-      expect(find.byType(ListView), findsOneWidget, reason: 'Le ListView doit être présent quand il y a des rappels');
-      
+      expect(
+        find.byType(ListView),
+        findsOneWidget,
+        reason: 'Le ListView doit être présent quand il y a des rappels',
+      );
+
       // Vérifier qu'il y a au moins une Card (les rappels sont dans des Cards)
-      expect(find.byType(Card), findsWidgets, reason: 'Il doit y avoir au moins une Card pour le rappel');
+      expect(
+        find.byType(Card),
+        findsWidgets,
+        reason: 'Il doit y avoir au moins une Card pour le rappel',
+      );
     }, timeout: const Timeout(Duration(seconds: 2)));
 
-    testWidgets('Affiche le bouton Modifier sur les rappels non terminés', (WidgetTester tester) async {
+    testWidgets('Affiche le bouton Modifier sur les rappels non terminés', (
+      WidgetTester tester,
+    ) async {
       // Créer un rappel de test non terminé
       final testReminder = {
         'id': 'test_reminder_2',
         'title': 'Rappel à modifier',
         'description': 'Description',
-        'reminder_date': DateTime.now().add(const Duration(days: 1)).toIso8601String(),
+        'reminder_date':
+            DateTime.now().add(const Duration(days: 1)).toIso8601String(),
         'is_completed': false,
         'source': 'local',
         'created_at': DateTime.now().toIso8601String(),
@@ -146,21 +149,18 @@ void main() {
 
       await LocalStorageService.saveReminder(testReminder);
 
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: RemindersScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: RemindersScreen()));
 
       // Attendre que les rappels locaux soient chargés (sans attendre CalendarService)
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
       await tester.pump();
-      
+
       // Attendre que l'icône apparaisse (max 1 seconde)
       int attempts = 0;
       const maxAttempts = 20; // 20 * 50ms = 1 seconde max
-      while (find.byIcon(Icons.edit).evaluate().isEmpty && attempts < maxAttempts) {
+      while (find.byIcon(Icons.edit).evaluate().isEmpty &&
+          attempts < maxAttempts) {
         await tester.pump(const Duration(milliseconds: 50));
         attempts++;
       }
@@ -169,13 +169,16 @@ void main() {
       expect(find.byIcon(Icons.edit), findsOneWidget);
     });
 
-    testWidgets('Affiche le bouton Terminer sur les rappels non terminés', (WidgetTester tester) async {
+    testWidgets('Affiche le bouton Terminer sur les rappels non terminés', (
+      WidgetTester tester,
+    ) async {
       // Créer un rappel de test non terminé
       final testReminder = {
         'id': 'test_reminder_3',
         'title': 'Rappel à terminer',
         'description': 'Description',
-        'reminder_date': DateTime.now().add(const Duration(days: 1)).toIso8601String(),
+        'reminder_date':
+            DateTime.now().add(const Duration(days: 1)).toIso8601String(),
         'is_completed': false,
         'source': 'local',
         'created_at': DateTime.now().toIso8601String(),
@@ -183,11 +186,7 @@ void main() {
 
       await LocalStorageService.saveReminder(testReminder);
 
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: RemindersScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: RemindersScreen()));
 
       // Attendre le chargement complet avec plusieurs pumps
       // Ne pas utiliser pumpAndSettle car CalendarService peut bloquer en test
@@ -201,13 +200,16 @@ void main() {
       expect(find.byIcon(Icons.check_circle_outline), findsOneWidget);
     });
 
-    testWidgets('N\'affiche pas le bouton Modifier sur les rappels terminés', (WidgetTester tester) async {
+    testWidgets('N\'affiche pas le bouton Modifier sur les rappels terminés', (
+      WidgetTester tester,
+    ) async {
       // Créer un rappel de test terminé
       final testReminder = {
         'id': 'test_reminder_4',
         'title': 'Rappel terminé',
         'description': 'Description',
-        'reminder_date': DateTime.now().add(const Duration(days: 1)).toIso8601String(),
+        'reminder_date':
+            DateTime.now().add(const Duration(days: 1)).toIso8601String(),
         'is_completed': true,
         'source': 'local',
         'created_at': DateTime.now().toIso8601String(),
@@ -215,11 +217,7 @@ void main() {
 
       await LocalStorageService.saveReminder(testReminder);
 
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: RemindersScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: RemindersScreen()));
 
       // Attendre le chargement complet avec plusieurs pumps
       // Ne pas utiliser pumpAndSettle car CalendarService peut bloquer en test
@@ -235,7 +233,9 @@ void main() {
       expect(find.byIcon(Icons.check), findsOneWidget);
     });
 
-    testWidgets('Affiche la date formatée correctement', (WidgetTester tester) async {
+    testWidgets('Affiche la date formatée correctement', (
+      WidgetTester tester,
+    ) async {
       final testDate = DateTime.now().add(const Duration(days: 1));
       final testReminder = {
         'id': 'test_reminder_5',
@@ -249,11 +249,7 @@ void main() {
 
       await LocalStorageService.saveReminder(testReminder);
 
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: RemindersScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: RemindersScreen()));
 
       // Attendre le chargement complet avec plusieurs pumps
       // Ne pas utiliser pumpAndSettle car CalendarService peut bloquer en test
@@ -264,15 +260,16 @@ void main() {
       await tester.pump(const Duration(seconds: 1));
 
       // Vérifier que la date formatée est affichée (format: DD/MM/YYYY à HH:MM)
-      expect(find.textContaining('${testDate.day}/${testDate.month}/${testDate.year}'), findsOneWidget);
+      expect(
+        find.textContaining(
+          '${testDate.day}/${testDate.month}/${testDate.year}',
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('L\'écran est scrollable', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: RemindersScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: RemindersScreen()));
 
       // Attendre le chargement complet avec plusieurs pumps
       // Ne pas utiliser pumpAndSettle car CalendarService peut bloquer en test
@@ -285,18 +282,21 @@ void main() {
       // L'écran peut avoir soit un ListView (si rappels présents) soit un SingleChildScrollView (si vide)
       // Les deux sont scrollables, donc on vérifie qu'au moins un widget scrollable est présent
       final hasListView = find.byType(ListView).evaluate().isNotEmpty;
-      final hasScrollView = find.byType(SingleChildScrollView).evaluate().isNotEmpty;
-      
-      expect(hasListView || hasScrollView, isTrue, 
-        reason: 'L\'écran doit contenir un widget scrollable (ListView ou SingleChildScrollView)');
+      final hasScrollView =
+          find.byType(SingleChildScrollView).evaluate().isNotEmpty;
+
+      expect(
+        hasListView || hasScrollView,
+        isTrue,
+        reason:
+            'L\'écran doit contenir un widget scrollable (ListView ou SingleChildScrollView)',
+      );
     });
 
-    testWidgets('Affiche le bouton de rafraîchissement', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: RemindersScreen(),
-        ),
-      );
+    testWidgets('Affiche le bouton de rafraîchissement', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(const MaterialApp(home: RemindersScreen()));
 
       // Attendre le chargement complet avec plusieurs pumps
       // Ne pas utiliser pumpAndSettle car CalendarService peut bloquer en test
@@ -404,4 +404,3 @@ void main() {
     });
   });
 }
-

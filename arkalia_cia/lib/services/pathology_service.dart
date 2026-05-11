@@ -41,8 +41,12 @@ class PathologyService {
           if (oldVersion < 4) {
             // Migration : ajouter colonnes category et subcategory
             try {
-              await db.execute('ALTER TABLE pathologies ADD COLUMN category TEXT');
-              await db.execute('ALTER TABLE pathologies ADD COLUMN subcategory TEXT');
+              await db.execute(
+                'ALTER TABLE pathologies ADD COLUMN category TEXT',
+              );
+              await db.execute(
+                'ALTER TABLE pathologies ADD COLUMN subcategory TEXT',
+              );
             } catch (e) {
               // Colonnes peuvent déjà exister, ignorer l'erreur
             }
@@ -140,20 +144,23 @@ class PathologyService {
     if (kIsWeb) {
       final pathologies = await _getPathologiesFromStorage();
       return pathologies.map((map) {
-        try {
-          final converted = _convertWebMapToSqliteMap(map);
-          // Pathology.fromMap() gère maintenant les reminders en String JSON ou Map
-          return Pathology.fromMap(converted);
-        } catch (e) {
-          // En cas d'erreur, retourner une pathologie vide plutôt que de planter
-          return Pathology(
-            id: map['id'] is int ? map['id'] : int.tryParse(map['id']?.toString() ?? ''),
-            name: map['name']?.toString() ?? 'Pathologie inconnue',
-            description: map['description']?.toString(),
-            reminders: {},
-          );
-        }
-      }).toList()
+          try {
+            final converted = _convertWebMapToSqliteMap(map);
+            // Pathology.fromMap() gère maintenant les reminders en String JSON ou Map
+            return Pathology.fromMap(converted);
+          } catch (e) {
+            // En cas d'erreur, retourner une pathologie vide plutôt que de planter
+            return Pathology(
+              id:
+                  map['id'] is int
+                      ? map['id']
+                      : int.tryParse(map['id']?.toString() ?? ''),
+              name: map['name']?.toString() ?? 'Pathologie inconnue',
+              description: map['description']?.toString(),
+              reminders: {},
+            );
+          }
+        }).toList()
         ..sort((a, b) => a.name.compareTo(b.name));
     }
     final db = await database;
@@ -168,7 +175,8 @@ class PathologyService {
       // Parser les reminders depuis JSON
       if (map['reminders'] != null) {
         try {
-          final remindersData = jsonDecode(map['reminders'] as String) as Map<String, dynamic>;
+          final remindersData =
+              jsonDecode(map['reminders'] as String) as Map<String, dynamic>;
           final reminders = <String, ReminderConfig>{};
           remindersData.forEach((key, value) {
             reminders[key] = ReminderConfig.fromMap(
@@ -187,15 +195,12 @@ class PathologyService {
   Future<Pathology?> getPathologyById(int id) async {
     if (kIsWeb) {
       final pathologies = await _getPathologiesFromStorage();
-      final pathologyMap = pathologies.firstWhere(
-        (map) {
-          final mapId = map['id'];
-          if (mapId is int) return mapId == id;
-          if (mapId is String) return int.tryParse(mapId) == id;
-          return mapId?.toString() == id.toString();
-        },
-        orElse: () => <String, dynamic>{},
-      );
+      final pathologyMap = pathologies.firstWhere((map) {
+        final mapId = map['id'];
+        if (mapId is int) return mapId == id;
+        if (mapId is String) return int.tryParse(mapId) == id;
+        return mapId?.toString() == id.toString();
+      }, orElse: () => <String, dynamic>{});
       if (pathologyMap.isEmpty) return null;
       try {
         final converted = _convertWebMapToSqliteMap(pathologyMap);
@@ -216,12 +221,13 @@ class PathologyService {
       whereArgs: [id],
     );
     if (maps.isEmpty) return null;
-    
+
     final map = maps.first;
     // Parser les reminders depuis JSON
     if (map['reminders'] != null) {
       try {
-        final remindersData = jsonDecode(map['reminders'] as String) as Map<String, dynamic>;
+        final remindersData =
+            jsonDecode(map['reminders'] as String) as Map<String, dynamic>;
         final reminders = <String, ReminderConfig>{};
         remindersData.forEach((key, value) {
           reminders[key] = ReminderConfig.fromMap(
@@ -243,7 +249,9 @@ class PathologyService {
       if (index == -1) return 0;
       final updatedPathology = pathology.copyWith(updatedAt: DateTime.now());
       final remindersJson = jsonEncode(
-        updatedPathology.reminders.map((key, value) => MapEntry(key, value.toMap())),
+        updatedPathology.reminders.map(
+          (key, value) => MapEntry(key, value.toMap()),
+        ),
       );
       final map = updatedPathology.toMap();
       map['reminders'] = remindersJson;
@@ -257,7 +265,9 @@ class PathologyService {
     }
     final updatedPathology = pathology.copyWith(updatedAt: DateTime.now());
     final remindersJson = jsonEncode(
-      updatedPathology.reminders.map((key, value) => MapEntry(key, value.toMap())),
+      updatedPathology.reminders.map(
+        (key, value) => MapEntry(key, value.toMap()),
+      ),
     );
     final map = updatedPathology.toMap();
     map['reminders'] = remindersJson;
@@ -284,11 +294,7 @@ class PathologyService {
     if (db == null) {
       throw UnsupportedError('Base de données non disponible');
     }
-    return await db.delete(
-      'pathologies',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    return await db.delete('pathologies', where: 'id = ?', whereArgs: [id]);
   }
 
   // Méthodes helper pour le stockage web
@@ -304,9 +310,10 @@ class PathologyService {
   Map<String, dynamic> _convertWebMapToSqliteMap(Map<String, dynamic> map) {
     final converted = Map<String, dynamic>.from(map);
     if (converted['id'] != null) {
-      converted['id'] = converted['id'] is int 
-          ? converted['id'] 
-          : int.tryParse(converted['id'].toString()) ?? converted['id'];
+      converted['id'] =
+          converted['id'] is int
+              ? converted['id']
+              : int.tryParse(converted['id'].toString()) ?? converted['id'];
     }
     return converted;
   }
@@ -341,29 +348,32 @@ class PathologyService {
   }) async {
     if (kIsWeb) {
       final tracking = await _getPathologyTrackingFromStorage();
-      var filtered = tracking.where((map) => map['pathology_id'] == pathologyId).toList();
-      
+      var filtered =
+          tracking.where((map) => map['pathology_id'] == pathologyId).toList();
+
       if (startDate != null) {
         final startStr = startDate.toIso8601String();
-        filtered = filtered.where((map) {
-          final date = map['date'] as String?;
-          return date != null && date.compareTo(startStr) >= 0;
-        }).toList();
+        filtered =
+            filtered.where((map) {
+              final date = map['date'] as String?;
+              return date != null && date.compareTo(startStr) >= 0;
+            }).toList();
       }
       if (endDate != null) {
         final endStr = endDate.toIso8601String();
-        filtered = filtered.where((map) {
-          final date = map['date'] as String?;
-          return date != null && date.compareTo(endStr) <= 0;
-        }).toList();
+        filtered =
+            filtered.where((map) {
+              final date = map['date'] as String?;
+              return date != null && date.compareTo(endStr) <= 0;
+            }).toList();
       }
-      
+
       filtered.sort((a, b) {
         final dateA = a['date'] as String? ?? '';
         final dateB = b['date'] as String? ?? '';
         return dateB.compareTo(dateA); // DESC
       });
-      
+
       return filtered.map((map) {
         final converted = _convertWebMapToSqliteMap(map);
         // Parser data depuis JSON
@@ -442,7 +452,7 @@ class PathologyService {
       whereArgs: [id],
     );
     if (maps.isEmpty) return null;
-    
+
     final map = maps.first;
     // Parser data depuis JSON
     if (map['data'] != null) {
@@ -562,11 +572,11 @@ class PathologyService {
     if (kIsWeb) {
       return;
     }
-    
+
     for (final entry in pathology.reminders.entries) {
       final reminderConfig = entry.value;
       final title = '[Pathologie] ${pathology.name} - ${reminderConfig.type}';
-      
+
       // Programmer les rappels selon la fréquence
       if (reminderConfig.times.isNotEmpty) {
         for (final timeStr in reminderConfig.times) {
@@ -576,8 +586,14 @@ class PathologyService {
             final hour = int.tryParse(parts[0]) ?? 8;
             final minute = int.tryParse(parts[1]) ?? 0;
             final now = DateTime.now();
-            var reminderDate = DateTime(now.year, now.month, now.day, hour, minute);
-            
+            var reminderDate = DateTime(
+              now.year,
+              now.month,
+              now.day,
+              hour,
+              minute,
+            );
+
             if (reminderDate.isBefore(now)) {
               reminderDate = reminderDate.add(const Duration(days: 1));
             }
@@ -587,7 +603,8 @@ class PathologyService {
                 title: title,
                 description: pathology.description ?? '',
                 reminderDate: reminderDate,
-                recurrence: reminderConfig.frequency == 'daily' ? 'daily' : null,
+                recurrence:
+                    reminderConfig.frequency == 'daily' ? 'daily' : null,
               );
             } catch (e) {
               // Ignorer les erreurs de calendrier
@@ -604,23 +621,16 @@ class PathologyService {
   static Pathology createEndometriosisTemplate() {
     return Pathology(
       name: 'Endométriose',
-      description: 'Suivi de l\'endométriose avec cycle, douleurs et saignements',
+      description:
+          'Suivi de l\'endométriose avec cycle, douleurs et saignements',
       symptoms: [
         'Douleurs pelviennes',
         'Règles douloureuses',
         'Saignements',
         'Fatigue',
       ],
-      treatments: [
-        'Hormonothérapie',
-        'Chirurgie',
-        'Antalgiques',
-      ],
-      exams: [
-        'Échographie pelvienne',
-        'IRM pelvienne',
-        'Laparoscopie',
-      ],
+      treatments: ['Hormonothérapie', 'Chirurgie', 'Antalgiques'],
+      exams: ['Échographie pelvienne', 'IRM pelvienne', 'Laparoscopie'],
       reminders: {
         'exam': ReminderConfig(
           type: 'exam',
@@ -634,8 +644,12 @@ class PathologyService {
         ),
       },
       color: PathologyColorService.getColorForPathology('Endométriose'),
-      category: PathologyCategoryService.getCategoryForPathology('Endométriose'),
-      subcategory: PathologyCategoryService.getSubcategoryForPathology('Endométriose'),
+      category: PathologyCategoryService.getCategoryForPathology(
+        'Endométriose',
+      ),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology(
+        'Endométriose',
+      ),
     );
   }
 
@@ -644,23 +658,9 @@ class PathologyService {
     return Pathology(
       name: 'Cancer',
       description: 'Suivi des traitements et examens pour le cancer',
-      symptoms: [
-        'Fatigue',
-        'Nausées',
-        'Douleurs',
-        'Perte d\'appétit',
-      ],
-      treatments: [
-        'Chimiothérapie',
-        'Radiothérapie',
-        'Chirurgie',
-      ],
-      exams: [
-        'Scanner',
-        'IRM',
-        'Biopsie',
-        'Analyses sanguines',
-      ],
+      symptoms: ['Fatigue', 'Nausées', 'Douleurs', 'Perte d\'appétit'],
+      treatments: ['Chimiothérapie', 'Radiothérapie', 'Chirurgie'],
+      exams: ['Scanner', 'IRM', 'Biopsie', 'Analyses sanguines'],
       reminders: {
         'treatment': ReminderConfig(
           type: 'treatment',
@@ -675,7 +675,9 @@ class PathologyService {
       },
       color: PathologyColorService.getColorForPathology('Cancer'),
       category: PathologyCategoryService.getCategoryForPathology('Cancer'),
-      subcategory: PathologyCategoryService.getSubcategoryForPathology('Cancer'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology(
+        'Cancer',
+      ),
     );
   }
 
@@ -683,21 +685,11 @@ class PathologyService {
   static Pathology createMyelomaTemplate() {
     return Pathology(
       name: 'Myélome',
-      description: 'Suivi du myélome avec analyses biologiques et douleurs osseuses',
-      symptoms: [
-        'Douleurs osseuses',
-        'Fatigue',
-        'Infections',
-      ],
-      treatments: [
-        'Chimiothérapie',
-        'Greffe',
-      ],
-      exams: [
-        'IRM',
-        'Biopsie médullaire',
-        'Analyses sanguines',
-      ],
+      description:
+          'Suivi du myélome avec analyses biologiques et douleurs osseuses',
+      symptoms: ['Douleurs osseuses', 'Fatigue', 'Infections'],
+      treatments: ['Chimiothérapie', 'Greffe'],
+      exams: ['IRM', 'Biopsie médullaire', 'Analyses sanguines'],
       reminders: {
         'exam': ReminderConfig(
           type: 'exam',
@@ -712,7 +704,9 @@ class PathologyService {
       },
       color: PathologyColorService.getColorForPathology('Myélome'),
       category: PathologyCategoryService.getCategoryForPathology('Myélome'),
-      subcategory: PathologyCategoryService.getSubcategoryForPathology('Myélome'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology(
+        'Myélome',
+      ),
     );
   }
 
@@ -721,18 +715,9 @@ class PathologyService {
     return Pathology(
       name: 'Ostéoporose',
       description: 'Suivi de l\'ostéoporose avec activité physique et examens',
-      symptoms: [
-        'Douleurs',
-        'Fractures',
-      ],
-      treatments: [
-        'Biphosphonates',
-        'Calcium',
-        'Vitamine D',
-      ],
-      exams: [
-        'Densitométrie osseuse',
-      ],
+      symptoms: ['Douleurs', 'Fractures'],
+      treatments: ['Biphosphonates', 'Calcium', 'Vitamine D'],
+      exams: ['Densitométrie osseuse'],
       reminders: {
         'exam': ReminderConfig(
           type: 'exam',
@@ -752,7 +737,9 @@ class PathologyService {
       },
       color: PathologyColorService.getColorForPathology('Ostéoporose'),
       category: PathologyCategoryService.getCategoryForPathology('Ostéoporose'),
-      subcategory: PathologyCategoryService.getSubcategoryForPathology('Ostéoporose'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology(
+        'Ostéoporose',
+      ),
     );
   }
 
@@ -760,22 +747,11 @@ class PathologyService {
   static Pathology createArthritisTemplate() {
     return Pathology(
       name: 'Arthrose',
-      description: 'Suivi de l\'arthrose avec douleurs articulaires et mobilité',
-      symptoms: [
-        'Douleurs articulaires',
-        'Raideur',
-        'Gonflement',
-      ],
-      treatments: [
-        'Anti-inflammatoires',
-        'Antalgiques',
-        'Kinésithérapie',
-      ],
-      exams: [
-        'Radiographie',
-        'Échographie articulaire',
-        'IRM',
-      ],
+      description:
+          'Suivi de l\'arthrose avec douleurs articulaires et mobilité',
+      symptoms: ['Douleurs articulaires', 'Raideur', 'Gonflement'],
+      treatments: ['Anti-inflammatoires', 'Antalgiques', 'Kinésithérapie'],
+      exams: ['Radiographie', 'Échographie articulaire', 'IRM'],
       reminders: {
         'medication': ReminderConfig(
           type: 'medication',
@@ -790,7 +766,9 @@ class PathologyService {
       },
       color: PathologyColorService.getColorForPathology('Arthrite'),
       category: PathologyCategoryService.getCategoryForPathology('Arthrite'),
-      subcategory: PathologyCategoryService.getSubcategoryForPathology('Arthrite'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology(
+        'Arthrite',
+      ),
     );
   }
 
@@ -799,11 +777,7 @@ class PathologyService {
     return Pathology(
       name: 'Arthrite rhumatoïde',
       description: 'Suivi de l\'arthrite avec douleurs et traitements',
-      symptoms: [
-        'Douleurs articulaires',
-        'Raideur',
-        'Gonflement',
-      ],
+      symptoms: ['Douleurs articulaires', 'Raideur', 'Gonflement'],
       treatments: [
         'Anti-inflammatoires',
         'Traitements de fond',
@@ -828,8 +802,12 @@ class PathologyService {
         ),
       },
       color: PathologyColorService.getColorForPathology('Arthrite rhumatoïde'),
-      category: PathologyCategoryService.getCategoryForPathology('Arthrite rhumatoïde'),
-      subcategory: PathologyCategoryService.getSubcategoryForPathology('Arthrite rhumatoïde'),
+      category: PathologyCategoryService.getCategoryForPathology(
+        'Arthrite rhumatoïde',
+      ),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology(
+        'Arthrite rhumatoïde',
+      ),
     );
   }
 
@@ -838,20 +816,9 @@ class PathologyService {
     return Pathology(
       name: 'Tendinite',
       description: 'Suivi de la tendinite avec douleurs et rééducation',
-      symptoms: [
-        'Douleurs articulaires',
-        'Raideur',
-        'Gonflement',
-      ],
-      treatments: [
-        'Anti-inflammatoires',
-        'Repos',
-        'Kinésithérapie',
-      ],
-      exams: [
-        'Échographie articulaire',
-        'IRM',
-      ],
+      symptoms: ['Douleurs articulaires', 'Raideur', 'Gonflement'],
+      treatments: ['Anti-inflammatoires', 'Repos', 'Kinésithérapie'],
+      exams: ['Échographie articulaire', 'IRM'],
       reminders: {
         'medication': ReminderConfig(
           type: 'medication',
@@ -866,7 +833,9 @@ class PathologyService {
       },
       color: PathologyColorService.getColorForPathology('Tendinite'),
       category: PathologyCategoryService.getCategoryForPathology('Tendinite'),
-      subcategory: PathologyCategoryService.getSubcategoryForPathology('Tendinite'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology(
+        'Tendinite',
+      ),
     );
   }
 
@@ -875,21 +844,13 @@ class PathologyService {
     return Pathology(
       name: 'Spondylarthrite',
       description: 'Suivi de la spondylarthrite avec douleurs et mobilité',
-      symptoms: [
-        'Douleurs articulaires',
-        'Raideur',
-        'Gonflement',
-      ],
+      symptoms: ['Douleurs articulaires', 'Raideur', 'Gonflement'],
       treatments: [
         'Anti-inflammatoires',
         'Traitements de fond',
         'Kinésithérapie',
       ],
-      exams: [
-        'Radiographie',
-        'IRM',
-        'Analyses sanguines',
-      ],
+      exams: ['Radiographie', 'IRM', 'Analyses sanguines'],
       reminders: {
         'medication': ReminderConfig(
           type: 'medication',
@@ -903,8 +864,12 @@ class PathologyService {
         ),
       },
       color: PathologyColorService.getColorForPathology('Spondylarthrite'),
-      category: PathologyCategoryService.getCategoryForPathology('Spondylarthrite'),
-      subcategory: PathologyCategoryService.getSubcategoryForPathology('Spondylarthrite'),
+      category: PathologyCategoryService.getCategoryForPathology(
+        'Spondylarthrite',
+      ),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology(
+        'Spondylarthrite',
+      ),
     );
   }
 
@@ -912,20 +877,16 @@ class PathologyService {
   static Pathology createParkinsonTemplate() {
     return Pathology(
       name: 'Parkinson',
-      description: 'Suivi de la maladie de Parkinson avec symptômes et médicaments',
+      description:
+          'Suivi de la maladie de Parkinson avec symptômes et médicaments',
       symptoms: [
         'Tremblements',
         'Rigidité',
         'Bradykinésie',
         'Troubles de l\'équilibre',
       ],
-      treatments: [
-        'Lévodopa',
-        'Autres traitements',
-      ],
-      exams: [
-        'Consultation neurologue',
-      ],
+      treatments: ['Lévodopa', 'Autres traitements'],
+      exams: ['Consultation neurologue'],
       reminders: {
         'medication': ReminderConfig(
           type: 'medication',
@@ -945,7 +906,9 @@ class PathologyService {
       },
       color: PathologyColorService.getColorForPathology('Parkinson'),
       category: PathologyCategoryService.getCategoryForPathology('Parkinson'),
-      subcategory: PathologyCategoryService.getSubcategoryForPathology('Parkinson'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology(
+        'Parkinson',
+      ),
     );
   }
 
@@ -984,7 +947,9 @@ class PathologyService {
       },
       color: PathologyColorService.getColorForPathology('Alzheimer'),
       category: PathologyCategoryService.getCategoryForPathology('Alzheimer'),
-      subcategory: PathologyCategoryService.getSubcategoryForPathology('Alzheimer'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology(
+        'Alzheimer',
+      ),
     );
   }
 
@@ -993,22 +958,9 @@ class PathologyService {
     return Pathology(
       name: 'Anémie',
       description: 'Suivi de l\'anémie avec fatigue et carences',
-      symptoms: [
-        'Fatigue',
-        'Pâleur',
-        'Essoufflement',
-        'Vertiges',
-      ],
-      treatments: [
-        'Supplémentation en fer',
-        'Vitamine B12',
-        'Acide folique',
-      ],
-      exams: [
-        'Numération formule sanguine',
-        'Ferritine',
-        'Vitamine B12',
-      ],
+      symptoms: ['Fatigue', 'Pâleur', 'Essoufflement', 'Vertiges'],
+      treatments: ['Supplémentation en fer', 'Vitamine B12', 'Acide folique'],
+      exams: ['Numération formule sanguine', 'Ferritine', 'Vitamine B12'],
       reminders: {
         'medication': ReminderConfig(
           type: 'medication',
@@ -1023,7 +975,9 @@ class PathologyService {
       },
       color: PathologyColorService.getColorForPathology('Anémie'),
       category: PathologyCategoryService.getCategoryForPathology('Anémie'),
-      subcategory: PathologyCategoryService.getSubcategoryForPathology('Anémie'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology(
+        'Anémie',
+      ),
     );
   }
 
@@ -1043,11 +997,7 @@ class PathologyService {
         'Bronchodilatateurs',
         'Traitement de crise',
       ],
-      exams: [
-        'Spirométrie',
-        'Peak flow',
-        'Tests allergologiques',
-      ],
+      exams: ['Spirométrie', 'Peak flow', 'Tests allergologiques'],
       reminders: {
         'medication': ReminderConfig(
           type: 'medication',
@@ -1062,7 +1012,9 @@ class PathologyService {
       },
       color: PathologyColorService.getColorForPathology('Asthme'),
       category: PathologyCategoryService.getCategoryForPathology('Asthme'),
-      subcategory: PathologyCategoryService.getSubcategoryForPathology('Asthme'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology(
+        'Asthme',
+      ),
     );
   }
 
@@ -1082,12 +1034,7 @@ class PathologyService {
         'Médicaments antidiabétiques',
         'Régime alimentaire',
       ],
-      exams: [
-        'Glycémie',
-        'HbA1c',
-        'Bilan rénal',
-        'Examen des pieds',
-      ],
+      exams: ['Glycémie', 'HbA1c', 'Bilan rénal', 'Examen des pieds'],
       reminders: {
         'medication': ReminderConfig(
           type: 'medication',
@@ -1102,7 +1049,9 @@ class PathologyService {
       },
       color: PathologyColorService.getColorForPathology('Diabète'),
       category: PathologyCategoryService.getCategoryForPathology('Diabète'),
-      subcategory: PathologyCategoryService.getSubcategoryForPathology('Diabète'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology(
+        'Diabète',
+      ),
     );
   }
 
@@ -1117,15 +1066,8 @@ class PathologyService {
         'Fatigue',
         'Troubles du sommeil',
       ],
-      treatments: [
-        'Antidépresseurs',
-        'Psychothérapie',
-        'Activité physique',
-      ],
-      exams: [
-        'Consultation psychiatre',
-        'Consultation psychologue',
-      ],
+      treatments: ['Antidépresseurs', 'Psychothérapie', 'Activité physique'],
+      exams: ['Consultation psychiatre', 'Consultation psychologue'],
       reminders: {
         'medication': ReminderConfig(
           type: 'medication',
@@ -1140,7 +1082,9 @@ class PathologyService {
       },
       color: PathologyColorService.getColorForPathology('Dépression'),
       category: PathologyCategoryService.getCategoryForPathology('Dépression'),
-      subcategory: PathologyCategoryService.getSubcategoryForPathology('Dépression'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology(
+        'Dépression',
+      ),
     );
   }
 
@@ -1155,15 +1099,8 @@ class PathologyService {
         'Sécheresse cutanée',
         'Desquamation',
       ],
-      treatments: [
-        'Corticoïdes locaux',
-        'Émollients',
-        'Antihistaminiques',
-      ],
-      exams: [
-        'Consultation dermatologue',
-        'Tests allergologiques',
-      ],
+      treatments: ['Corticoïdes locaux', 'Émollients', 'Antihistaminiques'],
+      exams: ['Consultation dermatologue', 'Tests allergologiques'],
       reminders: {
         'medication': ReminderConfig(
           type: 'medication',
@@ -1178,7 +1115,9 @@ class PathologyService {
       },
       color: PathologyColorService.getColorForPathology('Eczéma'),
       category: PathologyCategoryService.getCategoryForPathology('Eczéma'),
-      subcategory: PathologyCategoryService.getSubcategoryForPathology('Eczéma'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology(
+        'Eczéma',
+      ),
     );
   }
 
@@ -1193,15 +1132,8 @@ class PathologyService {
         'Troubles du sommeil',
         'Troubles cognitifs',
       ],
-      treatments: [
-        'Antalgiques',
-        'Antidépresseurs',
-        'Kinésithérapie',
-      ],
-      exams: [
-        'Consultation rhumatologue',
-        'Bilan douleur',
-      ],
+      treatments: ['Antalgiques', 'Antidépresseurs', 'Kinésithérapie'],
+      exams: ['Consultation rhumatologue', 'Bilan douleur'],
       reminders: {
         'medication': ReminderConfig(
           type: 'medication',
@@ -1215,8 +1147,12 @@ class PathologyService {
         ),
       },
       color: PathologyColorService.getColorForPathology('Fibromyalgie'),
-      category: PathologyCategoryService.getCategoryForPathology('Fibromyalgie'),
-      subcategory: PathologyCategoryService.getSubcategoryForPathology('Fibromyalgie'),
+      category: PathologyCategoryService.getCategoryForPathology(
+        'Fibromyalgie',
+      ),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology(
+        'Fibromyalgie',
+      ),
     );
   }
 
@@ -1224,17 +1160,10 @@ class PathologyService {
   static Pathology createHypertensionTemplate() {
     return Pathology(
       name: 'Hypertension',
-      description: 'Suivi de l\'hypertension artérielle avec tension et traitement',
-      symptoms: [
-        'Maux de tête',
-        'Vertiges',
-        'Palpitations',
-      ],
-      treatments: [
-        'Inhibiteurs ACE',
-        'Diurétiques',
-        'Bêta-bloquants',
-      ],
+      description:
+          'Suivi de l\'hypertension artérielle avec tension et traitement',
+      symptoms: ['Maux de tête', 'Vertiges', 'Palpitations'],
+      treatments: ['Inhibiteurs ACE', 'Diurétiques', 'Bêta-bloquants'],
       exams: [
         'Mesure tension artérielle',
         'Électrocardiogramme',
@@ -1253,8 +1182,12 @@ class PathologyService {
         ),
       },
       color: PathologyColorService.getColorForPathology('Hypertension'),
-      category: PathologyCategoryService.getCategoryForPathology('Hypertension'),
-      subcategory: PathologyCategoryService.getSubcategoryForPathology('Hypertension'),
+      category: PathologyCategoryService.getCategoryForPathology(
+        'Hypertension',
+      ),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology(
+        'Hypertension',
+      ),
     );
   }
 
@@ -1263,20 +1196,9 @@ class PathologyService {
     return Pathology(
       name: 'Hypothyroïdie',
       description: 'Suivi de l\'hypothyroïdie avec hormones et traitement',
-      symptoms: [
-        'Fatigue',
-        'Prise de poids',
-        'Frilosité',
-        'Ralentissement',
-      ],
-      treatments: [
-        'Lévothyroxine',
-      ],
-      exams: [
-        'TSH',
-        'T4 libre',
-        'Consultation endocrinologue',
-      ],
+      symptoms: ['Fatigue', 'Prise de poids', 'Frilosité', 'Ralentissement'],
+      treatments: ['Lévothyroxine'],
+      exams: ['TSH', 'T4 libre', 'Consultation endocrinologue'],
       reminders: {
         'medication': ReminderConfig(
           type: 'medication',
@@ -1290,8 +1212,12 @@ class PathologyService {
         ),
       },
       color: PathologyColorService.getColorForPathology('Hypothyroïdie'),
-      category: PathologyCategoryService.getCategoryForPathology('Hypothyroïdie'),
-      subcategory: PathologyCategoryService.getSubcategoryForPathology('Hypothyroïdie'),
+      category: PathologyCategoryService.getCategoryForPathology(
+        'Hypothyroïdie',
+      ),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology(
+        'Hypothyroïdie',
+      ),
     );
   }
 
@@ -1306,15 +1232,8 @@ class PathologyService {
         'Sensibilité à la lumière',
         'Aura visuelle',
       ],
-      treatments: [
-        'Triptans',
-        'Antalgiques',
-        'Traitement de fond',
-      ],
-      exams: [
-        'Consultation neurologue',
-        'IRM cérébrale',
-      ],
+      treatments: ['Triptans', 'Antalgiques', 'Traitement de fond'],
+      exams: ['Consultation neurologue', 'IRM cérébrale'],
       reminders: {
         'medication': ReminderConfig(
           type: 'medication',
@@ -1335,23 +1254,16 @@ class PathologyService {
   static Pathology createRheumatoidArthritisTemplate() {
     return Pathology(
       name: 'Polyarthrite rhumatoïde',
-      description: 'Suivi de la polyarthrite rhumatoïde avec douleurs articulaires',
+      description:
+          'Suivi de la polyarthrite rhumatoïde avec douleurs articulaires',
       symptoms: [
         'Douleurs articulaires',
         'Raideur matinale',
         'Gonflement',
         'Déformation',
       ],
-      treatments: [
-        'Traitements de fond',
-        'Anti-inflammatoires',
-        'Corticoïdes',
-      ],
-      exams: [
-        'Radiographie',
-        'Analyses sanguines',
-        'Échographie articulaire',
-      ],
+      treatments: ['Traitements de fond', 'Anti-inflammatoires', 'Corticoïdes'],
+      exams: ['Radiographie', 'Analyses sanguines', 'Échographie articulaire'],
       reminders: {
         'medication': ReminderConfig(
           type: 'medication',
@@ -1364,9 +1276,15 @@ class PathologyService {
           times: ['09:00'],
         ),
       },
-      color: PathologyColorService.getColorForPathology('Polyarthrite rhumatoïde'),
-      category: PathologyCategoryService.getCategoryForPathology('Arthrite rhumatoïde'),
-      subcategory: PathologyCategoryService.getSubcategoryForPathology('Arthrite rhumatoïde'),
+      color: PathologyColorService.getColorForPathology(
+        'Polyarthrite rhumatoïde',
+      ),
+      category: PathologyCategoryService.getCategoryForPathology(
+        'Arthrite rhumatoïde',
+      ),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology(
+        'Arthrite rhumatoïde',
+      ),
     );
   }
 
@@ -1386,10 +1304,7 @@ class PathologyService {
         'Traitements systémiques',
         'Photothérapie',
       ],
-      exams: [
-        'Consultation dermatologue',
-        'Bilan articulaire',
-      ],
+      exams: ['Consultation dermatologue', 'Bilan articulaire'],
       reminders: {
         'medication': ReminderConfig(
           type: 'medication',
@@ -1404,7 +1319,9 @@ class PathologyService {
       },
       color: PathologyColorService.getColorForPathology('Psoriasis'),
       category: PathologyCategoryService.getCategoryForPathology('Psoriasis'),
-      subcategory: PathologyCategoryService.getSubcategoryForPathology('Psoriasis'),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology(
+        'Psoriasis',
+      ),
     );
   }
 
@@ -1424,10 +1341,7 @@ class PathologyService {
         'Anti-H2',
         'Antiacides',
       ],
-      exams: [
-        'Endoscopie digestive',
-        'pH-métrie',
-      ],
+      exams: ['Endoscopie digestive', 'pH-métrie'],
       reminders: {
         'medication': ReminderConfig(
           type: 'medication',
@@ -1440,9 +1354,15 @@ class PathologyService {
           times: ['09:00'],
         ),
       },
-      color: PathologyColorService.getColorForPathology('Reflux gastro-œsophagien'),
-      category: PathologyCategoryService.getCategoryForPathology('Reflux gastro-œsophagien'),
-      subcategory: PathologyCategoryService.getSubcategoryForPathology('Reflux gastro-œsophagien'),
+      color: PathologyColorService.getColorForPathology(
+        'Reflux gastro-œsophagien',
+      ),
+      category: PathologyCategoryService.getCategoryForPathology(
+        'Reflux gastro-œsophagien',
+      ),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology(
+        'Reflux gastro-œsophagien',
+      ),
     );
   }
 
@@ -1450,23 +1370,16 @@ class PathologyService {
   static Pathology createMultipleSclerosisTemplate() {
     return Pathology(
       name: 'Sclérose en plaques',
-      description: 'Suivi de la sclérose en plaques avec poussées et traitement',
+      description:
+          'Suivi de la sclérose en plaques avec poussées et traitement',
       symptoms: [
         'Troubles visuels',
         'Fatigue',
         'Troubles moteurs',
         'Troubles sensitifs',
       ],
-      treatments: [
-        'Traitements de fond',
-        'Corticoïdes',
-        'Kinésithérapie',
-      ],
-      exams: [
-        'IRM cérébrale',
-        'Ponction lombaire',
-        'Consultation neurologue',
-      ],
+      treatments: ['Traitements de fond', 'Corticoïdes', 'Kinésithérapie'],
+      exams: ['IRM cérébrale', 'Ponction lombaire', 'Consultation neurologue'],
       reminders: {
         'medication': ReminderConfig(
           type: 'medication',
@@ -1480,8 +1393,12 @@ class PathologyService {
         ),
       },
       color: PathologyColorService.getColorForPathology('Sclérose en plaques'),
-      category: PathologyCategoryService.getCategoryForPathology('Sclérose en plaques'),
-      subcategory: PathologyCategoryService.getSubcategoryForPathology('Sclérose en plaques'),
+      category: PathologyCategoryService.getCategoryForPathology(
+        'Sclérose en plaques',
+      ),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology(
+        'Sclérose en plaques',
+      ),
     );
   }
 
@@ -1489,22 +1406,16 @@ class PathologyService {
   static Pathology createIbsTemplate() {
     return Pathology(
       name: 'Syndrome du côlon irritable',
-      description: 'Suivi du syndrome du côlon irritable avec symptômes digestifs',
+      description:
+          'Suivi du syndrome du côlon irritable avec symptômes digestifs',
       symptoms: [
         'Douleurs abdominales',
         'Ballonnements',
         'Diarrhée',
         'Constipation',
       ],
-      treatments: [
-        'Régime alimentaire',
-        'Probiotiques',
-        'Antispasmodiques',
-      ],
-      exams: [
-        'Consultation gastro-entérologue',
-        'Coloscopie',
-      ],
+      treatments: ['Régime alimentaire', 'Probiotiques', 'Antispasmodiques'],
+      exams: ['Consultation gastro-entérologue', 'Coloscopie'],
       reminders: {
         'medication': ReminderConfig(
           type: 'medication',
@@ -1517,9 +1428,15 @@ class PathologyService {
           times: ['09:00'],
         ),
       },
-      color: PathologyColorService.getColorForPathology('Syndrome du côlon irritable'),
-      category: PathologyCategoryService.getCategoryForPathology('Syndrome du côlon irritable'),
-      subcategory: PathologyCategoryService.getSubcategoryForPathology('Syndrome du côlon irritable'),
+      color: PathologyColorService.getColorForPathology(
+        'Syndrome du côlon irritable',
+      ),
+      category: PathologyCategoryService.getCategoryForPathology(
+        'Syndrome du côlon irritable',
+      ),
+      subcategory: PathologyCategoryService.getSubcategoryForPathology(
+        'Syndrome du côlon irritable',
+      ),
     );
   }
 
@@ -1529,7 +1446,7 @@ class PathologyService {
   Future<Map<String, List<Pathology>>> getPathologiesByCategory() async {
     final allPathologies = await getAllPathologies();
     final grouped = <String, List<Pathology>>{};
-    
+
     for (final pathology in allPathologies) {
       final category = pathology.category ?? 'Autres';
       if (!grouped.containsKey(category)) {
@@ -1537,17 +1454,19 @@ class PathologyService {
       }
       grouped[category]!.add(pathology);
     }
-    
+
     // Trier les pathologies dans chaque catégorie
     for (final category in grouped.keys) {
       grouped[category]!.sort((a, b) => a.name.compareTo(b.name));
     }
-    
+
     return grouped;
   }
 
   /// Filtre les pathologies par catégorie
-  Future<List<Pathology>> getPathologiesByCategoryFilter(String? category) async {
+  Future<List<Pathology>> getPathologiesByCategoryFilter(
+    String? category,
+  ) async {
     if (category == null) {
       return await getAllPathologies();
     }
@@ -1557,7 +1476,9 @@ class PathologyService {
   }
 
   /// Filtre les pathologies par sous-catégorie
-  Future<List<Pathology>> getPathologiesBySubcategoryFilter(String? subcategory) async {
+  Future<List<Pathology>> getPathologiesBySubcategoryFilter(
+    String? subcategory,
+  ) async {
     if (subcategory == null) {
       return await getAllPathologies();
     }
@@ -1570,12 +1491,12 @@ class PathologyService {
   Future<Map<String, int>> getCategoriesWithCount() async {
     final allPathologies = await getAllPathologies();
     final categories = <String, int>{};
-    
+
     for (final pathology in allPathologies) {
       final category = pathology.category ?? 'Autres';
       categories[category] = (categories[category] ?? 0) + 1;
     }
-    
+
     return categories;
   }
 
@@ -1607,10 +1528,9 @@ class PathologyService {
       createSpondylitisTemplate(),
       createTendinitisTemplate(),
     ];
-    
+
     // Trier par ordre alphabétique
     templates.sort((a, b) => a.name.compareTo(b.name));
     return templates;
   }
 }
-

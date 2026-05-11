@@ -34,7 +34,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
     try {
       // Vérifier d'abord la permission avant de charger les contacts
       final hasPermission = await ContactsService.hasContactsPermission();
-      
+
       if (!hasPermission) {
         // Demander la permission avec un dialogue explicatif
         final granted = await _requestContactsPermissionWithDialog();
@@ -63,23 +63,25 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
 
       // Fusionner les contacts système et locaux
       final allContacts = <Map<String, dynamic>>[];
-      
+
       // Ajouter les contacts locaux (priorité)
       for (final localContact in localContacts) {
         allContacts.add(localContact);
       }
-      
+
       // Ajouter les contacts système qui ne sont pas déjà dans la liste locale
       for (final systemContact in systemContacts) {
-        final systemPhone = systemContact.phones.isNotEmpty 
-            ? systemContact.phones.first.number 
-            : '';
+        final systemPhone =
+            systemContact.phones.isNotEmpty
+                ? systemContact.phones.first.number
+                : '';
         final systemName =
             '${systemContact.name.first} ${systemContact.name.last}'.trim();
-        final existsInLocal = localContacts.any((local) => 
-            local['phone'] == systemPhone || 
-            local['name'] == systemName);
-        
+        final existsInLocal = localContacts.any(
+          (local) =>
+              local['phone'] == systemPhone || local['name'] == systemName,
+        );
+
         if (!existsInLocal && systemPhone.isNotEmpty) {
           allContacts.add({
             'id': 'system_${systemContact.id}',
@@ -105,7 +107,8 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
       }
       // Ne pas afficher d'erreur si c'est juste une permission refusée
       final errorString = e.toString().toLowerCase();
-      if (!errorString.contains('permission') && !errorString.contains('denied')) {
+      if (!errorString.contains('permission') &&
+          !errorString.contains('denied')) {
         ErrorHelper.logError('EmergencyScreen._loadData', e);
         _showError(ErrorHelper.getUserFriendlyMessage(e));
       }
@@ -115,38 +118,45 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
   Future<bool> _requestContactsPermissionWithDialog() async {
     // Ne pas afficher le dialog si on n'est pas sur l'écran Urgence
     if (!mounted) return false;
-    
+
     final result = await showDialog<bool>(
       context: context,
       barrierDismissible: true,
-      builder: (context) => AlertDialog(
-        title: const Text('Permission Contacts'),
-        content: const Text(
-          'Arkalia CIA a besoin d\'accéder à vos contacts pour afficher '
-          'vos contacts d\'urgence (ICE).\n\n'
-          'Vos données restent privées et ne quittent jamais votre appareil.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(false);
-            },
-            style: TextButton.styleFrom(
-              minimumSize: const Size(100, 48), // Minimum 48px pour accessibilité seniors
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Permission Contacts'),
+            content: const Text(
+              'Arkalia CIA a besoin d\'accéder à vos contacts pour afficher '
+              'vos contacts d\'urgence (ICE).\n\n'
+              'Vos données restent privées et ne quittent jamais votre appareil.',
             ),
-            child: const Text('Annuler'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+                style: TextButton.styleFrom(
+                  minimumSize: const Size(
+                    100,
+                    48,
+                  ), // Minimum 48px pour accessibilité seniors
+                ),
+                child: const Text('Annuler'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(
+                    120,
+                    48,
+                  ), // Minimum 48px pour accessibilité seniors
+                ),
+                child: const Text('Autoriser'),
+              ),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop(true);
-            },
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size(120, 48), // Minimum 48px pour accessibilité seniors
-            ),
-            child: const Text('Autoriser'),
-          ),
-        ],
-      ),
     );
 
     if (result == true) {
@@ -189,21 +199,25 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
             relationship: contactData['relationship'] ?? '',
             isPrimary: contactData['is_primary'] ?? false,
           );
-          
+
           // Le backend retourne soit un objet avec 'id' (succès) soit un objet avec 'error' (échec)
-          if (backendResult.containsKey('error') || backendResult['success'] == false) {
+          if (backendResult.containsKey('error') ||
+              backendResult['success'] == false) {
             // Si le backend n'est pas configuré, continuer avec stockage local sans erreur
-            if (backendResult['backend_not_configured'] == true || 
+            if (backendResult['backend_not_configured'] == true ||
                 backendResult['backend_disabled'] == true) {
               // Backend non configuré, continuer avec stockage local
             } else {
               // Erreur backend réelle, afficher message détaillé mais continuer avec stockage local
-              final errorMsg = backendResult['error'] ?? 
-                             backendResult['technical_error'] ?? 
-                             'Erreur lors de la sauvegarde sur le serveur';
+              final errorMsg =
+                  backendResult['error'] ??
+                  backendResult['technical_error'] ??
+                  'Erreur lors de la sauvegarde sur le serveur';
               // Logger l'erreur mais ne pas afficher à l'utilisateur (le contact sera sauvegardé localement)
-              ErrorHelper.logError('EmergencyScreen._addContact (backend)', 
-                Exception('Erreur serveur: $errorMsg'));
+              ErrorHelper.logError(
+                'EmergencyScreen._addContact (backend)',
+                Exception('Erreur serveur: $errorMsg'),
+              );
               // Ne pas afficher l'erreur à l'utilisateur car le contact sera sauvegardé localement
             }
           } else {
@@ -216,7 +230,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
           // Erreur backend, continuer avec stockage local sans bloquer
           // Ne pas afficher d'erreur si c'est juste que le backend n'est pas disponible
           final errorString = e.toString();
-          if (!errorString.contains('Backend non configuré') && 
+          if (!errorString.contains('Backend non configuré') &&
               !errorString.contains('Backend non disponible') &&
               !errorString.contains('backend_not_configured')) {
             // Erreur réelle, logger mais continuer
@@ -225,7 +239,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
           // Continuer avec stockage local même en cas d'erreur backend
         }
       }
-      
+
       // 2. Ajouter au système natif (contacts du téléphone)
       try {
         await ContactsService.addEmergencyContact(
@@ -235,7 +249,10 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
         );
       } catch (e) {
         // Erreur système natif, continuer quand même avec stockage local
-        ErrorHelper.logError('EmergencyScreen._addContact (contacts natifs)', e);
+        ErrorHelper.logError(
+          'EmergencyScreen._addContact (contacts natifs)',
+          e,
+        );
       }
 
       // 3. Sauvegarder localement
@@ -295,51 +312,63 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
 
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Informations médicales d\'urgence'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: fields.entries
-                .map((entry) => Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      child: TextField(
-                        controller: controllers[entry.key]!,
-                        decoration: InputDecoration(
-                          labelText: entry.value,
-                          border: const OutlineInputBorder(),
-                        ),
-                        maxLines: entry.key == 'emergency_notes' ? 3 : 1,
-                      ),
-                    ))
-                .toList(),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            style: TextButton.styleFrom(
-              minimumSize: const Size(100, 48), // Minimum 48px pour accessibilité seniors
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Informations médicales d\'urgence'),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children:
+                    fields.entries
+                        .map(
+                          (entry) => Padding(
+                            padding: const EdgeInsets.only(bottom: 16),
+                            child: TextField(
+                              controller: controllers[entry.key]!,
+                              decoration: InputDecoration(
+                                labelText: entry.value,
+                                border: const OutlineInputBorder(),
+                              ),
+                              maxLines: entry.key == 'emergency_notes' ? 3 : 1,
+                            ),
+                          ),
+                        )
+                        .toList(),
+              ),
             ),
-            child: const Text('Annuler'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                style: TextButton.styleFrom(
+                  minimumSize: const Size(
+                    100,
+                    48,
+                  ), // Minimum 48px pour accessibilité seniors
+                ),
+                child: const Text('Annuler'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  final data = <String, dynamic>{};
+                  for (final entry in controllers.entries) {
+                    // Sanitizer les entrées utilisateur pour prévenir XSS
+                    final sanitizedValue = InputSanitizer.sanitizeForStorage(
+                      entry.value.text.trim(),
+                    );
+                    data[entry.key] = sanitizedValue;
+                  }
+                  Navigator.of(context).pop(data);
+                },
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(
+                    120,
+                    48,
+                  ), // Minimum 48px pour accessibilité seniors
+                ),
+                child: const Text('Sauvegarder'),
+              ),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () {
-              final data = <String, dynamic>{};
-              for (final entry in controllers.entries) {
-                // Sanitizer les entrées utilisateur pour prévenir XSS
-                final sanitizedValue = InputSanitizer.sanitizeForStorage(entry.value.text.trim());
-                data[entry.key] = sanitizedValue;
-              }
-              Navigator.of(context).pop(data);
-            },
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size(120, 48), // Minimum 48px pour accessibilité seniors
-            ),
-            child: const Text('Sauvegarder'),
-          ),
-        ],
-      ),
     );
 
     // Nettoyer les contrôleurs
@@ -366,24 +395,28 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
   Future<bool> _showConfirmDialog(String title, String content) async {
     final result = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(title),
-        content: Text(content),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Annuler'),
+      builder:
+          (context) => AlertDialog(
+            title: Text(title),
+            content: Text(content),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('Annuler'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  minimumSize: const Size(
+                    120,
+                    48,
+                  ), // Minimum 48px pour accessibilité seniors
+                ),
+                child: const Text('Confirmer'),
+              ),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              minimumSize: const Size(120, 48), // Minimum 48px pour accessibilité seniors
-            ),
-            child: const Text('Confirmer'),
-          ),
-        ],
-      ),
     );
     return result ?? false;
   }
@@ -415,9 +448,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     return Scaffold(
@@ -442,10 +473,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
               padding: const EdgeInsets.only(bottom: 12),
               child: Text(
                 'En cas de problème, tu peux appeler rapidement les services d\'urgence ou une personne de confiance.',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey.shade800,
-                ),
+                style: TextStyle(fontSize: 14, color: Colors.grey.shade800),
               ),
             ),
             // Boutons d'urgence
@@ -481,10 +509,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
           children: [
             const Text(
               'Numéros d\'urgence',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Row(
@@ -497,7 +522,10 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 16,
+                        horizontal: 12,
+                      ),
                       minimumSize: const Size(0, 48),
                     ),
                   ),
@@ -511,7 +539,10 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 16,
+                        horizontal: 12,
+                      ),
                       minimumSize: const Size(0, 48),
                     ),
                   ),
@@ -525,8 +556,14 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-                      minimumSize: const Size(0, 48), // Minimum 48px pour accessibilité seniors
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 16,
+                        horizontal: 12,
+                      ),
+                      minimumSize: const Size(
+                        0,
+                        48,
+                      ), // Minimum 48px pour accessibilité seniors
                     ),
                   ),
                 ),
@@ -549,10 +586,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
             const Expanded(
               child: Text(
                 'Contacts d\'urgence',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
           ],
@@ -579,10 +613,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
                   const SizedBox(height: 16),
                   Text(
                     'Aucun contact d\'urgence',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey.shade600,
-                    ),
+                    style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -595,21 +626,24 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
             ),
           )
         else
-          ...emergencyContacts.map((contact) => Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: EmergencyContactCard(
-                  contact: contact is Map<String, dynamic>
-                      ? contact
-                      : {
+          ...emergencyContacts.map(
+            (contact) => Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: EmergencyContactCard(
+                contact:
+                    contact is Map<String, dynamic>
+                        ? contact
+                        : {
                           'name': contact.displayName ?? 'Contact sans nom',
                           'phone': contact.phones?.first?.value ?? '',
                           'relationship': contact.phones?.first?.label ?? '',
                           'is_primary': false,
                         },
-                  onEdit: () => _showEditContactDialog(contact),
-                  onDelete: () => _deleteContact(contact),
-                ),
-              )),
+                onEdit: () => _showEditContactDialog(contact),
+                onDelete: () => _deleteContact(contact),
+              ),
+            ),
+          ),
       ],
     );
   }

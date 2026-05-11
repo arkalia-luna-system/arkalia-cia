@@ -79,16 +79,9 @@ void main() {
     });
 
     test('copyWith should create modified copy', () {
-      final original = Medication(
-        id: 1,
-        name: 'Aspirine',
-        dosage: '100mg',
-      );
+      final original = Medication(id: 1, name: 'Aspirine', dosage: '100mg');
 
-      final modified = original.copyWith(
-        name: 'Paracétamol',
-        dosage: '500mg',
-      );
+      final modified = original.copyWith(name: 'Paracétamol', dosage: '500mg');
 
       expect(modified.id, 1);
       expect(modified.name, 'Paracétamol');
@@ -184,4 +177,3 @@ void main() {
     });
   });
 }
-

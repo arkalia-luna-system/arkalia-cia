@@ -6,7 +6,8 @@ class ManageFamilyMembersScreen extends StatefulWidget {
   const ManageFamilyMembersScreen({super.key});
 
   @override
-  State<ManageFamilyMembersScreen> createState() => _ManageFamilyMembersScreenState();
+  State<ManageFamilyMembersScreen> createState() =>
+      _ManageFamilyMembersScreenState();
 }
 
 class _ManageFamilyMembersScreenState extends State<ManageFamilyMembersScreen> {
@@ -54,62 +55,68 @@ class _ManageFamilyMembersScreenState extends State<ManageFamilyMembersScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Gérer membres famille'),
-      ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: ElevatedButton.icon(
-                    onPressed: _addMember,
-                    icon: const Icon(Icons.add),
-                    label: const Text('Ajouter un membre'),
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 50),
+      appBar: AppBar(title: const Text('Gérer membres famille')),
+      body:
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: ElevatedButton.icon(
+                      onPressed: _addMember,
+                      icon: const Icon(Icons.add),
+                      label: const Text('Ajouter un membre'),
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 50),
+                      ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: _members.isEmpty
-                      ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.people_outline, size: 64, color: Colors.grey[400]),
-                              const SizedBox(height: 16),
-                              Text(
-                                'Aucun membre famille',
-                                style: TextStyle(color: Colors.grey[600]),
-                              ),
-                            ],
-                          ),
-                        )
-                      : ListView.builder(
-                          itemCount: _members.length,
-                          itemBuilder: (context, index) {
-                            final member = _members[index];
-                            return ListTile(
-                              leading: CircleAvatar(
-                                child: Text(member.name[0].toUpperCase()),
-                              ),
-                              title: Text(member.name),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                  Expanded(
+                    child:
+                        _members.isEmpty
+                            ? Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text(member.email),
-                                  if (member.phone != null) Text('📞 ${member.phone}'),
-                                  Text('Relation: ${member.relationship}'),
+                                  Icon(
+                                    Icons.people_outline,
+                                    size: 64,
+                                    color: Colors.grey[400],
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    'Aucun membre famille',
+                                    style: TextStyle(color: Colors.grey[600]),
+                                  ),
                                 ],
                               ),
-                            );
-                          },
-                        ),
-                ),
-              ],
-            ),
+                            )
+                            : ListView.builder(
+                              itemCount: _members.length,
+                              itemBuilder: (context, index) {
+                                final member = _members[index];
+                                return ListTile(
+                                  leading: CircleAvatar(
+                                    child: Text(member.name[0].toUpperCase()),
+                                  ),
+                                  title: Text(member.name),
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(member.email),
+                                      if (member.phone != null)
+                                        Text('📞 ${member.phone}'),
+                                      Text('Relation: ${member.relationship}'),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                  ),
+                ],
+              ),
     );
   }
 }
@@ -155,9 +162,10 @@ class _AddMemberDialogState extends State<_AddMemberDialog> {
               DropdownButtonFormField<String>(
                 value: _relationship,
                 decoration: const InputDecoration(labelText: 'Relation'),
-                items: ['Famille', 'Conjoint', 'Enfant', 'Parent', 'Autre']
-                    .map((r) => DropdownMenuItem(value: r, child: Text(r)))
-                    .toList(),
+                items:
+                    ['Famille', 'Conjoint', 'Enfant', 'Parent', 'Autre']
+                        .map((r) => DropdownMenuItem(value: r, child: Text(r)))
+                        .toList(),
                 onChanged: (v) => setState(() => _relationship = v!),
               ),
             ],
@@ -173,13 +181,19 @@ class _AddMemberDialogState extends State<_AddMemberDialog> {
           onPressed: () {
             if (_formKey.currentState!.validate()) {
               // Sanitizer les entrées utilisateur pour prévenir XSS
-              final sanitizedName = InputSanitizer.sanitizeForStorage(_nameController.text.trim());
-              final sanitizedEmail = _emailController.text.trim(); // Email déjà validé
-              final sanitizedPhone = _phoneController.text.trim().isEmpty 
-                  ? null 
-                  : _phoneController.text.trim(); // Phone déjà validé
-              final sanitizedRelationship = InputSanitizer.sanitizeForStorage(_relationship);
-              
+              final sanitizedName = InputSanitizer.sanitizeForStorage(
+                _nameController.text.trim(),
+              );
+              final sanitizedEmail =
+                  _emailController.text.trim(); // Email déjà validé
+              final sanitizedPhone =
+                  _phoneController.text.trim().isEmpty
+                      ? null
+                      : _phoneController.text.trim(); // Phone déjà validé
+              final sanitizedRelationship = InputSanitizer.sanitizeForStorage(
+                _relationship,
+              );
+
               Navigator.pop(context, {
                 'name': sanitizedName,
                 'email': sanitizedEmail,
@@ -194,4 +208,3 @@ class _AddMemberDialogState extends State<_AddMemberDialog> {
     );
   }
 }
-

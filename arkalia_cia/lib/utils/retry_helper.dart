@@ -4,12 +4,12 @@ import 'app_logger.dart';
 /// Helper pour retry automatique avec backoff exponentiel
 class RetryHelper {
   /// Exécute une fonction avec retry automatique
-  /// 
+  ///
   /// [fn] : La fonction à exécuter
   /// [maxRetries] : Nombre maximum de tentatives (défaut: 3)
   /// [initialDelay] : Délai initial en secondes (défaut: 1)
   /// [maxDelay] : Délai maximum en secondes (défaut: 10)
-  /// 
+  ///
   /// Retourne le résultat de la fonction ou lance la dernière exception
   static Future<T> retry<T>({
     required Future<T> Function() fn,
@@ -25,15 +25,17 @@ class RetryHelper {
         return await fn();
       } catch (e) {
         attempt++;
-        
+
         if (attempt >= maxRetries) {
           AppLogger.error('Retry épuisé après $maxRetries tentatives', e);
           rethrow;
         }
 
-        AppLogger.debug('Tentative $attempt/$maxRetries échouée. Nouvelle tentative dans ${delay}s...');
+        AppLogger.debug(
+          'Tentative $attempt/$maxRetries échouée. Nouvelle tentative dans ${delay}s...',
+        );
         await Future.delayed(Duration(seconds: delay));
-        
+
         // Backoff exponentiel : double le délai à chaque tentative
         delay = (delay * 2).clamp(initialDelay, maxDelay);
       }
@@ -48,11 +50,6 @@ class RetryHelper {
     int maxRetries = 3,
     int initialDelay = 1,
   }) async {
-    return retry(
-      fn: fn,
-      maxRetries: maxRetries,
-      initialDelay: initialDelay,
-    );
+    return retry(fn: fn, maxRetries: maxRetries, initialDelay: initialDelay);
   }
 }
-

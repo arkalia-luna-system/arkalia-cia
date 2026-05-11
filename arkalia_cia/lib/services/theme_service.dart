@@ -24,7 +24,8 @@ class ThemeService {
   /// Récupère le ThemeData selon le thème sélectionné
   /// Mode sombre optimisé avec couleurs douces pour le confort visuel
   static ThemeData getThemeData(String theme, Brightness systemBrightness) {
-    final isDark = theme == _darkTheme ||
+    final isDark =
+        theme == _darkTheme ||
         (theme == _systemTheme && systemBrightness == Brightness.dark);
 
     if (isDark) {
@@ -32,21 +33,21 @@ class ThemeService {
       return ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
-        
+
         // Fond principal : gris foncé doux au lieu de noir pur
-        scaffoldBackgroundColor: const Color(0xFF1A1A1A), // Gris très foncé doux
-        
+        scaffoldBackgroundColor: const Color(
+          0xFF1A1A1A,
+        ), // Gris très foncé doux
         // Fond des cartes : légèrement plus clair que le fond
         cardColor: const Color(0xFF242424), // Gris foncé doux
-        
         // Fond des dialogs et surfaces élevées - utiliser ThemeData.dialogTheme par défaut
         // La couleur de fond sera gérée par colorScheme.surfaceContainerHighest
-        
+
         // Couleurs primaires moins saturées
         primaryColor: const Color(0xFF64B5F6), // Bleu doux
         primaryColorDark: const Color(0xFF42A5F5),
         primaryColorLight: const Color(0xFF90CAF9),
-        
+
         // ColorScheme personnalisé pour mode sombre doux
         colorScheme: const ColorScheme.dark(
           brightness: Brightness.dark,
@@ -73,7 +74,7 @@ class ThemeService {
           outline: Color(0xFF4A4A4A),
           outlineVariant: Color(0xFF3A3A3A),
         ),
-        
+
         // AppBar : gris foncé doux au lieu de noir
         appBarTheme: const AppBarTheme(
           backgroundColor: Color(0xFF242424),
@@ -81,10 +82,10 @@ class ThemeService {
           elevation: 0,
           centerTitle: true,
         ),
-        
+
         // Cartes : fond doux avec bordure subtile - utiliser ThemeData.cardTheme par défaut
         // La couleur de fond sera gérée par cardColor défini plus haut
-        
+
         // InputDecoration : bordures douces
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
@@ -103,21 +104,15 @@ class ThemeService {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(
-              color: Color(0xFF64B5F6),
-              width: 2,
-            ),
+            borderSide: const BorderSide(color: Color(0xFF64B5F6), width: 2),
           ),
         ),
-        
+
         // Divider : très subtil
         dividerColor: const Color(0x14FFFFFF), // alpha: 0.08
-        
         // IconTheme : icônes douces
-        iconTheme: const IconThemeData(
-          color: Color(0xFFB0B0B0),
-        ),
-        
+        iconTheme: const IconThemeData(color: Color(0xFFB0B0B0)),
+
         // TextTheme : textes avec bonne lisibilité
         textTheme: const TextTheme(
           displayLarge: TextStyle(color: Color(0xFFE0E0E0)),
@@ -136,20 +131,20 @@ class ThemeService {
           labelMedium: TextStyle(color: Color(0xFFB0B0B0)),
           labelSmall: TextStyle(color: Color(0xFFB0B0B0)),
         ),
-        
+
         // FloatingActionButton : couleur douce
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
           backgroundColor: Color(0xFF64B5F6),
           foregroundColor: Color(0xFF000000),
         ),
-        
+
         // BottomNavigationBar : fond doux
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           backgroundColor: Color(0xFF242424),
           selectedItemColor: Color(0xFF64B5F6),
           unselectedItemColor: Color(0xFFB0B0B0),
         ),
-        
+
         // ChipTheme : chips douces
         chipTheme: const ChipThemeData(
           backgroundColor: Color(0xFF2A2A2A),
@@ -185,4 +180,3 @@ class ThemeService {
     }
   }
 }
-

@@ -56,7 +56,7 @@ class _HealthScreenState extends State<HealthScreen> {
           final backendPortals = await ApiService.getHealthPortals();
           existingUrls.addAll(backendPortals.map((p) => p['url'] as String));
           allPortals.addAll(backendPortals);
-          
+
           // Ajouter les portails pré-configurés qui ne sont pas déjà dans le backend
           for (final portal in belgianPortals) {
             if (!existingUrls.contains(portal['url'] as String)) {
@@ -68,9 +68,9 @@ class _HealthScreenState extends State<HealthScreen> {
                   description: portal['description'] as String,
                   category: portal['category'] as String,
                 );
-                
-                if (result['success'] != false && 
-                    result['backend_unavailable'] != true && 
+
+                if (result['success'] != false &&
+                    result['backend_unavailable'] != true &&
                     result['backend_disabled'] != true) {
                   // Ajouter à la liste si créé avec succès
                   allPortals.add(portal);
@@ -113,80 +113,88 @@ class _HealthScreenState extends State<HealthScreen> {
 
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          title: const Text('Nouveau portail santé'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Nom du portail',
-                    border: OutlineInputBorder(),
+      builder:
+          (context) => StatefulBuilder(
+            builder:
+                (context, setDialogState) => AlertDialog(
+                  title: const Text('Nouveau portail santé'),
+                  content: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextField(
+                          controller: nameController,
+                          decoration: const InputDecoration(
+                            labelText: 'Nom du portail',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        TextField(
+                          controller: urlController,
+                          decoration: InputDecoration(
+                            labelText: 'URL du portail',
+                            border: const OutlineInputBorder(),
+                            hintText: 'https://exemple.com',
+                            helperText:
+                                'Doit commencer par http:// ou https://',
+                            errorText:
+                                urlController.text.isNotEmpty &&
+                                        !ValidationHelper.isValidUrl(
+                                          urlController.text.trim(),
+                                        )
+                                    ? 'URL invalide'
+                                    : null,
+                          ),
+                          keyboardType: TextInputType.url,
+                          onChanged: (_) => setDialogState(() {}),
+                        ),
+                        const SizedBox(height: 16),
+                        TextField(
+                          controller: descriptionController,
+                          decoration: const InputDecoration(
+                            labelText: 'Description (optionnel)',
+                            border: OutlineInputBorder(),
+                          ),
+                          maxLines: 2,
+                        ),
+                        const SizedBox(height: 16),
+                        TextField(
+                          controller: categoryController,
+                          decoration: const InputDecoration(
+                            labelText: 'Catégorie (optionnel)',
+                            border: OutlineInputBorder(),
+                            hintText: 'ex: Médecin, Pharmacie, Hôpital',
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Annuler'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (nameController.text.isNotEmpty &&
+                            ValidationHelper.isValidUrl(
+                              urlController.text.trim(),
+                            )) {
+                          Navigator.pop(context, {
+                            'name': nameController.text,
+                            'url': urlController.text.trim(),
+                            'description': descriptionController.text,
+                            'category': categoryController.text,
+                          });
+                        }
+                      },
+                      child: const Text('Ajouter'),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: urlController,
-                  decoration: InputDecoration(
-                    labelText: 'URL du portail',
-                    border: const OutlineInputBorder(),
-                    hintText: 'https://exemple.com',
-                    helperText: 'Doit commencer par http:// ou https://',
-                    errorText: urlController.text.isNotEmpty && 
-                        !ValidationHelper.isValidUrl(urlController.text.trim())
-                        ? 'URL invalide'
-                        : null,
-                  ),
-                  keyboardType: TextInputType.url,
-                  onChanged: (_) => setDialogState(() {}),
-                ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Description (optionnel)',
-                  border: OutlineInputBorder(),
-                ),
-                maxLines: 2,
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: categoryController,
-                decoration: const InputDecoration(
-                  labelText: 'Catégorie (optionnel)',
-                  border: OutlineInputBorder(),
-                  hintText: 'ex: Médecin, Pharmacie, Hôpital',
-                ),
-              ),
-            ],
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Annuler'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              if (nameController.text.isNotEmpty && 
-                  ValidationHelper.isValidUrl(urlController.text.trim())) {
-                Navigator.pop(context, {
-                  'name': nameController.text,
-                  'url': urlController.text.trim(),
-                  'description': descriptionController.text,
-                  'category': categoryController.text,
-                });
-              }
-            },
-            child: const Text('Ajouter'),
-          ),
-        ],
-      ),
-        ),
-      );
+    );
 
     if (result != null) {
       await _createPortal(result);
@@ -228,19 +236,13 @@ class _HealthScreenState extends State<HealthScreen> {
 
   void _showSuccess(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.green,
-      ),
+      SnackBar(content: Text(message), backgroundColor: Colors.green),
     );
   }
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-      ),
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
     );
   }
 
@@ -290,7 +292,7 @@ class _HealthScreenState extends State<HealthScreen> {
 
   Widget _buildPortalsList() {
     final filteredPortals = _getFilteredPortals();
-    
+
     if (_showFavoritesOnly && filteredPortals.isEmpty) {
       return Center(
         child: Column(
@@ -337,22 +339,18 @@ class _HealthScreenState extends State<HealthScreen> {
         final isFavorite = _favoriteUrls.contains(url);
 
         return Card(
-          margin: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 4,
-          ),
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           child: InkWell(
             onTap: () => _openPortal(url),
             child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 8,
+              ),
               leading: CircleAvatar(
                 backgroundColor: Colors.grey.shade100,
                 radius: 24,
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: 28,
-                ),
+                child: Icon(icon, color: color, size: 28),
               ),
               title: Text(
                 portal['name'] ?? 'Portail',
@@ -410,14 +408,21 @@ class _HealthScreenState extends State<HealthScreen> {
                       await HealthPortalFavoritesService.toggleFavorite(url);
                       await _loadFavorites();
                     },
-                    tooltip: isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris',
+                    tooltip:
+                        isFavorite
+                            ? 'Retirer des favoris'
+                            : 'Ajouter aux favoris',
                     constraints: const BoxConstraints(
                       minWidth: 48,
                       minHeight: 48,
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.open_in_new, color: Colors.blue, size: 24),
+                    icon: const Icon(
+                      Icons.open_in_new,
+                      color: Colors.blue,
+                      size: 24,
+                    ),
                     onPressed: () => _openPortal(url),
                     tooltip: 'Ouvrir le portail',
                     constraints: const BoxConstraints(
@@ -452,11 +457,11 @@ class _HealthScreenState extends State<HealthScreen> {
                 _showFavoritesOnly = !_showFavoritesOnly;
               });
             },
-            tooltip: _showFavoritesOnly ? 'Afficher tous les portails' : 'Afficher seulement les favoris',
-            constraints: const BoxConstraints(
-              minWidth: 48,
-              minHeight: 48,
-            ),
+            tooltip:
+                _showFavoritesOnly
+                    ? 'Afficher tous les portails'
+                    : 'Afficher seulement les favoris',
+            constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
           ),
           IconButton(
             icon: const Icon(Icons.description, size: 24),
@@ -469,10 +474,7 @@ class _HealthScreenState extends State<HealthScreen> {
               );
             },
             tooltip: 'Générer rapport médical',
-            constraints: const BoxConstraints(
-              minWidth: 48,
-              minHeight: 48,
-            ),
+            constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
           ),
           IconButton(
             icon: const Icon(Icons.refresh, size: 24),
@@ -481,50 +483,42 @@ class _HealthScreenState extends State<HealthScreen> {
               _loadFavorites();
             },
             tooltip: 'Actualiser',
-            constraints: const BoxConstraints(
-              minWidth: 48,
-              minHeight: 48,
-            ),
+            constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
           ),
         ],
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : portals.isEmpty
+      body:
+          isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : portals.isEmpty
               ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.red.withValues(alpha: 0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.medical_services,
-                          size: 64,
-                          color: Colors.red,
-                        ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.red.withValues(alpha: 0.1),
+                        shape: BoxShape.circle,
                       ),
-                      const SizedBox(height: 16),
-                      const Text(
-                        'Aucun portail santé',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.grey,
-                        ),
+                      child: const Icon(
+                        Icons.medical_services,
+                        size: 64,
+                        color: Colors.red,
                       ),
-                      const Text(
-                        'Appuyez sur + pour ajouter un portail',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
-                  ),
-                )
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Aucun portail santé',
+                      style: TextStyle(fontSize: 18, color: Colors.grey),
+                    ),
+                    const Text(
+                      'Appuyez sur + pour ajouter un portail',
+                      style: TextStyle(color: Colors.grey, fontSize: 16),
+                    ),
+                  ],
+                ),
+              )
               : _buildPortalsList(),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddPortalDialog,

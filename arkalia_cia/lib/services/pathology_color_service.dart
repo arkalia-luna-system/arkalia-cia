@@ -10,25 +10,24 @@ class PathologyColorService {
     // Gynécologie
     'Endométriose': 'Gynécologue',
     'Fibromyalgie': 'Gynécologue', // Souvent suivi par gynéco
-    
     // Cardiologie
     'Hypertension': 'Cardiologue',
-    'Cancer': 'Cardiologue', // Peut être suivi par plusieurs spécialités, mais souvent cardio
-    
+    'Cancer':
+        'Cardiologue', // Peut être suivi par plusieurs spécialités, mais souvent cardio
     // Neurologie
     'Parkinson': 'Neurologue',
     'Alzheimer': 'Neurologue',
     'Sclérose en plaques': 'Neurologue',
     'Migraine': 'Neurologue',
-    
+
     // Psychiatrie
     'Dépression': 'Psychiatre',
     'TDAH': 'Psychiatre',
-    
+
     // Endocrinologie
     'Diabète': 'Endocrinologue',
     'Hypothyroïdie': 'Endocrinologue',
-    
+
     // Rhumatologie
     'Arthrite': 'Rhumatologue',
     'Arthrose': 'Rhumatologue', // Variante d'arthrite
@@ -38,18 +37,18 @@ class PathologyColorService {
     'Spondylarthrite': 'Rhumatologue', // Variante
     'Ostéoporose': 'Rhumatologue',
     'Tendinite': 'Rhumatologue',
-    
+
     // Dermatologie
     'Eczéma': 'Dermatologue',
     'Psoriasis': 'Dermatologue',
-    
+
     // Pneumologie
     'Asthme': 'Pneumologue',
-    
+
     // Gastro-entérologie (pas de spécialité dans Doctor, utiliser Généraliste)
     'Syndrome du côlon irritable': 'Généraliste',
     'Reflux gastro-œsophagien': 'Généraliste',
-    
+
     // Hématologie (pas de spécialité dans Doctor, utiliser Généraliste)
     'Anémie': 'Généraliste',
     'Myélome': 'Généraliste',
@@ -60,12 +59,12 @@ class PathologyColorService {
   static Color getColorForPathology(String pathologyName) {
     // Chercher la spécialité associée à la pathologie
     final specialty = _pathologyToSpecialty[pathologyName];
-    
+
     if (specialty != null) {
       // Utiliser la couleur de la spécialité
       return Doctor.getColorForSpecialty(specialty);
     }
-    
+
     // Si la pathologie n'est pas dans le mapping, utiliser la couleur par défaut
     return Colors.blue;
   }
@@ -85,4 +84,3 @@ class PathologyColorService {
     return _pathologyToSpecialty.keys.toList()..sort();
   }
 }
-

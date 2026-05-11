@@ -41,13 +41,15 @@ class AccessibleText extends StatelessWidget {
         final textSize = snapshot.data ?? AccessibilityTextSize.normal;
         final baseFontSize = style?.fontSize ?? 14.0;
         final adjustedFontSize = baseFontSize * textSize.multiplier;
-        
+
         // S'assurer que la taille minimale est respectée (14px minimum)
         final finalFontSize = adjustedFontSize < 14.0 ? 14.0 : adjustedFontSize;
 
         return Text(
           text,
-          style: style?.copyWith(fontSize: finalFontSize) ?? TextStyle(fontSize: finalFontSize),
+          style:
+              style?.copyWith(fontSize: finalFontSize) ??
+              TextStyle(fontSize: finalFontSize),
           textAlign: textAlign,
           maxLines: maxLines,
           overflow: overflow,
@@ -63,4 +65,3 @@ class AccessibleText extends StatelessWidget {
     );
   }
 }
-

@@ -132,7 +132,9 @@ class HydrationService {
       return entries
           .where((map) {
             final date = map['date'] as String?;
-            return date != null && date.compareTo(startStr) >= 0 && date.compareTo(endStr) <= 0;
+            return date != null &&
+                date.compareTo(startStr) >= 0 &&
+                date.compareTo(endStr) <= 0;
           })
           .map((map) => HydrationEntry.fromMap(_convertWebMapToSqliteMap(map)))
           .toList()
@@ -188,9 +190,10 @@ class HydrationService {
   Map<String, dynamic> _convertWebMapToSqliteMap(Map<String, dynamic> map) {
     final converted = Map<String, dynamic>.from(map);
     if (converted['id'] != null) {
-      converted['id'] = converted['id'] is int 
-          ? converted['id'] 
-          : int.tryParse(converted['id'].toString()) ?? converted['id'];
+      converted['id'] =
+          converted['id'] is int
+              ? converted['id']
+              : int.tryParse(converted['id'].toString()) ?? converted['id'];
     }
     return converted;
   }
@@ -203,7 +206,8 @@ class HydrationService {
     if (kIsWeb) {
       final entries = await getHydrationEntries(date);
       final total = entries.fold<int>(0, (sum, entry) => sum + entry.amount);
-      final percentage = goal.dailyGoal > 0 ? (total / goal.dailyGoal * 100).round() : 0;
+      final percentage =
+          goal.dailyGoal > 0 ? (total / goal.dailyGoal * 100).round() : 0;
       final remaining = goal.dailyGoal - total;
       final glasses = (total / 250).round();
 
@@ -229,7 +233,8 @@ class HydrationService {
     );
 
     final total = Sqflite.firstIntValue(result) ?? 0;
-    final percentage = goal.dailyGoal > 0 ? (total / goal.dailyGoal * 100).round() : 0;
+    final percentage =
+        goal.dailyGoal > 0 ? (total / goal.dailyGoal * 100).round() : 0;
     final remaining = goal.dailyGoal - total;
     final glasses = (total / 250).round();
 
@@ -248,11 +253,7 @@ class HydrationService {
   /// Enregistre une consommation
   Future<void> markAsDrank(int amount) async {
     final now = DateTime.now();
-    final entry = HydrationEntry(
-      date: now,
-      amount: amount,
-      time: now,
-    );
+    final entry = HydrationEntry(date: now, amount: amount, time: now);
     await insertHydrationEntry(entry);
   }
 
@@ -263,7 +264,13 @@ class HydrationService {
 
     // Rappels de 8h à 20h, toutes les 2h
     for (int hour = 8; hour <= 20; hour += 2) {
-      final reminderDate = DateTime(today.year, today.month, today.day, hour, 0);
+      final reminderDate = DateTime(
+        today.year,
+        today.month,
+        today.day,
+        hour,
+        0,
+      );
 
       // Ne programmer que si l'heure n'est pas encore passée aujourd'hui
       if (reminderDate.isAfter(now)) {
@@ -289,7 +296,8 @@ class HydrationService {
       final nextReminder = now.add(const Duration(minutes: 30));
       await CalendarService.scheduleNotification(
         title: '💧 Rappel hydratation',
-        description: 'Vous n\'avez bu que ${progress['glasses']} verre(s) aujourd\'hui. '
+        description:
+            'Vous n\'avez bu que ${progress['glasses']} verre(s) aujourd\'hui. '
             'Pensez à boire !',
         date: nextReminder,
       );
@@ -352,7 +360,10 @@ class HydrationService {
   }
 
   /// Obtient les statistiques sur une période
-  Future<Map<String, dynamic>> getStatistics(DateTime startDate, DateTime endDate) async {
+  Future<Map<String, dynamic>> getStatistics(
+    DateTime startDate,
+    DateTime endDate,
+  ) async {
     final entries = await getHydrationEntriesRange(startDate, endDate);
     final goal = await getHydrationGoal();
 
@@ -374,7 +385,8 @@ class HydrationService {
       }
     }
 
-    final averageDaily = daysWithEntries > 0 ? totalAmount ~/ daysWithEntries : 0;
+    final averageDaily =
+        daysWithEntries > 0 ? totalAmount ~/ daysWithEntries : 0;
 
     return {
       'total_amount': totalAmount,
@@ -382,10 +394,10 @@ class HydrationService {
       'days_with_entries': daysWithEntries,
       'days_goal_reached': daysGoalReached,
       'goal': goal.dailyGoal,
-      'compliance_rate': daysWithEntries > 0
-          ? (daysGoalReached / daysWithEntries * 100).round()
-          : 0,
+      'compliance_rate':
+          daysWithEntries > 0
+              ? (daysGoalReached / daysWithEntries * 100).round()
+              : 0,
     };
   }
 }
-

@@ -30,20 +30,20 @@ class _LockScreenState extends State<LockScreen> {
   /// LockScreen s'affiche seulement si authentification activée ET configurée (web uniquement)
   Future<void> _initializeAuth() async {
     AppLogger.debug('LockScreen: Initialisation authentification');
-    
+
     // VÉRIFICATION FINALE : Si l'auth n'est pas vraiment disponible/configurée, aller directement à HomePage
     final authEnabled = await AuthService.isAuthEnabled();
     if (!authEnabled) {
       _unlockApp();
       return;
     }
-    
+
     final shouldAuth = await AuthService.shouldAuthenticateOnStartup();
     if (!shouldAuth) {
       _unlockApp();
       return;
     }
-    
+
     if (kIsWeb) {
       final pinConfigured = await PinAuthService.isPinConfigured();
       if (!pinConfigured) {
@@ -56,7 +56,7 @@ class _LockScreenState extends State<LockScreen> {
       _unlockApp();
       return;
     }
-    
+
     // Lancer l'authentification au démarrage (web uniquement)
     await _authenticateOnStartup();
   }
@@ -67,31 +67,31 @@ class _LockScreenState extends State<LockScreen> {
       final pinConfigured = await PinAuthService.isPinConfigured();
       final shouldAuth = await AuthService.shouldAuthenticateOnStartup();
       final authEnabled = await AuthService.isAuthEnabled();
-      
+
       // Si l'authentification est désactivée, permettre l'accès direct
       if (!authEnabled) {
         _unlockApp();
         return;
       }
-      
+
       // Si l'authentification au démarrage est désactivée, permettre l'accès direct
       if (!shouldAuth) {
         _unlockApp();
         return;
       }
-      
+
       // Si aucun PIN n'est configuré, permettre l'accès direct
       if (!pinConfigured) {
         _unlockApp();
         return;
       }
-      
+
       // PIN configuré, demander l'authentification
       await Future.delayed(const Duration(milliseconds: 500));
       await _authenticate();
       return;
     }
-    
+
     // Sur mobile, authentification désactivée - accès direct
     _unlockApp();
   }
@@ -136,9 +136,9 @@ class _LockScreenState extends State<LockScreen> {
   Future<void> _unlockApp() async {
     // Vérifier si l'onboarding est complété
     final onboardingCompleted = await OnboardingService.isOnboardingCompleted();
-    
+
     if (!mounted) return;
-    
+
     if (!onboardingCompleted) {
       // Première connexion : afficher onboarding
       Navigator.of(context).pushReplacement(
@@ -160,10 +160,7 @@ class _LockScreenState extends State<LockScreen> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Colors.blue[600]!,
-              Colors.blue[800]!,
-            ],
+            colors: [Colors.blue[600]!, Colors.blue[800]!],
           ),
         ),
         child: SafeArea(
@@ -202,7 +199,7 @@ class _LockScreenState extends State<LockScreen> {
                     ),
                   ),
                   const SizedBox(height: 32),
-                  
+
                   // Titre
                   const Text(
                     'Arkalia CIA',
@@ -213,20 +210,17 @@ class _LockScreenState extends State<LockScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Message
                   const Text(
                     kIsWeb
                         ? 'Authentification requise\n(Code PIN)'
                         : 'Authentification désactivée',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.white70,
-                    ),
+                    style: TextStyle(fontSize: 18, color: Colors.white70),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 48),
-                  
+
                   // Message d'erreur
                   if (_errorMessage.isNotEmpty)
                     Container(
@@ -242,39 +236,42 @@ class _LockScreenState extends State<LockScreen> {
                         textAlign: TextAlign.center,
                       ),
                     ),
-                  
+
                   // Bouton d'authentification (web uniquement)
                   if (kIsWeb)
                     ElevatedButton.icon(
                       onPressed: _isAuthenticating ? null : _authenticate,
-                      icon: _isAuthenticating
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                              ),
-                            )
-                          : const Icon(Icons.lock),
+                      icon:
+                          _isAuthenticating
+                              ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
+                                ),
+                              )
+                              : const Icon(Icons.lock),
                       label: Text(
                         _isAuthenticating
                             ? 'Authentification...'
                             : 'S\'authentifier (code PIN)',
                         style: const TextStyle(fontSize: 18),
                       ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.blue[800],
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 32,
-                        vertical: 16,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.blue[800],
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 32,
+                          vertical: 16,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
                       ),
                     ),
-                  ),
                 ],
               ),
             ),
@@ -284,4 +281,3 @@ class _LockScreenState extends State<LockScreen> {
     );
   }
 }
-

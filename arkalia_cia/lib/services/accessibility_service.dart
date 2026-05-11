@@ -35,7 +35,10 @@ class AccessibilityService {
   static Future<AccessibilityTextSize> getTextSize() async {
     final prefs = await SharedPreferences.getInstance();
     final sizeIndex = prefs.getInt(_textSizeKey) ?? 1; // Normal par défaut
-    return AccessibilityTextSize.values[sizeIndex.clamp(0, AccessibilityTextSize.values.length - 1)];
+    return AccessibilityTextSize.values[sizeIndex.clamp(
+      0,
+      AccessibilityTextSize.values.length - 1,
+    )];
   }
 
   /// Définit la taille de texte
@@ -48,7 +51,10 @@ class AccessibilityService {
   static Future<AccessibilityIconSize> getIconSize() async {
     final prefs = await SharedPreferences.getInstance();
     final sizeIndex = prefs.getInt(_iconSizeKey) ?? 1; // Normal par défaut
-    return AccessibilityIconSize.values[sizeIndex.clamp(0, AccessibilityIconSize.values.length - 1)];
+    return AccessibilityIconSize.values[sizeIndex.clamp(
+      0,
+      AccessibilityIconSize.values.length - 1,
+    )];
   }
 
   /// Définit la taille d'icône
@@ -96,4 +102,3 @@ class AccessibilityService {
     return baseSize * multiplier;
   }
 }
-

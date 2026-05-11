@@ -19,7 +19,8 @@ void main() {
     test('requestCalendarPermission retourne false sur web', () async {
       // Sur web, les permissions calendrier ne sont pas disponibles
       if (kIsWeb) {
-        final permissionGranted = await CalendarService.requestCalendarPermission();
+        final permissionGranted =
+            await CalendarService.requestCalendarPermission();
         expect(permissionGranted, false);
       }
     });
@@ -87,4 +88,3 @@ void main() {
     });
   });
 }
-

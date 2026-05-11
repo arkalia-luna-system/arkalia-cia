@@ -75,8 +75,10 @@ void main() {
     });
 
     test('logError should not throw', () {
-      expect(() => ErrorHelper.logError('test context', 'test error'),
-          returnsNormally);
+      expect(
+        () => ErrorHelper.logError('test context', 'test error'),
+        returnsNormally,
+      );
     });
 
     test('isNetworkError should detect network errors', () {
@@ -95,4 +97,3 @@ void main() {
     });
   });
 }
-

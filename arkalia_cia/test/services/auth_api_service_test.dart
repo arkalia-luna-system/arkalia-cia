@@ -9,14 +9,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() {
   // Initialiser le binding Flutter pour les tests
   TestWidgetsFlutterBinding.ensureInitialized();
-  
+
   group('AuthApiService - Gestion Session', () {
     setUp(() async {
       // Réinitialiser les préférences avant chaque test
       SharedPreferences.setMockInitialValues({});
       final prefs = await SharedPreferences.getInstance();
       await prefs.clear();
-      
+
       // Note: On force le mode web pour utiliser SharedPreferences
       // au lieu de flutter_secure_storage qui nécessite une plateforme réelle
       // En production, kIsWeb est détecté automatiquement
@@ -61,4 +61,3 @@ void main() {
     // Ces tests sont à faire avec des mocks appropriés.
   });
 }
-

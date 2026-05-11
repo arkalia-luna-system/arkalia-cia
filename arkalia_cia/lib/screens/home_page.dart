@@ -71,7 +71,7 @@ class _HomePageState extends State<HomePage> {
   void _onSearchChanged() {
     // Annuler le timer précédent s'il existe
     _debounceTimer?.cancel();
-    
+
     final query = _searchController.text.trim();
     if (query.isEmpty) {
       if (mounted) {
@@ -91,10 +91,10 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _performSearch(String query) async {
     if (!mounted) return;
-    
+
     // Sanitizer la requête de recherche pour prévenir XSS
     final sanitizedQuery = InputSanitizer.sanitizeForStorage(query);
-    
+
     setState(() {
       _isSearching = true;
     });
@@ -113,28 +113,33 @@ class _HomePageState extends State<HomePage> {
     try {
       // Charger les documents en premier (rapide)
       final documents = await LocalStorageService.getDocuments();
-      
+
       // Compter les rappels locaux (rapide)
       final localReminders = await LocalStorageService.getReminders();
-      
+
       // Mettre à jour immédiatement avec les données locales
       if (mounted) {
         setState(() {
           _documentCount = documents.length;
           _upcomingRemindersCount = localReminders.length;
-          _isLoadingStats = false; // Afficher les stats même si le calendrier n'est pas encore chargé
+          _isLoadingStats =
+              false; // Afficher les stats même si le calendrier n'est pas encore chargé
         });
       }
-      
+
       // Charger le calendrier en arrière-plan (seulement sur mobile, avec timeout court)
       if (!kIsWeb && mounted) {
         try {
           final calendarReminders = await CalendarService.getUpcomingReminders()
-              .timeout(const Duration(seconds: 1), onTimeout: () => <Map<String, dynamic>>[]);
-          
+              .timeout(
+                const Duration(seconds: 1),
+                onTimeout: () => <Map<String, dynamic>>[],
+              );
+
           if (mounted) {
             setState(() {
-              _upcomingRemindersCount = localReminders.length + calendarReminders.length;
+              _upcomingRemindersCount =
+                  localReminders.length + calendarReminders.length;
             });
           }
         } catch (e) {
@@ -214,22 +219,24 @@ class _HomePageState extends State<HomePage> {
                         child: TextField(
                           controller: _searchController,
                           decoration: InputDecoration(
-                            hintText: 'Rechercher dans documents, rappels, contacts...',
+                            hintText:
+                                'Rechercher dans documents, rappels, contacts...',
                             prefixIcon: const Icon(Icons.search),
-                            suffixIcon: _searchController.text.isNotEmpty
-                                ? Semantics(
-                                    label: 'Effacer la recherche',
-                                    hint: 'Supprime le texte de recherche',
-                                    button: true,
-                                    child: IconButton(
-                                      icon: const Icon(Icons.clear),
-                                      onPressed: () {
-                                        _searchController.clear();
-                                      },
-                                      tooltip: 'Effacer',
-                                    ),
-                                  )
-                                : null,
+                            suffixIcon:
+                                _searchController.text.isNotEmpty
+                                    ? Semantics(
+                                      label: 'Effacer la recherche',
+                                      hint: 'Supprime le texte de recherche',
+                                      button: true,
+                                      child: IconButton(
+                                        icon: const Icon(Icons.clear),
+                                        onPressed: () {
+                                          _searchController.clear();
+                                        },
+                                        tooltip: 'Effacer',
+                                      ),
+                                    )
+                                    : null,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -248,7 +255,9 @@ class _HomePageState extends State<HomePage> {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            PageTransitions.slideRight(const AdvancedSearchScreen()),
+                            PageTransitions.slideRight(
+                              const AdvancedSearchScreen(),
+                            ),
                           );
                         },
                       ),
@@ -295,9 +304,7 @@ class _HomePageState extends State<HomePage> {
                   if (_isLoadingStats)
                     const Padding(
                       padding: EdgeInsets.all(16.0),
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
+                      child: Center(child: CircularProgressIndicator()),
                     )
                   else
                     _buildStatsWidgets(),
@@ -306,7 +313,8 @@ class _HomePageState extends State<HomePage> {
                   // Grille de modules principaux avec accessibilité (toujours visible)
                   Semantics(
                     label: 'Modules de l\'application',
-                    hint: 'Sélectionnez un module pour accéder à ses fonctionnalités',
+                    hint:
+                        'Sélectionnez un module pour accéder à ses fonctionnalités',
                     child: GridView.count(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
@@ -314,145 +322,145 @@ class _HomePageState extends State<HomePage> {
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
                       children: [
-                    // Bouton 1: Import/voir doc
-                    _buildActionButton(
-                      context,
-                      icon: MdiIcons.fileDocumentOutline,
-                      title: 'Documents',
-                      subtitle: 'Import/voir docs',
-                      color: Colors.green,
-                      onTap: () => _showDocuments(context),
-                    ),
+                        // Bouton 1: Import/voir doc
+                        _buildActionButton(
+                          context,
+                          icon: MdiIcons.fileDocumentOutline,
+                          title: 'Documents',
+                          subtitle: 'Import/voir docs',
+                          color: Colors.green,
+                          onTap: () => _showDocuments(context),
+                        ),
 
-                    // Bouton 2: Portails santé
-                    _buildActionButton(
-                      context,
-                      icon: MdiIcons.medicalBag,
-                      title: 'Santé',
-                      subtitle: 'Portails santé',
-                      color: Colors.red,
-                      onTap: () => _showHealth(context),
-                    ),
+                        // Bouton 2: Portails santé
+                        _buildActionButton(
+                          context,
+                          icon: MdiIcons.medicalBag,
+                          title: 'Santé',
+                          subtitle: 'Portails santé',
+                          color: Colors.red,
+                          onTap: () => _showHealth(context),
+                        ),
 
-                    // Bouton 2b: Pathologies
-                    _buildActionButton(
-                      context,
-                      icon: MdiIcons.medicalBag,
-                      title: 'Pathologies',
-                      subtitle: 'Suivi pathologies',
-                      color: Colors.purple,
-                      onTap: () => _showPathologies(context),
-                    ),
+                        // Bouton 2b: Pathologies
+                        _buildActionButton(
+                          context,
+                          icon: MdiIcons.medicalBag,
+                          title: 'Pathologies',
+                          subtitle: 'Suivi pathologies',
+                          color: Colors.purple,
+                          onTap: () => _showPathologies(context),
+                        ),
 
-                    // Bouton 3: Rappels simples
-                    _buildActionButton(
-                      context,
-                      icon: MdiIcons.bellOutline,
-                      title: 'Rappels',
-                      subtitle: 'Rappels simples',
-                      color: Colors.orange,
-                      onTap: () => _showReminders(context),
-                    ),
+                        // Bouton 3: Rappels simples
+                        _buildActionButton(
+                          context,
+                          icon: MdiIcons.bellOutline,
+                          title: 'Rappels',
+                          subtitle: 'Rappels simples',
+                          color: Colors.orange,
+                          onTap: () => _showReminders(context),
+                        ),
 
-                    // Bouton 4: Urgence ICE
-                    _buildActionButton(
-                      context,
-                      icon: MdiIcons.phoneAlert,
-                      title: 'Urgence',
-                      subtitle: 'ICE - Contacts',
-                      color: Colors.purple,
-                      onTap: () => _showEmergency(context),
-                    ),
+                        // Bouton 4: Urgence ICE
+                        _buildActionButton(
+                          context,
+                          icon: MdiIcons.phoneAlert,
+                          title: 'Urgence',
+                          subtitle: 'ICE - Contacts',
+                          color: Colors.purple,
+                          onTap: () => _showEmergency(context),
+                        ),
 
-                    // Bouton 5: ARIA - Laboratoire Santé
-                    _buildActionButton(
-                      context,
-                      icon: MdiIcons.heartPulse,
-                      title: 'ARIA',
-                      subtitle: 'Laboratoire Santé',
-                      color: Colors.red,
-                      onTap: () => _showARIA(context),
-                    ),
+                        // Bouton 5: ARIA - Laboratoire Santé
+                        _buildActionButton(
+                          context,
+                          icon: MdiIcons.heartPulse,
+                          title: 'ARIA',
+                          subtitle: 'Laboratoire Santé',
+                          color: Colors.red,
+                          onTap: () => _showARIA(context),
+                        ),
 
-                    // Bouton 6: CIA Sync
-                    _buildActionButton(
-                      context,
-                      icon: MdiIcons.syncIcon,
-                      title: 'Sync',
-                      subtitle: 'CIA ↔ ARIA',
-                      color: Colors.orange,
-                      onTap: () => _showSync(context),
-                    ),
+                        // Bouton 6: CIA Sync
+                        _buildActionButton(
+                          context,
+                          icon: MdiIcons.syncIcon,
+                          title: 'Sync',
+                          subtitle: 'CIA ↔ ARIA',
+                          color: Colors.orange,
+                          onTap: () => _showSync(context),
+                        ),
 
-                    // Bouton 7: Médecins
-                    _buildActionButton(
-                      context,
-                      icon: MdiIcons.doctor,
-                      title: 'Médecins',
-                      subtitle: 'Historique médecins',
-                      color: Colors.teal,
-                      onTap: () => _showDoctors(context),
-                    ),
+                        // Bouton 7: Médecins
+                        _buildActionButton(
+                          context,
+                          icon: MdiIcons.doctor,
+                          title: 'Médecins',
+                          subtitle: 'Historique médecins',
+                          color: Colors.teal,
+                          onTap: () => _showDoctors(context),
+                        ),
 
-                    // Bouton Calendrier
-                    _buildActionButton(
-                      context,
-                      icon: MdiIcons.calendar,
-                      title: 'Calendrier',
-                      subtitle: 'RDV et rappels',
-                      color: Colors.blue,
-                      onTap: () => _showCalendar(context),
-                    ),
+                        // Bouton Calendrier
+                        _buildActionButton(
+                          context,
+                          icon: MdiIcons.calendar,
+                          title: 'Calendrier',
+                          subtitle: 'RDV et rappels',
+                          color: Colors.blue,
+                          onTap: () => _showCalendar(context),
+                        ),
 
-                    // Bouton 8: Partage Familial
-                    _buildActionButton(
-                      context,
-                      icon: MdiIcons.accountGroup,
-                      title: 'Partage',
-                      subtitle: 'Partage familial',
-                      color: Colors.purple,
-                      onTap: () => _showFamilySharing(context),
-                    ),
+                        // Bouton 8: Partage Familial
+                        _buildActionButton(
+                          context,
+                          icon: MdiIcons.accountGroup,
+                          title: 'Partage',
+                          subtitle: 'Partage familial',
+                          color: Colors.purple,
+                          onTap: () => _showFamilySharing(context),
+                        ),
 
-                    // Bouton 9: Assistant IA
-                    _buildActionButton(
-                      context,
-                      icon: MdiIcons.robot,
-                      title: 'Assistant IA',
-                      subtitle: 'Posez vos questions',
-                      color: Colors.teal,
-                      onTap: () => _showConversationalAI(context),
-                    ),
+                        // Bouton 9: Assistant IA
+                        _buildActionButton(
+                          context,
+                          icon: MdiIcons.robot,
+                          title: 'Assistant IA',
+                          subtitle: 'Posez vos questions',
+                          color: Colors.teal,
+                          onTap: () => _showConversationalAI(context),
+                        ),
 
-                    // Bouton 11: BBIA Robot
-                    _buildActionButton(
-                      context,
-                      icon: MdiIcons.robot,
-                      title: 'BBIA Robot',
-                      subtitle: 'Intégration robotique',
-                      color: Colors.deepPurple,
-                      onTap: () => _showBBIAIntegration(context),
-                    ),
+                        // Bouton 11: BBIA Robot
+                        _buildActionButton(
+                          context,
+                          icon: MdiIcons.robot,
+                          title: 'BBIA Robot',
+                          subtitle: 'Intégration robotique',
+                          color: Colors.deepPurple,
+                          onTap: () => _showBBIAIntegration(context),
+                        ),
 
-                    // Bouton 10: Patterns IA
-                    _buildActionButton(
-                      context,
-                      icon: MdiIcons.chartLine,
-                      title: 'Patterns',
-                      subtitle: 'Analyse patterns',
-                      color: Colors.indigo,
-                      onTap: () => _showPatterns(context),
-                    ),
+                        // Bouton 10: Patterns IA
+                        _buildActionButton(
+                          context,
+                          icon: MdiIcons.chartLine,
+                          title: 'Patterns',
+                          subtitle: 'Analyse patterns',
+                          color: Colors.indigo,
+                          onTap: () => _showPatterns(context),
+                        ),
 
-                    // Bouton 11: Hydratation
-                    _buildActionButton(
-                      context,
-                      icon: MdiIcons.water,
-                      title: 'Hydratation',
-                      subtitle: 'Rappels hydratation',
-                      color: Colors.cyan,
-                      onTap: () => _showHydration(context),
-                    ),
+                        // Bouton 11: Hydratation
+                        _buildActionButton(
+                          context,
+                          icon: MdiIcons.water,
+                          title: 'Hydratation',
+                          subtitle: 'Rappels hydratation',
+                          color: Colors.cyan,
+                          onTap: () => _showHydration(context),
+                        ),
                       ],
                     ),
                   ),
@@ -476,10 +484,11 @@ class _HomePageState extends State<HomePage> {
     // Adapter les couleurs pour le mode sombre (moins saturées)
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final adaptedColor = isDark ? _getDarkModeColor(color) : color;
-    final subtitleColor = isDark 
-        ? Theme.of(context).colorScheme.onSurfaceVariant 
-        : Colors.grey[600];
-    
+    final subtitleColor =
+        isDark
+            ? Theme.of(context).colorScheme.onSurfaceVariant
+            : Colors.grey[600];
+
     return Semantics(
       label: '$title - $subtitle',
       button: true,
@@ -496,11 +505,7 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    icon,
-                    size: 48,
-                    color: adaptedColor,
-                  ),
+                  Icon(icon, size: 48, color: adaptedColor),
                   const SizedBox(height: 12),
                   Text(
                     title,
@@ -536,8 +541,12 @@ class _HomePageState extends State<HomePage> {
     // pour des couleurs plus douces en mode sombre
     final hsl = HSLColor.fromColor(originalColor);
     return hsl
-        .withSaturation((hsl.saturation * 0.7).clamp(0.0, 1.0)) // Réduire saturation de 30%
-        .withLightness((hsl.lightness * 1.2).clamp(0.0, 0.9)) // Augmenter luminosité de 20%
+        .withSaturation(
+          (hsl.saturation * 0.7).clamp(0.0, 1.0),
+        ) // Réduire saturation de 30%
+        .withLightness(
+          (hsl.lightness * 1.2).clamp(0.0, 0.9),
+        ) // Augmenter luminosité de 20%
         .toColor();
   }
 
@@ -553,10 +562,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _showHealth(BuildContext context) {
-    Navigator.push(
-      context,
-      PageTransitions.slideRight(const HealthScreen()),
-    );
+    Navigator.push(context, PageTransitions.slideRight(const HealthScreen()));
   }
 
   void _showReminders(BuildContext context) {
@@ -582,10 +588,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _showCalendar(BuildContext context) {
-    Navigator.push(
-      context,
-      PageTransitions.slideRight(const CalendarScreen()),
-    );
+    Navigator.push(context, PageTransitions.slideRight(const CalendarScreen()));
   }
 
   void _showFamilySharing(BuildContext context) {
@@ -626,17 +629,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _showARIA(BuildContext context) {
-    Navigator.push(
-      context,
-      PageTransitions.slideRight(const ARIAScreen()),
-    );
+    Navigator.push(context, PageTransitions.slideRight(const ARIAScreen()));
   }
 
   void _showSync(BuildContext context) {
-    Navigator.push(
-      context,
-      PageTransitions.slideRight(const SyncScreen()),
-    );
+    Navigator.push(context, PageTransitions.slideRight(const SyncScreen()));
   }
 
   void _showSettings(BuildContext context) {
@@ -673,7 +670,8 @@ class _HomePageState extends State<HomePage> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    final totalResults = (_searchResults['documents']?.length ?? 0) +
+    final totalResults =
+        (_searchResults['documents']?.length ?? 0) +
         (_searchResults['reminders']?.length ?? 0) +
         (_searchResults['contacts']?.length ?? 0);
 
@@ -701,19 +699,39 @@ class _HomePageState extends State<HomePage> {
     return ListView(
       children: [
         if (_searchResults['documents']?.isNotEmpty == true) ...[
-          _buildSearchSection('Documents', Icons.description, Colors.green, _searchResults['documents']!),
+          _buildSearchSection(
+            'Documents',
+            Icons.description,
+            Colors.green,
+            _searchResults['documents']!,
+          ),
         ],
         if (_searchResults['reminders']?.isNotEmpty == true) ...[
-          _buildSearchSection('Rappels', Icons.notifications, Colors.orange, _searchResults['reminders']!),
+          _buildSearchSection(
+            'Rappels',
+            Icons.notifications,
+            Colors.orange,
+            _searchResults['reminders']!,
+          ),
         ],
         if (_searchResults['contacts']?.isNotEmpty == true) ...[
-          _buildSearchSection('Contacts', Icons.contacts, Colors.red, _searchResults['contacts']!),
+          _buildSearchSection(
+            'Contacts',
+            Icons.contacts,
+            Colors.red,
+            _searchResults['contacts']!,
+          ),
         ],
       ],
     );
   }
 
-  Widget _buildSearchSection(String title, IconData icon, Color color, List<Map<String, dynamic>> items) {
+  Widget _buildSearchSection(
+    String title,
+    IconData icon,
+    Color color,
+    List<Map<String, dynamic>> items,
+  ) {
     return Semantics(
       label: 'Section $title avec ${items.length} résultat(s)',
       child: Card(
@@ -739,46 +757,61 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             const Divider(height: 1),
-            ...items.take(5).map((item) => Semantics(
-                  label: '${item['title'] ?? item['name'] ?? item['original_name'] ?? 'Sans titre'}',
-                  button: true,
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    title: Text(
-                      item['title'] ?? item['name'] ?? item['original_name'] ?? 'Sans titre',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    subtitle: Padding(
-                      padding: const EdgeInsets.only(top: 4),
-                      child: Text(
-                        item['description'] ?? item['phone'] ?? item['category'] ?? '',
-                        style: const TextStyle(fontSize: 14),
+            ...items
+                .take(5)
+                .map(
+                  (item) => Semantics(
+                    label:
+                        '${item['title'] ?? item['name'] ?? item['original_name'] ?? 'Sans titre'}',
+                    button: true,
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
                       ),
+                      title: Text(
+                        item['title'] ??
+                            item['name'] ??
+                            item['original_name'] ??
+                            'Sans titre',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      subtitle: Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text(
+                          item['description'] ??
+                              item['phone'] ??
+                              item['category'] ??
+                              '',
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                      trailing: const Icon(
+                        Icons.chevron_right,
+                        color: Colors.grey,
+                        size: 24,
+                      ),
+                      onTap: () {
+                        // Navigation vers le détail selon le type
+                        if (title == 'Documents') {
+                          _showDocuments(context);
+                        } else if (title == 'Rappels') {
+                          _showReminders(context);
+                        } else if (title == 'Contacts') {
+                          _showEmergency(context);
+                        }
+                      },
                     ),
-                    trailing: const Icon(Icons.chevron_right, color: Colors.grey, size: 24),
-                    onTap: () {
-                      // Navigation vers le détail selon le type
-                      if (title == 'Documents') {
-                        _showDocuments(context);
-                      } else if (title == 'Rappels') {
-                        _showReminders(context);
-                      } else if (title == 'Contacts') {
-                        _showEmergency(context);
-                      }
-                    },
                   ),
-                )),
+                ),
             if (items.length > 5)
               Padding(
                 padding: const EdgeInsets.all(8),
-                  child: Text(
-                    '... et ${items.length - 5} autre(s)',
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 16,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
+                child: Text(
+                  '... et ${items.length - 5} autre(s)',
+                  style: TextStyle(color: Colors.grey[600], fontSize: 16),
+                  textAlign: TextAlign.center,
+                ),
               ),
           ],
         ),
@@ -788,7 +821,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildStatsWidgets() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Row(
       children: [
         Expanded(
@@ -800,16 +833,17 @@ class _HomePageState extends State<HomePage> {
               borderRadius: BorderRadius.circular(12),
               child: Card(
                 elevation: 2,
-                color: isDark 
-                    ? Theme.of(context).colorScheme.surfaceContainerHigh
-                    : Colors.green[50],
+                color:
+                    isDark
+                        ? Theme.of(context).colorScheme.surfaceContainerHigh
+                        : Colors.green[50],
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Column(
                     children: [
                       Icon(
-                        Icons.folder, 
-                        color: isDark ? Colors.green[300] : Colors.green[700], 
+                        Icons.folder,
+                        color: isDark ? Colors.green[300] : Colors.green[700],
                         size: 32,
                       ),
                       const SizedBox(height: 8),
@@ -851,16 +885,17 @@ class _HomePageState extends State<HomePage> {
               borderRadius: BorderRadius.circular(12),
               child: Card(
                 elevation: 2,
-                color: isDark 
-                    ? Theme.of(context).colorScheme.surfaceContainerHigh
-                    : Colors.orange[50],
+                color:
+                    isDark
+                        ? Theme.of(context).colorScheme.surfaceContainerHigh
+                        : Colors.orange[50],
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Column(
                     children: [
                       Icon(
-                        Icons.notifications, 
-                        color: isDark ? Colors.orange[300] : Colors.orange[700], 
+                        Icons.notifications,
+                        color: isDark ? Colors.orange[300] : Colors.orange[700],
                         size: 32,
                       ),
                       const SizedBox(height: 8),
@@ -869,7 +904,8 @@ class _HomePageState extends State<HomePage> {
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.orange[300] : Colors.orange[700],
+                          color:
+                              isDark ? Colors.orange[300] : Colors.orange[700],
                         ),
                       ),
                       Text(

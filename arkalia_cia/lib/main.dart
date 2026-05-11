@@ -22,16 +22,18 @@ import 'utils/app_logger.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialiser databaseFactory pour le web (si nécessaire)
   if (kIsWeb) {
     // Pour le web, sqflite nécessite sqflite_common_ffi
     // Si le package n'est pas disponible, on continue sans initialisation
     // Les services géreront l'erreur gracieusement
     // Note: Le try-catch a été supprimé car le bloc était vide
-    AppLogger.debug('Mode web: sqflite_common_ffi géré par les services si nécessaire.');
+    AppLogger.debug(
+      'Mode web: sqflite_common_ffi géré par les services si nécessaire.',
+    );
   }
-  
+
   await LocalStorageService.init();
   await CalendarService.init();
   // Initialiser le service de notifications au démarrage
@@ -50,7 +52,8 @@ class ArkaliaCIAApp extends StatefulWidget {
   State<ArkaliaCIAApp> createState() => _ArkaliaCIAAppState();
 }
 
-class _ArkaliaCIAAppState extends State<ArkaliaCIAApp> with WidgetsBindingObserver {
+class _ArkaliaCIAAppState extends State<ArkaliaCIAApp>
+    with WidgetsBindingObserver {
   ThemeMode _themeMode = ThemeMode.system;
 
   @override
@@ -88,7 +91,7 @@ class _ArkaliaCIAAppState extends State<ArkaliaCIAApp> with WidgetsBindingObserv
         AutoSyncService.syncIfNeeded(force: true);
       });
     }
-    
+
     // Démarrer la synchronisation périodique si activée
     final autoSyncEnabled = await AutoSyncService.isAutoSyncEnabled();
     if (autoSyncEnabled) {
@@ -110,10 +113,13 @@ class _ArkaliaCIAAppState extends State<ArkaliaCIAApp> with WidgetsBindingObserv
       builder: (context, snapshot) {
         final textSize = snapshot.data ?? AccessibilityTextSize.normal;
         final textScaler = TextScaler.linear(textSize.multiplier);
-        
+
         return MaterialApp(
           title: 'Arkalia CIA',
-          theme: ThemeService.getThemeData('light', MediaQuery.platformBrightnessOf(context)),
+          theme: ThemeService.getThemeData(
+            'light',
+            MediaQuery.platformBrightnessOf(context),
+          ),
           darkTheme: ThemeService.getThemeData('dark', Brightness.dark),
           themeMode: _themeMode,
           builder: (context, child) {
@@ -143,7 +149,8 @@ class _InitialScreenState extends State<_InitialScreen> {
   void initState() {
     super.initState();
     // Délai réduit pour chargement plus rapide
-    const delay = kIsWeb ? Duration(milliseconds: 1500) : Duration(milliseconds: 300);
+    const delay =
+        kIsWeb ? Duration(milliseconds: 1500) : Duration(milliseconds: 300);
     Future.delayed(delay, () {
       if (mounted) {
         _checkAuth();
@@ -157,40 +164,44 @@ class _InitialScreenState extends State<_InitialScreen> {
       await Future.delayed(const Duration(milliseconds: 800));
       if (!mounted) return;
     }
-    
+
     // Vérifier si le backend est configuré et activé
     final backendEnabled = await BackendConfigService.isBackendEnabled();
-    
+
     if (backendEnabled) {
       // Si backend activé, vérifier l'authentification API
       final hasToken = await AuthApiService.isLoggedIn();
-      
+
       if (mounted) {
         if (hasToken) {
           // Token présent : tenter de vérifier sa validité
           // Si le backend n'est pas accessible, on assume que le token est valide
           // (mode offline-first : on garde le token même si le backend est temporairement inaccessible)
           final backendUrl = await BackendConfigService.getBackendURL();
-          if (backendUrl.isNotEmpty && !backendUrl.contains('localhost') && !backendUrl.contains('127.0.0.1')) {
+          if (backendUrl.isNotEmpty &&
+              !backendUrl.contains('localhost') &&
+              !backendUrl.contains('127.0.0.1')) {
             // Délai réduit pour chargement plus rapide
             if (kIsWeb) {
               await Future.delayed(const Duration(milliseconds: 800));
               if (!mounted) return;
             }
-            
+
             try {
               // Tenter un refresh silencieux (sans déconnecter en cas d'erreur réseau)
               final refreshResult = await AuthApiService.refreshToken();
-              
+
               // Si le refresh échoue avec une erreur réseau, on garde le token
               // Seulement si c'est une erreur d'authentification (401/403), on déconnecte
-              if (refreshResult['success'] == false && 
+              if (refreshResult['success'] == false &&
                   refreshResult['error']?.contains('Session expirée') == true) {
                 // Token invalide : déconnecter et aller à WelcomeAuthScreen
                 await AuthApiService.logout();
                 if (mounted) {
                   Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => const WelcomeAuthScreen()),
+                    MaterialPageRoute(
+                      builder: (context) => const WelcomeAuthScreen(),
+                    ),
                   );
                 }
                 return;
@@ -200,7 +211,7 @@ class _InitialScreenState extends State<_InitialScreen> {
               // Ne pas déconnecter l'utilisateur en cas d'erreur réseau
             }
           }
-          
+
           // Token valide ou erreur réseau (on garde le token) : vérifier si auth activée
           // SIMPLIFIÉ : Aller à LockScreen seulement si authentification activée ET configurée
           // Sinon, vérifier onboarding et aller à WelcomeScreen ou HomePage
@@ -212,11 +223,14 @@ class _InitialScreenState extends State<_InitialScreen> {
               );
             } else {
               // Pas de LockScreen : vérifier onboarding avant d'aller à HomePage
-              final onboardingCompleted = await OnboardingService.isOnboardingCompleted();
+              final onboardingCompleted =
+                  await OnboardingService.isOnboardingCompleted();
               if (mounted) {
                 if (!onboardingCompleted) {
                   Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+                    MaterialPageRoute(
+                      builder: (context) => const WelcomeScreen(),
+                    ),
                   );
                 } else {
                   Navigator.of(context).pushReplacement(
@@ -241,9 +255,9 @@ class _InitialScreenState extends State<_InitialScreen> {
         await Future.delayed(const Duration(milliseconds: 2000));
         if (!mounted) return;
       }
-      
+
       final isGoogleSignedIn = await GoogleAuthService.isSignedIn();
-      
+
       if (mounted) {
         if (isGoogleSignedIn) {
           // SIMPLIFIÉ : Utilisateur connecté avec Google : vérifier si auth activée
@@ -255,11 +269,14 @@ class _InitialScreenState extends State<_InitialScreen> {
               );
             } else {
               // Pas de LockScreen : vérifier onboarding avant d'aller à HomePage
-              final onboardingCompleted = await OnboardingService.isOnboardingCompleted();
+              final onboardingCompleted =
+                  await OnboardingService.isOnboardingCompleted();
               if (mounted) {
                 if (!onboardingCompleted) {
                   Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+                    MaterialPageRoute(
+                      builder: (context) => const WelcomeScreen(),
+                    ),
                   );
                 } else {
                   Navigator.of(context).pushReplacement(
@@ -285,16 +302,16 @@ class _InitialScreenState extends State<_InitialScreen> {
   Future<bool> _shouldShowLockScreen() async {
     final authEnabled = await AuthService.isAuthEnabled();
     if (!authEnabled) return false;
-    
+
     final shouldAuthOnStartup = await AuthService.shouldAuthenticateOnStartup();
     if (!shouldAuthOnStartup) return false;
-    
+
     // Sur web, vérifier si PIN configuré
     if (kIsWeb) {
       final pinConfigured = await PinAuthService.isPinConfigured();
       return pinConfigured;
     }
-    
+
     // Sur mobile, authentification désactivée - pas de LockScreen
     return false;
   }
@@ -328,9 +345,9 @@ class _InitialScreenState extends State<_InitialScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              kIsWeb 
-                ? 'Compilation en cours...\nLes erreurs WebSocket sont normales'
-                : 'Cela peut prendre quelques instants',
+              kIsWeb
+                  ? 'Compilation en cours...\nLes erreurs WebSocket sont normales'
+                  : 'Cela peut prendre quelques instants',
               style: TextStyle(
                 fontSize: 14,
                 color: isDark ? Colors.grey[400] : Colors.grey[600],

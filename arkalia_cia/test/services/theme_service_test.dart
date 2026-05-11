@@ -47,15 +47,20 @@ void main() {
       expect(themeData.brightness, Brightness.dark);
     });
 
-    test('getThemeData should return dark theme for system mode when system is dark', () {
-      final themeData = ThemeService.getThemeData('system', Brightness.dark);
-      expect(themeData.brightness, Brightness.dark);
-    });
+    test(
+      'getThemeData should return dark theme for system mode when system is dark',
+      () {
+        final themeData = ThemeService.getThemeData('system', Brightness.dark);
+        expect(themeData.brightness, Brightness.dark);
+      },
+    );
 
-    test('getThemeData should return light theme for system mode when system is light', () {
-      final themeData = ThemeService.getThemeData('system', Brightness.light);
-      expect(themeData.brightness, Brightness.light);
-    });
+    test(
+      'getThemeData should return light theme for system mode when system is light',
+      () {
+        final themeData = ThemeService.getThemeData('system', Brightness.light);
+        expect(themeData.brightness, Brightness.light);
+      },
+    );
   });
 }
-

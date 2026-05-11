@@ -93,9 +93,7 @@ void main() {
     });
 
     test('detectDoctorFromMetadata retourne null si pas de nom', () {
-      final metadata = {
-        'doctor_specialty': 'Cardiologue',
-      };
+      final metadata = {'doctor_specialty': 'Cardiologue'};
 
       final result = DoctorDetectionService.detectDoctorFromMetadata(metadata);
 
@@ -145,4 +143,3 @@ void main() {
     });
   });
 }
-

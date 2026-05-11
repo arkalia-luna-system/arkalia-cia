@@ -136,23 +136,31 @@ class LocalStorageService {
   /// Importe des données depuis une sauvegarde
   static Future<void> importAllData(Map<String, dynamic> backup) async {
     if (backup['documents'] != null) {
-      await StorageHelper.saveList(_documentsKey,
-          List<Map<String, dynamic>>.from(backup['documents']));
+      await StorageHelper.saveList(
+        _documentsKey,
+        List<Map<String, dynamic>>.from(backup['documents']),
+      );
     }
 
     if (backup['reminders'] != null) {
-      await StorageHelper.saveList(_remindersKey,
-          List<Map<String, dynamic>>.from(backup['reminders']));
+      await StorageHelper.saveList(
+        _remindersKey,
+        List<Map<String, dynamic>>.from(backup['reminders']),
+      );
     }
 
     if (backup['emergency_contacts'] != null) {
-      await StorageHelper.saveList(_emergencyContactsKey,
-          List<Map<String, dynamic>>.from(backup['emergency_contacts']));
+      await StorageHelper.saveList(
+        _emergencyContactsKey,
+        List<Map<String, dynamic>>.from(backup['emergency_contacts']),
+      );
     }
 
     if (backup['emergency_info'] != null) {
-      await StorageHelper.saveObject(_emergencyInfoKey,
-          Map<String, dynamic>.from(backup['emergency_info']));
+      await StorageHelper.saveObject(
+        _emergencyInfoKey,
+        Map<String, dynamic>.from(backup['emergency_info']),
+      );
     }
   }
 }

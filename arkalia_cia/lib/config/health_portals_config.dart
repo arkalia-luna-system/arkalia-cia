@@ -1,5 +1,5 @@
 /// Configuration centralisée de tous les portails de santé
-/// 
+///
 /// Ce fichier contient toutes les informations sur les portails de santé
 /// belges et internationaux utilisés dans l'application.
 /// Pour ajouter un nouveau portail :
@@ -48,13 +48,17 @@ class BelgianHealthPortals {
     HealthPortalConfig(
       name: 'eHealth',
       url: 'https://www.ehealth.fgov.be',
-      description: 'Plateforme eHealth belge - Accès sécurisé aux données de santé (Accréditation requise)',
+      description:
+          'Plateforme eHealth belge - Accès sécurisé aux données de santé (Accréditation requise)',
       category: 'Administration',
       supportsOAuth: true,
-      oauthAuthUrl: 'https://iam.ehealth.fgov.be/iam-connect/oidc/authorize', // URL réelle
-      oauthTokenUrl: 'https://iam.ehealth.fgov.be/iam-connect/oidc/token', // URL réelle
+      oauthAuthUrl:
+          'https://iam.ehealth.fgov.be/iam-connect/oidc/authorize', // URL réelle
+      oauthTokenUrl:
+          'https://iam.ehealth.fgov.be/iam-connect/oidc/token', // URL réelle
       oauthCallbackUrl: 'arkaliacia://oauth/ehealth',
-      oauthScopes: 'ehealthbox.read consultations.read labresults.read', // Scopes réels eHealth
+      oauthScopes:
+          'ehealthbox.read consultations.read labresults.read', // Scopes réels eHealth
     ),
     HealthPortalConfig(
       name: 'Inami',
@@ -84,7 +88,8 @@ class BelgianHealthPortals {
     HealthPortalConfig(
       name: 'Andaman 7',
       url: 'https://www.andaman7.com',
-      description: 'Application santé belge - Import manuel uniquement (export PDF/CSV depuis l\'app)',
+      description:
+          'Application santé belge - Import manuel uniquement (export PDF/CSV depuis l\'app)',
       category: 'Application',
       supportsOAuth: false, // Pas d'API publique
       // oauthAuthUrl: null, // Pas d'OAuth disponible
@@ -95,7 +100,8 @@ class BelgianHealthPortals {
     HealthPortalConfig(
       name: 'MaSanté',
       url: 'https://www.masante.belgique.be',
-      description: 'Portail santé belge - Import manuel uniquement (export PDF depuis le portail)',
+      description:
+          'Portail santé belge - Import manuel uniquement (export PDF depuis le portail)',
       category: 'Application',
       supportsOAuth: false, // Pas d'API publique
       // oauthAuthUrl: null, // Pas d'OAuth disponible
@@ -139,9 +145,7 @@ class BelgianHealthPortals {
   /// Recherche un portail par URL
   static HealthPortalConfig? findByUrl(String url) {
     try {
-      return portals.firstWhere(
-        (portal) => portal.url == url,
-      );
+      return portals.firstWhere((portal) => portal.url == url);
     } catch (e) {
       return null;
     }
@@ -171,10 +175,13 @@ class OAuthPortalsConfig {
   /// Mapping des noms de portails vers leurs URLs OAuth
   static const Map<String, OAuthConfig> configs = {
     'eHealth': OAuthConfig(
-      authUrl: 'https://iam.ehealth.fgov.be/iam-connect/oidc/authorize', // URL réelle
-      tokenUrl: 'https://iam.ehealth.fgov.be/iam-connect/oidc/token', // URL réelle
+      authUrl:
+          'https://iam.ehealth.fgov.be/iam-connect/oidc/authorize', // URL réelle
+      tokenUrl:
+          'https://iam.ehealth.fgov.be/iam-connect/oidc/token', // URL réelle
       callbackUrl: 'arkaliacia://oauth/ehealth',
-      scopes: 'ehealthbox.read consultations.read labresults.read', // Scopes réels
+      scopes:
+          'ehealthbox.read consultations.read labresults.read', // Scopes réels
     ),
     // Andaman 7 et MaSanté n'ont pas d'API publique OAuth
     // Import manuel uniquement (PDF/CSV)
@@ -214,7 +221,7 @@ class HealthPortalsStats {
   static int get totalBelgianPortals => BelgianHealthPortals.portals.length;
 
   /// Nombre de portails avec OAuth
-  static int get oauthPortalsCount => 
+  static int get oauthPortalsCount =>
       BelgianHealthPortals.getOAuthPortals().length;
 
   /// Nombre de portails par catégorie
@@ -228,10 +235,6 @@ class HealthPortalsStats {
 
   /// Liste des catégories disponibles
   static List<String> get categories {
-    return BelgianHealthPortals.portals
-        .map((p) => p.category)
-        .toSet()
-        .toList();
+    return BelgianHealthPortals.portals.map((p) => p.category).toSet().toList();
   }
 }
-

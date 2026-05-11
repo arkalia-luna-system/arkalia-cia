@@ -14,13 +14,15 @@ class CategoryService {
   static Future<List<String>> getCategories() async {
     final prefs = await SharedPreferences.getInstance();
     final customCategoriesJson = prefs.getString(_categoriesKey);
-    
+
     if (customCategoriesJson == null) {
       return List<String>.from(_defaultCategories);
     }
-    
+
     try {
-      final customCategories = List<String>.from(jsonDecode(customCategoriesJson));
+      final customCategories = List<String>.from(
+        jsonDecode(customCategoriesJson),
+      );
       // Fusionner les catégories par défaut avec les personnalisées
       final allCategories = List<String>.from(_defaultCategories);
       for (final category in customCategories) {
@@ -37,30 +39,35 @@ class CategoryService {
   /// Ajoute une catégorie personnalisée
   static Future<bool> addCategory(String category) async {
     if (category.trim().isEmpty) return false;
-    if (_defaultCategories.contains(category)) return false; // Ne pas ajouter les défaut
-    
+    if (_defaultCategories.contains(category))
+      return false; // Ne pas ajouter les défaut
+
     final categories = await getCategories();
     if (categories.contains(category)) return false; // Déjà existante
-    
+
     final prefs = await SharedPreferences.getInstance();
-    final customCategories = categories.where((c) => !_defaultCategories.contains(c)).toList();
+    final customCategories =
+        categories.where((c) => !_defaultCategories.contains(c)).toList();
     customCategories.add(category);
-    
+
     await prefs.setString(_categoriesKey, jsonEncode(customCategories));
     return true;
   }
 
   /// Supprime une catégorie personnalisée
   static Future<bool> deleteCategory(String category) async {
-    if (_defaultCategories.contains(category)) return false; // Ne pas supprimer les défaut
-    
+    if (_defaultCategories.contains(category))
+      return false; // Ne pas supprimer les défaut
+
     final prefs = await SharedPreferences.getInstance();
     final customCategoriesJson = prefs.getString(_categoriesKey);
-    
+
     if (customCategoriesJson == null) return false;
-    
+
     try {
-      final customCategories = List<String>.from(jsonDecode(customCategoriesJson));
+      final customCategories = List<String>.from(
+        jsonDecode(customCategoriesJson),
+      );
       customCategories.remove(category);
       await prefs.setString(_categoriesKey, jsonEncode(customCategories));
       return true;
@@ -75,4 +82,3 @@ class CategoryService {
     return categories.contains(category);
   }
 }
-

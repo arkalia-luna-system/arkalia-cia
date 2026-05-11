@@ -36,11 +36,7 @@ class MedicationReminderWidget extends StatelessWidget {
                 color: isTaken ? Colors.grey : Colors.blue[100],
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
-                Icons.medication,
-                color: Colors.blue,
-                size: 30,
-              ),
+              child: const Icon(Icons.medication, color: Colors.blue, size: 30),
             ),
             const SizedBox(width: 16),
             // Informations
@@ -61,19 +57,13 @@ class MedicationReminderWidget extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       'Dosage: ${medication.dosage}',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                     ),
                   ],
                   const SizedBox(height: 4),
                   Text(
                     '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                   ),
                 ],
               ),
@@ -91,11 +81,7 @@ class MedicationReminderWidget extends StatelessWidget {
                 tooltip: 'Ignorer',
               ),
             ] else ...[
-              const Icon(
-                Icons.check_circle,
-                color: Colors.green,
-                size: 32,
-              ),
+              const Icon(Icons.check_circle, color: Colors.green, size: 32),
             ],
           ],
         ),
@@ -103,4 +89,3 @@ class MedicationReminderWidget extends StatelessWidget {
     );
   }
 }
-

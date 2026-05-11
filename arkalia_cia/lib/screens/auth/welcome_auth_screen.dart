@@ -35,15 +35,12 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
       duration: const Duration(milliseconds: 800),
     );
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOut,
-      ),
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
     _animationController.forward();
     _checkBackendStatus();
   }
-  
+
   /// SIMPLIFIÉ : Vérifier si backend est configuré pour afficher/masquer Login/Register
   Future<void> _checkBackendStatus() async {
     final enabled = await BackendConfigService.isBackendEnabled();
@@ -64,12 +61,12 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
   /// LockScreen s'affichera automatiquement au prochain démarrage si authentification activée
   Future<void> _handleContinueWithoutAccount(BuildContext context) async {
     if (!context.mounted) return;
-    
+
     // Vérifier l'onboarding
     final onboardingCompleted = await OnboardingService.isOnboardingCompleted();
-    
+
     if (!context.mounted) return;
-    
+
     if (!onboardingCompleted) {
       // Première connexion : afficher onboarding
       Navigator.of(context).pushReplacement(
@@ -84,7 +81,7 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
   }
 
   /// Gestion de la connexion Google Sign In
-  /// 
+  ///
   /// **Mode gratuit et offline-first** :
   /// - Utilise Google Sign In pour authentifier l'utilisateur
   /// - Stocke les informations localement (email, nom, photo)
@@ -96,32 +93,33 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const CircularProgressIndicator(),
-            const SizedBox(height: 16),
-            const Text(
-              'Connexion en cours...',
-              style: TextStyle(fontSize: 14),
+      builder:
+          (context) => AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const CircularProgressIndicator(),
+                const SizedBox(height: 16),
+                const Text(
+                  'Connexion en cours...',
+                  style: TextStyle(fontSize: 14),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '💡 IMPORTANT :\n'
+                  'Si une page Google s\'ouvre :\n'
+                  '• Cliquez sur votre compte pour vous connecter\n'
+                  '• NE cliquez PAS sur "Envoyer un mail" ou Gmail\n'
+                  '• Attendez que la page se ferme automatiquement',
+                  style: TextStyle(
+                    fontSize: 14, // Minimum 14px pour accessibilité seniors
+                    color: Colors.grey[600],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
-            const SizedBox(height: 8),
-            Text(
-              '💡 IMPORTANT :\n'
-              'Si une page Google s\'ouvre :\n'
-              '• Cliquez sur votre compte pour vous connecter\n'
-              '• NE cliquez PAS sur "Envoyer un mail" ou Gmail\n'
-              '• Attendez que la page se ferme automatiquement',
-              style: TextStyle(
-                fontSize: 14, // Minimum 14px pour accessibilité seniors
-                color: Colors.grey[600],
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
+          ),
     );
 
     try {
@@ -134,7 +132,7 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
         // SIMPLIFIÉ : Connexion réussie, aller directement à HomePage
         // LockScreen s'affichera automatiquement au prochain démarrage si authentification activée
         if (!context.mounted) return;
-        
+
         // Auto-remplir le profil utilisateur depuis Google Sign-In
         // Utiliser directement les données du compte Google retourné
         try {
@@ -143,7 +141,7 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
             // email est non-null selon GoogleSignInAccount
             final googleEmail = googleAccount.email.trim();
             final googleName = googleAccount.displayName?.trim();
-            
+
             // Ne créer/mettre à jour le profil que si l'email est valide
             if (googleEmail.isNotEmpty) {
               final existingProfile = await UserProfileService.getProfile();
@@ -151,41 +149,58 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                 // Créer automatiquement le profil depuis Google
                 await UserProfileService.createProfile(
                   email: googleEmail,
-                  displayName: googleName?.isNotEmpty == true ? googleName : null,
+                  displayName:
+                      googleName?.isNotEmpty == true ? googleName : null,
                 );
-                AppLogger.info('✅ Profil utilisateur créé depuis Google Sign-In: $googleEmail');
+                AppLogger.info(
+                  '✅ Profil utilisateur créé depuis Google Sign-In: $googleEmail',
+                );
               } else {
                 // Mettre à jour le profil existant avec les infos Google si nécessaire
                 final emailChanged = existingProfile.email != googleEmail;
                 final nameChanged = existingProfile.displayName != googleName;
-                
+
                 if (emailChanged || nameChanged) {
                   final updatedProfile = existingProfile.copyWith(
                     email: googleEmail,
-                    displayName: googleName?.isNotEmpty == true ? googleName : existingProfile.displayName,
+                    displayName:
+                        googleName?.isNotEmpty == true
+                            ? googleName
+                            : existingProfile.displayName,
                   );
                   await UserProfileService.saveProfile(updatedProfile);
-                  AppLogger.info('✅ Profil utilisateur mis à jour depuis Google Sign-In: $googleEmail');
+                  AppLogger.info(
+                    '✅ Profil utilisateur mis à jour depuis Google Sign-In: $googleEmail',
+                  );
                 } else {
                   AppLogger.debug('Profil utilisateur déjà à jour');
                 }
               }
             } else {
-              AppLogger.warning('⚠️ Email Google invalide ou vide, profil non créé');
+              AppLogger.warning(
+                '⚠️ Email Google invalide ou vide, profil non créé',
+              );
             }
           } else {
-            AppLogger.warning('⚠️ Compte Google non disponible dans le résultat');
+            AppLogger.warning(
+              '⚠️ Compte Google non disponible dans le résultat',
+            );
           }
         } catch (e, stackTrace) {
           // Logger l'erreur mais ne pas bloquer la connexion
-          AppLogger.error('Erreur création profil depuis Google', e, stackTrace);
+          AppLogger.error(
+            'Erreur création profil depuis Google',
+            e,
+            stackTrace,
+          );
         }
-        
+
         // Vérifier l'onboarding
-        final onboardingCompleted = await OnboardingService.isOnboardingCompleted();
-        
+        final onboardingCompleted =
+            await OnboardingService.isOnboardingCompleted();
+
         if (!context.mounted) return;
-        
+
         if (!onboardingCompleted) {
           // Première connexion : afficher onboarding
           Navigator.of(context).pushReplacement(
@@ -203,59 +218,66 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
           // Afficher un dialog avec l'erreur détaillée et actionnable
           showDialog(
             context: context,
-            builder: (context) => AlertDialog(
-              title: const Row(
-                children: [
-                  Icon(Icons.error_outline, color: Colors.red),
-                  SizedBox(width: 8),
-                  Text('Erreur de connexion Google'),
-                ],
-              ),
-              content: SingleChildScrollView(
-                child: Text(
-                  result['error'] ?? 'Erreur lors de la connexion',
-                  style: const TextStyle(fontSize: 14),
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Fermer'),
-                ),
-                if (result['error']?.contains('People API') == true ||
-                    result['error']?.contains('403') == true ||
-                    result['error']?.contains('SERVICE_DISABLED') == true)
-                  TextButton.icon(
-                    onPressed: () async {
-                      Navigator.of(context).pop();
-                      // Ouvrir le lien d'activation de l'API People
-                      final url = Uri.parse(
-                        'https://console.developers.google.com/apis/api/people.googleapis.com/overview?project=1062485264410',
-                      );
-                      if (await canLaunchUrl(url)) {
-                        await launchUrl(url, mode: LaunchMode.externalApplication);
-                      }
-                    },
-                    icon: const Icon(Icons.open_in_new, size: 18),
-                    label: const Text('Activer l\'API'),
+            builder:
+                (context) => AlertDialog(
+                  title: const Row(
+                    children: [
+                      Icon(Icons.error_outline, color: Colors.red),
+                      SizedBox(width: 8),
+                      Text('Erreur de connexion Google'),
+                    ],
                   ),
-                if (result['error']?.contains('Configuration') == true ||
-                    result['error']?.contains('not registered') == true)
-                  TextButton(
-                    onPressed: () async {
-                      Navigator.of(context).pop();
-                      // Ouvrir Google Cloud Console
-                      final url = Uri.parse(
-                        'https://console.cloud.google.com/apis/credentials?project=arkalia-cia',
-                      );
-                      if (await canLaunchUrl(url)) {
-                        await launchUrl(url, mode: LaunchMode.externalApplication);
-                      }
-                    },
-                    child: const Text('Voir la config'),
+                  content: SingleChildScrollView(
+                    child: Text(
+                      result['error'] ?? 'Erreur lors de la connexion',
+                      style: const TextStyle(fontSize: 14),
+                    ),
                   ),
-              ],
-            ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('Fermer'),
+                    ),
+                    if (result['error']?.contains('People API') == true ||
+                        result['error']?.contains('403') == true ||
+                        result['error']?.contains('SERVICE_DISABLED') == true)
+                      TextButton.icon(
+                        onPressed: () async {
+                          Navigator.of(context).pop();
+                          // Ouvrir le lien d'activation de l'API People
+                          final url = Uri.parse(
+                            'https://console.developers.google.com/apis/api/people.googleapis.com/overview?project=1062485264410',
+                          );
+                          if (await canLaunchUrl(url)) {
+                            await launchUrl(
+                              url,
+                              mode: LaunchMode.externalApplication,
+                            );
+                          }
+                        },
+                        icon: const Icon(Icons.open_in_new, size: 18),
+                        label: const Text('Activer l\'API'),
+                      ),
+                    if (result['error']?.contains('Configuration') == true ||
+                        result['error']?.contains('not registered') == true)
+                      TextButton(
+                        onPressed: () async {
+                          Navigator.of(context).pop();
+                          // Ouvrir Google Cloud Console
+                          final url = Uri.parse(
+                            'https://console.cloud.google.com/apis/credentials?project=arkalia-cia',
+                          );
+                          if (await canLaunchUrl(url)) {
+                            await launchUrl(
+                              url,
+                              mode: LaunchMode.externalApplication,
+                            );
+                          }
+                        },
+                        child: const Text('Voir la config'),
+                      ),
+                  ],
+                ),
           );
         }
       }
@@ -276,28 +298,28 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: isDark
-                ? [
-                    Colors.blue[900]!,
-                    Colors.blue[800]!,
-                    Colors.purple[900]!,
-                  ]
-                : [
-                    Colors.blue[400]!,
-                    Colors.blue[600]!,
-                    Colors.purple[500]!,
-                  ],
+            colors:
+                isDark
+                    ? [
+                      Colors.blue[900]!,
+                      Colors.blue[800]!,
+                      Colors.purple[900]!,
+                    ]
+                    : [
+                      Colors.blue[400]!,
+                      Colors.blue[600]!,
+                      Colors.purple[500]!,
+                    ],
           ),
         ),
         child: SafeArea(
@@ -309,7 +331,7 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const SizedBox(height: 40),
-                  
+
                   // Logo/Icone avec effets visuels discrets et animation
                   FadeTransition(
                     opacity: _fadeAnimation,
@@ -352,9 +374,9 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 32),
-                  
+
                   // Titre
                   const Text(
                     'Arkalia CIA',
@@ -365,9 +387,9 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  
+
                   const SizedBox(height: 8),
-                  
+
                   // Sous-titre
                   const Text(
                     'Votre Carnet de Santé',
@@ -378,9 +400,9 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  
+
                   const SizedBox(height: 48),
-                  
+
                   // Bouton Google (unique, fonctionne avec Gmail aussi)
                   ElevatedButton.icon(
                     onPressed: () => _handleGoogleSignIn(context),
@@ -403,15 +425,19 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                       elevation: 4,
                     ),
                   ),
-                  
+
                   // SIMPLIFIÉ : Afficher Login/Register seulement si backend configuré
                   if (_backendEnabled) ...[
                     const SizedBox(height: 24),
-                    
+
                     // Séparateur
                     Row(
                       children: [
-                        Expanded(child: Divider(color: Colors.white.withValues(alpha: 0.3))),
+                        Expanded(
+                          child: Divider(
+                            color: Colors.white.withValues(alpha: 0.3),
+                          ),
+                        ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Text(
@@ -423,12 +449,16 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                             ),
                           ),
                         ),
-                        Expanded(child: Divider(color: Colors.white.withValues(alpha: 0.3))),
+                        Expanded(
+                          child: Divider(
+                            color: Colors.white.withValues(alpha: 0.3),
+                          ),
+                        ),
                       ],
                     ),
-                    
+
                     const SizedBox(height: 24),
-                    
+
                     // Bouton Créer un compte (seulement si backend configuré)
                     OutlinedButton(
                       onPressed: () {
@@ -455,9 +485,9 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                         ),
                       ),
                     ),
-                    
+
                     const SizedBox(height: 12),
-                    
+
                     // Bouton Se connecter (seulement si backend configuré)
                     TextButton(
                       onPressed: () {
@@ -505,7 +535,8 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                               'Pour créer un compte avec backend, configurez l\'URL dans les paramètres (⚙️ > Backend API)',
                               style: TextStyle(
                                 color: Colors.white.withValues(alpha: 0.9),
-                                fontSize: 14, // Minimum 14px pour accessibilité seniors
+                                fontSize:
+                                    14, // Minimum 14px pour accessibilité seniors
                               ),
                             ),
                           ),
@@ -513,9 +544,9 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                       ),
                     ),
                   ],
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Bouton Continuer sans compte (discret)
                   TextButton(
                     onPressed: () => _handleContinueWithoutAccount(context),
@@ -531,7 +562,7 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 20),
                 ],
               ),
@@ -542,4 +573,3 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
     );
   }
 }
-

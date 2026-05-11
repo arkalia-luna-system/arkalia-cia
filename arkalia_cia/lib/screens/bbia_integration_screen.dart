@@ -10,7 +10,7 @@ class BBIAIntegrationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Intégration BBIA'),
@@ -47,38 +47,34 @@ class BBIAIntegrationScreen extends StatelessWidget {
                       color: Colors.white.withValues(alpha: 0.2),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(
-                      MdiIcons.robot,
-                      size: 100,
-                      color: Colors.white,
-                    ),
+                    child: Icon(MdiIcons.robot, size: 100, color: Colors.white),
                   ),
                   const SizedBox(height: 24),
-                  
+
                   // Titre
                   Text(
                     'BBIA - Robot Cognitif',
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 12),
-                  
+
                   // Sous-titre
                   Text(
                     'Moteur cognitif pour Reachy Mini',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: Colors.white.withValues(alpha: 0.9),
-                        ),
+                      color: Colors.white.withValues(alpha: 0.9),
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 32),
-            
+
             // Description enrichie
             Card(
               elevation: 2,
@@ -97,9 +93,8 @@ class BBIAIntegrationScreen extends StatelessWidget {
                         const SizedBox(width: 12),
                         Text(
                           'À propos de BBIA',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -119,7 +114,11 @@ class BBIAIntegrationScreen extends StatelessWidget {
                         _buildTechChip(context, 'MuJoCo', Colors.orange),
                         _buildTechChip(context, 'IA Émotions', Colors.pink),
                         _buildTechChip(context, 'Vision', Colors.green),
-                        _buildTechChip(context, 'Reachy Mini', Colors.deepPurple),
+                        _buildTechChip(
+                          context,
+                          'Reachy Mini',
+                          Colors.deepPurple,
+                        ),
                       ],
                     ),
                   ],
@@ -127,7 +126,7 @@ class BBIAIntegrationScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            
+
             // Fonctionnalités prévues
             Card(
               elevation: 2,
@@ -146,9 +145,8 @@ class BBIAIntegrationScreen extends StatelessWidget {
                         const SizedBox(width: 12),
                         Text(
                           'Fonctionnalités prévues',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -199,12 +197,15 @@ class BBIAIntegrationScreen extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Statut du projet
             Card(
-              color: isDark ? Colors.blue[900]?.withValues(alpha: 0.3) : Colors.blue[50],
+              color:
+                  isDark
+                      ? Colors.blue[900]?.withValues(alpha: 0.3)
+                      : Colors.blue[50],
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
@@ -220,10 +221,12 @@ class BBIAIntegrationScreen extends StatelessWidget {
                         const SizedBox(width: 12),
                         Text(
                           'Statut du projet',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.blue[900],
-                              ),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue[900],
+                          ),
                         ),
                       ],
                     ),
@@ -240,13 +243,18 @@ class BBIAIntegrationScreen extends StatelessWidget {
                     const SizedBox(height: 16),
                     Row(
                       children: [
-                        Icon(Icons.check_circle, color: Colors.green[700], size: 20),
+                        Icon(
+                          Icons.check_circle,
+                          color: Colors.green[700],
+                          size: 20,
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             '1362 tests collectés • 68.86% coverage • SDK officiel validé',
                             style: TextStyle(
-                              color: isDark ? Colors.blue[200] : Colors.blue[800],
+                              color:
+                                  isDark ? Colors.blue[200] : Colors.blue[800],
                               fontSize: 14,
                             ),
                           ),
@@ -257,9 +265,9 @@ class BBIAIntegrationScreen extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Liens vers projets GitHub
             Card(
               elevation: 2,
@@ -271,8 +279,8 @@ class BBIAIntegrationScreen extends StatelessWidget {
                     Text(
                       'Ressources',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 16),
                     _buildLinkButton(
@@ -296,9 +304,9 @@ class BBIAIntegrationScreen extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Spécifications techniques
             Card(
               elevation: 2,
@@ -317,9 +325,8 @@ class BBIAIntegrationScreen extends StatelessWidget {
                         const SizedBox(width: 12),
                         Text(
                           'Spécifications techniques',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -328,7 +335,11 @@ class BBIAIntegrationScreen extends StatelessWidget {
                     _buildSpecItem(context, 'Simulateur', 'MuJoCo'),
                     _buildSpecItem(context, 'Format', 'MJCF (MuJoCo XML)'),
                     _buildSpecItem(context, 'Articulations', '16 au total'),
-                    _buildSpecItem(context, 'Assets', '41 fichiers STL officiels'),
+                    _buildSpecItem(
+                      context,
+                      'Assets',
+                      '41 fichiers STL officiels',
+                    ),
                   ],
                 ),
               ),
@@ -352,10 +363,7 @@ class BBIAIntegrationScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: color.withValues(alpha: 0.3),
-          width: 1,
-        ),
+        border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -437,10 +445,7 @@ class BBIAIntegrationScreen extends StatelessWidget {
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: color.withValues(alpha: 0.3),
-            width: 1,
-          ),
+          border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
         ),
         child: Row(
           children: [
@@ -469,11 +474,7 @@ class BBIAIntegrationScreen extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(
-              Icons.open_in_new,
-              color: color,
-              size: 20,
-            ),
+            Icon(Icons.open_in_new, color: color, size: 20),
           ],
         ),
       ),
@@ -499,9 +500,7 @@ class BBIAIntegrationScreen extends StatelessWidget {
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(
-                fontWeight: FontWeight.w500,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.w500),
             ),
           ),
         ],
@@ -509,4 +508,3 @@ class BBIAIntegrationScreen extends StatelessWidget {
     );
   }
 }
-

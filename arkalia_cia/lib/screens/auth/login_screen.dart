@@ -44,7 +44,8 @@ class _LoginScreenState extends State<LoginScreen> {
       final backendConfigured = await BackendConfigService.isBackendEnabled();
       if (!backendConfigured) {
         setState(() {
-          _errorMessage = '⚙️ Backend non configuré.\n\n'
+          _errorMessage =
+              '⚙️ Backend non configuré.\n\n'
               'Pour vous connecter avec un compte, utilisez "Continuer avec Google" sur l\'écran précédent.\n\n'
               'Ou configurez l\'URL du backend dans les paramètres (⚙️ > Backend API).';
           _isLoading = false;
@@ -59,10 +60,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (result['success'] == true) {
         // Connexion réussie, vérifier l'onboarding
-        final onboardingCompleted = await OnboardingService.isOnboardingCompleted();
-        
+        final onboardingCompleted =
+            await OnboardingService.isOnboardingCompleted();
+
         if (!mounted) return;
-        
+
         if (!onboardingCompleted) {
           // Première connexion : afficher onboarding
           Navigator.of(context).pushReplacement(
@@ -113,7 +115,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.primary.withValues(alpha: 0.15),
                           blurRadius: 20,
                           spreadRadius: 2,
                           offset: const Offset(0, 4),
@@ -147,8 +151,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 Text(
                   'Arkalia CIA',
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    fontWeight: FontWeight.bold,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8),
@@ -158,7 +162,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 48),
-                
+
                 // Message d'erreur
                 if (_errorMessage != null)
                   Container(
@@ -213,7 +217,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     prefixIcon: const Icon(Icons.lock),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                        _obscurePassword
+                            ? Icons.visibility
+                            : Icons.visibility_off,
                       ),
                       onPressed: () {
                         setState(() {
@@ -247,30 +253,32 @@ class _LoginScreenState extends State<LoginScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: _isLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text(
-                          'Se connecter',
-                          style: TextStyle(fontSize: 16),
-                        ),
+                  child:
+                      _isLoading
+                          ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                          : const Text(
+                            'Se connecter',
+                            style: TextStyle(fontSize: 16),
+                          ),
                 ),
                 const SizedBox(height: 16),
 
                 // Lien vers inscription
                 TextButton(
-                  onPressed: _isLoading
-                      ? null
-                      : () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => const RegisterScreen(),
-                            ),
-                          );
-                        },
+                  onPressed:
+                      _isLoading
+                          ? null
+                          : () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => const RegisterScreen(),
+                              ),
+                            );
+                          },
                   child: const Text('Créer un compte'),
                 ),
               ],
@@ -281,4 +289,3 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-

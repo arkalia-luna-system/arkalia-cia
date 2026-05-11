@@ -21,10 +21,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
       duration: const Duration(milliseconds: 800),
     );
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOut,
-      ),
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
     _animationController.forward();
   }
@@ -34,6 +31,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     _animationController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,11 +49,15 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                   child: Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.05),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.primary.withValues(alpha: 0.05),
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.primary.withValues(alpha: 0.15),
                           blurRadius: 20,
                           spreadRadius: 2,
                           offset: const Offset(0, 4),
@@ -77,9 +79,9 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // Titre
               Text(
                 'Bienvenue dans Arkalia CIA',
@@ -90,9 +92,9 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 ),
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Description
               Text(
                 'Votre assistant santé personnel\n'
@@ -103,9 +105,9 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 ),
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // Avantages
               _buildFeature(
                 context,
@@ -113,27 +115,27 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 'Import automatique',
                 'Récupérez vos données depuis vos portails santé',
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               _buildFeature(
                 context,
                 Icons.security,
                 '100% sécurisé',
                 'Toutes vos données restent sur votre appareil',
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               _buildFeature(
                 context,
                 Icons.auto_awesome,
                 'Intelligent',
                 'Création automatique de votre historique médical',
               ),
-              
+
               const SizedBox(height: 48),
-              
+
               // Bouton continuer
               SizedBox(
                 width: double.infinity,
@@ -148,7 +150,10 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                   },
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 56),
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 16,
+                    ),
                   ),
                   child: const Text(
                     'Commencer',
@@ -164,7 +169,12 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     );
   }
 
-  Widget _buildFeature(BuildContext context, IconData icon, String title, String description) {
+  Widget _buildFeature(
+    BuildContext context,
+    IconData icon,
+    String title,
+    String description,
+  ) {
     return Row(
       children: [
         Icon(icon, color: Theme.of(context).colorScheme.primary),
@@ -195,4 +205,3 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     );
   }
 }
-

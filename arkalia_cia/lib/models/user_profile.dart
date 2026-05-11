@@ -18,8 +18,8 @@ class UserProfile {
     DateTime? createdAt,
     this.lastSync,
     this.preferences,
-  })  : devices = devices ?? [],
-        createdAt = createdAt ?? DateTime.now();
+  }) : devices = devices ?? [],
+       createdAt = createdAt ?? DateTime.now();
 
   /// Crée un UserProfile depuis un Map (depuis JSON/SharedPreferences)
   factory UserProfile.fromMap(Map<String, dynamic> map) {
@@ -27,16 +27,19 @@ class UserProfile {
       userId: map['userId'] as String,
       email: map['email'] as String,
       displayName: map['displayName'] as String?,
-      devices: (map['devices'] as List<dynamic>?)
+      devices:
+          (map['devices'] as List<dynamic>?)
               ?.map((d) => Device.fromMap(d as Map<String, dynamic>))
               .toList() ??
           [],
-      createdAt: map['createdAt'] != null
-          ? DateTime.parse(map['createdAt'] as String)
-          : null,
-      lastSync: map['lastSync'] != null
-          ? DateTime.parse(map['lastSync'] as String)
-          : null,
+      createdAt:
+          map['createdAt'] != null
+              ? DateTime.parse(map['createdAt'] as String)
+              : null,
+      lastSync:
+          map['lastSync'] != null
+              ? DateTime.parse(map['lastSync'] as String)
+              : null,
       preferences: map['preferences'] as Map<String, dynamic>?,
     );
   }
@@ -103,4 +106,3 @@ class UserProfile {
   @override
   int get hashCode => userId.hashCode;
 }
-

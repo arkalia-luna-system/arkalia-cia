@@ -68,10 +68,12 @@ void main() {
       expect(categories, contains('Médical'));
     });
 
-    test('deleteCategory should return false for non-existent category', () async {
-      final success = await CategoryService.deleteCategory('Non Existent');
-      expect(success, false);
-    });
+    test(
+      'deleteCategory should return false for non-existent category',
+      () async {
+        final success = await CategoryService.deleteCategory('Non Existent');
+        expect(success, false);
+      },
+    );
   });
 }
-

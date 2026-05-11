@@ -121,7 +121,9 @@ class MedicationService {
   Future<List<Medication>> getAllMedications() async {
     if (kIsWeb) {
       final medications = await _getMedicationsFromStorage();
-      return medications.map((map) => Medication.fromMap(_convertWebMapToSqliteMap(map))).toList()
+      return medications
+          .map((map) => Medication.fromMap(_convertWebMapToSqliteMap(map)))
+          .toList()
         ..sort((a, b) => a.name.compareTo(b.name));
     }
     final db = await database;
@@ -140,10 +142,10 @@ class MedicationService {
       final allMedications = await getAllMedications();
       final now = DateTime.now();
       return allMedications.where((med) {
-        if (med.startDate.isAfter(now)) return false;
-        if (med.endDate != null && med.endDate!.isBefore(now)) return false;
-        return true;
-      }).toList()
+          if (med.startDate.isAfter(now)) return false;
+          if (med.endDate != null && med.endDate!.isBefore(now)) return false;
+          return true;
+        }).toList()
         ..sort((a, b) => a.name.compareTo(b.name));
     }
     final db = await database;
@@ -214,7 +216,7 @@ class MedicationService {
   Future<int> deleteMedication(int id) async {
     // Annuler les notifications avant suppression
     await cancelMedicationNotifications(id);
-    
+
     if (kIsWeb) {
       final medications = await _getMedicationsFromStorage();
       medications.removeWhere((map) => map['id'] == id);
@@ -229,11 +231,7 @@ class MedicationService {
     if (db == null) {
       throw UnsupportedError('Base de données non disponible');
     }
-    return await db.delete(
-      'medications',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    return await db.delete('medications', where: 'id = ?', whereArgs: [id]);
   }
 
   // Méthodes helper pour le stockage web
@@ -249,9 +247,10 @@ class MedicationService {
   Map<String, dynamic> _convertWebMapToSqliteMap(Map<String, dynamic> map) {
     final converted = Map<String, dynamic>.from(map);
     if (converted['id'] != null) {
-      converted['id'] = converted['id'] is int 
-          ? converted['id'] 
-          : int.tryParse(converted['id'].toString()) ?? converted['id'];
+      converted['id'] =
+          converted['id'] is int
+              ? converted['id']
+              : int.tryParse(converted['id'].toString()) ?? converted['id'];
     }
     return converted;
   }
@@ -261,7 +260,8 @@ class MedicationService {
     if (medication.id == null) return;
 
     final now = DateTime.now();
-    final startDate = medication.startDate.isBefore(now) ? now : medication.startDate;
+    final startDate =
+        medication.startDate.isBefore(now) ? now : medication.startDate;
     // final endDate = medication.endDate ?? startDate.add(const Duration(days: 365));
 
     for (final time in medication.times) {
@@ -277,20 +277,22 @@ class MedicationService {
       if (firstReminderDate.isAfter(now)) {
         await CalendarService.addReminder(
           title: '💊 ${medication.name}',
-          description: medication.dosage != null
-              ? 'Dosage: ${medication.dosage}'
-              : 'N\'oubliez pas votre médicament',
+          description:
+              medication.dosage != null
+                  ? 'Dosage: ${medication.dosage}'
+                  : 'N\'oubliez pas votre médicament',
           reminderDate: firstReminderDate,
           recurrence: 'daily',
         );
-        
+
         // Programmer aussi une notification push pour rappel
         await NotificationService.scheduleNotification(
           id: medication.id! * 1000 + time.hour * 60 + time.minute, // ID unique
           title: '💊 ${medication.name}',
-          body: medication.dosage != null
-              ? 'Dosage: ${medication.dosage}'
-              : 'N\'oubliez pas votre médicament',
+          body:
+              medication.dosage != null
+                  ? 'Dosage: ${medication.dosage}'
+                  : 'N\'oubliez pas votre médicament',
           scheduledDate: firstReminderDate,
         );
       }
@@ -304,7 +306,7 @@ class MedicationService {
   Future<void> cancelMedicationNotifications(int medicationId) async {
     final medication = await getMedicationById(medicationId);
     if (medication == null) return;
-    
+
     // Annuler toutes les notifications pour ce médicament
     for (final time in medication.times) {
       final notificationId = medicationId * 1000 + time.hour * 60 + time.minute;
@@ -313,18 +315,23 @@ class MedicationService {
   }
 
   /// Marque un médicament comme pris
-  Future<void> markAsTaken(int medicationId, DateTime date, TimeOfDay time) async {
+  Future<void> markAsTaken(
+    int medicationId,
+    DateTime date,
+    TimeOfDay time,
+  ) async {
     if (kIsWeb) {
       final taken = await _getMedicationTakenFromStorage();
       final dateStr = date.toIso8601String().split('T')[0];
       final timeStr = '${time.hour}:${time.minute}';
-      
+
       final existingIndex = taken.indexWhere(
-        (map) => map['medication_id'] == medicationId && 
-                 map['date'] == dateStr && 
-                 map['time'] == timeStr,
+        (map) =>
+            map['medication_id'] == medicationId &&
+            map['date'] == dateStr &&
+            map['time'] == timeStr,
       );
-      
+
       if (existingIndex != -1) {
         taken[existingIndex]['taken'] = 1;
         taken[existingIndex]['taken_at'] = DateTime.now().toIso8601String();
@@ -363,10 +370,7 @@ class MedicationService {
       // Mettre à jour
       await db.update(
         'medication_taken',
-        {
-          'taken': 1,
-          'taken_at': DateTime.now().toIso8601String(),
-        },
+        {'taken': 1, 'taken_at': DateTime.now().toIso8601String()},
         where: 'id = ?',
         whereArgs: [existing.first['id']],
       );
@@ -397,10 +401,11 @@ class MedicationService {
         for (final time in medication.times) {
           final timeStr = '${time.hour}:${time.minute}';
           final wasTaken = taken.any(
-            (map) => map['medication_id'] == medication.id &&
-                     map['date'] == dateStr &&
-                     map['time'] == timeStr &&
-                     map['taken'] == 1,
+            (map) =>
+                map['medication_id'] == medication.id &&
+                map['date'] == dateStr &&
+                map['time'] == timeStr &&
+                map['taken'] == 1,
           );
 
           if (!wasTaken) {
@@ -475,7 +480,8 @@ class MedicationService {
       'ibuprofène': ['aspirine', 'anticoagulant'],
     };
 
-    final medicationNames = medications.map((m) => m.name.toLowerCase()).toList();
+    final medicationNames =
+        medications.map((m) => m.name.toLowerCase()).toList();
 
     for (final medication in medications) {
       final name = medication.name.toLowerCase();
@@ -505,14 +511,15 @@ class MedicationService {
       final taken = await _getMedicationTakenFromStorage();
       final startStr = startDate.toIso8601String().split('T')[0];
       final endStr = endDate.toIso8601String().split('T')[0];
-      
-      final filtered = taken.where((map) {
-        final date = map['date'] as String?;
-        return map['medication_id'] == medicationId &&
-               date != null &&
-               date.compareTo(startStr) >= 0 &&
-               date.compareTo(endStr) <= 0;
-      }).toList();
+
+      final filtered =
+          taken.where((map) {
+            final date = map['date'] as String?;
+            return map['medication_id'] == medicationId &&
+                date != null &&
+                date.compareTo(startStr) >= 0 &&
+                date.compareTo(endStr) <= 0;
+          }).toList();
 
       final takenCount = filtered.where((m) => m['taken'] == 1).length;
       final total = filtered.length;
@@ -521,7 +528,12 @@ class MedicationService {
         'taken': takenCount,
         'total': total,
         'percentage': total > 0 ? (takenCount / total * 100).round() : 0,
-        'entries': filtered.map((m) => MedicationTaken.fromMap(_convertWebMapToSqliteMap(m))).toList(),
+        'entries':
+            filtered
+                .map(
+                  (m) => MedicationTaken.fromMap(_convertWebMapToSqliteMap(m)),
+                )
+                .toList(),
       };
     }
     final db = await database;
@@ -549,4 +561,3 @@ class MedicationService {
     };
   }
 }
-

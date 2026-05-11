@@ -83,9 +83,7 @@ jobs:
           # Tests PWA si disponibles
           if [ -f "../tests/web/pwa_test.dart" ]; then
             echo "🧪 Running PWA tests..."
-            cd ..
-            dart test tests/web/pwa_test.dart
-            cd arkalia_cia
+            flutter test ../tests/web/pwa_test.dart
           fi
 
           # Vérifier que le fichier de couverture a été généré

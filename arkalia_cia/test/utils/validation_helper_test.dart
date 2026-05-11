@@ -25,7 +25,10 @@ void main() {
         expect(ValidationHelper.isValidPhone(''), isFalse);
         expect(ValidationHelper.isValidPhone('123'), isFalse);
         expect(ValidationHelper.isValidPhone('abc'), isFalse);
-        expect(ValidationHelper.isValidPhone('0312345678'), isFalse); // Ne commence pas par 04
+        expect(
+          ValidationHelper.isValidPhone('0312345678'),
+          isFalse,
+        ); // Ne commence pas par 04
       });
     });
 
@@ -55,7 +58,10 @@ void main() {
         expect(ValidationHelper.isValidDate('2024-01-01'), isTrue);
         expect(ValidationHelper.isValidDate('2024-01-01T12:00:00'), isTrue);
         expect(ValidationHelper.isValidDate('2024-01-01T12:00:00Z'), isTrue);
-        expect(ValidationHelper.isValidDate('2024-01-01T12:00:00+01:00'), isTrue);
+        expect(
+          ValidationHelper.isValidDate('2024-01-01T12:00:00+01:00'),
+          isTrue,
+        );
       });
 
       test('should reject invalid dates', () {
@@ -69,7 +75,10 @@ void main() {
     group('isValidEmail', () {
       test('should validate correct emails', () {
         expect(ValidationHelper.isValidEmail('test@example.com'), isTrue);
-        expect(ValidationHelper.isValidEmail('user.name@example.co.uk'), isTrue);
+        expect(
+          ValidationHelper.isValidEmail('user.name@example.co.uk'),
+          isTrue,
+        );
         expect(ValidationHelper.isValidEmail('user+tag@example.com'), isTrue);
         expect(ValidationHelper.isValidEmail('user_name@example.com'), isTrue);
       });
@@ -101,7 +110,10 @@ void main() {
         expect(ValidationHelper.isValidName('A'), isFalse); // Trop court
         expect(ValidationHelper.isValidName('A' * 101), isFalse); // Trop long
         expect(ValidationHelper.isValidName('Jean123'), isFalse); // Chiffres
-        expect(ValidationHelper.isValidName('Jean@Pierre'), isFalse); // Caractères spéciaux
+        expect(
+          ValidationHelper.isValidName('Jean@Pierre'),
+          isFalse,
+        ); // Caractères spéciaux
       });
     });
 
@@ -123,7 +135,10 @@ void main() {
       test('should validate optional descriptions', () {
         expect(ValidationHelper.isValidDescription(null), isTrue);
         expect(ValidationHelper.isValidDescription(''), isTrue);
-        expect(ValidationHelper.isValidDescription('Description valide'), isTrue);
+        expect(
+          ValidationHelper.isValidDescription('Description valide'),
+          isTrue,
+        );
         expect(ValidationHelper.isValidDescription('A' * 1000), isTrue);
       });
 
@@ -150,21 +165,24 @@ void main() {
 
     group('formatBelgianPhone', () {
       test('should format Belgian phone numbers correctly', () {
-        expect(ValidationHelper.formatBelgianPhone('0412345678'),
-            '0412 34 56 78');
-        expect(ValidationHelper.formatBelgianPhone('+32412345678'),
-            '0412345678');
-        expect(ValidationHelper.formatBelgianPhone('04 12 34 56 78'),
-            '0412 34 56 78');
+        expect(
+          ValidationHelper.formatBelgianPhone('0412345678'),
+          '0412 34 56 78',
+        );
+        expect(
+          ValidationHelper.formatBelgianPhone('+32412345678'),
+          '0412345678',
+        );
+        expect(
+          ValidationHelper.formatBelgianPhone('04 12 34 56 78'),
+          '0412 34 56 78',
+        );
       });
 
       test('should return original if format not recognized', () {
-        expect(ValidationHelper.formatBelgianPhone('1234567890'),
-            '1234567890');
-        expect(ValidationHelper.formatBelgianPhone('invalid'),
-            'invalid');
+        expect(ValidationHelper.formatBelgianPhone('1234567890'), '1234567890');
+        expect(ValidationHelper.formatBelgianPhone('invalid'), 'invalid');
       });
     });
   });
 }
-

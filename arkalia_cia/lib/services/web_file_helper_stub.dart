@@ -15,4 +15,3 @@ String? createBlobUrl(Uint8List bytes, String mimeType) {
 void revokeBlobUrl(String url) {
   // Ne sera jamais appelé car protégé par kIsWeb
 }
-

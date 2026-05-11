@@ -102,7 +102,10 @@ class PinAuthService {
 
   /// Active ou désactive l'authentification PIN
   /// [forceWeb] : Force le mode web pour les tests
-  static Future<void> setPinAuthEnabled(bool enabled, {bool forceWeb = false}) async {
+  static Future<void> setPinAuthEnabled(
+    bool enabled, {
+    bool forceWeb = false,
+  }) async {
     if (!kIsWeb && !forceWeb) {
       return; // Sur mobile, on utilise l'authentification biométrique
     }
@@ -112,7 +115,9 @@ class PinAuthService {
 
   /// Vérifie si l'authentification PIN est nécessaire au démarrage
   /// [forceWeb] : Force le mode web pour les tests
-  static Future<bool> shouldAuthenticateOnStartup({bool forceWeb = false}) async {
+  static Future<bool> shouldAuthenticateOnStartup({
+    bool forceWeb = false,
+  }) async {
     if (!kIsWeb && !forceWeb) {
       return false; // Sur mobile, on utilise l'authentification biométrique
     }
@@ -122,7 +127,10 @@ class PinAuthService {
 
   /// Configure l'authentification PIN au démarrage
   /// [forceWeb] : Force le mode web pour les tests
-  static Future<void> setPinAuthOnStartup(bool enabled, {bool forceWeb = false}) async {
+  static Future<void> setPinAuthOnStartup(
+    bool enabled, {
+    bool forceWeb = false,
+  }) async {
     if (!kIsWeb && !forceWeb) {
       return; // Sur mobile, on utilise l'authentification biométrique
     }
@@ -130,4 +138,3 @@ class PinAuthService {
     await prefs.setBool('pin_auth_on_startup', enabled);
   }
 }
-

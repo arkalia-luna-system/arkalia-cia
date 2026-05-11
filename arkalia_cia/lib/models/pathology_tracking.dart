@@ -33,9 +33,7 @@ class PathologyTracking {
       id: map['id'],
       pathologyId: map['pathology_id'],
       date: DateTime.parse(map['date']),
-      data: map['data'] != null
-          ? Map<String, dynamic>.from(map['data'])
-          : {},
+      data: map['data'] != null ? Map<String, dynamic>.from(map['data']) : {},
       notes: map['notes'],
       createdAt: DateTime.parse(map['created_at']),
     );
@@ -59,4 +57,3 @@ class PathologyTracking {
     );
   }
 }
-

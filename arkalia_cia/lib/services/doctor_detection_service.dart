@@ -4,26 +4,68 @@ class DoctorDetectionService {
   /// Patterns pour détecter les titres de médecins
   /// Supporte les accents et caractères spéciaux
   static final List<RegExp> _doctorTitlePatterns = [
-    RegExp(r'\b(?:Dr|Dr\.|Docteur|Dre|Dre\.|Docteure)\s+([A-ZÀÁÂÄÈÉÊËÌÍÎÏÒÓÔÖÙÚÛÜÇ][a-zàáâäèéêëìíîïòóôöùúûüç]+(?:\s+[A-ZÀÁÂÄÈÉÊËÌÍÎÏÒÓÔÖÙÚÛÜÇ][a-zàáâäèéêëìíîïòóôöùúûüç]+)*)', caseSensitive: false),
-    RegExp(r'\b(?:M\.|Mme|Monsieur|Madame)\s+(?:le\s+)?(?:Dr|Dr\.|Docteur)\s+([A-ZÀÁÂÄÈÉÊËÌÍÎÏÒÓÔÖÙÚÛÜÇ][a-zàáâäèéêëìíîïòóôöùúûüç]+(?:\s+[A-ZÀÁÂÄÈÉÊËÌÍÎÏÒÓÔÖÙÚÛÜÇ][a-zàáâäèéêëìíîïòóôöùúûüç]+)*)', caseSensitive: false),
-    RegExp(r'\b(?:Pr|Pr\.|Professeur)\s+([A-ZÀÁÂÄÈÉÊËÌÍÎÏÒÓÔÖÙÚÛÜÇ][a-zàáâäèéêëìíîïòóôöùúûüç]+(?:\s+[A-ZÀÁÂÄÈÉÊËÌÍÎÏÒÓÔÖÙÚÛÜÇ][a-zàáâäèéêëìíîïòóôöùúûüç]+)*)', caseSensitive: false),
+    RegExp(
+      r'\b(?:Dr|Dr\.|Docteur|Dre|Dre\.|Docteure)\s+([A-ZÀÁÂÄÈÉÊËÌÍÎÏÒÓÔÖÙÚÛÜÇ][a-zàáâäèéêëìíîïòóôöùúûüç]+(?:\s+[A-ZÀÁÂÄÈÉÊËÌÍÎÏÒÓÔÖÙÚÛÜÇ][a-zàáâäèéêëìíîïòóôöùúûüç]+)*)',
+      caseSensitive: false,
+    ),
+    RegExp(
+      r'\b(?:M\.|Mme|Monsieur|Madame)\s+(?:le\s+)?(?:Dr|Dr\.|Docteur)\s+([A-ZÀÁÂÄÈÉÊËÌÍÎÏÒÓÔÖÙÚÛÜÇ][a-zàáâäèéêëìíîïòóôöùúûüç]+(?:\s+[A-ZÀÁÂÄÈÉÊËÌÍÎÏÒÓÔÖÙÚÛÜÇ][a-zàáâäèéêëìíîïòóôöùúûüç]+)*)',
+      caseSensitive: false,
+    ),
+    RegExp(
+      r'\b(?:Pr|Pr\.|Professeur)\s+([A-ZÀÁÂÄÈÉÊËÌÍÎÏÒÓÔÖÙÚÛÜÇ][a-zàáâäèéêëìíîïòóôöùúûüç]+(?:\s+[A-ZÀÁÂÄÈÉÊËÌÍÎÏÒÓÔÖÙÚÛÜÇ][a-zàáâäèéêëìíîïòóôöùúûüç]+)*)',
+      caseSensitive: false,
+    ),
   ];
 
   /// Patterns pour détecter les spécialités médicales
   static final Map<String, RegExp> _specialtyPatterns = {
-    'Cardiologue': RegExp(r'\b(?:cardiologue|cardio|cardiologie)\b', caseSensitive: false),
-    'Dermatologue': RegExp(r'\b(?:dermatologue|dermato|dermatologie)\b', caseSensitive: false),
-    'Gynécologue': RegExp(r'\b(?:gynécologue|gynéco|gynécologie)\b', caseSensitive: false),
-    'Ophtalmologue': RegExp(r'\b(?:ophtalmologue|ophtalmo|ophtalmologie)\b', caseSensitive: false),
-    'Orthopédiste': RegExp(r'\b(?:orthopédiste|orthopédie)\b', caseSensitive: false),
-    'Pneumologue': RegExp(r'\b(?:pneumologue|pneumo|pneumologie)\b', caseSensitive: false),
-    'Rhumatologue': RegExp(r'\b(?:rhumatologue|rhumato|rhumatologie)\b', caseSensitive: false),
-    'Neurologue': RegExp(r'\b(?:neurologue|neuro|neurologie)\b', caseSensitive: false),
-    'Généraliste': RegExp(r'\b(?:médecin\s+général|généraliste|médecin\s+de\s+famille|MG)\b', caseSensitive: false),
+    'Cardiologue': RegExp(
+      r'\b(?:cardiologue|cardio|cardiologie)\b',
+      caseSensitive: false,
+    ),
+    'Dermatologue': RegExp(
+      r'\b(?:dermatologue|dermato|dermatologie)\b',
+      caseSensitive: false,
+    ),
+    'Gynécologue': RegExp(
+      r'\b(?:gynécologue|gynéco|gynécologie)\b',
+      caseSensitive: false,
+    ),
+    'Ophtalmologue': RegExp(
+      r'\b(?:ophtalmologue|ophtalmo|ophtalmologie)\b',
+      caseSensitive: false,
+    ),
+    'Orthopédiste': RegExp(
+      r'\b(?:orthopédiste|orthopédie)\b',
+      caseSensitive: false,
+    ),
+    'Pneumologue': RegExp(
+      r'\b(?:pneumologue|pneumo|pneumologie)\b',
+      caseSensitive: false,
+    ),
+    'Rhumatologue': RegExp(
+      r'\b(?:rhumatologue|rhumato|rhumatologie)\b',
+      caseSensitive: false,
+    ),
+    'Neurologue': RegExp(
+      r'\b(?:neurologue|neuro|neurologie)\b',
+      caseSensitive: false,
+    ),
+    'Généraliste': RegExp(
+      r'\b(?:médecin\s+général|généraliste|médecin\s+de\s+famille|MG)\b',
+      caseSensitive: false,
+    ),
     'Pédiatre': RegExp(r'\b(?:pédiatre|pédiatrie)\b', caseSensitive: false),
-    'Psychiatre': RegExp(r'\b(?:psychiatre|psychiatrie)\b', caseSensitive: false),
+    'Psychiatre': RegExp(
+      r'\b(?:psychiatre|psychiatrie)\b',
+      caseSensitive: false,
+    ),
     'Urologue': RegExp(r'\b(?:urologue|urologie)\b', caseSensitive: false),
-    'Endocrinologue': RegExp(r'\b(?:endocrinologue|endocrino|endocrinologie)\b', caseSensitive: false),
+    'Endocrinologue': RegExp(
+      r'\b(?:endocrinologue|endocrino|endocrinologie)\b',
+      caseSensitive: false,
+    ),
   };
 
   /// Détecte un médecin dans un texte
@@ -97,7 +139,9 @@ class DoctorDetectionService {
 
   /// Détecte un médecin depuis les métadonnées d'un document
   /// Les métadonnées peuvent venir du backend (extraction automatique)
-  static Map<String, String>? detectDoctorFromMetadata(Map<String, dynamic>? metadata) {
+  static Map<String, String>? detectDoctorFromMetadata(
+    Map<String, dynamic>? metadata,
+  ) {
     if (metadata == null) return null;
 
     final doctorName = metadata['doctor_name'] as String?;
@@ -146,4 +190,3 @@ class DoctorDetectionService {
     return null;
   }
 }
-

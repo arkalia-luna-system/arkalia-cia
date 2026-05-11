@@ -9,10 +9,7 @@ import 'package:flutter_contacts/flutter_contacts.dart' as contacts_api;
 class EmergencyContactDialog extends StatefulWidget {
   final Map<String, dynamic>? existingContact;
 
-  const EmergencyContactDialog({
-    super.key,
-    this.existingContact,
-  });
+  const EmergencyContactDialog({super.key, this.existingContact});
 
   @override
   State<EmergencyContactDialog> createState() => _EmergencyContactDialogState();
@@ -40,7 +37,10 @@ class _EmergencyContactDialogState extends State<EmergencyContactDialog> {
       text: widget.existingContact?['relationship'] ?? '',
     );
     displayNameController = TextEditingController(
-      text: widget.existingContact?['display_name'] ?? widget.existingContact?['name'] ?? '',
+      text:
+          widget.existingContact?['display_name'] ??
+          widget.existingContact?['name'] ??
+          '',
     );
     emojiController = TextEditingController(
       text: widget.existingContact?['emoji'] ?? '👤',
@@ -70,9 +70,9 @@ class _EmergencyContactDialogState extends State<EmergencyContactDialog> {
       final contacts = await ContactsService.getContacts();
       if (contacts.isEmpty) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Aucun contact trouvé')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Aucun contact trouvé')));
         }
         return;
       }
@@ -81,35 +81,41 @@ class _EmergencyContactDialogState extends State<EmergencyContactDialog> {
       if (!mounted) return;
       final selectedContact = await showDialog<contacts_api.Contact>(
         context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Sélectionner un contact'),
-          content: SizedBox(
-            width: double.maxFinite,
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: contacts.length,
-              itemBuilder: (context, index) {
-                final contact = contacts[index];
-                final name = '${contact.name.first} ${contact.name.last}'.trim();
-                final phone = contact.phones.isNotEmpty ? contact.phones.first.number : '';
-                return ListTile(
-                  title: Text(name),
-                  subtitle: phone.isNotEmpty ? Text(phone) : null,
-                  onTap: () => Navigator.of(context).pop(contact),
-                );
-              },
+        builder:
+            (context) => AlertDialog(
+              title: const Text('Sélectionner un contact'),
+              content: SizedBox(
+                width: double.maxFinite,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: contacts.length,
+                  itemBuilder: (context, index) {
+                    final contact = contacts[index];
+                    final name =
+                        '${contact.name.first} ${contact.name.last}'.trim();
+                    final phone =
+                        contact.phones.isNotEmpty
+                            ? contact.phones.first.number
+                            : '';
+                    return ListTile(
+                      title: Text(name),
+                      subtitle: phone.isNotEmpty ? Text(phone) : null,
+                      onTap: () => Navigator.of(context).pop(contact),
+                    );
+                  },
+                ),
+              ),
             ),
-          ),
-        ),
       );
 
       if (selectedContact != null && mounted) {
         final name =
             '${selectedContact.name.first} ${selectedContact.name.last}'.trim();
-        final phone = selectedContact.phones.isNotEmpty 
-            ? selectedContact.phones.first.number 
-            : '';
-        
+        final phone =
+            selectedContact.phones.isNotEmpty
+                ? selectedContact.phones.first.number
+                : '';
+
         setState(() {
           nameController.text = name;
           phoneController.text = phone;
@@ -120,9 +126,9 @@ class _EmergencyContactDialogState extends State<EmergencyContactDialog> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur lors de l\'import: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Erreur lors de l\'import: $e')));
       }
     }
   }
@@ -132,7 +138,9 @@ class _EmergencyContactDialogState extends State<EmergencyContactDialog> {
     final isEditing = widget.existingContact != null;
 
     return AlertDialog(
-      title: Text(isEditing ? 'Modifier le contact' : 'Nouveau contact d\'urgence'),
+      title: Text(
+        isEditing ? 'Modifier le contact' : 'Nouveau contact d\'urgence',
+      ),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -142,10 +150,13 @@ class _EmergencyContactDialogState extends State<EmergencyContactDialog> {
               decoration: InputDecoration(
                 labelText: 'Nom du contact',
                 border: const OutlineInputBorder(),
-                errorText: nameController.text.isNotEmpty && 
-                    !ValidationHelper.isValidName(nameController.text.trim())
-                    ? 'Nom invalide (min 2 caractères, lettres uniquement)'
-                    : null,
+                errorText:
+                    nameController.text.isNotEmpty &&
+                            !ValidationHelper.isValidName(
+                              nameController.text.trim(),
+                            )
+                        ? 'Nom invalide (min 2 caractères, lettres uniquement)'
+                        : null,
               ),
               onChanged: (_) => setState(() {}),
             ),
@@ -156,10 +167,13 @@ class _EmergencyContactDialogState extends State<EmergencyContactDialog> {
                 labelText: 'Numéro de téléphone',
                 border: const OutlineInputBorder(),
                 helperText: 'Format: 04XX XX XX XX ou +32 4XX XX XX XX',
-                errorText: phoneController.text.isNotEmpty && 
-                    !ValidationHelper.isValidPhone(phoneController.text.trim())
-                    ? 'Numéro invalide'
-                    : null,
+                errorText:
+                    phoneController.text.isNotEmpty &&
+                            !ValidationHelper.isValidPhone(
+                              phoneController.text.trim(),
+                            )
+                        ? 'Numéro invalide'
+                        : null,
               ),
               keyboardType: TextInputType.phone,
               onChanged: (_) => setState(() {}),
@@ -245,34 +259,47 @@ class _EmergencyContactDialogState extends State<EmergencyContactDialog> {
           child: const Text('Annuler'),
         ),
         ElevatedButton(
-          onPressed: _isValid
-              ? () {
-                  // Sanitizer les entrées utilisateur pour prévenir XSS
-                  final sanitizedName = InputSanitizer.sanitizeForStorage(nameController.text.trim());
-                  final sanitizedPhone = phoneController.text.trim(); // Phone déjà validé par ValidationHelper
-                  final sanitizedRelationship = relationshipController.text.trim().isNotEmpty
-                      ? InputSanitizer.sanitizeForStorage(relationshipController.text.trim())
-                      : '';
-                  final sanitizedDisplayName = displayNameController.text.trim().isNotEmpty 
-                      ? InputSanitizer.sanitizeForStorage(displayNameController.text.trim())
-                      : sanitizedName;
-                  final sanitizedEmoji = emojiController.text.trim().isNotEmpty 
-                      ? emojiController.text.trim() // Emoji ne nécessite pas de sanitization
-                      : '👤';
-                  
-                  final contactData = {
-                    'name': sanitizedName,
-                    'phone': sanitizedPhone,
-                    'relationship': sanitizedRelationship,
-                    'display_name': sanitizedDisplayName,
-                    'emoji': sanitizedEmoji,
-                    'color': selectedColor.toARGB32(),
-                    'is_primary': isPrimary,
-                    if (isEditing) 'id': widget.existingContact!['id'],
-                  };
-                  Navigator.of(context).pop(contactData);
-                }
-              : null,
+          onPressed:
+              _isValid
+                  ? () {
+                    // Sanitizer les entrées utilisateur pour prévenir XSS
+                    final sanitizedName = InputSanitizer.sanitizeForStorage(
+                      nameController.text.trim(),
+                    );
+                    final sanitizedPhone =
+                        phoneController.text
+                            .trim(); // Phone déjà validé par ValidationHelper
+                    final sanitizedRelationship =
+                        relationshipController.text.trim().isNotEmpty
+                            ? InputSanitizer.sanitizeForStorage(
+                              relationshipController.text.trim(),
+                            )
+                            : '';
+                    final sanitizedDisplayName =
+                        displayNameController.text.trim().isNotEmpty
+                            ? InputSanitizer.sanitizeForStorage(
+                              displayNameController.text.trim(),
+                            )
+                            : sanitizedName;
+                    final sanitizedEmoji =
+                        emojiController.text.trim().isNotEmpty
+                            ? emojiController.text
+                                .trim() // Emoji ne nécessite pas de sanitization
+                            : '👤';
+
+                    final contactData = {
+                      'name': sanitizedName,
+                      'phone': sanitizedPhone,
+                      'relationship': sanitizedRelationship,
+                      'display_name': sanitizedDisplayName,
+                      'emoji': sanitizedEmoji,
+                      'color': selectedColor.toARGB32(),
+                      'is_primary': isPrimary,
+                      if (isEditing) 'id': widget.existingContact!['id'],
+                    };
+                    Navigator.of(context).pop(contactData);
+                  }
+                  : null,
           child: Text(isEditing ? 'Modifier' : 'Ajouter'),
         ),
       ],
@@ -293,35 +320,40 @@ class _EmergencyContactDialogState extends State<EmergencyContactDialog> {
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Choisir une couleur'),
-        content: Wrap(
-          spacing: 16,
-          runSpacing: 16,
-          children: colors.map((color) {
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  selectedColor = color;
-                });
-                Navigator.of(context).pop();
-              },
-              child: Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: color,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: selectedColor == color ? Colors.black : Colors.grey,
-                    width: selectedColor == color ? 3 : 1,
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-      ),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Choisir une couleur'),
+            content: Wrap(
+              spacing: 16,
+              runSpacing: 16,
+              children:
+                  colors.map((color) {
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedColor = color;
+                        });
+                        Navigator.of(context).pop();
+                      },
+                      child: Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: color,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color:
+                                selectedColor == color
+                                    ? Colors.black
+                                    : Colors.grey,
+                            width: selectedColor == color ? 3 : 1,
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+            ),
+          ),
     );
   }
 }

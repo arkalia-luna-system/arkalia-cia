@@ -46,7 +46,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
       for (final doctor in doctors) {
         if (doctor.id == null) continue;
 
-        final consultations = await _doctorService.getConsultationsByDoctor(doctor.id!);
+        final consultations = await _doctorService.getConsultationsByDoctor(
+          doctor.id!,
+        );
         for (final consultation in consultations) {
           final date = DateTime(
             consultation.date.year,
@@ -71,13 +73,17 @@ class _CalendarScreenState extends State<CalendarScreen> {
       // Charger pour tous les jours du mois visible (pas seulement _focusedDay)
       final medications = await _medicationService.getActiveMedications();
       final monthEnd = DateTime(_focusedDay.year, _focusedDay.month + 1, 0);
-      
+
       // Charger les médicaments pour tous les jours du mois visible
       for (int day = 1; day <= monthEnd.day; day++) {
         final currentDate = DateTime(_focusedDay.year, _focusedDay.month, day);
         for (final medication in medications) {
           for (final time in medication.times) {
-            final dateOnly = DateTime(currentDate.year, currentDate.month, currentDate.day);
+            final dateOnly = DateTime(
+              currentDate.year,
+              currentDate.month,
+              currentDate.day,
+            );
 
             if (!eventsMap.containsKey(dateOnly)) {
               eventsMap[dateOnly] = [];
@@ -100,7 +106,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
       for (int day = 1; day <= monthEnd.day; day++) {
         final currentDate = DateTime(_focusedDay.year, _focusedDay.month, day);
         for (int hour = 8; hour <= 20; hour += 2) {
-          final dateOnly = DateTime(currentDate.year, currentDate.month, currentDate.day);
+          final dateOnly = DateTime(
+            currentDate.year,
+            currentDate.month,
+            currentDate.day,
+          );
 
           if (!eventsMap.containsKey(dateOnly)) {
             eventsMap[dateOnly] = [];
@@ -121,12 +131,17 @@ class _CalendarScreenState extends State<CalendarScreen> {
         try {
           final reminderDateStr = reminder['reminder_date'] as String?;
           if (reminderDateStr == null || reminderDateStr.isEmpty) continue;
-          
+
           final reminderDate = DateTime.parse(reminderDateStr);
-          final dateOnly = DateTime(reminderDate.year, reminderDate.month, reminderDate.day);
-          
+          final dateOnly = DateTime(
+            reminderDate.year,
+            reminderDate.month,
+            reminderDate.day,
+          );
+
           // Ne charger que les rappels du mois visible
-          if (dateOnly.year == _focusedDay.year && dateOnly.month == _focusedDay.month) {
+          if (dateOnly.year == _focusedDay.year &&
+              dateOnly.month == _focusedDay.month) {
             // Ne pas afficher les rappels terminés dans le calendrier
             final isCompleted = reminder['is_completed'] == true;
             if (!isCompleted) {
@@ -153,7 +168,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
       // Ajouter un timeout pour éviter les blocages
       try {
         final calendarReminders = await CalendarService.getUpcomingReminders()
-            .timeout(const Duration(seconds: 2), onTimeout: () => <Map<String, dynamic>>[]);
+            .timeout(
+              const Duration(seconds: 2),
+              onTimeout: () => <Map<String, dynamic>>[],
+            );
         for (final reminder in calendarReminders) {
           final dateStr = reminder['reminder_date'] as String?;
           if (dateStr != null) {
@@ -162,7 +180,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
               final dateOnly = DateTime(date.year, date.month, date.day);
 
               // Ne charger que les rappels du mois visible
-              if (dateOnly.year == _focusedDay.year && dateOnly.month == _focusedDay.month) {
+              if (dateOnly.year == _focusedDay.year &&
+                  dateOnly.month == _focusedDay.month) {
                 if (!eventsMap.containsKey(dateOnly)) {
                   eventsMap[dateOnly] = [];
                 }
@@ -173,10 +192,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 final isHydration = title.contains('💧');
 
                 eventsMap[dateOnly]!.add({
-                  'type': isMedication ? 'medication' : (isHydration ? 'hydration' : 'reminder'),
+                  'type':
+                      isMedication
+                          ? 'medication'
+                          : (isHydration ? 'hydration' : 'reminder'),
                   'title': title,
                   'description': reminder['description'] as String? ?? '',
-                  'color': isMedication ? Colors.blue : (isHydration ? Colors.cyan : Colors.orange),
+                  'color':
+                      isMedication
+                          ? Colors.blue
+                          : (isHydration ? Colors.cyan : Colors.orange),
                 });
               }
             } catch (e) {
@@ -218,13 +243,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
-
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-      ),
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
     );
   }
 
@@ -305,17 +326,18 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   bottom: 1,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
-                    children: colors.take(3).map((color) {
-                      return Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 1),
-                        width: 6,
-                        height: 6,
-                        decoration: BoxDecoration(
-                          color: color,
-                          shape: BoxShape.circle,
-                        ),
-                      );
-                    }).toList(),
+                    children:
+                        colors.take(3).map((color) {
+                          return Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 1),
+                            width: 6,
+                            height: 6,
+                            decoration: BoxDecoration(
+                              color: color,
+                              shape: BoxShape.circle,
+                            ),
+                          );
+                        }).toList(),
                   ),
                 );
               },
@@ -352,50 +374,51 @@ class _CalendarScreenState extends State<CalendarScreen> {
           Expanded(
             child: RefreshIndicator(
               onRefresh: _loadEvents,
-              child: _isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : _selectedEvents.isEmpty
+              child:
+                  _isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : _selectedEvents.isEmpty
                       ? SingleChildScrollView(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          child: SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.3,
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.event_busy,
-                                    size: 64,
-                                    color: Colors.grey[400],
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        child: SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.3,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.event_busy,
+                                  size: 64,
+                                  color: Colors.grey[400],
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'Aucun événement ce jour',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.grey[600],
                                   ),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    'Aucun événement ce jour',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.grey[600],
-                                    ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Appuie sur un jour avec des petits points colorés pour voir tes rendez‑vous et rappels.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey[600],
                                   ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    'Appuie sur un jour avec des petits points colorés pour voir tes rendez‑vous et rappels.',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey[600],
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
-                        )
-                      : ListView.builder(
-                          itemCount: _selectedEvents.length,
-                          itemBuilder: (context, index) {
-                            return _buildEventCard(_selectedEvents[index]);
-                          },
                         ),
+                      )
+                      : ListView.builder(
+                        itemCount: _selectedEvents.length,
+                        itemBuilder: (context, index) {
+                          return _buildEventCard(_selectedEvents[index]);
+                        },
+                      ),
             ),
           ),
         ],
@@ -403,34 +426,26 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-
   Widget _buildEventCard(Map<String, dynamic> event) {
     final color = event['color'] as Color;
     final type = event['type'] as String;
 
     return Card(
-      margin: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 8,
-      ),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: ListTile(
         leading: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: 4,
-              height: double.infinity,
-              color: color,
-            ),
+            Container(width: 4, height: double.infinity, color: color),
             const SizedBox(width: 8),
             Icon(
               type == 'consultation'
                   ? Icons.medical_services
                   : type == 'medication'
-                      ? Icons.medication
-                      : type == 'hydration'
-                          ? Icons.water_drop
-                          : Icons.notifications,
+                  ? Icons.medication
+                  : type == 'hydration'
+                  ? Icons.water_drop
+                  : Icons.notifications,
               color: color,
             ),
           ],
@@ -441,12 +456,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
               : event['title'] as String? ?? 'Rappel',
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        subtitle: type == 'consultation'
-            ? _buildConsultationSubtitle(event)
-            : Text(
-                // Sanitizer à l'affichage pour prévenir XSS
-                InputSanitizer.sanitize(event['description']?.toString() ?? ''),
-              ),
+        subtitle:
+            type == 'consultation'
+                ? _buildConsultationSubtitle(event)
+                : Text(
+                  // Sanitizer à l'affichage pour prévenir XSS
+                  InputSanitizer.sanitize(
+                    event['description']?.toString() ?? '',
+                  ),
+                ),
         onTap: () {
           _showEventDetails(event);
         },
@@ -461,12 +479,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (doctor.specialty != null)
-          Text('Spécialité: ${doctor.specialty}'),
-        if (doctor.address != null)
-          Text('Adresse: ${doctor.address}'),
-        if (consultation.reason != null)
-          Text('Raison: ${consultation.reason}'),
+        if (doctor.specialty != null) Text('Spécialité: ${doctor.specialty}'),
+        if (doctor.address != null) Text('Adresse: ${doctor.address}'),
+        if (consultation.reason != null) Text('Raison: ${consultation.reason}'),
       ],
     );
   }
@@ -474,25 +489,29 @@ class _CalendarScreenState extends State<CalendarScreen> {
   void _showEventDetails(Map<String, dynamic> event) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          event['type'] == 'consultation'
-              ? 'Consultation'
-              : event['title'] as String? ?? 'Rappel',
-        ),
-        content: event['type'] == 'consultation'
-            ? _buildConsultationDetails(event)
-            : Text(
-                // Sanitizer à l'affichage pour prévenir XSS
-                InputSanitizer.sanitize(event['description']?.toString() ?? ''),
+      builder:
+          (context) => AlertDialog(
+            title: Text(
+              event['type'] == 'consultation'
+                  ? 'Consultation'
+                  : event['title'] as String? ?? 'Rappel',
+            ),
+            content:
+                event['type'] == 'consultation'
+                    ? _buildConsultationDetails(event)
+                    : Text(
+                      // Sanitizer à l'affichage pour prévenir XSS
+                      InputSanitizer.sanitize(
+                        event['description']?.toString() ?? '',
+                      ),
+                    ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Fermer'),
               ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Fermer'),
+            ],
           ),
-        ],
-      ),
     );
   }
 

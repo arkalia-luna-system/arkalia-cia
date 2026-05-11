@@ -27,12 +27,16 @@ class AuthApiService {
       } on MissingPluginException catch (e) {
         // Fallback vers SharedPreferences si flutter_secure_storage n'est pas disponible
         // (peut arriver en mode test ou si la plateforme n'est pas disponible)
-        AppLogger.debug('FlutterSecureStorage non disponible, utilisation SharedPreferences: $e');
+        AppLogger.debug(
+          'FlutterSecureStorage non disponible, utilisation SharedPreferences: $e',
+        );
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString(key, value);
       } catch (e) {
         // Autre erreur, fallback vers SharedPreferences
-        AppLogger.debug('Erreur FlutterSecureStorage, utilisation SharedPreferences: $e');
+        AppLogger.debug(
+          'Erreur FlutterSecureStorage, utilisation SharedPreferences: $e',
+        );
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString(key, value);
       }
@@ -48,12 +52,16 @@ class AuthApiService {
         return await _secureStorage.read(key: key);
       } on MissingPluginException catch (e) {
         // Fallback vers SharedPreferences si flutter_secure_storage n'est pas disponible
-        AppLogger.debug('FlutterSecureStorage non disponible, utilisation SharedPreferences: $e');
+        AppLogger.debug(
+          'FlutterSecureStorage non disponible, utilisation SharedPreferences: $e',
+        );
         final prefs = await SharedPreferences.getInstance();
         return prefs.getString(key);
       } catch (e) {
         // Autre erreur, fallback vers SharedPreferences
-        AppLogger.debug('Erreur FlutterSecureStorage, utilisation SharedPreferences: $e');
+        AppLogger.debug(
+          'Erreur FlutterSecureStorage, utilisation SharedPreferences: $e',
+        );
         final prefs = await SharedPreferences.getInstance();
         return prefs.getString(key);
       }
@@ -69,12 +77,16 @@ class AuthApiService {
         await _secureStorage.delete(key: key);
       } on MissingPluginException catch (e) {
         // Fallback vers SharedPreferences si flutter_secure_storage n'est pas disponible
-        AppLogger.debug('FlutterSecureStorage non disponible, utilisation SharedPreferences: $e');
+        AppLogger.debug(
+          'FlutterSecureStorage non disponible, utilisation SharedPreferences: $e',
+        );
         final prefs = await SharedPreferences.getInstance();
         await prefs.remove(key);
       } catch (e) {
         // Autre erreur, fallback vers SharedPreferences
-        AppLogger.debug('Erreur FlutterSecureStorage, utilisation SharedPreferences: $e');
+        AppLogger.debug(
+          'Erreur FlutterSecureStorage, utilisation SharedPreferences: $e',
+        );
         final prefs = await SharedPreferences.getInstance();
         await prefs.remove(key);
       }
@@ -90,28 +102,24 @@ class AuthApiService {
     try {
       final url = await BackendConfigService.getBackendURL();
       if (url.isEmpty) {
-        return {
-          'success': false,
-          'error': 'Backend non configuré',
-        };
+        return {'success': false, 'error': 'Backend non configuré'};
       }
 
-      final response = await http.post(
-        Uri.parse('$url/api/v1/auth/register'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'username': username,
-          'password': password,
-          'email': email,
-        }),
-      ).timeout(const Duration(seconds: 10));
+      final response = await http
+          .post(
+            Uri.parse('$url/api/v1/auth/register'),
+            headers: {'Content-Type': 'application/json'},
+            body: json.encode({
+              'username': username,
+              'password': password,
+              'email': email,
+            }),
+          )
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        return {
-          'success': true,
-          'user': data,
-        };
+        return {'success': true, 'user': data};
       } else {
         final errorData = json.decode(response.body);
         return {
@@ -121,28 +129,28 @@ class AuthApiService {
       }
     } catch (e) {
       AppLogger.error('Erreur inscription', e);
-      
+
       // SIMPLIFIÉ : Messages d'erreur plus précis
       final errorString = e.toString().toLowerCase();
       String errorMsg;
-      
-      if (errorString.contains('timeout') || errorString.contains('timed out')) {
-        errorMsg = 'Le serveur met trop de temps à répondre. Vérifiez votre connexion.';
-      } else if (errorString.contains('connection refused') || 
-                 errorString.contains('failed host lookup') ||
-                 errorString.contains('socketexception')) {
-        errorMsg = 'Impossible de se connecter au serveur. Vérifiez l\'URL du backend.';
+
+      if (errorString.contains('timeout') ||
+          errorString.contains('timed out')) {
+        errorMsg =
+            'Le serveur met trop de temps à répondre. Vérifiez votre connexion.';
+      } else if (errorString.contains('connection refused') ||
+          errorString.contains('failed host lookup') ||
+          errorString.contains('socketexception')) {
+        errorMsg =
+            'Impossible de se connecter au serveur. Vérifiez l\'URL du backend.';
       } else if (errorString.contains('format exception') ||
-                 errorString.contains('invalid json')) {
+          errorString.contains('invalid json')) {
         errorMsg = 'Erreur de communication avec le serveur. Réessayez.';
       } else {
         errorMsg = ErrorHelper.getUserFriendlyMessage(e);
       }
-      
-      return {
-        'success': false,
-        'error': errorMsg,
-      };
+
+      return {'success': false, 'error': errorMsg};
     }
   }
 
@@ -154,20 +162,16 @@ class AuthApiService {
     try {
       final url = await BackendConfigService.getBackendURL();
       if (url.isEmpty) {
-        return {
-          'success': false,
-          'error': 'Backend non configuré',
-        };
+        return {'success': false, 'error': 'Backend non configuré'};
       }
 
-      final response = await http.post(
-        Uri.parse('$url/api/v1/auth/login'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'username': username,
-          'password': password,
-        }),
-      ).timeout(const Duration(seconds: 10));
+      final response = await http
+          .post(
+            Uri.parse('$url/api/v1/auth/login'),
+            headers: {'Content-Type': 'application/json'},
+            body: json.encode({'username': username, 'password': password}),
+          )
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -188,15 +192,14 @@ class AuthApiService {
         final errorData = json.decode(response.body);
         return {
           'success': false,
-          'error': errorData['detail'] ?? 'Nom d\'utilisateur ou mot de passe incorrect',
+          'error':
+              errorData['detail'] ??
+              'Nom d\'utilisateur ou mot de passe incorrect',
         };
       }
     } catch (e) {
       AppLogger.error('Erreur connexion', e);
-      return {
-        'success': false,
-        'error': ErrorHelper.getUserFriendlyMessage(e),
-      };
+      return {'success': false, 'error': ErrorHelper.getUserFriendlyMessage(e)};
     }
   }
 
@@ -205,16 +208,15 @@ class AuthApiService {
     try {
       final refreshToken = await _readSecure(_refreshTokenKey);
       if (refreshToken == null) {
-        return {
-          'success': false,
-          'error': 'Aucun refresh token disponible',
-        };
+        return {'success': false, 'error': 'Aucun refresh token disponible'};
       }
 
       final url = await BackendConfigService.getBackendURL();
-      
+
       // Vérifier que l'URL est valide avant d'essayer de rafraîchir
-      if (url.isEmpty || url.contains('localhost') || url.contains('127.0.0.1')) {
+      if (url.isEmpty ||
+          url.contains('localhost') ||
+          url.contains('127.0.0.1')) {
         // URL invalide ou localhost : ne pas essayer de rafraîchir
         // Retourner une erreur réseau pour que l'app garde le token (mode offline-first)
         return {
@@ -222,14 +224,14 @@ class AuthApiService {
           'error': 'Backend non accessible (mode offline)',
         };
       }
-      
-      final response = await http.post(
-        Uri.parse('$url/api/v1/auth/refresh'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'refresh_token': refreshToken,
-        }),
-      ).timeout(const Duration(seconds: 10));
+
+      final response = await http
+          .post(
+            Uri.parse('$url/api/v1/auth/refresh'),
+            headers: {'Content-Type': 'application/json'},
+            body: json.encode({'refresh_token': refreshToken}),
+          )
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -255,10 +257,7 @@ class AuthApiService {
       }
     } catch (e) {
       AppLogger.error('Erreur refresh token', e);
-      return {
-        'success': false,
-        'error': ErrorHelper.getUserFriendlyMessage(e),
-      };
+      return {'success': false, 'error': ErrorHelper.getUserFriendlyMessage(e)};
     }
   }
 
@@ -285,4 +284,3 @@ class AuthApiService {
     return await _readSecure(_usernameKey);
   }
 }
-

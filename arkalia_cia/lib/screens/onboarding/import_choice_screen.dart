@@ -21,79 +21,95 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              'Importer depuis un portail santé',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Choisissez votre portail :',
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-            const SizedBox(height: 16),
-            
-            // Andaman 7
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.pop(context);
-                _pickAndImportPDFs('andaman7');
-              },
-              icon: const Icon(Icons.medical_services),
-              label: const Text('Andaman 7'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                minimumSize: const Size(double.infinity, 50),
-              ),
-            ),
-            const SizedBox(height: 12),
-            
-            // MaSanté
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.pop(context);
-                _pickAndImportPDFs('masante');
-              },
-              icon: const Icon(Icons.health_and_safety),
-              label: const Text('MaSanté'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                minimumSize: const Size(double.infinity, 50),
-              ),
-            ),
-            const SizedBox(height: 16),
-            
-            // Instructions
-            ExpansionTile(
-              title: const Text('Comment exporter depuis le portail ?'),
+      builder:
+          (context) => Container(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildInstructionStep('1', 'Ouvrez l\'app Andaman 7 ou le portail MaSanté'),
-                      _buildInstructionStep('2', 'Allez dans "Mes documents" ou "Exporter"'),
-                      _buildInstructionStep('3', 'Sélectionnez "Exporter en PDF"'),
-                      _buildInstructionStep('4', 'Sauvegardez le PDF sur votre appareil'),
-                      _buildInstructionStep('5', 'Revenez ici et uploadez le PDF'),
-                    ],
+                Text(
+                  'Importer depuis un portail santé',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Choisissez votre portail :',
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                const SizedBox(height: 16),
+
+                // Andaman 7
+                ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _pickAndImportPDFs('andaman7');
+                  },
+                  icon: const Icon(Icons.medical_services),
+                  label: const Text('Andaman 7'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    minimumSize: const Size(double.infinity, 50),
                   ),
+                ),
+                const SizedBox(height: 12),
+
+                // MaSanté
+                ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _pickAndImportPDFs('masante');
+                  },
+                  icon: const Icon(Icons.health_and_safety),
+                  label: const Text('MaSanté'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    minimumSize: const Size(double.infinity, 50),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Instructions
+                ExpansionTile(
+                  title: const Text('Comment exporter depuis le portail ?'),
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildInstructionStep(
+                            '1',
+                            'Ouvrez l\'app Andaman 7 ou le portail MaSanté',
+                          ),
+                          _buildInstructionStep(
+                            '2',
+                            'Allez dans "Mes documents" ou "Exporter"',
+                          ),
+                          _buildInstructionStep(
+                            '3',
+                            'Sélectionnez "Exporter en PDF"',
+                          ),
+                          _buildInstructionStep(
+                            '4',
+                            'Sauvegardez le PDF sur votre appareil',
+                          ),
+                          _buildInstructionStep(
+                            '5',
+                            'Revenez ici et uploadez le PDF',
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
-      ),
+          ),
     );
   }
 
@@ -118,12 +134,7 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
             ),
           ),
           const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(fontSize: 14),
-            ),
-          ),
+          Expanded(child: Text(text, style: const TextStyle(fontSize: 14))),
         ],
       ),
     );
@@ -149,17 +160,16 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
           final fileDataList = <Map<String, dynamic>>[];
           for (final file in result.files) {
             if (file.bytes != null) {
-              fileDataList.add({
-                'name': file.name,
-                'bytes': file.bytes!,
-              });
+              fileDataList.add({'name': file.name, 'bytes': file.bytes!});
             }
           }
-          
+
           if (fileDataList.isEmpty) {
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Aucun fichier valide sélectionné')),
+                const SnackBar(
+                  content: Text('Aucun fichier valide sélectionné'),
+                ),
               );
             }
             return;
@@ -169,22 +179,26 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => ImportProgressScreen(
-                importType: ImportType.manualPDF,
-                fileDataList: fileDataList,
-              ),
+              builder:
+                  (context) => ImportProgressScreen(
+                    importType: ImportType.manualPDF,
+                    fileDataList: fileDataList,
+                  ),
             ),
           );
         } else {
-          final filePaths = result.files
-              .where((file) => file.path != null)
-              .map((file) => file.path!)
-              .toList();
+          final filePaths =
+              result.files
+                  .where((file) => file.path != null)
+                  .map((file) => file.path!)
+                  .toList();
 
           if (filePaths.isEmpty) {
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Aucun fichier valide sélectionné')),
+                const SnackBar(
+                  content: Text('Aucun fichier valide sélectionné'),
+                ),
               );
             }
             return;
@@ -194,10 +208,11 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => ImportProgressScreen(
-                importType: ImportType.manualPDF,
-                filePaths: filePaths,
-              ),
+              builder:
+                  (context) => ImportProgressScreen(
+                    importType: ImportType.manualPDF,
+                    filePaths: filePaths,
+                  ),
             ),
           );
         }
@@ -230,13 +245,15 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
       }
 
       final pickedFile = result.files.first;
-      
+
       if (kIsWeb) {
         // Sur web, on ne peut pas utiliser File directement
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Import portail non disponible sur web. Utilisez l\'import PDF générique.'),
+              content: Text(
+                'Import portail non disponible sur web. Utilisez l\'import PDF générique.',
+              ),
             ),
           );
         }
@@ -253,12 +270,12 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
       }
 
       final file = File(pickedFile.path!);
-      
+
       if (!await file.exists()) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Fichier non trouvé')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Fichier non trouvé')));
         }
         return;
       }
@@ -268,16 +285,17 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) => AlertDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const CircularProgressIndicator(),
-              const SizedBox(height: 16),
-              Text('Import depuis $portal...'),
-            ],
-          ),
-        ),
+        builder:
+            (context) => AlertDialog(
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const CircularProgressIndicator(),
+                  const SizedBox(height: 16),
+                  Text('Import depuis $portal...'),
+                ],
+              ),
+            ),
       );
 
       // Upload vers backend
@@ -297,12 +315,14 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
           final count = uploadResult['imported_count'] ?? 0;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('✅ $count document(s) importé(s) avec succès depuis $portal'),
+              content: Text(
+                '✅ $count document(s) importé(s) avec succès depuis $portal',
+              ),
               backgroundColor: Colors.green,
               duration: const Duration(seconds: 4),
             ),
           );
-          
+
           // Rediriger vers home après succès
           await Future.delayed(const Duration(seconds: 1));
           if (mounted) {
@@ -342,9 +362,7 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
     if (mounted) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (context) => const HomePage(),
-        ),
+        MaterialPageRoute(builder: (context) => const HomePage()),
       );
     }
   }
@@ -352,9 +370,7 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Import de vos données'),
-      ),
+      appBar: AppBar(title: const Text('Import de vos données')),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
@@ -369,9 +385,9 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
-              
+
               const SizedBox(height: 8),
-              
+
               Text(
                 'Nous pouvons importer automatiquement vos données depuis vos portails santé pour créer votre historique complet.',
                 style: TextStyle(
@@ -379,28 +395,30 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // Option 1 : Import manuel PDF (gratuit, fonctionne immédiatement) - PRIORITÉ
               _buildImportOption(
                 context,
                 icon: Icons.upload_file,
                 title: 'Importer vos documents PDF (GRATUIT)',
-                description: 'Exportez depuis Andaman 7 ou MaSanté\n'
+                description:
+                    'Exportez depuis Andaman 7 ou MaSanté\n'
                     'Puis uploadez vos PDFs ici - Fonctionne immédiatement',
                 color: Colors.green,
                 onTap: () => _showImportManualGuide(context),
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Option 2 : Import eHealth (si accréditation obtenue)
               _buildImportOption(
                 context,
                 icon: Icons.cloud_download,
                 title: 'Import automatique eHealth',
-                description: 'Accréditation requise (1-3 mois)\n'
+                description:
+                    'Accréditation requise (1-3 mois)\n'
                     'Import automatique depuis eHealth',
                 color: Colors.blue,
                 onTap: () {
@@ -408,37 +426,38 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
                   // Voir INTEGRATION_EHEALTH_DETAILLEE.md pour procédure
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Import eHealth - Accréditation requise (voir documentation)'),
+                      content: Text(
+                        'Import eHealth - Accréditation requise (voir documentation)',
+                      ),
                       duration: Duration(seconds: 4),
                     ),
                   );
                 },
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Option 3 : Commencer vide
               _buildImportOption(
                 context,
                 icon: Icons.add_circle_outline,
                 title: 'Commencer sans import',
-                description: 'Créer votre historique manuellement\n'
+                description:
+                    'Créer votre historique manuellement\n'
                     'Vous pourrez importer plus tard',
                 color: Colors.grey,
                 onTap: _skipImport,
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // Note importante
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.blue[50]?.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: Colors.blue.withValues(alpha: 0.3),
-                  ),
+                  border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
                 ),
                 child: Row(
                   children: [
@@ -447,10 +466,7 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
                     Expanded(
                       child: Text(
                         'L\'import peut prendre quelques minutes, mais vous aurez un historique complet dès le départ.',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.blue[900],
-                        ),
+                        style: TextStyle(fontSize: 14, color: Colors.blue[900]),
                       ),
                     ),
                   ],
@@ -525,4 +541,3 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
     );
   }
 }
-

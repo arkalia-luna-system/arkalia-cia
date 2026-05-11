@@ -5,10 +5,7 @@ import 'package:arkalia_cia/models/doctor.dart';
 void main() {
   group('Doctor', () {
     test('should create doctor with required fields', () {
-      final doctor = Doctor(
-        firstName: 'Jean',
-        lastName: 'Dupont',
-      );
+      final doctor = Doctor(firstName: 'Jean', lastName: 'Dupont');
 
       expect(doctor.firstName, 'Jean');
       expect(doctor.lastName, 'Dupont');
@@ -19,10 +16,7 @@ void main() {
     });
 
     test('fullName should return first and last name', () {
-      final doctor = Doctor(
-        firstName: 'Marie',
-        lastName: 'Martin',
-      );
+      final doctor = Doctor(firstName: 'Marie', lastName: 'Martin');
 
       expect(doctor.fullName, 'Marie Martin');
     });
@@ -207,4 +201,3 @@ void main() {
     });
   });
 }
-

@@ -17,7 +17,7 @@ class AddEditDoctorScreen extends StatefulWidget {
 class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> {
   final _formKey = GlobalKey<FormState>();
   final _doctorService = DoctorService();
-  
+
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _specialtyController = TextEditingController();
@@ -84,30 +84,48 @@ class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> {
 
     try {
       // Sanitizer les entrées utilisateur pour prévenir XSS
-      final sanitizedFirstName = InputSanitizer.sanitizeForStorage(_firstNameController.text.trim());
-      final sanitizedLastName = InputSanitizer.sanitizeForStorage(_lastNameController.text.trim());
-      final sanitizedSpecialty = _specialtyController.text.trim().isNotEmpty 
-          ? InputSanitizer.sanitizeForStorage(_specialtyController.text.trim())
-          : null;
-      final sanitizedPhone = _phoneController.text.trim().isEmpty 
-          ? null 
-          : _phoneController.text.trim(); // Phone déjà validé par ValidationHelper
-      final sanitizedEmail = _emailController.text.trim().isEmpty 
-          ? null 
-          : _emailController.text.trim(); // Email déjà validé par ValidationHelper
-      final sanitizedAddress = _addressController.text.trim().isEmpty 
-          ? null 
-          : InputSanitizer.sanitizeForStorage(_addressController.text.trim());
-      final sanitizedCity = _cityController.text.trim().isEmpty 
-          ? null 
-          : InputSanitizer.sanitizeForStorage(_cityController.text.trim());
-      final sanitizedPostalCode = _postalCodeController.text.trim().isEmpty 
-          ? null 
-          : _postalCodeController.text.trim(); // Code postal = chiffres seulement
-      final sanitizedNotes = _notesController.text.trim().isEmpty 
-          ? null 
-          : InputSanitizer.sanitizeForStorage(_notesController.text.trim());
-      
+      final sanitizedFirstName = InputSanitizer.sanitizeForStorage(
+        _firstNameController.text.trim(),
+      );
+      final sanitizedLastName = InputSanitizer.sanitizeForStorage(
+        _lastNameController.text.trim(),
+      );
+      final sanitizedSpecialty =
+          _specialtyController.text.trim().isNotEmpty
+              ? InputSanitizer.sanitizeForStorage(
+                _specialtyController.text.trim(),
+              )
+              : null;
+      final sanitizedPhone =
+          _phoneController.text.trim().isEmpty
+              ? null
+              : _phoneController.text
+                  .trim(); // Phone déjà validé par ValidationHelper
+      final sanitizedEmail =
+          _emailController.text.trim().isEmpty
+              ? null
+              : _emailController.text
+                  .trim(); // Email déjà validé par ValidationHelper
+      final sanitizedAddress =
+          _addressController.text.trim().isEmpty
+              ? null
+              : InputSanitizer.sanitizeForStorage(
+                _addressController.text.trim(),
+              );
+      final sanitizedCity =
+          _cityController.text.trim().isEmpty
+              ? null
+              : InputSanitizer.sanitizeForStorage(_cityController.text.trim());
+      final sanitizedPostalCode =
+          _postalCodeController.text.trim().isEmpty
+              ? null
+              : _postalCodeController.text
+                  .trim(); // Code postal = chiffres seulement
+      final sanitizedNotes =
+          _notesController.text.trim().isEmpty
+              ? null
+              : InputSanitizer.sanitizeForStorage(_notesController.text.trim());
+
       final doctor = Doctor(
         id: widget.doctor?.id,
         firstName: sanitizedFirstName,
@@ -150,7 +168,9 @@ class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.doctor == null ? 'Ajouter un médecin' : 'Modifier médecin'),
+        title: Text(
+          widget.doctor == null ? 'Ajouter un médecin' : 'Modifier médecin',
+        ),
         actions: [
           if (_isSaving)
             const Padding(
@@ -158,20 +178,22 @@ class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> {
               child: SizedBox(
                 width: 20,
                 height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                ),
+                child: CircularProgressIndicator(strokeWidth: 2),
               ),
             )
           else
             IconButton(
               icon: Icon(
                 Icons.check,
-                color: _formKey.currentState?.validate() == true
-                    ? Theme.of(context).colorScheme.primary
-                    : Colors.grey,
+                color:
+                    _formKey.currentState?.validate() == true
+                        ? Theme.of(context).colorScheme.primary
+                        : Colors.grey,
               ),
-              onPressed: _formKey.currentState?.validate() == true ? _saveDoctor : null,
+              onPressed:
+                  _formKey.currentState?.validate() == true
+                      ? _saveDoctor
+                      : null,
               tooltip: 'Enregistrer',
             ),
         ],
@@ -196,7 +218,7 @@ class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> {
               },
             ),
             const SizedBox(height: 16),
-            
+
             TextFormField(
               controller: _lastNameController,
               decoration: const InputDecoration(
@@ -211,7 +233,7 @@ class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> {
               },
             ),
             const SizedBox(height: 16),
-            
+
             // Spécialité
             TextFormField(
               controller: _specialtyController,
@@ -222,7 +244,7 @@ class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            
+
             // Téléphone
             TextFormField(
               controller: _phoneController,
@@ -234,7 +256,7 @@ class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> {
               keyboardType: TextInputType.phone,
             ),
             const SizedBox(height: 16),
-            
+
             // Email
             TextFormField(
               controller: _emailController,
@@ -246,7 +268,7 @@ class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> {
               keyboardType: TextInputType.emailAddress,
             ),
             const SizedBox(height: 16),
-            
+
             // Adresse
             TextFormField(
               controller: _addressController,
@@ -257,7 +279,7 @@ class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            
+
             // Ville et Code postal
             Row(
               children: [
@@ -285,7 +307,7 @@ class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> {
               ],
             ),
             const SizedBox(height: 16),
-            
+
             // Notes
             TextFormField(
               controller: _notesController,
@@ -297,7 +319,7 @@ class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> {
               maxLines: 3,
             ),
             const SizedBox(height: 32),
-            
+
             // Bouton sauvegarder
             ElevatedButton(
               onPressed: _isSaving ? null : _saveDoctor,
@@ -306,18 +328,19 @@ class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> {
                 backgroundColor: Theme.of(context).colorScheme.primary,
                 foregroundColor: Theme.of(context).colorScheme.onPrimary,
               ),
-              child: _isSaving
-                  ? SizedBox(
-                      height: 24,
-                      width: 24,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          Theme.of(context).colorScheme.onPrimary,
+              child:
+                  _isSaving
+                      ? SizedBox(
+                        height: 24,
+                        width: 24,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Theme.of(context).colorScheme.onPrimary,
+                          ),
                         ),
-                      ),
-                    )
-                  : Text(widget.doctor == null ? 'Ajouter' : 'Enregistrer'),
+                      )
+                      : Text(widget.doctor == null ? 'Ajouter' : 'Enregistrer'),
             ),
           ],
         ),
@@ -325,4 +348,3 @@ class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> {
     );
   }
 }
-

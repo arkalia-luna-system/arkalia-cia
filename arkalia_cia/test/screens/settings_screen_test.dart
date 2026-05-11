@@ -4,12 +4,10 @@ import 'package:arkalia_cia/screens/settings_screen.dart';
 
 void main() {
   group('SettingsScreen - Statistiques', () {
-    testWidgets('affiche section Statistiques dans les paramètres', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: SettingsScreen(),
-        ),
-      );
+    testWidgets('affiche section Statistiques dans les paramètres', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(const MaterialApp(home: SettingsScreen()));
 
       // Attendre que l'écran soit chargé avec plusieurs pumps pour les appels async
       // Ne pas utiliser pumpAndSettle car les appels async peuvent prendre du temps
@@ -31,15 +29,16 @@ void main() {
       // Vérifier que la section Statistiques est présente
       expect(find.text('Statistiques'), findsOneWidget);
       expect(find.text('Statistiques détaillées'), findsOneWidget);
-      expect(find.text('Voir graphiques et analyses complètes'), findsOneWidget);
+      expect(
+        find.text('Voir graphiques et analyses complètes'),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('affiche icône bar_chart pour section Statistiques', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: SettingsScreen(),
-        ),
-      );
+    testWidgets('affiche icône bar_chart pour section Statistiques', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(const MaterialApp(home: SettingsScreen()));
 
       // Attendre que l'écran soit chargé avec plusieurs pumps
       // Ne pas utiliser pumpAndSettle car les appels async peuvent prendre du temps
@@ -61,12 +60,10 @@ void main() {
       expect(find.byIcon(Icons.bar_chart), findsWidgets);
     });
 
-    testWidgets('ListTile Statistiques détaillées est cliquable', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: SettingsScreen(),
-        ),
-      );
+    testWidgets('ListTile Statistiques détaillées est cliquable', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(const MaterialApp(home: SettingsScreen()));
 
       // Attendre que l'écran soit chargé avec plusieurs pumps
       // Ne pas utiliser pumpAndSettle car les appels async peuvent prendre du temps
@@ -93,4 +90,3 @@ void main() {
     });
   });
 }
-

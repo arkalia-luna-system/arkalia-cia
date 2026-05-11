@@ -8,12 +8,10 @@ import 'package:arkalia_cia/screens/auth/register_screen.dart';
 
 void main() {
   group('WelcomeAuthScreen Tests', () {
-    testWidgets('Affiche le titre et le sous-titre', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: WelcomeAuthScreen(),
-        ),
-      );
+    testWidgets('Affiche le titre et le sous-titre', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(const MaterialApp(home: WelcomeAuthScreen()));
 
       // Ne pas utiliser pumpAndSettle pour éviter les blocages
       await tester.pump();
@@ -23,12 +21,10 @@ void main() {
       expect(find.text('Votre Carnet de Santé'), findsOneWidget);
     });
 
-    testWidgets('Affiche les boutons principaux (Gmail, Google, Créer un compte)', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: WelcomeAuthScreen(),
-        ),
-      );
+    testWidgets('Affiche les boutons principaux (Gmail, Google, Créer un compte)', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(const MaterialApp(home: WelcomeAuthScreen()));
 
       // Ne pas utiliser pumpAndSettle pour éviter les blocages
       await tester.pump();
@@ -36,17 +32,15 @@ void main() {
 
       // Le bouton Google est toujours présent
       expect(find.text('Continuer avec Google'), findsOneWidget);
-      
+
       // Les boutons CRÉER UN COMPTE et J'ai déjà un compte ne sont visibles que si backend est activé
       // Dans les tests, le backend n'est généralement pas activé, donc on vérifie seulement le bouton Google
     });
 
-    testWidgets('Bouton J\'ai déjà un compte existe', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: WelcomeAuthScreen(),
-        ),
-      );
+    testWidgets('Bouton J\'ai déjà un compte existe', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(const MaterialApp(home: WelcomeAuthScreen()));
 
       // Ne pas utiliser pumpAndSettle pour éviter les blocages
       await tester.pump();
@@ -58,12 +52,10 @@ void main() {
       expect(find.text('Continuer avec Google'), findsOneWidget);
     });
 
-    testWidgets('Bouton CRÉER UN COMPTE navigue vers RegisterScreen', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: WelcomeAuthScreen(),
-        ),
-      );
+    testWidgets('Bouton CRÉER UN COMPTE navigue vers RegisterScreen', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(const MaterialApp(home: WelcomeAuthScreen()));
 
       // Ne pas utiliser pumpAndSettle pour éviter les blocages
       await tester.pump();
@@ -84,11 +76,7 @@ void main() {
     });
 
     testWidgets('Affiche l\'icône de santé', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: WelcomeAuthScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: WelcomeAuthScreen()));
 
       // Ne pas utiliser pumpAndSettle pour éviter les blocages
       await tester.pump();
@@ -97,17 +85,14 @@ void main() {
       // L'icône health_and_safety est un fallback si l'image logo.png ne charge pas
       // Dans les tests, l'image peut ne pas charger, donc l'icône peut être présente
       // On vérifie que soit l'image soit l'icône est présente
-      final hasIcon = find.byIcon(Icons.health_and_safety).evaluate().isNotEmpty;
+      final hasIcon =
+          find.byIcon(Icons.health_and_safety).evaluate().isNotEmpty;
       final hasImage = find.byType(Image).evaluate().isNotEmpty;
       expect(hasIcon || hasImage, isTrue);
     });
 
     testWidgets('L\'écran est scrollable', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: WelcomeAuthScreen(),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: WelcomeAuthScreen()));
 
       expect(find.byType(SingleChildScrollView), findsOneWidget);
     });

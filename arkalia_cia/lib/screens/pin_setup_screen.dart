@@ -63,9 +63,7 @@ class _PinSetupScreenState extends State<PinSetupScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Configuration du code PIN'),
-      ),
+      appBar: AppBar(title: const Text('Configuration du code PIN')),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
@@ -85,8 +83,8 @@ class _PinSetupScreenState extends State<PinSetupScreen> {
                 Text(
                   'Configurer un code PIN',
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    fontWeight: FontWeight.bold,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8),
@@ -186,16 +184,17 @@ class _PinSetupScreenState extends State<PinSetupScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: _isLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text(
-                          'Configurer le code PIN',
-                          style: TextStyle(fontSize: 16),
-                        ),
+                  child:
+                      _isLoading
+                          ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                          : const Text(
+                            'Configurer le code PIN',
+                            style: TextStyle(fontSize: 16),
+                          ),
                 ),
               ],
             ),
@@ -205,4 +204,3 @@ class _PinSetupScreenState extends State<PinSetupScreen> {
     );
   }
 }
-

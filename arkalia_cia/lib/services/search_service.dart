@@ -27,7 +27,7 @@ class SearchFilters {
 class SearchResult {
   final String id;
   final String title;
-  final String type;  // 'document', 'consultation', 'doctor'
+  final String type; // 'document', 'consultation', 'doctor'
   final DateTime? date;
   final String? preview;
   final double? relevanceScore;
@@ -68,15 +68,18 @@ class SearchService {
 
   /// Recherche simple avec une requête texte (limité à 20 résultats par catégorie)
   /// Utilise la recherche sémantique si la requête est suffisamment longue (>3 caractères)
-  static Future<Map<String, List<Map<String, dynamic>>>> searchAll(String query) async {
+  static Future<Map<String, List<Map<String, dynamic>>>> searchAll(
+    String query,
+  ) async {
     final results = <String, List<Map<String, dynamic>>>{
       'documents': [],
       'reminders': [],
       'contacts': [],
     };
-    
+
     const maxResults = 20; // Limiter les résultats pour économiser la mémoire
-    final useSemantic = query.length > 3; // Utiliser recherche sémantique pour requêtes longues
+    final useSemantic =
+        query.length > 3; // Utiliser recherche sémantique pour requêtes longues
 
     try {
       // Recherche dans les documents avec recherche sémantique si activée
@@ -86,7 +89,7 @@ class SearchService {
       } else {
         documents = await LocalStorageService.getDocuments();
       }
-      
+
       for (var doc in documents.take(50)) {
         if (results['documents']!.length >= maxResults) break;
         final name = (doc['original_name'] ?? doc['name'] ?? '').toLowerCase();
@@ -101,9 +104,12 @@ class SearchService {
       for (var reminder in reminders.take(50)) {
         if (results['reminders']!.length >= maxResults) break;
         final title = (reminder['title'] ?? '').toLowerCase().trim();
-        final description = (reminder['description'] ?? '').toLowerCase().trim();
+        final description =
+            (reminder['description'] ?? '').toLowerCase().trim();
         // Recherche dans le titre ET la description (même si description est vide)
-        if (title.isNotEmpty && (title.contains(queryLower) || (description.isNotEmpty && description.contains(queryLower)))) {
+        if (title.isNotEmpty &&
+            (title.contains(queryLower) ||
+                (description.isNotEmpty && description.contains(queryLower)))) {
           results['reminders']!.add(reminder);
         }
       }
@@ -114,7 +120,8 @@ class SearchService {
         if (results['contacts']!.length >= maxResults) break;
         final name = (contact['name'] ?? '').toLowerCase();
         final phone = (contact['phone'] ?? '').toLowerCase();
-        if (name.contains(query.toLowerCase()) || phone.contains(query.toLowerCase())) {
+        if (name.contains(query.toLowerCase()) ||
+            phone.contains(query.toLowerCase())) {
           results['contacts']!.add(contact);
         }
       }
@@ -125,19 +132,27 @@ class SearchService {
     return results;
   }
 
-  Future<List<SearchResult>> search(SearchFilters filters, {bool useSemantic = false}) async {
+  Future<List<SearchResult>> search(
+    SearchFilters filters, {
+    bool useSemantic = false,
+  }) async {
     // Vérifier le cache d'abord
-    final cacheKey = 'search_${filters.query}_${filters.category}_${filters.examType}';
+    final cacheKey =
+        'search_${filters.query}_${filters.category}_${filters.examType}';
     final cachedResults = await OfflineCacheService.getCachedData(cacheKey);
     if (cachedResults != null) {
-      return (cachedResults as List).map((r) => SearchResult(
-        id: r['id'],
-        title: r['title'],
-        type: r['type'],
-        date: r['date'] != null ? DateTime.tryParse(r['date']) : null,
-        preview: r['preview'],
-        relevanceScore: r['relevanceScore']?.toDouble(),
-      )).toList();
+      return (cachedResults as List)
+          .map(
+            (r) => SearchResult(
+              id: r['id'],
+              title: r['title'],
+              type: r['type'],
+              date: r['date'] != null ? DateTime.tryParse(r['date']) : null,
+              preview: r['preview'],
+              relevanceScore: r['relevanceScore']?.toDouble(),
+            ),
+          )
+          .toList();
     }
 
     final List<SearchResult> results = [];
@@ -154,15 +169,18 @@ class SearchService {
     for (var doc in documents) {
       final matches = _matchesDocument(doc, filters);
       if (matches) {
-        results.add(SearchResult(
-          id: doc['id']?.toString() ?? '',
-          title: doc['original_name'] ?? doc['name'] ?? 'Sans titre',
-          type: 'document',
-          date: doc['created_at'] != null 
-              ? DateTime.tryParse(doc['created_at']) 
-              : null,
-          preview: doc['category'] ?? '',
-        ));
+        results.add(
+          SearchResult(
+            id: doc['id']?.toString() ?? '',
+            title: doc['original_name'] ?? doc['name'] ?? 'Sans titre',
+            type: 'document',
+            date:
+                doc['created_at'] != null
+                    ? DateTime.tryParse(doc['created_at'])
+                    : null,
+            preview: doc['category'] ?? '',
+          ),
+        );
       }
     }
 
@@ -177,24 +195,28 @@ class SearchService {
           doctors = await doctorService.searchDoctors(filters.query!);
         }
         for (var doctor in doctors) {
-          results.add(SearchResult(
-            id: doctor.id?.toString() ?? '',
-            title: doctor.fullName,
-            type: 'doctor',
-            preview: doctor.specialty,
-          ));
+          results.add(
+            SearchResult(
+              id: doctor.id?.toString() ?? '',
+              title: doctor.fullName,
+              type: 'doctor',
+              preview: doctor.specialty,
+            ),
+          );
         }
       } catch (e) {
         // En cas d'erreur, essayer la recherche normale
         try {
           doctors = await doctorService.searchDoctors(filters.query!);
           for (var doctor in doctors) {
-            results.add(SearchResult(
-              id: doctor.id?.toString() ?? '',
-              title: doctor.fullName,
-              type: 'doctor',
-              preview: doctor.specialty,
-            ));
+            results.add(
+              SearchResult(
+                id: doctor.id?.toString() ?? '',
+                title: doctor.fullName,
+                type: 'doctor',
+                preview: doctor.specialty,
+              ),
+            );
           }
         } catch (e2) {
           // Ignorer l'erreur et continuer
@@ -213,14 +235,18 @@ class SearchService {
     // Mettre en cache les résultats (durée: 1 heure)
     await OfflineCacheService.cacheData(
       cacheKey,
-      results.map((r) => {
-        'id': r.id,
-        'title': r.title,
-        'type': r.type,
-        'date': r.date?.toIso8601String(),
-        'preview': r.preview,
-        'relevanceScore': r.relevanceScore,
-      }).toList(),
+      results
+          .map(
+            (r) => {
+              'id': r.id,
+              'title': r.title,
+              'type': r.type,
+              'date': r.date?.toIso8601String(),
+              'preview': r.preview,
+              'relevanceScore': r.relevanceScore,
+            },
+          )
+          .toList(),
       duration: const Duration(hours: 1),
     );
 
@@ -246,11 +272,12 @@ class SearchService {
 
     // Filtre date
     if (filters.startDate != null || filters.endDate != null) {
-      final docDate = doc['created_at'] != null 
-          ? DateTime.tryParse(doc['created_at']) 
-          : null;
+      final docDate =
+          doc['created_at'] != null
+              ? DateTime.tryParse(doc['created_at'])
+              : null;
       if (docDate == null) return false;
-      
+
       if (filters.startDate != null && docDate.isBefore(filters.startDate!)) {
         return false;
       }
@@ -283,7 +310,7 @@ class SearchService {
       // ou si le document est associé à une consultation du médecin
       final doctorName = doc['doctor_name'];
       final metadataDoctorName = doc['metadata']?['doctor_name'];
-      
+
       // Si aucune information de médecin dans le document, exclure
       // (on pourrait aussi chercher dans les consultations, mais c'est plus complexe)
       if (doctorName == null && metadataDoctorName == null) {
@@ -299,7 +326,7 @@ class SearchService {
     final documents = await LocalStorageService.getDocuments();
     final suggestions = <String>{};
     final queryLower = partialQuery.toLowerCase();
-    
+
     // Synonymes médicaux pour améliorer les suggestions
     final synonyms = {
       'scanner': ['IRM', 'tomodensitométrie', 'CT', 'scanner CT'],
@@ -308,7 +335,7 @@ class SearchService {
       'radio': ['radiographie', 'RX', 'rayon X'],
       'echographie': ['échographie', 'ultrasons', 'écho', 'US'],
     };
-    
+
     // Recherche directe dans les noms
     for (var doc in documents) {
       final name = doc['original_name'] ?? doc['name'] ?? '';
@@ -316,7 +343,7 @@ class SearchService {
         suggestions.add(name);
       }
     }
-    
+
     // Recherche avec synonymes
     for (var entry in synonyms.entries) {
       if (queryLower.contains(entry.key)) {
@@ -325,7 +352,7 @@ class SearchService {
         }
       }
     }
-    
+
     // Recherche dans les métadonnées (type d'examen)
     for (var doc in documents) {
       final metadata = doc['metadata'];
@@ -337,7 +364,7 @@ class SearchService {
         }
       }
     }
-    
+
     return suggestions.take(10).toList();
   }
 }

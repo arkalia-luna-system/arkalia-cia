@@ -4,7 +4,8 @@ import '../services/auth_service.dart';
 import '../services/auth_api_service.dart';
 import '../services/auto_sync_service.dart';
 import '../services/backend_config_service.dart';
-import '../services/health_portal_auth_service.dart' show HealthPortalAuthService, HealthPortal;
+import '../services/health_portal_auth_service.dart'
+    show HealthPortalAuthService, HealthPortal;
 import '../services/offline_cache_service.dart';
 import '../services/accessibility_service.dart';
 import '../services/google_auth_service.dart';
@@ -141,9 +142,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     if (!mounted) return;
                     messenger.showSnackBar(
                       SnackBar(
-                        content: Text(value 
-                          ? 'Mode simplifié activé' 
-                          : 'Mode simplifié désactivé'),
+                        content: Text(
+                          value
+                              ? 'Mode simplifié activé'
+                              : 'Mode simplifié désactivé',
+                        ),
                         duration: const Duration(seconds: 2),
                       ),
                     );
@@ -164,7 +167,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 SwitchListTile(
                   secondary: const Icon(Icons.lock),
                   title: const Text('Verrouillage automatique'),
-                  subtitle: const Text('Demander authentification à l\'ouverture de l\'application'),
+                  subtitle: const Text(
+                    'Demander authentification à l\'ouverture de l\'application',
+                  ),
                   value: _authOnStartup,
                   onChanged: (value) async {
                     await AuthService.setAuthOnStartup(value);
@@ -195,7 +200,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const UserProfileScreen()),
+                        MaterialPageRoute(
+                          builder: (context) => const UserProfileScreen(),
+                        ),
                       );
                     },
                   ),
@@ -216,48 +223,60 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         if (!mounted) return;
                         // ignore: use_build_context_synchronously - mounted vérifié juste avant
                         final shouldLogout = await showDialog<bool>(
-                          context: dialogContext, // ignore: use_build_context_synchronously
-                          builder: (context) => AlertDialog(
-                            title: const Text('Déconnexion'),
-                            content: const Text('Voulez-vous vous déconnecter ?'),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(context, false),
-                                child: const Text('Annuler'),
-                              ),
-                              ElevatedButton(
-                                onPressed: () => Navigator.pop(context, true),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.red,
-                                  foregroundColor: Colors.white,
+                          context:
+                              dialogContext, // ignore: use_build_context_synchronously
+                          builder:
+                              (context) => AlertDialog(
+                                title: const Text('Déconnexion'),
+                                content: const Text(
+                                  'Voulez-vous vous déconnecter ?',
                                 ),
-                                child: const Text('Déconnexion'),
+                                actions: [
+                                  TextButton(
+                                    onPressed:
+                                        () => Navigator.pop(context, false),
+                                    child: const Text('Annuler'),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed:
+                                        () => Navigator.pop(context, true),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                      foregroundColor: Colors.white,
+                                    ),
+                                    child: const Text('Déconnexion'),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
                         );
-                        
+
                         if (shouldLogout == true) {
                           if (!mounted) return;
-                          
+
                           // Vérifier si l'utilisateur est connecté avec Google et déconnecter
                           try {
-                            final isGoogleSignedIn = await GoogleAuthService.isSignedIn();
+                            final isGoogleSignedIn =
+                                await GoogleAuthService.isSignedIn();
                             if (isGoogleSignedIn) {
                               await GoogleAuthService.signOut();
                             }
                           } catch (e) {
                             // Ignorer les erreurs de déconnexion Google
-                            AppLogger.debug('Erreur lors de la déconnexion Google: $e');
+                            AppLogger.debug(
+                              'Erreur lors de la déconnexion Google: $e',
+                            );
                           }
-                          
+
                           // Déconnexion backend si nécessaire
                           await AuthApiService.logout();
                           if (!mounted) return;
-                          final navContext = context; // Capturer context après await
+                          final navContext =
+                              context; // Capturer context après await
                           if (navContext.mounted) {
                             Navigator.of(navContext).pushAndRemoveUntil(
-                              MaterialPageRoute(builder: (context) => const WelcomeAuthScreen()),
+                              MaterialPageRoute(
+                                builder: (context) => const WelcomeAuthScreen(),
+                              ),
                               (route) => false,
                             );
                           }
@@ -265,10 +284,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       } else {
                         if (!mounted) return;
                         // Rediriger vers login
-                        final navContext = context; // Capturer context après await
+                        final navContext =
+                            context; // Capturer context après await
                         if (navContext.mounted) {
                           Navigator.of(navContext).push(
-                            MaterialPageRoute(builder: (context) => const LoginScreen()),
+                            MaterialPageRoute(
+                              builder: (context) => const LoginScreen(),
+                            ),
                           );
                         }
                       }
@@ -288,7 +310,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 SwitchListTile(
                   secondary: const Icon(Icons.sync),
                   title: const Text('Synchronisation automatique'),
-                  subtitle: const Text('Synchroniser automatiquement quand l\'app est active'),
+                  subtitle: const Text(
+                    'Synchroniser automatiquement quand l\'app est active',
+                  ),
                   value: _autoSyncEnabled,
                   onChanged: (value) async {
                     await AutoSyncService.setAutoSyncEnabled(value);
@@ -300,7 +324,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 SwitchListTile(
                   secondary: const Icon(Icons.refresh),
                   title: const Text('Synchroniser au démarrage'),
-                  subtitle: const Text('Synchroniser automatiquement à l\'ouverture de l\'app'),
+                  subtitle: const Text(
+                    'Synchroniser automatiquement à l\'ouverture de l\'app',
+                  ),
                   value: _syncOnStartup,
                   onChanged: (value) async {
                     await AutoSyncService.setSyncOnStartup(value);
@@ -330,15 +356,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       AutoSyncService.formatLastSyncTime(_lastSyncTime),
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    trailing: _lastSyncStats != null
-                        ? Chip(
-                            label: Text(
-                              '${_lastSyncStats!['docs'] ?? 0} docs, ${_lastSyncStats!['reminders'] ?? 0} rappels, ${_lastSyncStats!['contacts'] ?? 0} contacts',
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                            backgroundColor: Colors.green[100],
-                          )
-                        : null,
+                    trailing:
+                        _lastSyncStats != null
+                            ? Chip(
+                              label: Text(
+                                '${_lastSyncStats!['docs'] ?? 0} docs, ${_lastSyncStats!['reminders'] ?? 0} rappels, ${_lastSyncStats!['contacts'] ?? 0} contacts',
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                              backgroundColor: Colors.green[100],
+                            )
+                            : null,
                   ),
                 ],
               ],
@@ -354,29 +381,39 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 SwitchListTile(
                   secondary: const Icon(Icons.cloud),
                   title: const Text('Activer le backend'),
-                  subtitle: Text(_backendUrl.isEmpty 
-                    ? 'Configurez l\'URL du backend ci-dessous'
-                    : 'Backend: $_backendUrl'),
+                  subtitle: Text(
+                    _backendUrl.isEmpty
+                        ? 'Configurez l\'URL du backend ci-dessous'
+                        : 'Backend: $_backendUrl',
+                  ),
                   value: _backendEnabled,
-                  onChanged: _backendUrl.isEmpty ? null : (value) async {
-                    await BackendConfigService.setBackendEnabled(value);
-                    setState(() {
-                      _backendEnabled = value;
-                    });
-                  },
+                  onChanged:
+                      _backendUrl.isEmpty
+                          ? null
+                          : (value) async {
+                            await BackendConfigService.setBackendEnabled(value);
+                            setState(() {
+                              _backendEnabled = value;
+                            });
+                          },
                 ),
                 ListTile(
                   leading: const Icon(Icons.settings),
                   title: const Text('URL du backend'),
-                  subtitle: Text(_backendUrl.isEmpty 
-                    ? 'Non configuré (ex: http://192.168.1.100:8000)'
-                    : _backendUrl),
+                  subtitle: Text(
+                    _backendUrl.isEmpty
+                        ? 'Non configuré (ex: http://192.168.1.100:8000)'
+                        : _backendUrl,
+                  ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       if (_backendUrl.isNotEmpty && !_isTestingConnection)
                         IconButton(
-                          icon: const Icon(Icons.check_circle, color: Colors.green),
+                          icon: const Icon(
+                            Icons.check_circle,
+                            color: Colors.green,
+                          ),
                           onPressed: _testBackendConnection,
                           tooltip: 'Tester la connexion',
                         ),
@@ -457,7 +494,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const StatsScreen()),
+                      MaterialPageRoute(
+                        builder: (context) => const StatsScreen(),
+                      ),
                     );
                   },
                 ),
@@ -500,73 +539,79 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _showPortalCredentialsDialog() async {
     final portal = await showDialog<HealthPortal>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Choisir un portail'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              title: const Text('eHealth'),
-              onTap: () => Navigator.pop(context, HealthPortal.ehealth),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Choisir un portail'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  title: const Text('eHealth'),
+                  onTap: () => Navigator.pop(context, HealthPortal.ehealth),
+                ),
+                ListTile(
+                  title: const Text('Andaman 7'),
+                  onTap: () => Navigator.pop(context, HealthPortal.andaman7),
+                ),
+                ListTile(
+                  title: const Text('MaSanté'),
+                  onTap: () => Navigator.pop(context, HealthPortal.masante),
+                ),
+              ],
             ),
-            ListTile(
-              title: const Text('Andaman 7'),
-              onTap: () => Navigator.pop(context, HealthPortal.andaman7),
-            ),
-            ListTile(
-              title: const Text('MaSanté'),
-              onTap: () => Navigator.pop(context, HealthPortal.masante),
-            ),
-          ],
-        ),
-      ),
+          ),
     );
 
     if (portal == null) return;
 
     final service = HealthPortalAuthService();
     final credentials = await service.getPortalCredentials(portal);
-    
-    final clientIdController = TextEditingController(text: credentials['client_id'] ?? '');
-    final clientSecretController = TextEditingController(text: credentials['client_secret'] ?? '');
+
+    final clientIdController = TextEditingController(
+      text: credentials['client_id'] ?? '',
+    );
+    final clientSecretController = TextEditingController(
+      text: credentials['client_secret'] ?? '',
+    );
 
     if (!mounted) return;
     final result = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Credentials ${_getPortalName(portal)}'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: clientIdController,
-              decoration: const InputDecoration(
-                labelText: 'Client ID',
-                hintText: 'Entrez le Client ID OAuth',
-              ),
+      builder:
+          (context) => AlertDialog(
+            title: Text('Credentials ${_getPortalName(portal)}'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: clientIdController,
+                  decoration: const InputDecoration(
+                    labelText: 'Client ID',
+                    hintText: 'Entrez le Client ID OAuth',
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: clientSecretController,
+                  decoration: const InputDecoration(
+                    labelText: 'Client Secret',
+                    hintText: 'Entrez le Client Secret OAuth',
+                  ),
+                  obscureText: true,
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: clientSecretController,
-              decoration: const InputDecoration(
-                labelText: 'Client Secret',
-                hintText: 'Entrez le Client Secret OAuth',
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Annuler'),
               ),
-              obscureText: true,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annuler'),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Sauvegarder'),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Sauvegarder'),
-          ),
-        ],
-      ),
     );
 
     if (result == true) {
@@ -587,22 +632,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (!mounted) return;
     final result = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Nettoyer le cache'),
-        content: const Text(
-          'Voulez-vous supprimer tous les caches ? Cette action ne peut pas être annulée.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annuler'),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Nettoyer le cache'),
+            content: const Text(
+              'Voulez-vous supprimer tous les caches ? Cette action ne peut pas être annulée.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Annuler'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Nettoyer'),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Nettoyer'),
-          ),
-        ],
-      ),
     );
 
     if (result == true) {
@@ -643,38 +689,54 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _showThemeDialog() async {
     final result = await showDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Choisir le thème'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              title: const Text('Clair'),
-              leading: Icon(
-                _currentTheme == 'light' ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-                color: _currentTheme == 'light' ? Theme.of(context).primaryColor : null,
-              ),
-              onTap: () => Navigator.pop(context, 'light'),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Choisir le thème'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  title: const Text('Clair'),
+                  leading: Icon(
+                    _currentTheme == 'light'
+                        ? Icons.radio_button_checked
+                        : Icons.radio_button_unchecked,
+                    color:
+                        _currentTheme == 'light'
+                            ? Theme.of(context).primaryColor
+                            : null,
+                  ),
+                  onTap: () => Navigator.pop(context, 'light'),
+                ),
+                ListTile(
+                  title: const Text('Sombre'),
+                  leading: Icon(
+                    _currentTheme == 'dark'
+                        ? Icons.radio_button_checked
+                        : Icons.radio_button_unchecked,
+                    color:
+                        _currentTheme == 'dark'
+                            ? Theme.of(context).primaryColor
+                            : null,
+                  ),
+                  onTap: () => Navigator.pop(context, 'dark'),
+                ),
+                ListTile(
+                  title: const Text('Système'),
+                  leading: Icon(
+                    _currentTheme == 'system'
+                        ? Icons.radio_button_checked
+                        : Icons.radio_button_unchecked,
+                    color:
+                        _currentTheme == 'system'
+                            ? Theme.of(context).primaryColor
+                            : null,
+                  ),
+                  onTap: () => Navigator.pop(context, 'system'),
+                ),
+              ],
             ),
-            ListTile(
-              title: const Text('Sombre'),
-              leading: Icon(
-                _currentTheme == 'dark' ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-                color: _currentTheme == 'dark' ? Theme.of(context).primaryColor : null,
-              ),
-              onTap: () => Navigator.pop(context, 'dark'),
-            ),
-            ListTile(
-              title: const Text('Système'),
-              leading: Icon(
-                _currentTheme == 'system' ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-                color: _currentTheme == 'system' ? Theme.of(context).primaryColor : null,
-              ),
-              onTap: () => Navigator.pop(context, 'system'),
-            ),
-          ],
-        ),
-      ),
+          ),
     );
 
     if (result != null) {
@@ -696,65 +758,70 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _showBackendConfigDialog() async {
     final urlController = TextEditingController(text: _backendUrl);
-    
+
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Configuration Backend'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Entrez l\'URL du backend API.\n\n'
-                'Sur mobile (iPad/S25), utilisez l\'IP locale de votre Mac, par exemple:\n'
-                'http://192.168.1.100:8000\n\n'
-                '⚠️ Ne pas utiliser localhost sur mobile !',
-                style: TextStyle(fontSize: 14),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Configuration Backend'),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Entrez l\'URL du backend API.\n\n'
+                    'Sur mobile (iPad/S25), utilisez l\'IP locale de votre Mac, par exemple:\n'
+                    'http://192.168.1.100:8000\n\n'
+                    '⚠️ Ne pas utiliser localhost sur mobile !',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: urlController,
+                    decoration: const InputDecoration(
+                      labelText: 'URL du backend',
+                      hintText: 'http://192.168.1.100:8000',
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.url,
+                  ),
+                ],
               ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: urlController,
-                decoration: const InputDecoration(
-                  labelText: 'URL du backend',
-                  hintText: 'http://192.168.1.100:8000',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.url,
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Annuler'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  final url = urlController.text.trim();
+                  if (url.isNotEmpty &&
+                      (url.startsWith('http://') ||
+                          url.startsWith('https://'))) {
+                    Navigator.pop(context, {'url': url});
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'URL invalide. Doit commencer par http:// ou https://',
+                        ),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                },
+                child: const Text('Enregistrer'),
               ),
             ],
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Annuler'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              final url = urlController.text.trim();
-              if (url.isNotEmpty && (url.startsWith('http://') || url.startsWith('https://'))) {
-                Navigator.pop(context, {'url': url});
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('URL invalide. Doit commencer par http:// ou https://'),
-                    backgroundColor: Colors.red,
-                  ),
-                );
-              }
-            },
-            child: const Text('Enregistrer'),
-          ),
-        ],
-      ),
     );
 
     if (result != null && result['url'] != null) {
       await BackendConfigService.setBackendURL(result['url'] as String);
       await _loadSettings();
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -768,23 +835,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _testBackendConnection() async {
     if (_backendUrl.isEmpty) return;
-    
+
     setState(() {
       _isTestingConnection = true;
     });
 
     final isConnected = await BackendConfigService.testConnection(_backendUrl);
-    
+
     if (mounted) {
       setState(() {
         _isTestingConnection = false;
       });
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(isConnected 
-            ? '✅ Connexion réussie au backend !'
-            : '❌ Impossible de se connecter au backend. Vérifiez l\'URL et que le backend est démarré.'),
+          content: Text(
+            isConnected
+                ? '✅ Connexion réussie au backend !'
+                : '❌ Impossible de se connecter au backend. Vérifiez l\'URL et que le backend est démarré.',
+          ),
           backgroundColor: isConnected ? Colors.green : Colors.red,
           duration: const Duration(seconds: 3),
         ),
@@ -795,216 +864,229 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _showMedicalDisclaimer() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Row(
-          children: [
-            Icon(Icons.medical_services, color: Colors.red),
-            SizedBox(width: 8),
-            Text('Avertissement Médical'),
-          ],
-        ),
-        content: const SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'IMPORTANT : Arkalia CIA n\'est PAS un dispositif médical ou un outil de diagnostic.',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: Colors.red,
-                ),
+      builder:
+          (context) => AlertDialog(
+            title: const Row(
+              children: [
+                Icon(Icons.medical_services, color: Colors.red),
+                SizedBox(width: 8),
+                Text('Avertissement Médical'),
+              ],
+            ),
+            content: const SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'IMPORTANT : Arkalia CIA n\'est PAS un dispositif médical ou un outil de diagnostic.',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.red,
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'L\'application :',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    '❌ Ne fournit PAS de conseils médicaux, de diagnostics ou de traitements',
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    '❌ Ne remplace PAS les conseils de professionnels de santé',
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    '✅ Est un outil d\'organisation pour gérer vos documents et rappels',
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'Toujours consulter un professionnel de santé qualifié pour toute décision médicale.',
+                    style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'Nous ne sommes pas responsables des décisions médicales prises sur la base d\'informations stockées dans l\'application.',
+                    style: TextStyle(fontSize: 14, color: Colors.grey),
+                  ),
+                ],
               ),
-              SizedBox(height: 16),
-              Text(
-                'L\'application :',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 8),
-              Text('❌ Ne fournit PAS de conseils médicaux, de diagnostics ou de traitements'),
-              SizedBox(height: 8),
-              Text('❌ Ne remplace PAS les conseils de professionnels de santé'),
-              SizedBox(height: 8),
-              Text('✅ Est un outil d\'organisation pour gérer vos documents et rappels'),
-              SizedBox(height: 16),
-              Text(
-                'Toujours consulter un professionnel de santé qualifié pour toute décision médicale.',
-                style: TextStyle(
-                  fontStyle: FontStyle.italic,
-                  color: Colors.grey,
-                ),
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Nous ne sommes pas responsables des décisions médicales prises sur la base d\'informations stockées dans l\'application.',
-                style: TextStyle(fontSize: 14, color: Colors.grey),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('J\'ai compris'),
               ),
             ],
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('J\'ai compris'),
-          ),
-        ],
-      ),
     );
   }
 
   void _showTextSizeDialog() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Taille du texte'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: AccessibilityTextSize.values.map((size) {
-            return RadioListTile<AccessibilityTextSize>(
-              title: Text(
-                size.label,
-                style: TextStyle(fontSize: (14 * size.multiplier)),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Taille du texte'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children:
+                  AccessibilityTextSize.values.map((size) {
+                    return RadioListTile<AccessibilityTextSize>(
+                      title: Text(
+                        size.label,
+                        style: TextStyle(fontSize: (14 * size.multiplier)),
+                      ),
+                      subtitle: Text(
+                        'Exemple de texte avec cette taille',
+                        style: TextStyle(
+                          fontSize: (14 * size.multiplier),
+                        ), // Minimum 14px pour accessibilité seniors
+                      ),
+                      value: size,
+                      groupValue: _textSize,
+                      onChanged: (AccessibilityTextSize? value) async {
+                        if (value == null) return;
+                        final navigator = Navigator.of(context);
+                        final messenger = ScaffoldMessenger.of(context);
+                        await AccessibilityService.setTextSize(value);
+                        if (!mounted) return;
+                        setState(() {
+                          _textSize = value;
+                        });
+                        if (!mounted) return;
+                        navigator.pop();
+                        if (!mounted) return;
+                        messenger.showSnackBar(
+                          SnackBar(
+                            content: Text('Taille du texte : ${value.label}'),
+                            duration: const Duration(seconds: 2),
+                          ),
+                        );
+                      },
+                    );
+                  }).toList(),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Annuler'),
               ),
-              subtitle: Text(
-                'Exemple de texte avec cette taille',
-                style: TextStyle(fontSize: (14 * size.multiplier)), // Minimum 14px pour accessibilité seniors
-              ),
-              value: size,
-              groupValue: _textSize,
-              onChanged: (AccessibilityTextSize? value) async {
-                if (value == null) return;
-                final navigator = Navigator.of(context);
-                final messenger = ScaffoldMessenger.of(context);
-                await AccessibilityService.setTextSize(value);
-                if (!mounted) return;
-                setState(() {
-                  _textSize = value;
-                });
-                if (!mounted) return;
-                navigator.pop();
-                if (!mounted) return;
-                messenger.showSnackBar(
-                  SnackBar(
-                    content: Text('Taille du texte : ${value.label}'),
-                    duration: const Duration(seconds: 2),
-                  ),
-                );
-              },
-            );
-          }).toList(),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Annuler'),
+            ],
           ),
-        ],
-      ),
     );
   }
 
   void _showIconSizeDialog() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Taille des icônes'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: AccessibilityIconSize.values.map((size) {
-            return RadioListTile<AccessibilityIconSize>(
-              title: Text(size.label),
-              subtitle: Row(
-                children: [
-                  Icon(Icons.home, size: (24.0 * size.multiplier)),
-                  const SizedBox(width: 8),
-                  Icon(Icons.settings, size: (24.0 * size.multiplier)),
-                  const SizedBox(width: 8),
-                  Icon(Icons.favorite, size: (24.0 * size.multiplier)),
-                ],
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Taille des icônes'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children:
+                  AccessibilityIconSize.values.map((size) {
+                    return RadioListTile<AccessibilityIconSize>(
+                      title: Text(size.label),
+                      subtitle: Row(
+                        children: [
+                          Icon(Icons.home, size: (24.0 * size.multiplier)),
+                          const SizedBox(width: 8),
+                          Icon(Icons.settings, size: (24.0 * size.multiplier)),
+                          const SizedBox(width: 8),
+                          Icon(Icons.favorite, size: (24.0 * size.multiplier)),
+                        ],
+                      ),
+                      value: size,
+                      groupValue: _iconSize,
+                      onChanged: (AccessibilityIconSize? value) async {
+                        if (value == null) return;
+                        final navigator = Navigator.of(context);
+                        final messenger = ScaffoldMessenger.of(context);
+                        await AccessibilityService.setIconSize(value);
+                        if (!mounted) return;
+                        setState(() {
+                          _iconSize = value;
+                        });
+                        if (!mounted) return;
+                        navigator.pop();
+                        if (!mounted) return;
+                        messenger.showSnackBar(
+                          SnackBar(
+                            content: Text('Taille des icônes : ${value.label}'),
+                            duration: const Duration(seconds: 2),
+                          ),
+                        );
+                      },
+                    );
+                  }).toList(),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Annuler'),
               ),
-              value: size,
-              groupValue: _iconSize,
-              onChanged: (AccessibilityIconSize? value) async {
-                if (value == null) return;
-                final navigator = Navigator.of(context);
-                final messenger = ScaffoldMessenger.of(context);
-                await AccessibilityService.setIconSize(value);
-                if (!mounted) return;
-                setState(() {
-                  _iconSize = value;
-                });
-                if (!mounted) return;
-                navigator.pop();
-                if (!mounted) return;
-                messenger.showSnackBar(
-                  SnackBar(
-                    content: Text('Taille des icônes : ${value.label}'),
-                    duration: const Duration(seconds: 2),
-                  ),
-                );
-              },
-            );
-          }).toList(),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Annuler'),
+            ],
           ),
-        ],
-      ),
     );
   }
 
   void _showPrivacyInfo() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Row(
-          children: [
-            Icon(Icons.privacy_tip, color: Colors.blue),
-            SizedBox(width: 8),
-            Text('Politique de Confidentialité'),
-          ],
-        ),
-        content: const SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Arkalia CIA respecte votre vie privée :',
-                style: TextStyle(fontWeight: FontWeight.bold),
+      builder:
+          (context) => AlertDialog(
+            title: const Row(
+              children: [
+                Icon(Icons.privacy_tip, color: Colors.blue),
+                SizedBox(width: 8),
+                Text('Politique de Confidentialité'),
+              ],
+            ),
+            content: const SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Arkalia CIA respecte votre vie privée :',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 16),
+                  Text('✅ Aucune collecte de données'),
+                  Text('   Toutes vos données restent sur votre appareil'),
+                  SizedBox(height: 8),
+                  Text('✅ Aucune transmission'),
+                  Text('   Vos données ne quittent jamais votre téléphone'),
+                  SizedBox(height: 8),
+                  Text('✅ Chiffrement AES-256'),
+                  Text('   Tous vos documents sont chiffrés localement'),
+                  SizedBox(height: 8),
+                  Text('✅ Stockage 100% local'),
+                  Text('   Aucun cloud, aucun serveur externe'),
+                  SizedBox(height: 16),
+                  Text(
+                    'Vous avez le contrôle total sur vos données. Vous pouvez les exporter ou les supprimer à tout moment.',
+                    style: TextStyle(fontSize: 14, color: Colors.grey),
+                  ),
+                ],
               ),
-              SizedBox(height: 16),
-              Text('✅ Aucune collecte de données'),
-              Text('   Toutes vos données restent sur votre appareil'),
-              SizedBox(height: 8),
-              Text('✅ Aucune transmission'),
-              Text('   Vos données ne quittent jamais votre téléphone'),
-              SizedBox(height: 8),
-              Text('✅ Chiffrement AES-256'),
-              Text('   Tous vos documents sont chiffrés localement'),
-              SizedBox(height: 8),
-              Text('✅ Stockage 100% local'),
-              Text('   Aucun cloud, aucun serveur externe'),
-              SizedBox(height: 16),
-              Text(
-                'Vous avez le contrôle total sur vos données. Vous pouvez les exporter ou les supprimer à tout moment.',
-                style: TextStyle(fontSize: 14, color: Colors.grey),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
               ),
             ],
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
     );
   }
 }
-

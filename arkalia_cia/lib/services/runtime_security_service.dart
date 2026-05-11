@@ -20,9 +20,11 @@ class RuntimeSecurityService {
         } else if (Platform.isIOS) {
           _isJailbroken = await _checkIOSJailbreak();
         }
-        
+
         if (_isRooted == true || _isJailbroken == true) {
-          AppLogger.warning('⚠️ Appareil rooté/jailbreaké détecté - Sécurité compromise');
+          AppLogger.warning(
+            '⚠️ Appareil rooté/jailbreaké détecté - Sécurité compromise',
+          );
           // En production, on pourrait bloquer l'app ou afficher un avertissement
         }
       } else {
@@ -116,9 +118,11 @@ class RuntimeSecurityService {
       // Vérification basique de l'intégrité
       // En production, on pourrait vérifier la signature de l'app
       // ou utiliser des techniques anti-tampering plus avancées
-      
+
       if (isDeviceCompromised()) {
-        AppLogger.warning('⚠️ Intégrité compromise - Appareil rooté/jailbreaké');
+        AppLogger.warning(
+          '⚠️ Intégrité compromise - Appareil rooté/jailbreaké',
+        );
         return false;
       }
 

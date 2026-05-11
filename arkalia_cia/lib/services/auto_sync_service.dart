@@ -17,10 +17,10 @@ class AutoSyncService {
   static const String _syncOnStartupKey = 'sync_on_startup';
   static const String _syncOnlyOnWifiKey = 'sync_only_on_wifi';
   static const String _lastSyncStatsKey = 'last_sync_stats';
-  
+
   static bool _isSyncing = false;
   static Timer? _periodicTimer;
-  
+
   // Statistiques de la dernière synchronisation
   static int _lastDocsSynced = 0;
   static int _lastRemindersSynced = 0;
@@ -30,7 +30,7 @@ class AutoSyncService {
   static Future<void> setAutoSyncEnabled(bool enabled) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_autoSyncEnabledKey, enabled);
-    
+
     if (enabled) {
       _startPeriodicSync();
     } else {
@@ -99,7 +99,9 @@ class AutoSyncService {
     if (syncOnlyWifi && !force) {
       final isWifi = await _isWifiConnected();
       if (!isWifi) {
-        AppLogger.debug('Synchronisation uniquement WiFi activée mais pas en WiFi, ignorée');
+        AppLogger.debug(
+          'Synchronisation uniquement WiFi activée mais pas en WiFi, ignorée',
+        );
         return;
       }
     }
@@ -113,17 +115,21 @@ class AutoSyncService {
           final lastSync = DateTime.parse(lastSyncStr);
           final now = DateTime.now();
           final diff = now.difference(lastSync);
-          
+
           // Ne pas synchroniser si la dernière sync était il y a moins de 5 minutes
           if (diff.inMinutes < 5) {
-            AppLogger.debug('Synchronisation récente (${diff.inMinutes} min), ignorée');
+            AppLogger.debug(
+              'Synchronisation récente (${diff.inMinutes} min), ignorée',
+            );
             return;
           }
-          
+
           // Détection intelligente : vérifier s'il y a eu des changements locaux
           final hasLocalChanges = await _hasLocalChanges(lastSync);
           if (!hasLocalChanges) {
-            AppLogger.debug('Aucun changement local détecté depuis la dernière sync, ignorée');
+            AppLogger.debug(
+              'Aucun changement local détecté depuis la dernière sync, ignorée',
+            );
             return;
           }
         } catch (e) {
@@ -141,7 +147,8 @@ class AutoSyncService {
       // Vérifier les documents
       final documents = await LocalStorageService.getDocuments();
       for (final doc in documents) {
-        final updatedAt = doc['updated_at'] as String? ?? doc['created_at'] as String?;
+        final updatedAt =
+            doc['updated_at'] as String? ?? doc['created_at'] as String?;
         if (updatedAt != null) {
           try {
             final docDate = DateTime.parse(updatedAt);
@@ -153,11 +160,13 @@ class AutoSyncService {
           }
         }
       }
-      
+
       // Vérifier les rappels
       final reminders = await LocalStorageService.getReminders();
       for (final reminder in reminders) {
-        final updatedAt = reminder['updated_at'] as String? ?? reminder['created_at'] as String?;
+        final updatedAt =
+            reminder['updated_at'] as String? ??
+            reminder['created_at'] as String?;
         if (updatedAt != null) {
           try {
             final reminderDate = DateTime.parse(updatedAt);
@@ -169,11 +178,13 @@ class AutoSyncService {
           }
         }
       }
-      
+
       // Vérifier les contacts d'urgence
       final contacts = await LocalStorageService.getEmergencyContacts();
       for (final contact in contacts) {
-        final updatedAt = contact['updated_at'] as String? ?? contact['created_at'] as String?;
+        final updatedAt =
+            contact['updated_at'] as String? ??
+            contact['created_at'] as String?;
         if (updatedAt != null) {
           try {
             final contactDate = DateTime.parse(updatedAt);
@@ -185,7 +196,7 @@ class AutoSyncService {
           }
         }
       }
-      
+
       return false; // Aucun changement détecté
     } catch (e) {
       AppLogger.warning('Erreur détection changements locaux: $e');
@@ -197,12 +208,12 @@ class AutoSyncService {
   /// Effectue la synchronisation complète
   static Future<void> _performSync() async {
     if (_isSyncing) return;
-    
+
     _isSyncing = true;
     _lastDocsSynced = 0;
     _lastRemindersSynced = 0;
     _lastContactsSynced = 0;
-    
+
     try {
       // Vérifier la connexion backend
       final backendEnabled = await BackendConfigService.isBackendEnabled();
@@ -227,7 +238,7 @@ class AutoSyncService {
       // Enregistrer l'heure de la dernière synchronisation et les statistiques
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_lastSyncTimeKey, DateTime.now().toIso8601String());
-      
+
       final stats = {
         'docs': _lastDocsSynced,
         'reminders': _lastRemindersSynced,
@@ -236,9 +247,12 @@ class AutoSyncService {
       };
       await prefs.setString(_lastSyncStatsKey, jsonEncode(stats));
 
-      final totalSynced = _lastDocsSynced + _lastRemindersSynced + _lastContactsSynced;
-      AppLogger.info('Synchronisation automatique terminée: $_lastDocsSynced docs, $_lastRemindersSynced rappels, $_lastContactsSynced contacts');
-      
+      final totalSynced =
+          _lastDocsSynced + _lastRemindersSynced + _lastContactsSynced;
+      AppLogger.info(
+        'Synchronisation automatique terminée: $_lastDocsSynced docs, $_lastRemindersSynced rappels, $_lastContactsSynced contacts',
+      );
+
       // Afficher une notification silencieuse si des éléments ont été synchronisés
       if (totalSynced > 0) {
         AppLogger.debug('Notification: $totalSynced élément(s) synchronisé(s)');
@@ -269,12 +283,18 @@ class AutoSyncService {
           (bd) => bd['id'].toString() == docId,
           orElse: () => <String, dynamic>{},
         );
-        
+
         if (backendDoc.isEmpty) return true;
-        
+
         try {
-          final localUpdated = doc['updated_at'] as String? ?? doc['created_at'] as String? ?? '';
-          final backendUpdated = backendDoc['updated_at'] as String? ?? backendDoc['created_at'] as String? ?? '';
+          final localUpdated =
+              doc['updated_at'] as String? ??
+              doc['created_at'] as String? ??
+              '';
+          final backendUpdated =
+              backendDoc['updated_at'] as String? ??
+              backendDoc['created_at'] as String? ??
+              '';
           if (localUpdated.isNotEmpty && backendUpdated.isNotEmpty) {
             final localDate = DateTime.parse(localUpdated);
             final backendDate = DateTime.parse(backendUpdated);
@@ -285,10 +305,11 @@ class AutoSyncService {
         }
         return false;
       });
-      
+
       for (final doc in toSyncUp) {
         try {
-          final filePath = doc['path'] as String? ?? doc['file_path'] as String?;
+          final filePath =
+              doc['path'] as String? ?? doc['file_path'] as String?;
           if (filePath != null) {
             final file = File(filePath);
             if (await file.exists()) {
@@ -308,7 +329,7 @@ class AutoSyncService {
           (ld) => ld['id'].toString() == docId,
           orElse: () => <String, dynamic>{},
         );
-        
+
         // Si nouveau document sur le backend ou plus récent
         if (localDoc.isEmpty) {
           // Nouveau document depuis le backend - sauvegarder localement
@@ -316,11 +337,16 @@ class AutoSyncService {
             final docToSave = {
               'id': docId,
               'name': backendDoc['name'] ?? backendDoc['file_name'] ?? '',
-              'original_name': backendDoc['original_name'] ?? backendDoc['name'] ?? '',
+              'original_name':
+                  backendDoc['original_name'] ?? backendDoc['name'] ?? '',
               'path': backendDoc['file_path'] ?? '',
               'file_size': backendDoc['file_size'] ?? 0,
-              'created_at': backendDoc['created_at'] ?? DateTime.now().toIso8601String(),
-              'updated_at': backendDoc['updated_at'] ?? backendDoc['created_at'] ?? DateTime.now().toIso8601String(),
+              'created_at':
+                  backendDoc['created_at'] ?? DateTime.now().toIso8601String(),
+              'updated_at':
+                  backendDoc['updated_at'] ??
+                  backendDoc['created_at'] ??
+                  DateTime.now().toIso8601String(),
             };
             await LocalStorageService.saveDocument(docToSave);
             _lastDocsSynced++;
@@ -330,8 +356,14 @@ class AutoSyncService {
         } else {
           // Document existe localement - vérifier si le backend est plus récent
           try {
-            final localUpdated = localDoc['updated_at'] as String? ?? localDoc['created_at'] as String? ?? '';
-            final backendUpdated = backendDoc['updated_at'] as String? ?? backendDoc['created_at'] as String? ?? '';
+            final localUpdated =
+                localDoc['updated_at'] as String? ??
+                localDoc['created_at'] as String? ??
+                '';
+            final backendUpdated =
+                backendDoc['updated_at'] as String? ??
+                backendDoc['created_at'] as String? ??
+                '';
             if (localUpdated.isNotEmpty && backendUpdated.isNotEmpty) {
               final localDate = DateTime.parse(localUpdated);
               final backendDate = DateTime.parse(backendUpdated);
@@ -340,10 +372,16 @@ class AutoSyncService {
                 final docToUpdate = {
                   'id': docId,
                   'name': backendDoc['name'] ?? localDoc['name'] ?? '',
-                  'original_name': backendDoc['original_name'] ?? localDoc['original_name'] ?? '',
+                  'original_name':
+                      backendDoc['original_name'] ??
+                      localDoc['original_name'] ??
+                      '',
                   'path': backendDoc['file_path'] ?? localDoc['path'] ?? '',
-                  'file_size': backendDoc['file_size'] ?? localDoc['file_size'] ?? 0,
-                  'created_at': localDoc['created_at'] ?? DateTime.now().toIso8601String(),
+                  'file_size':
+                      backendDoc['file_size'] ?? localDoc['file_size'] ?? 0,
+                  'created_at':
+                      localDoc['created_at'] ??
+                      DateTime.now().toIso8601String(),
                   'updated_at': backendUpdated,
                 };
                 await LocalStorageService.updateDocument(docToUpdate);
@@ -367,7 +405,7 @@ class AutoSyncService {
     try {
       final localReminders = await LocalStorageService.getReminders();
       final backendReminders = await ApiService.getReminders();
-      
+
       // 1. Synchroniser LOCAL → BACKEND
       final toSyncUp = localReminders.where((reminder) {
         final reminderId = reminder['id'].toString();
@@ -375,12 +413,18 @@ class AutoSyncService {
           (br) => br['id'].toString() == reminderId,
           orElse: () => <String, dynamic>{},
         );
-        
+
         if (backendReminder.isEmpty) return true;
-        
+
         try {
-          final localUpdated = reminder['updated_at'] as String? ?? reminder['created_at'] as String? ?? '';
-          final backendUpdated = backendReminder['updated_at'] as String? ?? backendReminder['created_at'] as String? ?? '';
+          final localUpdated =
+              reminder['updated_at'] as String? ??
+              reminder['created_at'] as String? ??
+              '';
+          final backendUpdated =
+              backendReminder['updated_at'] as String? ??
+              backendReminder['created_at'] as String? ??
+              '';
           if (localUpdated.isNotEmpty && backendUpdated.isNotEmpty) {
             final localDate = DateTime.parse(localUpdated);
             final backendDate = DateTime.parse(backendUpdated);
@@ -391,7 +435,7 @@ class AutoSyncService {
         }
         return false;
       });
-      
+
       for (final reminder in toSyncUp) {
         try {
           final reminderDateStr = reminder['reminder_date'] as String;
@@ -413,7 +457,7 @@ class AutoSyncService {
           (lr) => lr['id'].toString() == reminderId,
           orElse: () => <String, dynamic>{},
         );
-        
+
         if (localReminder.isEmpty) {
           // Nouveau rappel depuis le backend
           try {
@@ -421,9 +465,17 @@ class AutoSyncService {
               'id': reminderId,
               'title': backendReminder['title'] ?? '',
               'description': backendReminder['description'] ?? '',
-              'reminder_date': backendReminder['reminder_date'] ?? backendReminder['date'] ?? '',
-              'created_at': backendReminder['created_at'] ?? DateTime.now().toIso8601String(),
-              'updated_at': backendReminder['updated_at'] ?? backendReminder['created_at'] ?? DateTime.now().toIso8601String(),
+              'reminder_date':
+                  backendReminder['reminder_date'] ??
+                  backendReminder['date'] ??
+                  '',
+              'created_at':
+                  backendReminder['created_at'] ??
+                  DateTime.now().toIso8601String(),
+              'updated_at':
+                  backendReminder['updated_at'] ??
+                  backendReminder['created_at'] ??
+                  DateTime.now().toIso8601String(),
               'is_completed': backendReminder['is_completed'] ?? false,
             };
             await LocalStorageService.saveReminder(reminderToSave);
@@ -434,8 +486,14 @@ class AutoSyncService {
         } else {
           // Vérifier si le backend est plus récent
           try {
-            final localUpdated = localReminder['updated_at'] as String? ?? localReminder['created_at'] as String? ?? '';
-            final backendUpdated = backendReminder['updated_at'] as String? ?? backendReminder['created_at'] as String? ?? '';
+            final localUpdated =
+                localReminder['updated_at'] as String? ??
+                localReminder['created_at'] as String? ??
+                '';
+            final backendUpdated =
+                backendReminder['updated_at'] as String? ??
+                backendReminder['created_at'] as String? ??
+                '';
             if (localUpdated.isNotEmpty && backendUpdated.isNotEmpty) {
               final localDate = DateTime.parse(localUpdated);
               final backendDate = DateTime.parse(backendUpdated);
@@ -443,12 +501,25 @@ class AutoSyncService {
                 // Backend plus récent - mettre à jour localement
                 final reminderToUpdate = {
                   'id': reminderId,
-                  'title': backendReminder['title'] ?? localReminder['title'] ?? '',
-                  'description': backendReminder['description'] ?? localReminder['description'] ?? '',
-                  'reminder_date': backendReminder['reminder_date'] ?? backendReminder['date'] ?? localReminder['reminder_date'] ?? '',
-                  'created_at': localReminder['created_at'] ?? DateTime.now().toIso8601String(),
+                  'title':
+                      backendReminder['title'] ?? localReminder['title'] ?? '',
+                  'description':
+                      backendReminder['description'] ??
+                      localReminder['description'] ??
+                      '',
+                  'reminder_date':
+                      backendReminder['reminder_date'] ??
+                      backendReminder['date'] ??
+                      localReminder['reminder_date'] ??
+                      '',
+                  'created_at':
+                      localReminder['created_at'] ??
+                      DateTime.now().toIso8601String(),
                   'updated_at': backendUpdated,
-                  'is_completed': backendReminder['is_completed'] ?? localReminder['is_completed'] ?? false,
+                  'is_completed':
+                      backendReminder['is_completed'] ??
+                      localReminder['is_completed'] ??
+                      false,
                 };
                 await LocalStorageService.updateReminder(reminderToUpdate);
                 _lastRemindersSynced++;
@@ -471,7 +542,7 @@ class AutoSyncService {
     try {
       final localContacts = await LocalStorageService.getEmergencyContacts();
       final backendContacts = await ApiService.getEmergencyContacts();
-      
+
       // 1. Synchroniser LOCAL → BACKEND
       final toSyncUp = localContacts.where((contact) {
         final contactId = contact['id'].toString();
@@ -479,12 +550,18 @@ class AutoSyncService {
           (bc) => bc['id'].toString() == contactId,
           orElse: () => <String, dynamic>{},
         );
-        
+
         if (backendContact.isEmpty) return true;
-        
+
         try {
-          final localUpdated = contact['updated_at'] as String? ?? contact['created_at'] as String? ?? '';
-          final backendUpdated = backendContact['updated_at'] as String? ?? backendContact['created_at'] as String? ?? '';
+          final localUpdated =
+              contact['updated_at'] as String? ??
+              contact['created_at'] as String? ??
+              '';
+          final backendUpdated =
+              backendContact['updated_at'] as String? ??
+              backendContact['created_at'] as String? ??
+              '';
           if (localUpdated.isNotEmpty && backendUpdated.isNotEmpty) {
             final localDate = DateTime.parse(localUpdated);
             final backendDate = DateTime.parse(backendUpdated);
@@ -495,7 +572,7 @@ class AutoSyncService {
         }
         return false;
       });
-      
+
       for (final contact in toSyncUp) {
         try {
           await ApiService.createEmergencyContact(
@@ -517,7 +594,7 @@ class AutoSyncService {
           (lc) => lc['id'].toString() == contactId,
           orElse: () => <String, dynamic>{},
         );
-        
+
         if (localContact.isEmpty) {
           // Nouveau contact depuis le backend
           try {
@@ -527,8 +604,13 @@ class AutoSyncService {
               'phone': backendContact['phone'] ?? '',
               'relationship': backendContact['relationship'] ?? '',
               'is_primary': backendContact['is_primary'] ?? false,
-              'created_at': backendContact['created_at'] ?? DateTime.now().toIso8601String(),
-              'updated_at': backendContact['updated_at'] ?? backendContact['created_at'] ?? DateTime.now().toIso8601String(),
+              'created_at':
+                  backendContact['created_at'] ??
+                  DateTime.now().toIso8601String(),
+              'updated_at':
+                  backendContact['updated_at'] ??
+                  backendContact['created_at'] ??
+                  DateTime.now().toIso8601String(),
             };
             await LocalStorageService.saveEmergencyContact(contactToSave);
             _lastContactsSynced++;
@@ -538,8 +620,14 @@ class AutoSyncService {
         } else {
           // Vérifier si le backend est plus récent
           try {
-            final localUpdated = localContact['updated_at'] as String? ?? localContact['created_at'] as String? ?? '';
-            final backendUpdated = backendContact['updated_at'] as String? ?? backendContact['created_at'] as String? ?? '';
+            final localUpdated =
+                localContact['updated_at'] as String? ??
+                localContact['created_at'] as String? ??
+                '';
+            final backendUpdated =
+                backendContact['updated_at'] as String? ??
+                backendContact['created_at'] as String? ??
+                '';
             if (localUpdated.isNotEmpty && backendUpdated.isNotEmpty) {
               final localDate = DateTime.parse(localUpdated);
               final backendDate = DateTime.parse(backendUpdated);
@@ -548,13 +636,24 @@ class AutoSyncService {
                 final contactToUpdate = {
                   'id': contactId,
                   'name': backendContact['name'] ?? localContact['name'] ?? '',
-                  'phone': backendContact['phone'] ?? localContact['phone'] ?? '',
-                  'relationship': backendContact['relationship'] ?? localContact['relationship'] ?? '',
-                  'is_primary': backendContact['is_primary'] ?? localContact['is_primary'] ?? false,
-                  'created_at': localContact['created_at'] ?? DateTime.now().toIso8601String(),
+                  'phone':
+                      backendContact['phone'] ?? localContact['phone'] ?? '',
+                  'relationship':
+                      backendContact['relationship'] ??
+                      localContact['relationship'] ??
+                      '',
+                  'is_primary':
+                      backendContact['is_primary'] ??
+                      localContact['is_primary'] ??
+                      false,
+                  'created_at':
+                      localContact['created_at'] ??
+                      DateTime.now().toIso8601String(),
                   'updated_at': backendUpdated,
                 };
-                await LocalStorageService.updateEmergencyContact(contactToUpdate);
+                await LocalStorageService.updateEmergencyContact(
+                  contactToUpdate,
+                );
                 _lastContactsSynced++;
               }
             }
@@ -571,7 +670,7 @@ class AutoSyncService {
   /// Démarre la synchronisation périodique (toutes les heures)
   static void _startPeriodicSync() {
     _stopPeriodicSync(); // S'assurer qu'il n'y a pas de timer en double
-    
+
     _periodicTimer = Timer.periodic(const Duration(hours: 1), (timer) {
       syncIfNeeded();
     });
@@ -588,7 +687,7 @@ class AutoSyncService {
     final prefs = await SharedPreferences.getInstance();
     final lastSyncStr = prefs.getString(_lastSyncTimeKey);
     if (lastSyncStr == null) return null;
-    
+
     try {
       return DateTime.parse(lastSyncStr);
     } catch (e) {
@@ -601,7 +700,7 @@ class AutoSyncService {
     final prefs = await SharedPreferences.getInstance();
     final statsStr = prefs.getString(_lastSyncStatsKey);
     if (statsStr == null) return null;
-    
+
     try {
       return Map<String, dynamic>.from(jsonDecode(statsStr));
     } catch (e) {
@@ -612,10 +711,10 @@ class AutoSyncService {
   /// Formate le temps écoulé depuis la dernière synchronisation
   static String formatLastSyncTime(DateTime? lastSync) {
     if (lastSync == null) return 'Jamais';
-    
+
     final now = DateTime.now();
     final diff = now.difference(lastSync);
-    
+
     if (diff.inDays > 0) {
       return 'Il y a ${diff.inDays} jour${diff.inDays > 1 ? 's' : ''}';
     } else if (diff.inHours > 0) {
@@ -632,4 +731,3 @@ class AutoSyncService {
     _stopPeriodicSync();
   }
 }
-

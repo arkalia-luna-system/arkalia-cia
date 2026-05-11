@@ -9,10 +9,7 @@ import 'pathology_tracking_screen.dart';
 class PathologyDetailScreen extends StatefulWidget {
   final int pathologyId;
 
-  const PathologyDetailScreen({
-    super.key,
-    required this.pathologyId,
-  });
+  const PathologyDetailScreen({super.key, required this.pathologyId});
 
   @override
   State<PathologyDetailScreen> createState() => _PathologyDetailScreenState();
@@ -34,9 +31,13 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
   Future<void> _loadData() async {
     setState(() => _isLoading = true);
     try {
-      final pathology = await _pathologyService.getPathologyById(widget.pathologyId);
-      final tracking = await _pathologyService.getTrackingByPathology(widget.pathologyId);
-      
+      final pathology = await _pathologyService.getPathologyById(
+        widget.pathologyId,
+      );
+      final tracking = await _pathologyService.getTrackingByPathology(
+        widget.pathologyId,
+      );
+
       // Calculer les stats sur les 30 derniers jours
       final endDate = DateTime.now();
       final startDate = endDate.subtract(const Duration(days: 30));
@@ -57,9 +58,9 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Erreur: $e')));
       }
     }
   }
@@ -100,9 +101,10 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
               await Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => PathologyTrackingScreen(
-                    pathologyId: widget.pathologyId,
-                  ),
+                  builder:
+                      (context) => PathologyTrackingScreen(
+                        pathologyId: widget.pathologyId,
+                      ),
                 ),
               );
               _loadData();
@@ -148,15 +150,18 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: _pathology!.symptoms.map((symptom) {
-                  return Chip(
-                    label: Text(
-                      // Sanitizer à l'affichage pour prévenir XSS
-                      InputSanitizer.sanitize(symptom),
-                    ),
-                    backgroundColor: _pathology!.color.withValues(alpha: 0.1),
-                  );
-                }).toList(),
+                children:
+                    _pathology!.symptoms.map((symptom) {
+                      return Chip(
+                        label: Text(
+                          // Sanitizer à l'affichage pour prévenir XSS
+                          InputSanitizer.sanitize(symptom),
+                        ),
+                        backgroundColor: _pathology!.color.withValues(
+                          alpha: 0.1,
+                        ),
+                      );
+                    }).toList(),
               ),
               const SizedBox(height: 16),
             ],
@@ -167,15 +172,16 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: _pathology!.treatments.map((treatment) {
-                  return Chip(
-                    label: Text(
-                      // Sanitizer à l'affichage pour prévenir XSS
-                      InputSanitizer.sanitize(treatment),
-                    ),
-                    backgroundColor: Colors.green.withValues(alpha: 0.1),
-                  );
-                }).toList(),
+                children:
+                    _pathology!.treatments.map((treatment) {
+                      return Chip(
+                        label: Text(
+                          // Sanitizer à l'affichage pour prévenir XSS
+                          InputSanitizer.sanitize(treatment),
+                        ),
+                        backgroundColor: Colors.green.withValues(alpha: 0.1),
+                      );
+                    }).toList(),
               ),
               const SizedBox(height: 16),
             ],
@@ -186,12 +192,13 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: _pathology!.exams.map((exam) {
-                  return Chip(
-                    label: Text(exam),
-                    backgroundColor: Colors.blue.withValues(alpha: 0.1),
-                  );
-                }).toList(),
+                children:
+                    _pathology!.exams.map((exam) {
+                      return Chip(
+                        label: Text(exam),
+                        backgroundColor: Colors.blue.withValues(alpha: 0.1),
+                      );
+                    }).toList(),
               ),
               const SizedBox(height: 16),
             ],
@@ -311,7 +318,12 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
     );
   }
 
-  Widget _buildStatItem(String label, String value, IconData icon, [Color? color]) {
+  Widget _buildStatItem(
+    String label,
+    String value,
+    IconData icon, [
+    Color? color,
+  ]) {
     return Column(
       children: [
         Icon(icon, color: color ?? _pathology?.color),
@@ -324,10 +336,7 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
             color: color ?? _pathology?.color,
           ),
         ),
-        Text(
-          label,
-          style: const TextStyle(fontSize: 14, color: Colors.grey),
-        ),
+        Text(label, style: const TextStyle(fontSize: 14, color: Colors.grey)),
       ],
     );
   }
@@ -337,11 +346,12 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
   }
 
   Widget _buildPainChart() {
-    final painData = _trackingEntries
-        .where((entry) => entry.data.containsKey('painLevel'))
-        .take(30)
-        .toList()
-      ..sort((a, b) => a.date.compareTo(b.date));
+    final painData =
+        _trackingEntries
+            .where((entry) => entry.data.containsKey('painLevel'))
+            .take(30)
+            .toList()
+          ..sort((a, b) => a.date.compareTo(b.date));
 
     if (painData.isEmpty) return const SizedBox.shrink();
 
@@ -384,11 +394,13 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
                   borderData: FlBorderData(show: true),
                   lineBarsData: [
                     LineChartBarData(
-                      spots: painData.asMap().entries.map((entry) {
-                        final pain = entry.value.data['painLevel'];
-                        final painValue = pain is num ? pain.toDouble() : 0.0;
-                        return FlSpot(entry.key.toDouble(), painValue);
-                      }).toList(),
+                      spots:
+                          painData.asMap().entries.map((entry) {
+                            final pain = entry.value.data['painLevel'];
+                            final painValue =
+                                pain is num ? pain.toDouble() : 0.0;
+                            return FlSpot(entry.key.toDouble(), painValue);
+                          }).toList(),
                       isCurved: true,
                       color: Colors.red,
                       barWidth: 3,
@@ -422,10 +434,11 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => PathologyTrackingScreen(
-          pathologyId: widget.pathologyId,
-          existingEntry: entry,
-        ),
+        builder:
+            (context) => PathologyTrackingScreen(
+              pathologyId: widget.pathologyId,
+              existingEntry: entry,
+            ),
       ),
     );
     _loadData();
@@ -434,23 +447,24 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
   Future<void> _deleteTrackingEntry(PathologyTracking entry) async {
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Supprimer l\'entrée'),
-        content: Text(
-          'Êtes-vous sûr de vouloir supprimer l\'entrée du ${_formatDate(entry.date)} ?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annuler'),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Supprimer l\'entrée'),
+            content: Text(
+              'Êtes-vous sûr de vouloir supprimer l\'entrée du ${_formatDate(entry.date)} ?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Annuler'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                style: TextButton.styleFrom(foregroundColor: Colors.red),
+                child: const Text('Supprimer'),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Supprimer'),
-          ),
-        ],
-      ),
     );
 
     if (confirmed == true && entry.id != null) {
@@ -458,18 +472,17 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
         await _pathologyService.deleteTracking(entry.id!);
         if (mounted) {
           _loadData();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Entrée supprimée')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Entrée supprimée')));
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Erreur: $e')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Erreur: $e')));
         }
       }
     }
   }
 }
-

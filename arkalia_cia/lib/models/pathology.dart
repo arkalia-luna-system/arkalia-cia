@@ -14,20 +14,14 @@ class ReminderConfig {
   }) : times = times ?? [];
 
   Map<String, dynamic> toMap() {
-    return {
-      'type': type,
-      'frequency': frequency,
-      'times': times,
-    };
+    return {'type': type, 'frequency': frequency, 'times': times};
   }
 
   factory ReminderConfig.fromMap(Map<String, dynamic> map) {
     return ReminderConfig(
       type: map['type'] ?? '',
       frequency: map['frequency'] ?? 'daily',
-      times: map['times'] != null
-          ? List<String>.from(map['times'])
-          : [],
+      times: map['times'] != null ? List<String>.from(map['times']) : [],
     );
   }
 }
@@ -92,7 +86,8 @@ class Pathology {
       Map<String, dynamic> remindersData;
       if (map['reminders'] is String) {
         try {
-          remindersData = json.decode(map['reminders'] as String) as Map<String, dynamic>;
+          remindersData =
+              json.decode(map['reminders'] as String) as Map<String, dynamic>;
         } catch (e) {
           remindersData = {};
         }
@@ -101,7 +96,7 @@ class Pathology {
       } else {
         remindersData = {};
       }
-      
+
       remindersData.forEach((key, value) {
         try {
           remindersMap[key] = ReminderConfig.fromMap(
@@ -117,19 +112,29 @@ class Pathology {
       id: map['id'],
       name: map['name'] ?? '',
       description: map['description'],
-      symptoms: map['symptoms'] != null
-          ? (map['symptoms'] as String).split(',').where((s) => s.isNotEmpty).toList()
-          : [],
-      treatments: map['treatments'] != null
-          ? (map['treatments'] as String).split(',').where((s) => s.isNotEmpty).toList()
-          : [],
-      exams: map['exams'] != null
-          ? (map['exams'] as String).split(',').where((s) => s.isNotEmpty).toList()
-          : [],
+      symptoms:
+          map['symptoms'] != null
+              ? (map['symptoms'] as String)
+                  .split(',')
+                  .where((s) => s.isNotEmpty)
+                  .toList()
+              : [],
+      treatments:
+          map['treatments'] != null
+              ? (map['treatments'] as String)
+                  .split(',')
+                  .where((s) => s.isNotEmpty)
+                  .toList()
+              : [],
+      exams:
+          map['exams'] != null
+              ? (map['exams'] as String)
+                  .split(',')
+                  .where((s) => s.isNotEmpty)
+                  .toList()
+              : [],
       reminders: remindersMap,
-      color: map['color'] != null
-          ? Color(map['color'] as int)
-          : Colors.blue,
+      color: map['color'] != null ? Color(map['color'] as int) : Colors.blue,
       category: map['category'],
       subcategory: map['subcategory'],
       createdAt: DateTime.parse(map['created_at']),
@@ -167,4 +172,3 @@ class Pathology {
     );
   }
 }
-

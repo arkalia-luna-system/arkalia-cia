@@ -10,9 +10,7 @@ import 'package:flutter/services.dart';
 class EncryptionHelper {
   static const String _keyStorageKey = 'encryption_key';
   static const FlutterSecureStorage _secureStorage = FlutterSecureStorage(
-    aOptions: AndroidOptions(
-      encryptedSharedPreferences: true,
-    ),
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
     iOptions: IOSOptions(
       accessibility: KeychainAccessibility.first_unlock_this_device,
     ),
@@ -32,13 +30,15 @@ class EncryptionHelper {
           final prefs = await SharedPreferences.getInstance();
           return prefs.getString(_keyStorageKey);
         }
-        return await _secureStorage.read(key: _keyStorageKey).timeout(
-          const Duration(milliseconds: 100),
-          onTimeout: () {
-            // Timeout, utiliser SharedPreferences comme fallback
-            return null;
-          },
-        );
+        return await _secureStorage
+            .read(key: _keyStorageKey)
+            .timeout(
+              const Duration(milliseconds: 100),
+              onTimeout: () {
+                // Timeout, utiliser SharedPreferences comme fallback
+                return null;
+              },
+            );
       } on MissingPluginException {
         // Fallback vers SharedPreferences si flutter_secure_storage n'est pas disponible
         final prefs = await SharedPreferences.getInstance();
@@ -65,13 +65,15 @@ class EncryptionHelper {
           await prefs.setString(_keyStorageKey, value);
           return;
         }
-        await _secureStorage.write(key: _keyStorageKey, value: value).timeout(
-          const Duration(milliseconds: 100),
-          onTimeout: () {
-            // Timeout, utiliser SharedPreferences comme fallback
-            // Ne rien faire, le fallback sera géré par le catch
-          },
-        );
+        await _secureStorage
+            .write(key: _keyStorageKey, value: value)
+            .timeout(
+              const Duration(milliseconds: 100),
+              onTimeout: () {
+                // Timeout, utiliser SharedPreferences comme fallback
+                // Ne rien faire, le fallback sera géré par le catch
+              },
+            );
       } on MissingPluginException {
         // Fallback vers SharedPreferences si flutter_secure_storage n'est pas disponible
         final prefs = await SharedPreferences.getInstance();
@@ -114,7 +116,7 @@ class EncryptionHelper {
       final encrypter = encrypt.Encrypter(encrypt.AES(key));
 
       final encrypted = encrypter.encrypt(plainText, iv: iv);
-      
+
       // Retourner IV + données chiffrées en base64
       return '${iv.base64}:${encrypted.base64}';
     } catch (e) {
@@ -127,7 +129,7 @@ class EncryptionHelper {
     try {
       final key = await _getEncryptionKey();
       final parts = encryptedText.split(':');
-      
+
       if (parts.length != 2) {
         throw Exception('Format de données chiffrées invalide');
       }
@@ -161,4 +163,3 @@ class EncryptionHelper {
     return digest.toString();
   }
 }
-

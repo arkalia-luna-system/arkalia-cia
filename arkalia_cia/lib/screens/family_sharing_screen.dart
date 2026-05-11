@@ -50,18 +50,19 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
     } catch (e) {
       setState(() => _isLoading = false);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Erreur: $e')));
       }
     }
   }
 
   Future<void> _shareSelectedDocuments() async {
-    final selectedIds = _selectedDocuments.entries
-        .where((e) => e.value)
-        .map((e) => e.key)
-        .toList();
+    final selectedIds =
+        _selectedDocuments.entries
+            .where((e) => e.value)
+            .map((e) => e.key)
+            .toList();
 
     if (selectedIds.isEmpty) {
       if (mounted) {
@@ -82,7 +83,10 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
     }
 
     // Afficher dialog de consentement explicite
-    final consent = await _showConsentDialog(selectedIds.length, _members.length);
+    final consent = await _showConsentDialog(
+      selectedIds.length,
+      _members.length,
+    );
     if (consent != true) {
       return; // Utilisateur a refusé
     }
@@ -103,34 +107,41 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: Text('Partage de ${selectedIds.length} document(s) en cours...'),
+                child: Text(
+                  'Partage de ${selectedIds.length} document(s) en cours...',
+                ),
               ),
             ],
           ),
-          duration: const Duration(seconds: 30), // Longue durée pour permettre le partage
+          duration: const Duration(
+            seconds: 30,
+          ), // Longue durée pour permettre le partage
           backgroundColor: Colors.blue,
         ),
       );
     }
 
     // Partager avec tous les membres actifs (utiliser les IDs des membres, pas les indices)
-    final memberIds = _members
-        .where((m) => m.isActive && m.id != null)
-        .map((m) => m.id!)
-        .toList();
-    
+    final memberIds =
+        _members
+            .where((m) => m.isActive && m.id != null)
+            .map((m) => m.id!)
+            .toList();
+
     if (memberIds.isEmpty) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Aucun membre actif disponible pour le partage')),
+          const SnackBar(
+            content: Text('Aucun membre actif disponible pour le partage'),
+          ),
         );
       }
       return;
     }
-    
+
     int successCount = 0;
     int errorCount = 0;
-    
+
     for (final docId in selectedIds) {
       try {
         await _sharingService.shareDocumentWithMembers(
@@ -162,7 +173,9 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
                 const Icon(Icons.check_circle, color: Colors.white),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Text('$successCount document(s) partagé(s) avec succès avec ${memberIds.length} membre(s)'),
+                  child: Text(
+                    '$successCount document(s) partagé(s) avec succès avec ${memberIds.length} membre(s)',
+                  ),
                 ),
               ],
             ),
@@ -186,7 +199,9 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
                 const Icon(Icons.warning, color: Colors.white),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Text('$successCount partagé(s), $errorCount erreur(s)'),
+                  child: Text(
+                    '$successCount partagé(s), $errorCount erreur(s)',
+                  ),
                 ),
               ],
             ),
@@ -293,12 +308,7 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
       children: [
         Icon(icon, size: 20, color: Theme.of(context).colorScheme.primary),
         const SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            text,
-            style: const TextStyle(fontSize: 14),
-          ),
-        ),
+        Expanded(child: Text(text, style: const TextStyle(fontSize: 14))),
       ],
     );
   }
@@ -323,30 +333,28 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
           ),
         ],
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                // Tabs
-                TabBar(
-                  controller: _tabController,
-                  tabs: const [
-                    Tab(icon: Icon(Icons.share), text: 'Partager'),
-                    Tab(icon: Icon(Icons.bar_chart), text: 'Statistiques'),
-                  ],
-                ),
-                
-                Expanded(
-                  child: TabBarView(
+      body:
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : Column(
+                children: [
+                  // Tabs
+                  TabBar(
                     controller: _tabController,
-                    children: [
-                      _buildShareTab(),
-                      _buildStatsTab(),
+                    tabs: const [
+                      Tab(icon: Icon(Icons.share), text: 'Partager'),
+                      Tab(icon: Icon(Icons.bar_chart), text: 'Statistiques'),
                     ],
                   ),
-                ),
-              ],
-            ),
+
+                  Expanded(
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: [_buildShareTab(), _buildStatsTab()],
+                    ),
+                  ),
+                ],
+              ),
     );
   }
 
@@ -383,7 +391,7 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
             ],
           ),
         ),
-        
+
         // Documents à partager
         Padding(
           padding: const EdgeInsets.all(16.0),
@@ -396,59 +404,76 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
             ),
           ),
         ),
-        
+
         Expanded(
           child: RefreshIndicator(
             onRefresh: _loadData,
-            child: _documents.isEmpty
-                ? SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    child: SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.4,
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.folder_open, size: 64, color: Colors.grey[400]),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Aucun document disponible',
-                              style: TextStyle(color: Colors.grey[600]),
-                            ),
-                          ],
+            child:
+                _documents.isEmpty
+                    ? SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.4,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.folder_open,
+                                size: 64,
+                                color: Colors.grey[400],
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                'Aucun document disponible',
+                                style: TextStyle(color: Colors.grey[600]),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
+                    )
+                    : ListView.builder(
+                      itemCount: _documents.length,
+                      itemBuilder: (context, index) {
+                        final doc = _documents[index];
+                        final docId = doc['id']?.toString() ?? '';
+                        final isSelected = _selectedDocuments[docId] ?? false;
+                        final isShared = _sharedDocuments.any(
+                          (sd) => sd.documentId == docId,
+                        );
+
+                        return CheckboxListTile(
+                          title: Text(
+                            // Sanitizer à l'affichage pour prévenir XSS
+                            InputSanitizer.sanitize(
+                              doc['original_name']?.toString() ??
+                                  doc['name']?.toString() ??
+                                  'Sans titre',
+                            ),
+                          ),
+                          subtitle: Text(
+                            '${doc['category'] ?? 'Non catégorisé'}${isShared ? ' • Déjà partagé' : ''}',
+                          ),
+                          value: isSelected,
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedDocuments[docId] = value ?? false;
+                            });
+                          },
+                          secondary:
+                              isShared
+                                  ? const Icon(
+                                    Icons.check_circle,
+                                    color: Colors.green,
+                                  )
+                                  : null,
+                        );
+                      },
                     ),
-                  )
-                : ListView.builder(
-                    itemCount: _documents.length,
-                    itemBuilder: (context, index) {
-                      final doc = _documents[index];
-                      final docId = doc['id']?.toString() ?? '';
-                      final isSelected = _selectedDocuments[docId] ?? false;
-                      final isShared = _sharedDocuments.any((sd) => sd.documentId == docId);
-                      
-                      return CheckboxListTile(
-                        title: Text(
-                          // Sanitizer à l'affichage pour prévenir XSS
-                          InputSanitizer.sanitize(doc['original_name']?.toString() ?? doc['name']?.toString() ?? 'Sans titre'),
-                        ),
-                        subtitle: Text(
-                          '${doc['category'] ?? 'Non catégorisé'}${isShared ? ' • Déjà partagé' : ''}',
-                        ),
-                        value: isSelected,
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedDocuments[docId] = value ?? false;
-                          });
-                        },
-                        secondary: isShared ? const Icon(Icons.check_circle, color: Colors.green) : null,
-                      );
-                    },
-                  ),
           ),
         ),
-        
+
         // Bouton partager
         Padding(
           padding: const EdgeInsets.all(16.0),
@@ -471,7 +496,7 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
     final totalShared = _sharedDocuments.length;
     final totalMembers = _members.length;
     final activeMembers = _members.where((m) => m.isActive).length;
-    
+
     return RefreshIndicator(
       onRefresh: _loadData,
       child: SingleChildScrollView(
@@ -490,27 +515,39 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
                     Text(
                       'Statistiques Partage',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 16),
-                    _buildStatRow('Documents partagés', totalShared.toString(), Icons.description),
-                    _buildStatRow('Membres famille', totalMembers.toString(), Icons.people),
-                    _buildStatRow('Membres actifs', activeMembers.toString(), Icons.check_circle),
+                    _buildStatRow(
+                      'Documents partagés',
+                      totalShared.toString(),
+                      Icons.description,
+                    ),
+                    _buildStatRow(
+                      'Membres famille',
+                      totalMembers.toString(),
+                      Icons.people,
+                    ),
+                    _buildStatRow(
+                      'Membres actifs',
+                      activeMembers.toString(),
+                      Icons.check_circle,
+                    ),
                   ],
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Documents récemment partagés
             if (_sharedDocuments.isNotEmpty) ...[
               Text(
                 'Documents récemment partagés',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               ..._sharedDocuments.take(5).map((sharedDoc) {
@@ -524,14 +561,19 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
                     leading: const Icon(Icons.description),
                     title: Text(
                       // Sanitizer à l'affichage pour prévenir XSS
-                      InputSanitizer.sanitize(doc['original_name']?.toString() ?? doc['name']?.toString() ?? 'Sans titre'),
+                      InputSanitizer.sanitize(
+                        doc['original_name']?.toString() ??
+                            doc['name']?.toString() ??
+                            'Sans titre',
+                      ),
                     ),
                     subtitle: Text(
                       'Partagé avec ${sharedDoc.memberIds.length} membre(s) • ${_formatDate(sharedDoc.sharedAt)}',
                     ),
-                    trailing: sharedDoc.isEncrypted
-                        ? const Icon(Icons.lock, color: Colors.green)
-                        : null,
+                    trailing:
+                        sharedDoc.isEncrypted
+                            ? const Icon(Icons.lock, color: Colors.green)
+                            : null,
                   ),
                 );
               }),
@@ -578,4 +620,3 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
     }
   }
 }
-

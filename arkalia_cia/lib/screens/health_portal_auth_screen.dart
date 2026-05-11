@@ -25,59 +25,61 @@ class _HealthPortalAuthScreenState extends State<HealthPortalAuthScreen> {
 
     try {
       final result = await _authService.authenticatePortal(widget.portal);
-      
+
       if (result['success'] == true) {
         // L'authentification OAuth a été lancée dans le navigateur
         // L'utilisateur sera redirigé vers l'app via deep link avec le code
         // Note: En production, utiliser un listener de deep link pour capturer le callback
         // Pour l'instant, afficher un message d'attente
-        
+
         if (mounted) {
           // Afficher dialogue d'attente
           showDialog(
             context: context,
             barrierDismissible: false,
-            builder: (context) => AlertDialog(
-              title: const Text('Authentification en cours'),
-              content: const Text(
-                'Veuillez compléter l\'authentification dans le navigateur.\n'
-                'Vous serez redirigé automatiquement vers l\'application.',
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    setState(() {
-                      _isAuthenticating = false;
-                    });
-                  },
-                  child: const Text('Annuler'),
+            builder:
+                (context) => AlertDialog(
+                  title: const Text('Authentification en cours'),
+                  content: const Text(
+                    'Veuillez compléter l\'authentification dans le navigateur.\n'
+                    'Vous serez redirigé automatiquement vers l\'application.',
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        setState(() {
+                          _isAuthenticating = false;
+                        });
+                      },
+                      child: const Text('Annuler'),
+                    ),
+                  ],
                 ),
-              ],
-            ),
           );
         }
-        
+
         // Note: En production, le callback OAuth sera géré par un listener de deep link
         // qui appellera handleOAuthCallback() puis fetchPortalData()
         // Pour l'instant, simuler avec un délai
         await Future.delayed(const Duration(seconds: 3));
-        
+
         // Vérifier si un token a été sauvegardé (via callback)
         final token = await _authService.getAccessToken(widget.portal);
         if (token != null) {
           // Récupérer les données du portail
           await _authService.fetchPortalData(widget.portal, token);
-          
+
           if (mounted) {
             Navigator.of(context).pop(); // Fermer dialogue d'attente
             // Naviguer vers écran progression import
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
-                builder: (context) => ImportProgressScreen(
-                  importType: ImportType.portals,
-                  portalIds: ['portal_${widget.portal.name}'],
-                ),
+                builder:
+                    (context) => ImportProgressScreen(
+                      importType: ImportType.portals,
+                      portalIds: ['portal_${widget.portal.name}'],
+                    ),
               ),
             );
           }
@@ -108,7 +110,9 @@ class _HealthPortalAuthScreenState extends State<HealthPortalAuthScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Authentification ${HealthPortalAuthService.getPortalName(widget.portal)}'),
+        title: Text(
+          'Authentification ${HealthPortalAuthService.getPortalName(widget.portal)}',
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -123,9 +127,9 @@ class _HealthPortalAuthScreenState extends State<HealthPortalAuthScreen> {
             const SizedBox(height: 32),
             Text(
               'Connexion à ${HealthPortalAuthService.getPortalName(widget.portal)}',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
@@ -143,10 +147,7 @@ class _HealthPortalAuthScreenState extends State<HealthPortalAuthScreen> {
                   color: Colors.red[100],
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Text(
-                  _error!,
-                  style: const TextStyle(color: Colors.red),
-                ),
+                child: Text(_error!, style: const TextStyle(color: Colors.red)),
               ),
             SizedBox(
               width: double.infinity,
@@ -158,16 +159,17 @@ class _HealthPortalAuthScreenState extends State<HealthPortalAuthScreen> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: _isAuthenticating
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text(
-                        'Se connecter',
-                        style: TextStyle(fontSize: 18),
-                      ),
+                child:
+                    _isAuthenticating
+                        ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                        : const Text(
+                          'Se connecter',
+                          style: TextStyle(fontSize: 18),
+                        ),
               ),
             ),
           ],
@@ -176,4 +178,3 @@ class _HealthPortalAuthScreenState extends State<HealthPortalAuthScreen> {
     );
   }
 }
-

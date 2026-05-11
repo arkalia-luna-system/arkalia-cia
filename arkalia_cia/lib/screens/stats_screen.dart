@@ -24,40 +24,46 @@ class _StatsScreenState extends State<StatsScreen> {
     setState(() {
       _isLoading = true;
     });
-    
+
     try {
       final documents = await LocalStorageService.getDocuments();
       final reminders = await LocalStorageService.getReminders();
       final contacts = await LocalStorageService.getEmergencyContacts();
-      
+
       // Récupérer les rappels du calendrier (mobile seulement)
       List<Map<String, dynamic>> calendarReminders = [];
       try {
         // Ajouter un timeout pour éviter les blocages
         calendarReminders = await CalendarService.getUpcomingReminders()
-            .timeout(const Duration(seconds: 2), onTimeout: () => <Map<String, dynamic>>[]);
+            .timeout(
+              const Duration(seconds: 2),
+              onTimeout: () => <Map<String, dynamic>>[],
+            );
       } catch (e) {
         // Ignorer les erreurs de calendrier
       }
 
       // Calculer les statistiques des rappels
-      final completedReminders = reminders.where((r) => r['is_completed'] == true).length;
-      final pendingReminders = reminders.where((r) => r['is_completed'] != true).length;
-      
+      final completedReminders =
+          reminders.where((r) => r['is_completed'] == true).length;
+      final pendingReminders =
+          reminders.where((r) => r['is_completed'] != true).length;
+
       // Calculer les rappels à venir (locaux + calendrier)
       final now = DateTime.now();
-      final upcomingLocal = reminders.where((r) {
-        if (r['is_completed'] == true) return false;
-        try {
-          final dateStr = r['reminder_date'] as String?;
-          if (dateStr == null || dateStr.isEmpty) return false;
-          final reminderDate = DateTime.parse(dateStr);
-          return reminderDate.isAfter(now);
-        } catch (e) {
-          return false;
-        }
-      }).length;
-      
+      final upcomingLocal =
+          reminders.where((r) {
+            if (r['is_completed'] == true) return false;
+            try {
+              final dateStr = r['reminder_date'] as String?;
+              if (dateStr == null || dateStr.isEmpty) return false;
+              final reminderDate = DateTime.parse(dateStr);
+              return reminderDate.isAfter(now);
+            } catch (e) {
+              return false;
+            }
+          }).length;
+
       final totalUpcoming = upcomingLocal + calendarReminders.length;
 
       // Documents par catégorie
@@ -73,11 +79,12 @@ class _StatsScreenState extends State<StatsScreen> {
         0,
         (sum, doc) => sum + ((doc['file_size'] as num?)?.toInt() ?? 0),
       );
-      
+
       final totalSizeMB = totalSize / (1024 * 1024);
-      final sizeDisplay = totalSizeMB < 0.01 
-          ? '0 MB' 
-          : totalSizeMB < 1 
+      final sizeDisplay =
+          totalSizeMB < 0.01
+              ? '0 MB'
+              : totalSizeMB < 1
               ? '${(totalSizeMB * 1024).toStringAsFixed(0)} KB'
               : '${totalSizeMB.toStringAsFixed(2)} MB';
 
@@ -97,7 +104,12 @@ class _StatsScreenState extends State<StatsScreen> {
             },
             'contacts': {
               'total': contacts.length,
-              'primary': contacts.where((c) => c['is_ice'] == true || c['is_primary'] == true).length,
+              'primary':
+                  contacts
+                      .where(
+                        (c) => c['is_ice'] == true || c['is_primary'] == true,
+                      )
+                      .length,
             },
           };
           _isLoading = false;
@@ -119,56 +131,83 @@ class _StatsScreenState extends State<StatsScreen> {
         title: const Text('Statistiques'),
         backgroundColor: Colors.blue[600],
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
-              onRefresh: _loadStats,
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildStatCard(
-                      'Documents',
-                      Icons.description,
-                      Colors.green,
-                      [
-                        _StatItem('Total', '${_stats['documents']?['total'] ?? 0}'),
-                        _StatItem('Taille totale', _stats['documents']?['total_size'] ?? '0 MB'),
-                        if (_stats['documents']?['by_category'] != null && 
-                            (_stats['documents']!['by_category'] as Map).isNotEmpty)
-                          ...(_stats['documents']!['by_category'] as Map<String, int>)
-                              .entries
-                              .map((e) => _StatItem(e.key, '${e.value}')),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    _buildStatCard(
-                      'Rappels',
-                      Icons.notifications,
-                      Colors.orange,
-                      [
-                        _StatItem('Total', '${_stats['reminders']?['total'] ?? 0}'),
-                        _StatItem('Terminés', '${_stats['reminders']?['completed'] ?? 0}'),
-                        _StatItem('En attente', '${_stats['reminders']?['pending'] ?? 0}'),
-                        _StatItem('À venir', '${_stats['reminders']?['upcoming'] ?? 0}'),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    _buildStatCard(
-                      'Contacts d\'urgence',
-                      Icons.emergency,
-                      Colors.red,
-                      [
-                        _StatItem('Total', '${_stats['contacts']?['total'] ?? 0}'),
-                        _StatItem('Principaux', '${_stats['contacts']?['primary'] ?? 0}'),
-                      ],
-                    ),
-                  ],
+      body:
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : RefreshIndicator(
+                onRefresh: _loadStats,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildStatCard(
+                        'Documents',
+                        Icons.description,
+                        Colors.green,
+                        [
+                          _StatItem(
+                            'Total',
+                            '${_stats['documents']?['total'] ?? 0}',
+                          ),
+                          _StatItem(
+                            'Taille totale',
+                            _stats['documents']?['total_size'] ?? '0 MB',
+                          ),
+                          if (_stats['documents']?['by_category'] != null &&
+                              (_stats['documents']!['by_category'] as Map)
+                                  .isNotEmpty)
+                            ...(_stats['documents']!['by_category']
+                                    as Map<String, int>)
+                                .entries
+                                .map((e) => _StatItem(e.key, '${e.value}')),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      _buildStatCard(
+                        'Rappels',
+                        Icons.notifications,
+                        Colors.orange,
+                        [
+                          _StatItem(
+                            'Total',
+                            '${_stats['reminders']?['total'] ?? 0}',
+                          ),
+                          _StatItem(
+                            'Terminés',
+                            '${_stats['reminders']?['completed'] ?? 0}',
+                          ),
+                          _StatItem(
+                            'En attente',
+                            '${_stats['reminders']?['pending'] ?? 0}',
+                          ),
+                          _StatItem(
+                            'À venir',
+                            '${_stats['reminders']?['upcoming'] ?? 0}',
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      _buildStatCard(
+                        'Contacts d\'urgence',
+                        Icons.emergency,
+                        Colors.red,
+                        [
+                          _StatItem(
+                            'Total',
+                            '${_stats['contacts']?['total'] ?? 0}',
+                          ),
+                          _StatItem(
+                            'Principaux',
+                            '${_stats['contacts']?['primary'] ?? 0}',
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
     );
   }
 
@@ -180,9 +219,7 @@ class _StatsScreenState extends State<StatsScreen> {
   ) {
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
@@ -215,29 +252,31 @@ class _StatsScreenState extends State<StatsScreen> {
                 ],
               ),
               const SizedBox(height: 16),
-              ...items.map((item) => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 6),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          item.label,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            color: Colors.grey,
-                          ),
+              ...items.map(
+                (item) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        item.label,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          color: Colors.grey,
                         ),
-                        Text(
-                          item.value,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: color,
-                          ),
+                      ),
+                      Text(
+                        item.value,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: color,
                         ),
-                      ],
-                    ),
-                  )),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -252,4 +291,3 @@ class _StatItem {
 
   _StatItem(this.label, this.value);
 }
-

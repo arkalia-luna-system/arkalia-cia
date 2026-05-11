@@ -37,7 +37,7 @@ class _ARIAScreenState extends State<ARIAScreen> {
     });
 
     final isConnected = await ARIAService.checkConnection();
-    
+
     setState(() {
       _isARIAConnected = isConnected;
       _isChecking = false;
@@ -62,16 +62,17 @@ class _ARIAScreenState extends State<ARIAScreen> {
             tooltip: 'Configuration',
           ),
           IconButton(
-            icon: _isChecking
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  )
-                : const Icon(Icons.refresh),
+            icon:
+                _isChecking
+                    ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                    : const Icon(Icons.refresh),
             onPressed: _isChecking ? null : _checkARIAConnection,
             tooltip: 'Vérifier la connexion',
           ),
@@ -156,7 +157,9 @@ class _ARIAScreenState extends State<ARIAScreen> {
             Row(
               children: [
                 Icon(
-                  _isARIAConnected ? MdiIcons.checkCircle : MdiIcons.alertCircle,
+                  _isARIAConnected
+                      ? MdiIcons.checkCircle
+                      : MdiIcons.alertCircle,
                   color: _isARIAConnected ? Colors.green : Colors.red,
                   size: 32,
                 ),
@@ -170,16 +173,22 @@ class _ARIAScreenState extends State<ARIAScreen> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: _isARIAConnected ? Colors.green[700] : Colors.red[700],
+                          color:
+                              _isARIAConnected
+                                  ? Colors.green[700]
+                                  : Colors.red[700],
                         ),
                       ),
                       Text(
                         _isARIAConnected
-                          ? 'Laboratoire de recherche santé opérationnel'
-                          : 'Vérifiez que le serveur ARIA est démarré\n(Configuration disponible dans les paramètres)',
+                            ? 'Laboratoire de recherche santé opérationnel'
+                            : 'Vérifiez que le serveur ARIA est démarré\n(Configuration disponible dans les paramètres)',
                         style: TextStyle(
                           fontSize: 14,
-                          color: _isARIAConnected ? Colors.green[600] : Colors.red[600],
+                          color:
+                              _isARIAConnected
+                                  ? Colors.green[600]
+                                  : Colors.red[600],
                         ),
                       ),
                       if (_ariaIP != null) ...[
@@ -188,7 +197,10 @@ class _ARIAScreenState extends State<ARIAScreen> {
                           'Serveur: $_ariaIP:$_ariaPort',
                           style: TextStyle(
                             fontSize: 14,
-                            color: _isARIAConnected ? Colors.green[600] : Colors.red[600],
+                            color:
+                                _isARIAConnected
+                                    ? Colors.green[600]
+                                    : Colors.red[600],
                           ),
                         ),
                       ],
@@ -262,11 +274,7 @@ class _ARIAScreenState extends State<ARIAScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                icon,
-                size: 48,
-                color: color,
-              ),
+              Icon(icon, size: 48, color: color),
               const SizedBox(height: 8),
               Text(
                 title,
@@ -279,10 +287,7 @@ class _ARIAScreenState extends State<ARIAScreen> {
               const SizedBox(height: 4),
               Text(
                 subtitle,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -301,15 +306,11 @@ class _ARIAScreenState extends State<ARIAScreen> {
           backgroundColor: Colors.red[600],
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
         icon: Icon(MdiIcons.openInApp),
         label: Text(
-          _isARIAConnected 
-            ? 'Accéder à ARIA' 
-            : 'ARIA non disponible',
+          _isARIAConnected ? 'Accéder à ARIA' : 'ARIA non disponible',
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
       ),
@@ -318,7 +319,9 @@ class _ARIAScreenState extends State<ARIAScreen> {
 
   Future<void> _launchARIA(String page) async {
     if (!_isARIAConnected) {
-      _showError('ARIA n\'est pas connecté. Vérifiez que le serveur ARIA est démarré.');
+      _showError(
+        'ARIA n\'est pas connecté. Vérifiez que le serveur ARIA est démarré.',
+      );
       return;
     }
 
@@ -328,7 +331,7 @@ class _ARIAScreenState extends State<ARIAScreen> {
       'L\'accès ARIA via navigateur n\'est pas disponible sur mobile.\n\n'
       'Utilisez l\'application ARIA dédiée ou accédez-y depuis votre ordinateur.',
     );
-    
+
     // Ne pas essayer d'ouvrir localhost sur mobile
     // (commenté pour référence future si besoin d'implémenter WebView)
     /*
@@ -357,55 +360,56 @@ class _ARIAScreenState extends State<ARIAScreen> {
 
     final result = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Configuration ARIA'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: ipController,
-              decoration: const InputDecoration(
-                labelText: 'Adresse IP du serveur',
-                hintText: '192.168.1.100',
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Configuration ARIA'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: ipController,
+                  decoration: const InputDecoration(
+                    labelText: 'Adresse IP du serveur',
+                    hintText: '192.168.1.100',
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: portController,
+                  decoration: const InputDecoration(
+                    labelText: 'Port',
+                    hintText: '8080',
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton.icon(
+                  onPressed: () async {
+                    final detectedIP = await ARIAService.detectARIA();
+                    if (detectedIP != null) {
+                      ipController.text = detectedIP;
+                      _showSuccess('Serveur ARIA détecté: $detectedIP');
+                    } else {
+                      _showError('Aucun serveur ARIA détecté automatiquement.');
+                    }
+                  },
+                  icon: const Icon(Icons.search),
+                  label: const Text('Détecter automatiquement'),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Annuler'),
               ),
-              keyboardType: TextInputType.number,
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: portController,
-              decoration: const InputDecoration(
-                labelText: 'Port',
-                hintText: '8080',
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Sauvegarder'),
               ),
-              keyboardType: TextInputType.number,
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton.icon(
-              onPressed: () async {
-                final detectedIP = await ARIAService.detectARIA();
-                if (detectedIP != null) {
-                  ipController.text = detectedIP;
-                  _showSuccess('Serveur ARIA détecté: $detectedIP');
-                } else {
-                  _showError('Aucun serveur ARIA détecté automatiquement.');
-                }
-              },
-              icon: const Icon(Icons.search),
-              label: const Text('Détecter automatiquement'),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annuler'),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Sauvegarder'),
-          ),
-        ],
-      ),
     );
 
     if (result == true) {

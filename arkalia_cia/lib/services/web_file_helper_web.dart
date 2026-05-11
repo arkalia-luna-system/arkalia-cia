@@ -7,7 +7,7 @@ import 'dart:html' as html;
 /// Retourne null si pas sur web ou en cas d'erreur
 String? createBlobUrl(Uint8List bytes, String mimeType) {
   if (!kIsWeb) return null;
-  
+
   try {
     final blob = html.Blob([bytes], mimeType);
     return html.Url.createObjectUrlFromBlob(blob);
@@ -19,11 +19,10 @@ String? createBlobUrl(Uint8List bytes, String mimeType) {
 /// Révoque un Blob URL
 void revokeBlobUrl(String url) {
   if (!kIsWeb) return;
-  
+
   try {
     html.Url.revokeObjectUrl(url);
   } catch (e) {
     // Ignorer les erreurs
   }
 }
-

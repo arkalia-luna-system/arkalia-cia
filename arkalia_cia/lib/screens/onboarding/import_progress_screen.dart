@@ -65,7 +65,7 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
 
   Future<void> _importManualPDFWeb() async {
     final fileDataList = widget.fileDataList ?? [];
-    
+
     if (fileDataList.isEmpty) {
       setState(() {
         _currentStep = 'Aucun fichier à importer';
@@ -109,19 +109,22 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
         // 2. Sur web, les fichiers sont gérés par le navigateur (File API)
         // 3. IndexedDB serait nécessaire seulement pour très gros fichiers (>50MB)
         // 4. L'implémentation actuelle fonctionne pour 99% des cas d'usage
-        
+
         // Vérifier la taille du fichier (limite 5 MB sur web)
         const maxWebFileSize = 5 * 1024 * 1024; // 5 MB
         if (bytes.length > maxWebFileSize) {
-          AppLogger.warning('Fichier trop volumineux pour le web: ${bytes.length} bytes (max: $maxWebFileSize)');
+          AppLogger.warning(
+            'Fichier trop volumineux pour le web: ${bytes.length} bytes (max: $maxWebFileSize)',
+          );
           continue; // Ignorer les fichiers trop volumineux
         }
-        
+
         final document = {
           'id': '${timestamp}_$i',
           'name': uniqueFileName,
           'original_name': fileName,
-          'path': uniqueFileName, // Sur web, on utilise le nom comme identifiant
+          'path':
+              uniqueFileName, // Sur web, on utilise le nom comme identifiant
           'file_size': bytes.length,
           'category': 'Médical',
           'created_at': DateTime.now().toIso8601String(),
@@ -147,7 +150,7 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
 
   Future<void> _importManualPDFMobile() async {
     final filePaths = widget.filePaths ?? [];
-    
+
     if (filePaths.isEmpty) {
       setState(() {
         _currentStep = 'Aucun fichier à importer';
@@ -169,7 +172,7 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
     for (int i = 0; i < filePaths.length; i++) {
       final filePath = filePaths[i];
       final file = io.File(filePath);
-      
+
       if (!await file.exists()) {
         continue;
       }
@@ -296,9 +299,9 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
                 size: 80,
                 color: Theme.of(context).colorScheme.primary,
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // Titre
               Text(
                 'Import en cours',
@@ -308,9 +311,9 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
-              
+
               const SizedBox(height: 8),
-              
+
               // Étape actuelle
               Text(
                 _currentStep,
@@ -320,18 +323,18 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
                 ),
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // Barre progression
               LinearProgressIndicator(
                 value: _progress,
                 minHeight: 8,
                 backgroundColor: Colors.grey[300],
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Pourcentage
               Text(
                 '${(_progress * 100).toInt()}%',
@@ -341,9 +344,9 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
                   color: Theme.of(context).colorScheme.primary,
                 ),
               ),
-              
+
               const SizedBox(height: 48),
-              
+
               // Résultat import (si terminé)
               if (_importResult != null && _isComplete)
                 Container(
@@ -357,7 +360,11 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
                   ),
                   child: Column(
                     children: [
-                      Icon(Icons.check_circle, color: Colors.green[700], size: 48),
+                      Icon(
+                        Icons.check_circle,
+                        color: Colors.green[700],
+                        size: 48,
+                      ),
                       const SizedBox(height: 16),
                       Text(
                         'Historique créé avec succès !',
@@ -384,4 +391,3 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
     );
   }
 }
-

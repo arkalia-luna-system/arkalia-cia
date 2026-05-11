@@ -29,13 +29,13 @@ class DocumentsScreen extends StatefulWidget {
 }
 
 enum DocumentSortOrder {
-  recent,      // Plus récent d'abord
-  oldest,      // Plus ancien d'abord
+  recent, // Plus récent d'abord
+  oldest, // Plus ancien d'abord
   alphabetical, // A-Z
   alphabeticalReverse, // Z-A
-  sizeLargest,  // Plus grand d'abord
+  sizeLargest, // Plus grand d'abord
   sizeSmallest, // Plus petit d'abord
-  category,     // Par catégorie
+  category, // Par catégorie
 }
 
 class _DocumentsScreenState extends State<DocumentsScreen> {
@@ -48,7 +48,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   String? _selectedExamType; // Filtre par type d'examen
   DocumentSortOrder _sortOrder = DocumentSortOrder.recent; // Tri par défaut
   Timer? _debounceTimer;
-  
+
   // Pagination pour performance
   static const int _itemsPerPage = 20;
   int _currentPage = 0;
@@ -72,7 +72,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   void _onSearchChanged() {
     // Annuler le timer précédent s'il existe
     _debounceTimer?.cancel();
-    
+
     // Créer un nouveau timer avec un délai de 500ms (uniformisé pour meilleure performance)
     _debounceTimer = Timer(const Duration(milliseconds: 500), () {
       _filterDocuments();
@@ -82,7 +82,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   /// Trie une liste de documents selon l'ordre sélectionné
   List<Map<String, dynamic>> _sortDocuments(List<Map<String, dynamic>> docs) {
     final sorted = List<Map<String, dynamic>>.from(docs);
-    
+
     switch (_sortOrder) {
       case DocumentSortOrder.recent:
         sorted.sort((a, b) {
@@ -139,10 +139,10 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         });
         break;
     }
-    
+
     return sorted;
   }
-  
+
   /// Parse une date ISO8601 en DateTime
   DateTime _parseDate(dynamic dateStr) {
     if (dateStr == null) return DateTime(1970);
@@ -155,96 +155,104 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
 
   void _filterDocuments() {
     if (!mounted) return;
-    
+
     final query = _searchController.text.toLowerCase();
     setState(() {
       // Filtrer tous les documents
-      final allFiltered = documents.where((doc) {
-        final name = (doc['original_name'] ?? '').toLowerCase();
-        final matchesSearch = name.contains(query);
-        final matchesCategory = _selectedCategory == 'Tous' ||
-            (doc['category'] ?? 'Non catégorisé') == _selectedCategory;
-        
-        // Filtre par type d'examen
-        bool matchesExamType = true; // Par défaut, pas de filtre
-        if (_selectedExamType != null) {
-          matchesExamType = false; // Si filtre actif, chercher correspondance
-          final metadata = doc['metadata'];
-          if (metadata != null && metadata is Map) {
-            final examType = metadata['exam_type']?.toString().toLowerCase();
-            if (examType == _selectedExamType!.toLowerCase()) {
-              matchesExamType = true;
+      final allFiltered =
+          documents.where((doc) {
+            final name = (doc['original_name'] ?? '').toLowerCase();
+            final matchesSearch = name.contains(query);
+            final matchesCategory =
+                _selectedCategory == 'Tous' ||
+                (doc['category'] ?? 'Non catégorisé') == _selectedCategory;
+
+            // Filtre par type d'examen
+            bool matchesExamType = true; // Par défaut, pas de filtre
+            if (_selectedExamType != null) {
+              matchesExamType =
+                  false; // Si filtre actif, chercher correspondance
+              final metadata = doc['metadata'];
+              if (metadata != null && metadata is Map) {
+                final examType =
+                    metadata['exam_type']?.toString().toLowerCase();
+                if (examType == _selectedExamType!.toLowerCase()) {
+                  matchesExamType = true;
+                }
+              }
+              // Aussi chercher dans le nom du document
+              if (!matchesExamType) {
+                matchesExamType = name.contains(
+                  _selectedExamType!.toLowerCase(),
+                );
+              }
             }
-          }
-          // Aussi chercher dans le nom du document
-          if (!matchesExamType) {
-            matchesExamType = name.contains(_selectedExamType!.toLowerCase());
-          }
-        }
-        
-        return matchesSearch && matchesCategory && matchesExamType;
-      }).toList();
-      
+
+            return matchesSearch && matchesCategory && matchesExamType;
+          }).toList();
+
       // Trier les documents filtrés
       final sorted = _sortDocuments(allFiltered);
-      
+
       // Pagination : Limiter à la première page
       _currentPage = 0;
       _hasMoreItems = sorted.length > _itemsPerPage;
       filteredDocuments = sorted.take(_itemsPerPage).toList();
     });
   }
-  
+
   /// Charge la page suivante pour la pagination
   void _loadNextPage() {
     if (!_hasMoreItems || isLoading) return;
-    
+
     final query = _searchController.text.toLowerCase();
-    final allFiltered = documents.where((doc) {
-      final name = (doc['original_name'] ?? '').toLowerCase();
-      final matchesSearch = name.contains(query);
-      final matchesCategory = _selectedCategory == 'Tous' ||
-          (doc['category'] ?? 'Non catégorisé') == _selectedCategory;
-      
-      bool matchesExamType = true;
-      if (_selectedExamType != null) {
-        matchesExamType = false;
-        final metadata = doc['metadata'];
-        if (metadata != null && metadata is Map) {
-          final examType = metadata['exam_type']?.toString().toLowerCase();
-          if (examType == _selectedExamType!.toLowerCase()) {
-            matchesExamType = true;
+    final allFiltered =
+        documents.where((doc) {
+          final name = (doc['original_name'] ?? '').toLowerCase();
+          final matchesSearch = name.contains(query);
+          final matchesCategory =
+              _selectedCategory == 'Tous' ||
+              (doc['category'] ?? 'Non catégorisé') == _selectedCategory;
+
+          bool matchesExamType = true;
+          if (_selectedExamType != null) {
+            matchesExamType = false;
+            final metadata = doc['metadata'];
+            if (metadata != null && metadata is Map) {
+              final examType = metadata['exam_type']?.toString().toLowerCase();
+              if (examType == _selectedExamType!.toLowerCase()) {
+                matchesExamType = true;
+              }
+            }
+            if (!matchesExamType) {
+              matchesExamType = name.contains(_selectedExamType!.toLowerCase());
+            }
           }
-        }
-        if (!matchesExamType) {
-          matchesExamType = name.contains(_selectedExamType!.toLowerCase());
-        }
-      }
-      
-      return matchesSearch && matchesCategory && matchesExamType;
-    }).toList();
-    
+
+          return matchesSearch && matchesCategory && matchesExamType;
+        }).toList();
+
     // Trier les documents filtrés
     final sorted = _sortDocuments(allFiltered);
-    
+
     final nextPage = _currentPage + 1;
     final startIndex = nextPage * _itemsPerPage;
     final endIndex = (startIndex + _itemsPerPage).clamp(0, sorted.length);
-    
+
     if (startIndex >= sorted.length) {
       setState(() {
         _hasMoreItems = false;
       });
       return;
     }
-    
+
     setState(() {
       filteredDocuments.addAll(sorted.sublist(startIndex, endIndex));
       _currentPage = nextPage;
       _hasMoreItems = endIndex < sorted.length;
     });
   }
-  
+
   /// Obtient la répartition des examens par type
   Map<String, int> _getExamTypeDistribution() {
     final distribution = <String, int>{};
@@ -280,19 +288,21 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
             },
           ),
           const SizedBox(width: 8),
-          ...distribution.keys.map((examType) => Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: FilterChip(
-                  label: Text('$examType (${distribution[examType]})'),
-                  selected: _selectedExamType == examType,
-                  onSelected: (selected) {
-                    setState(() {
-                      _selectedExamType = selected ? examType : null;
-                    });
-                    _filterDocuments();
-                  },
-                ),
-              )),
+          ...distribution.keys.map(
+            (examType) => Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: FilterChip(
+                label: Text('$examType (${distribution[examType]})'),
+                selected: _selectedExamType == examType,
+                onSelected: (selected) {
+                  setState(() {
+                    _selectedExamType = selected ? examType : null;
+                  });
+                  _filterDocuments();
+                },
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -315,7 +325,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-            const Text(
+          const Text(
             'Répartition des examens',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
@@ -329,9 +339,9 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                   Expanded(
                     child: Text(
                       '${entry.key}: ${entry.value}',
-                    style: const TextStyle(fontSize: 16),
+                      style: const TextStyle(fontSize: 16),
+                    ),
                   ),
-                ),
                   SizedBox(
                     width: 100,
                     child: LinearProgressIndicator(
@@ -343,10 +353,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  Text(
-                    '$percentage%',
-                    style: const TextStyle(fontSize: 16),
-                  ),
+                  Text('$percentage%', style: const TextStyle(fontSize: 16)),
                 ],
               ),
             );
@@ -358,7 +365,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
 
   Future<void> _loadDocuments() async {
     if (!mounted) return;
-    
+
     setState(() {
       isLoading = true;
     });
@@ -366,7 +373,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     try {
       final docs = await LocalStorageService.getDocuments();
       if (!mounted) return;
-      
+
       setState(() {
         documents = docs;
         // Trier les documents
@@ -379,13 +386,13 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       });
     } catch (e) {
       if (!mounted) return;
-      
+
       setState(() {
         isLoading = false;
         documents = [];
         filteredDocuments = [];
       });
-      
+
       // Afficher l'erreur seulement si le widget est monté
       if (mounted) {
         _showError('Erreur lors du chargement des documents: $e');
@@ -395,7 +402,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
 
   Future<void> _uploadDocument() async {
     if (!mounted) return;
-    
+
     try {
       // Permettre PDF et autres types de documents médicaux
       FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -406,25 +413,37 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
 
       if (result != null) {
         if (!mounted) return;
-        
+
         setState(() {
           isUploading = true;
         });
 
         final pickedFile = result.files.single;
         final fileName = pickedFile.name;
-        
+
         // Vérifier que c'est un type de fichier supporté
-        final allowedExtensions = ['.pdf', '.jpg', '.jpeg', '.png', '.doc', '.docx', '.txt'];
-        final fileExtension = fileName.toLowerCase().substring(fileName.lastIndexOf('.'));
+        final allowedExtensions = [
+          '.pdf',
+          '.jpg',
+          '.jpeg',
+          '.png',
+          '.doc',
+          '.docx',
+          '.txt',
+        ];
+        final fileExtension = fileName.toLowerCase().substring(
+          fileName.lastIndexOf('.'),
+        );
         if (!allowedExtensions.contains(fileExtension)) {
-          _showError('Type de fichier non supporté. Formats acceptés: PDF, JPG, PNG, DOC, DOCX, TXT');
+          _showError(
+            'Type de fichier non supporté. Formats acceptés: PDF, JPG, PNG, DOC, DOCX, TXT',
+          );
           setState(() {
             isUploading = false;
           });
           return;
         }
-        
+
         final timestamp = DateTime.now().millisecondsSinceEpoch;
         final uniqueFileName = '${timestamp}_$fileName';
 
@@ -463,7 +482,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         // Demander la catégorie avant de sauvegarder
         if (!mounted) return;
         final category = await _showCategoryDialog();
-        
+
         // Sauvegarder les métadonnées localement
         final documentId = timestamp.toString();
         final document = <String, dynamic>{
@@ -471,7 +490,10 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           'name': uniqueFileName,
           'original_name': fileName,
           'path': kIsWeb ? uniqueFileName : (savedFile as dynamic).path,
-          'file_size': kIsWeb ? pickedFile.bytes!.length : await (savedFile as dynamic).length(),
+          'file_size':
+              kIsWeb
+                  ? pickedFile.bytes!.length
+                  : await (savedFile as dynamic).length(),
           'category': category ?? 'Autre',
           'created_at': DateTime.now().toIso8601String(),
         };
@@ -488,9 +510,14 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
             );
           } else {
             // Stocker les bytes pour permettre l'ouverture
-            final saved = await WebFileStorageService.saveFileBytes(documentId, pickedFile.bytes!);
+            final saved = await WebFileStorageService.saveFileBytes(
+              documentId,
+              pickedFile.bytes!,
+            );
             if (!saved) {
-              AppLogger.warning('Impossible de stocker les bytes du fichier $documentId');
+              AppLogger.warning(
+                'Impossible de stocker les bytes du fichier $documentId',
+              );
             }
           }
         }
@@ -498,7 +525,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         await LocalStorageService.saveDocument(document);
 
         if (!mounted) return;
-        
+
         setState(() {
           isUploading = false;
         });
@@ -511,7 +538,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       }
     } catch (e) {
       if (!mounted) return;
-      
+
       setState(() {
         isUploading = false;
       });
@@ -519,29 +546,31 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     }
   }
 
-
   Future<void> _deleteDocument(dynamic documentId) async {
     if (!mounted) return;
-    
+
     // Convertir l'ID en String pour cohérence
     final docIdString = documentId.toString();
-    
+
     bool? confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Supprimer le document'),
-        content: const Text('Êtes-vous sûr de vouloir supprimer ce document ?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annuler'),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Supprimer le document'),
+            content: const Text(
+              'Êtes-vous sûr de vouloir supprimer ce document ?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Annuler'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Supprimer'),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Supprimer'),
-          ),
-        ],
-      ),
     );
 
     if (confirmed == true && mounted) {
@@ -552,16 +581,16 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           (d) => d['id'].toString() == docIdString,
           orElse: () => {},
         );
-        
+
         if (doc.isEmpty) {
           if (mounted) {
             _showError('Document introuvable');
           }
           return;
         }
-        
+
         final fileName = doc['name'] as String?;
-        
+
         // Supprimer le fichier physique
         if (fileName != null) {
           if (kIsWeb) {
@@ -569,16 +598,18 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
             await WebFileStorageService.deleteFileBytes(docIdString);
           } else {
             // Sur mobile, utiliser FileStorageService pour supprimer le fichier
-            final deleted = await FileStorageService.deleteDocumentFile(fileName);
+            final deleted = await FileStorageService.deleteDocumentFile(
+              fileName,
+            );
             if (!deleted) {
               // Fichier non supprimé, mais on continue
             }
           }
         }
-        
+
         // Supprimer les métadonnées
         await LocalStorageService.deleteDocument(docIdString);
-        
+
         if (mounted) {
           _showSuccess('Document supprimé avec succès !');
           _loadDocuments(); // Recharger la liste
@@ -602,7 +633,9 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
             Expanded(
               child: Text(
                 message,
-                style: const TextStyle(fontSize: 14), // Minimum 14px pour accessibilité seniors
+                style: const TextStyle(
+                  fontSize: 14,
+                ), // Minimum 14px pour accessibilité seniors
               ),
             ),
           ],
@@ -625,7 +658,9 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
             Expanded(
               child: Text(
                 message,
-                style: const TextStyle(fontSize: 14), // Minimum 14px pour accessibilité seniors
+                style: const TextStyle(
+                  fontSize: 14,
+                ), // Minimum 14px pour accessibilité seniors
               ),
             ),
           ],
@@ -645,7 +680,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
 
   Future<void> _previewDocument(Map<String, dynamic> doc) async {
     if (!mounted) return;
-    
+
     try {
       final filePath = doc['path'] as String?;
       if (filePath == null || filePath.isEmpty) {
@@ -663,36 +698,37 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
 
         // Récupérer les bytes du fichier
         final bytes = await WebFileStorageService.getFileBytes(docId);
-        
+
         if (bytes == null) {
           // Bytes non disponibles (fichier trop volumineux ou non stocké)
           if (!mounted) return;
           final shouldShare = await showDialog<bool>(
             context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Fichier non disponible'),
-              content: const Text(
-                'Ce fichier est trop volumineux ou n\'a pas été stocké avec ses données.\n\n'
-                'Voulez-vous utiliser le bouton de partage pour télécharger le fichier ?',
-                style: TextStyle(fontSize: 14),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: const Text('Annuler'),
-                ),
-                ElevatedButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    foregroundColor: Colors.white,
+            builder:
+                (context) => AlertDialog(
+                  title: const Text('Fichier non disponible'),
+                  content: const Text(
+                    'Ce fichier est trop volumineux ou n\'a pas été stocké avec ses données.\n\n'
+                    'Voulez-vous utiliser le bouton de partage pour télécharger le fichier ?',
+                    style: TextStyle(fontSize: 14),
                   ),
-                  child: const Text('Partager'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: const Text('Annuler'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                      ),
+                      child: const Text('Partager'),
+                    ),
+                  ],
                 ),
-              ],
-            ),
           );
-          
+
           if (shouldShare == true && mounted) {
             await _shareDocument(doc);
           }
@@ -701,7 +737,9 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
 
         // Déterminer le type MIME
         final fileName = doc['original_name']?.toString() ?? 'document.pdf';
-        final extension = fileName.toLowerCase().substring(fileName.lastIndexOf('.'));
+        final extension = fileName.toLowerCase().substring(
+          fileName.lastIndexOf('.'),
+        );
         String mimeType = 'application/pdf';
         switch (extension) {
           case '.jpg':
@@ -723,17 +761,17 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         // Créer un Blob et un Blob URL
         try {
           final blobUrl = createBlobUrl(bytes, mimeType);
-          
+
           if (blobUrl == null) {
             _showError('Impossible de créer l\'URL du document');
             return;
           }
-          
+
           // Ouvrir le Blob URL dans un nouvel onglet
           final uri = Uri.parse(blobUrl);
           if (await canLaunchUrl(uri)) {
             await launchUrl(uri, mode: LaunchMode.externalApplication);
-            
+
             // Nettoyer le Blob URL après un délai (pour éviter fuites mémoire)
             Future.delayed(const Duration(seconds: 5), () {
               revokeBlobUrl(blobUrl);
@@ -785,13 +823,15 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
             } catch (e) {
               permission = Permission.photos;
             }
-            
+
             final status = await permission.status;
             if (!status.isGranted) {
               final result = await permission.request();
               if (!result.isGranted) {
                 if (mounted) {
-                  _showError('Permission de lecture refusée. Impossible d\'ouvrir le PDF.');
+                  _showError(
+                    'Permission de lecture refusée. Impossible d\'ouvrir le PDF.',
+                  );
                 }
                 return;
               }
@@ -804,7 +844,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
 
       // Ouvrir le PDF avec open_filex (fonctionne mieux sur iOS/macOS)
       final result = await OpenFilex.open(filePath);
-      
+
       if (result.type != ResultType.done) {
         // Si open_filex échoue, essayer avec url_launcher en fallback
         try {
@@ -812,7 +852,9 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           if (await canLaunchUrl(uri)) {
             await launchUrl(uri, mode: LaunchMode.externalApplication);
           } else {
-            _showError('Impossible d\'ouvrir le PDF. Installez une application de visualisation PDF.');
+            _showError(
+              'Impossible d\'ouvrir le PDF. Installez une application de visualisation PDF.',
+            );
           }
         } catch (e) {
           if (mounted) {
@@ -829,7 +871,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
 
   Future<void> _shareDocument(Map<String, dynamic> doc) async {
     if (!mounted) return;
-    
+
     try {
       final filePath = doc['path'] as String?;
       if (filePath == null || filePath.isEmpty) {
@@ -847,7 +889,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
 
         // Récupérer les bytes du fichier
         final bytes = await WebFileStorageService.getFileBytes(docId);
-        
+
         if (bytes == null) {
           _showError(
             'Ce fichier est trop volumineux ou n\'a pas été stocké avec ses données.\n\n'
@@ -859,7 +901,9 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         // Créer un Blob et un Blob URL pour le partage
         try {
           final fileName = doc['original_name']?.toString() ?? 'document.pdf';
-          final extension = fileName.toLowerCase().substring(fileName.lastIndexOf('.'));
+          final extension = fileName.toLowerCase().substring(
+            fileName.lastIndexOf('.'),
+          );
           String mimeType = 'application/pdf';
           switch (extension) {
             case '.jpg':
@@ -880,23 +924,24 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
 
           // Créer un Blob URL pour le partage
           final blobUrl = createBlobUrl(bytes, mimeType);
-          
+
           if (blobUrl == null) {
             _showError('Impossible de créer l\'URL du fichier pour le partage');
             return;
           }
-          
+
           // Partager via l'API de partage du navigateur
           try {
             // Utiliser XFile pour créer un fichier partageable
-            final xFile = XFile.fromData(bytes, mimeType: mimeType, name: fileName);
-            await SharePlus.instance.share(
-              ShareParams(
-                files: [xFile],
-                text: 'Document: $fileName',
-              ),
+            final xFile = XFile.fromData(
+              bytes,
+              mimeType: mimeType,
+              name: fileName,
             );
-            
+            await SharePlus.instance.share(
+              ShareParams(files: [xFile], text: 'Document: $fileName'),
+            );
+
             // Nettoyer le Blob URL après un délai
             Future.delayed(const Duration(seconds: 5), () {
               revokeBlobUrl(blobUrl);
@@ -975,78 +1020,79 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
               });
               _filterDocuments();
             },
-            itemBuilder: (context) => [
-              const PopupMenuItem(
-                value: DocumentSortOrder.recent,
-                child: Row(
-                  children: [
-                    Icon(Icons.access_time, size: 20),
-                    SizedBox(width: 8),
-                    Text('Plus récent'),
-                  ],
-                ),
-              ),
-              const PopupMenuItem(
-                value: DocumentSortOrder.oldest,
-                child: Row(
-                  children: [
-                    Icon(Icons.history, size: 20),
-                    SizedBox(width: 8),
-                    Text('Plus ancien'),
-                  ],
-                ),
-              ),
-              const PopupMenuItem(
-                value: DocumentSortOrder.alphabetical,
-                child: Row(
-                  children: [
-                    Icon(Icons.sort_by_alpha, size: 20),
-                    SizedBox(width: 8),
-                    Text('Alphabétique (A-Z)'),
-                  ],
-                ),
-              ),
-              const PopupMenuItem(
-                value: DocumentSortOrder.alphabeticalReverse,
-                child: Row(
-                  children: [
-                    Icon(Icons.sort_by_alpha, size: 20),
-                    SizedBox(width: 8),
-                    Text('Alphabétique (Z-A)'),
-                  ],
-                ),
-              ),
-              const PopupMenuItem(
-                value: DocumentSortOrder.sizeLargest,
-                child: Row(
-                  children: [
-                    Icon(Icons.arrow_downward, size: 20),
-                    SizedBox(width: 8),
-                    Text('Taille (plus grand)'),
-                  ],
-                ),
-              ),
-              const PopupMenuItem(
-                value: DocumentSortOrder.sizeSmallest,
-                child: Row(
-                  children: [
-                    Icon(Icons.arrow_upward, size: 20),
-                    SizedBox(width: 8),
-                    Text('Taille (plus petit)'),
-                  ],
-                ),
-              ),
-              const PopupMenuItem(
-                value: DocumentSortOrder.category,
-                child: Row(
-                  children: [
-                    Icon(Icons.category, size: 20),
-                    SizedBox(width: 8),
-                    Text('Par catégorie'),
-                  ],
-                ),
-              ),
-            ],
+            itemBuilder:
+                (context) => [
+                  const PopupMenuItem(
+                    value: DocumentSortOrder.recent,
+                    child: Row(
+                      children: [
+                        Icon(Icons.access_time, size: 20),
+                        SizedBox(width: 8),
+                        Text('Plus récent'),
+                      ],
+                    ),
+                  ),
+                  const PopupMenuItem(
+                    value: DocumentSortOrder.oldest,
+                    child: Row(
+                      children: [
+                        Icon(Icons.history, size: 20),
+                        SizedBox(width: 8),
+                        Text('Plus ancien'),
+                      ],
+                    ),
+                  ),
+                  const PopupMenuItem(
+                    value: DocumentSortOrder.alphabetical,
+                    child: Row(
+                      children: [
+                        Icon(Icons.sort_by_alpha, size: 20),
+                        SizedBox(width: 8),
+                        Text('Alphabétique (A-Z)'),
+                      ],
+                    ),
+                  ),
+                  const PopupMenuItem(
+                    value: DocumentSortOrder.alphabeticalReverse,
+                    child: Row(
+                      children: [
+                        Icon(Icons.sort_by_alpha, size: 20),
+                        SizedBox(width: 8),
+                        Text('Alphabétique (Z-A)'),
+                      ],
+                    ),
+                  ),
+                  const PopupMenuItem(
+                    value: DocumentSortOrder.sizeLargest,
+                    child: Row(
+                      children: [
+                        Icon(Icons.arrow_downward, size: 20),
+                        SizedBox(width: 8),
+                        Text('Taille (plus grand)'),
+                      ],
+                    ),
+                  ),
+                  const PopupMenuItem(
+                    value: DocumentSortOrder.sizeSmallest,
+                    child: Row(
+                      children: [
+                        Icon(Icons.arrow_upward, size: 20),
+                        SizedBox(width: 8),
+                        Text('Taille (plus petit)'),
+                      ],
+                    ),
+                  ),
+                  const PopupMenuItem(
+                    value: DocumentSortOrder.category,
+                    child: Row(
+                      children: [
+                        Icon(Icons.category, size: 20),
+                        SizedBox(width: 8),
+                        Text('Par catégorie'),
+                      ],
+                    ),
+                  ),
+                ],
           ),
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -1067,14 +1113,15 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                   decoration: InputDecoration(
                     hintText: 'Rechercher un document...',
                     prefixIcon: const Icon(Icons.search),
-                    suffixIcon: _searchController.text.isNotEmpty
-                        ? IconButton(
-                            icon: const Icon(Icons.clear),
-                            onPressed: () {
-                              _searchController.clear();
-                            },
-                          )
-                        : null,
+                    suffixIcon:
+                        _searchController.text.isNotEmpty
+                            ? IconButton(
+                              icon: const Icon(Icons.clear),
+                              onPressed: () {
+                                _searchController.clear();
+                              },
+                            )
+                            : null,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -1084,24 +1131,30 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                 FutureBuilder<List<String>>(
                   future: CategoryService.getCategories(),
                   builder: (context, snapshot) {
-                    final categories = ['Tous', ...(snapshot.data ?? ['Médical', 'Administratif', 'Autre'])];
+                    final categories = [
+                      'Tous',
+                      ...(snapshot.data ??
+                          ['Médical', 'Administratif', 'Autre']),
+                    ];
                     return SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: [
-                          ...categories.map((category) => Padding(
-                                padding: const EdgeInsets.only(right: 8),
-                                child: FilterChip(
-                                  label: Text(category),
-                                  selected: _selectedCategory == category,
-                                  onSelected: (selected) {
-                                    setState(() {
-                                      _selectedCategory = category;
-                                    });
-                                    _filterDocuments();
-                                  },
-                                ),
-                              )),
+                          ...categories.map(
+                            (category) => Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: FilterChip(
+                                label: Text(category),
+                                selected: _selectedCategory == category,
+                                onSelected: (selected) {
+                                  setState(() {
+                                    _selectedCategory = category;
+                                  });
+                                  _filterDocuments();
+                                },
+                              ),
+                            ),
+                          ),
                           IconButton(
                             icon: const Icon(Icons.add),
                             onPressed: _showManageCategoriesDialog,
@@ -1131,39 +1184,51 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 16,
+                    horizontal: 24,
+                  ),
                   minimumSize: const Size(double.infinity, 48),
                 ),
-                child: isUploading
-                    ? const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                child:
+                    isUploading
+                        ? const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
+                              ),
                             ),
-                          ),
-                          SizedBox(width: 12),
-                          Text(
-                            'Upload en cours...',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                          ),
-                        ],
-                      )
-                    : const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.upload),
-                          SizedBox(width: 8),
-                          Text(
-                            'Uploader un document',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                          ),
-                        ],
-                      ),
+                            SizedBox(width: 12),
+                            Text(
+                              'Upload en cours...',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        )
+                        : const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.upload),
+                            SizedBox(width: 8),
+                            Text(
+                              'Uploader un document',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
               ),
             ),
           ),
@@ -1172,125 +1237,146 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           Expanded(
             child: RefreshIndicator(
               onRefresh: _loadDocuments,
-              child: isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : documents.isEmpty
+              child:
+                  isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : documents.isEmpty
                       ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  color: Colors.green.shade500.withValues(alpha: 0.1),
-                                  shape: BoxShape.circle,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.green.shade500.withValues(
+                                  alpha: 0.1,
                                 ),
-                                child: const Icon(
-                                  Icons.folder_open,
-                                  size: 64,
-                                  color: Colors.green,
-                                ),
+                                shape: BoxShape.circle,
                               ),
-                              const SizedBox(height: 16),
-                              const Text(
-                                'Aucun document médical enregistré',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.grey,
-                                ),
+                              child: const Icon(
+                                Icons.folder_open,
+                                size: 64,
+                                color: Colors.green,
                               ),
-                              const SizedBox(height: 8),
-                              const Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 24),
-                                child: Text(
-                                  'Appuie sur le bouton ci‑dessous pour ajouter ton premier document médical (par exemple une ordonnance ou un résultat de prise de sang).',
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 14,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                              const SizedBox(height: 24),
-                              ElevatedButton.icon(
-                                onPressed: _uploadDocument,
-                                icon: const Icon(Icons.upload),
-                                label: const Text('Ajouter un document médical'),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.green,
-                                  foregroundColor: Colors.white,
-                                  minimumSize: const Size(220, 48), // Minimum 48px pour accessibilité seniors
-                                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                    : filteredDocuments.isEmpty
-                        ? Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(16),
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey.shade500.withValues(alpha: 0.1),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: const Icon(
-                                    Icons.search_off,
-                                    size: 64,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
-                                const Text(
-                                  'Aucun document trouvé',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                const Text(
-                                  'Essayez de modifier vos critères de recherche',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ],
                             ),
-                          )
-                        : ListView.builder(
-                            itemCount: filteredDocuments.length + (_hasMoreItems ? 1 : 0),
-                            itemBuilder: (context, index) {
-                              // Bouton "Charger plus" à la fin
-                              if (index == filteredDocuments.length) {
-                                return Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Center(
-                                    child: ElevatedButton.icon(
-                                      onPressed: _loadNextPage,
-                                      icon: const Icon(Icons.expand_more),
-                                      label: const Text('Charger plus'),
-                                      style: ElevatedButton.styleFrom(
-                                        minimumSize: const Size(200, 48), // Minimum 48px pour accessibilité seniors
-                                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                                      ),
+                            const SizedBox(height: 16),
+                            const Text(
+                              'Aucun document médical enregistré',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 24),
+                              child: Text(
+                                'Appuie sur le bouton ci‑dessous pour ajouter ton premier document médical (par exemple une ordonnance ou un résultat de prise de sang).',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 14,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                            ElevatedButton.icon(
+                              onPressed: _uploadDocument,
+                              icon: const Icon(Icons.upload),
+                              label: const Text('Ajouter un document médical'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                foregroundColor: Colors.white,
+                                minimumSize: const Size(
+                                  220,
+                                  48,
+                                ), // Minimum 48px pour accessibilité seniors
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 12,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                      : filteredDocuments.isEmpty
+                      ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade500.withValues(
+                                  alpha: 0.1,
+                                ),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.search_off,
+                                size: 64,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            const Text(
+                              'Aucun document trouvé',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            const Text(
+                              'Essayez de modifier vos critères de recherche',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                      : ListView.builder(
+                        itemCount:
+                            filteredDocuments.length + (_hasMoreItems ? 1 : 0),
+                        itemBuilder: (context, index) {
+                          // Bouton "Charger plus" à la fin
+                          if (index == filteredDocuments.length) {
+                            return Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Center(
+                                child: ElevatedButton.icon(
+                                  onPressed: _loadNextPage,
+                                  icon: const Icon(Icons.expand_more),
+                                  label: const Text('Charger plus'),
+                                  style: ElevatedButton.styleFrom(
+                                    minimumSize: const Size(
+                                      200,
+                                      48,
+                                    ), // Minimum 48px pour accessibilité seniors
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 24,
+                                      vertical: 12,
                                     ),
                                   ),
-                                );
-                              }
-                              
-                              final doc = filteredDocuments[index];
+                                ),
+                              ),
+                            );
+                          }
+
+                          final doc = filteredDocuments[index];
                           return Card(
                             margin: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 4,
                             ),
                             child: ListTile(
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
                               leading: const Icon(
                                 Icons.picture_as_pdf,
                                 color: Colors.red,
@@ -1309,13 +1395,21 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     // Badge type d'examen si disponible
-                                    if (doc['metadata'] != null && doc['metadata'] is Map)
+                                    if (doc['metadata'] != null &&
+                                        doc['metadata'] is Map)
                                       Padding(
-                                        padding: const EdgeInsets.only(bottom: 6),
+                                        padding: const EdgeInsets.only(
+                                          bottom: 6,
+                                        ),
                                         child: ExamTypeBadge(
-                                          examType: doc['metadata']['exam_type'],
-                                          confidence: doc['metadata']['exam_type_confidence']?.toDouble(),
-                                          showConfidence: doc['metadata']['needs_verification'] == true,
+                                          examType:
+                                              doc['metadata']['exam_type'],
+                                          confidence:
+                                              doc['metadata']['exam_type_confidence']
+                                                  ?.toDouble(),
+                                          showConfidence:
+                                              doc['metadata']['needs_verification'] ==
+                                              true,
                                         ),
                                       ),
                                     Text(
@@ -1334,7 +1428,11 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   IconButton(
-                                    icon: const Icon(Icons.visibility, color: Colors.blue, size: 24),
+                                    icon: const Icon(
+                                      Icons.visibility,
+                                      color: Colors.blue,
+                                      size: 24,
+                                    ),
                                     onPressed: () => _previewDocument(doc),
                                     tooltip: 'Prévisualiser',
                                     constraints: const BoxConstraints(
@@ -1343,7 +1441,11 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                                     ),
                                   ),
                                   IconButton(
-                                    icon: const Icon(Icons.share, color: Colors.green, size: 24),
+                                    icon: const Icon(
+                                      Icons.share,
+                                      color: Colors.green,
+                                      size: 24,
+                                    ),
                                     onPressed: () => _shareDocument(doc),
                                     tooltip: 'Partager',
                                     constraints: const BoxConstraints(
@@ -1352,7 +1454,11 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                                     ),
                                   ),
                                   IconButton(
-                                    icon: const Icon(Icons.delete, color: Colors.red, size: 24),
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: Colors.red,
+                                      size: 24,
+                                    ),
                                     onPressed: () => _deleteDocument(doc['id']),
                                     tooltip: 'Supprimer',
                                     constraints: const BoxConstraints(
@@ -1374,46 +1480,53 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         onPressed: isUploading ? null : _uploadDocument,
         backgroundColor: Colors.green,
         tooltip: 'Ajouter un document',
-        child: isUploading
-            ? const SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
-              )
-            : const Icon(Icons.add, color: Colors.white),
+        child:
+            isUploading
+                ? const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                )
+                : const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
 
   Future<String?> _showCategoryDialog() async {
     if (!mounted) return 'Autre';
-    
+
     final categories = await CategoryService.getCategories();
     if (!mounted) return 'Autre';
-    
+
     return showDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Choisir une catégorie'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: categories.map((category) => ListTile(
-              title: Text(category),
-              onTap: () => Navigator.pop(context, category),
-            )).toList(),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Choisir une catégorie'),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children:
+                    categories
+                        .map(
+                          (category) => ListTile(
+                            title: Text(category),
+                            onTap: () => Navigator.pop(context, category),
+                          ),
+                        )
+                        .toList(),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, 'Autre'),
+                child: const Text('Autre'),
+              ),
+            ],
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, 'Autre'),
-            child: const Text('Autre'),
-          ),
-        ],
-      ),
     );
   }
 
@@ -1424,19 +1537,25 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     try {
       // Récupérer les métadonnées du document
       final metadata = document['metadata'] as Map<String, dynamic>?;
-      
+
       // Essayer de détecter un médecin depuis les métadonnées ou le texte
       // Note: Pour l'instant, on utilise seulement les métadonnées
       // Si le backend extrait le texte, on pourrait aussi l'utiliser
-      final detectedDoctor = DoctorDetectionService.detectDoctorFromMetadata(metadata);
+      final detectedDoctor = DoctorDetectionService.detectDoctorFromMetadata(
+        metadata,
+      );
 
       if (detectedDoctor != null && mounted) {
         // Vérifier si le médecin existe déjà
         final doctorService = DoctorService();
         final existingDoctors = await doctorService.getAllDoctors();
-        final alreadyExists = existingDoctors.any((doc) =>
-            doc.firstName.toLowerCase() == detectedDoctor['firstName']!.toLowerCase() &&
-            doc.lastName.toLowerCase() == detectedDoctor['lastName']!.toLowerCase());
+        final alreadyExists = existingDoctors.any(
+          (doc) =>
+              doc.firstName.toLowerCase() ==
+                  detectedDoctor['firstName']!.toLowerCase() &&
+              doc.lastName.toLowerCase() ==
+                  detectedDoctor['lastName']!.toLowerCase(),
+        );
 
         if (alreadyExists) {
           // Le médecin existe déjà, ne pas proposer
@@ -1449,54 +1568,52 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         // Afficher le dialog de proposition
         final shouldAdd = await showDialog<bool>(
           context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Médecin détecté'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Un médecin a été détecté dans ce document :'),
-                const SizedBox(height: 16),
-                Text(
-                  '${detectedDoctor['firstName']} ${detectedDoctor['lastName']}',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-                if (detectedDoctor['specialty'] != null &&
-                    detectedDoctor['specialty']!.isNotEmpty) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    'Spécialité : ${detectedDoctor['specialty']}',
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 14,
+          builder:
+              (context) => AlertDialog(
+                title: const Text('Médecin détecté'),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Un médecin a été détecté dans ce document :'),
+                    const SizedBox(height: 16),
+                    Text(
+                      '${detectedDoctor['firstName']} ${detectedDoctor['lastName']}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
                     ),
+                    if (detectedDoctor['specialty'] != null &&
+                        detectedDoctor['specialty']!.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        'Spécialité : ${detectedDoctor['specialty']}',
+                        style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                      ),
+                    ],
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Souhaitez-vous l\'ajouter à votre liste de médecins ?',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                  ],
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: const Text('Ignorer'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const Text('Ajouter'),
                   ),
                 ],
-                const SizedBox(height: 16),
-                const Text(
-                  'Souhaitez-vous l\'ajouter à votre liste de médecins ?',
-                  style: TextStyle(fontSize: 14),
-                ),
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Ignorer'),
               ),
-              ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
-                ),
-                child: const Text('Ajouter'),
-              ),
-            ],
-          ),
         );
 
         if (shouldAdd == true && mounted) {
@@ -1504,9 +1621,10 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           final newDoctor = Doctor(
             firstName: detectedDoctor['firstName']!,
             lastName: detectedDoctor['lastName']!,
-            specialty: detectedDoctor['specialty']?.isNotEmpty == true
-                ? detectedDoctor['specialty']
-                : null,
+            specialty:
+                detectedDoctor['specialty']?.isNotEmpty == true
+                    ? detectedDoctor['specialty']
+                    : null,
           );
 
           await doctorService.insertDoctor(newDoctor);
@@ -1534,95 +1652,137 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
 
   Future<void> _showManageCategoriesDialog() async {
     if (!mounted) return;
-    
+
     final controller = TextEditingController();
-    
+
     if (!mounted) return;
-    
+
     // Charger les catégories initiales
     List<String> customCategories = [];
     final allCategories = await CategoryService.getCategories();
     if (!mounted) return;
-    customCategories = allCategories.where((c) => 
-      !['Médical', 'Administratif', 'Autre'].contains(c)
-    ).toList();
-    
+    customCategories =
+        allCategories
+            .where((c) => !['Médical', 'Administratif', 'Autre'].contains(c))
+            .toList();
+
     if (!mounted) return;
     await showDialog(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          title: const Text('Gérer les catégories'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: controller,
-                decoration: const InputDecoration(
-                  labelText: 'Nouvelle catégorie',
-                  hintText: 'Nom de la catégorie',
-                ),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () async {
-                  if (controller.text.trim().isNotEmpty) {
-                    // Sanitizer la catégorie avant ajout pour prévenir XSS
-                    final sanitizedCategory = InputSanitizer.sanitizeForStorage(controller.text.trim());
-                    final success = await CategoryService.addCategory(sanitizedCategory);
-                    if (success) {
-                      controller.clear();
-                      // Recharger les catégories depuis le service
-                      final updatedCategories = await CategoryService.getCategories();
-                      setDialogState(() {
-                        customCategories = updatedCategories.where((c) => 
-                          !['Médical', 'Administratif', 'Autre'].contains(c)
-                        ).toList();
-                      });
-                    }
-                  }
-                },
-                child: const Text('Ajouter'),
-              ),
-              const SizedBox(height: 16),
-              const Text('Catégories personnalisées:', style: TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
-              // Afficher les catégories depuis l'état local (mis à jour en temps réel)
-              customCategories.isEmpty
-                  ? const Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Text('Aucune catégorie personnalisée', style: TextStyle(color: Colors.grey)),
-                    )
-                  : Column(
-                      children: customCategories.map((category) => ListTile(
-                        title: Text(category),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () async {
-                            await CategoryService.deleteCategory(category);
-                            // Recharger les catégories depuis le service
-                            final updatedCategories = await CategoryService.getCategories();
-                            setDialogState(() {
-                              customCategories = updatedCategories.where((c) => 
-                                !['Médical', 'Administratif', 'Autre'].contains(c)
-                              ).toList();
-                            });
-                          },
+      builder:
+          (context) => StatefulBuilder(
+            builder:
+                (context, setDialogState) => AlertDialog(
+                  title: const Text('Gérer les catégories'),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextField(
+                        controller: controller,
+                        decoration: const InputDecoration(
+                          labelText: 'Nouvelle catégorie',
+                          hintText: 'Nom de la catégorie',
                         ),
-                      )).toList(),
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () async {
+                          if (controller.text.trim().isNotEmpty) {
+                            // Sanitizer la catégorie avant ajout pour prévenir XSS
+                            final sanitizedCategory =
+                                InputSanitizer.sanitizeForStorage(
+                                  controller.text.trim(),
+                                );
+                            final success = await CategoryService.addCategory(
+                              sanitizedCategory,
+                            );
+                            if (success) {
+                              controller.clear();
+                              // Recharger les catégories depuis le service
+                              final updatedCategories =
+                                  await CategoryService.getCategories();
+                              setDialogState(() {
+                                customCategories =
+                                    updatedCategories
+                                        .where(
+                                          (c) =>
+                                              ![
+                                                'Médical',
+                                                'Administratif',
+                                                'Autre',
+                                              ].contains(c),
+                                        )
+                                        .toList();
+                              });
+                            }
+                          }
+                        },
+                        child: const Text('Ajouter'),
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Catégories personnalisées:',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 8),
+                      // Afficher les catégories depuis l'état local (mis à jour en temps réel)
+                      customCategories.isEmpty
+                          ? const Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Text(
+                              'Aucune catégorie personnalisée',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          )
+                          : Column(
+                            children:
+                                customCategories
+                                    .map(
+                                      (category) => ListTile(
+                                        title: Text(category),
+                                        trailing: IconButton(
+                                          icon: const Icon(
+                                            Icons.delete,
+                                            color: Colors.red,
+                                          ),
+                                          onPressed: () async {
+                                            await CategoryService.deleteCategory(
+                                              category,
+                                            );
+                                            // Recharger les catégories depuis le service
+                                            final updatedCategories =
+                                                await CategoryService.getCategories();
+                                            setDialogState(() {
+                                              customCategories =
+                                                  updatedCategories
+                                                      .where(
+                                                        (c) =>
+                                                            ![
+                                                              'Médical',
+                                                              'Administratif',
+                                                              'Autre',
+                                                            ].contains(c),
+                                                      )
+                                                      .toList();
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                          ),
+                    ],
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Fermer'),
                     ),
-            ],
+                  ],
+                ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Fermer'),
-            ),
-          ],
-        ),
-      ),
     );
-    
+
     // Recharger les documents pour mettre à jour les filtres
     if (mounted) {
       _loadDocuments();

@@ -24,7 +24,8 @@ class ExamTypeBadge extends StatelessWidget {
       case 'scanner':
         return Icons.scanner;
       case 'irm':
-        return Icons.medical_services; // MRI icon not available, using medical_services
+        return Icons
+            .medical_services; // MRI icon not available, using medical_services
       case 'echographie':
       case 'échographie':
         return Icons.waves;
@@ -157,4 +158,3 @@ class ExamTypeBadge extends StatelessWidget {
     );
   }
 }
-

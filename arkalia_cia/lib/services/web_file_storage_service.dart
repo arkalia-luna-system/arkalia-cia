@@ -41,7 +41,7 @@ class WebFileStorageService {
     try {
       final prefs = await SharedPreferences.getInstance();
       final base64String = prefs.getString('$_prefix$fileId');
-      
+
       if (base64String == null) {
         return null;
       }
@@ -85,4 +85,3 @@ class WebFileStorageService {
   /// Retourne la taille maximale autorisée
   static int get maxFileSize => _maxFileSize;
 }
-

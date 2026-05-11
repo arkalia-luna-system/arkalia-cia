@@ -10,7 +10,8 @@ import 'pathology_service.dart';
 /// Service de gestion du calendrier natif pour Arkalia CIA
 /// Intègre le calendrier système et les notifications
 class CalendarService {
-  static final DeviceCalendarPlugin _deviceCalendarPlugin = DeviceCalendarPlugin();
+  static final DeviceCalendarPlugin _deviceCalendarPlugin =
+      DeviceCalendarPlugin();
   static final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
@@ -20,22 +21,23 @@ class CalendarService {
     if (kIsWeb) {
       return;
     }
-    
+
     // Configuration des notifications locales
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
     const DarwinInitializationSettings initializationSettingsIOS =
         DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-    );
+          requestAlertPermission: true,
+          requestBadgePermission: true,
+          requestSoundPermission: true,
+        );
 
-    const InitializationSettings initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS,
-    );
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
+          android: initializationSettingsAndroid,
+          iOS: initializationSettingsIOS,
+        );
 
     await _notificationsPlugin.initialize(initializationSettings);
   }
@@ -53,7 +55,7 @@ class CalendarService {
     if (kIsWeb) {
       return false;
     }
-    
+
     // Vérifier et demander les permissions si nécessaire
     final hasPermission = await hasCalendarPermission();
     if (!hasPermission) {
@@ -62,7 +64,7 @@ class CalendarService {
         return false; // Permission refusée
       }
     }
-    
+
     try {
       // Récupérer les calendriers disponibles
       final calendarsResult = await _deviceCalendarPlugin.retrieveCalendars();
@@ -88,7 +90,9 @@ class CalendarService {
       } else if (pathologyId != null) {
         try {
           final pathologyService = PathologyService();
-          final pathology = await pathologyService.getPathologyById(pathologyId);
+          final pathology = await pathologyService.getPathologyById(
+            pathologyId,
+          );
           if (pathology != null) {
             eventColor = pathology.color;
           }
@@ -102,14 +106,20 @@ class CalendarService {
         calendar.id,
         title: '[Santé] $title',
         description: description,
-        start: TZDateTime.fromMillisecondsSinceEpoch(tz.local, reminderDate.millisecondsSinceEpoch),
-        end: TZDateTime.fromMillisecondsSinceEpoch(tz.local, reminderDate.add(const Duration(hours: 1)).millisecondsSinceEpoch),
+        start: TZDateTime.fromMillisecondsSinceEpoch(
+          tz.local,
+          reminderDate.millisecondsSinceEpoch,
+        ),
+        end: TZDateTime.fromMillisecondsSinceEpoch(
+          tz.local,
+          reminderDate.add(const Duration(hours: 1)).millisecondsSinceEpoch,
+        ),
         allDay: false,
         // Note: device_calendar ne supporte pas directement les couleurs
         // On stocke la couleur dans la description pour récupération ultérieure
         // Format: [COLOR:#RRGGBB] en début de description si couleur disponible
       );
-      
+
       // Ajouter info couleur dans description si disponible
       if (eventColor != null) {
         // Format: #RRGGBB (sans alpha)
@@ -117,7 +127,8 @@ class CalendarService {
         final r = (eventColor.r * 255.0).round() & 0xff;
         final g = (eventColor.g * 255.0).round() & 0xff;
         final b = (eventColor.b * 255.0).round() & 0xff;
-        final colorHex = '#${r.toRadixString(16).padLeft(2, '0').toUpperCase()}'
+        final colorHex =
+            '#${r.toRadixString(16).padLeft(2, '0').toUpperCase()}'
             '${g.toRadixString(16).padLeft(2, '0').toUpperCase()}'
             '${b.toRadixString(16).padLeft(2, '0').toUpperCase()}';
         event.description = '[COLOR:$colorHex] $description';
@@ -137,7 +148,7 @@ class CalendarService {
       if (recurrence != null && result?.isSuccess == true) {
         DateTime nextDate = reminderDate;
         final endDate = reminderDate.add(const Duration(days: 365)); // 1 an
-        
+
         for (int i = 0; i < 52 && nextDate.isBefore(endDate); i++) {
           switch (recurrence) {
             case 'daily':
@@ -147,22 +158,32 @@ class CalendarService {
               nextDate = nextDate.add(const Duration(days: 7));
               break;
             case 'monthly':
-              nextDate = DateTime(nextDate.year, nextDate.month + 1, nextDate.day);
+              nextDate = DateTime(
+                nextDate.year,
+                nextDate.month + 1,
+                nextDate.day,
+              );
               break;
           }
-          
+
           if (nextDate.isBefore(endDate)) {
             final recurringEvent = Event(
               calendar.id,
               title: '[Santé] $title',
               description: description,
-              start: TZDateTime.fromMillisecondsSinceEpoch(tz.local, nextDate.millisecondsSinceEpoch),
-              end: TZDateTime.fromMillisecondsSinceEpoch(tz.local, nextDate.add(const Duration(hours: 1)).millisecondsSinceEpoch),
+              start: TZDateTime.fromMillisecondsSinceEpoch(
+                tz.local,
+                nextDate.millisecondsSinceEpoch,
+              ),
+              end: TZDateTime.fromMillisecondsSinceEpoch(
+                tz.local,
+                nextDate.add(const Duration(hours: 1)).millisecondsSinceEpoch,
+              ),
               allDay: false,
             );
-            
+
             await _deviceCalendarPlugin.createOrUpdateEvent(recurringEvent);
-            
+
             // Programmer une notification pour chaque occurrence
             await _scheduleNotification(
               title: title,
@@ -188,17 +209,19 @@ class CalendarService {
     try {
       final events = await getUpcomingEvents();
       final now = DateTime.now();
-      
+
       return events
           .where((event) => event.start != null && event.start!.isAfter(now))
-          .map((event) => {
-                'id': event.eventId,
-                'title': event.title?.replaceAll('[Santé] ', '') ?? 'Rappel',
-                'description': event.description ?? '',
-                'reminder_date': event.start?.toIso8601String() ?? '',
-                'is_completed': false,
-                'created_at': event.start?.toIso8601String() ?? '',
-              })
+          .map(
+            (event) => {
+              'id': event.eventId,
+              'title': event.title?.replaceAll('[Santé] ', '') ?? 'Rappel',
+              'description': event.description ?? '',
+              'reminder_date': event.start?.toIso8601String() ?? '',
+              'is_completed': false,
+              'created_at': event.start?.toIso8601String() ?? '',
+            },
+          )
           .toList();
     } catch (e) {
       // Retourner liste vide plutôt que de planter
@@ -225,10 +248,7 @@ class CalendarService {
       for (final calendar in calendarsResult.data!) {
         final calendarEventsResult = await _deviceCalendarPlugin.retrieveEvents(
           calendar.id,
-          RetrieveEventsParams(
-            startDate: now,
-            endDate: endDate,
-          ),
+          RetrieveEventsParams(startDate: now, endDate: endDate),
         );
         if (calendarEventsResult.isSuccess) {
           events.addAll(calendarEventsResult.data!);
@@ -262,7 +282,10 @@ class CalendarService {
         0,
         title,
         description,
-        TZDateTime.fromMillisecondsSinceEpoch(tz.local, date.millisecondsSinceEpoch),
+        TZDateTime.fromMillisecondsSinceEpoch(
+          tz.local,
+          date.millisecondsSinceEpoch,
+        ),
         const NotificationDetails(
           android: AndroidNotificationDetails(
             'arkalia_cia_reminders',
@@ -335,12 +358,13 @@ class CalendarService {
     required DateTime originalTime,
   }) async {
     final reminderTime = originalTime.add(const Duration(minutes: 30));
-    
+
     // Ne programmer que si l'heure n'est pas encore passée
     if (reminderTime.isAfter(DateTime.now())) {
       await scheduleNotification(
         title: '💊 Rappel: $medicationName',
-        description: 'Vous n\'avez pas encore pris $medicationName. '
+        description:
+            'Vous n\'avez pas encore pris $medicationName. '
             'Dosage: $dosage',
         date: reminderTime,
       );
@@ -365,15 +389,17 @@ class CalendarService {
           .map((event) {
             final title = event.title ?? '';
             final description = event.description ?? '';
-            
+
             // Détecter le type d'événement
             String type = 'other';
             String icon = '📅';
-            
+
             if (title.contains('💊') || description.contains('médicament')) {
               type = 'medication';
               icon = '💊';
-            } else if (title.contains('💧') || description.contains('hydratation') || description.contains('eau')) {
+            } else if (title.contains('💧') ||
+                description.contains('hydratation') ||
+                description.contains('eau')) {
               type = 'hydration';
               icon = '💧';
             } else if (title.contains('[Santé]')) {

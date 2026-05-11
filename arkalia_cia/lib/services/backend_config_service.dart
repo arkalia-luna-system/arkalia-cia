@@ -13,7 +13,7 @@ class BackendConfigService {
   static Future<String> getBackendURL() async {
     final prefs = await SharedPreferences.getInstance();
     final savedUrl = prefs.getString(_backendUrlKey);
-    
+
     // Si aucune URL n'est configurée, utiliser localhost:8000 par défaut pour le web
     if (savedUrl == null || savedUrl.isEmpty) {
       if (kIsWeb) {
@@ -23,16 +23,18 @@ class BackendConfigService {
       // Sur mobile, retourner vide pour forcer la configuration
       return '';
     }
-    
+
     // Si l'URL contient localhost ou 127.0.0.1, remplacer par une IP vide
     // pour forcer la reconfiguration sur mobile (mais OK sur web)
     if (savedUrl.contains('localhost') || savedUrl.contains('127.0.0.1')) {
       if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
-        AppLogger.warning('localhost détecté sur mobile - URL invalide, retour vide');
+        AppLogger.warning(
+          'localhost détecté sur mobile - URL invalide, retour vide',
+        );
         return '';
       }
     }
-    
+
     return savedUrl;
   }
 
@@ -66,4 +68,3 @@ class BackendConfigService {
     }
   }
 }
-

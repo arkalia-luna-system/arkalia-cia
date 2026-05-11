@@ -9,20 +9,19 @@ import 'offline_cache_service.dart';
 import 'auth_api_service.dart';
 
 class ApiService {
-  static Future<String> get baseUrl async => await BackendConfigService.getBackendURL();
+  static Future<String> get baseUrl async =>
+      await BackendConfigService.getBackendURL();
 
   // Headers communs avec authentification JWT
   static Future<Map<String, String>> get _headers async {
-    final headers = {
-      'Content-Type': 'application/json',
-    };
-    
+    final headers = {'Content-Type': 'application/json'};
+
     // Ajouter le token JWT si disponible
     final token = await AuthApiService.getAccessToken();
     if (token != null) {
       headers['Authorization'] = 'Bearer $token';
     }
-    
+
     return headers;
   }
 
@@ -44,29 +43,32 @@ class ApiService {
       if (url.isEmpty) {
         return {
           'success': false,
-          'error': 'Backend non configuré. Configurez l\'URL du backend dans les paramètres.',
+          'error':
+              'Backend non configuré. Configurez l\'URL du backend dans les paramètres.',
           'backend_not_configured': true,
         };
       }
-      
+
       // Fonction pour créer et envoyer la requête multipart
       Future<http.StreamedResponse> makeMultipartRequest() async {
         var request = http.MultipartRequest(
           'POST',
           Uri.parse('$url/api/v1/documents/upload'),
         );
-        
+
         // Ajouter le token JWT
         final token = await AuthApiService.getAccessToken();
         if (token != null) {
           request.headers['Authorization'] = 'Bearer $token';
         }
 
-        request.files.add(await http.MultipartFile.fromPath(
-          'file',
-          pdfFile.path,
-          filename: pdfFile.path.split('/').last,
-        ));
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'file',
+            pdfFile.path,
+            filename: pdfFile.path.split('/').last,
+          ),
+        );
 
         return await request.send();
       }
@@ -77,12 +79,16 @@ class ApiService {
 
       // Si 401 (Unauthorized), essayer de rafraîchir le token
       if (response.statusCode == 401) {
-        AppLogger.debug('Token expiré lors de l\'upload, tentative de rafraîchissement...');
+        AppLogger.debug(
+          'Token expiré lors de l\'upload, tentative de rafraîchissement...',
+        );
         final refreshResult = await AuthApiService.refreshToken();
 
         if (refreshResult['success'] == true) {
           // Token rafraîchi, réessayer l'upload
-          AppLogger.debug('Token rafraîchi avec succès, nouvelle tentative d\'upload...');
+          AppLogger.debug(
+            'Token rafraîchi avec succès, nouvelle tentative d\'upload...',
+          );
           response = await makeMultipartRequest();
           responseBody = await response.stream.bytesToString();
         } else {
@@ -107,10 +113,7 @@ class ApiService {
       }
     } catch (e) {
       AppLogger.error('Erreur upload document', e);
-      return {
-        'success': false,
-        'error': 'Erreur: $e',
-      };
+      return {'success': false, 'error': 'Erreur: $e'};
     }
   }
 
@@ -129,39 +132,36 @@ class ApiService {
           // Retourner le cache si disponible, sinon liste vide
           if (cached != null && cached is List) {
             return List<Map<String, dynamic>>.from(
-              cached.map((item) => item as Map<String, dynamic>)
+              cached.map((item) => item as Map<String, dynamic>),
             );
           }
           return <Map<String, dynamic>>[];
         }
-        
+
         final response = await _makeAuthenticatedRequest(() async {
           final headers = await _headers;
           return await http
-              .get(
-                Uri.parse('$url/api/v1/documents'),
-                headers: headers,
-              )
+              .get(Uri.parse('$url/api/v1/documents'), headers: headers)
               .timeout(const Duration(seconds: 10));
         });
 
         List<dynamic> data = response as List;
         final result = data.cast<Map<String, dynamic>>();
-        
+
         // Mettre en cache pour usage offline
         await OfflineCacheService.cacheData('documents', result);
-        
+
         return result;
       },
     ).catchError((e) {
       ErrorHelper.logError('ApiService.getDocuments', e);
-      
+
       // En cas d'erreur réseau, retourner le cache si disponible
       if (ErrorHelper.isNetworkError(e) && cached != null) {
         AppLogger.debug('Erreur réseau, utilisation du cache offline');
         return List<Map<String, dynamic>>.from(cached);
       }
-      
+
       return <Map<String, dynamic>>[];
     });
   }
@@ -213,7 +213,7 @@ class ApiService {
           return jsonData;
         }
       }
-      
+
       return {
         'success': false,
         'error': 'Erreur lors de la création du rappel',
@@ -236,10 +236,7 @@ class ApiService {
         final response = await _makeAuthenticatedRequest(() async {
           final headers = await _headers;
           return await http
-              .get(
-                Uri.parse('$url/api/v1/reminders'),
-                headers: headers,
-              )
+              .get(Uri.parse('$url/api/v1/reminders'), headers: headers)
               .timeout(const Duration(seconds: 10));
         });
 
@@ -266,23 +263,26 @@ class ApiService {
       if (url.isEmpty) {
         return {
           'success': false,
-          'error': 'Backend non configuré. Configurez l\'URL du backend dans les paramètres.',
+          'error':
+              'Backend non configuré. Configurez l\'URL du backend dans les paramètres.',
           'backend_not_configured': true,
         };
       }
 
       final response = await _makeAuthenticatedRequest(() async {
         final headers = await _headers;
-        return await http.post(
-          Uri.parse('$url/api/v1/emergency-contacts'),
-          headers: headers,
-          body: json.encode({
-            'name': name,
-            'phone': phone,
-            'relationship': relationship,
-            'is_primary': isPrimary,
-          }),
-        ).timeout(const Duration(seconds: 10));
+        return await http
+            .post(
+              Uri.parse('$url/api/v1/emergency-contacts'),
+              headers: headers,
+              body: json.encode({
+                'name': name,
+                'phone': phone,
+                'relationship': relationship,
+                'is_primary': isPrimary,
+              }),
+            )
+            .timeout(const Duration(seconds: 10));
       });
 
       // _makeAuthenticatedRequest retourne un Map décodé en cas de succès
@@ -292,32 +292,32 @@ class ApiService {
         return response;
       } else {
         // Réponse inattendue
-        return {
-          'success': false,
-          'error': 'Réponse inattendue du serveur',
-        };
+        return {'success': false, 'error': 'Réponse inattendue du serveur'};
       }
     } catch (e) {
       ErrorHelper.logError('ApiService.createEmergencyContact', e);
-      
+
       // Extraire le message d'erreur de l'exception
       String errorMsg;
       final errorString = e.toString();
-      
+
       // Si l'exception contient un message détaillé (venant de _makeAuthenticatedRequest)
       if (errorString.startsWith('Exception: ')) {
         errorMsg = errorString.substring(11); // Enlever "Exception: "
       } else {
         errorMsg = ErrorHelper.getUserFriendlyMessage(e);
       }
-      
+
       // Vérifier si c'est une erreur de timeout ou de connexion
-      if (errorString.contains('TimeoutException') || errorString.contains('timeout')) {
+      if (errorString.contains('TimeoutException') ||
+          errorString.contains('timeout')) {
         errorMsg = 'Délai d\'attente dépassé. Vérifiez votre connexion.';
-      } else if (errorString.contains('SocketException') || errorString.contains('Failed host lookup')) {
-        errorMsg = 'Impossible de se connecter au serveur. Vérifiez votre connexion internet.';
+      } else if (errorString.contains('SocketException') ||
+          errorString.contains('Failed host lookup')) {
+        errorMsg =
+            'Impossible de se connecter au serveur. Vérifiez votre connexion internet.';
       }
-      
+
       return {
         'success': false,
         'error': errorMsg,
@@ -371,9 +371,11 @@ class ApiService {
 
     try {
       final baseUrlValue = await baseUrl;
-      
+
       // Test rapide de connexion avant la requête principale
-      final isConnected = await BackendConfigService.testConnection(baseUrlValue);
+      final isConnected = await BackendConfigService.testConnection(
+        baseUrlValue,
+      );
       if (!isConnected) {
         return {
           'success': false,
@@ -383,16 +385,18 @@ class ApiService {
       }
 
       final headers = await _headers;
-      final response = await http.post(
-        Uri.parse('$baseUrlValue/api/v1/health-portals'),
-        headers: headers,
-        body: json.encode({
-          'name': name,
-          'url': url,
-          'description': description,
-          'category': category,
-        }),
-      ).timeout(const Duration(seconds: 5));
+      final response = await http
+          .post(
+            Uri.parse('$baseUrlValue/api/v1/health-portals'),
+            headers: headers,
+            body: json.encode({
+              'name': name,
+              'url': url,
+              'description': description,
+              'category': category,
+            }),
+          )
+          .timeout(const Duration(seconds: 5));
 
       if (response.statusCode == 200) {
         return json.decode(response.body);
@@ -409,14 +413,15 @@ class ApiService {
     } catch (e) {
       // Ne logger l'erreur que si ce n'est pas une erreur de connexion normale (backend non disponible)
       final errorString = e.toString().toLowerCase();
-      final isConnectionRefused = e is SocketException && 
-                                  (errorString.contains('connection refused') || 
-                                   errorString.contains('errno = 61'));
-      
+      final isConnectionRefused =
+          e is SocketException &&
+          (errorString.contains('connection refused') ||
+              errorString.contains('errno = 61'));
+
       if (!isConnectionRefused) {
         ErrorHelper.logError('ApiService.createHealthPortal', e);
       }
-      
+
       return {
         'success': false,
         'error': ErrorHelper.getUserFriendlyMessage(e),
@@ -434,10 +439,7 @@ class ApiService {
         final response = await _makeAuthenticatedRequest(() async {
           final headers = await _headers;
           return await http
-              .get(
-                Uri.parse('$url/api/v1/health-portals'),
-                headers: headers,
-              )
+              .get(Uri.parse('$url/api/v1/health-portals'), headers: headers)
               .timeout(const Duration(seconds: 10));
         });
 
@@ -478,10 +480,7 @@ class ApiService {
 
       final headers = await _headers;
       final response = await http
-          .get(
-            Uri.parse('$url$endpoint'),
-            headers: headers,
-          )
+          .get(Uri.parse('$url$endpoint'), headers: headers)
           .timeout(const Duration(seconds: 10));
 
       return response;
@@ -526,7 +525,7 @@ class ApiService {
           // FastAPI peut retourner 'detail' comme string ou liste (pour erreurs de validation)
           dynamic detail = errorData['detail'];
           String errorMsg;
-          
+
           if (detail is List && detail.isNotEmpty) {
             // Si detail est une liste (erreurs de validation FastAPI)
             // Extraire le message de la première erreur
@@ -539,11 +538,12 @@ class ApiService {
           } else if (detail is String) {
             errorMsg = detail;
           } else {
-            errorMsg = errorData['message'] ?? 
-                      errorData['error'] ??
-                      'Erreur HTTP ${response.statusCode}';
+            errorMsg =
+                errorData['message'] ??
+                errorData['error'] ??
+                'Erreur HTTP ${response.statusCode}';
           }
-          
+
           AppLogger.debug('Erreur API (${response.statusCode}): $errorMsg');
           throw Exception(errorMsg);
         } catch (e) {
@@ -566,7 +566,7 @@ class ApiService {
   // === RAPPORTS MÉDICAUX ===
 
   /// Génère un rapport médical pré-consultation combinant CIA + ARIA
-  /// 
+  ///
   /// [consultationDate] Date de consultation (ISO format, optionnel, défaut: aujourd'hui)
   /// [daysRange] Nombre de jours à inclure (défaut: 30)
   /// [includeAria] Inclure les données ARIA si disponibles (défaut: true)
@@ -606,15 +606,13 @@ class ApiService {
         final errorData = json.decode(response.body);
         return {
           'success': false,
-          'error': errorData['detail'] ?? 'Erreur lors de la génération du rapport',
+          'error':
+              errorData['detail'] ?? 'Erreur lors de la génération du rapport',
         };
       }
     } catch (e) {
       AppLogger.error('Erreur génération rapport médical', e);
-      return {
-        'success': false,
-        'error': e.toString(),
-      };
+      return {'success': false, 'error': e.toString()};
     }
   }
 }

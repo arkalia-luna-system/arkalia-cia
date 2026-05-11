@@ -58,7 +58,9 @@ class MultiDeviceSyncService {
         AppLogger.info('Profil synchronisé avec succès');
         return true;
       } else {
-        AppLogger.error('Erreur synchronisation profil: ${response.statusCode}');
+        AppLogger.error(
+          'Erreur synchronisation profil: ${response.statusCode}',
+        );
         return false;
       }
     } catch (e) {
@@ -83,9 +85,7 @@ class MultiDeviceSyncService {
       final response = await _makeAuthenticatedRequest(
         () => http.get(
           Uri.parse('$backendUrl/api/v1/user/profile'),
-          headers: {
-            'Authorization': 'Bearer $token',
-          },
+          headers: {'Authorization': 'Bearer $token'},
         ),
       );
 
@@ -140,12 +140,7 @@ class MultiDeviceSyncService {
   /// Synchronise les données utilisateur (documents, rappels, etc.) entre appareils
   /// Utilise le chiffrement E2E pour la sécurité
   static Future<Map<String, int>> syncUserData() async {
-    final stats = {
-      'documents': 0,
-      'reminders': 0,
-      'contacts': 0,
-      'errors': 0,
-    };
+    final stats = {'documents': 0, 'reminders': 0, 'contacts': 0, 'errors': 0};
 
     try {
       final backendUrl = await BackendConfigService.getBackendURL();
@@ -211,4 +206,3 @@ class MultiDeviceSyncService {
     }
   }
 }
-

@@ -14,7 +14,8 @@ class PatternsDashboardScreen extends StatefulWidget {
   const PatternsDashboardScreen({super.key});
 
   @override
-  State<PatternsDashboardScreen> createState() => _PatternsDashboardScreenState();
+  State<PatternsDashboardScreen> createState() =>
+      _PatternsDashboardScreenState();
 }
 
 class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
@@ -48,27 +49,32 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
 
       // Récupérer données depuis plusieurs sources
       final List<Map<String, dynamic>> data = [];
-      
+
       // 1. Documents
       final documents = await ApiService.getDocuments();
       for (final doc in documents) {
         data.add({
-          'date': doc['created_at'] ?? doc['createdAt'] ?? DateTime.now().toIso8601String(),
+          'date':
+              doc['created_at'] ??
+              doc['createdAt'] ??
+              DateTime.now().toIso8601String(),
           'type': 'document',
           'value': 1,
         });
       }
-      
+
       // 2. Pathologies et leur tracking (LIMITÉ pour économiser mémoire)
       try {
         final pathologyService = PathologyService();
         final allPathologies = await pathologyService.getAllPathologies();
-        
+
         // ⚠️ OPTIMISATION MÉMOIRE : Limiter à 20 pathologies max et 90 jours de tracking
         // Au lieu de charger TOUTES les pathologies avec 365 jours de tracking
         final pathologies = allPathologies.take(20).toList();
-        final trackingStartDate = DateTime.now().subtract(const Duration(days: 90)); // 90 jours au lieu de 365
-        
+        final trackingStartDate = DateTime.now().subtract(
+          const Duration(days: 90),
+        ); // 90 jours au lieu de 365
+
         for (final pathology in pathologies) {
           // Ajouter la création de la pathologie
           data.add({
@@ -76,17 +82,18 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
             'type': 'pathologie',
             'value': 1,
           });
-          
+
           // Ajouter les entrées de tracking (limité à 90 jours)
           final tracking = await pathologyService.getTrackingByPathology(
             pathology.id!,
             startDate: trackingStartDate,
           );
-          
+
           // Limiter aussi le nombre d'entrées de tracking par pathologie (max 100)
           final limitedTracking = tracking.take(100).toList();
           for (final entry in limitedTracking) {
-            final painLevel = entry.data['painLevel'] ?? entry.data['pain_level'];
+            final painLevel =
+                entry.data['painLevel'] ?? entry.data['pain_level'];
             if (painLevel != null) {
               data.add({
                 'date': entry.date.toIso8601String(),
@@ -99,12 +106,12 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
       } catch (e) {
         // Ignorer les erreurs de pathologies
       }
-      
+
       // 3. Médicaments (LIMITÉ pour économiser mémoire)
       try {
         final medicationService = MedicationService();
         final allMedications = await medicationService.getAllMedications();
-        
+
         // ⚠️ OPTIMISATION MÉMOIRE : Limiter à 50 médicaments max
         final medications = allMedications.take(50).toList();
         for (final medication in medications) {
@@ -117,10 +124,11 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
       } catch (e) {
         // Ignorer les erreurs de médicaments
       }
-      
+
       if (data.isEmpty) {
         setState(() {
-          _error = 'Aucune donnée disponible pour l\'analyse.\n\nAjoutez des documents, pathologies ou médicaments pour voir des patterns.';
+          _error =
+              'Aucune donnée disponible pour l\'analyse.\n\nAjoutez des documents, pathologies ou médicaments pour voir des patterns.';
           _isLoading = false;
         });
         return;
@@ -129,14 +137,14 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
       // Vérifier si le backend est configuré et activé
       final url = await BackendConfigService.getBackendURL();
       final backendEnabled = await BackendConfigService.isBackendEnabled();
-      
+
       if (url.isEmpty || !backendEnabled) {
         // Mode offline : Afficher un résumé basique des données
         final docCount = data.where((d) => d['type'] == 'document').length;
         final pathoCount = data.where((d) => d['type'] == 'pathologie').length;
         final medCount = data.where((d) => d['type'] == 'medicament').length;
         final painCount = data.where((d) => d['type'] == 'douleur').length;
-        
+
         setState(() {
           _patterns = {
             'summary': {
@@ -146,7 +154,8 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
               'total_pain_records': painCount,
             },
             'offline_mode': true,
-            'message': 'Mode offline activé. Configurez le backend pour une analyse avancée.',
+            'message':
+                'Mode offline activé. Configurez le backend pour une analyse avancée.',
           };
           _isLoading = false;
         });
@@ -162,11 +171,13 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
         if (token != null) {
           patternHeaders['Authorization'] = 'Bearer $token';
         }
-        return await http.post(
-          Uri.parse('$url/api/v1/patterns/analyze'),
-          headers: patternHeaders,
-          body: jsonEncode({'data': data}),
-        ).timeout(const Duration(seconds: 30));
+        return await http
+            .post(
+              Uri.parse('$url/api/v1/patterns/analyze'),
+              headers: patternHeaders,
+              body: jsonEncode({'data': data}),
+            )
+            .timeout(const Duration(seconds: 30));
       });
 
       final patterns = response as Map<String, dynamic>;
@@ -184,33 +195,36 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
       ErrorHelper.logError('PatternsDashboardScreen._loadPatterns', e);
       final errorString = e.toString().toLowerCase();
       String userMessage;
-      
+
       // Messages d'erreur plus spécifiques
-      if (errorString.contains('backend non configuré') || 
+      if (errorString.contains('backend non configuré') ||
           errorString.contains('backend non activé')) {
         userMessage = ErrorHelper.getUserFriendlyMessage(e);
-      } else if (errorString.contains('session expirée') || 
-                 errorString.contains('401') ||
-                 errorString.contains('unauthorized')) {
+      } else if (errorString.contains('session expirée') ||
+          errorString.contains('401') ||
+          errorString.contains('unauthorized')) {
         userMessage = 'Session expirée. Veuillez vous reconnecter.';
-      } else if (errorString.contains('timeout') || 
-                 errorString.contains('timed out')) {
-        userMessage = 'Le serveur met trop de temps à répondre.\n\nVérifiez votre connexion et réessayez.';
-      } else if (errorString.contains('failed host lookup') || 
-                 errorString.contains('connection refused') ||
-                 errorString.contains('network')) {
-        userMessage = 'Impossible de se connecter au serveur.\n\nVérifiez que :\n'
+      } else if (errorString.contains('timeout') ||
+          errorString.contains('timed out')) {
+        userMessage =
+            'Le serveur met trop de temps à répondre.\n\nVérifiez votre connexion et réessayez.';
+      } else if (errorString.contains('failed host lookup') ||
+          errorString.contains('connection refused') ||
+          errorString.contains('network')) {
+        userMessage =
+            'Impossible de se connecter au serveur.\n\nVérifiez que :\n'
             '• Votre connexion internet fonctionne\n'
             '• Le backend est démarré\n'
             '• L\'adresse du backend est correcte dans les paramètres (⚙️ > Backend API)';
-      } else if (errorString.contains('aucune donnée') || 
-                 errorString.contains('données insuffisantes')) {
-        userMessage = 'Aucune donnée disponible pour l\'analyse.\n\n'
+      } else if (errorString.contains('aucune donnée') ||
+          errorString.contains('données insuffisantes')) {
+        userMessage =
+            'Aucune donnée disponible pour l\'analyse.\n\n'
             'Ajoutez des documents, pathologies ou médicaments pour voir des patterns.';
       } else {
         userMessage = ErrorHelper.getUserFriendlyMessage(e);
       }
-      
+
       setState(() {
         _error = userMessage;
         _isLoading = false;
@@ -220,56 +234,62 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
 
   Future<void> _sharePatterns() async {
     if (_patterns == null) return;
-    
+
     try {
       // Formater les patterns en texte lisible
       final buffer = StringBuffer();
-      buffer.writeln('ANALYSE PATTERNS - ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}');
+      buffer.writeln(
+        'ANALYSE PATTERNS - ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
+      );
       buffer.writeln('=' * 50);
       buffer.writeln();
-      
+
       // Patterns récurrents
       final recurring = _patterns!['recurring_patterns'] as List?;
       if (recurring != null && recurring.isNotEmpty) {
         buffer.writeln('PATTERNS RÉCURRENTS:');
         for (var pattern in recurring) {
-          buffer.writeln('• ${pattern['type'] ?? 'Inconnu'}: Tous les ${pattern['frequency_days'] ?? '?'} jours (Confiance: ${((pattern['confidence'] ?? 0) * 100).toStringAsFixed(0)}%)');
+          buffer.writeln(
+            '• ${pattern['type'] ?? 'Inconnu'}: Tous les ${pattern['frequency_days'] ?? '?'} jours (Confiance: ${((pattern['confidence'] ?? 0) * 100).toStringAsFixed(0)}%)',
+          );
         }
         buffer.writeln();
       }
-      
+
       // Tendances
       final trends = _patterns!['trends'] as Map?;
       if (trends != null && trends.isNotEmpty) {
         buffer.writeln('TENDANCES:');
         buffer.writeln('• Direction: ${trends['direction'] ?? 'stable'}');
-        buffer.writeln('• Force: ${trends['strength']?.toStringAsFixed(2) ?? '0'}');
+        buffer.writeln(
+          '• Force: ${trends['strength']?.toStringAsFixed(2) ?? '0'}',
+        );
         buffer.writeln();
       }
-      
+
       // Saisonnalité
       final seasonality = _patterns!['seasonality'] as Map?;
       if (seasonality != null && seasonality.isNotEmpty) {
         buffer.writeln('SAISONNALITÉ:');
         buffer.writeln('• Période: ${seasonality['period'] ?? '?'} jours');
-        buffer.writeln('• Amplitude: ${seasonality['amplitude']?.toStringAsFixed(2) ?? '0'}');
+        buffer.writeln(
+          '• Amplitude: ${seasonality['amplitude']?.toStringAsFixed(2) ?? '0'}',
+        );
         buffer.writeln();
       }
-      
+
       // Prédictions
       final predictions = _patterns!['predictions'] as Map?;
       if (predictions != null && predictions.isNotEmpty) {
         buffer.writeln('PRÉDICTIONS:');
-        buffer.writeln('• Prochaine valeur estimée: ${predictions['next_value']?.toStringAsFixed(2) ?? '?'}');
+        buffer.writeln(
+          '• Prochaine valeur estimée: ${predictions['next_value']?.toStringAsFixed(2) ?? '?'}',
+        );
         buffer.writeln('• Date: ${predictions['next_date'] ?? '?'}');
         buffer.writeln();
       }
-      
-      await SharePlus.instance.share(
-        ShareParams(
-          text: buffer.toString(),
-        ),
-      );
+
+      await SharePlus.instance.share(ShareParams(text: buffer.toString()));
     } catch (e) {
       ErrorHelper.logError('PatternsDashboardScreen._sharePatterns', e);
       if (mounted) {
@@ -314,13 +334,18 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
         final decoded = json.decode(body);
         // Vérifier si la réponse contient une erreur
         if (decoded is Map && decoded.containsKey('error')) {
-          throw Exception(decoded['error'] as String? ?? 'Erreur lors de l\'analyse');
+          throw Exception(
+            decoded['error'] as String? ?? 'Erreur lors de l\'analyse',
+          );
         }
         return decoded;
       } else {
         try {
           final errorData = json.decode(response.body);
-          final detail = errorData['detail'] ?? errorData['message'] ?? 'Erreur HTTP ${response.statusCode}';
+          final detail =
+              errorData['detail'] ??
+              errorData['message'] ??
+              'Erreur HTTP ${response.statusCode}';
           throw Exception(detail);
         } catch (e) {
           if (e is Exception) {
@@ -356,126 +381,147 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
           ),
         ],
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+      body:
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
               : _error != null
               ? RefreshIndicator(
-                  onRefresh: _loadPatterns,
-                  child: SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    child: SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.8,
-                      child: Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(32.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.error_outline, size: 64, color: Colors.red),
-                              const SizedBox(height: 16),
-                              Text(
-                                _error!,
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                              const SizedBox(height: 24),
-                              // Suggestions selon le type d'erreur
-                              if (_error!.toLowerCase().contains('données insuffisantes') ||
-                                  _error!.toLowerCase().contains('aucune donnée'))
-                                Card(
-                                  color: Colors.blue[50],
-                                  child: const Padding(
-                                    padding: EdgeInsets.all(16.0),
-                                    child: Column(
-                                      children: [
-                                        Icon(Icons.info_outline, color: Colors.blue),
-                                        SizedBox(height: 8),
-                                        Text(
-                                          'Conseil:',
-                                          style: TextStyle(fontWeight: FontWeight.bold),
-                                        ),
-                                        SizedBox(height: 4),
-                                        Text(
-                                          'Ajoutez au moins 3 documents, pathologies ou médicaments pour voir des patterns.',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(fontSize: 14),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              if (_error!.toLowerCase().contains('backend') ||
-                                  _error!.toLowerCase().contains('connexion'))
-                                Card(
-                                  color: Colors.orange[50],
-                                  child: const Padding(
-                                    padding: EdgeInsets.all(16.0),
-                                    child: Column(
-                                      children: [
-                                        Icon(Icons.wifi_off, color: Colors.orange),
-                                        SizedBox(height: 8),
-                                        Text(
-                                          'Vérifiez:',
-                                          style: TextStyle(fontWeight: FontWeight.bold),
-                                        ),
-                                        SizedBox(height: 4),
-                                        Text(
-                                          '1. Le backend est démarré\n2. L\'URL est correcte dans les paramètres\n3. Votre connexion réseau',
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(fontSize: 14),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              const SizedBox(height: 16),
-                              ElevatedButton.icon(
-                                onPressed: _loadPatterns,
-                                icon: const Icon(Icons.refresh),
-                                label: const Text('Réessayer'),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                )
-              : _patterns == null
-                  ? RefreshIndicator(
-                      onRefresh: _loadPatterns,
-                      child: SingleChildScrollView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        child: SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.8,
-                          child: const Center(child: Text('Aucune donnée disponible')),
-                        ),
-                      ),
-                    )
-                  : RefreshIndicator(
-                      onRefresh: _loadPatterns,
-                      child: SingleChildScrollView(
-                        padding: const EdgeInsets.all(16),
+                onRefresh: _loadPatterns,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.8,
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(32.0),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            _buildSection(
-                              'Patterns Récurrents',
-                              _patterns!['recurring_patterns'] ?? [],
+                            const Icon(
+                              Icons.error_outline,
+                              size: 64,
+                              color: Colors.red,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              _error!,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontSize: 16),
                             ),
                             const SizedBox(height: 24),
-                            _buildTrendsSection(_patterns!['trends'] ?? {}),
-                            const SizedBox(height: 24),
-                            _buildSeasonalitySection(_patterns!['seasonality'] ?? {}),
-                            if (_patterns!['predictions'] != null &&
-                                (_patterns!['predictions'] as Map).isNotEmpty) ...[
-                              const SizedBox(height: 24),
-                              _buildPredictionsSection(_patterns!['predictions'] ?? {}),
-                            ],
+                            // Suggestions selon le type d'erreur
+                            if (_error!.toLowerCase().contains(
+                                  'données insuffisantes',
+                                ) ||
+                                _error!.toLowerCase().contains('aucune donnée'))
+                              Card(
+                                color: Colors.blue[50],
+                                child: const Padding(
+                                  padding: EdgeInsets.all(16.0),
+                                  child: Column(
+                                    children: [
+                                      Icon(
+                                        Icons.info_outline,
+                                        color: Colors.blue,
+                                      ),
+                                      SizedBox(height: 8),
+                                      Text(
+                                        'Conseil:',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        'Ajoutez au moins 3 documents, pathologies ou médicaments pour voir des patterns.',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(fontSize: 14),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            if (_error!.toLowerCase().contains('backend') ||
+                                _error!.toLowerCase().contains('connexion'))
+                              Card(
+                                color: Colors.orange[50],
+                                child: const Padding(
+                                  padding: EdgeInsets.all(16.0),
+                                  child: Column(
+                                    children: [
+                                      Icon(
+                                        Icons.wifi_off,
+                                        color: Colors.orange,
+                                      ),
+                                      SizedBox(height: 8),
+                                      Text(
+                                        'Vérifiez:',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        '1. Le backend est démarré\n2. L\'URL est correcte dans les paramètres\n3. Votre connexion réseau',
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(fontSize: 14),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            const SizedBox(height: 16),
+                            ElevatedButton.icon(
+                              onPressed: _loadPatterns,
+                              icon: const Icon(Icons.refresh),
+                              label: const Text('Réessayer'),
+                            ),
                           ],
                         ),
                       ),
                     ),
+                  ),
+                ),
+              )
+              : _patterns == null
+              ? RefreshIndicator(
+                onRefresh: _loadPatterns,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.8,
+                    child: const Center(
+                      child: Text('Aucune donnée disponible'),
+                    ),
+                  ),
+                ),
+              )
+              : RefreshIndicator(
+                onRefresh: _loadPatterns,
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildSection(
+                        'Patterns Récurrents',
+                        _patterns!['recurring_patterns'] ?? [],
+                      ),
+                      const SizedBox(height: 24),
+                      _buildTrendsSection(_patterns!['trends'] ?? {}),
+                      const SizedBox(height: 24),
+                      _buildSeasonalitySection(_patterns!['seasonality'] ?? {}),
+                      if (_patterns!['predictions'] != null &&
+                          (_patterns!['predictions'] as Map).isNotEmpty) ...[
+                        const SizedBox(height: 24),
+                        _buildPredictionsSection(
+                          _patterns!['predictions'] ?? {},
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
     );
   }
 
@@ -488,9 +534,9 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
           children: [
             Text(
               title,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             if (items.isEmpty)
@@ -515,7 +561,9 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
       title: Text(pattern['type'] ?? 'Inconnu'),
       subtitle: Text('Fréquence: ${pattern['frequency_days']} jours'),
       trailing: Chip(
-        label: Text('${((pattern['confidence'] ?? 0) * 100).toStringAsFixed(0)}%'),
+        label: Text(
+          '${((pattern['confidence'] ?? 0) * 100).toStringAsFixed(0)}%',
+        ),
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       ),
     );
@@ -530,9 +578,9 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
           children: [
             Text(
               'Tendances',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             if (trends.isEmpty)
@@ -541,8 +589,14 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
               Column(
                 children: [
                   _buildTrendItem('Direction', trends['direction'] ?? 'stable'),
-                  _buildTrendItem('Force', trends['strength']?.toStringAsFixed(2) ?? '0'),
-                  _buildTrendItem('Pente', trends['slope']?.toStringAsFixed(2) ?? '0'),
+                  _buildTrendItem(
+                    'Force',
+                    trends['strength']?.toStringAsFixed(2) ?? '0',
+                  ),
+                  _buildTrendItem(
+                    'Pente',
+                    trends['slope']?.toStringAsFixed(2) ?? '0',
+                  ),
                 ],
               ),
           ],
@@ -558,10 +612,7 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label),
-          Text(
-            value,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
+          Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
         ],
       ),
     );
@@ -576,9 +627,9 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
           children: [
             Text(
               'Saisonnalité',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             if (seasonality.isEmpty)
@@ -634,20 +685,25 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
           children: [
             Text(
               'Prédictions (${predictions['periods'] ?? 30} jours)',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             if (trend.isNotEmpty) ...[
               _buildTrendItem('Direction', trend['direction'] ?? 'stable'),
-              _buildTrendItem('Force', trend['strength']?.toStringAsFixed(2) ?? '0'),
+              _buildTrendItem(
+                'Force',
+                trend['strength']?.toStringAsFixed(2) ?? '0',
+              ),
               const SizedBox(height: 16),
             ],
             if (predictionsList.isEmpty)
               const Text('Aucune prédiction disponible')
             else
-              ...predictionsList.take(5).map((pred) => _buildPredictionItem(pred, trend)),
+              ...predictionsList
+                  .take(5)
+                  .map((pred) => _buildPredictionItem(pred, trend)),
             if (predictionsList.length > 5)
               Text(
                 '... et ${predictionsList.length - 5} autres prédictions',
@@ -659,7 +715,10 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
     );
   }
 
-  Widget _buildPredictionItem(Map<String, dynamic> prediction, Map<String, dynamic> trend) {
+  Widget _buildPredictionItem(
+    Map<String, dynamic> prediction,
+    Map<String, dynamic> trend,
+  ) {
     final date = DateTime.tryParse(prediction['date'] ?? '');
     final value = prediction['predicted_value'] ?? 0.0;
     final lower = prediction['lower_bound'] ?? 0.0;
@@ -690,12 +749,17 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
           ),
           Chip(
             label: Text(
-              direction == 'increasing' ? '↑' : direction == 'decreasing' ? '↓' : '→',
+              direction == 'increasing'
+                  ? '↑'
+                  : direction == 'decreasing'
+                  ? '↓'
+                  : '→',
               style: const TextStyle(fontSize: 16),
             ),
-            backgroundColor: direction == 'increasing'
-                ? Colors.green.withValues(alpha: 0.2)
-                : direction == 'decreasing'
+            backgroundColor:
+                direction == 'increasing'
+                    ? Colors.green.withValues(alpha: 0.2)
+                    : direction == 'decreasing'
                     ? Colors.red.withValues(alpha: 0.2)
                     : Colors.grey.withValues(alpha: 0.2),
           ),
@@ -704,4 +768,3 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
     );
   }
 }
-

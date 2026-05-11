@@ -53,11 +53,14 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
         final enabled = await BackendConfigService.isBackendEnabled();
         String errorMessage;
         if (url.isEmpty) {
-          errorMessage = 'Backend non configuré.\n\nVeuillez configurer l\'URL du backend dans les paramètres (⚙️ > Backend API).';
+          errorMessage =
+              'Backend non configuré.\n\nVeuillez configurer l\'URL du backend dans les paramètres (⚙️ > Backend API).';
         } else if (!enabled) {
-          errorMessage = 'Backend non activé.\n\nVeuillez activer le backend dans les paramètres (⚙️ > Backend API).';
+          errorMessage =
+              'Backend non activé.\n\nVeuillez activer le backend dans les paramètres (⚙️ > Backend API).';
         } else {
-          errorMessage = 'Backend non configuré.\n\nVeuillez configurer le backend dans les paramètres (⚙️ > Backend API).';
+          errorMessage =
+              'Backend non configuré.\n\nVeuillez configurer le backend dans les paramètres (⚙️ > Backend API).';
         }
         setState(() {
           _error = errorMessage;
@@ -83,14 +86,16 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
         if (result['error'] != null) {
           final error = result['error'] as String;
           if (error.contains('Backend non configuré')) {
-            errorMessage = 'Backend non configuré.\n\nVeuillez configurer l\'URL du backend dans les paramètres.';
+            errorMessage =
+                'Backend non configuré.\n\nVeuillez configurer l\'URL du backend dans les paramètres.';
           } else if (error.contains('Connection') || error.contains('Failed')) {
-            errorMessage = 'Impossible de se connecter au backend.\n\nVérifiez que le backend est démarré et que l\'URL est correcte.';
+            errorMessage =
+                'Impossible de se connecter au backend.\n\nVérifiez que le backend est démarré et que l\'URL est correcte.';
           } else {
             errorMessage = error;
           }
         }
-        
+
         setState(() {
           _error = errorMessage;
           _isLoading = false;
@@ -101,12 +106,13 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
       String errorMessage;
       final errorStr = e.toString();
       if (errorStr.contains('Backend non configuré')) {
-        errorMessage = 'Backend non configuré.\n\nVeuillez configurer l\'URL du backend dans les paramètres.';
+        errorMessage =
+            'Backend non configuré.\n\nVeuillez configurer l\'URL du backend dans les paramètres.';
       } else {
         // Utiliser ErrorHelper pour les messages génériques
         errorMessage = ErrorHelper.getUserFriendlyMessage(e);
       }
-      
+
       setState(() {
         _error = errorMessage;
         _isLoading = false;
@@ -119,9 +125,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
 
     try {
       await SharePlus.instance.share(
-        ShareParams(
-          text: _report!['formatted_text'],
-        ),
+        ShareParams(text: _report!['formatted_text']),
       );
     } catch (e) {
       if (mounted) {
@@ -158,13 +162,14 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
           ),
         ],
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _error != null
+      body:
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : _error != null
               ? _buildErrorView()
               : _report == null
-                  ? const Center(child: Text('Aucun rapport disponible'))
-                  : _buildReportView(),
+              ? const Center(child: Text('Aucun rapport disponible'))
+              : _buildReportView(),
     );
   }
 
@@ -175,11 +180,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.error_outline,
-              size: 64,
-              color: Colors.red[300],
-            ),
+            Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
             const SizedBox(height: 16),
             Text(
               'Erreur',
@@ -193,10 +194,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
             Text(
               _error ?? 'Erreur inconnue',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[700],
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.grey[700]),
             ),
             const SizedBox(height: 24),
             ElevatedButton.icon(
@@ -252,10 +250,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
                   const SizedBox(height: 8),
                   Text(
                     'Date de consultation: ${_formatDate(_report!['report_date'])}',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[700],
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.grey[700]),
                   ),
                 ],
               ],
@@ -337,7 +332,8 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
               Icons.description,
               Colors.blue,
             ),
-          if (sections['aria'] != null && sections['aria']['pain_timeline'] != null)
+          if (sections['aria'] != null &&
+              sections['aria']['pain_timeline'] != null)
             _buildStatItem(
               'Entrées douleur',
               '${sections['aria']['pain_timeline']['total_entries'] ?? 0}',
@@ -356,7 +352,12 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
     );
   }
 
-  Widget _buildStatItem(String label, String value, IconData icon, Color color) {
+  Widget _buildStatItem(
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Column(
       children: [
         Icon(icon, color: color, size: 28),
@@ -369,13 +370,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
             color: color.withValues(alpha: 0.8),
           ),
         ),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey[700],
-          ),
-        ),
+        Text(label, style: TextStyle(fontSize: 14, color: Colors.grey[700])),
       ],
     );
   }
@@ -389,4 +384,3 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
     }
   }
 }
-

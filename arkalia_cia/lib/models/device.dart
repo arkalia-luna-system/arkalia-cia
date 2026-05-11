@@ -73,4 +73,3 @@ class Device {
   @override
   int get hashCode => deviceId.hashCode;
 }
-

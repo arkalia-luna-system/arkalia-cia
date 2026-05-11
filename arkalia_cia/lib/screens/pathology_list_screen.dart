@@ -36,9 +36,9 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur chargement: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Erreur chargement: $e')));
       }
     }
   }
@@ -49,39 +49,42 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
 
     final selected = await showDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Ajouter une pathologie'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'Choisissez un template ou créez une pathologie personnalisée:',
-                style: TextStyle(fontSize: 14),
-              ),
-              const SizedBox(height: 16),
-              ...templates.map((template) => ListTile(
-                    leading: Container(
-                      width: 24,
-                      height: 24,
-                      decoration: BoxDecoration(
-                        color: template.color,
-                        shape: BoxShape.circle,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Ajouter une pathologie'),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Choisissez un template ou créez une pathologie personnalisée:',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                  const SizedBox(height: 16),
+                  ...templates.map(
+                    (template) => ListTile(
+                      leading: Container(
+                        width: 24,
+                        height: 24,
+                        decoration: BoxDecoration(
+                          color: template.color,
+                          shape: BoxShape.circle,
+                        ),
                       ),
+                      title: Text(template.name),
+                      onTap: () => Navigator.pop(context, template.name),
                     ),
-                    title: Text(template.name),
-                    onTap: () => Navigator.pop(context, template.name),
-                  )),
-              const Divider(),
-              ListTile(
-                leading: const Icon(Icons.add_circle_outline),
-                title: const Text(customOption),
-                onTap: () => Navigator.pop(context, customOption),
+                  ),
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.add_circle_outline),
+                    title: const Text(customOption),
+                    onTap: () => Navigator.pop(context, customOption),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
     );
 
     if (selected == null || !mounted) return;
@@ -95,52 +98,58 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
       if (!mounted) return;
       final result = await showDialog<bool>(
         context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Nouvelle pathologie'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Nom de la pathologie',
-                  hintText: 'Ex: Diabète',
-                ),
+        builder:
+            (context) => AlertDialog(
+              title: const Text('Nouvelle pathologie'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: nameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Nom de la pathologie',
+                      hintText: 'Ex: Diabète',
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: descriptionController,
+                    decoration: const InputDecoration(
+                      labelText: 'Description (optionnel)',
+                    ),
+                    maxLines: 3,
+                  ),
+                ],
               ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Description (optionnel)',
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('Annuler'),
                 ),
-                maxLines: 3,
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('Annuler'),
+                TextButton(
+                  onPressed: () {
+                    if (nameController.text.isNotEmpty) {
+                      Navigator.pop(context, true);
+                    }
+                  },
+                  child: const Text('Créer'),
+                ),
+              ],
             ),
-            TextButton(
-              onPressed: () {
-                if (nameController.text.isNotEmpty) {
-                  Navigator.pop(context, true);
-                }
-              },
-              child: const Text('Créer'),
-            ),
-          ],
-        ),
       );
 
       if (result == true && nameController.text.isNotEmpty) {
         // Sanitizer les entrées utilisateur pour prévenir XSS
-        final sanitizedName = InputSanitizer.sanitizeForStorage(nameController.text.trim());
-        final sanitizedDescription = descriptionController.text.trim().isNotEmpty
-            ? InputSanitizer.sanitizeForStorage(descriptionController.text.trim())
-            : null;
-        
+        final sanitizedName = InputSanitizer.sanitizeForStorage(
+          nameController.text.trim(),
+        );
+        final sanitizedDescription =
+            descriptionController.text.trim().isNotEmpty
+                ? InputSanitizer.sanitizeForStorage(
+                  descriptionController.text.trim(),
+                )
+                : null;
+
         newPathology = Pathology(
           name: sanitizedName,
           description: sanitizedDescription,
@@ -169,9 +178,9 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Erreur: $e')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Erreur: $e')));
         }
       }
     }
@@ -180,21 +189,24 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
   Future<void> _deletePathology(Pathology pathology) async {
     final confirm = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Supprimer la pathologie'),
-        content: Text('Êtes-vous sûr de vouloir supprimer "${pathology.name}" ?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annuler'),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Supprimer la pathologie'),
+            content: Text(
+              'Êtes-vous sûr de vouloir supprimer "${pathology.name}" ?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Annuler'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                style: TextButton.styleFrom(foregroundColor: Colors.red),
+                child: const Text('Supprimer'),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Supprimer'),
-          ),
-        ],
-      ),
     );
 
     if (confirm == true) {
@@ -202,15 +214,15 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
         await _pathologyService.deletePathology(pathology.id!);
         if (mounted) {
           _loadPathologies();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Pathologie supprimée')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Pathologie supprimée')));
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Erreur: $e')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Erreur: $e')));
         }
       }
     }
@@ -221,52 +233,57 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
     String? tempSelected = _selectedCategory;
     final selected = await showDialog<String?>(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
-          title: const Text('Filtrer par catégorie'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  title: const Text('Toutes les catégories'),
-                  leading: Icon(
-                    tempSelected == null
-                        ? Icons.radio_button_checked
-                        : Icons.radio_button_off,
-                  ),
-                  onTap: () {
-                    setState(() {
-                      tempSelected = null;
-                    });
-                    Navigator.pop(context, null);
-                  },
-                ),
-                const Divider(),
-                ...categories.map((category) {
-                  final count = _pathologiesByCategory[category]?.length ?? 0;
-                  final isSelected = tempSelected == category;
-                  return ListTile(
-                    title: Text(category),
-                    subtitle: Text('$count pathologie${count > 1 ? 's' : ''}'),
-                    leading: Icon(
-                      isSelected
-                          ? Icons.radio_button_checked
-                          : Icons.radio_button_off,
+      builder:
+          (context) => StatefulBuilder(
+            builder:
+                (context, setState) => AlertDialog(
+                  title: const Text('Filtrer par catégorie'),
+                  content: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ListTile(
+                          title: const Text('Toutes les catégories'),
+                          leading: Icon(
+                            tempSelected == null
+                                ? Icons.radio_button_checked
+                                : Icons.radio_button_off,
+                          ),
+                          onTap: () {
+                            setState(() {
+                              tempSelected = null;
+                            });
+                            Navigator.pop(context, null);
+                          },
+                        ),
+                        const Divider(),
+                        ...categories.map((category) {
+                          final count =
+                              _pathologiesByCategory[category]?.length ?? 0;
+                          final isSelected = tempSelected == category;
+                          return ListTile(
+                            title: Text(category),
+                            subtitle: Text(
+                              '$count pathologie${count > 1 ? 's' : ''}',
+                            ),
+                            leading: Icon(
+                              isSelected
+                                  ? Icons.radio_button_checked
+                                  : Icons.radio_button_off,
+                            ),
+                            onTap: () {
+                              setState(() {
+                                tempSelected = category;
+                              });
+                              Navigator.pop(context, category);
+                            },
+                          );
+                        }),
+                      ],
                     ),
-                    onTap: () {
-                      setState(() {
-                        tempSelected = category;
-                      });
-                      Navigator.pop(context, category);
-                    },
-                  );
-                }),
-              ],
-            ),
+                  ),
+                ),
           ),
-        ),
-      ),
     );
 
     if (selected != null && mounted) {
@@ -278,9 +295,11 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
   }
 
   Widget _buildPathologiesList() {
-    final categoriesToShow = _selectedCategory != null
-        ? [_selectedCategory!]
-        : _pathologiesByCategory.keys.toList()..sort();
+    final categoriesToShow =
+        _selectedCategory != null
+              ? [_selectedCategory!]
+              : _pathologiesByCategory.keys.toList()
+          ..sort();
 
     return ListView.builder(
       itemCount: categoriesToShow.length,
@@ -289,109 +308,108 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
         final pathologies = _pathologiesByCategory[category] ?? [];
 
         return ExpansionTile(
-          leading: Icon(
-            Icons.folder,
-            color: Colors.purple[600],
-          ),
+          leading: Icon(Icons.folder, color: Colors.purple[600]),
           title: Text(
             category,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
           ),
-          subtitle: Text('${pathologies.length} pathologie${pathologies.length > 1 ? 's' : ''}'),
-          children: pathologies.map((pathology) {
-            return Card(
-              margin: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 4,
-              ),
-              child: ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                leading: Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: pathology.color.withValues(alpha: 0.2),
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: pathology.color,
-                      width: 2,
+          subtitle: Text(
+            '${pathologies.length} pathologie${pathologies.length > 1 ? 's' : ''}',
+          ),
+          children:
+              pathologies.map((pathology) {
+                return Card(
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 4,
+                  ),
+                  child: ListTile(
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
                     ),
-                  ),
-                  child: Icon(
-                    Icons.medical_services,
-                    color: pathology.color,
-                    size: 24,
-                  ),
-                ),
-                title: Text(
-                  pathology.name,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-                subtitle: Padding(
-                  padding: const EdgeInsets.only(top: 4),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (pathology.description != null)
-                        Text(
-                          pathology.description!,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                      if (pathology.subcategory != null) ...[
-                        const SizedBox(height: 4),
-                        Text(
-                          pathology.subcategory!,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[600],
-                            fontStyle: FontStyle.italic,
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-                trailing: PopupMenuButton(
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(
-                      value: 'delete',
-                      child: Row(
+                    leading: Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: pathology.color.withValues(alpha: 0.2),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: pathology.color, width: 2),
+                      ),
+                      child: Icon(
+                        Icons.medical_services,
+                        color: pathology.color,
+                        size: 24,
+                      ),
+                    ),
+                    title: Text(
+                      pathology.name,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    subtitle: Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(Icons.delete, color: Colors.red),
-                          SizedBox(width: 8),
-                          Text('Supprimer'),
+                          if (pathology.description != null)
+                            Text(
+                              pathology.description!,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                          if (pathology.subcategory != null) ...[
+                            const SizedBox(height: 4),
+                            Text(
+                              pathology.subcategory!,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey[600],
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ),
-                  ],
-                  onSelected: (value) {
-                    if (value == 'delete') {
-                      _deletePathology(pathology);
-                    }
-                  },
-                ),
-                onTap: () async {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PathologyDetailScreen(
-                        pathologyId: pathology.id!,
-                      ),
+                    trailing: PopupMenuButton(
+                      itemBuilder:
+                          (context) => [
+                            const PopupMenuItem(
+                              value: 'delete',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.delete, color: Colors.red),
+                                  SizedBox(width: 8),
+                                  Text('Supprimer'),
+                                ],
+                              ),
+                            ),
+                          ],
+                      onSelected: (value) {
+                        if (value == 'delete') {
+                          _deletePathology(pathology);
+                        }
+                      },
                     ),
-                  );
-                  _loadPathologies();
-                },
-              ),
-            );
-          }).toList(),
+                    onTap: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) => PathologyDetailScreen(
+                                pathologyId: pathology.id!,
+                              ),
+                        ),
+                      );
+                      _loadPathologies();
+                    },
+                  ),
+                );
+              }).toList(),
         );
       },
     );
@@ -419,53 +437,47 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
       ),
       body: RefreshIndicator(
         onRefresh: _loadPathologies,
-        child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : _pathologiesByCategory.isEmpty
+        child:
+            _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _pathologiesByCategory.isEmpty
                 ? SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    child: SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.7,
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: Colors.purple.withValues(alpha: 0.1),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.medical_services,
-                                size: 64,
-                                color: Colors.purple[400],
-                              ),
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.7,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.purple.withValues(alpha: 0.1),
+                              shape: BoxShape.circle,
                             ),
-                            const SizedBox(height: 16),
-                            const Text(
-                              'Aucune pathologie',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.grey,
-                              ),
+                            child: Icon(
+                              Icons.medical_services,
+                              size: 64,
+                              color: Colors.purple[400],
                             ),
-                            const SizedBox(height: 8),
-                            const Text(
-                              'Appuyez sur + pour ajouter une pathologie',
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(height: 16),
+                          const Text(
+                            'Aucune pathologie',
+                            style: TextStyle(fontSize: 18, color: Colors.grey),
+                          ),
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Appuyez sur + pour ajouter une pathologie',
+                            style: TextStyle(color: Colors.grey, fontSize: 14),
+                          ),
+                        ],
                       ),
                     ),
-                  )
+                  ),
+                )
                 : _buildPathologiesList(),
       ),
     );
   }
 }
-

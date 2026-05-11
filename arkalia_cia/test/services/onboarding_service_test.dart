@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  
+
   group('OnboardingService', () {
     setUp(() async {
       // Réinitialiser les préférences avant chaque test
@@ -35,4 +35,3 @@ void main() {
     });
   });
 }
-

@@ -74,7 +74,8 @@ class PathologyAISuggestions extends StatelessWidget {
                       child: Text(
                         question,
                         style: TextStyle(
-                          fontSize: 14, // Minimum 14sp pour accessibilité seniors
+                          fontSize:
+                              14, // Minimum 14sp pour accessibilité seniors
                           color: Colors.blue[900],
                         ),
                       ),
@@ -89,4 +90,3 @@ class PathologyAISuggestions extends StatelessWidget {
     );
   }
 }
-

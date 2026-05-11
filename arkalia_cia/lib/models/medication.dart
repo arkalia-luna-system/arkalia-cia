@@ -5,7 +5,8 @@ class Medication {
   final int? id;
   final String name;
   final String? dosage;
-  final String frequency; // 'daily', 'twice_daily', 'three_times_daily', 'four_times_daily', 'as_needed'
+  final String
+  frequency; // 'daily', 'twice_daily', 'three_times_daily', 'four_times_daily', 'as_needed'
   final List<TimeOfDay> times; // Heures de prise
   final DateTime startDate;
   final DateTime? endDate;
@@ -42,13 +43,14 @@ class Medication {
     List<TimeOfDay> parsedTimes = [];
     if (map['times'] != null && map['times'].toString().isNotEmpty) {
       final timeStrings = (map['times'] as String).split(',');
-      parsedTimes = timeStrings.map((timeStr) {
-        final parts = timeStr.split(':');
-        return TimeOfDay(
-          hour: int.parse(parts[0]),
-          minute: int.parse(parts[1]),
-        );
-      }).toList();
+      parsedTimes =
+          timeStrings.map((timeStr) {
+            final parts = timeStr.split(':');
+            return TimeOfDay(
+              hour: int.parse(parts[0]),
+              minute: int.parse(parts[1]),
+            );
+          }).toList();
     } else {
       parsedTimes = [const TimeOfDay(hour: 8, minute: 0)];
     }
@@ -140,4 +142,3 @@ class MedicationTaken {
     );
   }
 }
-

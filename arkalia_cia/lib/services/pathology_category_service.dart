@@ -14,7 +14,7 @@ class PathologyCategoryService {
       'category': 'Gynécologie',
       'subcategory': 'Syndromes douloureux',
     },
-    
+
     // Cardiologie
     'Hypertension': {
       'category': 'Cardiologie',
@@ -24,7 +24,7 @@ class PathologyCategoryService {
       'category': 'Oncologie',
       'subcategory': 'Pathologies cancéreuses',
     },
-    
+
     // Neurologie
     'Parkinson': {
       'category': 'Neurologie',
@@ -38,17 +38,14 @@ class PathologyCategoryService {
       'category': 'Neurologie',
       'subcategory': 'Maladies auto-immunes',
     },
-    'Migraine': {
-      'category': 'Neurologie',
-      'subcategory': 'Céphalées',
-    },
-    
+    'Migraine': {'category': 'Neurologie', 'subcategory': 'Céphalées'},
+
     // Psychiatrie
     'Dépression': {
       'category': 'Psychiatrie',
       'subcategory': 'Troubles de l\'humeur',
     },
-    
+
     // Endocrinologie
     'Diabète': {
       'category': 'Endocrinologie',
@@ -58,12 +55,9 @@ class PathologyCategoryService {
       'category': 'Endocrinologie',
       'subcategory': 'Troubles thyroïdiens',
     },
-    
+
     // Rhumatologie
-    'Arthrite': {
-      'category': 'Rhumatologie',
-      'subcategory': 'Arthrites',
-    },
+    'Arthrite': {'category': 'Rhumatologie', 'subcategory': 'Arthrites'},
     'Arthrite rhumatoïde': {
       'category': 'Rhumatologie',
       'subcategory': 'Arthrites',
@@ -80,23 +74,20 @@ class PathologyCategoryService {
       'category': 'Rhumatologie',
       'subcategory': 'Pathologies des tissus mous',
     },
-    
+
     // Dermatologie
-    'Eczéma': {
-      'category': 'Dermatologie',
-      'subcategory': 'Dermatites',
-    },
+    'Eczéma': {'category': 'Dermatologie', 'subcategory': 'Dermatites'},
     'Psoriasis': {
       'category': 'Dermatologie',
       'subcategory': 'Maladies inflammatoires',
     },
-    
+
     // Pneumologie
     'Asthme': {
       'category': 'Pneumologie',
       'subcategory': 'Pathologies respiratoires',
     },
-    
+
     // Gastro-entérologie
     'Syndrome du côlon irritable': {
       'category': 'Gastro-entérologie',
@@ -106,12 +97,9 @@ class PathologyCategoryService {
       'category': 'Gastro-entérologie',
       'subcategory': 'Troubles digestifs',
     },
-    
+
     // Hématologie
-    'Anémie': {
-      'category': 'Hématologie',
-      'subcategory': 'Troubles sanguins',
-    },
+    'Anémie': {'category': 'Hématologie', 'subcategory': 'Troubles sanguins'},
     'Myélome': {
       'category': 'Hématologie',
       'subcategory': 'Pathologies malignes',
@@ -131,10 +119,7 @@ class PathologyCategoryService {
   /// Retourne la catégorie et la sous-catégorie d'une pathologie
   static Map<String, String?> getCategoryAndSubcategory(String pathologyName) {
     final data = _pathologyToCategory[pathologyName];
-    return {
-      'category': data?['category'],
-      'subcategory': data?['subcategory'],
-    };
+    return {'category': data?['category'], 'subcategory': data?['subcategory']};
   }
 
   /// Vérifie si une pathologie a un mapping catégorie défini
@@ -190,4 +175,3 @@ class PathologyCategoryService {
     return pathologies..sort();
   }
 }
-

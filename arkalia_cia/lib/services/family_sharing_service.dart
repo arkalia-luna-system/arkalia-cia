@@ -127,23 +127,23 @@ class FamilySharingService {
   static const String _sharedDocumentsKey = 'shared_documents';
   static const String _auditLogKey = 'sharing_audit_log';
   static const String _encryptionKeyKey = 'family_sharing_key';
-  
+
   late encrypt.Encrypter _encrypter;
   bool _encryptionInitialized = false;
 
   Future<void> _initializeEncryption() async {
     if (_encryptionInitialized) return;
-    
+
     final prefs = await SharedPreferences.getInstance();
     String? keyString = prefs.getString(_encryptionKeyKey);
-    
+
     if (keyString == null) {
       // Générer nouvelle clé
       final key = encrypt.Key.fromSecureRandom(32);
       keyString = key.base64;
       await prefs.setString(_encryptionKeyKey, keyString);
     }
-    
+
     final key = encrypt.Key.fromBase64(keyString);
     // IV généré automatiquement lors de l'encryption, pas besoin de le stocker
     _encrypter = encrypt.Encrypter(encrypt.AES(key));
@@ -157,31 +157,41 @@ class FamilySharingService {
     return membersJson.map((json) {
       try {
         final map = Map<String, dynamic>.from(
-          json.split('|').asMap().map((i, v) => MapEntry(
-            ['id', 'name', 'email', 'phone', 'relationship', 'is_active', 'created_at'][i],
-            v,
-          )),
+          json
+              .split('|')
+              .asMap()
+              .map(
+                (i, v) => MapEntry(
+                  [
+                    'id',
+                    'name',
+                    'email',
+                    'phone',
+                    'relationship',
+                    'is_active',
+                    'created_at',
+                  ][i],
+                  v,
+                ),
+              ),
         );
         return FamilyMember.fromMap(map);
       } catch (e) {
         // Format simple si parsing échoue
-        return FamilyMember(
-          name: json,
-          email: '',
-          relationship: 'Famille',
-        );
+        return FamilyMember(name: json, email: '', relationship: 'Famille');
       }
     }).toList();
   }
 
   Future<void> addFamilyMember(FamilyMember member) async {
     final members = await getFamilyMembers();
-    
+
     // Générer un ID unique si non fourni
     if (member.id == null) {
-      final maxId = members.isEmpty 
-          ? 0 
-          : members.map((m) => m.id ?? 0).reduce((a, b) => a > b ? a : b);
+      final maxId =
+          members.isEmpty
+              ? 0
+              : members.map((m) => m.id ?? 0).reduce((a, b) => a > b ? a : b);
       final newMember = FamilyMember(
         id: maxId + 1,
         name: member.name,
@@ -195,38 +205,47 @@ class FamilySharingService {
     } else {
       members.add(member);
     }
-    
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.setStringList(
       _membersKey,
-      members.map((m) => '${m.id}|${m.name}|${m.email}|${m.phone ?? ''}|${m.relationship}|${m.isActive}|${m.createdAt.toIso8601String()}').toList(),
+      members
+          .map(
+            (m) =>
+                '${m.id}|${m.name}|${m.email}|${m.phone ?? ''}|${m.relationship}|${m.isActive}|${m.createdAt.toIso8601String()}',
+          )
+          .toList(),
     );
-    
+
     // Synchroniser avec le backend si configuré
     await _syncMemberToBackend(members.last);
   }
-  
+
   /// Synchronise un membre famille avec le backend
   Future<void> _syncMemberToBackend(FamilyMember member) async {
     try {
       final backendConfigured = await ApiService.isBackendConfigured();
       if (!backendConfigured) {
-        AppLogger.debug('Backend non configuré, synchronisation membre famille ignorée');
+        AppLogger.debug(
+          'Backend non configuré, synchronisation membre famille ignorée',
+        );
         return;
       }
-      
+
       final baseUrl = await BackendConfigService.getBackendURL();
       final token = await AuthApiService.getAccessToken();
       if (token == null) {
-        AppLogger.debug('Non authentifié, synchronisation membre famille ignorée');
+        AppLogger.debug(
+          'Non authentifié, synchronisation membre famille ignorée',
+        );
         return;
       }
-      
+
       final headers = {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       };
-      
+
       final response = await http.post(
         Uri.parse('$baseUrl/api/v1/family-sharing/members'),
         headers: headers,
@@ -238,17 +257,21 @@ class FamilySharingService {
           'is_active': member.isActive,
         }),
       );
-      
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
-        AppLogger.info('Membre famille synchronisé avec backend: ${member.name}');
+        AppLogger.info(
+          'Membre famille synchronisé avec backend: ${member.name}',
+        );
         // Mettre à jour l'ID local avec l'ID backend si disponible
         if (data['id'] != null) {
           // Note: L'ID local reste prioritaire, on ne le remplace pas
           AppLogger.debug('ID backend reçu: ${data['id']}');
         }
       } else {
-        AppLogger.warning('Erreur synchronisation membre famille: ${response.statusCode}');
+        AppLogger.warning(
+          'Erreur synchronisation membre famille: ${response.statusCode}',
+        );
       }
     } catch (e) {
       AppLogger.error('Erreur synchronisation membre famille', e);
@@ -258,47 +281,54 @@ class FamilySharingService {
 
   Future<void> removeFamilyMember(int memberId) async {
     final members = await getFamilyMembers();
-    
+
     members.removeWhere((m) => m.id == memberId);
     final prefs = await SharedPreferences.getInstance();
     await prefs.setStringList(
       _membersKey,
-      members.map((m) => '${m.id}|${m.name}|${m.email}|${m.phone ?? ''}|${m.relationship}|${m.isActive}|${m.createdAt.toIso8601String()}').toList(),
+      members
+          .map(
+            (m) =>
+                '${m.id}|${m.name}|${m.email}|${m.phone ?? ''}|${m.relationship}|${m.isActive}|${m.createdAt.toIso8601String()}',
+          )
+          .toList(),
     );
-    
+
     // Synchroniser la suppression avec le backend
     await _deleteMemberFromBackend(memberId);
   }
-  
+
   /// Supprime un membre famille du backend
   Future<void> _deleteMemberFromBackend(int memberId) async {
     try {
       final backendConfigured = await ApiService.isBackendConfigured();
       if (!backendConfigured) {
-        AppLogger.debug('Backend non configuré, suppression membre famille ignorée');
+        AppLogger.debug(
+          'Backend non configuré, suppression membre famille ignorée',
+        );
         return;
       }
-      
+
       final baseUrl = await BackendConfigService.getBackendURL();
       final token = await AuthApiService.getAccessToken();
       if (token == null) {
         AppLogger.debug('Non authentifié, suppression membre famille ignorée');
         return;
       }
-      
-      final headers = {
-        'Authorization': 'Bearer $token',
-      };
-      
+
+      final headers = {'Authorization': 'Bearer $token'};
+
       final response = await http.delete(
         Uri.parse('$baseUrl/api/v1/family-sharing/members/$memberId'),
         headers: headers,
       );
-      
+
       if (response.statusCode == 200 || response.statusCode == 204) {
         AppLogger.info('Membre famille supprimé du backend: ID $memberId');
       } else {
-        AppLogger.warning('Erreur suppression membre famille backend: ${response.statusCode}');
+        AppLogger.warning(
+          'Erreur suppression membre famille backend: ${response.statusCode}',
+        );
       }
     } catch (e) {
       AppLogger.error('Erreur suppression membre famille backend', e);
@@ -318,42 +348,44 @@ class FamilySharingService {
       AppLogger.warning('Aucun membre sélectionné pour le partage');
       throw Exception('Aucun membre sélectionné pour le partage');
     }
-    
+
     // Vérifier que les membres existent
     final members = await getFamilyMembers();
-    final validMemberIds = memberIds.where((id) => 
-      members.any((m) => m.id == id && m.isActive)
-    ).toList();
-    
+    final validMemberIds =
+        memberIds
+            .where((id) => members.any((m) => m.id == id && m.isActive))
+            .toList();
+
     if (validMemberIds.isEmpty) {
       AppLogger.warning('Aucun membre actif trouvé pour le partage');
       throw Exception('Aucun membre actif trouvé pour le partage');
     }
-    
+
     if (encrypt) {
       await _initializeEncryption();
     }
-    
+
     final prefs = await SharedPreferences.getInstance();
     final sharedJson = prefs.getStringList(_sharedDocumentsKey) ?? [];
-    
+
     // Vérifier si le document n'est pas déjà partagé avec ces membres
     final existingShare = sharedJson.firstWhere(
       (entry) => entry.startsWith('$documentId:'),
       orElse: () => '',
     );
-    
+
     final sharedDoc = SharedDocument(
       documentId: documentId,
       memberIds: validMemberIds,
       sharedAt: DateTime.now(),
       isEncrypted: encrypt,
     );
-    
+
     // Format: documentId:memberIds:sharedAt:encrypt:permissionLevel
     final permission = permissionLevel ?? 'view';
-    final shareEntry = '$documentId:${validMemberIds.join(",")}:${sharedDoc.sharedAt.toIso8601String()}:$encrypt:$permission';
-    
+    final shareEntry =
+        '$documentId:${validMemberIds.join(",")}:${sharedDoc.sharedAt.toIso8601String()}:$encrypt:$permission';
+
     if (existingShare.isNotEmpty) {
       // Mettre à jour le partage existant
       final index = sharedJson.indexOf(existingShare);
@@ -362,34 +394,37 @@ class FamilySharingService {
       // Ajouter un nouveau partage
       sharedJson.add(shareEntry);
     }
-    
+
     await prefs.setStringList(_sharedDocumentsKey, sharedJson);
-    AppLogger.info('Partage enregistré localement: document $documentId avec ${validMemberIds.length} membre(s)');
-    
+    AppLogger.info(
+      'Partage enregistré localement: document $documentId avec ${validMemberIds.length} membre(s)',
+    );
+
     // Enregistrer dans audit log
     await _addAuditLog(documentId, validMemberIds, 'shared');
-    
+
     // Synchroniser avec le backend si configuré
     await _syncShareToBackend(documentId, validMemberIds, permission);
-    
+
     // Envoyer notification si demandé
     if (sendNotification) {
       // S'assurer que NotificationService est initialisé
       await NotificationService.initialize();
-      
+
       final doc = await LocalStorageService.getDocuments();
       final docData = doc.firstWhere(
         (d) => d['id']?.toString() == documentId || d['id'] == documentId,
         orElse: () => {'name': 'Document', 'original_name': 'Document'},
       );
       final docName = docData['original_name'] ?? docData['name'] ?? 'Document';
-      
+
       for (final memberId in validMemberIds) {
         final member = members.firstWhere(
           (m) => m.id == memberId,
-          orElse: () => FamilyMember(name: 'Membre', email: '', relationship: ''),
+          orElse:
+              () => FamilyMember(name: 'Membre', email: '', relationship: ''),
         );
-        
+
         try {
           await NotificationService.notifyDocumentShared(
             documentName: docName,
@@ -400,47 +435,62 @@ class FamilySharingService {
           AppLogger.error('Erreur notification partage', e);
         }
       }
-      
+
       // Confirmation visuelle supplémentaire (sera affichée dans l'UI)
-      AppLogger.info('Document $docName partagé avec ${validMemberIds.length} membre(s)');
+      AppLogger.info(
+        'Document $docName partagé avec ${validMemberIds.length} membre(s)',
+      );
     }
   }
-  
+
   /// Synchronise un partage avec le backend
-  Future<void> _syncShareToBackend(String documentId, List<int> memberIds, String permissionLevel) async {
+  Future<void> _syncShareToBackend(
+    String documentId,
+    List<int> memberIds,
+    String permissionLevel,
+  ) async {
     try {
       final backendConfigured = await ApiService.isBackendConfigured();
       if (!backendConfigured) {
-        AppLogger.debug('Backend non configuré, synchronisation partage ignorée');
+        AppLogger.debug(
+          'Backend non configuré, synchronisation partage ignorée',
+        );
         return;
       }
-      
+
       final baseUrl = await BackendConfigService.getBackendURL();
       final token = await AuthApiService.getAccessToken();
       if (token == null) {
         AppLogger.debug('Non authentifié, synchronisation partage ignorée');
         return;
       }
-      
+
       final members = await getFamilyMembers();
-      final memberEmails = memberIds.map((id) {
-        final member = members.firstWhere(
-          (m) => m.id == id,
-          orElse: () => FamilyMember(name: '', email: '', relationship: ''),
-        );
-        return member.email;
-      }).where((email) => email.isNotEmpty).toList();
-      
+      final memberEmails =
+          memberIds
+              .map((id) {
+                final member = members.firstWhere(
+                  (m) => m.id == id,
+                  orElse:
+                      () => FamilyMember(name: '', email: '', relationship: ''),
+                );
+                return member.email;
+              })
+              .where((email) => email.isNotEmpty)
+              .toList();
+
       if (memberEmails.isEmpty) {
-        AppLogger.warning('Aucun email de membre trouvé pour la synchronisation');
+        AppLogger.warning(
+          'Aucun email de membre trouvé pour la synchronisation',
+        );
         return;
       }
-      
+
       final headers = {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       };
-      
+
       final response = await http.post(
         Uri.parse('$baseUrl/api/v1/family-sharing/share'),
         headers: headers,
@@ -450,16 +500,22 @@ class FamilySharingService {
           'permission_level': permissionLevel,
         }),
       );
-      
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
-        AppLogger.info('Document $documentId partagé avec backend: ${data['shared_count'] ?? memberEmails.length} membre(s)');
+        AppLogger.info(
+          'Document $documentId partagé avec backend: ${data['shared_count'] ?? memberEmails.length} membre(s)',
+        );
       } else {
-        AppLogger.warning('Erreur synchronisation partage backend: ${response.statusCode}');
+        AppLogger.warning(
+          'Erreur synchronisation partage backend: ${response.statusCode}',
+        );
         // Logger le body de l'erreur pour debug
         try {
           final errorData = jsonDecode(response.body);
-          AppLogger.debug('Détails erreur: ${errorData['detail'] ?? response.body}');
+          AppLogger.debug(
+            'Détails erreur: ${errorData['detail'] ?? response.body}',
+          );
         } catch (_) {
           AppLogger.debug('Erreur réponse: ${response.body}');
         }
@@ -469,12 +525,16 @@ class FamilySharingService {
       // Ne pas bloquer le partage local en cas d'erreur backend
     }
   }
-  
+
   /// Ajoute une entrée dans l'audit log
-  Future<void> _addAuditLog(String documentId, List<int> memberIds, String action) async {
+  Future<void> _addAuditLog(
+    String documentId,
+    List<int> memberIds,
+    String action,
+  ) async {
     final prefs = await SharedPreferences.getInstance();
     final auditJson = prefs.getStringList(_auditLogKey) ?? [];
-    
+
     for (final memberId in memberIds) {
       final logEntry = SharingAuditLog(
         documentId: documentId,
@@ -483,85 +543,94 @@ class FamilySharingService {
         timestamp: DateTime.now(),
       );
       // Format: documentId:memberId:action:timestamp
-      auditJson.add('$documentId:$memberId:$action:${logEntry.timestamp.toIso8601String()}');
+      auditJson.add(
+        '$documentId:$memberId:$action:${logEntry.timestamp.toIso8601String()}',
+      );
     }
-    
+
     await prefs.setStringList(_auditLogKey, auditJson);
   }
-  
+
   /// Récupère l'audit log pour un document
-  Future<List<SharingAuditLog>> getAuditLogForDocument(String documentId) async {
+  Future<List<SharingAuditLog>> getAuditLogForDocument(
+    String documentId,
+  ) async {
     final prefs = await SharedPreferences.getInstance();
     final auditJson = prefs.getStringList(_auditLogKey) ?? [];
     final logs = <SharingAuditLog>[];
-    
+
     for (var entry in auditJson) {
       final parts = entry.split(':');
       if (parts.length >= 4 && parts[0] == documentId) {
         try {
-          logs.add(SharingAuditLog(
-            documentId: parts[0],
-            memberId: int.parse(parts[1]),
-            action: parts[2],
-            timestamp: DateTime.parse(parts[3]),
-          ));
+          logs.add(
+            SharingAuditLog(
+              documentId: parts[0],
+              memberId: int.parse(parts[1]),
+              action: parts[2],
+              timestamp: DateTime.parse(parts[3]),
+            ),
+          );
         } catch (e) {
           // Ignorer entrées invalides
         }
       }
     }
-    
+
     // Trier par date décroissante
     logs.sort((a, b) => b.timestamp.compareTo(a.timestamp));
     return logs;
   }
-  
+
   /// Récupère l'audit log pour un membre
   Future<List<SharingAuditLog>> getAuditLogForMember(int memberId) async {
     final prefs = await SharedPreferences.getInstance();
     final auditJson = prefs.getStringList(_auditLogKey) ?? [];
     final logs = <SharingAuditLog>[];
-    
+
     for (var entry in auditJson) {
       final parts = entry.split(':');
       if (parts.length >= 4 && int.tryParse(parts[1]) == memberId) {
         try {
-          logs.add(SharingAuditLog(
-            documentId: parts[0],
-            memberId: int.parse(parts[1]),
-            action: parts[2],
-            timestamp: DateTime.parse(parts[3]),
-          ));
+          logs.add(
+            SharingAuditLog(
+              documentId: parts[0],
+              memberId: int.parse(parts[1]),
+              action: parts[2],
+              timestamp: DateTime.parse(parts[3]),
+            ),
+          );
         } catch (e) {
           // Ignorer entrées invalides
         }
       }
     }
-    
+
     // Trier par date décroissante
     logs.sort((a, b) => b.timestamp.compareTo(a.timestamp));
     return logs;
   }
-  
+
   /// Enregistre un accès à un document partagé
   Future<void> logDocumentAccess(String documentId, int memberId) async {
     await _addAuditLog(documentId, [memberId], 'accessed');
   }
-  
+
   /// Enregistre un téléchargement d'un document partagé
   Future<void> logDocumentDownload(String documentId, int memberId) async {
     await _addAuditLog(documentId, [memberId], 'downloaded');
   }
-  
+
   /// Récupère le niveau de permission pour un document partagé avec un membre
   Future<String?> getDocumentPermission(String documentId, int memberId) async {
     final prefs = await SharedPreferences.getInstance();
     final sharedJson = prefs.getStringList(_sharedDocumentsKey) ?? [];
-    
+
     for (var entry in sharedJson) {
       final parts = entry.split(':');
       if (parts.length >= 5 && parts[0] == documentId) {
-        final memberIds = parts[1].split(',').map((id) => int.tryParse(id) ?? -1).toList();
+        final memberIds =
+            parts[1].split(',').map((id) => int.tryParse(id) ?? -1).toList();
         if (memberIds.contains(memberId)) {
           return parts[4]; // permissionLevel
         }
@@ -569,7 +638,7 @@ class FamilySharingService {
     }
     return null;
   }
-  
+
   /// Met à jour les permissions pour un document partagé
   Future<void> updateDocumentPermission(
     String documentId,
@@ -579,11 +648,12 @@ class FamilySharingService {
     final prefs = await SharedPreferences.getInstance();
     final sharedJson = prefs.getStringList(_sharedDocumentsKey) ?? [];
     final updatedJson = <String>[];
-    
+
     for (var entry in sharedJson) {
       final parts = entry.split(':');
       if (parts.length >= 5 && parts[0] == documentId) {
-        final memberIds = parts[1].split(',').map((id) => int.tryParse(id) ?? -1).toList();
+        final memberIds =
+            parts[1].split(',').map((id) => int.tryParse(id) ?? -1).toList();
         if (memberIds.contains(memberId)) {
           // Mettre à jour la permission pour ce membre
           parts[4] = permissionLevel;
@@ -595,7 +665,7 @@ class FamilySharingService {
         updatedJson.add(entry);
       }
     }
-    
+
     await prefs.setStringList(_sharedDocumentsKey, updatedJson);
   }
 
@@ -603,18 +673,19 @@ class FamilySharingService {
     final prefs = await SharedPreferences.getInstance();
     final sharedJson = prefs.getStringList(_sharedDocumentsKey) ?? [];
     final sharedDocs = <String>[];
-    
+
     for (var entry in sharedJson) {
       final parts = entry.split(':');
       if (parts.length >= 2) {
         final docId = parts[0];
-        final memberIds = parts[1].split(',').map((id) => int.tryParse(id) ?? -1).toList();
+        final memberIds =
+            parts[1].split(',').map((id) => int.tryParse(id) ?? -1).toList();
         if (memberIds.contains(memberId)) {
           sharedDocs.add(docId);
         }
       }
     }
-    
+
     return sharedDocs;
   }
 
@@ -622,42 +693,53 @@ class FamilySharingService {
     final prefs = await SharedPreferences.getInstance();
     final sharedJson = prefs.getStringList(_sharedDocumentsKey) ?? [];
     final sharedDocs = <SharedDocument>[];
-    
+
     for (var entry in sharedJson) {
       final parts = entry.split(':');
       if (parts.length >= 4) {
         try {
-          sharedDocs.add(SharedDocument(
-            documentId: parts[0],
-            memberIds: parts[1].split(',').map((id) => int.tryParse(id) ?? -1).toList(),
-            sharedAt: DateTime.parse(parts[2]),
-            isEncrypted: parts[3] == 'true',
-          ));
+          sharedDocs.add(
+            SharedDocument(
+              documentId: parts[0],
+              memberIds:
+                  parts[1]
+                      .split(',')
+                      .map((id) => int.tryParse(id) ?? -1)
+                      .toList(),
+              sharedAt: DateTime.parse(parts[2]),
+              isEncrypted: parts[3] == 'true',
+            ),
+          );
         } catch (e) {
           // Ignorer entrées invalides
         }
       }
     }
-    
+
     return sharedDocs;
   }
 
   Future<void> unshareDocument(String documentId, {String? memberEmail}) async {
     final prefs = await SharedPreferences.getInstance();
     final sharedJson = prefs.getStringList(_sharedDocumentsKey) ?? [];
-    
+
     // Récupérer les membres avant suppression pour audit log
     final sharedDocs = await getSharedDocuments();
     final doc = sharedDocs.firstWhere(
       (d) => d.documentId == documentId,
-      orElse: () => SharedDocument(documentId: documentId, memberIds: [], sharedAt: DateTime.now()),
+      orElse:
+          () => SharedDocument(
+            documentId: documentId,
+            memberIds: [],
+            sharedAt: DateTime.now(),
+          ),
     );
-    
+
     // Enregistrer dans audit log
     if (doc.memberIds.isNotEmpty) {
       await _addAuditLog(documentId, doc.memberIds, 'unshared');
     }
-    
+
     // Retirer le partage local
     if (memberEmail != null) {
       // Retirer seulement pour ce membre
@@ -667,19 +749,25 @@ class FamilySharingService {
         (m) => m.email == memberEmail,
         orElse: () => FamilyMember(name: '', email: '', relationship: ''),
       );
-      
+
       if (member.id != null) {
         final updatedJson = <String>[];
         for (final entry in sharedJson) {
           final parts = entry.split(':');
           if (parts.length >= 2 && parts[0] == documentId) {
-            final memberIds = parts[1].split(',').map((id) => int.tryParse(id) ?? -1).toList();
+            final memberIds =
+                parts[1]
+                    .split(',')
+                    .map((id) => int.tryParse(id) ?? -1)
+                    .toList();
             if (memberIds.contains(member.id)) {
               // Retirer ce membre de la liste
               memberIds.remove(member.id);
               if (memberIds.isNotEmpty) {
                 // Mettre à jour l'entrée avec les membres restants
-                updatedJson.add('${parts[0]}:${memberIds.join(",")}:${parts[2]}:${parts[3]}:${parts.length >= 5 ? parts[4] : 'view'}');
+                updatedJson.add(
+                  '${parts[0]}:${memberIds.join(",")}:${parts[2]}:${parts[3]}:${parts.length >= 5 ? parts[4] : 'view'}',
+                );
               }
               // Si memberIds est vide, on ne l'ajoute pas (suppression)
             } else {
@@ -700,46 +788,47 @@ class FamilySharingService {
       // Retirer tous les partages du document
       sharedJson.removeWhere((entry) => entry.startsWith('$documentId:'));
     }
-    
+
     await prefs.setStringList(_sharedDocumentsKey, sharedJson);
-    
+
     // Synchroniser avec le backend
     await _unshareFromBackend(documentId, memberEmail);
   }
-  
+
   /// Retire un partage du backend
-  Future<void> _unshareFromBackend(String documentId, String? memberEmail) async {
+  Future<void> _unshareFromBackend(
+    String documentId,
+    String? memberEmail,
+  ) async {
     try {
       final backendConfigured = await ApiService.isBackendConfigured();
       if (!backendConfigured) {
         AppLogger.debug('Backend non configuré, retrait partage ignoré');
         return;
       }
-      
+
       final baseUrl = await BackendConfigService.getBackendURL();
       final token = await AuthApiService.getAccessToken();
       if (token == null) {
         AppLogger.debug('Non authentifié, retrait partage ignoré');
         return;
       }
-      
-      final headers = {
-        'Authorization': 'Bearer $token',
-      };
-      
-      final url = memberEmail != null
-          ? '$baseUrl/api/v1/family-sharing/share/$documentId?member_email=${Uri.encodeComponent(memberEmail)}'
-          : '$baseUrl/api/v1/family-sharing/share/$documentId';
-      
-      final response = await http.delete(
-        Uri.parse(url),
-        headers: headers,
-      );
-      
+
+      final headers = {'Authorization': 'Bearer $token'};
+
+      final url =
+          memberEmail != null
+              ? '$baseUrl/api/v1/family-sharing/share/$documentId?member_email=${Uri.encodeComponent(memberEmail)}'
+              : '$baseUrl/api/v1/family-sharing/share/$documentId';
+
+      final response = await http.delete(Uri.parse(url), headers: headers);
+
       if (response.statusCode == 200 || response.statusCode == 204) {
         AppLogger.info('Partage retiré du backend: document $documentId');
       } else {
-        AppLogger.warning('Erreur retrait partage backend: ${response.statusCode}');
+        AppLogger.warning(
+          'Erreur retrait partage backend: ${response.statusCode}',
+        );
       }
     } catch (e) {
       AppLogger.error('Erreur retrait partage backend', e);
@@ -748,7 +837,10 @@ class FamilySharingService {
   }
 
   // Chiffrement/déchiffrement E2E amélioré
-  Future<String> encryptDocumentForMember(String content, String memberEmail) async {
+  Future<String> encryptDocumentForMember(
+    String content,
+    String memberEmail,
+  ) async {
     await _initializeEncryption();
     // Générer clé unique par membre (E2E)
     final memberKey = await _generateMemberKey(memberEmail);
@@ -759,7 +851,10 @@ class FamilySharingService {
     return '${iv.base64}:${encrypted.base64}';
   }
 
-  Future<String> decryptDocumentForMember(String encryptedContent, String memberEmail) async {
+  Future<String> decryptDocumentForMember(
+    String encryptedContent,
+    String memberEmail,
+  ) async {
     await _initializeEncryption();
     // Extraire IV et données
     final parts = encryptedContent.split(':');
@@ -768,7 +863,7 @@ class FamilySharingService {
     }
     final iv = encrypt.IV.fromBase64(parts[0]);
     final encrypted = encrypt.Encrypted.fromBase64(parts[1]);
-    
+
     // Générer clé unique par membre
     final memberKey = await _generateMemberKey(memberEmail);
     final memberEncrypter = encrypt.Encrypter(encrypt.AES(memberKey));

@@ -31,9 +31,11 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
     setState(() => _isLoading = true);
     try {
       final doctor = await _doctorService.getDoctorById(widget.doctorId);
-      final consultations = await _doctorService.getConsultationsByDoctor(widget.doctorId);
+      final consultations = await _doctorService.getConsultationsByDoctor(
+        widget.doctorId,
+      );
       final stats = await _doctorService.getDoctorStats(widget.doctorId);
-      
+
       setState(() {
         _doctor = doctor;
         _consultations = consultations;
@@ -43,9 +45,9 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
     } catch (e) {
       setState(() => _isLoading = false);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Erreur: $e')));
       }
     }
   }
@@ -69,10 +71,11 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => MedicalReportScreen(
-                    doctorId: widget.doctorId,
-                    doctorName: _doctor!.fullName,
-                  ),
+                  builder:
+                      (context) => MedicalReportScreen(
+                        doctorId: widget.doctorId,
+                        doctorName: _doctor!.fullName,
+                      ),
                 ),
               );
             },
@@ -100,13 +103,13 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
           children: [
             // Informations médecin
             _buildDoctorInfo(),
-            
+
             // Statistiques
             if (_stats != null) _buildStats(),
-            
+
             // Bouton générer rapport
             _buildGenerateReportButton(),
-            
+
             // Historique consultations
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -130,7 +133,9 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
                 ),
               )
             else
-              ..._consultations.map((consultation) => _buildConsultationCard(consultation)),
+              ..._consultations.map(
+                (consultation) => _buildConsultationCard(consultation),
+              ),
           ],
         ),
       ),
@@ -167,7 +172,11 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
               const SizedBox(height: 16),
               Row(
                 children: [
-                  Icon(Icons.phone, size: 20, color: Theme.of(context).colorScheme.primary),
+                  Icon(
+                    Icons.phone,
+                    size: 20,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                   const SizedBox(width: 8),
                   Text(_doctor!.phone!),
                 ],
@@ -177,7 +186,11 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
               const SizedBox(height: 8),
               Row(
                 children: [
-                  Icon(Icons.email, size: 20, color: Theme.of(context).colorScheme.primary),
+                  Icon(
+                    Icons.email,
+                    size: 20,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                   const SizedBox(width: 8),
                   Text(_doctor!.email!),
                 ],
@@ -188,10 +201,16 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.location_on, size: 20, color: Theme.of(context).colorScheme.primary),
+                  Icon(
+                    Icons.location_on,
+                    size: 20,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: Text('${_doctor!.address}\n${_doctor!.city} ${_doctor!.postalCode ?? ''}'),
+                    child: Text(
+                      '${_doctor!.address}\n${_doctor!.city} ${_doctor!.postalCode ?? ''}',
+                    ),
                   ),
                 ],
               ),
@@ -226,10 +245,7 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
             if (_stats!['last_visit'] != null)
               Column(
                 children: [
-                  const Text(
-                    'Dernière visite',
-                    style: TextStyle(fontSize: 14),
-                  ),
+                  const Text('Dernière visite', style: TextStyle(fontSize: 14)),
                   Text(
                     _formatDate(_stats!['last_visit']),
                     style: const TextStyle(
@@ -257,15 +273,15 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
           ),
         ),
         title: Text(_formatDate(consultation.date.toIso8601String())),
-        subtitle: consultation.reason != null
-            ? Text(consultation.reason!)
-            : null,
-        trailing: consultation.documentIds.isNotEmpty
-            ? Chip(
-                label: Text('${consultation.documentIds.length} doc'),
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              )
-            : null,
+        subtitle:
+            consultation.reason != null ? Text(consultation.reason!) : null,
+        trailing:
+            consultation.documentIds.isNotEmpty
+                ? Chip(
+                  label: Text('${consultation.documentIds.length} doc'),
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                )
+                : null,
       ),
     );
   }
@@ -280,10 +296,11 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => MedicalReportScreen(
-                  doctorId: widget.doctorId,
-                  doctorName: _doctor!.fullName,
-                ),
+                builder:
+                    (context) => MedicalReportScreen(
+                      doctorId: widget.doctorId,
+                      doctorName: _doctor!.fullName,
+                    ),
               ),
             );
           },
@@ -307,4 +324,3 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
     return '${date.day}/${date.month}/${date.year}';
   }
 }
-

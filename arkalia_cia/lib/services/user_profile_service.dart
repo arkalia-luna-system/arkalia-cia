@@ -152,7 +152,8 @@ class UserProfileService {
     final profile = await getProfile();
     if (profile == null) return;
 
-    final updatedDevices = profile.devices.where((d) => d.deviceId != deviceId).toList();
+    final updatedDevices =
+        profile.devices.where((d) => d.deviceId != deviceId).toList();
     final updatedProfile = profile.copyWith(devices: updatedDevices);
     await saveProfile(updatedProfile);
   }
@@ -162,12 +163,13 @@ class UserProfileService {
     final profile = await getProfile();
     if (profile == null) return;
 
-    final updatedDevices = profile.devices.map((d) {
-      if (d.deviceId == deviceId) {
-        return d.copyWith(isActive: false);
-      }
-      return d;
-    }).toList();
+    final updatedDevices =
+        profile.devices.map((d) {
+          if (d.deviceId == deviceId) {
+            return d.copyWith(isActive: false);
+          }
+          return d;
+        }).toList();
 
     final updatedProfile = profile.copyWith(devices: updatedDevices);
     await saveProfile(updatedProfile);
@@ -191,4 +193,3 @@ class UserProfileService {
     }
   }
 }
-
