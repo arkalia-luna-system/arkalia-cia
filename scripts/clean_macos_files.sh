@@ -1,13 +1,24 @@
 #!/bin/bash
-# Script pour nettoyer les fichiers macOS
+# Script pour nettoyer les fichiers macOS (sans parcourir venv / node_modules : trop lourd)
 
 echo "🧹 Nettoyage des fichiers macOS..."
 
-# Compter les fichiers avant nettoyage
-COUNT_BEFORE=$(find . -name "._*" -type f 2>/dev/null | wc -l | tr -d ' ')
+find_prune_heavy() {
+    find . \( \
+        -path './arkalia_cia_venv/*' -o \
+        -path './arkalia_cia/.dart_tool/*' -o \
+        -path './arkalia_cia/build/*' -o \
+        -path './node_modules/*' -o \
+        -path './.idea/*' -o \
+        -path './htmlcov/*' \
+    \) -prune -o "$@"
+}
 
-# Supprimer tous les fichiers ._* (y compris dans .git)
-find . -name "._*" -type f -delete 2>/dev/null || true
+# Compter les fichiers avant nettoyage
+COUNT_BEFORE=$(find_prune_heavy -type f -name '._*' -print 2>/dev/null | wc -l | tr -d ' ')
+
+# Supprimer les fichiers ._* (hors grosses arborescences jetables)
+find_prune_heavy -type f -name '._*' -delete 2>/dev/null || true
 
 # Supprimer les fichiers macOS dans .git/objects/pack et .git/refs (si .git existe)
 if [ -d ".git" ]; then
@@ -23,13 +34,13 @@ fi
 rm -rf build/ dist/ *.egg-info/ 2>/dev/null || true
 
 # Supprimer les fichiers .DS_Store
-find . -name ".DS_Store" -type f -delete 2>/dev/null || true
+find_prune_heavy -type f -name '.DS_Store' -delete 2>/dev/null || true
 
 # Supprimer les fichiers .AppleDouble
-find . -name ".AppleDouble" -type d -exec rm -rf {} + 2>/dev/null || true
+find_prune_heavy -type d -name '.AppleDouble' -exec rm -rf {} + 2>/dev/null || true
 
 # Compter les fichiers après nettoyage
-COUNT_AFTER=$(find . -name "._*" -type f 2>/dev/null | wc -l | tr -d ' ')
+COUNT_AFTER=$(find_prune_heavy -type f -name '._*' -print 2>/dev/null | wc -l | tr -d ' ')
 
 # Afficher le résultat du nettoyage
 if [ -z "$COUNT_BEFORE" ] || [ "$COUNT_BEFORE" = "0" ]; then

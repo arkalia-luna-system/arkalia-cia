@@ -36,71 +36,16 @@ fi
 echo $$ > "$LOCK_FILE"
 
 # Fonction pour supprimer les fichiers macOS cachés
+# Un seul balayage récursif sur build/ + .gradle (avant : ~15 find par cycle).
 clean_macos_files() {
-    # Nettoyer dans build/ (récursif et agressif)
     if [ -d "$PROJECT_DIR/build" ]; then
-        find "$PROJECT_DIR/build" -type f \( -name "._*" -o -name ".!*!._*" -o -name ".DS_Store" \) -delete 2>/dev/null || true
-        # Nettoyer spécifiquement dans intermediates (où le problème se produit)
-        if [ -d "$PROJECT_DIR/build/app/intermediates" ]; then
-            find "$PROJECT_DIR/build/app/intermediates" -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
-        fi
-        # Nettoyer spécifiquement javac qui cause les erreurs D8
+        find "$PROJECT_DIR/build" -type f \( -name '._*' -o -name '.!*!._*' -o -name '.DS_Store' \) -delete 2>/dev/null || true
         if [ -d "$PROJECT_DIR/build/app/intermediates/javac" ]; then
-            find "$PROJECT_DIR/build/app/intermediates/javac" -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
-            # Supprimer aussi les répertoires vides créés par macOS
             find "$PROJECT_DIR/build/app/intermediates/javac" -type d -empty -delete 2>/dev/null || true
         fi
-        # Nettoyer aussi dans compileDebugJavaWithJavac/classes spécifiquement (où l'erreur se produit)
-        if [ -d "$PROJECT_DIR/build/app/intermediates/javac/debug/compileDebugJavaWithJavac/classes" ]; then
-            find "$PROJECT_DIR/build/app/intermediates/javac/debug/compileDebugJavaWithJavac/classes" -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
-            # Nettoyer aussi dans com/arkalia/cia/ spécifiquement (où MainActivity.class est créé)
-            if [ -d "$PROJECT_DIR/build/app/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/arkalia/cia" ]; then
-                find "$PROJECT_DIR/build/app/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/arkalia/cia" -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
-            fi
-        fi
-        # Nettoyer aussi dans tous les sous-répertoires de javac (récursif)
-        if [ -d "$PROJECT_DIR/build/app/intermediates/javac" ]; then
-            find "$PROJECT_DIR/build/app/intermediates/javac" -type f -name "._*" -delete 2>/dev/null || true
-            find "$PROJECT_DIR/build/app/intermediates/javac" -type f -name ".!*!._*" -delete 2>/dev/null || true
-        fi
-        # Nettoyer aussi dans kotlin-classes (où les fichiers sont créés)
-        if [ -d "$PROJECT_DIR/build/app/tmp/kotlin-classes" ]; then
-            find "$PROJECT_DIR/build/app/tmp/kotlin-classes" -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
-        fi
-        # Nettoyer spécifiquement compile_and_runtime_not_namespaced_r_class_jar (où l'erreur se produit)
-        if [ -d "$PROJECT_DIR/build/app/intermediates/compile_and_runtime_not_namespaced_r_class_jar" ]; then
-            find "$PROJECT_DIR/build/app/intermediates/compile_and_runtime_not_namespaced_r_class_jar" -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
-        fi
-        # Nettoyer aussi dans processDebugResources/R.jar spécifiquement
-        if [ -d "$PROJECT_DIR/build/app/intermediates/compile_and_runtime_not_namespaced_r_class_jar/debug/processDebugResources" ]; then
-            find "$PROJECT_DIR/build/app/intermediates/compile_and_runtime_not_namespaced_r_class_jar/debug/processDebugResources" -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
-        fi
-        # Nettoyer aussi dans tous les répertoires où BuildConfig.class peut être créé
-        if [ -d "$PROJECT_DIR/build/app/intermediates/javac" ]; then
-            find "$PROJECT_DIR/build/app/intermediates/javac" -type f -name "._BuildConfig.class" -delete 2>/dev/null || true
-            find "$PROJECT_DIR/build/app/intermediates/javac" -type f -name "._*" -delete 2>/dev/null || true
-        fi
-        if [ -d "$PROJECT_DIR/build/app/tmp/kotlin-classes" ]; then
-            find "$PROJECT_DIR/build/app/tmp/kotlin-classes" -type f -name "._BuildConfig.class" -delete 2>/dev/null || true
-            find "$PROJECT_DIR/build/app/tmp/kotlin-classes" -type f -name "._*" -delete 2>/dev/null || true
-        fi
-        # Nettoyer aussi dans compile_and_runtime_not_namespaced_r_class_jar (où l'erreur se produit)
-        if [ -d "$PROJECT_DIR/build/app/intermediates/compile_and_runtime_not_namespaced_r_class_jar" ]; then
-            find "$PROJECT_DIR/build/app/intermediates/compile_and_runtime_not_namespaced_r_class_jar" -type f -name "._BuildConfig.class" -delete 2>/dev/null || true
-            find "$PROJECT_DIR/build/app/intermediates/compile_and_runtime_not_namespaced_r_class_jar" -type f -name "._*" -delete 2>/dev/null || true
-        fi
     fi
-    
-    # Nettoyer spécifiquement dans packaged_res (où l'erreur parseReleaseLocalResources se produit)
-    if [ -d "$PROJECT_DIR/build" ]; then
-        find "$PROJECT_DIR/build" -path "*/packaged_res/*" -type f \( -name "._*" -o -name ".!*!._*" -o -name ".DS_Store" \) -delete 2>/dev/null || true
-        # Nettoyer aussi dans tous les répertoires packageReleaseResources
-        find "$PROJECT_DIR/build" -path "*/packageReleaseResources/*" -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
-    fi
-    
-    # Nettoyer aussi dans android/.gradle
     if [ -d "$SCRIPT_DIR/.gradle" ]; then
-        find "$SCRIPT_DIR/.gradle" -type f \( -name "._*" -o -name ".DS_Store" \) -delete 2>/dev/null || true
+        find "$SCRIPT_DIR/.gradle" -type f \( -name '._*' -o -name '.DS_Store' \) -delete 2>/dev/null || true
     fi
 }
 
