@@ -65,17 +65,15 @@ security: ## Lancer les vérifications de sécurité
 clean: ## Nettoyer les fichiers temporaires
 	@echo "$(GREEN)Nettoyage...$(NC)"
 	@./scripts/cleanup_all.sh --keep-coverage || true
-	find . -type f -name "*.pyc" -delete
-	find . -type d -name "__pycache__" -delete
-	find . -type d -name "*.egg-info" -exec rm -rf {} +
-	find . -type d -name ".pytest_cache" -exec rm -rf {} +
-	find . -type d -name "htmlcov" -exec rm -rf {} +
-	find . -type f -name ".coverage" -delete
-	find . -type f -name "bandit-report.json" -delete
-	find . -type f -name "safety-report.json" -delete
-	find . -name "._*" -delete
-	find . -name ".!*!._*" -delete
-	find . -name ".DS_Store" -delete
+	find . \( -path "./.git/*" -o -path "./arkalia_cia_venv/*" -o -path "./node_modules/*" -o -path "./arkalia_cia/.dart_tool/*" -o -path "./arkalia_cia/build/*" \) -prune -o -type f -name "*.pyc" -delete
+	find . \( -path "./.git/*" -o -path "./arkalia_cia_venv/*" -o -path "./node_modules/*" -o -path "./arkalia_cia/.dart_tool/*" -o -path "./arkalia_cia/build/*" \) -prune -o -type d -name "__pycache__" -exec rm -rf {} +
+	find . \( -path "./.git/*" -o -path "./arkalia_cia_venv/*" -o -path "./node_modules/*" -o -path "./arkalia_cia/.dart_tool/*" -o -path "./arkalia_cia/build/*" \) -prune -o -type d -name "*.egg-info" -exec rm -rf {} +
+	find . \( -path "./.git/*" -o -path "./arkalia_cia_venv/*" -o -path "./node_modules/*" -o -path "./arkalia_cia/.dart_tool/*" -o -path "./arkalia_cia/build/*" \) -prune -o -type d -name ".pytest_cache" -exec rm -rf {} +
+	find . \( -path "./.git/*" -o -path "./arkalia_cia_venv/*" -o -path "./node_modules/*" -o -path "./arkalia_cia/.dart_tool/*" -o -path "./arkalia_cia/build/*" \) -prune -o -type d -name "htmlcov" -exec rm -rf {} +
+	find . \( -path "./.git/*" -o -path "./arkalia_cia_venv/*" -o -path "./node_modules/*" -o -path "./arkalia_cia/.dart_tool/*" -o -path "./arkalia_cia/build/*" \) -prune -o -type f -name ".coverage" -delete
+	find . \( -path "./.git/*" -o -path "./arkalia_cia_venv/*" -o -path "./node_modules/*" -o -path "./arkalia_cia/.dart_tool/*" -o -path "./arkalia_cia/build/*" \) -prune -o -type f -name "bandit-report.json" -delete
+	find . \( -path "./.git/*" -o -path "./arkalia_cia_venv/*" -o -path "./node_modules/*" -o -path "./arkalia_cia/.dart_tool/*" -o -path "./arkalia_cia/build/*" \) -prune -o -type f -name "safety-report.json" -delete
+	find . \( -path "./.git/*" -o -path "./arkalia_cia_venv/*" -o -path "./node_modules/*" -o -path "./arkalia_cia/.dart_tool/*" -o -path "./arkalia_cia/build/*" \) -prune -o -type f \( -name "._*" -o -name ".!*!._*" -o -name ".DS_Store" \) -delete
 
 build: ## Construire le package
 	@echo "$(GREEN)Construction du package...$(NC)"
