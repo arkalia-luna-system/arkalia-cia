@@ -10,7 +10,7 @@ import 'package:flutter/services.dart';
 class EncryptionHelper {
   static const String _keyStorageKey = 'encryption_key';
   static const FlutterSecureStorage _secureStorage = FlutterSecureStorage(
-    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+    aOptions: AndroidOptions(),
     iOptions: IOSOptions(
       accessibility: KeychainAccessibility.first_unlock_this_device,
     ),

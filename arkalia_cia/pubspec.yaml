@@ -18,7 +18,7 @@ dependencies:
   path_provider: ^2.1.1
 
   # UI
-  cupertino_icons: ^1.0.2
+  cupertino_icons: ^1.0.9
   material_design_icons_flutter: ^7.0.7296
   table_calendar: ^3.1.2
   fl_chart: 1.0.0 # Version exacte (1.1.0 nécessite vector_math 2.2.0, incompatible avec Flutter 3.29.0)
@@ -46,7 +46,7 @@ dependencies:
   flutter_contacts: 1.1.9+2
   crypto: ^3.0.3
   encrypt: ^5.0.1
-  flutter_secure_storage: ^9.2.4
+  flutter_secure_storage: ^10.1.0
   permission_handler: ^11.4.0
   device_info_plus: ^12.4.0
   uuid: ^4.3.3
