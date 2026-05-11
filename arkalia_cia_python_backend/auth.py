@@ -143,17 +143,19 @@ def verify_token(
                     detail="Token révoqué",
                 )
 
-        user_id: str = payload.get("sub")
-        username: str = payload.get("username")
-        role: str = payload.get("role", "user")
+        user_id = payload.get("sub")
+        username = payload.get("username")
+        role_raw = payload.get("role", "user")
+        role: str = role_raw if isinstance(role_raw, str) else "user"
 
-        if user_id is None:
+        if not isinstance(user_id, str):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Token invalide",
             )
 
-        return TokenData(user_id=user_id, username=username, role=role)
+        uname = username if isinstance(username, str) else None
+        return TokenData(user_id=user_id, username=uname, role=role)
     except HTTPException:
         raise
     except jwt.ExpiredSignatureError as e:

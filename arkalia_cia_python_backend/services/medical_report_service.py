@@ -506,14 +506,14 @@ class MedicalReportService:
     ) -> str:
         """Exporte le rapport en PDF (gratuit avec reportlab)"""
         try:
-            from reportlab.lib import colors  # type: ignore[import-untyped]
-            from reportlab.lib.pagesizes import letter  # type: ignore[import-untyped]
-            from reportlab.lib.styles import (  # type: ignore[import-untyped]
+            from reportlab.lib import colors
+            from reportlab.lib.pagesizes import letter
+            from reportlab.lib.styles import (
                 ParagraphStyle,
                 getSampleStyleSheet,
             )
-            from reportlab.lib.units import inch  # type: ignore[import-untyped]
-            from reportlab.platypus import (  # type: ignore[import-untyped]
+            from reportlab.lib.units import inch
+            from reportlab.platypus import (
                 Paragraph,
                 SimpleDocTemplate,
                 Spacer,
@@ -565,8 +565,8 @@ class MedicalReportService:
                 docs_section = report["sections"]["documents"]
                 story.append(Paragraph(docs_section["title"], subtitle_style))
                 if docs_section["items"]:
-                    for doc in docs_section["items"]:
-                        doc_date = doc.get("date", "")
+                    for item in docs_section["items"]:
+                        doc_date = item.get("date", "")
                         if doc_date:
                             try:
                                 date_obj = datetime.fromisoformat(
@@ -579,7 +579,7 @@ class MedicalReportService:
                             date_str = "Date inconnue"
                         story.append(
                             Paragraph(
-                                f"• {doc.get('name', 'Document')} ({doc.get('type', 'Document')}) - {date_str}",
+                                f"• {item.get('name', 'Document')} ({item.get('type', 'Document')}) - {date_str}",
                                 styles["Normal"],
                             )
                         )
