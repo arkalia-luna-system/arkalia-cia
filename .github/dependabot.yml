@@ -20,6 +20,13 @@ updates:
       - "security"
       - "dependencies"
       - "python"
+    # PRs automatiques désactivées : montées de version manuelles (tests / stack ML / compat CI).
+    ignore:
+      - dependency-name: "prophet"
+      - dependency-name: "httpx"
+      - dependency-name: "pandas"
+      - dependency-name: "pydantic"
+      - dependency-name: "click"
 
   # Flutter/Dart dependencies
   - package-ecosystem: "pub"
@@ -38,6 +45,10 @@ updates:
       - "security"
       - "dependencies"
       - "flutter"
+    ignore:
+      - dependency-name: "fl_chart"
+      - dependency-name: "flutter_contacts"
+      - dependency-name: "file_picker"
 
   # GitHub Actions
   - package-ecosystem: "github-actions"

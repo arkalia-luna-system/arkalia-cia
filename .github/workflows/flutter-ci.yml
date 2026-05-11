@@ -128,7 +128,7 @@ jobs:
 
       - name: "Upload Coverage to Codecov"
         if: hashFiles('arkalia_cia/coverage/lcov.info') != ''
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           files: arkalia_cia/coverage/lcov.info
           flags: flutter
@@ -256,7 +256,7 @@ jobs:
           flutter build web --release --base-href "/arkalia-cia/"
 
       - name: "Setup Pages"
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
 
       - name: "Upload artifact"
         uses: actions/upload-pages-artifact@v4

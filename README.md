@@ -655,19 +655,9 @@ graph TB
 
 ---
 
-## Pour débuter (nouveaux contributeurs)
-
-Si tu veux contribuer mais que tu ne sais pas par où commencer :
-
-- **Lire le guide de contribution** : voir [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) pour l’installation, les commandes utiles (`make test`, `make lint`, etc.) et le workflow Git recommandé.
-- **Choisir une issue simple** : regarde les issues marquées [`good first issue`](https://github.com/arkalia-luna-system/arkalia-cia/labels/good%20first%20issue) (idéal pour un premier pas).
-- **Chercher où on a besoin d’aide** : les issues avec le label [`help wanted`](https://github.com/arkalia-luna-system/arkalia-cia/labels/help%20wanted) signalent que des contributions sont activement souhaitées.
-
 ## Contributing
 
-> **🌍 English**: We welcome contributions! Check [CONTRIBUTING.md](docs/CONTRIBUTING.md) for guidelines. Look for **🏷️ good first issue** and **🆘 help wanted** labels.
-
-See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for development guidelines, code standards, and contribution process.
+Voir [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) pour l’installation, les commandes (`make test`, `make lint`, etc.) et le flux Git. **English:** same file for guidelines and contribution process.
 
 ## What's New & User Impact
 
