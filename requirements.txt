@@ -18,7 +18,7 @@ requests==2.33.1
 
 # Sécurité et validation
 cryptography==47.0.0
-python-multipart==0.0.27
+python-multipart==0.0.28
 slowapi==0.1.9  # Rate limiting pour FastAPI
 authlib==1.7.0  # Security updates (GHSA advisories fixed)
 passlib[bcrypt]==1.7.4  # Hashing de mots de passe
