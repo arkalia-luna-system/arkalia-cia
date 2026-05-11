@@ -143,15 +143,33 @@ echo "📋 Nettoyage des fichiers macOS cachés..."
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$PROJECT_ROOT"
 
-# Compter avant suppression (méthode améliorée avec find + grep)
-# 1. Fichiers standards ._* (exclure .git, venv, build, etc.)
-STANDARD_COUNT=$(find . -type f -name "._*" ! -path "./.git/*" ! -path "./arkalia_cia_venv/*" ! -path "./.dart_tool/*" ! -path "./build/*" ! -path "./node_modules/*" ! -path "./.idea/*" 2>/dev/null | wc -l | tr -d ' ')
+# Balayage ciblé (évite de lister tout le dépôt : trop lourd sur disque externe / grand build)
+find_pruned() {
+    find . \( \
+        -path './.git/*' -o \
+        -path './arkalia_cia_venv/*' -o \
+        -path './.dart_tool/*' -o \
+        -path './arkalia_cia/.dart_tool/*' -o \
+        -path './arkalia_cia/build/*' -o \
+        -path './arkalia_cia/android/build/*' -o \
+        -path './arkalia_cia/android/.gradle/*' -o \
+        -path './htmlcov/*' -o \
+        -path './node_modules/*' -o \
+        -path './.idea/*' -o \
+        -path './arkalia_cia/ios/Pods/*' -o \
+        -path './arkalia_cia/macos/Pods/*' \
+    \) -prune -o "$@"
+}
 
-# 2. Fichiers avec numéros .!nombre!._* (méthode robuste: find puis grep)
-NUMBERED_COUNT=$(find . -type f ! -path "./.git/*" ! -path "./arkalia_cia_venv/*" ! -path "./.dart_tool/*" ! -path "./build/*" ! -path "./node_modules/*" ! -path "./.idea/*" 2>/dev/null | grep -E "\.![0-9]+!\._" | wc -l | tr -d ' ')
+# Compter avant suppression
+# 1. Fichiers standards ._*
+STANDARD_COUNT=$(find_pruned -type f -name '._*' -print 2>/dev/null | wc -l | tr -d ' ')
+
+# 2. Fichiers AppleDouble .!123!._* (sans parcourir tous les fichiers du repo)
+NUMBERED_COUNT=$(find_pruned -type f -name '.!*!._*' -print 2>/dev/null | wc -l | tr -d ' ')
 
 # 3. Fichiers .DS_Store
-DSSTORE_COUNT=$(find . -type f -name ".DS_Store" ! -path "./.git/*" ! -path "./arkalia_cia_venv/*" ! -path "./.dart_tool/*" ! -path "./build/*" ! -path "./node_modules/*" ! -path "./.idea/*" 2>/dev/null | wc -l | tr -d ' ')
+DSSTORE_COUNT=$(find_pruned -type f -name '.DS_Store' -print 2>/dev/null | wc -l | tr -d ' ')
 
 BEFORE_COUNT=$((STANDARD_COUNT + NUMBERED_COUNT + DSSTORE_COUNT))
 
@@ -163,32 +181,31 @@ if [ "$BEFORE_COUNT" -gt 0 ]; then
     
     # Supprimer les fichiers macOS cachés standards (._*)
     if [ "$STANDARD_COUNT" -gt 0 ]; then
-        find . -type f -name "._*" ! -path "./.git/*" ! -path "./arkalia_cia_venv/*" ! -path "./.dart_tool/*" ! -path "./build/*" ! -path "./node_modules/*" ! -path "./.idea/*" -delete 2>/dev/null || true
+        find_pruned -type f -name '._*' -delete 2>/dev/null || true
     fi
-    
-    # Supprimer les fichiers macOS avec numéros (format: .!28431!._fichier.md)
-    # Méthode robuste: find tous les fichiers puis grep pour le pattern
+
+    # Supprimer les fichiers AppleDouble .!nombre!._*
     if [ "$NUMBERED_COUNT" -gt 0 ]; then
-        find . -type f ! -path "./.git/*" ! -path "./arkalia_cia_venv/*" ! -path "./.dart_tool/*" ! -path "./build/*" ! -path "./node_modules/*" ! -path "./.idea/*" 2>/dev/null | grep -E "\.![0-9]+!\._" | while read -r file; do
+        find_pruned -type f -name '.!*!._*' -print 2>/dev/null | while read -r file; do
             echo "      🗑️  Suppression: $file"
             rm -f "$file" 2>/dev/null || true
         done
     fi
-    
+
     # Supprimer les fichiers .DS_Store
     if [ "$DSSTORE_COUNT" -gt 0 ]; then
-        find . -type f -name ".DS_Store" ! -path "./.git/*" ! -path "./arkalia_cia_venv/*" ! -path "./.dart_tool/*" ! -path "./build/*" ! -path "./node_modules/*" ! -path "./.idea/*" -delete 2>/dev/null || true
+        find_pruned -type f -name '.DS_Store' -delete 2>/dev/null || true
     fi
-    
+
     # Supprimer les dossiers macOS cachés
-    find . -type d -name ".AppleDouble" ! -path "./.git/*" ! -path "./arkalia_cia_venv/*" ! -path "./.dart_tool/*" ! -path "./build/*" ! -path "./node_modules/*" ! -path "./.idea/*" -exec rm -rf {} + 2>/dev/null || true
-    find . -type d -name ".Spotlight-V100" ! -path "./.git/*" ! -path "./arkalia_cia_venv/*" ! -path "./.dart_tool/*" ! -path "./build/*" ! -path "./node_modules/*" ! -path "./.idea/*" -exec rm -rf {} + 2>/dev/null || true
-    find . -type d -name ".Trashes" ! -path "./.git/*" ! -path "./arkalia_cia_venv/*" ! -path "./.dart_tool/*" ! -path "./build/*" ! -path "./node_modules/*" ! -path "./.idea/*" -exec rm -rf {} + 2>/dev/null || true
-    
+    find_pruned -type d -name '.AppleDouble' -exec rm -rf {} + 2>/dev/null || true
+    find_pruned -type d -name '.Spotlight-V100' -exec rm -rf {} + 2>/dev/null || true
+    find_pruned -type d -name '.Trashes' -exec rm -rf {} + 2>/dev/null || true
+
     # Vérifier après suppression
-    STANDARD_AFTER=$(find . -type f -name "._*" ! -path "./.git/*" ! -path "./arkalia_cia_venv/*" ! -path "./.dart_tool/*" ! -path "./build/*" ! -path "./node_modules/*" ! -path "./.idea/*" 2>/dev/null | wc -l | tr -d ' ')
-    NUMBERED_AFTER=$(find . -type f ! -path "./.git/*" ! -path "./arkalia_cia_venv/*" ! -path "./.dart_tool/*" ! -path "./build/*" ! -path "./node_modules/*" ! -path "./.idea/*" 2>/dev/null | grep -E "\.![0-9]+!\._" | wc -l | tr -d ' ')
-    DSSTORE_AFTER=$(find . -type f -name ".DS_Store" ! -path "./.git/*" ! -path "./arkalia_cia_venv/*" ! -path "./.dart_tool/*" ! -path "./build/*" ! -path "./node_modules/*" ! -path "./.idea/*" 2>/dev/null | wc -l | tr -d ' ')
+    STANDARD_AFTER=$(find_pruned -type f -name '._*' -print 2>/dev/null | wc -l | tr -d ' ')
+    NUMBERED_AFTER=$(find_pruned -type f -name '.!*!._*' -print 2>/dev/null | wc -l | tr -d ' ')
+    DSSTORE_AFTER=$(find_pruned -type f -name '.DS_Store' -print 2>/dev/null | wc -l | tr -d ' ')
     AFTER_COUNT=$((STANDARD_AFTER + NUMBERED_AFTER + DSSTORE_AFTER))
     
     if [ "$AFTER_COUNT" -eq 0 ]; then
@@ -197,7 +214,7 @@ if [ "$BEFORE_COUNT" -gt 0 ]; then
         echo "   ⚠️  Il reste $AFTER_COUNT fichiers (peut-être verrouillés)"
         if [ "$NUMBERED_AFTER" -gt 0 ]; then
             echo "      Fichiers avec numéros restants:"
-            find . -type f ! -path "./.git/*" ! -path "./arkalia_cia_venv/*" ! -path "./.dart_tool/*" ! -path "./build/*" ! -path "./node_modules/*" ! -path "./.idea/*" 2>/dev/null | grep -E "\.![0-9]+!\._" | head -5 | sed 's/^/         - /'
+            find_pruned -type f -name '.!*!._*' -print 2>/dev/null | head -5 | sed 's/^/         - /'
         fi
     fi
 else

@@ -110,10 +110,10 @@ if [ -f "$WATCH_SCRIPT" ]; then
     # Tuer le processus de surveillance à la fin
     trap "kill $WATCH_PID 2>/dev/null || true" EXIT
 else
-    # Fallback : surveillance simple en arrière-plan
+    # Fallback : nettoyage peu fréquent (évite de marteler le disque en boucle)
     (
         while true; do
-            sleep 2
+            sleep 12
             find build -type f \( -name "._*" -o -name ".!*!._*" \) -delete 2>/dev/null || true
         done
     ) &

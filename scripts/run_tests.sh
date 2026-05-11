@@ -70,10 +70,12 @@ cd "$PROJECT_ROOT"
     if [ -d ".pytest_cache" ]; then
         rm -rf .pytest_cache 2>/dev/null || true
     fi
-    # Nettoyer les fichiers macOS cachés (y compris ceux avec numéros)
-    find . -type f \( -name "._*" -o -name ".!*!._*" -o -name ".DS_Store" \) ! -path "./.git/*" ! -path "./arkalia_cia_venv/*" ! -path "./.dart_tool/*" ! -path "./build/*" -delete 2>/dev/null || true
-    # Pattern alternatif pour fichiers avec numéros
-    find . -type f ! -path "./.git/*" ! -path "./arkalia_cia_venv/*" ! -path "./.dart_tool/*" ! -path "./build/*" | grep -E "\.![0-9]+!\._" | xargs rm -f 2>/dev/null || true
+    # Nettoyer les fichiers macOS cachés (sans parcourir build/Pods/htmlcov)
+    find . \( \
+        -path './.git/*' -o -path './arkalia_cia_venv/*' -o -path './.dart_tool/*' -o \
+        -path './arkalia_cia/.dart_tool/*' -o -path './arkalia_cia/build/*' -o \
+        -path './arkalia_cia/android/build/*' -o -path './htmlcov/*' \
+    \) -prune -o -type f \( -name '._*' -o -name '.!*!._*' -o -name '.DS_Store' \) -delete 2>/dev/null || true
 }
 
 # Retourner le code de sortie des tests

@@ -108,11 +108,12 @@ echo "👀 Surveillance des fichiers macOS (PID: $$)"
 echo "   Pour arrêter: Ctrl+C ou './cleanup_all.sh'"
 echo ""
 
-# Surveiller en continu (toutes les 0.5 seconde - plus fréquent pour éviter erreurs D8/R8)
-# D8/R8 traite les fichiers très rapidement, donc on nettoie plus souvent
+# Intervalle volontairement modéré : un balayage toutes les 0,5 s saturait
+# CPU/disque (surtout sur volume externe). 4 s reste largement suffisant
+# pour supprimer les AppleDouble avant les étapes Gradle lentes.
 while [ -f "$LOCK_FILE" ]; do
     clean_macos_files
-    sleep 0.5
+    sleep 4
 done
 
 # Nettoyage à la fin
