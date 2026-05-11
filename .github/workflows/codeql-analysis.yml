@@ -66,7 +66,10 @@ jobs:
 
       # JavaScript/TypeScript analysis removed - not applicable for Flutter/Dart
 
+      # category fixe: évite toute ambiguïté avec d’anciennes configs « javascript »
+      # côté GitHub (désactiver l’éventuelle Default setup JS dans
+      # Paramètres → Sécurité du code → Analyse de code si elle apparaît encore).
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
         with:
-          category: "/language:${{matrix.language}}"
+          category: "/language:python"

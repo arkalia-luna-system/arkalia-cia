@@ -1838,7 +1838,7 @@ async def export_medical_report_pdf(
                 )
         raise HTTPException(
             status_code=500, detail="Erreur lors de l'export PDF du rapport médical"
-        ) from e
+        ) from None
 
 
 class PatternAnalysisRequest(BaseModel):
@@ -1872,16 +1872,16 @@ async def analyze_patterns(
 
         # Vérifier si l'analyse a retourné une erreur
         if isinstance(patterns, dict) and "error" in patterns:
-            error_msg = str(patterns.get("error", "Erreur inconnue lors de l'analyse"))
             logger.warning(
-                "Analyse patterns retournée avec erreur: %s",
-                sanitize_log_message(error_msg),
+                "Analyse patterns retournée avec erreur (détail côté serveur uniquement)."
             )
-            safe_patterns = dict(patterns)
-            safe_patterns["error"] = "Analyse incomplète. Vérifiez les données fournies."
-            safe_patterns.pop("traceback", None)
-            safe_patterns.pop("exception", None)
-            return safe_patterns
+            return {
+                "recurring_patterns": list(patterns.get("recurring_patterns") or []),
+                "trends": dict(patterns.get("trends") or {}),
+                "seasonality": dict(patterns.get("seasonality") or {}),
+                "predictions": dict(patterns.get("predictions") or {}),
+                "error": "Analyse incomplète. Vérifiez les données fournies.",
+            }
 
         return patterns
     except HTTPException:
@@ -1894,7 +1894,7 @@ async def analyze_patterns(
         raise HTTPException(
             status_code=400,
             detail="Erreur de validation des données fournies pour l'analyse.",
-        ) from e
+        ) from None
     except Exception as e:
         logger.error(
             f"Erreur analyse patterns: {sanitize_log_message(str(e))}", exc_info=True
@@ -1902,7 +1902,7 @@ async def analyze_patterns(
         raise HTTPException(
             status_code=500,
             detail="Erreur interne lors de l'analyse des patterns.",
-        ) from e
+        ) from None
 
 
 # === PARTAGE FAMILIAL ===

@@ -105,22 +105,26 @@ class AdvancedPatternAnalyzer:
                 "predictions": predictions,
             }
         except ValueError as e:
-            logger.error(f"Erreur validation données patterns: {e}", exc_info=True)
+            logger.error(
+                "Erreur validation données patterns: %s", e, exc_info=True
+            )
             return {
                 "recurring_patterns": [],
                 "trends": {},
                 "seasonality": {},
                 "predictions": {},
-                "error": f"Erreur de validation des données: {str(e)}",
+                "error": "Erreur de validation des données fournies.",
             }
         except Exception as e:
-            logger.error(f"Erreur détection patterns: {e}", exc_info=True)
+            logger.error(
+                "Erreur détection patterns: %s", e, exc_info=True
+            )
             return {
                 "recurring_patterns": [],
                 "trends": {},
                 "seasonality": {},
                 "predictions": {},
-                "error": f"Erreur lors de l'analyse: {str(e)}",
+                "error": "Erreur lors de l'analyse des patterns.",
             }
 
     def _detect_recurrence(self, data: list[dict]) -> list[dict]:
