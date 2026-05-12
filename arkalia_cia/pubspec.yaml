@@ -14,7 +14,7 @@ dependencies:
   path: ^1.8.3
 
   # Fichiers et PDF
-  file_picker: ^10.3.7
+  file_picker: ">=10.3.7 <13.0.0"
   path_provider: ^2.1.1
 
   # UI
@@ -36,7 +36,7 @@ dependencies:
   url_launcher: ^6.2.1
 
   # Partage
-  share_plus: ^12.0.1
+  share_plus: ">=12.0.1 <14.0.0"
   # Ouverture de fichiers
   open_filex: ^4.4.0
 
@@ -48,7 +48,7 @@ dependencies:
   encrypt: ^5.0.1
   flutter_secure_storage: ^10.1.0
   permission_handler: ^11.4.0
-  device_info_plus: ^12.4.0
+  device_info_plus: ">=12.4.0 <14.0.0"
   uuid: ^4.3.3
 
   # Authentification Google (gratuite, sans backend)
