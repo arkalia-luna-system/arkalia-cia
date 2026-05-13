@@ -48,9 +48,16 @@ updates:
     ignore:
       - dependency-name: "fl_chart"
       - dependency-name: "flutter_contacts"
+      # Bloquer seulement le passage à file_picker 11.x (breaking)
       - dependency-name: "file_picker"
+        update-types: ["version-update:semver-major"]
       # 1.0.9+ requiert Dart ^3.9 ; CI Flutter 3.29 = Dart 3.7
       - dependency-name: "cupertino_icons"
+      # 13.x requiert Dart ≥3.10 ; CI = Dart 3.7
+      - dependency-name: "device_info_plus"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "share_plus"
+        update-types: ["version-update:semver-major"]
 
   # GitHub Actions
   - package-ecosystem: "github-actions"
