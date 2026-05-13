@@ -1,8 +1,7 @@
-# Workflow CI/CD Matrix Ultra-Professionnel pour Arkalia-CIA
+# Pipeline CI principal : validation, tests Python multi-version, qualité.
 # Teste sur Windows, macOS, Linux + Python 3.10, 3.11, 3.12
-# Avec tests, couverture, sécurité et qualité
 
-name: CI_CD_Matrix_Ultra_Pro
+name: Arkalia CI
 
 on:
   push:

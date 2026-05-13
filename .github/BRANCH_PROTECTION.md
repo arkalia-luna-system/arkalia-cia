@@ -30,13 +30,15 @@
 
 ## Checks de statut requis
 
+> **Renommage du workflow** : l’ancien nom d’affichage `CI_CD_Matrix_Ultra_Pro` a été remplacé par **`Arkalia CI`**. Si une branche protégée exige encore l’ancien contexte, retire-le dans **Réglages → Branches → Règle → Checks requis** (ou ré-applique la commande `gh api` ci-dessous).
+
 ### Pour `main` et `develop`
-- `CI_CD_Matrix_Ultra_Pro` : Pipeline principal
+- `Arkalia CI` : Pipeline principal (workflow `.github/workflows/ci-matrix.yml`)
 - `CodeQL Analysis` : Analyse de sécurité
 - `Dependabot` : Vérification des dépendances
 
 ### Pour `feature/*`
-- `CI_CD_Matrix_Ultra_Pro` : Pipeline principal
+- `Arkalia CI` : Pipeline principal
 
 ## Règles de merge
 
@@ -56,7 +58,7 @@
 # Protection de la branche main
 gh api repos/:owner/:repo/branches/main/protection \
   --method PUT \
-  --field required_status_checks='{"strict":true,"contexts":["CI_CD_Matrix_Ultra_Pro","CodeQL Analysis"]}' \
+  --field required_status_checks='{"strict":true,"contexts":["Arkalia CI","CodeQL Analysis"]}' \
   --field enforce_admins=true \
   --field required_pull_request_reviews='{"required_approving_review_count":1,"dismiss_stale_reviews":true,"require_code_owner_reviews":true}' \
   --field restrictions='{"users":[],"teams":["arkalia-luna-system"]}'
@@ -64,7 +66,7 @@ gh api repos/:owner/:repo/branches/main/protection \
 # Protection de la branche develop
 gh api repos/:owner/:repo/branches/develop/protection \
   --method PUT \
-  --field required_status_checks='{"strict":true,"contexts":["CI_CD_Matrix_Ultra_Pro"]}' \
+  --field required_status_checks='{"strict":true,"contexts":["Arkalia CI"]}' \
   --field enforce_admins=false \
   --field required_pull_request_reviews='{"required_approving_review_count":1,"dismiss_stale_reviews":true}' \
   --field restrictions='{"users":[],"teams":["arkalia-luna-system"]}'
