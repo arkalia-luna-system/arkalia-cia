@@ -60,19 +60,17 @@ class TestMedicationService:
         assert times_str == "8:0,14:0,20:0"
 
     def test_get_missed_doses_logic(self):
-        """Test logique de détection des doses manquées"""
-        # Médicament avec rappel à 8h
-        reminder_time = datetime.now().replace(
-            hour=8, minute=0, second=0, microsecond=0
-        )
-        now = datetime.now()
+        """Test logique de détection des doses manquées (dates fixes, pas d’heure CI)."""
+        base = datetime(2026, 6, 1, 12, 0, 0)
+        reminder_time = base.replace(hour=8, minute=0, second=0, microsecond=0)
 
-        if now.hour > 8:
-            # Si on est après 8h et pas pris, c'est manqué
-            assert self._is_missed(reminder_time, False, now) is True
-        else:
-            # Si on est avant 8h, pas encore manqué
-            assert self._is_missed(reminder_time, False, now) is False
+        before = base.replace(hour=7, minute=0)
+        assert self._is_missed(reminder_time, False, before) is False
+
+        after = base.replace(hour=10, minute=35)
+        assert self._is_missed(reminder_time, False, after) is True
+
+        assert self._is_missed(reminder_time, True, after) is False
 
     def _is_active_on_date(self, start_date, end_date, check_date):
         """Vérifie si médicament est actif à une date"""
