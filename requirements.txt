@@ -14,7 +14,7 @@ fastapi==0.136.1  # Updated: Compatible with starlette 0.49.1 (security fixes)
 uvicorn==0.46.0
 pydantic==2.9.2  # Downgraded for safety compatibility
 starlette==0.49.1  # Updated: Security fix (CVE-2025-62727)
-requests==2.34.0
+requests==2.34.1
 
 # Sécurité et validation
 cryptography==48.0.0
