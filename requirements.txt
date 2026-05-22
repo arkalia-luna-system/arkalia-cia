@@ -22,7 +22,7 @@ python-multipart==0.0.28
 slowapi==0.1.9  # Rate limiting pour FastAPI
 authlib==1.7.2  # Security updates (GHSA advisories fixed)
 passlib[bcrypt]==1.7.4  # Hashing de mots de passe
-PyJWT==2.12.1  # JWT tokens
+PyJWT==2.13.0  # JWT tokens
 python-jose[cryptography]==3.5.0  # Alternative JWT (compatibilité)
 bleach==6.3.0  # Sanitization HTML/XSS protection
 phonenumbers==9.0.30  # Validation téléphone internationale
