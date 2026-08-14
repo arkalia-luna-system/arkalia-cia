@@ -261,8 +261,8 @@ def _make_aria_request(method: str, endpoint: str, **kwargs) -> requests.Respons
         url = f"{ARIA_BASE_URL}{endpoint}"
         response = requests.request(method, url, timeout=ARIA_TIMEOUT, **kwargs)
         return response
-    except requests.RequestException as e:
-        raise HTTPException(status_code=503, detail="Impossible de contacter ARIA.") from e
+    except requests.RequestException:
+        raise HTTPException(status_code=503, detail="Impossible de contacter ARIA.") from None
 
 
 @router.get("/status")
@@ -307,19 +307,19 @@ async def quick_pain_entry(entry: QuickEntry) -> PainEntryOut:
     try:
         local_entry = _save_local_pain_entry(payload)
         return PainEntryOut(**local_entry)
-    except Exception as exc:
+    except Exception:
         if not _check_aria_connection():
             raise HTTPException(
                 status_code=503,
                 detail="CIA douleur locale indisponible et ARIA non disponible.",
-            ) from exc
+            ) from None
         response = _make_aria_request("POST", "/api/pain/quick-entry", json=payload)
         if response.status_code == 200:
             return PainEntryOut(**response.json())
         raise HTTPException(
             status_code=response.status_code,
             detail=_safe_upstream_error_message(response.status_code),
-        ) from exc
+        ) from None
 
 
 @router.post("/pain-entry", response_model=PainEntryOut)
@@ -329,16 +329,16 @@ async def create_pain_entry(entry: PainEntryIn) -> PainEntryOut:
     try:
         local_entry = _save_local_pain_entry(payload)
         return PainEntryOut(**local_entry)
-    except Exception as exc:
+    except Exception:
         if not _check_aria_connection():
-            raise HTTPException(status_code=503, detail="CIA/ARIA indisponible") from exc
+            raise HTTPException(status_code=503, detail="CIA/ARIA indisponible") from None
         response = _make_aria_request("POST", "/api/pain/entry", json=payload)
         if response.status_code == 200:
             return PainEntryOut(**response.json())
         raise HTTPException(
             status_code=response.status_code,
             detail=_safe_upstream_error_message(response.status_code),
-        ) from exc
+        ) from None
 
 
 @router.get("/pain-entries", response_model=list[PainEntryOut])
@@ -346,9 +346,9 @@ async def get_pain_entries() -> list[PainEntryOut]:
     """Récupère les entrées douleur depuis CIA local, fallback ARIA."""
     try:
         return [PainEntryOut(**entry) for entry in _fetch_local_pain_entries()]
-    except Exception as exc:
+    except Exception:
         if not _check_aria_connection():
-            raise HTTPException(status_code=503, detail="CIA/ARIA indisponible") from exc
+            raise HTTPException(status_code=503, detail="CIA/ARIA indisponible") from None
         response = _make_aria_request("GET", "/api/pain/entries")
         if response.status_code == 200:
             payload = response.json()
@@ -358,12 +358,12 @@ async def get_pain_entries() -> list[PainEntryOut]:
             if not isinstance(entries, list):
                 raise HTTPException(
                     status_code=502, detail="Réponse ARIA invalide pour /api/pain/entries"
-                ) from exc
+                ) from None
             return [PainEntryOut(**entry) for entry in entries]
         raise HTTPException(
             status_code=response.status_code,
             detail=_safe_upstream_error_message(response.status_code),
-        ) from exc
+        ) from None
 
 
 @router.get("/pain-entries/recent", response_model=list[PainEntryOut])
@@ -373,9 +373,9 @@ async def get_recent_pain_entries(limit: int = 20) -> list[PainEntryOut]:
         return [
             PainEntryOut(**entry) for entry in _fetch_local_pain_entries(limit=limit)
         ]
-    except Exception as exc:
+    except Exception:
         if not _check_aria_connection():
-            raise HTTPException(status_code=503, detail="CIA/ARIA indisponible") from exc
+            raise HTTPException(status_code=503, detail="CIA/ARIA indisponible") from None
         response = _make_aria_request(
             "GET", "/api/pain/entries/recent", params={"limit": limit}
         )
@@ -384,7 +384,7 @@ async def get_recent_pain_entries(limit: int = 20) -> list[PainEntryOut]:
         raise HTTPException(
             status_code=response.status_code,
             detail=_safe_upstream_error_message(response.status_code),
-        ) from exc
+        ) from None
 
 
 @router.get("/export/csv")
@@ -421,16 +421,16 @@ async def export_csv() -> dict[str, Any]:
             "csv_data": output.getvalue(),
             "rows": len(entries),
         }
-    except Exception as exc:
+    except Exception:
         if not _check_aria_connection():
-            raise HTTPException(status_code=503, detail="CIA/ARIA indisponible") from exc
+            raise HTTPException(status_code=503, detail="CIA/ARIA indisponible") from None
         response = _make_aria_request("GET", "/api/pain/export/csv")
         if response.status_code == 200:
             return cast(dict[str, Any], response.json())
         raise HTTPException(
             status_code=response.status_code,
             detail=_safe_upstream_error_message(response.status_code),
-        ) from exc
+        ) from None
 
 
 @router.get("/patterns/recent")
@@ -457,16 +457,16 @@ async def get_recent_patterns() -> dict[str, Any]:
                 }
             )
         return {"source": "cia_local", "patterns": patterns, "stats": summary["stats"]}
-    except Exception as exc:
+    except Exception:
         if not _check_aria_connection():
-            raise HTTPException(status_code=503, detail="CIA/ARIA indisponible") from exc
+            raise HTTPException(status_code=503, detail="CIA/ARIA indisponible") from None
         response = _make_aria_request("GET", "/api/patterns/recent")
         if response.status_code == 200:
             return cast(dict[str, Any], response.json())
         raise HTTPException(
             status_code=response.status_code,
             detail=_safe_upstream_error_message(response.status_code),
-        ) from exc
+        ) from None
 
 
 @router.get("/pain/summary")
@@ -475,9 +475,9 @@ async def get_pain_summary(window: int = 30) -> dict[str, Any]:
     try:
         summary = _build_local_summary(_fetch_local_pain_entries(), window=window)
         return summary
-    except Exception as exc:
+    except Exception:
         if not _check_aria_connection():
-            raise HTTPException(status_code=503, detail="CIA/ARIA indisponible") from exc
+            raise HTTPException(status_code=503, detail="CIA/ARIA indisponible") from None
         response = _make_aria_request(
             "GET", "/api/pain/summary", params={"window": window}
         )
@@ -486,7 +486,7 @@ async def get_pain_summary(window: int = 30) -> dict[str, Any]:
         raise HTTPException(
             status_code=response.status_code,
             detail=_safe_upstream_error_message(response.status_code),
-        ) from exc
+        ) from None
 
 
 @router.get("/pain/suggestions")
@@ -507,9 +507,9 @@ async def get_pain_suggestions(window: int = 30) -> dict[str, Any]:
         if not suggestions:
             suggestions.append("Aucune alerte majeure: poursuivre le suivi régulier.")
         return {"window_days": window, "suggestions": suggestions, "source": "cia_local"}
-    except Exception as exc:
+    except Exception:
         if not _check_aria_connection():
-            raise HTTPException(status_code=503, detail="CIA/ARIA indisponible") from exc
+            raise HTTPException(status_code=503, detail="CIA/ARIA indisponible") from None
         response = _make_aria_request(
             "GET", "/api/pain/suggestions", params={"window": window}
         )
@@ -518,7 +518,7 @@ async def get_pain_suggestions(window: int = 30) -> dict[str, Any]:
         raise HTTPException(
             status_code=response.status_code,
             detail=_safe_upstream_error_message(response.status_code),
-        ) from exc
+        ) from None
 
 
 @router.get("/predictions/current")
@@ -549,13 +549,13 @@ async def get_current_predictions() -> dict[str, Any]:
             "risk_level": risk_level,
             "source": "cia_local",
         }
-    except Exception as exc:
+    except Exception:
         if not _check_aria_connection():
-            raise HTTPException(status_code=503, detail="CIA/ARIA indisponible") from exc
+            raise HTTPException(status_code=503, detail="CIA/ARIA indisponible") from None
         response = _make_aria_request("GET", "/api/predictions/current")
         if response.status_code == 200:
             return cast(dict[str, Any], response.json())
         raise HTTPException(
             status_code=response.status_code,
             detail=_safe_upstream_error_message(response.status_code),
-        ) from exc
+        ) from None

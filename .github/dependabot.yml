@@ -27,8 +27,7 @@ updates:
       - dependency-name: "pandas"
       - dependency-name: "pydantic"
       - dependency-name: "click"
-      # FastAPI 0.136.x exige starlette <0.50 ; 1.x casserait le backend
-      - dependency-name: "starlette"
+      - dependency-name: "reportlab"
         update-types: ["version-update:semver-major"]
 
   # Flutter/Dart dependencies

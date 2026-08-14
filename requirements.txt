@@ -5,36 +5,36 @@
 # Note: sqlite3 est inclus dans Python standard
 
 # Traitement de fichiers
-pypdf==6.13.0  # Security updates (GHSA advisories fixed)
+pypdf==6.15.0  # Security updates (GHSA advisories fixed)
 python-magic==0.4.27
 # pathlib2==2.3.7  # Removed: yanked version, using built-in pathlib
 
 # APIs et web
-fastapi==0.136.3  # Compatible with starlette 0.49.1 (pas Starlette 1.x)
-uvicorn==0.49.0
+fastapi==0.141.1
+uvicorn==0.52.1
 pydantic==2.9.2  # Downgraded for safety compatibility
-starlette==0.49.1  # Updated: Security fix (CVE-2025-62727)
+starlette==0.52.1
 requests==2.34.2
 
 # Sécurité et validation
-cryptography==48.0.0
+cryptography==50.0.0
 python-multipart==0.0.32
-slowapi==0.1.9  # Rate limiting pour FastAPI
+slowapi==0.1.10  # Rate limiting pour FastAPI
 authlib==1.7.2  # Security updates (GHSA advisories fixed)
 passlib[bcrypt]==1.7.4  # Hashing de mots de passe
 PyJWT==2.13.0  # JWT tokens
 python-jose[cryptography]==3.5.0  # Alternative JWT (compatibilité)
 bleach==6.4.0  # Sanitization HTML/XSS protection
-phonenumbers==9.0.32  # Validation téléphone internationale
+phonenumbers==9.0.36  # Validation téléphone internationale
 
 # Utilitaires
 python-dotenv==1.2.2
-pydantic-settings==2.14.1  # Configuration avec Pydantic Settings
+pydantic-settings==2.15.0  # Configuration avec Pydantic Settings
 click==8.1.8  # Downgraded for semgrep compatibility
 rich==15.0.0  # Downgraded for semgrep compatibility
 
 # Tests
-pytest==9.0.3
+pytest==9.1.1
 pytest-asyncio==1.4.0
 pytest-cov==7.1.0
 httpx==0.27.0

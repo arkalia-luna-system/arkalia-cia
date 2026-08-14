@@ -158,16 +158,16 @@ def verify_token(
         return TokenData(user_id=user_id, username=uname, role=role)
     except HTTPException:
         raise
-    except jwt.ExpiredSignatureError as e:
+    except jwt.ExpiredSignatureError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token expiré",
-        ) from e
-    except jwt.PyJWTError as e:
+        ) from None
+    except jwt.PyJWTError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token invalide",
-        ) from e
+        ) from None
 
 
 async def get_current_user(

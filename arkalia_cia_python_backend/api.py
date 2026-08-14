@@ -61,7 +61,6 @@ from arkalia_cia_python_backend.middleware.request_size_validator import (
 )
 from arkalia_cia_python_backend.security.ssrf_validator import get_ssrf_validator
 from arkalia_cia_python_backend.security_utils import (
-    sanitize_error_detail,
     sanitize_html,
     sanitize_log_message,
     validate_phone_number,
@@ -646,7 +645,7 @@ async def register(
         raise HTTPException(
             status_code=500,
             detail="Erreur lors de l'inscription",
-        ) from e
+        ) from None
 
 
 @app.post(f"{API_PREFIX}/auth/login", response_model=Token)
@@ -712,7 +711,7 @@ async def login(
         raise HTTPException(
             status_code=500,
             detail="Erreur lors de la connexion",
-        ) from e
+        ) from None
 
 
 @app.post(f"{API_PREFIX}/auth/refresh", response_model=Token)
@@ -785,7 +784,7 @@ async def refresh_token_endpoint(
         raise HTTPException(
             status_code=401,
             detail="Token de rafraîchissement invalide",
-        ) from e
+        ) from None
 
 
 @app.post(f"{API_PREFIX}/auth/logout")
@@ -841,7 +840,7 @@ async def logout(
         raise HTTPException(
             status_code=500,
             detail="Erreur lors de la déconnexion",
-        ) from e
+        ) from None
 
 
 # === DOCUMENTS ===
@@ -899,13 +898,15 @@ async def upload_document(
         raise HTTPException(
             status_code=400,
             detail="Données de document invalides pour l'upload.",
-        ) from e
+        ) from None
     except Exception as e:
         logger.error(
             f"Erreur upload document: {sanitize_log_message(str(e))}",
             exc_info=True,
         )
-        raise HTTPException(status_code=500, detail=sanitize_error_detail(e)) from e
+        raise HTTPException(
+            status_code=500, detail="Erreur interne. Réessayez plus tard."
+        ) from None
 
 
 @app.get(f"{API_PREFIX}/health-portals/documents")
@@ -936,7 +937,9 @@ async def get_health_portal_documents(
             f"Erreur récupération documents portail santé: {sanitize_log_message(str(e))}",
             exc_info=True,
         )
-        raise HTTPException(status_code=500, detail=sanitize_error_detail(e)) from e
+        raise HTTPException(
+            status_code=500, detail="Erreur interne. Réessayez plus tard."
+        ) from None
 
 
 @app.delete(f"{API_PREFIX}/health-portals/documents/{{doc_id}}")
@@ -974,7 +977,9 @@ async def delete_health_portal_document(
             f"Erreur suppression document portail santé: {sanitize_log_message(str(e))}",
             exc_info=True,
         )
-        raise HTTPException(status_code=500, detail=sanitize_error_detail(e)) from e
+        raise HTTPException(
+            status_code=500, detail="Erreur interne. Réessayez plus tard."
+        ) from None
 
 
 @app.get(f"{API_PREFIX}/documents", response_model=list[DocumentResponse])
@@ -1456,7 +1461,7 @@ async def import_health_portal_manual(
         )
         raise HTTPException(
             status_code=500, detail="Erreur lors de l'import du fichier portail"
-        ) from e
+        ) from None
 
 
 # Garder l'ancien endpoint pour compatibilité (mais il est obsolète)
@@ -1488,9 +1493,11 @@ async def import_health_portal_data(
                     _ = doc.get("type", doc.get("category", "document"))
                     imported_count += 1
                 except Exception as e:
-                    errors.append(
-                        f"Erreur import document: {sanitize_log_message(str(e))}"
+                    logger.warning(
+                        "Erreur import document portail: %s",
+                        sanitize_log_message(str(e)),
                     )
+                    errors.append("Un document n'a pas pu être importé.")
 
         return {
             "success": True,
@@ -1503,7 +1510,7 @@ async def import_health_portal_data(
         logger.error(f"Erreur import portail santé: {sanitize_log_message(str(e))}")
         raise HTTPException(
             status_code=500, detail="Erreur lors de l'import des données du portail"
-        ) from e
+        ) from None
 
 
 # === IA CONVERSATIONNELLE ===
@@ -1577,7 +1584,7 @@ async def chat_with_ai(
         logger.error(f"Erreur IA conversationnelle: {sanitize_log_message(str(e))}")
         raise HTTPException(
             status_code=500, detail="Erreur lors du traitement de votre question"
-        ) from e
+        ) from None
 
 
 class PrepareAppointmentRequest(BaseModel):
@@ -1608,7 +1615,7 @@ async def get_ai_conversations(
         )
         raise HTTPException(
             status_code=500, detail="Erreur lors de la récupération des conversations"
-        ) from e
+        ) from None
 
 
 # === RAPPORTS MÉDICAUX ===
@@ -1702,7 +1709,7 @@ async def generate_medical_report(
         )
         raise HTTPException(
             status_code=500, detail="Erreur lors de la génération du rapport médical"
-        ) from e
+        ) from None
 
 
 def _cleanup_temp_file(file_path: str) -> None:
@@ -1808,7 +1815,7 @@ async def export_medical_report_pdf(
             raise HTTPException(
                 status_code=503,
                 detail="Export PDF non disponible (reportlab requis)",
-            ) from e
+            ) from None
         except Exception:
             # Nettoyer le fichier temporaire en cas d'erreur
             if os.path.exists(pdf_path):
@@ -2025,7 +2032,7 @@ async def create_family_member(
         )
         raise HTTPException(
             status_code=500, detail="Erreur lors de l'ajout du membre famille"
-        ) from e
+        ) from None
 
 
 @app.get(f"{API_PREFIX}/family-sharing/members", response_model=list[FamilyMemberResponse])
@@ -2065,7 +2072,7 @@ async def get_family_members(
         )
         raise HTTPException(
             status_code=500, detail="Erreur lors de la récupération des membres famille"
-        ) from e
+        ) from None
 
 
 @app.put(f"{API_PREFIX}/family-sharing/members/{{member_id}}", response_model=FamilyMemberResponse)
@@ -2165,7 +2172,7 @@ async def update_family_member(
         )
         raise HTTPException(
             status_code=500, detail="Erreur lors de la mise à jour du membre famille"
-        ) from e
+        ) from None
 
 
 @app.delete(f"{API_PREFIX}/family-sharing/members/{{member_id}}")
@@ -2214,7 +2221,7 @@ async def delete_family_member(
         )
         raise HTTPException(
             status_code=500, detail="Erreur lors de la suppression du membre famille"
-        ) from e
+        ) from None
 
 
 @app.post(f"{API_PREFIX}/family-sharing/share")
@@ -2298,7 +2305,7 @@ async def share_document(
         )
         raise HTTPException(
             status_code=500, detail="Erreur lors du partage du document"
-        ) from e
+        ) from None
 
 
 @app.get(f"{API_PREFIX}/family-sharing/shared", response_model=list[SharedDocumentResponse])
@@ -2337,7 +2344,7 @@ async def get_shared_documents(
         )
         raise HTTPException(
             status_code=500, detail="Erreur lors de la récupération des documents partagés"
-        ) from e
+        ) from None
 
 
 @app.delete(f"{API_PREFIX}/family-sharing/share/{{document_id}}")
@@ -2391,7 +2398,7 @@ async def unshare_document(
         )
         raise HTTPException(
             status_code=500, detail="Erreur lors du retrait du partage"
-        ) from e
+        ) from None
 
 
 class PredictEventsRequest(BaseModel):
@@ -2429,7 +2436,7 @@ async def predict_future_events(
         logger.error(f"Erreur prédiction événements: {sanitize_log_message(str(e))}")
         raise HTTPException(
             status_code=500, detail="Erreur lors de la prédiction des événements"
-        ) from e
+        ) from None
 
 
 @app.post(f"{API_PREFIX}/ai/prepare-appointment")
@@ -2451,7 +2458,7 @@ async def prepare_appointment_questions(
         logger.error(f"Erreur préparation RDV: {sanitize_log_message(str(e))}")
         raise HTTPException(
             status_code=500, detail="Erreur lors de la préparation des questions"
-        ) from e
+        ) from None
 
 
 if __name__ == "__main__":
