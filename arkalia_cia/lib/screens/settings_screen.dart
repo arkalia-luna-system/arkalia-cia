@@ -213,18 +213,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     subtitle: const Text('Se déconnecter du compte'),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () async {
-                      if (!mounted) return;
                       final isLoggedIn = await AuthApiService.isLoggedIn();
-                      if (!mounted) return;
+                      if (!context.mounted) return;
                       if (isLoggedIn) {
-                        // Afficher dialog de déconnexion
-                        if (!mounted) return;
-                        final dialogContext = context;
-                        if (!mounted) return;
-                        // ignore: use_build_context_synchronously - mounted vérifié juste avant
                         final shouldLogout = await showDialog<bool>(
-                          context:
-                              dialogContext, // ignore: use_build_context_synchronously
+                          context: context,
                           builder:
                               (context) => AlertDialog(
                                 title: const Text('Déconnexion'),

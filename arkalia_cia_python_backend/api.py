@@ -1372,7 +1372,6 @@ async def import_health_portal_manual(
 
             # Sauvegarder les documents dans la base
             imported_count = 0
-            errors: list[str] = []
 
             # Validation user_id
             if not current_user.user_id:
@@ -1432,12 +1431,10 @@ async def import_health_portal_manual(
             return {
                 "success": True,
                 "imported_count": imported_count,
-                "document_id": doc_id,  # Utiliser doc_id dans la réponse
+                "document_id": doc_id,
                 "portal": portal_lower,
                 "total_documents_found": result.get("total_documents", 0),
-                "errors": errors[:10],  # Limiter à 10 erreurs
                 "message": f"{imported_count} document(s) importé(s) depuis {portal_lower}",
-                "metadata": result.get("metadata", {}),
             }
 
         finally:

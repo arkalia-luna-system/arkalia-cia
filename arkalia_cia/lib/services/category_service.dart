@@ -39,8 +39,9 @@ class CategoryService {
   /// Ajoute une catégorie personnalisée
   static Future<bool> addCategory(String category) async {
     if (category.trim().isEmpty) return false;
-    if (_defaultCategories.contains(category))
+    if (_defaultCategories.contains(category)) {
       return false; // Ne pas ajouter les défaut
+    }
 
     final categories = await getCategories();
     if (categories.contains(category)) return false; // Déjà existante
@@ -56,8 +57,9 @@ class CategoryService {
 
   /// Supprime une catégorie personnalisée
   static Future<bool> deleteCategory(String category) async {
-    if (_defaultCategories.contains(category))
+    if (_defaultCategories.contains(category)) {
       return false; // Ne pas supprimer les défaut
+    }
 
     final prefs = await SharedPreferences.getInstance();
     final customCategoriesJson = prefs.getString(_categoriesKey);
