@@ -4,7 +4,9 @@
 
 <br>
 
-# 📱❤️🔐 **Arkalia CIA** - Assistant Mobile Santé | Tests: 509, couverture: 72%
+# Arkalia CIA — Assistant mobile santé (**bêta**)
+
+> Tests ~509 · couverture ~72 % · Flutter + Python · hors ligne / privacy-first
 
 > **Statut ARIA (27 avril 2026)**: les fonctionnalités ARIA sont désormais consolidées dans CIA.  
 > Le dépôt `arkalia-aria` est en archivage progressif (historique uniquement).
@@ -355,8 +357,8 @@ make deps-update        # Update dependencies
 
 | Platform | Minimum Version | Status |
 |----------|----------------|--------|
-| **iOS** | 12.0+ | ✅ Production |
-| **Android** | API 21 (5.0+) | ✅ Production |
+| **iOS** | 12.0+ | Cible supportée (bêta) |
+| **Android** | API 21 (5.0+) | Cible supportée (bêta) |
 | **Web** | Modern browsers | 🧪 Development |
 
 ## Performance Metrics
