@@ -13,7 +13,7 @@ python-magic==0.4.27
 fastapi==0.141.1
 uvicorn==0.52.1
 pydantic==2.9.2  # Downgraded for safety compatibility
-starlette==0.52.1
+starlette==1.6.0
 requests==2.34.2
 
 # Sécurité et validation
