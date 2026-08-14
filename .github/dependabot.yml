@@ -27,6 +27,9 @@ updates:
       - dependency-name: "pandas"
       - dependency-name: "pydantic"
       - dependency-name: "click"
+      # FastAPI 0.136.x exige starlette <0.50 ; 1.x casserait le backend
+      - dependency-name: "starlette"
+        update-types: ["version-update:semver-major"]
 
   # Flutter/Dart dependencies
   - package-ecosystem: "pub"
@@ -58,6 +61,11 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: "share_plus"
         update-types: ["version-update:semver-major"]
+      - dependency-name: "permission_handler"
+        update-types: ["version-update:semver-major"]
+      # 2.1.6 / 2.4.3 exigent Dart ≥3.10 ; CI Flutter 3.29 = Dart 3.7
+      - dependency-name: "path_provider"
+      - dependency-name: "sqflite"
 
   # GitHub Actions
   - package-ecosystem: "github-actions"

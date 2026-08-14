@@ -31,7 +31,7 @@ jobs:
 
     steps:
       - name: "Checkout Code"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: "Cleanup macOS metadata files"
         run: |
@@ -128,7 +128,7 @@ jobs:
 
       - name: "Upload Coverage to Codecov"
         if: hashFiles('arkalia_cia/coverage/lcov.info') != ''
-        uses: codecov/codecov-action@v6
+        uses: codecov/codecov-action@v7
         with:
           files: arkalia_cia/coverage/lcov.info
           flags: flutter
@@ -162,7 +162,7 @@ jobs:
 
     steps:
       - name: "Checkout Code"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: "Cleanup macOS metadata files"
         run: |
@@ -224,7 +224,7 @@ jobs:
 
     steps:
       - name: "Checkout Code"
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 

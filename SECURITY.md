@@ -236,7 +236,7 @@ jobs:
   security:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Run Bandit
         run: bandit -r arkalia_cia_python_backend/
       - name: Run Safety
