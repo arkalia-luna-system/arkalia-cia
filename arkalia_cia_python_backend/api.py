@@ -518,9 +518,10 @@ async def health_check(db: CIADatabase = Depends(get_database)):
         if isinstance(checks, dict):
             checks["database"] = "ok"
     except Exception as e:
+        logger.warning("Health check database: %s", sanitize_log_message(str(e)))
         checks = health_status["checks"]
         if isinstance(checks, dict):
-            checks["database"] = f"error: {str(e)[:50]}"
+            checks["database"] = "error"
         health_status["status"] = "degraded"
 
     # Vérifier storage (disque)
@@ -542,12 +543,12 @@ async def health_check(db: CIADatabase = Depends(get_database)):
         if isinstance(checks, dict):
             checks["storage"] = storage_info
     except Exception as e:
-        # OPTIMISATION: Toujours créer un dict pour éviter erreurs d'indexation
+        logger.warning("Health check storage: %s", sanitize_log_message(str(e)))
         checks = health_status["checks"]
         if isinstance(checks, dict):
             checks["storage"] = {
                 "status": "error",
-                "message": str(e)[:50],
+                "message": "Vérification stockage indisponible",
             }
         health_status["status"] = "degraded"
 

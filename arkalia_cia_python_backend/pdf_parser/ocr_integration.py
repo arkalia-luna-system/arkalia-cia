@@ -177,7 +177,7 @@ class OCRIntegration:
                 "pages": [],
                 "confidence": 0.0,
                 "is_scanned": True,
-                "error": str(e),
+                "error": "Erreur OCR.",
                 "processing_time": time.time() - start_time,
             }
 

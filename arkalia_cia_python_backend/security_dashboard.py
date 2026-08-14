@@ -495,7 +495,10 @@ class SecurityDashboard:
                             }
                         else:
                             logger.warning(f"Erreur lors du linting: {e}")
-                            security_data["linting_results"] = {"error": str(e)}
+                            security_data["linting_results"] = {
+                                "error": "lint_failed",
+                                "message": "Analyse de qualité indisponible",
+                            }
 
             # Collecte des métriques de cache
             if "cache_manager" in self.athalia_components:
@@ -552,7 +555,7 @@ class SecurityDashboard:
                         logger.warning(
                             f"Erreur lors de la collecte des stats cache: {e}"
                         )
-                        security_data["cache_security"] = {"error": str(e)}
+                        security_data["cache_security"] = {"error": "cache_unavailable"}
 
             # Collecte des métriques complètes du projet (optimisé)
             if "metrics_collector" in self.athalia_components:
@@ -626,7 +629,7 @@ class SecurityDashboard:
 
                     except Exception as e:
                         logger.warning(f"Erreur lors de la collecte des métriques: {e}")
-                        security_data["project_metrics"] = {"error": str(e)}
+                        security_data["project_metrics"] = {"error": "metrics_unavailable"}
 
             # Génération des recommandations
             security_data["recommendations"] = self._generate_security_recommendations(
@@ -653,7 +656,7 @@ class SecurityDashboard:
 
         except Exception as e:
             logger.error(f"Erreur lors de la collecte des données de sécurité: {e}")
-            security_data["error"] = str(e)
+            security_data["error"] = "Erreur lors de la collecte des données de sécurité."
         finally:
             # Nettoyage mémoire seulement si beaucoup de données ont été traitées
             # Le GC Python est déjà efficace, pas besoin de forcer systématiquement

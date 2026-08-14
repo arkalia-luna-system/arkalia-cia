@@ -103,5 +103,5 @@ class OCRProcessor:
                 "pages": [],
                 "confidence": 0.0,
                 "is_scanned": True,
-                "error": str(e),
+                "error": "Erreur OCR.",
             }

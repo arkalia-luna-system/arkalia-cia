@@ -67,7 +67,7 @@ class SSRFValidator:
         try:
             parsed = urlparse(url)
         except Exception as e:
-            raise ValueError(f"Format d'URL invalide: {e}") from e
+            raise ValueError("Format d'URL invalide") from e
 
         # Vérifier le schéma
         if parsed.scheme not in ["http", "https"]:

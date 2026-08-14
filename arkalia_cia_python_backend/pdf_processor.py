@@ -17,7 +17,6 @@ from arkalia_cia_python_backend.pdf_parser.ocr_integration import (
     OCRIntegration,
 )
 from arkalia_cia_python_backend.security_utils import (
-    sanitize_error_detail,
     sanitize_log_message,
 )
 
@@ -92,7 +91,7 @@ class PDFProcessor:
                     return (
                         str(text_result)
                         if text_result
-                        else f"Erreur lors de l'extraction: {str(e)}"
+                        else "Erreur lors de l'extraction du PDF."
                     )
                 except Exception as ocr_error:
                     # Logger l'erreur OCR secondaire mais continuer
@@ -101,7 +100,7 @@ class PDFProcessor:
                         f"Erreur OCR secondaire (non bloquante): {ocr_error}",
                         exc_info=False,
                     )
-            return f"Erreur lors de l'extraction: {str(e)}"
+            return "Erreur lors de l'extraction du PDF."
 
     def save_pdf_to_uploads(self, file_path: str, filename: str) -> str:
         """Sauvegarde un PDF dans le dossier uploads"""
@@ -110,7 +109,7 @@ class PDFProcessor:
             shutil.copy2(file_path, destination)
             return str(destination)
         except Exception as e:
-            raise Exception(f"Erreur lors de la sauvegarde: {str(e)}") from e
+            raise Exception("Erreur lors de la sauvegarde du fichier.") from e
 
     def process_pdf(self, file_path: str, original_name: str) -> dict[str, Any]:
         """Traite un fichier PDF et le sauvegarde avec validations de sécurité"""
@@ -241,7 +240,7 @@ class PDFProcessor:
                 sanitize_log_message(f"Erreur traitement PDF: {str(e)}"),
                 exc_info=True,
             )
-            return {"success": False, "error": sanitize_error_detail(e)}
+            return {"success": False, "error": "Erreur lors du traitement du PDF."}
 
     def _sanitize_filename(self, filename: str) -> str:
         """Nettoie un nom de fichier pour qu'il soit sûr"""
@@ -277,7 +276,11 @@ class PDFProcessor:
                 "modified_at": datetime.fromtimestamp(stat.st_mtime).isoformat(),
             }
         except Exception as e:
-            return {"success": False, "error": str(e)}
+            logger.error(
+                "Impossible de lire le fichier: %s",
+                sanitize_log_message(str(e)),
+            )
+            return {"success": False, "error": "Impossible de lire le fichier."}
 
 
 # NOTE: Instance globale supprimée - utiliser get_pdf_processor()
