@@ -29,6 +29,9 @@ updates:
       - dependency-name: "click"
       - dependency-name: "reportlab"
         update-types: ["version-update:semver-major"]
+      # Starlette 1.x = majeure ; FastAPI 0.141 non validé dessus
+      - dependency-name: "starlette"
+        update-types: ["version-update:semver-major"]
 
   # Flutter/Dart dependencies
   - package-ecosystem: "pub"
