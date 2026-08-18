@@ -5,7 +5,7 @@
 # Note: sqlite3 est inclus dans Python standard
 
 # Traitement de fichiers
-pypdf==6.16.0  # Security updates (GHSA advisories fixed)
+pypdf==6.16.1  # Security updates (GHSA advisories fixed)
 python-magic==0.4.27
 # pathlib2==2.3.7  # Removed: yanked version, using built-in pathlib
 
