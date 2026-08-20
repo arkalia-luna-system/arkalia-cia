@@ -28,7 +28,7 @@ bleach==6.4.0  # Sanitization HTML/XSS protection
 phonenumbers==9.0.37  # Validation téléphone internationale
 
 # Utilitaires
-python-dotenv==1.2.2
+python-dotenv==1.2.3
 pydantic-settings==2.15.0  # Configuration avec Pydantic Settings
 click==8.1.8  # Downgraded for semgrep compatibility
 rich==15.0.0  # Downgraded for semgrep compatibility
