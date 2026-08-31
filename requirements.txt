@@ -17,7 +17,7 @@ starlette==0.52.1
 requests==2.34.2
 
 # Sécurité et validation
-cryptography==50.0.0
+cryptography==50.0.1
 python-multipart==0.0.32
 slowapi==0.1.10  # Rate limiting pour FastAPI
 authlib==1.7.2  # Security updates (GHSA advisories fixed)
