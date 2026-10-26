@@ -10,7 +10,7 @@ python-magic==0.4.27
 # pathlib2==2.3.7  # Removed: yanked version, using built-in pathlib
 
 # APIs et web
-fastapi==0.141.1
+fastapi==0.161.1
 uvicorn==0.52.3
 pydantic==2.9.2  # Downgraded for safety compatibility
 starlette==0.52.1
