@@ -4,6 +4,7 @@ import '../services/api_service.dart';
 import '../services/backend_config_service.dart';
 import '../utils/error_helper.dart';
 import '../utils/input_sanitizer.dart';
+import '../widgets/senior_empty_state.dart';
 
 class MedicalReportScreen extends StatefulWidget {
   final String? consultationDate;
@@ -133,8 +134,8 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
         final userMessage = ErrorHelper.getUserFriendlyMessage(e);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erreur lors du partage: $userMessage'),
-            backgroundColor: Colors.red,
+            content: Text('Impossible de partager : $userMessage'),
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -143,11 +144,12 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Rapport Médical'),
-        backgroundColor: Colors.green[600],
-        foregroundColor: Colors.white,
+        title: const Text('Rapport médical'),
+        backgroundColor: scheme.primary,
+        foregroundColor: scheme.onPrimary,
         actions: [
           if (_report != null && _report!['formatted_text'] != null)
             IconButton(
@@ -164,84 +166,99 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
       ),
       body:
           _isLoading
-              ? const Center(child: CircularProgressIndicator())
+              ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const CircularProgressIndicator(),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Préparation de votre rapport…',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: scheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              )
               : _error != null
               ? _buildErrorView()
               : _report == null
-              ? const Center(child: Text('Aucun rapport disponible'))
+              ? SeniorEmptyState(
+                icon: Icons.description_outlined,
+                title: 'Aucun rapport',
+                message:
+                    'Aucun rapport n’est disponible pour le moment. Vous pouvez en générer un nouveau.',
+                action: Semantics(
+                  button: true,
+                  label: 'Générer un rapport médical',
+                  child: ElevatedButton.icon(
+                    onPressed: _generateReport,
+                    icon: const Icon(Icons.refresh),
+                    label: const Text('Générer le rapport'),
+                  ),
+                ),
+              )
               : _buildReportView(),
     );
   }
 
   Widget _buildErrorView() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
-            const SizedBox(height: 16),
-            Text(
-              'Erreur',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.red[700],
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              _error ?? 'Erreur inconnue',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: _generateReport,
-              icon: const Icon(Icons.refresh),
-              label: const Text('Réessayer'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green[600],
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
-                ),
-              ),
-            ),
-          ],
+    final scheme = Theme.of(context).colorScheme;
+    return SeniorEmptyState(
+      icon: Icons.error_outline,
+      title: 'Rapport indisponible',
+      message: _error ?? 'Une erreur est survenue. Veuillez réessayer.',
+      useErrorAccent: true,
+      action: Semantics(
+        button: true,
+        label: 'Réessayer de générer le rapport',
+        child: ElevatedButton.icon(
+          onPressed: _generateReport,
+          icon: const Icon(Icons.refresh),
+          label: const Text('Réessayer'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: scheme.primary,
+            foregroundColor: scheme.onPrimary,
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            minimumSize: const Size(48, 48),
+          ),
         ),
       ),
     );
   }
 
   Widget _buildReportView() {
+    final scheme = Theme.of(context).colorScheme;
     final formattedText = _report!['formatted_text'] as String? ?? '';
     final sections = _report!['sections'] as Map<String, dynamic>? ?? {};
 
     return Column(
       children: [
-        // En-tête avec informations
         if (widget.doctorName != null)
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16.0),
-            color: Colors.green[50],
+            color: scheme.primaryContainer.withValues(alpha: 0.45),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    Icon(Icons.medical_services, color: Colors.green[700]),
+                    Icon(
+                      Icons.medical_services,
+                      color: scheme.onPrimaryContainer,
+                    ),
                     const SizedBox(width: 8),
-                    Text(
-                      // Sanitizer à l'affichage pour prévenir XSS
-                      'Rapport pour: ${InputSanitizer.sanitize(widget.doctorName ?? '')}',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green[900],
+                    Expanded(
+                      child: Text(
+                        'Rapport pour : ${InputSanitizer.sanitize(widget.doctorName ?? '')}',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: scheme.onPrimaryContainer,
+                        ),
                       ),
                     ),
                   ],
@@ -249,18 +266,17 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
                 if (_report!['report_date'] != null) ...[
                   const SizedBox(height: 8),
                   Text(
-                    'Date de consultation: ${_formatDate(_report!['report_date'])}',
-                    style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                    'Date de consultation : ${_formatDate(_report!['report_date'])}',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: scheme.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ],
             ),
           ),
-
-        // Statistiques rapides
         if (sections.isNotEmpty) _buildQuickStats(sections),
-
-        // Rapport complet
         Expanded(
           child: SingleChildScrollView(
             controller: _scrollController,
@@ -268,24 +284,22 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
             child: SelectableText(
               formattedText,
               style: TextStyle(
-                fontSize: 14, // Minimum 14sp pour accessibilité seniors
+                fontSize: 14,
                 fontFamily: 'monospace',
                 height: 1.5,
-                color: Colors.grey[900],
+                color: scheme.onSurface,
               ),
             ),
           ),
         ),
-
-        // Bouton partager en bas
         if (formattedText.isNotEmpty)
           Container(
             padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: scheme.surface,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withValues(alpha: 0.2),
+                  color: scheme.shadow.withValues(alpha: 0.12),
                   spreadRadius: 1,
                   blurRadius: 4,
                   offset: const Offset(0, -2),
@@ -294,17 +308,22 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
             ),
             child: SizedBox(
               width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: _shareReport,
-                icon: const Icon(Icons.share),
-                label: const Text(
-                  'Partager le rapport',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green[600],
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+              child: Semantics(
+                button: true,
+                label: 'Partager le rapport médical',
+                child: ElevatedButton.icon(
+                  onPressed: _shareReport,
+                  icon: const Icon(Icons.share),
+                  label: const Text(
+                    'Partager le rapport',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: scheme.primary,
+                    foregroundColor: scheme.onPrimary,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    minimumSize: const Size(48, 48),
+                  ),
                 ),
               ),
             ),
@@ -314,13 +333,14 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
   }
 
   Widget _buildQuickStats(Map<String, dynamic> sections) {
+    final scheme = Theme.of(context).colorScheme;
     return Container(
       margin: const EdgeInsets.all(16.0),
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: Colors.blue[50],
+        color: scheme.secondaryContainer.withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.blue[200]!),
+        border: Border.all(color: scheme.outlineVariant),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -330,7 +350,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
               'Documents',
               '${sections['documents']['count'] ?? 0}',
               Icons.description,
-              Colors.blue,
+              scheme.primary,
             ),
           if (sections['aria'] != null &&
               sections['aria']['pain_timeline'] != null)
@@ -338,14 +358,14 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
               'Entrées douleur',
               '${sections['aria']['pain_timeline']['total_entries'] ?? 0}',
               Icons.favorite,
-              Colors.red,
+              scheme.error,
             ),
           if (sections['consultations'] != null)
             _buildStatItem(
               'Consultations',
               '${sections['consultations']['count'] ?? 0}',
               Icons.calendar_today,
-              Colors.orange,
+              scheme.tertiary,
             ),
         ],
       ),
@@ -358,6 +378,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
     IconData icon,
     Color color,
   ) {
+    final onVariant = Theme.of(context).colorScheme.onSurfaceVariant;
     return Column(
       children: [
         Icon(icon, color: color, size: 28),
@@ -367,10 +388,10 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: color.withValues(alpha: 0.8),
+            color: color.withValues(alpha: 0.85),
           ),
         ),
-        Text(label, style: TextStyle(fontSize: 14, color: Colors.grey[700])),
+        Text(label, style: TextStyle(fontSize: 14, color: onVariant)),
       ],
     );
   }

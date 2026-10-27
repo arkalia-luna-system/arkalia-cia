@@ -446,15 +446,36 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     if (isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Urgences'),
+          backgroundColor: scheme.error,
+          foregroundColor: scheme.onError,
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(color: scheme.error),
+              const SizedBox(height: 16),
+              Text(
+                'Chargement des contacts d’urgence…',
+                style: TextStyle(fontSize: 16, color: scheme.onSurfaceVariant),
+              ),
+            ],
+          ),
+        ),
+      );
     }
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Urgences'),
-        backgroundColor: Colors.red.shade600,
-        foregroundColor: Colors.white,
+        backgroundColor: scheme.error,
+        foregroundColor: scheme.onError,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -472,100 +493,112 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
               padding: const EdgeInsets.only(bottom: 12),
               child: Text(
                 'En cas de problème, vous pouvez appeler rapidement les services d\'urgence ou une personne de confiance.',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
+                style: TextStyle(fontSize: 14, color: scheme.onSurfaceVariant),
               ),
             ),
-            // Boutons d'urgence
             _buildEmergencyButtons(),
             const SizedBox(height: 24),
-
-            // Informations médicales
             EmergencyInfoCard(
               emergencyInfo: emergencyInfo,
               onEdit: _showEditInfoDialog,
             ),
             const SizedBox(height: 24),
-
-            // Section contacts
             _buildContactsSection(),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _showAddContactDialog,
-        backgroundColor: Colors.red.shade600,
-        child: const Icon(Icons.add, color: Colors.white),
+      floatingActionButton: Semantics(
+        button: true,
+        label: 'Ajouter un contact d’urgence',
+        child: FloatingActionButton(
+          onPressed: _showAddContactDialog,
+          backgroundColor: scheme.error,
+          foregroundColor: scheme.onError,
+          tooltip: 'Ajouter un contact d’urgence',
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }
 
   Widget _buildEmergencyButtons() {
+    final scheme = Theme.of(context).colorScheme;
     return Card(
-      color: Colors.red.shade50,
+      color: scheme.errorContainer.withValues(alpha: 0.45),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            const Text(
+            Text(
               'Numéros d\'urgence',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: scheme.onErrorContainer,
+              ),
             ),
             const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () => _callEmergency('112'),
-                    icon: const Icon(Icons.local_hospital),
-                    label: const Text('Ambulance\n112'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 16,
-                        horizontal: 12,
+                  child: Semantics(
+                    button: true,
+                    label: 'Appeler l’ambulance, numéro 112',
+                    child: ElevatedButton.icon(
+                      onPressed: () => _callEmergency('112'),
+                      icon: const Icon(Icons.local_hospital),
+                      label: const Text('Ambulance\n112'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: scheme.error,
+                        foregroundColor: scheme.onError,
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 16,
+                          horizontal: 12,
+                        ),
+                        minimumSize: const Size(0, 48),
                       ),
-                      minimumSize: const Size(0, 48),
                     ),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () => _callEmergency('100'),
-                    icon: const Icon(Icons.fire_truck),
-                    label: const Text('Pompiers\n100'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 16,
-                        horizontal: 12,
+                  child: Semantics(
+                    button: true,
+                    label: 'Appeler les pompiers, numéro 100',
+                    child: ElevatedButton.icon(
+                      onPressed: () => _callEmergency('100'),
+                      icon: const Icon(Icons.fire_truck),
+                      label: const Text('Pompiers\n100'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: scheme.error,
+                        foregroundColor: scheme.onError,
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 16,
+                          horizontal: 12,
+                        ),
+                        minimumSize: const Size(0, 48),
                       ),
-                      minimumSize: const Size(0, 48),
                     ),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () => _callEmergency('101'),
-                    icon: const Icon(Icons.local_police),
-                    label: const Text('Police\n101'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 16,
-                        horizontal: 12,
+                  child: Semantics(
+                    button: true,
+                    label: 'Appeler la police, numéro 101',
+                    child: ElevatedButton.icon(
+                      onPressed: () => _callEmergency('101'),
+                      icon: const Icon(Icons.local_police),
+                      label: const Text('Police\n101'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: scheme.primary,
+                        foregroundColor: scheme.onPrimary,
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 16,
+                          horizontal: 12,
+                        ),
+                        minimumSize: const Size(0, 48),
                       ),
-                      minimumSize: const Size(
-                        0,
-                        48,
-                      ), // Minimum 48px pour accessibilité seniors
                     ),
                   ),
                 ),
@@ -583,7 +616,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
       children: [
         Row(
           children: [
-            Icon(Icons.contacts, color: Colors.red.shade600),
+            Icon(Icons.contacts, color: Theme.of(context).colorScheme.error),
             const SizedBox(width: 8),
             const Expanded(
               child: Text(

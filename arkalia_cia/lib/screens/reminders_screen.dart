@@ -474,14 +474,16 @@ class _RemindersScreenState extends State<RemindersScreen> {
   }
 
   void _showSuccess(String message) {
+    final scheme = Theme.of(context).colorScheme;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.green),
+      SnackBar(content: Text(message), backgroundColor: scheme.primary),
     );
   }
 
   void _showError(String message) {
+    final scheme = Theme.of(context).colorScheme;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red),
+      SnackBar(content: Text(message), backgroundColor: scheme.error),
     );
   }
 
@@ -502,8 +504,8 @@ class _RemindersScreenState extends State<RemindersScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Rappels'),
-        backgroundColor: Colors.orange[600],
-        foregroundColor: Colors.white,
+        backgroundColor: scheme.primary,
+        foregroundColor: scheme.onPrimary,
         actions: [
           IconButton(
             icon: const Icon(Icons.medication),
@@ -729,10 +731,16 @@ class _RemindersScreenState extends State<RemindersScreen> {
                   },
                 ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _showAddReminderDialog,
-        backgroundColor: Colors.orange,
-        child: const Icon(Icons.add, color: Colors.white),
+      floatingActionButton: Semantics(
+        button: true,
+        label: 'Ajouter un rappel',
+        child: FloatingActionButton(
+          onPressed: _showAddReminderDialog,
+          backgroundColor: scheme.primary,
+          foregroundColor: scheme.onPrimary,
+          tooltip: 'Ajouter un rappel',
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }
