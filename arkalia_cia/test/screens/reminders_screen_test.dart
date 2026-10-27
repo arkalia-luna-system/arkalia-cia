@@ -59,9 +59,9 @@ void main() {
 
       // L'icône notifications_none est affichée dans l'état vide
       expect(find.byIcon(Icons.notifications_none), findsOneWidget);
-      // Le texte d'aide doit parler de "créer ton premier rappel"
+      // Le texte d'aide doit parler de "créer votre premier rappel" (vouvoiement)
       expect(
-        find.textContaining('créer ton premier rappel', findRichText: true),
+        find.textContaining('créer votre premier rappel', findRichText: true),
         findsOneWidget,
       );
     });
