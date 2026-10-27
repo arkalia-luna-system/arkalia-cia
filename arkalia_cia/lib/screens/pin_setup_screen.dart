@@ -64,6 +64,8 @@ class _PinSetupScreenState extends State<PinSetupScreen> {
       return const SizedBox.shrink();
     }
 
+    final scheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(title: const Text('Configuration du code PIN')),
       body: SafeArea(
@@ -76,11 +78,7 @@ class _PinSetupScreenState extends State<PinSetupScreen> {
               children: [
                 const SizedBox(height: 40),
                 // Icône
-                Icon(
-                  Icons.lock_outline,
-                  size: 80,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+                Icon(Icons.lock_outline, size: 80, color: scheme.primary),
                 const SizedBox(height: 24),
                 Text(
                   'Configurer un code PIN',
@@ -103,17 +101,20 @@ class _PinSetupScreenState extends State<PinSetupScreen> {
                     padding: const EdgeInsets.all(16),
                     margin: const EdgeInsets.only(bottom: 24),
                     decoration: BoxDecoration(
-                      color: Colors.red[100],
+                      color: scheme.errorContainer,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.error_outline, color: Colors.red[700]),
+                        Icon(
+                          Icons.error_outline,
+                          color: scheme.onErrorContainer,
+                        ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
                             _errorMessage!,
-                            style: TextStyle(color: Colors.red[700]),
+                            style: TextStyle(color: scheme.onErrorContainer),
                           ),
                         ),
                       ],

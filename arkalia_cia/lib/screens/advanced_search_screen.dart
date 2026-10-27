@@ -129,6 +129,7 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(title: const Text('Recherche Avancée')),
       body: Column(
@@ -178,7 +179,7 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
                   Container(
                     height: 100,
                     decoration: BoxDecoration(
-                      color: Colors.grey[100],
+                      color: scheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: ListView.builder(
@@ -361,13 +362,13 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
                             Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: Colors.grey.withValues(alpha: 0.1),
+                                color: scheme.onSurface.withValues(alpha: 0.08),
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
                                 Icons.search_off,
                                 size: 64,
-                                color: Colors.grey[400],
+                                color: scheme.onSurfaceVariant,
                               ),
                             ),
                             const SizedBox(height: 16),
@@ -376,7 +377,7 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.grey[700],
+                                color: scheme.onSurface,
                               ),
                             ),
                             const SizedBox(height: 8),
@@ -384,7 +385,7 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
                               'Essayez de :',
                               style: TextStyle(
                                 fontSize: 14,
-                                color: Colors.grey[600],
+                                color: scheme.onSurfaceVariant,
                               ),
                             ),
                             const SizedBox(height: 16),
@@ -429,7 +430,10 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
                                       '${result.date!.day}/${result.date!.month}/${result.date!.year}',
                                       style: TextStyle(
                                         fontSize: 14,
-                                        color: Colors.grey[600],
+                                        color:
+                                            Theme.of(
+                                              context,
+                                            ).colorScheme.onSurfaceVariant,
                                       ),
                                     ),
                                 ],
@@ -632,16 +636,17 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
   }
 
   Widget _buildSearchTip(String tip) {
+    final scheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
         children: [
-          Icon(Icons.lightbulb_outline, size: 16, color: Colors.orange[700]),
+          Icon(Icons.lightbulb_outline, size: 16, color: scheme.tertiary),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               tip,
-              style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+              style: TextStyle(fontSize: 14, color: scheme.onSurfaceVariant),
             ),
           ),
         ],

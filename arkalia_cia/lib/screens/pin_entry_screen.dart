@@ -100,13 +100,16 @@ class _PinEntryScreenState extends State<PinEntryScreen> {
       return const SizedBox.shrink();
     }
 
+    final scheme = Theme.of(context).colorScheme;
+    final primaryDark = Color.lerp(scheme.primary, scheme.scrim, 0.35)!;
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.blue[600]!, Colors.blue[800]!],
+            colors: [scheme.primary, primaryDark],
           ),
         ),
         child: SafeArea(
@@ -120,24 +123,27 @@ class _PinEntryScreenState extends State<PinEntryScreen> {
                   children: [
                     const SizedBox(height: 40),
                     // Logo/Icone
-                    const Icon(Icons.lock, size: 80, color: Colors.white),
+                    Icon(Icons.lock, size: 80, color: scheme.onPrimary),
                     const SizedBox(height: 32),
 
                     // Titre
-                    const Text(
+                    Text(
                       'Arkalia CIA',
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: scheme.onPrimary,
                       ),
                     ),
                     const SizedBox(height: 16),
 
                     // Message
-                    const Text(
+                    Text(
                       'Entrez votre code PIN',
-                      style: TextStyle(fontSize: 18, color: Colors.white70),
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: scheme.onPrimary.withValues(alpha: 0.7),
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 48),
@@ -148,12 +154,12 @@ class _PinEntryScreenState extends State<PinEntryScreen> {
                         padding: const EdgeInsets.all(16),
                         margin: const EdgeInsets.only(bottom: 24),
                         decoration: BoxDecoration(
-                          color: Colors.red[300],
+                          color: scheme.error,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
                           _errorMessage,
-                          style: const TextStyle(color: Colors.white),
+                          style: TextStyle(color: scheme.onError),
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -169,7 +175,7 @@ class _PinEntryScreenState extends State<PinEntryScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         filled: true,
-                        fillColor: Colors.white,
+                        fillColor: scheme.onPrimary,
                       ),
                       keyboardType: TextInputType.number,
                       obscureText: true,
@@ -190,13 +196,13 @@ class _PinEntryScreenState extends State<PinEntryScreen> {
                       onPressed: _isAuthenticating ? null : _authenticate,
                       icon:
                           _isAuthenticating
-                              ? const SizedBox(
+                              ? SizedBox(
                                 width: 20,
                                 height: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
                                   valueColor: AlwaysStoppedAnimation<Color>(
-                                    Colors.white,
+                                    scheme.primary,
                                   ),
                                 ),
                               )
@@ -206,8 +212,8 @@ class _PinEntryScreenState extends State<PinEntryScreen> {
                         style: const TextStyle(fontSize: 18),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.blue[800],
+                        backgroundColor: scheme.onPrimary,
+                        foregroundColor: scheme.primary,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 32,
                           vertical: 16,

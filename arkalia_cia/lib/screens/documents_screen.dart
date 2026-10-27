@@ -294,10 +294,11 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     final total = distribution.values.fold(0, (sum, count) => sum + count);
     if (total == 0) return const SizedBox.shrink();
 
+    final scheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.grey[100],
+        color: scheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -324,10 +325,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                     width: 100,
                     child: LinearProgressIndicator(
                       value: entry.value / total,
-                      backgroundColor: Colors.grey[300],
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        Colors.blue[400]!,
-                      ),
+                      backgroundColor: scheme.surfaceContainerHighest,
+                      valueColor: AlwaysStoppedAnimation<Color>(scheme.primary),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -1404,7 +1403,10 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                       const SizedBox(height: 8),
                       Text(
                         'Spécialité : ${detectedDoctor['specialty']}',
-                        style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          fontSize: 14,
+                        ),
                       ),
                     ],
                     const SizedBox(height: 16),
@@ -1543,11 +1545,16 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                       const SizedBox(height: 8),
                       // Afficher les catégories depuis l'état local (mis à jour en temps réel)
                       customCategories.isEmpty
-                          ? const Padding(
-                            padding: EdgeInsets.all(16.0),
+                          ? Padding(
+                            padding: const EdgeInsets.all(16.0),
                             child: Text(
                               'Aucune catégorie personnalisée',
-                              style: TextStyle(color: Colors.grey),
+                              style: TextStyle(
+                                color:
+                                    Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
+                              ),
                             ),
                           )
                           : Column(
@@ -1557,9 +1564,12 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                                       (category) => ListTile(
                                         title: Text(category),
                                         trailing: IconButton(
-                                          icon: const Icon(
+                                          icon: Icon(
                                             Icons.delete,
-                                            color: Colors.red,
+                                            color:
+                                                Theme.of(
+                                                  context,
+                                                ).colorScheme.error,
                                           ),
                                           onPressed: () async {
                                             await CategoryService.deleteCategory(

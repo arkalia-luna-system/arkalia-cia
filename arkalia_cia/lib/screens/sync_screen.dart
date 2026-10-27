@@ -70,8 +70,9 @@ class _SyncScreenState extends State<SyncScreen> {
   }
 
   Widget _buildHeader() {
+    final scheme = Theme.of(context).colorScheme;
     return Card(
-      color: Colors.orange[50],
+      color: scheme.primaryContainer,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -79,7 +80,11 @@ class _SyncScreenState extends State<SyncScreen> {
           children: [
             Row(
               children: [
-                Icon(MdiIcons.syncIcon, color: Colors.orange[700], size: 32),
+                Icon(
+                  MdiIcons.syncIcon,
+                  color: scheme.onPrimaryContainer,
+                  size: 32,
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -90,13 +95,16 @@ class _SyncScreenState extends State<SyncScreen> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.orange[700],
+                          color: scheme.onPrimaryContainer,
                         ),
                       ),
                       const SizedBox(height: 4),
-                      const Text(
+                      Text(
                         'Synchronisez vos données entre l\'application et le backend',
-                        style: TextStyle(fontSize: 14),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: scheme.onPrimaryContainer,
+                        ),
                       ),
                     ],
                   ),
@@ -110,6 +118,7 @@ class _SyncScreenState extends State<SyncScreen> {
   }
 
   Widget _buildSyncOptions() {
+    final scheme = Theme.of(context).colorScheme;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -121,7 +130,7 @@ class _SyncScreenState extends State<SyncScreen> {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey[800],
+                color: scheme.onSurface,
               ),
             ),
             const SizedBox(height: 16),
@@ -146,6 +155,7 @@ class _SyncScreenState extends State<SyncScreen> {
   }
 
   Widget _buildSyncStatus() {
+    final scheme = Theme.of(context).colorScheme;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -157,7 +167,7 @@ class _SyncScreenState extends State<SyncScreen> {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey[800],
+                color: scheme.onSurface,
               ),
             ),
             const SizedBox(height: 16),
@@ -165,20 +175,20 @@ class _SyncScreenState extends State<SyncScreen> {
               _syncStatus,
               style: TextStyle(
                 fontSize: 14,
-                color: _isSyncing ? Colors.blue[700] : Colors.grey[700],
+                color: _isSyncing ? scheme.primary : scheme.onSurfaceVariant,
               ),
             ),
             if (_isSyncing) ...[
               const SizedBox(height: 16),
               LinearProgressIndicator(
                 value: _syncProgress,
-                backgroundColor: Colors.grey[300],
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.orange[600]!),
+                backgroundColor: scheme.surfaceContainerHighest,
+                valueColor: AlwaysStoppedAnimation<Color>(scheme.primary),
               ),
               const SizedBox(height: 8),
               Text(
                 '${(_syncProgress * 100).toInt()}%',
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                style: TextStyle(fontSize: 14, color: scheme.onSurfaceVariant),
               ),
             ],
           ],

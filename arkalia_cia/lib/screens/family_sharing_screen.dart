@@ -228,12 +228,13 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
+        final scheme = Theme.of(context).colorScheme;
         return AlertDialog(
-          title: const Row(
+          title: Row(
             children: [
-              Icon(Icons.security, color: Colors.orange),
-              SizedBox(width: 8),
-              Text('Consentement Partage Familial'),
+              Icon(Icons.security, color: scheme.tertiary),
+              const SizedBox(width: 8),
+              const Expanded(child: Text('Consentement Partage Familial')),
             ],
           ),
           content: SingleChildScrollView(
@@ -269,18 +270,25 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.orange.shade50,
+                    color: scheme.tertiaryContainer,
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.orange.shade200),
+                    border: Border.all(color: scheme.tertiary),
                   ),
-                  child: const Row(
+                  child: Row(
                     children: [
-                      Icon(Icons.info_outline, color: Colors.orange, size: 20),
-                      SizedBox(width: 8),
+                      Icon(
+                        Icons.info_outline,
+                        color: scheme.onTertiaryContainer,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           'Vous pourrez révoquer ce partage à tout moment',
-                          style: TextStyle(fontSize: 14),
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: scheme.onTertiaryContainer,
+                          ),
                         ),
                       ),
                     ],
@@ -297,8 +305,8 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
             ElevatedButton(
               onPressed: () => Navigator.of(context).pop(true),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                foregroundColor: Colors.white,
+                backgroundColor: scheme.primary,
+                foregroundColor: scheme.onPrimary,
               ),
               child: const Text('Je comprends et j\'accepte'),
             ),
