@@ -188,7 +188,7 @@ class _HomePageState extends State<HomePage> {
         actions: [
           Semantics(
             label: 'Paramètres',
-            hint: 'Ouvre les paramètres de l\'application',
+            hint: 'Ouvrez les paramètres de l\'application',
             button: true,
             child: IconButton(
               icon: const Icon(Icons.settings),
@@ -225,7 +225,7 @@ class _HomePageState extends State<HomePage> {
                                 _searchController.text.isNotEmpty
                                     ? Semantics(
                                       label: 'Effacer la recherche',
-                                      hint: 'Supprime le texte de recherche',
+                                      hint: 'Supprimez le texte de recherche',
                                       button: true,
                                       child: IconButton(
                                         icon: const Icon(Icons.clear),
@@ -246,7 +246,7 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(width: 8),
                     Semantics(
                       label: 'Recherche avancée',
-                      hint: 'Ouvre les options de recherche avancée',
+                      hint: 'Ouvrez les options de recherche avancée',
                       button: true,
                       child: IconButton(
                         icon: const Icon(Icons.tune),

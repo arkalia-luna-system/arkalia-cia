@@ -54,9 +54,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (!backendConfigured) {
         setState(() {
           _errorMessage =
-              '⚙️ Backend non configuré.\n\n'
-              'Pour créer un compte avec backend, configurez l\'URL dans les paramètres (⚙️ > Backend API).\n\n'
-              '💡 Alternative : Utilisez "Continuer avec Google" sur l\'écran précédent pour vous connecter sans backend.';
+              'Backend non configuré.\n\n'
+              'Pour créer un compte avec backend, configurez l\'URL dans les paramètres (Paramètres > Backend API).\n\n'
+              'Alternative : utilisez « Continuer avec Google » sur l\'écran précédent pour vous connecter sans backend.';
           _isLoading = false;
         });
         return;
@@ -69,9 +69,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
           backendUrl.contains('127.0.0.1')) {
         setState(() {
           _errorMessage =
-              '⚙️ URL du backend invalide.\n\n'
+              'URL du backend invalide.\n\n'
               'L\'URL du backend doit être une adresse valide.\n\n'
-              '💡 Alternative : Utilisez "Continuer avec Google" pour vous connecter sans backend.';
+              'Alternative : utilisez « Continuer avec Google » pour vous connecter sans backend.';
           _isLoading = false;
         });
         return;
@@ -172,18 +172,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (errorString.contains('timeout') ||
           errorString.contains('timed out')) {
         errorMsg =
-            '⏱️ Le serveur met trop de temps à répondre.\n\n'
+            'Le serveur met trop de temps à répondre.\n\n'
             'Vérifiez votre connexion internet et réessayez.';
       } else if (errorString.contains('connection refused') ||
           errorString.contains('failed host lookup') ||
           errorString.contains('network')) {
         errorMsg =
-            '🌐 Problème de connexion réseau.\n\n'
+            'Problème de connexion réseau.\n\n'
             'Vérifiez votre connexion internet et que le backend est accessible.';
       } else if (errorString.contains('backend non configuré') ||
           errorString.contains('url')) {
         errorMsg =
-            '⚙️ Backend non configuré.\n\n'
+            'Backend non configuré.\n\n'
             'Veuillez configurer l\'URL du backend dans les paramètres de l\'application.';
       } else {
         // Afficher l'erreur réelle pour débogage

@@ -5,6 +5,7 @@ import '../utils/app_logger.dart';
 import '../utils/input_sanitizer.dart';
 import 'manage_family_members_screen.dart';
 import '../utils/error_helper.dart';
+import '../widgets/senior_empty_state.dart';
 
 class FamilySharingScreen extends StatefulWidget {
   const FamilySharingScreen({super.key});
@@ -416,22 +417,11 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
                       physics: const AlwaysScrollableScrollPhysics(),
                       child: SizedBox(
                         height: MediaQuery.of(context).size.height * 0.4,
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.folder_open,
-                                size: 64,
-                                color: Colors.grey[400],
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                'Aucun document disponible',
-                                style: TextStyle(color: Colors.grey[600]),
-                              ),
-                            ],
-                          ),
+                        child: const SeniorEmptyState(
+                          icon: Icons.folder_open,
+                          title: 'Aucun document disponible',
+                          message:
+                              'Ajoutez des documents dans l\'application pour pouvoir les partager avec votre famille.',
                         ),
                       ),
                     )

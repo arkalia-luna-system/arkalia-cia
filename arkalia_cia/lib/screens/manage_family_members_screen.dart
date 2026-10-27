@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/family_sharing_service.dart';
 import '../utils/input_sanitizer.dart';
+import '../widgets/senior_empty_state.dart';
 
 class ManageFamilyMembersScreen extends StatefulWidget {
   const ManageFamilyMembersScreen({super.key});
@@ -75,22 +76,11 @@ class _ManageFamilyMembersScreenState extends State<ManageFamilyMembersScreen> {
                   Expanded(
                     child:
                         _members.isEmpty
-                            ? Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.people_outline,
-                                    size: 64,
-                                    color: Colors.grey[400],
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    'Aucun membre famille',
-                                    style: TextStyle(color: Colors.grey[600]),
-                                  ),
-                                ],
-                              ),
+                            ? const SeniorEmptyState(
+                              icon: Icons.people_outline,
+                              title: 'Aucun membre famille',
+                              message:
+                                  'Appuyez sur « Ajouter un membre » pour partager l\'accès avec votre famille.',
                             )
                             : ListView.builder(
                               itemCount: _members.length,

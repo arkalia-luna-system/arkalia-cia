@@ -764,7 +764,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     'Entrez l\'URL du backend API.\n\n'
                     'Sur mobile (iPad/S25), utilisez l\'IP locale de votre Mac, par exemple:\n'
                     'http://192.168.1.100:8000\n\n'
-                    '⚠️ Ne pas utiliser localhost sur mobile !',
+                    'Ne pas utiliser localhost sur mobile.',
                     style: TextStyle(fontSize: 14),
                   ),
                   const SizedBox(height: 16),

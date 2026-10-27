@@ -106,10 +106,10 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  '💡 IMPORTANT :\n'
+                  'Important :\n'
                   'Si une page Google s\'ouvre :\n'
                   '• Cliquez sur votre compte pour vous connecter\n'
-                  '• NE cliquez PAS sur "Envoyer un mail" ou Gmail\n'
+                  '• Ne cliquez pas sur « Envoyer un mail » ou Gmail\n'
                   '• Attendez que la page se ferme automatiquement',
                   style: TextStyle(
                     fontSize: 14, // Minimum 14px pour accessibilité seniors
@@ -532,7 +532,7 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              'Pour créer un compte avec backend, configurez l\'URL dans les paramètres (⚙️ > Backend API)',
+                              'Pour créer un compte avec backend, configurez l\'URL dans les paramètres (Paramètres > Backend API)',
                               style: TextStyle(
                                 color: Colors.white.withValues(alpha: 0.9),
                                 fontSize:

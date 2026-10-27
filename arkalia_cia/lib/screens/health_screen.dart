@@ -7,6 +7,7 @@ import '../utils/validation_helper.dart';
 import '../config/health_portals_config.dart';
 import 'medical_report_screen.dart';
 import '../utils/error_helper.dart';
+import '../widgets/senior_empty_state.dart';
 
 class HealthScreen extends StatefulWidget {
   const HealthScreen({super.key});
@@ -298,37 +299,11 @@ class _HealthScreenState extends State<HealthScreen> {
     final filteredPortals = _getFilteredPortals();
 
     if (_showFavoritesOnly && filteredPortals.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.star_border, size: 64, color: Colors.grey),
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.red.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.favorite_border,
-                size: 64,
-                color: Colors.red,
-              ),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Aucun portail favori',
-              style: TextStyle(fontSize: 18, color: Colors.grey),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Épinglez des portails pour les retrouver facilement',
-              style: TextStyle(fontSize: 14, color: Colors.grey),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
+      return const SeniorEmptyState(
+        icon: Icons.star_border,
+        title: 'Aucun portail favori',
+        message:
+            'Épinglez des portails pour les retrouver facilement.',
       );
     }
 
@@ -495,33 +470,10 @@ class _HealthScreenState extends State<HealthScreen> {
           isLoading
               ? const Center(child: CircularProgressIndicator())
               : portals.isEmpty
-              ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.red.withValues(alpha: 0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.medical_services,
-                        size: 64,
-                        color: Colors.red,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Aucun portail santé',
-                      style: TextStyle(fontSize: 18, color: Colors.grey),
-                    ),
-                    const Text(
-                      'Appuyez sur + pour ajouter un portail',
-                      style: TextStyle(color: Colors.grey, fontSize: 16),
-                    ),
-                  ],
-                ),
+              ? const SeniorEmptyState(
+                icon: Icons.medical_services,
+                title: 'Aucun portail santé',
+                message: 'Appuyez sur + pour ajouter un portail.',
               )
               : _buildPortalsList(),
       floatingActionButton: FloatingActionButton(

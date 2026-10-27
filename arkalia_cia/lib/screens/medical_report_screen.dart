@@ -54,13 +54,13 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
         String errorMessage;
         if (url.isEmpty) {
           errorMessage =
-              'Backend non configuré.\n\nVeuillez configurer l\'URL du backend dans les paramètres (⚙️ > Backend API).';
+              'Backend non configuré.\n\nVeuillez configurer l\'URL du backend dans les paramètres (Paramètres > Backend API).';
         } else if (!enabled) {
           errorMessage =
-              'Backend non activé.\n\nVeuillez activer le backend dans les paramètres (⚙️ > Backend API).';
+              'Backend non activé.\n\nVeuillez activer le backend dans les paramètres (Paramètres > Backend API).';
         } else {
           errorMessage =
-              'Backend non configuré.\n\nVeuillez configurer le backend dans les paramètres (⚙️ > Backend API).';
+              'Backend non configuré.\n\nVeuillez configurer le backend dans les paramètres (Paramètres > Backend API).';
         }
         setState(() {
           _error = errorMessage;

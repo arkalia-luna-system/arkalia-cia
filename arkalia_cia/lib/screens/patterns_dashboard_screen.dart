@@ -215,7 +215,7 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
             'Impossible de se connecter au serveur.\n\nVérifiez que :\n'
             '• Votre connexion internet fonctionne\n'
             '• Le backend est démarré\n'
-            '• L\'adresse du backend est correcte dans les paramètres (⚙️ > Backend API)';
+            '• L\'adresse du backend est correcte dans les paramètres (Paramètres > Backend API)';
       } else if (errorString.contains('aucune donnée') ||
           errorString.contains('données insuffisantes')) {
         userMessage =

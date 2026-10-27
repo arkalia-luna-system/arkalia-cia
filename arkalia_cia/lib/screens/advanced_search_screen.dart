@@ -158,7 +158,7 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
                             : IconButton(
                               icon: const Icon(Icons.help_outline),
                               tooltip:
-                                  'Exemples de recherche:\n• "analyse sang" - Trouve les analyses de sang\n• "Dr Martin" - Trouve le médecin\n• "ordonnance" - Trouve les ordonnances\n• "2024" - Documents de 2024',
+                                  'Exemples de recherche:\n• "analyse sang" - Trouvez les analyses de sang\n• "Dr Martin" - Trouvez le médecin\n• "ordonnance" - Trouvez les ordonnances\n• "2024" - Documents de 2024',
                               onPressed: () {
                                 _showSearchExamples();
                               },
@@ -596,9 +596,9 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 8),
-                  Text('• "analyse sang" - Trouve les analyses de sang'),
-                  Text('• "Dr Martin" - Trouve le médecin Dr Martin'),
-                  Text('• "ordonnance" - Trouve les ordonnances'),
+                  Text('• "analyse sang" - Trouvez les analyses de sang'),
+                  Text('• "Dr Martin" - Trouvez le médecin Dr Martin'),
+                  Text('• "ordonnance" - Trouvez les ordonnances'),
                   SizedBox(height: 16),
                   Text(
                     'Recherches par date :',

@@ -29,4 +29,30 @@ void main() {
     );
     expect(message.style?.fontSize, greaterThanOrEqualTo(14));
   });
+
+  testWidgets('SeniorEmptyState portails santé — copy ≥14sp vouvoyée', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: SeniorEmptyState(
+            icon: Icons.medical_services,
+            title: 'Aucun portail santé',
+            message: 'Appuyez sur + pour ajouter un portail.',
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Aucun portail santé'), findsOneWidget);
+    expect(find.textContaining('Appuyez sur +'), findsOneWidget);
+    expect(find.textContaining('Appuie sur'), findsNothing);
+    expect(find.byIcon(Icons.medical_services), findsOneWidget);
+
+    final message = tester.widget<Text>(
+      find.textContaining('Appuyez sur +'),
+    );
+    expect(message.style?.fontSize, greaterThanOrEqualTo(14));
+  });
 }

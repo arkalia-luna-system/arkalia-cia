@@ -6,6 +6,7 @@ import '../services/multi_device_sync_service.dart';
 import '../services/google_auth_service.dart';
 import '../utils/app_logger.dart';
 import '../utils/error_helper.dart';
+import '../widgets/senior_empty_state.dart';
 
 /// Écran de gestion du profil utilisateur et des appareils connectés
 class UserProfileScreen extends StatefulWidget {
@@ -191,35 +192,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           _isLoading
               ? const Center(child: CircularProgressIndicator())
               : _profile == null
-              ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.withValues(alpha: 0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.person_outline,
-                        size: 64,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Aucun profil utilisateur',
-                      style: TextStyle(fontSize: 18, color: Colors.grey),
-                    ),
-                    const SizedBox(height: 12),
-                    const Text(
-                      'Créez un compte pour activer la synchronisation multi-appareil',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 14, color: Colors.grey),
-                    ),
-                  ],
-                ),
+              ? const SeniorEmptyState(
+                icon: Icons.person_outline,
+                title: 'Aucun profil utilisateur',
+                message:
+                    'Créez un compte pour activer la synchronisation multi-appareil.',
               )
               : SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
