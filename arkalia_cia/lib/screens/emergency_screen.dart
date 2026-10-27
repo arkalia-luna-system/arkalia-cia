@@ -4,6 +4,7 @@ import '../services/local_storage_service.dart';
 import '../services/api_service.dart';
 import '../widgets/emergency_contact_dialog.dart';
 import '../widgets/emergency_contact_card.dart';
+import '../widgets/emergency_contacts_empty_state.dart';
 import '../widgets/emergency_info_card.dart';
 import '../utils/error_helper.dart';
 import '../utils/input_sanitizer.dart';
@@ -318,22 +319,20 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
             content: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children:
-                    fields.entries
-                        .map(
-                          (entry) => Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
-                            child: TextField(
-                              controller: controllers[entry.key]!,
-                              decoration: InputDecoration(
-                                labelText: entry.value,
-                                border: const OutlineInputBorder(),
-                              ),
-                              maxLines: entry.key == 'emergency_notes' ? 3 : 1,
-                            ),
-                          ),
-                        )
-                        .toList(),
+                children: [
+                  for (final entry in fields.entries)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: TextField(
+                        controller: controllers[entry.key],
+                        decoration: InputDecoration(
+                          labelText: entry.value,
+                          border: const OutlineInputBorder(),
+                        ),
+                        maxLines: entry.key == 'emergency_notes' ? 3 : 1,
+                      ),
+                    ),
+                ],
               ),
             ),
             actions: [
@@ -593,38 +592,7 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
         ),
         const SizedBox(height: 16),
         if (emergencyContacts.isEmpty)
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(32),
-              child: Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.red.withValues(alpha: 0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.contact_phone_outlined,
-                      size: 48,
-                      color: Colors.red.shade400,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Aucun contact d\'urgence',
-                    style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Ajoute ici 1 ou 2 personnes de confiance que tu peux appeler en cas de problème.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.grey.shade500, fontSize: 14),
-                  ),
-                ],
-              ),
-            ),
-          )
+          const EmergencyContactsEmptyState()
         else
           ...emergencyContacts.map(
             (contact) => Padding(

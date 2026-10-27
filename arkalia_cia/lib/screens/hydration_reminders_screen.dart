@@ -302,7 +302,7 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '📊 Statistiques de la semaine',
+                            'Statistiques de la semaine',
                             style: dialogTheme.textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),

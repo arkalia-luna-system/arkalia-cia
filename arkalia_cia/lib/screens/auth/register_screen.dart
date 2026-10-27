@@ -189,7 +189,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         // Afficher l'erreur réelle pour débogage
         errorMsg =
             '❌ Erreur lors de l\'inscription.\n\n'
-            'Détails: ${e.toString()}';
+            'Détails: $e';
       }
 
       setState(() {

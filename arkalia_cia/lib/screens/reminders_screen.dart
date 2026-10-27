@@ -496,6 +496,9 @@ class _RemindersScreenState extends State<RemindersScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final onVariant = scheme.onSurfaceVariant;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Rappels'),
@@ -538,29 +541,32 @@ class _RemindersScreenState extends State<RemindersScreen> {
                           Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: Colors.orange.withValues(alpha: 0.1),
+                              color: scheme.primaryContainer.withValues(
+                                alpha: 0.5,
+                              ),
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(
+                            child: Icon(
                               Icons.notifications_none,
                               size: 64,
-                              color: Colors.orange,
+                              color: scheme.primary,
                             ),
                           ),
                           const SizedBox(height: 16),
-                          const Text(
+                          Text(
                             'Aucun rappel',
-                            style: TextStyle(fontSize: 18, color: Colors.grey),
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: scheme.onSurface,
+                            ),
                           ),
                           const SizedBox(height: 8),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 24),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 24),
                             child: Text(
-                              'Appuie sur le bouton ci‑dessous pour créer ton premier rappel (par exemple un rendez‑vous médical ou un examen).',
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 14,
-                              ),
+                              'Appuyez sur le bouton ci-dessous pour créer votre premier rappel (par exemple un rendez-vous médical ou un examen).',
+                              style: TextStyle(color: onVariant, fontSize: 14),
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -570,8 +576,8 @@ class _RemindersScreenState extends State<RemindersScreen> {
                             icon: const Icon(Icons.add),
                             label: const Text('Créer un rappel'),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.orange,
-                              foregroundColor: Colors.white,
+                              backgroundColor: scheme.primary,
+                              foregroundColor: scheme.onPrimary,
                               minimumSize: const Size(
                                 200,
                                 48,

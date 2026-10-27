@@ -421,7 +421,10 @@ class DoctorService {
 
     DateTime? lastVisit;
     if (lastResult.isNotEmpty) {
-      lastVisit = DateTime.parse(lastResult.first['date'] as String);
+      final dateRaw = lastResult.first['date'];
+      if (dateRaw != null) {
+        lastVisit = DateTime.parse(dateRaw.toString());
+      }
     }
 
     return {

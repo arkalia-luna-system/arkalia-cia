@@ -159,8 +159,9 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
         if (kIsWeb) {
           final fileDataList = <Map<String, dynamic>>[];
           for (final file in result.files) {
-            if (file.bytes != null) {
-              fileDataList.add({'name': file.name, 'bytes': file.bytes!});
+            final bytes = file.bytes;
+            if (bytes != null) {
+              fileDataList.add({'name': file.name, 'bytes': bytes});
             }
           }
 

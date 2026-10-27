@@ -82,7 +82,12 @@ class SemanticSearchService {
           return score > 0.1;
         })
         .take(limit)
-        .map((item) => item['document'] as Map<String, dynamic>)
+        .map((item) {
+          final raw = item['document'];
+          if (raw is Map<String, dynamic>) return raw;
+          if (raw is Map) return Map<String, dynamic>.from(raw);
+          return <String, dynamic>{};
+        })
         .toList();
   }
 

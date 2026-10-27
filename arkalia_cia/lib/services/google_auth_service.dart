@@ -198,7 +198,7 @@ class GoogleAuthService {
 
         userFriendlyMessage = 'Erreur Google Sign-In\nCode: $code\n$message';
       } else {
-        userFriendlyMessage = 'Erreur lors de la connexion\n${e.toString()}';
+        userFriendlyMessage = 'Erreur lors de la connexion\n$e';
       }
 
       return {'success': false, 'error': userFriendlyMessage, 'user': null};
