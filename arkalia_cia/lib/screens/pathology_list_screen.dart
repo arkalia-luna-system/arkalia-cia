@@ -315,7 +315,10 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
         final pathologies = _pathologiesByCategory[category] ?? [];
 
         return ExpansionTile(
-          leading: Icon(Icons.folder, color: Colors.purple[600]),
+          leading: Icon(
+            Icons.folder,
+            color: Theme.of(context).colorScheme.primary,
+          ),
           title: Text(
             category,
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),

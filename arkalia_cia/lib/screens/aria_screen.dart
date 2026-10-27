@@ -227,14 +227,17 @@ class _ARIAScreenState extends State<ARIAScreen> {
           children: [
             Row(
               children: [
-                Icon(MdiIcons.information, color: Colors.blue[600]),
+                Icon(
+                  MdiIcons.information,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   'À propos d\'ARIA',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.blue[700],
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ],
@@ -290,7 +293,10 @@ class _ARIAScreenState extends State<ARIAScreen> {
               const SizedBox(height: 4),
               Text(
                 subtitle,
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
                 textAlign: TextAlign.center,
               ),
             ],
