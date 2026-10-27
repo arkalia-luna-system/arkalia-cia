@@ -130,7 +130,9 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
                 child: Center(
                   child: Text(
                     'Aucune consultation enregistrée',
-                    style: TextStyle(color: Colors.grey[600]),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ),
               )

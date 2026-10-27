@@ -113,7 +113,7 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                   '• Attendez que la page se ferme automatiquement',
                   style: TextStyle(
                     fontSize: 14, // Minimum 14px pour accessibilité seniors
-                    color: Colors.grey[600],
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -220,11 +220,14 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
             context: context,
             builder:
                 (context) => AlertDialog(
-                  title: const Row(
+                  title: Row(
                     children: [
-                      Icon(Icons.error_outline, color: Colors.red),
-                      SizedBox(width: 8),
-                      Text('Erreur de connexion Google'),
+                      Icon(
+                        Icons.error_outline,
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                      const SizedBox(width: 8),
+                      const Text('Erreur de connexion Google'),
                     ],
                   ),
                   content: SingleChildScrollView(
@@ -300,7 +303,24 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    // Gradient pro aligné ThemeService (bleu doux) — sans purple « AI »
+    final gradientColors =
+        isDark
+            ? [
+              Color.lerp(scheme.surface, scheme.primary, 0.35)!,
+              Color.lerp(scheme.surface, scheme.primary, 0.55)!,
+              Color.lerp(scheme.surface, scheme.primary, 0.75)!,
+            ]
+            : [
+              scheme.primary,
+              Color.lerp(scheme.primary, scheme.primaryContainer, 0.45)!,
+              scheme.primaryContainer,
+            ];
+    final onHero = isDark ? scheme.onSurface : scheme.onPrimary;
+    final onHeroMuted = onHero.withValues(alpha: 0.78);
+    final onHeroSubtle = onHero.withValues(alpha: 0.55);
 
     return Scaffold(
       body: Container(
@@ -308,18 +328,7 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors:
-                isDark
-                    ? [
-                      Colors.blue[900]!,
-                      Colors.blue[800]!,
-                      Colors.purple[900]!,
-                    ]
-                    : [
-                      Colors.blue[400]!,
-                      Colors.blue[600]!,
-                      Colors.purple[500]!,
-                    ],
+            colors: gradientColors,
           ),
         ),
         child: SafeArea(
@@ -339,17 +348,17 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                       child: Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: scheme.surface,
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.2),
+                              color: scheme.shadow.withValues(alpha: 0.25),
                               blurRadius: 20,
                               spreadRadius: 2,
                               offset: const Offset(0, 4),
                             ),
                             BoxShadow(
-                              color: Colors.white.withValues(alpha: 0.1),
+                              color: onHero.withValues(alpha: 0.08),
                               blurRadius: 10,
                               spreadRadius: -2,
                               offset: const Offset(0, -2),
@@ -367,7 +376,7 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                             return Icon(
                               Icons.health_and_safety,
                               size: 80,
-                              color: Colors.blue[800],
+                              color: scheme.primary,
                             );
                           },
                         ),
@@ -378,12 +387,12 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                   const SizedBox(height: 32),
 
                   // Titre
-                  const Text(
+                  Text(
                     'Arkalia CIA',
                     style: TextStyle(
                       fontSize: 36,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: onHero,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -391,12 +400,12 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                   const SizedBox(height: 8),
 
                   // Sous-titre
-                  const Text(
+                  Text(
                     'Votre Carnet de Santé',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w500,
-                      color: Colors.white70,
+                      color: onHeroMuted,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -416,8 +425,8 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.blue[800],
+                      backgroundColor: scheme.surface,
+                      foregroundColor: scheme.primary,
                       padding: const EdgeInsets.symmetric(vertical: 18),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -434,25 +443,21 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                     Row(
                       children: [
                         Expanded(
-                          child: Divider(
-                            color: Colors.white.withValues(alpha: 0.3),
-                          ),
+                          child: Divider(color: onHero.withValues(alpha: 0.3)),
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Text(
                             'OU',
                             style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.8),
+                              color: onHeroMuted,
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
                             ),
                           ),
                         ),
                         Expanded(
-                          child: Divider(
-                            color: Colors.white.withValues(alpha: 0.3),
-                          ),
+                          child: Divider(color: onHero.withValues(alpha: 0.3)),
                         ),
                       ],
                     ),
@@ -469,8 +474,8 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                         );
                       },
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        side: const BorderSide(color: Colors.white, width: 2),
+                        foregroundColor: onHero,
+                        side: BorderSide(color: onHero, width: 2),
                         padding: const EdgeInsets.symmetric(vertical: 18),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -498,7 +503,7 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                         );
                       },
                       style: TextButton.styleFrom(
-                        foregroundColor: Colors.white70,
+                        foregroundColor: onHeroMuted,
                         padding: const EdgeInsets.symmetric(vertical: 12),
                       ),
                       child: const Text(
@@ -515,10 +520,10 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.1),
+                        color: onHero.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.3),
+                          color: onHero.withValues(alpha: 0.3),
                           width: 1,
                         ),
                       ),
@@ -526,7 +531,7 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                         children: [
                           Icon(
                             Icons.info_outline,
-                            color: Colors.white.withValues(alpha: 0.9),
+                            color: onHeroMuted,
                             size: 20,
                           ),
                           const SizedBox(width: 12),
@@ -534,7 +539,7 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                             child: Text(
                               'Pour créer un compte avec backend, configurez l\'URL dans les paramètres (Paramètres > Backend API)',
                               style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.9),
+                                color: onHeroMuted,
                                 fontSize:
                                     14, // Minimum 14px pour accessibilité seniors
                               ),
@@ -551,7 +556,7 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
                   TextButton(
                     onPressed: () => _handleContinueWithoutAccount(context),
                     style: TextButton.styleFrom(
-                      foregroundColor: Colors.white60,
+                      foregroundColor: onHeroSubtle,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                     child: const Text(

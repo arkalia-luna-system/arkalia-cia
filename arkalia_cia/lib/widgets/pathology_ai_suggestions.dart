@@ -19,12 +19,14 @@ class PathologyAISuggestions extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
+    final scheme = Theme.of(context).colorScheme;
+
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.blue[50],
-        border: Border.all(color: Colors.blue),
+        color: scheme.primaryContainer.withValues(alpha: 0.45),
+        border: Border.all(color: scheme.primary.withValues(alpha: 0.55)),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -32,14 +34,14 @@ class PathologyAISuggestions extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.lightbulb, color: Colors.blue[700]),
+              Icon(Icons.lightbulb, color: scheme.primary),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   'Vous suivez $pathologyName',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.blue[700],
+                    color: scheme.onPrimaryContainer,
                     fontSize: 14,
                   ),
                 ),
@@ -51,7 +53,7 @@ class PathologyAISuggestions extends StatelessWidget {
             'Questions à poser à votre médecin :',
             style: TextStyle(
               fontSize: 14, // Minimum 14sp pour accessibilité seniors
-              color: Colors.blue[700],
+              color: scheme.primary,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -67,7 +69,7 @@ class PathologyAISuggestions extends StatelessWidget {
                     Icon(
                       Icons.arrow_forward_ios,
                       size: 12,
-                      color: Colors.blue[700],
+                      color: scheme.primary,
                     ),
                     const SizedBox(width: 8),
                     Expanded(
@@ -76,7 +78,7 @@ class PathologyAISuggestions extends StatelessWidget {
                         style: TextStyle(
                           fontSize:
                               14, // Minimum 14sp pour accessibilité seniors
-                          color: Colors.blue[900],
+                          color: scheme.onSurface,
                         ),
                       ),
                     ),
