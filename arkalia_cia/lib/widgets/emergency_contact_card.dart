@@ -139,7 +139,7 @@ class EmergencyContactCard extends StatelessWidget {
                         Text(
                           name,
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 14,
                             color: Colors.grey.shade600,
                           ),
                         ),
