@@ -317,7 +317,7 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                '✅ $count document(s) importé(s) avec succès depuis $portal',
+                '$count document(s) importé(s) avec succès depuis $portal',
               ),
               backgroundColor: Colors.green,
               duration: const Duration(seconds: 4),

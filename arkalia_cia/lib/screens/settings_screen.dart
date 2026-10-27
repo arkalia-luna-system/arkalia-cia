@@ -842,8 +842,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         SnackBar(
           content: Text(
             isConnected
-                ? '✅ Connexion réussie au backend !'
-                : '❌ Impossible de se connecter au backend. Vérifiez l\'URL et que le backend est démarré.',
+                ? 'Connexion réussie au backend.'
+                : 'Impossible de se connecter au backend. Vérifiez l\'URL et que le backend est démarré.',
           ),
           backgroundColor: isConnected ? Colors.green : Colors.red,
           duration: const Duration(seconds: 3),
@@ -884,15 +884,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    '❌ Ne fournit PAS de conseils médicaux, de diagnostics ou de traitements',
+                    '• Ne fournit PAS de conseils médicaux, de diagnostics ou de traitements',
                   ),
                   SizedBox(height: 8),
                   Text(
-                    '❌ Ne remplace PAS les conseils de professionnels de santé',
+                    '• Ne remplace PAS les conseils de professionnels de santé',
                   ),
                   SizedBox(height: 8),
                   Text(
-                    '✅ Est un outil d\'organisation pour gérer vos documents et rappels',
+                    '• Est un outil d\'organisation pour gérer vos documents et rappels',
                   ),
                   SizedBox(height: 16),
                   Text(
@@ -1052,16 +1052,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 16),
-                  Text('✅ Aucune collecte de données'),
+                  Text('• Aucune collecte de données'),
                   Text('   Toutes vos données restent sur votre appareil'),
                   SizedBox(height: 8),
-                  Text('✅ Aucune transmission'),
+                  Text('• Aucune transmission'),
                   Text('   Vos données ne quittent jamais votre téléphone'),
                   SizedBox(height: 8),
-                  Text('✅ Chiffrement AES-256'),
+                  Text('• Chiffrement AES-256'),
                   Text('   Tous vos documents sont chiffrés localement'),
                   SizedBox(height: 8),
-                  Text('✅ Stockage 100% local'),
+                  Text('• Stockage 100% local'),
                   Text('   Aucun cloud, aucun serveur externe'),
                   SizedBox(height: 16),
                   Text(

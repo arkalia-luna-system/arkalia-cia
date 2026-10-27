@@ -471,8 +471,11 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
             Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: Text(
-                'En cas de problème, tu peux appeler rapidement les services d\'urgence ou une personne de confiance.',
-                style: TextStyle(fontSize: 14, color: Colors.grey.shade800),
+                'En cas de problème, vous pouvez appeler rapidement les services d\'urgence ou une personne de confiance.',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
             // Boutons d'urgence

@@ -188,7 +188,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       } else {
         // Afficher l'erreur réelle pour débogage
         errorMsg =
-            '❌ Erreur lors de l\'inscription.\n\n'
+            'Erreur lors de l\'inscription.\n\n'
             'Détails: $e';
       }
 

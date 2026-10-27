@@ -3,6 +3,7 @@ import '../models/medication.dart';
 import '../services/medication_service.dart';
 import '../utils/input_sanitizer.dart';
 import '../widgets/medication_reminder_widget.dart';
+import '../widgets/senior_empty_state.dart';
 import '../utils/error_helper.dart';
 
 // MedicationTaken est défini dans medication.dart
@@ -488,45 +489,22 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
                   Expanded(
                     child:
                         activeMedications.isEmpty
-                            ? Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(16),
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey.withValues(alpha: 0.1),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Icon(
-                                      Icons.medication,
-                                      size: 64,
-                                      color: Colors.grey,
-                                    ),
+                            ? SeniorEmptyState(
+                              icon: Icons.medication,
+                              title: 'Aucun médicament actif',
+                              message:
+                                  'Appuyez sur le bouton ci-dessous pour ajouter votre premier médicament.',
+                              action: ElevatedButton.icon(
+                                onPressed: () => _showAddEditMedicationDialog(),
+                                icon: const Icon(Icons.add),
+                                label: const Text('Ajouter un médicament'),
+                                style: ElevatedButton.styleFrom(
+                                  minimumSize: const Size(200, 48),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 24,
+                                    vertical: 12,
                                   ),
-                                  const SizedBox(height: 16),
-                                  const Text(
-                                    'Aucun médicament actif',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  ElevatedButton.icon(
-                                    onPressed:
-                                        () => _showAddEditMedicationDialog(),
-                                    icon: const Icon(Icons.add),
-                                    label: const Text('Ajouter un médicament'),
-                                    style: ElevatedButton.styleFrom(
-                                      minimumSize: const Size(200, 48),
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 24,
-                                        vertical: 12,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
                             )
                             : ListView.builder(

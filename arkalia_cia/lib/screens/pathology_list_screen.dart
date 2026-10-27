@@ -4,6 +4,7 @@ import '../models/pathology.dart';
 import '../utils/input_sanitizer.dart';
 import 'pathology_detail_screen.dart';
 import '../utils/error_helper.dart';
+import '../widgets/senior_empty_state.dart';
 
 class PathologyListScreen extends StatefulWidget {
   const PathologyListScreen({super.key});
@@ -449,34 +450,10 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
                   physics: const AlwaysScrollableScrollPhysics(),
                   child: SizedBox(
                     height: MediaQuery.of(context).size.height * 0.7,
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: Colors.purple.withValues(alpha: 0.1),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.medical_services,
-                              size: 64,
-                              color: Colors.purple[400],
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          const Text(
-                            'Aucune pathologie',
-                            style: TextStyle(fontSize: 18, color: Colors.grey),
-                          ),
-                          const SizedBox(height: 8),
-                          const Text(
-                            'Appuyez sur + pour ajouter une pathologie',
-                            style: TextStyle(color: Colors.grey, fontSize: 14),
-                          ),
-                        ],
-                      ),
+                    child: const SeniorEmptyState(
+                      icon: Icons.medical_services,
+                      title: 'Aucune pathologie',
+                      message: 'Appuyez sur + pour ajouter une pathologie',
                     ),
                   ),
                 )

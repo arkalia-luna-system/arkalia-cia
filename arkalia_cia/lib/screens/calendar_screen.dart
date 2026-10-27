@@ -7,6 +7,7 @@ import '../services/local_storage_service.dart';
 import '../models/doctor.dart'; // Contient aussi Consultation
 import '../utils/input_sanitizer.dart';
 import '../utils/error_helper.dart';
+import '../widgets/senior_empty_state.dart';
 
 /// Écran calendrier avec affichage des rappels médicaments et hydratation
 class CalendarScreen extends StatefulWidget {
@@ -94,7 +95,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
               'type': 'medication',
               'medication': medication,
               'time': time,
-              'title': '💊 ${medication.name}',
+              'title': medication.name,
               'description': medication.dosage ?? 'Médicament',
               'color': Colors.blue,
             });
@@ -119,7 +120,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
           eventsMap[dateOnly]!.add({
             'type': 'hydration',
-            'title': '💧 Hydratation',
+            'title': 'Hydratation',
             'description': 'N\'oubliez pas de boire de l\'eau !',
             'color': Colors.cyan,
           });
@@ -384,34 +385,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         physics: const AlwaysScrollableScrollPhysics(),
                         child: SizedBox(
                           height: MediaQuery.of(context).size.height * 0.3,
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.event_busy,
-                                  size: 64,
-                                  color: Colors.grey[400],
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  'Aucun événement ce jour',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'Appuie sur un jour avec des petits points colorés pour voir tes rendez‑vous et rappels.',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                              ],
-                            ),
+                          child: const SeniorEmptyState(
+                            icon: Icons.event_busy,
+                            title: 'Aucun événement ce jour',
+                            message:
+                                'Appuyez sur un jour avec des petits points colorés pour voir vos rendez-vous et rappels.',
                           ),
                         ),
                       )
