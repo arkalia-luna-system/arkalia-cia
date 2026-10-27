@@ -24,7 +24,7 @@ void main() {
       final textWidget = tester.widget<Text>(confidenceText);
       final fontSize = textWidget.style?.fontSize;
       expect(fontSize, isNotNull);
-      expect(fontSize!, greaterThanOrEqualTo(14));
+      expect(fontSize, greaterThanOrEqualTo(14));
     },
   );
 

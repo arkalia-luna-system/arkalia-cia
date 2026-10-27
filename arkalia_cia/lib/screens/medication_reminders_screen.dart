@@ -437,7 +437,7 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('💊 Rappels Médicaments'),
+        title: const Text('Rappels Médicaments'),
         backgroundColor: Colors.blue[600],
         foregroundColor: Colors.white,
         actions: [
