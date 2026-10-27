@@ -302,8 +302,7 @@ class _HealthScreenState extends State<HealthScreen> {
       return const SeniorEmptyState(
         icon: Icons.star_border,
         title: 'Aucun portail favori',
-        message:
-            'Épinglez des portails pour les retrouver facilement.',
+        message: 'Épinglez des portails pour les retrouver facilement.',
       );
     }
 

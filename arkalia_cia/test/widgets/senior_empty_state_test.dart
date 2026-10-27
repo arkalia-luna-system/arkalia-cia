@@ -50,9 +50,7 @@ void main() {
     expect(find.textContaining('Appuie sur'), findsNothing);
     expect(find.byIcon(Icons.medical_services), findsOneWidget);
 
-    final message = tester.widget<Text>(
-      find.textContaining('Appuyez sur +'),
-    );
+    final message = tester.widget<Text>(find.textContaining('Appuyez sur +'));
     expect(message.style?.fontSize, greaterThanOrEqualTo(14));
   });
 }
