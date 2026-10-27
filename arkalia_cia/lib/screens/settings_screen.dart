@@ -235,8 +235,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     onPressed:
                                         () => Navigator.pop(context, true),
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.red,
-                                      foregroundColor: Colors.white,
+                                      backgroundColor:
+                                          Theme.of(context).colorScheme.error,
+                                      foregroundColor:
+                                          Theme.of(context).colorScheme.onError,
                                     ),
                                     child: const Text('Déconnexion'),
                                   ),
@@ -794,12 +796,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           url.startsWith('https://'))) {
                     Navigator.pop(context, {'url': url});
                   } else {
+                    final scheme = Theme.of(context).colorScheme;
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
+                      SnackBar(
+                        content: const Text(
                           'URL invalide. Doit commencer par http:// ou https://',
                         ),
-                        backgroundColor: Colors.red,
+                        backgroundColor: scheme.error,
                       ),
                     );
                   }
@@ -815,10 +818,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
       await _loadSettings();
 
       if (mounted) {
+        final scheme = Theme.of(context).colorScheme;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('URL du backend enregistrée'),
-            backgroundColor: Colors.green,
+          SnackBar(
+            content: const Text('URL du backend enregistrée'),
+            backgroundColor: scheme.primary,
           ),
         );
       }

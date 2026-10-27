@@ -9,6 +9,25 @@ import '../utils/input_sanitizer.dart';
 import '../utils/error_helper.dart';
 import '../widgets/senior_empty_state.dart';
 
+/// Événement calendrier typé (réduit le hotspot Map/dynamic côté UI).
+class _CalendarEvent {
+  const _CalendarEvent({
+    required this.type,
+    required this.color,
+    this.title,
+    this.description,
+    this.doctor,
+    this.consultation,
+  });
+
+  final String type;
+  final Color color;
+  final String? title;
+  final String? description;
+  final Doctor? doctor;
+  final Consultation? consultation;
+}
+
 /// Écran calendrier avec affichage des rappels médicaments et hydratation
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -23,8 +42,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
   DateTime _focusedDay = DateTime.now();
   DateTime _selectedDay = DateTime.now();
   CalendarFormat _calendarFormat = CalendarFormat.month;
-  Map<DateTime, List<Map<String, dynamic>>> _events = {};
-  List<Map<String, dynamic>> _selectedEvents = [];
+  Map<DateTime, List<_CalendarEvent>> _events = {};
+  List<_CalendarEvent> _selectedEvents = [];
   bool _isLoading = false;
 
   @override
@@ -42,7 +61,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     try {
       // Récupérer tous les médecins
       final doctors = await _doctorService.getAllDoctors();
-      final eventsMap = <DateTime, List<Map<String, dynamic>>>{};
+      final eventsMap = <DateTime, List<_CalendarEvent>>{};
 
       // Pour chaque médecin, récupérer ses consultations
       for (final doctor in doctors) {
@@ -58,16 +77,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
             consultation.date.day,
           );
 
-          if (!eventsMap.containsKey(date)) {
-            eventsMap[date] = [];
-          }
-
-          eventsMap[date]!.add({
-            'type': 'consultation',
-            'doctor': doctor,
-            'consultation': consultation,
-            'color': Doctor.getColorForSpecialty(doctor.specialty),
-          });
+          eventsMap
+              .putIfAbsent(date, () => [])
+              .add(
+                _CalendarEvent(
+                  type: 'consultation',
+                  doctor: doctor,
+                  consultation: consultation,
+                  color: Doctor.getColorForSpecialty(doctor.specialty),
+                ),
+              );
         }
       }
 
@@ -86,19 +105,20 @@ class _CalendarScreenState extends State<CalendarScreen> {
               currentDate.month,
               currentDate.day,
             );
+            final dosage = medication.dosage ?? 'Médicament';
+            final hh = time.hour.toString().padLeft(2, '0');
+            final mm = time.minute.toString().padLeft(2, '0');
 
-            if (!eventsMap.containsKey(dateOnly)) {
-              eventsMap[dateOnly] = [];
-            }
-
-            eventsMap[dateOnly]!.add({
-              'type': 'medication',
-              'medication': medication,
-              'time': time,
-              'title': medication.name,
-              'description': medication.dosage ?? 'Médicament',
-              'color': Colors.blue,
-            });
+            eventsMap
+                .putIfAbsent(dateOnly, () => [])
+                .add(
+                  _CalendarEvent(
+                    type: 'medication',
+                    title: medication.name,
+                    description: '$dosage · $hh:$mm',
+                    color: Colors.blue,
+                  ),
+                );
           }
         }
       }
@@ -114,16 +134,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
             currentDate.day,
           );
 
-          if (!eventsMap.containsKey(dateOnly)) {
-            eventsMap[dateOnly] = [];
-          }
-
-          eventsMap[dateOnly]!.add({
-            'type': 'hydration',
-            'title': 'Hydratation',
-            'description': 'N\'oubliez pas de boire de l\'eau !',
-            'color': Colors.cyan,
-          });
+          eventsMap
+              .putIfAbsent(dateOnly, () => [])
+              .add(
+                const _CalendarEvent(
+                  type: 'hydration',
+                  title: 'Hydratation',
+                  description: 'N\'oubliez pas de boire de l\'eau !',
+                  color: Colors.cyan,
+                ),
+              );
         }
       }
 
@@ -147,17 +167,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
             // Ne pas afficher les rappels terminés dans le calendrier
             final isCompleted = reminder['is_completed'] == true;
             if (!isCompleted) {
-              if (!eventsMap.containsKey(dateOnly)) {
-                eventsMap[dateOnly] = [];
-              }
-
-              eventsMap[dateOnly]!.add({
-                'type': 'reminder',
-                'title': reminder['title'] ?? 'Rappel',
-                'description': reminder['description'] ?? '',
-                'reminder': reminder,
-                'color': Colors.orange,
-              });
+              eventsMap
+                  .putIfAbsent(dateOnly, () => [])
+                  .add(
+                    _CalendarEvent(
+                      type: 'reminder',
+                      title: reminder['title'] as String? ?? 'Rappel',
+                      description: reminder['description'] as String? ?? '',
+                      color: Colors.orange,
+                    ),
+                  );
             }
           }
         } catch (e) {
@@ -184,27 +203,27 @@ class _CalendarScreenState extends State<CalendarScreen> {
               // Ne charger que les rappels du mois visible
               if (dateOnly.year == _focusedDay.year &&
                   dateOnly.month == _focusedDay.month) {
-                if (!eventsMap.containsKey(dateOnly)) {
-                  eventsMap[dateOnly] = [];
-                }
-
                 // Détecter le type de rappel par le titre
                 final title = reminder['title'] as String? ?? 'Rappel';
                 final isMedication = title.contains('💊');
                 final isHydration = title.contains('💧');
 
-                eventsMap[dateOnly]!.add({
-                  'type':
-                      isMedication
-                          ? 'medication'
-                          : (isHydration ? 'hydration' : 'reminder'),
-                  'title': title,
-                  'description': reminder['description'] as String? ?? '',
-                  'color':
-                      isMedication
-                          ? Colors.blue
-                          : (isHydration ? Colors.cyan : Colors.orange),
-                });
+                eventsMap
+                    .putIfAbsent(dateOnly, () => [])
+                    .add(
+                      _CalendarEvent(
+                        type:
+                            isMedication
+                                ? 'medication'
+                                : (isHydration ? 'hydration' : 'reminder'),
+                        title: title,
+                        description: reminder['description'] as String? ?? '',
+                        color:
+                            isMedication
+                                ? Colors.blue
+                                : (isHydration ? Colors.cyan : Colors.orange),
+                      ),
+                    );
               }
             } catch (e) {
               // Ignorer dates invalides
@@ -239,7 +258,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   List<Color> _getEventColors(DateTime day) {
     final events = _events[day] ?? [];
-    return events.map((e) => e['color'] as Color).toList();
+    return events.map((e) => e.color).toList();
   }
 
   bool isSameDay(DateTime a, DateTime b) {
@@ -247,18 +266,20 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   void _showError(String message) {
+    final scheme = Theme.of(context).colorScheme;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red),
+      SnackBar(content: Text(message), backgroundColor: scheme.error),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: const Text('📅 Calendrier'),
-        backgroundColor: Colors.purple[600],
-        foregroundColor: Colors.white,
+        backgroundColor: scheme.primary,
+        foregroundColor: scheme.onPrimary,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -270,7 +291,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       body: Column(
         children: [
           // Calendrier
-          TableCalendar<Map<String, dynamic>>(
+          TableCalendar<_CalendarEvent>(
             firstDay: DateTime.utc(2020, 1, 1),
             lastDay: DateTime.utc(2030, 12, 31),
             focusedDay: _focusedDay,
@@ -281,15 +302,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
             calendarStyle: CalendarStyle(
               outsideDaysVisible: false,
               todayDecoration: BoxDecoration(
-                color: Colors.blue.withValues(alpha: 0.5),
+                color: scheme.primary.withValues(alpha: 0.5),
                 shape: BoxShape.circle,
               ),
               selectedDecoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
+                color: scheme.primary,
                 shape: BoxShape.circle,
               ),
-              markerDecoration: const BoxDecoration(
-                color: Colors.red,
+              markerDecoration: BoxDecoration(
+                color: scheme.error,
                 shape: BoxShape.circle,
               ),
               markersMaxCount: 3,
@@ -318,7 +339,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 _loadEvents();
               });
             },
-            calendarBuilders: CalendarBuilders(
+            calendarBuilders: CalendarBuilders<_CalendarEvent>(
               markerBuilder: (context, date, events) {
                 if (events.isEmpty) return const SizedBox.shrink();
 
@@ -406,44 +427,39 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  Widget _buildEventCard(Map<String, dynamic> event) {
-    final color = event['color'] as Color;
-    final type = event['type'] as String;
-
+  Widget _buildEventCard(_CalendarEvent event) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: ListTile(
         leading: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(width: 4, height: double.infinity, color: color),
+            Container(width: 4, height: double.infinity, color: event.color),
             const SizedBox(width: 8),
             Icon(
-              type == 'consultation'
+              event.type == 'consultation'
                   ? Icons.medical_services
-                  : type == 'medication'
+                  : event.type == 'medication'
                   ? Icons.medication
-                  : type == 'hydration'
+                  : event.type == 'hydration'
                   ? Icons.water_drop
                   : Icons.notifications,
-              color: color,
+              color: event.color,
             ),
           ],
         ),
         title: Text(
-          type == 'consultation'
-              ? 'Consultation: ${(event['doctor'] as Doctor).fullName}'
-              : event['title'] as String? ?? 'Rappel',
+          event.type == 'consultation'
+              ? 'Consultation: ${event.doctor!.fullName}'
+              : event.title ?? 'Rappel',
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle:
-            type == 'consultation'
+            event.type == 'consultation'
                 ? _buildConsultationSubtitle(event)
                 : Text(
                   // Sanitizer à l'affichage pour prévenir XSS
-                  InputSanitizer.sanitize(
-                    event['description']?.toString() ?? '',
-                  ),
+                  InputSanitizer.sanitize(event.description ?? ''),
                 ),
         onTap: () {
           _showEventDetails(event);
@@ -452,9 +468,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  Widget _buildConsultationSubtitle(Map<String, dynamic> event) {
-    final doctor = event['doctor'] as Doctor;
-    final consultation = event['consultation'] as Consultation;
+  Widget _buildConsultationSubtitle(_CalendarEvent event) {
+    final doctor = event.doctor!;
+    final consultation = event.consultation!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -466,24 +482,22 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  void _showEventDetails(Map<String, dynamic> event) {
+  void _showEventDetails(_CalendarEvent event) {
     showDialog(
       context: context,
       builder:
           (context) => AlertDialog(
             title: Text(
-              event['type'] == 'consultation'
+              event.type == 'consultation'
                   ? 'Consultation'
-                  : event['title'] as String? ?? 'Rappel',
+                  : event.title ?? 'Rappel',
             ),
             content:
-                event['type'] == 'consultation'
+                event.type == 'consultation'
                     ? _buildConsultationDetails(event)
                     : Text(
                       // Sanitizer à l'affichage pour prévenir XSS
-                      InputSanitizer.sanitize(
-                        event['description']?.toString() ?? '',
-                      ),
+                      InputSanitizer.sanitize(event.description ?? ''),
                     ),
             actions: [
               TextButton(
@@ -495,9 +509,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  Widget _buildConsultationDetails(Map<String, dynamic> event) {
-    final doctor = event['doctor'] as Doctor;
-    final consultation = event['consultation'] as Consultation;
+  Widget _buildConsultationDetails(_CalendarEvent event) {
+    final doctor = event.doctor!;
+    final consultation = event.consultation!;
 
     return SingleChildScrollView(
       child: Column(
