@@ -37,8 +37,8 @@ class _SyncScreenState extends State<SyncScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Synchronisation'),
-        backgroundColor: Colors.orange[600],
-        foregroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),

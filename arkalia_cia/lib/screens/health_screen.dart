@@ -240,14 +240,16 @@ class _HealthScreenState extends State<HealthScreen> {
   }
 
   void _showSuccess(String message) {
+    final scheme = Theme.of(context).colorScheme;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.green),
+      SnackBar(content: Text(message), backgroundColor: scheme.primary),
     );
   }
 
   void _showError(String message) {
+    final scheme = Theme.of(context).colorScheme;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red),
+      SnackBar(content: Text(message), backgroundColor: scheme.error),
     );
   }
 
@@ -419,11 +421,12 @@ class _HealthScreenState extends State<HealthScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Portails Santé'),
-        backgroundColor: Colors.red[600],
-        foregroundColor: Colors.white,
+        backgroundColor: scheme.primary,
+        foregroundColor: scheme.onPrimary,
         actions: [
           IconButton(
             icon: Icon(
@@ -477,8 +480,9 @@ class _HealthScreenState extends State<HealthScreen> {
               : _buildPortalsList(),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddPortalDialog,
-        backgroundColor: Colors.red,
-        child: const Icon(Icons.add, color: Colors.white),
+        backgroundColor: scheme.primary,
+        foregroundColor: scheme.onPrimary,
+        child: const Icon(Icons.add),
       ),
     );
   }

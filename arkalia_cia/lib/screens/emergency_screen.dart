@@ -406,7 +406,8 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
               ElevatedButton(
                 onPressed: () => Navigator.of(context).pop(true),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
+                  backgroundColor: Theme.of(context).colorScheme.error,
+                  foregroundColor: Theme.of(context).colorScheme.onError,
                   minimumSize: const Size(
                     120,
                     48,
@@ -422,10 +423,11 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
 
   void _showError(String message) {
     if (mounted) {
+      final scheme = Theme.of(context).colorScheme;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(message),
-          backgroundColor: Colors.red,
+          backgroundColor: scheme.error,
           duration: const Duration(seconds: 4),
         ),
       );
@@ -434,10 +436,11 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
 
   void _showSuccess(String message) {
     if (mounted) {
+      final scheme = Theme.of(context).colorScheme;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(message),
-          backgroundColor: Colors.green,
+          backgroundColor: scheme.primary,
           duration: const Duration(seconds: 3),
         ),
       );

@@ -425,8 +425,8 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Pathologies'),
-        backgroundColor: Colors.purple[600],
-        foregroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         actions: [
           IconButton(
             icon: const Icon(Icons.filter_list),
