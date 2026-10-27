@@ -3,6 +3,7 @@ import '../services/doctor_service.dart';
 import '../models/doctor.dart';
 import 'doctor_detail_screen.dart';
 import 'add_edit_doctor_screen.dart';
+import '../utils/error_helper.dart';
 
 class DoctorsListScreen extends StatefulWidget {
   const DoctorsListScreen({super.key});
@@ -48,9 +49,10 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
     } catch (e) {
       setState(() => _isLoading = false);
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Erreur chargement: $e')));
+        ErrorHelper.logError('DoctorsListScreen._load', e);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(ErrorHelper.getUserFriendlyMessage(e))),
+        );
       }
     }
   }

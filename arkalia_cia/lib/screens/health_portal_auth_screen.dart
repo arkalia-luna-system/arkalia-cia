@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/health_portal_auth_service.dart';
 import 'onboarding/import_progress_screen.dart';
 import 'onboarding/import_type.dart';
+import '../utils/error_helper.dart';
 
 class HealthPortalAuthScreen extends StatefulWidget {
   final HealthPortal portal;
@@ -99,8 +100,9 @@ class _HealthPortalAuthScreenState extends State<HealthPortalAuthScreen> {
         });
       }
     } catch (e) {
+      ErrorHelper.logError('HealthPortalAuthScreen', e);
       setState(() {
-        _error = 'Erreur: $e';
+        _error = ErrorHelper.getUserFriendlyMessage(e);
         _isAuthenticating = false;
       });
     }

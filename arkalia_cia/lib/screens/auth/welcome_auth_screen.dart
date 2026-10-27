@@ -289,7 +289,7 @@ class _WelcomeAuthScreenState extends State<WelcomeAuthScreen>
         ErrorHelper.logError('WelcomeAuthScreen._handleGoogleSignIn', e);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erreur: $errorMessage'),
+            content: Text(errorMessage),
             backgroundColor: Colors.red,
             duration: const Duration(seconds: 3),
           ),

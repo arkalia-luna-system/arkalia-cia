@@ -3,6 +3,7 @@ import '../services/pathology_service.dart';
 import '../models/pathology.dart';
 import '../utils/input_sanitizer.dart';
 import 'pathology_detail_screen.dart';
+import '../utils/error_helper.dart';
 
 class PathologyListScreen extends StatefulWidget {
   const PathologyListScreen({super.key});
@@ -36,9 +37,10 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Erreur chargement: $e')));
+        ErrorHelper.logError('PathologyListScreen._load', e);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(ErrorHelper.getUserFriendlyMessage(e))),
+        );
       }
     }
   }
@@ -178,9 +180,10 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
         }
       } catch (e) {
         if (mounted) {
+          ErrorHelper.logError('PathologyListScreen', e);
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(SnackBar(content: Text('Erreur: $e')));
+          ).showSnackBar(SnackBar(content: Text(ErrorHelper.getUserFriendlyMessage(e))));
         }
       }
     }
@@ -220,9 +223,10 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
         }
       } catch (e) {
         if (mounted) {
+          ErrorHelper.logError('PathologyListScreen', e);
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(SnackBar(content: Text('Erreur: $e')));
+          ).showSnackBar(SnackBar(content: Text(ErrorHelper.getUserFriendlyMessage(e))));
         }
       }
     }

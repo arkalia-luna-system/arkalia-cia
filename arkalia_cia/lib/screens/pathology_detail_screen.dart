@@ -5,6 +5,7 @@ import '../models/pathology.dart';
 import '../models/pathology_tracking.dart';
 import '../utils/input_sanitizer.dart';
 import 'pathology_tracking_screen.dart';
+import '../utils/error_helper.dart';
 
 class PathologyDetailScreen extends StatefulWidget {
   final int pathologyId;
@@ -58,9 +59,10 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
+        ErrorHelper.logError('PathologyDetailScreen', e);
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Erreur: $e')));
+        ).showSnackBar(SnackBar(content: Text(ErrorHelper.getUserFriendlyMessage(e))));
       }
     }
   }
@@ -478,9 +480,10 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
         }
       } catch (e) {
         if (mounted) {
+          ErrorHelper.logError('PathologyDetailScreen._deleteTracking', e);
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(SnackBar(content: Text('Erreur: $e')));
+          ).showSnackBar(SnackBar(content: Text(ErrorHelper.getUserFriendlyMessage(e))));
         }
       }
     }

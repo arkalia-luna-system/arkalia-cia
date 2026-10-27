@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import '../services/pin_auth_service.dart';
+import '../utils/error_helper.dart';
 
 /// Écran de configuration du PIN pour le web
 class PinSetupScreen extends StatefulWidget {
@@ -48,8 +49,9 @@ class _PinSetupScreenState extends State<PinSetupScreen> {
         });
       }
     } catch (e) {
+      ErrorHelper.logError('PinSetupScreen._setupPin', e);
       setState(() {
-        _errorMessage = 'Erreur: $e';
+        _errorMessage = ErrorHelper.getUserFriendlyMessage(e);
         _isLoading = false;
       });
     }

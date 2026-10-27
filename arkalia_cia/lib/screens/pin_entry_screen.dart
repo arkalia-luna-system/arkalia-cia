@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import '../services/pin_auth_service.dart';
+import '../utils/error_helper.dart';
 
 /// Écran de saisie du PIN pour le web
 class PinEntryScreen extends StatefulWidget {
@@ -82,9 +83,10 @@ class _PinEntryScreenState extends State<PinEntryScreen> {
         }
       }
     } catch (e) {
+      ErrorHelper.logError('PinEntryScreen._authenticate', e);
       if (mounted) {
         setState(() {
-          _errorMessage = 'Erreur: $e';
+          _errorMessage = ErrorHelper.getUserFriendlyMessage(e);
           _isAuthenticating = false;
         });
       }

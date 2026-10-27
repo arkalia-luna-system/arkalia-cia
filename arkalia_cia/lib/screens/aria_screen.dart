@@ -349,7 +349,8 @@ class _ARIAScreenState extends State<ARIAScreen> {
         _showError('Impossible d\'ouvrir ARIA. Vérifiez que le serveur est accessible.');
       }
     } catch (e) {
-      _showError('Erreur: $e');
+      ErrorHelper.logError('ARIAScreen', e);
+      _showError(ErrorHelper.getUserFriendlyMessage(e));
     }
     */
   }

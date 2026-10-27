@@ -4,6 +4,7 @@ import '../services/calendar_service.dart';
 import '../services/local_storage_service.dart';
 import '../utils/input_sanitizer.dart';
 import 'medication_reminders_screen.dart';
+import '../utils/error_helper.dart';
 
 class RemindersScreen extends StatefulWidget {
   const RemindersScreen({super.key});
@@ -103,7 +104,8 @@ class _RemindersScreenState extends State<RemindersScreen> {
         setState(() {
           isLoading = false;
         });
-        _showError('Erreur lors du chargement des rappels: $e');
+        ErrorHelper.logError('RemindersScreen', e);
+        _showError(ErrorHelper.getUserFriendlyMessage(e));
       }
     }
   }
@@ -369,14 +371,16 @@ class _RemindersScreenState extends State<RemindersScreen> {
           }
         } catch (e) {
           // Ignorer les erreurs de calendrier, on a déjà sauvegardé localement
-          _showError('Erreur lors de l\'ajout au calendrier: $e');
+          ErrorHelper.logError('RemindersScreen.calendar', e);
+          _showError(ErrorHelper.getUserFriendlyMessage(e));
         }
       }
 
       _showSuccess('Rappel créé avec succès !');
       _loadReminders();
     } catch (e) {
-      _showError('Erreur: $e');
+      ErrorHelper.logError('RemindersScreen', e);
+      _showError(ErrorHelper.getUserFriendlyMessage(e));
     }
   }
 
@@ -428,7 +432,8 @@ class _RemindersScreenState extends State<RemindersScreen> {
       _showSuccess('Rappel modifié avec succès !');
       _loadReminders();
     } catch (e) {
-      _showError('Erreur: $e');
+      ErrorHelper.logError('RemindersScreen', e);
+      _showError(ErrorHelper.getUserFriendlyMessage(e));
     }
   }
 
@@ -441,7 +446,8 @@ class _RemindersScreenState extends State<RemindersScreen> {
       await _loadReminders();
       _showSuccess('Rappel marqué comme terminé');
     } catch (e) {
-      _showError('Erreur lors de la mise à jour: $e');
+      ErrorHelper.logError('RemindersScreen', e);
+      _showError(ErrorHelper.getUserFriendlyMessage(e));
     }
   }
 

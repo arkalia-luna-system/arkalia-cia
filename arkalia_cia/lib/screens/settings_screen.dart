@@ -14,7 +14,6 @@ import 'auth/login_screen.dart';
 import 'auth/welcome_auth_screen.dart';
 import 'stats_screen.dart';
 import 'user_profile_screen.dart';
-
 /// Écran de paramètres de l'application
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -254,10 +253,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               await GoogleAuthService.signOut();
                             }
                           } catch (e) {
-                            // Ignorer les erreurs de déconnexion Google
-                            AppLogger.debug(
-                              'Erreur lors de la déconnexion Google: $e',
-                            );
+                            // Ignorer les erreurs de déconnexion Google (non UI)
+                            AppLogger.debug('Déconnexion Google ignorée: $e');
                           }
 
                           // Déconnexion backend si nécessaire
