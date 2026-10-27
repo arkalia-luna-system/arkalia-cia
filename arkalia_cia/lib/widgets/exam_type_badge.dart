@@ -148,7 +148,7 @@ class ExamTypeBadge extends StatelessWidget {
             Text(
               '(${(confidence! * 100).toInt()}%)',
               style: TextStyle(
-                fontSize: 10,
+                fontSize: 14, // Minimum 14sp pour accessibilité seniors
                 color: color.withValues(alpha: 0.7),
               ),
             ),
