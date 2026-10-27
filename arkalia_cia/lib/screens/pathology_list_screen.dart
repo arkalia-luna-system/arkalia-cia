@@ -206,7 +206,9 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context, true),
-                style: TextButton.styleFrom(foregroundColor: Colors.red),
+                style: TextButton.styleFrom(
+                  foregroundColor: Theme.of(context).colorScheme.error,
+                ),
                 child: const Text('Supprimer'),
               ),
             ],
@@ -372,7 +374,10 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
                               pathology.subcategory!,
                               style: TextStyle(
                                 fontSize: 14,
-                                color: Colors.grey[600],
+                                color:
+                                    Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
                                 fontStyle: FontStyle.italic,
                               ),
                             ),
@@ -383,13 +388,16 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
                     trailing: PopupMenuButton(
                       itemBuilder:
                           (context) => [
-                            const PopupMenuItem(
+                            PopupMenuItem(
                               value: 'delete',
                               child: Row(
                                 children: [
-                                  Icon(Icons.delete, color: Colors.red),
-                                  SizedBox(width: 8),
-                                  Text('Supprimer'),
+                                  Icon(
+                                    Icons.delete,
+                                    color: Theme.of(context).colorScheme.error,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Text('Supprimer'),
                                 ],
                               ),
                             ),
@@ -433,10 +441,14 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
             onPressed: _showFilterDialog,
             tooltip: 'Filtrer par catégorie',
           ),
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: _showAddPathologyDialog,
-            tooltip: 'Ajouter une pathologie',
+          Semantics(
+            button: true,
+            label: 'Ajouter une pathologie',
+            child: IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: _showAddPathologyDialog,
+              tooltip: 'Ajouter une pathologie',
+            ),
           ),
         ],
       ),

@@ -182,7 +182,9 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
                           // Sanitizer à l'affichage pour prévenir XSS
                           InputSanitizer.sanitize(treatment),
                         ),
-                        backgroundColor: Colors.green.withValues(alpha: 0.1),
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.primaryContainer.withValues(alpha: 0.35),
                       );
                     }).toList(),
               ),
@@ -199,7 +201,10 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
                     _pathology!.exams.map((exam) {
                       return Chip(
                         label: Text(exam),
-                        backgroundColor: Colors.blue.withValues(alpha: 0.1),
+                        backgroundColor: Theme.of(context)
+                            .colorScheme
+                            .secondaryContainer
+                            .withValues(alpha: 0.45),
                       );
                     }).toList(),
               ),
@@ -209,12 +214,14 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
             // Historique des entrées
             _buildSectionTitle('Historique des entrées'),
             if (_trackingEntries.isEmpty)
-              const Padding(
-                padding: EdgeInsets.all(16),
+              Padding(
+                padding: const EdgeInsets.all(16),
                 child: Center(
                   child: Text(
                     'Aucune entrée enregistrée',
-                    style: TextStyle(color: Colors.grey),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ),
               )
@@ -251,12 +258,18 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
-                          icon: const Icon(Icons.edit, color: Colors.blue),
+                          icon: Icon(
+                            Icons.edit,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
                           onPressed: () => _editTrackingEntry(entry),
                           tooltip: 'Modifier l\'entrée',
                         ),
                         IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
+                          icon: Icon(
+                            Icons.delete,
+                            color: Theme.of(context).colorScheme.error,
+                          ),
                           onPressed: () => _deleteTrackingEntry(entry),
                           tooltip: 'Supprimer l\'entrée',
                         ),
@@ -463,7 +476,9 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context, true),
-                style: TextButton.styleFrom(foregroundColor: Colors.red),
+                style: TextButton.styleFrom(
+                  foregroundColor: Theme.of(context).colorScheme.error,
+                ),
                 child: const Text('Supprimer'),
               ),
             ],
