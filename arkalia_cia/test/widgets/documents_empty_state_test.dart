@@ -10,9 +10,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        home: Scaffold(
-          body: DocumentsEmptyState(onAdd: () => tapped = true),
-        ),
+        home: Scaffold(body: DocumentsEmptyState(onAdd: () => tapped = true)),
       ),
     );
 
@@ -33,9 +31,7 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(body: DocumentsFilterEmptyState()),
-      ),
+      const MaterialApp(home: Scaffold(body: DocumentsFilterEmptyState())),
     );
 
     expect(find.text('Aucun document trouvé'), findsOneWidget);

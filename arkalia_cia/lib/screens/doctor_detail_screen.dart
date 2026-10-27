@@ -47,9 +47,9 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
       setState(() => _isLoading = false);
       if (mounted) {
         ErrorHelper.logError('DoctorDetailScreen._loadDoctorData', e);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(ErrorHelper.getUserFriendlyMessage(e))));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(ErrorHelper.getUserFriendlyMessage(e))),
+        );
       }
     }
   }

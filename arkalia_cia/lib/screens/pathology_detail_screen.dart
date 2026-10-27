@@ -60,9 +60,9 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
       if (mounted) {
         setState(() => _isLoading = false);
         ErrorHelper.logError('PathologyDetailScreen', e);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(ErrorHelper.getUserFriendlyMessage(e))));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(ErrorHelper.getUserFriendlyMessage(e))),
+        );
       }
     }
   }
@@ -481,9 +481,9 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
       } catch (e) {
         if (mounted) {
           ErrorHelper.logError('PathologyDetailScreen._deleteTracking', e);
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(ErrorHelper.getUserFriendlyMessage(e))));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(ErrorHelper.getUserFriendlyMessage(e))),
+          );
         }
       }
     }

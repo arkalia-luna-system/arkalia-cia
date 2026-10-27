@@ -102,7 +102,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       AppLogger.error('Erreur synchronisation', e);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(ErrorHelper.getUserFriendlyMessage(e)), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text(ErrorHelper.getUserFriendlyMessage(e)),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     } finally {
@@ -153,7 +156,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         AppLogger.error('Erreur suppression device', e);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(ErrorHelper.getUserFriendlyMessage(e)), backgroundColor: Colors.red),
+            SnackBar(
+              content: Text(ErrorHelper.getUserFriendlyMessage(e)),
+              backgroundColor: Colors.red,
+            ),
           );
         }
       }

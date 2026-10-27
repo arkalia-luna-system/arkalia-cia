@@ -66,9 +66,9 @@ class _PathologyTrackingScreenState extends State<PathologyTrackingScreen> {
       if (mounted) {
         setState(() => _isLoading = false);
         ErrorHelper.logError('PathologyTrackingScreen', e);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(ErrorHelper.getUserFriendlyMessage(e))));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(ErrorHelper.getUserFriendlyMessage(e))),
+        );
       }
     }
   }
@@ -134,9 +134,9 @@ class _PathologyTrackingScreenState extends State<PathologyTrackingScreen> {
       if (mounted) {
         setState(() => _isSaving = false);
         ErrorHelper.logError('PathologyTrackingScreen', e);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(ErrorHelper.getUserFriendlyMessage(e))));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(ErrorHelper.getUserFriendlyMessage(e))),
+        );
       }
     }
   }

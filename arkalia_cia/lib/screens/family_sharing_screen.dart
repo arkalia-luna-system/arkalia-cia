@@ -52,9 +52,9 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
       setState(() => _isLoading = false);
       if (mounted) {
         ErrorHelper.logError('FamilySharingScreen._loadData', e);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(ErrorHelper.getUserFriendlyMessage(e))));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(ErrorHelper.getUserFriendlyMessage(e))),
+        );
       }
     }
   }

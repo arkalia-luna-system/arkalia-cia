@@ -348,10 +348,7 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
         Navigator.pop(context); // Fermer dialog si ouvert
         final userMessage = ErrorHelper.getUserFriendlyMessage(e);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(userMessage),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text(userMessage), backgroundColor: Colors.red),
         );
       }
     }

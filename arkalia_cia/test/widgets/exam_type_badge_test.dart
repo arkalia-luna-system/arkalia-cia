@@ -28,23 +28,22 @@ void main() {
     },
   );
 
-  testWidgets(
-    'texte de confiance absent quand showConfidence est false',
-    (tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: ExamTypeBadge(
-              examType: 'analyse',
-              confidence: 0.8,
-              showConfidence: false,
-            ),
+  testWidgets('texte de confiance absent quand showConfidence est false', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: ExamTypeBadge(
+            examType: 'analyse',
+            confidence: 0.8,
+            showConfidence: false,
           ),
         ),
-      );
+      ),
+    );
 
-      expect(find.text('(80%)'), findsNothing);
-      expect(find.text('Analyse'), findsOneWidget);
-    },
-  );
+    expect(find.text('(80%)'), findsNothing);
+    expect(find.text('Analyse'), findsOneWidget);
+  });
 }

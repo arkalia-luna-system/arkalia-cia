@@ -111,20 +111,15 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
     if (percentage >= 100) {
       suggestion = 'Excellent : vous avez atteint votre objectif aujourd\'hui.';
     } else if (hour < 10 && total < goal * 0.2) {
-      suggestion =
-          'Bon matin. Commencez votre journée avec un verre d\'eau.';
+      suggestion = 'Bon matin. Commencez votre journée avec un verre d\'eau.';
     } else if (hour >= 10 && hour < 14 && total < goal * 0.4) {
-      suggestion =
-          'Pensez à boire régulièrement avant le déjeuner.';
+      suggestion = 'Pensez à boire régulièrement avant le déjeuner.';
     } else if (hour >= 14 && hour < 18 && total < goal * 0.6) {
-      suggestion =
-          'Après-midi : continuez à vous hydrater régulièrement.';
+      suggestion = 'Après-midi : continuez à vous hydrater régulièrement.';
     } else if (hour >= 18 && total < goal * 0.8) {
-      suggestion =
-          'Il est temps de compléter votre hydratation quotidienne.';
+      suggestion = 'Il est temps de compléter votre hydratation quotidienne.';
     } else if (averageDaily > 0 && total < averageDaily * 0.7) {
-      suggestion =
-          'Vous êtes en dessous de votre moyenne habituelle.';
+      suggestion = 'Vous êtes en dessous de votre moyenne habituelle.';
     } else {
       final remaining = goal - total;
       final glassesNeeded = (remaining / 250).ceil();

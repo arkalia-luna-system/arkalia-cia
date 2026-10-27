@@ -37,7 +37,7 @@ void main() {
       await pumpHome(tester);
 
       expect(
-        find.text('Rechercher dans documents, rappels, contacts...'),
+        find.text('Rechercher documents, rappels, contacts…'),
         findsOneWidget,
       );
       expect(find.byTooltip('Recherche avancée'), findsOneWidget);

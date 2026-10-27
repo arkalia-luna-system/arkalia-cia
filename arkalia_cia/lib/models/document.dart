@@ -41,13 +41,15 @@ class Document {
       id: map['id']?.toString() ?? '',
       name: (map['original_name'] ?? map['name'] ?? 'Document').toString(),
       category: map['category']?.toString(),
-      fileSize: map['file_size'] is int
-          ? map['file_size'] as int
-          : int.tryParse(map['file_size']?.toString() ?? ''),
+      fileSize:
+          map['file_size'] is int
+              ? map['file_size'] as int
+              : int.tryParse(map['file_size']?.toString() ?? ''),
       createdAt: map['created_at']?.toString(),
-      metadata: map['metadata'] is Map
-          ? Map<String, dynamic>.from(map['metadata'] as Map)
-          : null,
+      metadata:
+          map['metadata'] is Map
+              ? Map<String, dynamic>.from(map['metadata'] as Map)
+              : null,
     );
   }
 }

@@ -28,11 +28,7 @@ class DocumentListTile extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: Icon(
-          Icons.picture_as_pdf,
-          color: scheme.error,
-          size: 40,
-        ),
+        leading: Icon(Icons.picture_as_pdf, color: scheme.error, size: 40),
         title: Text(
           document.name,
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
@@ -51,7 +47,10 @@ class DocumentListTile extends StatelessWidget {
                     showConfidence: document.needsVerification,
                   ),
                 ),
-              Text('Taille: $formattedSize', style: const TextStyle(fontSize: 14)),
+              Text(
+                'Taille: $formattedSize',
+                style: const TextStyle(fontSize: 14),
+              ),
               const SizedBox(height: 4),
               Text(
                 'Ajouté: ${document.createdAt ?? 'Inconnu'}',

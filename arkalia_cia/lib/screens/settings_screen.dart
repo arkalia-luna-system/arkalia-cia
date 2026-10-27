@@ -14,6 +14,7 @@ import 'auth/login_screen.dart';
 import 'auth/welcome_auth_screen.dart';
 import 'stats_screen.dart';
 import 'user_profile_screen.dart';
+
 /// Écran de paramètres de l'application
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});

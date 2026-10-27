@@ -181,9 +181,9 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
       } catch (e) {
         if (mounted) {
           ErrorHelper.logError('PathologyListScreen', e);
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(ErrorHelper.getUserFriendlyMessage(e))));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(ErrorHelper.getUserFriendlyMessage(e))),
+          );
         }
       }
     }
@@ -224,9 +224,9 @@ class _PathologyListScreenState extends State<PathologyListScreen> {
       } catch (e) {
         if (mounted) {
           ErrorHelper.logError('PathologyListScreen', e);
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(ErrorHelper.getUserFriendlyMessage(e))));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(ErrorHelper.getUserFriendlyMessage(e))),
+          );
         }
       }
     }
