@@ -124,12 +124,13 @@ class ThemeService {
           titleLarge: TextStyle(color: Color(0xFFE0E0E0)),
           titleMedium: TextStyle(color: Color(0xFFE0E0E0)),
           titleSmall: TextStyle(color: Color(0xFFE0E0E0)),
-          bodyLarge: TextStyle(color: Color(0xFFE0E0E0)),
-          bodyMedium: TextStyle(color: Color(0xFFE0E0E0)),
-          bodySmall: TextStyle(color: Color(0xFFB0B0B0)),
-          labelLarge: TextStyle(color: Color(0xFFE0E0E0)),
-          labelMedium: TextStyle(color: Color(0xFFB0B0B0)),
-          labelSmall: TextStyle(color: Color(0xFFB0B0B0)),
+          bodyLarge: TextStyle(color: Color(0xFFE0E0E0), fontSize: 16),
+          bodyMedium: TextStyle(color: Color(0xFFE0E0E0), fontSize: 14),
+          // ≥14sp pour accessibilité seniors (Material défaut bodySmall=12)
+          bodySmall: TextStyle(color: Color(0xFFB0B0B0), fontSize: 14),
+          labelLarge: TextStyle(color: Color(0xFFE0E0E0), fontSize: 14),
+          labelMedium: TextStyle(color: Color(0xFFB0B0B0), fontSize: 14),
+          labelSmall: TextStyle(color: Color(0xFFB0B0B0), fontSize: 14),
         ),
 
         // FloatingActionButton : couleur douce
@@ -154,14 +155,21 @@ class ThemeService {
         ),
       );
     } else {
-      // Mode clair standard
-      return ThemeData(
+      // Mode clair standard — bodySmall/labelSmall ≥14sp (seniors)
+      final lightBase = ThemeData(
         useMaterial3: true,
         brightness: Brightness.light,
         primarySwatch: Colors.blue,
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.blue,
           brightness: Brightness.light,
+        ),
+      );
+      return lightBase.copyWith(
+        textTheme: lightBase.textTheme.copyWith(
+          bodySmall: lightBase.textTheme.bodySmall?.copyWith(fontSize: 14),
+          labelSmall: lightBase.textTheme.labelSmall?.copyWith(fontSize: 14),
+          labelMedium: lightBase.textTheme.labelMedium?.copyWith(fontSize: 14),
         ),
       );
     }
