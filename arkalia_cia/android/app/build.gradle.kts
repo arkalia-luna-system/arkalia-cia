@@ -326,8 +326,22 @@ android {
         }
         
         // Nettoyer AVANT les tâches de compilation Java (le plus tôt possible)
+        // et APRÈS : sur volume T7 (exFAT), macOS crée des AppleDouble `._*.class`
+        // juste après javac — D8/dexBuilder échoue sinon (._GeneratedPluginRegistrant.class).
         tasks.matching { 
             it.name.contains("compile") && it.name.contains("Java")
+        }.configureEach {
+            doFirst {
+                cleanMacOSFiles()
+            }
+            doLast {
+                cleanMacOSFiles()
+            }
+        }
+
+        // Nettoyer AVANT dexBuilder / D8 (cause directe du crash build démarrage sur T7)
+        tasks.matching {
+            it.name.contains("dexBuilder", ignoreCase = true)
         }.configureEach {
             doFirst {
                 cleanMacOSFiles()
