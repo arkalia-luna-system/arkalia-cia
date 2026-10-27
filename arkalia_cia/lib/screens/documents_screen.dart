@@ -18,7 +18,10 @@ import '../services/doctor_service.dart';
 import '../models/doctor.dart';
 import '../utils/app_logger.dart';
 import '../utils/input_sanitizer.dart';
-import '../widgets/exam_type_badge.dart';
+import '../models/document.dart';
+import '../widgets/documents/document_list_tile.dart';
+import '../widgets/documents/documents_empty_state.dart';
+import '../widgets/documents/documents_exam_filters.dart';
 import '../services/web_file_helper.dart';
 import '../utils/error_helper.dart';
 
@@ -271,41 +274,15 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
 
   /// Construit les filtres rapides par type d'examen
   Widget _buildExamTypeFilters() {
-    final distribution = _getExamTypeDistribution();
-    if (distribution.isEmpty) return const SizedBox.shrink();
-
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          FilterChip(
-            label: const Text('Tous'),
-            selected: _selectedExamType == null,
-            onSelected: (selected) {
-              setState(() {
-                _selectedExamType = null;
-              });
-              _filterDocuments();
-            },
-          ),
-          const SizedBox(width: 8),
-          ...distribution.keys.map(
-            (examType) => Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: FilterChip(
-                label: Text('$examType (${distribution[examType]})'),
-                selected: _selectedExamType == examType,
-                onSelected: (selected) {
-                  setState(() {
-                    _selectedExamType = selected ? examType : null;
-                  });
-                  _filterDocuments();
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
+    return DocumentsExamFilters(
+      distribution: _getExamTypeDistribution(),
+      selectedExamType: _selectedExamType,
+      onChanged: (value) {
+        setState(() {
+          _selectedExamType = value;
+        });
+        _filterDocuments();
+      },
     );
   }
 
@@ -1251,108 +1228,13 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                   isLoading
                       ? const Center(child: CircularProgressIndicator())
                       : documents.isEmpty
-                      ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: Colors.green.shade500.withValues(
-                                  alpha: 0.1,
-                                ),
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(
-                                Icons.folder_open,
-                                size: 64,
-                                color: Colors.green,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            const Text(
-                              'Aucun document médical enregistré',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.grey,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 24),
-                              child: Text(
-                                'Appuie sur le bouton ci‑dessous pour ajouter ton premier document médical (par exemple une ordonnance ou un résultat de prise de sang).',
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 14,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            const SizedBox(height: 24),
-                            ElevatedButton.icon(
-                              onPressed: _uploadDocument,
-                              icon: const Icon(Icons.upload),
-                              label: const Text('Ajouter un document médical'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green,
-                                foregroundColor: Colors.white,
-                                minimumSize: const Size(
-                                  220,
-                                  48,
-                                ), // Minimum 48px pour accessibilité seniors
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 24,
-                                  vertical: 12,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
+                      ? DocumentsEmptyState(onAdd: _uploadDocument)
                       : filteredDocuments.isEmpty
-                      ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade500.withValues(
-                                  alpha: 0.1,
-                                ),
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(
-                                Icons.search_off,
-                                size: 64,
-                                color: Colors.grey,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            const Text(
-                              'Aucun document trouvé',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.grey,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            const Text(
-                              'Essayez de modifier vos critères de recherche',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
+                      ? const DocumentsFilterEmptyState()
                       : ListView.builder(
                         itemCount:
                             filteredDocuments.length + (_hasMoreItems ? 1 : 0),
                         itemBuilder: (context, index) {
-                          // Bouton "Charger plus" à la fin
                           if (index == filteredDocuments.length) {
                             return Padding(
                               padding: const EdgeInsets.all(16.0),
@@ -1362,10 +1244,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                                   icon: const Icon(Icons.expand_more),
                                   label: const Text('Charger plus'),
                                   style: ElevatedButton.styleFrom(
-                                    minimumSize: const Size(
-                                      200,
-                                      48,
-                                    ), // Minimum 48px pour accessibilité seniors
+                                    minimumSize: const Size(200, 48),
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 24,
                                       vertical: 12,
@@ -1376,109 +1255,16 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                             );
                           }
 
-                          final doc = filteredDocuments[index];
-                          return Card(
-                            margin: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 4,
+                          final docMap = filteredDocuments[index];
+                          final document = Document.fromMap(docMap);
+                          return DocumentListTile(
+                            document: document,
+                            formattedSize: _formatFileSize(
+                              document.fileSize ?? 0,
                             ),
-                            child: ListTile(
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              leading: const Icon(
-                                Icons.picture_as_pdf,
-                                color: Colors.red,
-                                size: 40,
-                              ),
-                              title: Text(
-                                doc['original_name'] ?? 'Document',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              subtitle: Padding(
-                                padding: const EdgeInsets.only(top: 4),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Badge type d'examen si disponible
-                                    if (doc['metadata'] != null &&
-                                        doc['metadata'] is Map)
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                          bottom: 6,
-                                        ),
-                                        child: ExamTypeBadge(
-                                          examType:
-                                              doc['metadata']['exam_type'],
-                                          confidence:
-                                              doc['metadata']['exam_type_confidence']
-                                                  ?.toDouble(),
-                                          showConfidence:
-                                              doc['metadata']['needs_verification'] ==
-                                              true,
-                                        ),
-                                      ),
-                                    Text(
-                                      'Taille: ${_formatFileSize(doc['file_size'] ?? 0)}',
-                                      style: const TextStyle(fontSize: 14),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      'Ajouté: ${doc['created_at'] ?? 'Inconnu'}',
-                                      style: const TextStyle(fontSize: 14),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.visibility,
-                                      color: Colors.blue,
-                                      size: 24,
-                                    ),
-                                    onPressed: () => _previewDocument(doc),
-                                    tooltip: 'Prévisualiser',
-                                    constraints: const BoxConstraints(
-                                      minWidth: 48,
-                                      minHeight: 48,
-                                    ),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.share,
-                                      color: Colors.green,
-                                      size: 24,
-                                    ),
-                                    onPressed: () => _shareDocument(doc),
-                                    tooltip: 'Partager',
-                                    constraints: const BoxConstraints(
-                                      minWidth: 48,
-                                      minHeight: 48,
-                                    ),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.delete,
-                                      color: Colors.red,
-                                      size: 24,
-                                    ),
-                                    onPressed: () => _deleteDocument(doc['id']),
-                                    tooltip: 'Supprimer',
-                                    constraints: const BoxConstraints(
-                                      minWidth: 48,
-                                      minHeight: 48,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                            onPreview: () => _previewDocument(docMap),
+                            onShare: () => _shareDocument(docMap),
+                            onDelete: () => _deleteDocument(document.id),
                           );
                         },
                       ),
