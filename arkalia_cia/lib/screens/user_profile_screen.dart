@@ -67,7 +67,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(ErrorHelper.getUserFriendlyMessage(e)),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -82,19 +82,20 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     try {
       final success = await MultiDeviceSyncService.syncProfile();
       if (mounted) {
+        final scheme = Theme.of(context).colorScheme;
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Profil synchronisé avec succès'),
-              backgroundColor: Colors.green,
+            SnackBar(
+              content: const Text('Profil synchronisé avec succès'),
+              backgroundColor: scheme.primary,
             ),
           );
           await _loadProfile();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Erreur lors de la synchronisation'),
-              backgroundColor: Colors.orange,
+            SnackBar(
+              content: const Text('Erreur lors de la synchronisation'),
+              backgroundColor: scheme.error,
             ),
           );
         }
@@ -105,7 +106,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(ErrorHelper.getUserFriendlyMessage(e)),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -134,7 +135,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               ),
               ElevatedButton(
                 onPressed: () => Navigator.pop(context, true),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.error,
+                  foregroundColor: Theme.of(context).colorScheme.onError,
+                ),
                 child: const Text('Supprimer'),
               ),
             ],
@@ -147,9 +151,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         await _loadProfile();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Appareil supprimé'),
-              backgroundColor: Colors.green,
+            SnackBar(
+              content: const Text('Appareil supprimé'),
+              backgroundColor: Theme.of(context).colorScheme.primary,
             ),
           );
         }
@@ -159,7 +163,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(ErrorHelper.getUserFriendlyMessage(e)),
-              backgroundColor: Colors.red,
+              backgroundColor: Theme.of(context).colorScheme.error,
             ),
           );
         }

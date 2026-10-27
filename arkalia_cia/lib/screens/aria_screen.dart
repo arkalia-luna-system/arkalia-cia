@@ -46,11 +46,12 @@ class _ARIAScreenState extends State<ARIAScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: const Text('ARKALIA ARIA'),
-        backgroundColor: Colors.red[600],
-        foregroundColor: Colors.white,
+        backgroundColor: scheme.primary,
+        foregroundColor: scheme.onPrimary,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -64,12 +65,14 @@ class _ARIAScreenState extends State<ARIAScreen> {
           IconButton(
             icon:
                 _isChecking
-                    ? const SizedBox(
+                    ? SizedBox(
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          scheme.onPrimary,
+                        ),
                       ),
                     )
                     : const Icon(Icons.refresh),
@@ -298,20 +301,30 @@ class _ARIAScreenState extends State<ARIAScreen> {
   }
 
   Widget _buildDirectAccessButton() {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton.icon(
-        onPressed: _isARIAConnected ? () => _launchARIA('home') : null,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.red[600],
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-        icon: Icon(MdiIcons.openInApp),
-        label: Text(
-          _isARIAConnected ? 'Accéder à ARIA' : 'ARIA non disponible',
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+    final scheme = Theme.of(context).colorScheme;
+    final label = _isARIAConnected ? 'Accéder à ARIA' : 'ARIA non disponible';
+    return Semantics(
+      button: true,
+      label: label,
+      enabled: _isARIAConnected,
+      excludeSemantics: true,
+      child: SizedBox(
+        width: double.infinity,
+        child: ElevatedButton.icon(
+          onPressed: _isARIAConnected ? () => _launchARIA('home') : null,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: scheme.primary,
+            foregroundColor: scheme.onPrimary,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          icon: Icon(MdiIcons.openInApp),
+          label: Text(
+            label,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
         ),
       ),
     );
@@ -424,10 +437,11 @@ class _ARIAScreenState extends State<ARIAScreen> {
 
   void _showError(String message) {
     if (mounted) {
+      final scheme = Theme.of(context).colorScheme;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(message),
-          backgroundColor: Colors.red,
+          backgroundColor: scheme.error,
           duration: const Duration(seconds: 4),
         ),
       );
@@ -436,10 +450,11 @@ class _ARIAScreenState extends State<ARIAScreen> {
 
   void _showSuccess(String message) {
     if (mounted) {
+      final scheme = Theme.of(context).colorScheme;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(message),
-          backgroundColor: Colors.green,
+          backgroundColor: scheme.primary,
           duration: const Duration(seconds: 2),
         ),
       );

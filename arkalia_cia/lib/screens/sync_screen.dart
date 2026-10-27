@@ -733,20 +733,22 @@ class _SyncScreenState extends State<SyncScreen> {
   }
 
   void _showError(String message) {
+    final scheme = Theme.of(context).colorScheme;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: Colors.red,
+        backgroundColor: scheme.error,
         duration: const Duration(seconds: 3),
       ),
     );
   }
 
   void _showSuccess(String message) {
+    final scheme = Theme.of(context).colorScheme;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: Colors.green,
+        backgroundColor: scheme.primary,
         duration: const Duration(seconds: 2),
       ),
     );

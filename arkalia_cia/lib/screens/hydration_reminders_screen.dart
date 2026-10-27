@@ -138,16 +138,17 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
       _loadData();
       if (mounted) {
         // Animation de succès
+        final scheme = Theme.of(context).colorScheme;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(
               children: [
-                const Icon(Icons.check_circle, color: Colors.white, size: 24),
+                Icon(Icons.check_circle, color: scheme.onPrimary, size: 24),
                 const SizedBox(width: 8),
                 Text('$amount ml enregistrés'),
               ],
             ),
-            backgroundColor: Colors.green,
+            backgroundColor: scheme.primary,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
@@ -527,7 +528,10 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red),
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Theme.of(context).colorScheme.error,
+      ),
     );
   }
 

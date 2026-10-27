@@ -100,12 +100,14 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
         SnackBar(
           content: Row(
             children: [
-              const SizedBox(
+              SizedBox(
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    Theme.of(context).colorScheme.onPrimary,
+                  ),
                 ),
               ),
               const SizedBox(width: 16),
@@ -119,7 +121,7 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
           duration: const Duration(
             seconds: 30,
           ), // Longue durée pour permettre le partage
-          backgroundColor: Colors.blue,
+          backgroundColor: Theme.of(context).colorScheme.primary,
         ),
       );
     }
@@ -168,12 +170,13 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
     await _loadData();
 
     if (mounted) {
+      final scheme = Theme.of(context).colorScheme;
       if (errorCount == 0) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(
               children: [
-                const Icon(Icons.check_circle, color: Colors.white),
+                Icon(Icons.check_circle, color: scheme.onPrimary),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
@@ -182,11 +185,11 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
                 ),
               ],
             ),
-            backgroundColor: Colors.green,
+            backgroundColor: scheme.primary,
             duration: const Duration(seconds: 4),
             action: SnackBarAction(
               label: 'Voir',
-              textColor: Colors.white,
+              textColor: scheme.onPrimary,
               onPressed: () {
                 // Basculer vers l'onglet statistiques
                 _tabController.animateTo(1);
@@ -199,7 +202,7 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
           SnackBar(
             content: Row(
               children: [
-                const Icon(Icons.warning, color: Colors.white),
+                Icon(Icons.warning, color: scheme.onError),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
@@ -208,7 +211,7 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
                 ),
               ],
             ),
-            backgroundColor: Colors.orange,
+            backgroundColor: scheme.error,
             duration: const Duration(seconds: 4),
           ),
         );

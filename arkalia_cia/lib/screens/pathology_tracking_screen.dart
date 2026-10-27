@@ -143,12 +143,13 @@ class _PathologyTrackingScreenState extends State<PathologyTrackingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     if (_isLoading) {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Nouvelle entrée'),
-          backgroundColor: Colors.purple[600],
-          foregroundColor: Colors.white,
+          backgroundColor: scheme.primary,
+          foregroundColor: scheme.onPrimary,
         ),
         body: const Center(child: CircularProgressIndicator()),
       );
@@ -158,8 +159,8 @@ class _PathologyTrackingScreenState extends State<PathologyTrackingScreen> {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Nouvelle entrée'),
-          backgroundColor: Colors.purple[600],
-          foregroundColor: Colors.white,
+          backgroundColor: scheme.primary,
+          foregroundColor: scheme.onPrimary,
         ),
         body: const Center(child: Text('Pathologie introuvable')),
       );
@@ -173,7 +174,7 @@ class _PathologyTrackingScreenState extends State<PathologyTrackingScreen> {
               : 'Suivi - ${_pathology!.name}',
         ),
         backgroundColor: _pathology!.color,
-        foregroundColor: Colors.white,
+        foregroundColor: scheme.onPrimary,
       ),
       body: Form(
         key: _formKey,

@@ -69,12 +69,13 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     if (_isLoading) {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Détails'),
-          backgroundColor: Colors.purple[600],
-          foregroundColor: Colors.white,
+          backgroundColor: scheme.primary,
+          foregroundColor: scheme.onPrimary,
         ),
         body: const Center(child: CircularProgressIndicator()),
       );
@@ -84,8 +85,8 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Détails'),
-          backgroundColor: Colors.purple[600],
-          foregroundColor: Colors.white,
+          backgroundColor: scheme.primary,
+          foregroundColor: scheme.onPrimary,
         ),
         body: const Center(child: Text('Pathologie introuvable')),
       );
@@ -95,7 +96,7 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
       appBar: AppBar(
         title: Text(_pathology!.name),
         backgroundColor: _pathology!.color,
-        foregroundColor: Colors.white,
+        foregroundColor: scheme.onPrimary,
         actions: [
           IconButton(
             icon: const Icon(Icons.add),

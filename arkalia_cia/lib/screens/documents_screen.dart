@@ -605,11 +605,12 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
 
   void _showSuccess(String message) {
     if (!mounted) return;
+    final scheme = Theme.of(context).colorScheme;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.check_circle, color: Colors.white),
+            Icon(Icons.check_circle, color: scheme.onPrimary),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
@@ -621,7 +622,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
             ),
           ],
         ),
-        backgroundColor: Colors.green,
+        backgroundColor: scheme.primary,
         duration: const Duration(seconds: 3),
         behavior: SnackBarBehavior.floating,
       ),
@@ -630,11 +631,12 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
 
   void _showError(String message) {
     if (!mounted) return;
+    final scheme = Theme.of(context).colorScheme;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.error_outline, color: Colors.white),
+            Icon(Icons.error_outline, color: scheme.onError),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
@@ -646,7 +648,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
             ),
           ],
         ),
-        backgroundColor: Colors.red,
+        backgroundColor: scheme.error,
         duration: const Duration(seconds: 4),
         behavior: SnackBarBehavior.floating,
       ),
@@ -701,8 +703,9 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                     ElevatedButton(
                       onPressed: () => Navigator.pop(context, true),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        foregroundColor: Colors.white,
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        foregroundColor:
+                            Theme.of(context).colorScheme.onPrimary,
                       ),
                       child: const Text('Partager'),
                     ),
@@ -991,11 +994,12 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Documents'),
-        backgroundColor: Colors.green[600],
-        foregroundColor: Colors.white,
+        backgroundColor: scheme.primary,
+        foregroundColor: scheme.onPrimary,
         actions: [
           // Menu de tri
           PopupMenuButton<DocumentSortOrder>(
@@ -1164,58 +1168,64 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           // Bouton d'upload
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: isUploading ? null : _uploadDocument,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 16,
-                    horizontal: 24,
+            child: Semantics(
+              button: true,
+              label: isUploading ? 'Upload en cours' : 'Uploader un document',
+              enabled: !isUploading,
+              excludeSemantics: true,
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: isUploading ? null : _uploadDocument,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: scheme.primary,
+                    foregroundColor: scheme.onPrimary,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 16,
+                      horizontal: 24,
+                    ),
+                    minimumSize: const Size(double.infinity, 48),
                   ),
-                  minimumSize: const Size(double.infinity, 48),
-                ),
-                child:
-                    isUploading
-                        ? const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white,
+                  child:
+                      isUploading
+                          ? Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    scheme.onPrimary,
+                                  ),
                                 ),
                               ),
-                            ),
-                            SizedBox(width: 12),
-                            Text(
-                              'Upload en cours...',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
+                              const SizedBox(width: 12),
+                              const Text(
+                                'Upload en cours...',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
-                            ),
-                          ],
-                        )
-                        : const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.upload),
-                            SizedBox(width: 8),
-                            Text(
-                              'Uploader un document',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
+                            ],
+                          )
+                          : const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.upload),
+                              SizedBox(width: 8),
+                              Text(
+                                'Uploader un document',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
+                            ],
+                          ),
+                ),
               ),
             ),
           ),
@@ -1272,21 +1282,30 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: isUploading ? null : _uploadDocument,
-        backgroundColor: Colors.green,
-        tooltip: 'Ajouter un document',
-        child:
-            isUploading
-                ? const SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  ),
-                )
-                : const Icon(Icons.add, color: Colors.white),
+      floatingActionButton: Semantics(
+        button: true,
+        label: 'Ajouter un document',
+        enabled: !isUploading,
+        excludeSemantics: true,
+        child: FloatingActionButton(
+          onPressed: isUploading ? null : _uploadDocument,
+          backgroundColor: scheme.primary,
+          foregroundColor: scheme.onPrimary,
+          tooltip: 'Ajouter un document',
+          child:
+              isUploading
+                  ? SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        scheme.onPrimary,
+                      ),
+                    ),
+                  )
+                  : const Icon(Icons.add),
+        ),
       ),
     );
   }
@@ -1403,8 +1422,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                   ElevatedButton(
                     onPressed: () => Navigator.of(context).pop(true),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      foregroundColor: Colors.white,
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
                     ),
                     child: const Text('Ajouter'),
                   ),
@@ -1426,12 +1445,13 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           await doctorService.insertDoctor(newDoctor);
 
           if (mounted) {
+            final scheme = Theme.of(context).colorScheme;
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
                   'Dr ${newDoctor.firstName} ${newDoctor.lastName} ajouté avec succès',
                 ),
-                backgroundColor: Colors.green,
+                backgroundColor: scheme.primary,
                 duration: const Duration(seconds: 3),
               ),
             );

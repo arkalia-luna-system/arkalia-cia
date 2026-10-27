@@ -312,8 +312,8 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
           ),
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green[600],
-            foregroundColor: Colors.white,
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            foregroundColor: Theme.of(context).colorScheme.onPrimary,
             padding: const EdgeInsets.symmetric(vertical: 16),
           ),
         ),
