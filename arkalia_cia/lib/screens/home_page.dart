@@ -14,7 +14,6 @@ import 'advanced_search_screen.dart';
 import 'family_sharing_screen.dart';
 import 'conversational_ai_screen.dart';
 import 'patterns_dashboard_screen.dart';
-import 'bbia_integration_screen.dart';
 import 'pathology_list_screen.dart';
 import 'calendar_screen.dart';
 import 'hydration_reminders_screen.dart';
@@ -432,16 +431,6 @@ class _HomePageState extends State<HomePage> {
                           onTap: () => _showConversationalAI(context),
                         ),
 
-                        // Bouton 11: BBIA Robot
-                        _buildActionButton(
-                          context,
-                          icon: MdiIcons.robot,
-                          title: 'BBIA Robot',
-                          subtitle: 'Intégration robotique',
-                          color: Colors.deepPurple,
-                          onTap: () => _showBBIAIntegration(context),
-                        ),
-
                         // Bouton 10: Patterns IA
                         _buildActionButton(
                           context,
@@ -609,13 +598,6 @@ class _HomePageState extends State<HomePage> {
     Navigator.push(
       context,
       PageTransitions.slideRight(const PatternsDashboardScreen()),
-    );
-  }
-
-  void _showBBIAIntegration(BuildContext context) {
-    Navigator.push(
-      context,
-      PageTransitions.slideRight(const BBIAIntegrationScreen()),
     );
   }
 

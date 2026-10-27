@@ -444,7 +444,6 @@ make deps-update        # Update dependencies
 ### Phase 4: Écosystème Connecté (Planifiée)
 - Synchronisation cloud optionnelle (infrastructure prête)
 - Partage sécurisé famille
-- Intégration robot (Reachy Mini)
 - Endpoints API publique
 
 ## Development Roadmap
@@ -463,7 +462,6 @@ graph LR
 
     C1[Cloud Sync<br/>Optional] --> C
     C2[Family Sharing<br/>Secure] --> C
-    C3[Robot Integration<br/>Reachy Mini] --> C
 
     style A fill:#90EE90
     style B fill:#FFD700
@@ -577,35 +575,25 @@ graph TB
         A[CIA<br/>Assistant Santé Généraliste]
         B[ARIA<br/>Laboratoire Douleur/Mental]
     end
-    
-    subgraph "Corps & Expression"
-        C[BBIA<br/>Robot Compagnon Cognitif]
-    end
-    
+
     A <--> B
-    A -.-> C
-    B -.-> C
-    
+
     A --> D[Documents Médicaux<br/>Rappels<br/>Urgences]
     B --> E[Suivi Douleur<br/>Patterns Psy<br/>Métriques]
-    C --> F[Émotions Robotiques<br/>Interface Incarnée<br/>Coaching]
 ```
 
 **Positionnement** :
 - **CIA** = "Coffre-fort santé" + gestion quotidienne (documents, rappels, contacts urgence)
 - **ARIA** = "Microscope douleur/mental" + recherche personnelle (patterns, corrélations, métriques)
-- **BBIA** = "Corps/visage" qui exprime les états de santé de façon robotique (future vision)
 
 **Flux de données** :
 - **CIA ↔ ARIA** : Documents médicaux (CIA) ↔ Données douleur fine-grain (ARIA)
-- **CIA/ARIA → BBIA** : États santé → Adaptation comportementale robot (Phase 4)
 
 ### **🔗 Related Projects**
 
 | Project | Rôle dans l'Écosystème | Intégration avec CIA | Statut |
 |---------|----------------------|---------------------|--------|
 | **❤️ [Arkalia ARIA](https://github.com/arkalia-luna-system/arkalia-aria)** | Historique labo douleur/psy | **Archive en migration vers CIA** | 🗂️ Archivage progressif |
-| **🤖 [BBIA-SIM](https://github.com/arkalia-luna-system/bbia-sim)** | Robot cognitif Reachy Mini | Phase 4 - Robot compagnon avec contexte santé | 📋 Planifié |
 | **📊 [Metrics Collector](https://github.com/arkalia-luna-system/arkalia-metrics-collector)** | Analytics usage app | Monitoring santé et métriques | ✅ Opérationnel |
 | **🔧 [Athalia DevOps](https://github.com/arkalia-luna-system/athalia-dev-setup)** | Infrastructure déploiement | CI/CD pipeline automatisé | ✅ Opérationnel |
 | **⚙️ [Base Template](https://github.com/arkalia-luna-system/base-template)** | Structure backend standard | Fondation API Python | ✅ Opérationnel |
@@ -617,12 +605,10 @@ graph TB
 - **CIA ↔ ARIA** : Documents médicaux (agrégats) ↔ Données douleur (fine-grain)
 - **CIA → Metrics Collector** : Métriques usage et santé
 - **CIA → Quest** : Contenu éducatif santé
-- **Future : CIA/ARIA → BBIA** : États santé → Comportement robot adaptatif
 
 **Vision clinique** :
 - **CIA** prépare les rapports médicaux avec contexte ARIA
 - **ARIA** détecte les patterns pour enrichir les réponses de l'IA conversationnelle CIA
-- **BBIA** (futur) adapte son comportement émotionnel selon l'état santé détecté
 
 ### **🏗️ Architecture Écosystème**
 
@@ -631,16 +617,16 @@ graph TB
 │           Arkalia Luna System Ecosystem                 │
 └─────────────────────────────────────────────────────────┘
                             │
-        ┌───────────────────┼───────────────────┐
-        │                   │                   │
-    ┌───▼───┐          ┌───▼───┐          ┌───▼───┐
-    │  CIA  │◄─────────►│ ARIA  │          │ BBIA  │
-    │       │  Sync    │       │          │       │
-    │ Docs  │  Health  │ Pain  │          │ Robot │
-    │ Remind│  Data    │Pattern│          │Emotion│
-    └───┬───┘          └───┬───┘          └───┬───┘
-        │                   │                   │
-        └───────────────────┼───────────────────┘
+              ┌─────────────┴─────────────┐
+              │                           │
+          ┌───▼───┐                   ┌───▼───┐
+          │  CIA  │◄─────────────────►│ ARIA  │
+          │       │  Sync Health Data │       │
+          │ Docs  │                   │ Pain  │
+          │ Remind│                   │Pattern│
+          └───┬───┘                   └───┬───┘
+              │                           │
+              └─────────────┬─────────────┘
                             │
                     ┌───────▼────────┐
                     │ Metrics        │

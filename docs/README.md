@@ -66,8 +66,8 @@
 
 ### `deployment/` — Déploiement
 
-- **[DEPLOYMENT.md](./deployment/DEPLOYMENT.md)** — Guide déploiement principal
-- **[PLAY_STORE_METADATA.md](./deployment/PLAY_STORE_METADATA.md)** — Métadonnées Play Store
+- **[DEPLOYMENT.md](./deployment/DEPLOYMENT.md)** — Guide déploiement principal (PWA ; Play Store non utilisé)
+- **[PLAY_STORE_METADATA.md](./deployment/PLAY_STORE_METADATA.md)** — Statut Play Store (abandonné) → pointer vers DEPLOYMENT.md
 
 ### `guides/` — Guides utilisateur et développeur
 
@@ -79,12 +79,14 @@
 - **[ECOSYSTEM_VISION.md](./integrations/ECOSYSTEM_VISION.md)** — Vision de l'écosystème Arkalia Luna
 - **[PORTAILS_SANTE.md](./integrations/PORTAILS_SANTE.md)** — Portails santé belges
 
-### 📋 `plans/` — Plans d'Implémentation
+### 📋 `plans/` — Plans historiques (déc. 2025)
+
+Snapshots de référence, **pas** la source de vérité courante — voir plutôt `DEPLOYMENT.md` et le README racine.
 
 - **[README.md](./plans/README.md)** — Index des plans
-- **[STATUT_COMPLET_27_DECEMBRE_2025.md](./plans/STATUT_COMPLET_27_DECEMBRE_2025.md)** — Statut complet consolidé
-- **[CE_QUI_RESTE_A_FAIRE.md](./plans/CE_QUI_RESTE_A_FAIRE.md)** — Ce qui reste à faire
-- **[PLAN_FUTUR_AMELIORATIONS.md](./plans/PLAN_FUTUR_AMELIORATIONS.md)** — Plan détaillé par phases
+- **[STATUT_COMPLET_27_DECEMBRE_2025.md](./plans/STATUT_COMPLET_27_DECEMBRE_2025.md)** — Statut consolidé (historique)
+- **[CE_QUI_RESTE_A_FAIRE.md](./plans/CE_QUI_RESTE_A_FAIRE.md)** — Snapshot « reste à faire »
+- **[PLAN_FUTUR_AMELIORATIONS.md](./plans/PLAN_FUTUR_AMELIORATIONS.md)** — Plan par phases (historique)
 
 
 ### 🛠️ `troubleshooting/` — Dépannage
@@ -104,7 +106,7 @@
 ## 📂 Fichiers à la Racine
 
 - **[POUR_MAMAN.md](./POUR_MAMAN.md)** — Guide utilisateur pour votre mère
-- **[CE_QUI_MANQUE_10_DECEMBRE_2025.md](./CE_QUI_MANQUE_10_DECEMBRE_2025.md)** — Ce qui manque encore (optionnel)
+- **[INDEX_DOCUMENTATION.md](./INDEX_DOCUMENTATION.md)** — Index de la documentation
 
 ---
 
@@ -129,7 +131,7 @@
 
 ### Déploiement
 - **Guide déploiement** : `deployment/DEPLOYMENT.md`
-- **Métadonnées Play Store** : `deployment/PLAY_STORE_METADATA.md`
+- **Play Store** : non utilisé — voir `DEPLOYMENT.md` / stub `deployment/PLAY_STORE_METADATA.md`
 
 ### Intégrations
 - **ARIA** : `integrations/ARIA_INTEGRATION.md`

@@ -371,37 +371,6 @@ Passer de 6/10 à 10/10 - Zéro défaut, zéro erreur
 - ✅ Réduction complexité cyclomatique (DocumentService créé)
 - ✅ Extraction logique métier vers services (DocumentService extrait)
 
-### Optimisations Tests BBIA-Reachy-Sim
-
-**Performance Tests**
-- ✅ **10 fichiers de tests optimisés** avec réduction itérations et sleeps
-- ✅ **Réduction temps d'exécution** : 40-50% plus rapide
-- ✅ **Corrections code quality** : 3 erreurs de type corrigées
-- ✅ **Code propre** : Commentaires de traçabilité ajoutés
-
-**Fichiers Optimisés**
-- `tests/test_expert_robustness_conformity.py` (2x plus rapide + corrections)
-- `tests/test_performance_benchmarks.py` (2x plus rapide)
-- `tests/test_bbia_chat_llm.py` (5.5x plus rapide)
-- `tests/test_bbia_reachy.py` (5x plus rapide)
-- `tests/test_reachy_mini_backend.py` (2x plus rapide)
-- `tests/test_reachy_mini_complete_conformity.py` (2x plus rapide)
-- `tests/test_system_stress_load.py` (1.5-2x plus rapide)
-- `tests/test_emotions_latency.py` (1.3-1.5x plus rapide)
-- `tests/test_robot_api_joint_latency.py` (1.7x plus rapide)
-- `tests/test_simulator_joint_latency.py` (1.7x plus rapide)
-
-**Corrections Code Quality Tests**
-- ✅ **test_expert_robustness_conformity.py** : Correction 3 erreurs de type (`create_head_pose is not None`)
-- ✅ **test_api_ai_endpoints.py** : Correction utilisation `api.db` → injection dépendances
-- ✅ **test_api.py** : Correction utilisation `api.db` → injection dépendances
-- ✅ **auth_helpers.py** : Correction utilisation `api.db` → instance directe CIADatabase
-
-**Architecture Tests**
-- ✅ Utilisation `dependency_overrides` pour injection dépendances dans tests
-- ✅ Code propre et maintenable avec commentaires `OPTIMISATION:`
-- ✅ Aucune régression introduite
-
 ### Améliorations Dashboard HTML
 
 **Correction Ouverture Multiple**

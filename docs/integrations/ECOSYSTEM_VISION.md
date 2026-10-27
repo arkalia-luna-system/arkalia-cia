@@ -1,8 +1,8 @@
 # Vision Écosystème Arkalia Luna System
 
-**Version** : 1.0.0  
-**Date** : 27 novembre 2025  
-**Statut** : Vision Stratégique
+**Version** : 1.1.0  
+**Date** : 27 octobre 2026  
+**Statut** : Vision stratégique (CIA + ARIA)
 
 ---
 
@@ -18,7 +18,7 @@
 
 ## 🏗️ Architecture Modulaire
 
-### Les Trois Piliers
+### Les deux piliers actifs
 
 ```mermaid
 graph TB
@@ -26,33 +26,25 @@ graph TB
         A[CIA<br/>Conversational Intelligence Assistant]
         B[ARIA<br/>Arkalia Research Intelligence Assistant]
     end
-    
-    subgraph "Corps & Expression"
-        C[BBIA<br/>Brain-Body Intelligence Assistant]
-    end
-    
+
     A <-->|Sync Health Data| B
-    A -.->|Future: Health Context| C
-    B -.->|Future: Emotional State| C
-    
+
     A --> D[Documents<br/>Rappels<br/>Urgences]
     B --> E[Douleur<br/>Patterns<br/>Métriques]
-    C --> F[Émotions<br/>Interface<br/>Coaching]
 ```
 
-### Positionnement de Chaque Composant
+### Positionnement de chaque composant
 
 | Composant | Rôle | Métaphore | Données |
 |-----------|------|-----------|---------|
 | **CIA** | Assistant santé généraliste | "Coffre-fort santé" | Documents médicaux, rappels, contacts urgence, agrégats |
 | **ARIA** | Laboratoire personnel | "Microscope douleur/mental" | Données douleur fine-grain, patterns psychologiques, métriques |
-| **BBIA** | Robot compagnon cognitif | "Corps/visage expressif" | Émotions robotiques, comportements adaptatifs, interface incarnée |
 
 ---
 
 ## 🔄 Flux de Données
 
-### CIA ↔ ARIA (Intégration Principale)
+### CIA ↔ ARIA (Intégration principale)
 
 **CIA → ARIA** (Données agrégées) :
 - Documents médicaux pertinents (extraits, métadonnées)
@@ -82,22 +74,11 @@ Scénario : Avant un RDV médical
 4. Médecin reçoit document structuré au lieu de "je ne sais pas trop"
 ```
 
-### CIA/ARIA → BBIA (Phase 4 - Future)
-
-**Vision** : Le robot BBIA adapte son comportement émotionnel selon l'état santé détecté
-
-**Exemples** :
-- Si ARIA détecte douleur élevée → BBIA adopte un comportement plus doux, empathique
-- Si CIA signale RDV médical proche → BBIA rappelle gentiment, propose de préparer les documents
-- Si patterns ARIA montrent stress élevé → BBIA suggère exercices de relaxation
-
-**Principe** : BBIA = "corps/visage" qui exprime les états de santé de façon robotique
-
 ---
 
 ## 🎯 Avantages Concurrentiels
 
-### Comparaison avec Solutions Existantes
+### Comparaison avec solutions existantes
 
 | Aspect | Solutions Existantes | Arkalia Luna System |
 |--------|---------------------|---------------------|
@@ -106,13 +87,12 @@ Scénario : Avant un RDV médical
 | **Contrôle** | Institutionnel | **Utilisateur contrôle total** |
 | **Local-First** | Souvent cloud obligatoire | **100% local, optionnel cloud** |
 | **Partage Familial** | Limité | **Contrôle granulaire complet** |
-| **Modularité** | Monolithique | **Architecture modulaire** (CIA/ARIA/BBIA) |
-| **Robotique** | Aucun | **Intégration BBIA** (Reachy Mini) |
+| **Modularité** | Monolithique | **Architecture modulaire** (CIA / ARIA) |
 | **Innovation** | Centré institution | **Dossier Patient IA centré patient/famille** |
 
-### Innovation Clé
+### Innovation clé
 
-✅ **"Dossier Patient IA centré patient/famille"** - C'est rare et innovant !
+✅ **"Dossier Patient IA centré patient/famille"** — rare et innovant.
 
 La plupart des solutions santé sont conçues pour les professionnels. Arkalia inverse cette logique : **l'utilisateur est au centre**, avec des outils qui l'aident à comprendre et gérer sa santé.
 
@@ -120,20 +100,16 @@ La plupart des solutions santé sont conçues pour les professionnels. Arkalia i
 
 ## 📊 Matrice de Fonctionnalités
 
-### Répartition des Rôles
-
-| Fonctionnalité | CIA | ARIA | BBIA |
-|----------------|-----|------|------|
-| **Documents médicaux** | ✅ Principal | ⚠️ Contexte | ❌ |
-| **Rappels santé** | ✅ Principal | ❌ | ⚠️ Future |
-| **Contacts urgence** | ✅ Principal | ❌ | ⚠️ Future |
-| **Suivi douleur** | ⚠️ Agrégats | ✅ Principal | ❌ |
-| **Patterns psychologiques** | ⚠️ Contexte | ✅ Principal | ❌ |
-| **Métriques santé** | ⚠️ Contexte | ✅ Principal | ❌ |
-| **IA conversationnelle** | ✅ Principal | ⚠️ Enrichissement | ⚠️ Future |
-| **Export médical** | ✅ Principal | ⚠️ Données fines | ❌ |
-| **Interface robotique** | ❌ | ❌ | ✅ Principal |
-| **Émotions adaptatives** | ❌ | ⚠️ Contexte | ✅ Principal |
+| Fonctionnalité | CIA | ARIA |
+|----------------|-----|------|
+| **Documents médicaux** | ✅ Principal | ⚠️ Contexte |
+| **Rappels santé** | ✅ Principal | ❌ |
+| **Contacts urgence** | ✅ Principal | ❌ |
+| **Suivi douleur** | ⚠️ Agrégats | ✅ Principal |
+| **Patterns psychologiques** | ⚠️ Contexte | ✅ Principal |
+| **Métriques santé** | ⚠️ Contexte | ✅ Principal |
+| **IA conversationnelle** | ✅ Principal | ⚠️ Enrichissement |
+| **Export médical** | ✅ Principal | ⚠️ Données fines |
 
 **Légende** :
 - ✅ **Principal** : Fonctionnalité principale du composant
@@ -144,7 +120,7 @@ La plupart des solutions santé sont conçues pour les professionnels. Arkalia i
 
 ## 🚀 Roadmap Écosystème
 
-### Phase Actuelle (v1.0)
+### Phase actuelle
 
 **CIA** :
 - ✅ Modules base (documents, santé, rappels, urgence)
@@ -158,12 +134,7 @@ La plupart des solutions santé sont conçues pour les professionnels. Arkalia i
 - ✅ Métriques santé
 - ✅ Sync CIA ↔ ARIA
 
-**BBIA** :
-- ✅ Robot cognitif stable
-- ✅ Émotions robotiques
-- ✅ Vision computer
-
-### Phase 2 (Q1 2026)
+### Suite prévue
 
 **CIA** :
 - 🔄 Génération automatique rapports médicaux avec contexte ARIA
@@ -175,17 +146,9 @@ La plupart des solutions santé sont conçues pour les professionnels. Arkalia i
 - 🔄 Export multi-format (PDF, CSV, JSON)
 - 🔄 Anonymisation pour partage
 
-**BBIA** :
-- 📋 Intégration contexte santé CIA/ARIA
-- 📋 Adaptation comportementale selon état santé
-
-### Phase 3 (Q2 2026)
-
-**Écosystème Complet** :
-- 📋 Synchronisation tri-directionnelle CIA ↔ ARIA ↔ BBIA
+**Écosystème** :
 - 📋 Dashboard unifié famille
 - 📋 API publique pour intégrations externes
-- 📋 Certification médicale (si nécessaire)
 
 ---
 
@@ -196,10 +159,9 @@ La plupart des solutions santé sont conçues pour les professionnels. Arkalia i
 **Principe** : Toutes les données restent sur l'appareil de l'utilisateur par défaut
 
 - **CIA** : Stockage local chiffré AES-256
-- **ARIA** : Base de données locale, pas de cloud
-- **BBIA** : Traitement local, pas de remontée données
+- **ARIA** : Base de données locale, pas de cloud obligatoire
 
-### Consentement Explicite
+### Consentement explicite
 
 **Principe** : Aucune synchronisation automatique sans consentement
 
@@ -207,7 +169,7 @@ La plupart des solutions santé sont conçues pour les professionnels. Arkalia i
 - L'utilisateur peut **choisir quelles données** partager
 - L'utilisateur peut **désactiver** à tout moment
 
-### Contrôle Granulaire
+### Contrôle granulaire
 
 **Exemple** :
 ```dart
@@ -222,25 +184,23 @@ ARIAIntegrationSettings(
 
 ---
 
-## 📈 Vision Long Terme
+## 📈 Vision long terme
 
-### Écosystème Complet
+### Écosystème cible
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│        Arkalia Luna System - Vision 2027                │
+│        Arkalia Luna System                              │
 └─────────────────────────────────────────────────────────┘
                             │
-        ┌───────────────────┼───────────────────┐
-        │                   │                   │
-    ┌───▼───┐          ┌───▼───┐          ┌───▼───┐
-    │  CIA  │◄─────────►│ ARIA  │◄─────────►│ BBIA  │
-    │       │  Health   │       │  Emotion │       │
-    │ Docs  │  Data     │ Pain  │  State   │ Robot │
-    │ Remind│  Sync     │Pattern│  Sync    │Emotion│
-    └───┬───┘          └───┬───┘          └───┬───┘
-        │                   │                   │
-        └───────────────────┼───────────────────┘
+              ┌─────────────┴─────────────┐
+              │                           │
+          ┌───▼───┐                   ┌───▼───┐
+          │  CIA  │◄─────────────────►│ ARIA  │
+          │ Docs  │  Health Data Sync │ Pain  │
+          │ Remind│                   │Pattern│
+          └───┬───┘                   └───┬───┘
+              └─────────────┬─────────────┘
                             │
                     ┌───────▼────────┐
                     │ Unified        │
@@ -249,30 +209,27 @@ ARIAIntegrationSettings(
                     └────────────────┘
 ```
 
-### Objectifs 2027
+### Objectifs
 
-1. **Synchronisation tri-directionnelle** complète
+1. **Synchronisation CIA ↔ ARIA** robuste et consentie
 2. **Dashboard unifié** pour vue d'ensemble famille
-3. **API publique** pour intégrations tierces
-4. **Certification médicale** si nécessaire
-5. **Communauté open source** active
+3. **API publique** pour intégrations tierces (si besoin)
+4. **Communauté open source** active
 
 ---
 
 ## 🔗 Voir aussi
 
 ### Documentation CIA
-- **[README.md](../README.md)** — Vue d'ensemble du projet CIA
+- **[README.md](../../README.md)** — Vue d'ensemble du projet CIA
 - **[ARIA_INTEGRATION.md](./ARIA_INTEGRATION.md)** — Détails intégration CIA ↔ ARIA
-- **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Architecture technique
-- **[VUE_ENSEMBLE_PROJET.md](./VUE_ENSEMBLE_PROJET.md)** — Vue d'ensemble visuelle
+- **[ARCHITECTURE.md](../ARCHITECTURE.md)** — Architecture technique
+- **[VUE_ENSEMBLE_PROJET.md](../VUE_ENSEMBLE_PROJET.md)** — Vue d'ensemble visuelle
 
-### Documentation Projets Liés
+### Documentation projets liés
 - **[README ARIA](https://github.com/arkalia-luna-system/arkalia-aria/blob/main/README.md)** — Vue d'ensemble ARIA
-- **[README BBIA-SIM](https://github.com/arkalia-luna-system/bbia-sim/blob/main/README.md)** — Vue d'ensemble BBIA
 
 ---
 
-**Dernière mise à jour** : 27 novembre 2025  
+**Dernière mise à jour** : 27 octobre 2026  
 **Maintenu par** : Arkalia Luna System
-

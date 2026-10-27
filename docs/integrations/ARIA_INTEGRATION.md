@@ -409,7 +409,6 @@ final response = await conversationalAI.ask(
 - 🔄 Suggestions personnalisées basées sur patterns
 
 ### Phase 3 (Q2 2026)
-- 📋 Intégration BBIA (robot compagnon)
 - 📋 Partage familial sécurisé avec filtres ARIA
 - 📋 Export multi-format (PDF, CSV, JSON)
 

@@ -25,7 +25,6 @@ graph TB
     subgraph "Écosystème Arkalia"
         A[Arkalia CIA<br/>Mobile Santé]
         B[Arkalia ARIA<br/>Recherche Douleur]
-        C[BBIA-SIM<br/>Robot Cognitif]
     end
 
     subgraph "Arkalia CIA — Composants"
@@ -50,7 +49,6 @@ graph TB
     D --> I
     D --> J
     A -.-> B
-    A -.-> C
 ```
 
 ---
@@ -348,7 +346,6 @@ sequenceDiagram
 - Graphiques interactifs patterns
 
 ### Long terme (2027+)
-- Intégration robotique BBIA
 - Application web complémentaire
 - Modèles ML supplémentaires (LSTM)
 

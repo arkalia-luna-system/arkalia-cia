@@ -4,7 +4,7 @@
 
 **Version** : 1.3.1+6 | **Dernière mise à jour** : 12 décembre 2025
 
-[![Statut](https://img.shields.io/badge/statut-production--ready-success)]()
+[![Statut](https://img.shields.io/badge/statut-bêta-yellow)]()
 [![Architecture](https://img.shields.io/badge/architecture-local--first-blue)]()
 
 </div>
@@ -445,7 +445,6 @@ graph TB
 - Recherche NLP avancée (modèles ML)
 
 ### Moyen terme
-- Intégration robotique BBIA
 - Modèles ML supplémentaires (LSTM)
 
 ### Long terme

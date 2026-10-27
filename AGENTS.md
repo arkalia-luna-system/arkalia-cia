@@ -15,8 +15,7 @@ Pont court pour les agents travaillant dans ce dépôt. Le circuit détaillé (r
 - `README.md` — vue d’ensemble et statut
 - `arkalia_cia/pubspec.yaml` — version
 - `docs/POUR_MAMAN.md` — guide utilisateur
-- `docs/deployment/DEPLOYMENT.md` — déploiement
-- `docs/deployment/PLAY_STORE_METADATA.md` — métadonnées Play Store
+- `docs/deployment/DEPLOYMENT.md` — déploiement (Play Store non utilisé)
 - `docs/integrations/ARIA_INTEGRATION.md` — ARIA
 - `docs/integrations/ECOSYSTEM_VISION.md` — vision écosystème
 

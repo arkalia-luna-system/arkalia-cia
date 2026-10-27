@@ -12,7 +12,6 @@ Instructions locales durables. Pour l’état courant (version, tests, publicati
 | Version app | `arkalia_cia/pubspec.yaml` |
 | Guide utilisateur (maman) | `docs/POUR_MAMAN.md` |
 | Déploiement | `docs/deployment/DEPLOYMENT.md` |
-| Métadonnées Play Store | `docs/deployment/PLAY_STORE_METADATA.md` |
 | Intégration ARIA | `docs/integrations/ARIA_INTEGRATION.md` |
 | Vision écosystème | `docs/integrations/ECOSYSTEM_VISION.md` |
 | Circuit agents (pont) | `AGENTS.md` |
@@ -24,7 +23,7 @@ Instructions locales durables. Pour l’état courant (version, tests, publicati
 - App santé pour une utilisatrice senior (mère) : simple, lisible, boutons larges.
 - Stack : Flutter (frontend) + Python FastAPI (backend optionnel).
 - Stockage local SQLite chiffré (AES-256), offline-first.
-- Écosystème : CIA (coffre-fort) + ARIA (labo) + BBIA (futur).
+- Écosystème : CIA (coffre-fort) + ARIA (labo douleur / mental).
 
 ---
 
