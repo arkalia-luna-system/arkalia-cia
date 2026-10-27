@@ -9,6 +9,37 @@ import 'medical_report_screen.dart';
 import '../utils/error_helper.dart';
 import '../widgets/senior_empty_state.dart';
 
+/// Vue typée d’un portail santé (UI) — sans réécriture du storage / API Map.
+class _HealthPortal {
+  const _HealthPortal({
+    required this.name,
+    required this.url,
+    this.description,
+    this.category,
+  });
+
+  final String name;
+  final String url;
+  final String? description;
+  final String? category;
+
+  factory _HealthPortal.fromMap(Map<String, dynamic> map) {
+    return _HealthPortal(
+      name: map['name'] as String? ?? 'Portail',
+      url: map['url'] as String? ?? '',
+      description: map['description'] as String?,
+      category: map['category'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toMap() => {
+    'name': name,
+    'url': url,
+    if (description != null) 'description': description,
+    if (category != null) 'category': category,
+  };
+}
+
 class HealthScreen extends StatefulWidget {
   const HealthScreen({super.key});
 
@@ -17,7 +48,7 @@ class HealthScreen extends StatefulWidget {
 }
 
 class _HealthScreenState extends State<HealthScreen> {
-  List<Map<String, dynamic>> portals = [];
+  List<_HealthPortal> portals = [];
   bool isLoading = false;
   bool _showFavoritesOnly = false;
   Set<String> _favoriteUrls = {};
@@ -46,9 +77,12 @@ class _HealthScreenState extends State<HealthScreen> {
     });
 
     // Toujours afficher les portails pré-configurés
-    final belgianPortals = BelgianHealthPortals.getPortalsAsMaps();
+    final belgianPortals =
+        BelgianHealthPortals.getPortalsAsMaps()
+            .map(_HealthPortal.fromMap)
+            .toList();
     final Set<String> existingUrls = {};
-    List<Map<String, dynamic>> allPortals = [];
+    List<_HealthPortal> allPortals = [];
 
     try {
       // Essayer de charger depuis le backend si disponible
@@ -56,46 +90,42 @@ class _HealthScreenState extends State<HealthScreen> {
       if (backendEnabled) {
         try {
           final backendPortals = await ApiService.getHealthPortals();
-          existingUrls.addAll(backendPortals.map((p) => p['url'] as String));
-          allPortals.addAll(backendPortals);
+          final typedBackend =
+              backendPortals.map(_HealthPortal.fromMap).toList();
+          existingUrls.addAll(typedBackend.map((p) => p.url));
+          allPortals.addAll(typedBackend);
 
           // Ajouter les portails pré-configurés qui ne sont pas déjà dans le backend
           for (final portal in belgianPortals) {
-            if (!existingUrls.contains(portal['url'] as String)) {
+            if (!existingUrls.contains(portal.url)) {
               // Essayer d'ajouter au backend (silencieusement)
               try {
                 final result = await ApiService.createHealthPortal(
-                  name: portal['name'] as String,
-                  url: portal['url'] as String,
-                  description: portal['description'] as String,
-                  category: portal['category'] as String,
+                  name: portal.name,
+                  url: portal.url,
+                  description: portal.description ?? '',
+                  category: portal.category ?? '',
                 );
 
                 if (result['success'] != false &&
                     result['backend_unavailable'] != true &&
                     result['backend_disabled'] != true) {
-                  // Ajouter à la liste si créé avec succès
                   allPortals.add(portal);
                 } else {
-                  // Ajouter quand même à la liste pour affichage
                   allPortals.add(portal);
                 }
               } catch (e) {
-                // En cas d'erreur, ajouter quand même pour affichage
                 allPortals.add(portal);
               }
             }
           }
         } catch (e) {
-          // Si erreur backend, utiliser uniquement les portails pré-configurés
           allPortals = List.from(belgianPortals);
         }
       } else {
-        // Backend désactivé, utiliser uniquement les portails pré-configurés
         allPortals = List.from(belgianPortals);
       }
     } catch (e) {
-      // En cas d'erreur, utiliser les portails pré-configurés
       allPortals = List.from(belgianPortals);
     }
 
@@ -113,7 +143,7 @@ class _HealthScreenState extends State<HealthScreen> {
     final descriptionController = TextEditingController();
     final categoryController = TextEditingController();
 
-    final result = await showDialog<Map<String, dynamic>>(
+    final result = await showDialog<_HealthPortal>(
       context: context,
       builder:
           (context) => StatefulBuilder(
@@ -183,12 +213,15 @@ class _HealthScreenState extends State<HealthScreen> {
                             ValidationHelper.isValidUrl(
                               urlController.text.trim(),
                             )) {
-                          Navigator.pop(context, {
-                            'name': nameController.text,
-                            'url': urlController.text.trim(),
-                            'description': descriptionController.text,
-                            'category': categoryController.text,
-                          });
+                          Navigator.pop(
+                            context,
+                            _HealthPortal(
+                              name: nameController.text,
+                              url: urlController.text.trim(),
+                              description: descriptionController.text,
+                              category: categoryController.text,
+                            ),
+                          );
                         }
                       },
                       child: const Text('Ajouter'),
@@ -203,13 +236,13 @@ class _HealthScreenState extends State<HealthScreen> {
     }
   }
 
-  Future<void> _createPortal(Map<String, dynamic> portalData) async {
+  Future<void> _createPortal(_HealthPortal portalData) async {
     try {
       Map<String, dynamic> response = await ApiService.createHealthPortal(
-        name: portalData['name'],
-        url: portalData['url'],
-        description: portalData['description'],
-        category: portalData['category'],
+        name: portalData.name,
+        url: portalData.url,
+        description: portalData.description,
+        category: portalData.category,
       );
 
       if (response['success'] != false) {
@@ -270,6 +303,7 @@ class _HealthScreenState extends State<HealthScreen> {
     }
   }
 
+  /// Couleurs sémantiques de catégorie (données) — volontairement distinctes du chrome UI.
   Color _getCategoryColor(String? category) {
     if (category == null) return Colors.red;
 
@@ -287,11 +321,10 @@ class _HealthScreenState extends State<HealthScreen> {
     }
   }
 
-  List<Map<String, dynamic>> _getFilteredPortals() {
+  List<_HealthPortal> _getFilteredPortals() {
     if (_showFavoritesOnly) {
       return portals.where((portal) {
-        final url = portal['url'] as String? ?? '';
-        return _favoriteUrls.contains(url);
+        return _favoriteUrls.contains(portal.url);
       }).toList();
     }
     return portals;
@@ -299,6 +332,7 @@ class _HealthScreenState extends State<HealthScreen> {
 
   Widget _buildPortalsList() {
     final filteredPortals = _getFilteredPortals();
+    final scheme = Theme.of(context).colorScheme;
 
     if (_showFavoritesOnly && filteredPortals.isEmpty) {
       return const SeniorEmptyState(
@@ -312,10 +346,10 @@ class _HealthScreenState extends State<HealthScreen> {
       itemCount: filteredPortals.length,
       itemBuilder: (context, index) {
         final portal = filteredPortals[index];
-        final category = portal['category'];
+        final category = portal.category;
         final icon = _getCategoryIcon(category);
         final color = _getCategoryColor(category);
-        final url = portal['url'] as String? ?? '';
+        final url = portal.url;
         final isFavorite = _favoriteUrls.contains(url);
 
         return Card(
@@ -328,12 +362,12 @@ class _HealthScreenState extends State<HealthScreen> {
                 vertical: 8,
               ),
               leading: CircleAvatar(
-                backgroundColor: Colors.grey.shade100,
+                backgroundColor: scheme.surfaceContainerHighest,
                 radius: 24,
                 child: Icon(icon, color: color, size: 28),
               ),
               title: Text(
-                portal['name'] ?? 'Portail',
+                portal.name,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
@@ -344,11 +378,12 @@ class _HealthScreenState extends State<HealthScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (portal['description'] != null)
+                    if (portal.description != null &&
+                        portal.description!.isNotEmpty)
                       Text(
-                        portal['description'],
-                        style: const TextStyle(
-                          color: Colors.grey,
+                        portal.description!,
+                        style: TextStyle(
+                          color: scheme.onSurfaceVariant,
                           fontSize: 14,
                         ),
                       ),
@@ -360,7 +395,7 @@ class _HealthScreenState extends State<HealthScreen> {
                           vertical: 2,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
+                          color: scheme.surfaceContainerHighest,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
@@ -378,36 +413,48 @@ class _HealthScreenState extends State<HealthScreen> {
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  IconButton(
-                    icon: Icon(
-                      isFavorite ? Icons.star : Icons.star_border,
-                      color: isFavorite ? Colors.amber : Colors.grey,
-                      size: 24,
-                    ),
-                    onPressed: () async {
-                      await HealthPortalFavoritesService.toggleFavorite(url);
-                      await _loadFavorites();
-                    },
-                    tooltip:
+                  Semantics(
+                    button: true,
+                    label:
                         isFavorite
-                            ? 'Retirer des favoris'
-                            : 'Ajouter aux favoris',
-                    constraints: const BoxConstraints(
-                      minWidth: 48,
-                      minHeight: 48,
+                            ? 'Retirer ${portal.name} des favoris'
+                            : 'Ajouter ${portal.name} aux favoris',
+                    child: IconButton(
+                      icon: Icon(
+                        isFavorite ? Icons.star : Icons.star_border,
+                        color:
+                            isFavorite ? Colors.amber : scheme.onSurfaceVariant,
+                        size: 24,
+                      ),
+                      onPressed: () async {
+                        await HealthPortalFavoritesService.toggleFavorite(url);
+                        await _loadFavorites();
+                      },
+                      tooltip:
+                          isFavorite
+                              ? 'Retirer des favoris'
+                              : 'Ajouter aux favoris',
+                      constraints: const BoxConstraints(
+                        minWidth: 48,
+                        minHeight: 48,
+                      ),
                     ),
                   ),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.open_in_new,
-                      color: Colors.blue,
-                      size: 24,
-                    ),
-                    onPressed: () => _openPortal(url),
-                    tooltip: 'Ouvrir le portail',
-                    constraints: const BoxConstraints(
-                      minWidth: 48,
-                      minHeight: 48,
+                  Semantics(
+                    button: true,
+                    label: 'Ouvrir le portail ${portal.name}',
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.open_in_new,
+                        color: scheme.primary,
+                        size: 24,
+                      ),
+                      onPressed: () => _openPortal(url),
+                      tooltip: 'Ouvrir le portail',
+                      constraints: const BoxConstraints(
+                        minWidth: 48,
+                        minHeight: 48,
+                      ),
                     ),
                   ),
                 ],
@@ -478,11 +525,16 @@ class _HealthScreenState extends State<HealthScreen> {
                 message: 'Appuyez sur + pour ajouter un portail.',
               )
               : _buildPortalsList(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _showAddPortalDialog,
-        backgroundColor: scheme.primary,
-        foregroundColor: scheme.onPrimary,
-        child: const Icon(Icons.add),
+      floatingActionButton: Semantics(
+        button: true,
+        label: 'Ajouter un portail santé',
+        child: FloatingActionButton(
+          onPressed: _showAddPortalDialog,
+          backgroundColor: scheme.primary,
+          foregroundColor: scheme.onPrimary,
+          tooltip: 'Ajouter un portail santé',
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }

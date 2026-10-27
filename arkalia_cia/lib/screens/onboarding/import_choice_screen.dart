@@ -50,7 +50,8 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
                   icon: const Icon(Icons.medical_services),
                   label: const Text('Andaman 7'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     minimumSize: const Size(double.infinity, 50),
                   ),
@@ -66,7 +67,8 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
                   icon: const Icon(Icons.health_and_safety),
                   label: const Text('MaSanté'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
+                    backgroundColor: Theme.of(context).colorScheme.tertiary,
+                    foregroundColor: Theme.of(context).colorScheme.onTertiary,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     minimumSize: const Size(double.infinity, 50),
                   ),
@@ -119,19 +121,24 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 24,
-            height: 24,
-            decoration: const BoxDecoration(
-              color: Colors.blue,
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Text(
-                number,
-                style: const TextStyle(color: Colors.white, fontSize: 14),
-              ),
-            ),
+          Builder(
+            builder: (context) {
+              final scheme = Theme.of(context).colorScheme;
+              return Container(
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  color: scheme.primary,
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Text(
+                    number,
+                    style: TextStyle(color: scheme.onPrimary, fontSize: 14),
+                  ),
+                ),
+              );
+            },
           ),
           const SizedBox(width: 12),
           Expanded(child: Text(text, style: const TextStyle(fontSize: 14))),
@@ -225,7 +232,7 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Erreur sélection fichiers: $userMessage'),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -314,12 +321,13 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
       if (mounted) {
         if (uploadResult['success'] == true) {
           final count = uploadResult['imported_count'] ?? 0;
+          final scheme = Theme.of(context).colorScheme;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
                 '$count document(s) importé(s) avec succès depuis $portal',
               ),
-              backgroundColor: Colors.green,
+              backgroundColor: scheme.primary,
               duration: const Duration(seconds: 4),
             ),
           );
@@ -337,7 +345,7 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(ErrorHelper.getUserFriendlyMessage(error)),
-              backgroundColor: Colors.red,
+              backgroundColor: Theme.of(context).colorScheme.error,
               duration: const Duration(seconds: 4),
             ),
           );
@@ -349,7 +357,10 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
         Navigator.pop(context); // Fermer dialog si ouvert
         final userMessage = ErrorHelper.getUserFriendlyMessage(e);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(userMessage), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text(userMessage),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
         );
       }
     }
@@ -404,7 +415,7 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
                 description:
                     'Exportez depuis Andaman 7 ou MaSanté\n'
                     'Puis uploadez vos PDFs ici - Fonctionne immédiatement',
-                color: Colors.green,
+                color: Theme.of(context).colorScheme.primary,
                 onTap: () => _showImportManualGuide(context),
               ),
 
@@ -418,7 +429,7 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
                 description:
                     'Accréditation requise (1-3 mois)\n'
                     'Import automatique depuis eHealth',
-                color: Colors.blue,
+                color: Theme.of(context).colorScheme.secondary,
                 onTap: () {
                   // Note: L'import automatique eHealth nécessite accréditation (1-3 mois)
                   // Voir INTEGRATION_EHEALTH_DETAILLEE.md pour procédure
@@ -443,32 +454,42 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
                 description:
                     'Créer votre historique manuellement\n'
                     'Vous pourrez importer plus tard',
-                color: Colors.grey,
+                color: Theme.of(context).colorScheme.outline,
                 onTap: _skipImport,
               ),
 
               const SizedBox(height: 32),
 
               // Note importante
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.blue[50]?.withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.info_outline, color: Colors.blue[700]),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        'L\'import peut prendre quelques minutes, mais vous aurez un historique complet dès le départ.',
-                        style: TextStyle(fontSize: 14, color: Colors.blue[900]),
+              Builder(
+                builder: (context) {
+                  final scheme = Theme.of(context).colorScheme;
+                  return Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: scheme.primaryContainer.withValues(alpha: 0.35),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: scheme.primary.withValues(alpha: 0.3),
                       ),
                     ),
-                  ],
-                ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.info_outline, color: scheme.primary),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'L\'import peut prendre quelques minutes, mais vous aurez un historique complet dès le départ.',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: scheme.onPrimaryContainer,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 24),
             ],
@@ -486,53 +507,57 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
     required Color color,
     required VoidCallback onTap,
   }) {
-    return Card(
-      elevation: 2,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(8),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
+    return Semantics(
+      button: true,
+      label: title,
+      child: Card(
+        elevation: 2,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(8),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(icon, color: color, size: 32),
                 ),
-                child: Icon(icon, color: color, size: 32),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSurface,
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      description,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      const SizedBox(height: 4),
+                      Text(
+                        description,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Icon(
-                Icons.arrow_forward_ios,
-                size: 20,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-            ],
+                Icon(
+                  Icons.arrow_forward_ios,
+                  size: 20,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ],
+            ),
           ),
         ),
       ),

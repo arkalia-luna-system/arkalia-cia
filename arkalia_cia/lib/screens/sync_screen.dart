@@ -188,28 +188,38 @@ class _SyncScreenState extends State<SyncScreen> {
   }
 
   Widget _buildActionButtons() {
+    final scheme = Theme.of(context).colorScheme;
     return Column(
       children: [
         SizedBox(
           width: double.infinity,
-          child: ElevatedButton.icon(
-            onPressed: _isSyncing ? null : _startSync,
-            icon:
+          child: Semantics(
+            button: true,
+            label:
                 _isSyncing
-                    ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    )
-                    : const Icon(Icons.sync),
-            label: Text(_isSyncing ? 'Synchronisation...' : 'Synchroniser'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.orange[600],
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 16),
+                    ? 'Synchronisation en cours'
+                    : 'Lancer la synchronisation',
+            child: ElevatedButton.icon(
+              onPressed: _isSyncing ? null : _startSync,
+              icon:
+                  _isSyncing
+                      ? SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            scheme.onPrimary,
+                          ),
+                        ),
+                      )
+                      : const Icon(Icons.sync),
+              label: Text(_isSyncing ? 'Synchronisation...' : 'Synchroniser'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: scheme.primary,
+                foregroundColor: scheme.onPrimary,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
             ),
           ),
         ),

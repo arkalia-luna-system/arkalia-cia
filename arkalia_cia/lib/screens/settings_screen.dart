@@ -186,7 +186,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 if (_backendEnabled) ...[
                   const Divider(),
                   ListTile(
-                    leading: const Icon(Icons.person, color: Colors.blue),
+                    leading: Icon(
+                      Icons.person,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                     title: const Text('Profil utilisateur'),
                     subtitle: FutureBuilder<String?>(
                       future: AuthApiService.getUsername(),
@@ -209,7 +212,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   const Divider(),
                   ListTile(
-                    leading: const Icon(Icons.logout, color: Colors.red),
+                    leading: Icon(
+                      Icons.logout,
+                      color: Theme.of(context).colorScheme.error,
+                    ),
                     title: const Text('Déconnexion'),
                     subtitle: const Text('Se déconnecter du compte'),
                     trailing: const Icon(Icons.chevron_right),
@@ -344,7 +350,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 if (_lastSyncTime != null) ...[
                   const Divider(),
                   ListTile(
-                    leading: const Icon(Icons.sync, color: Colors.orange),
+                    leading: Icon(
+                      Icons.sync,
+                      color: Theme.of(context).colorScheme.tertiary,
+                    ),
                     title: const Text('Dernière synchronisation'),
                     subtitle: Text(
                       AutoSyncService.formatLastSyncTime(_lastSyncTime),
@@ -357,7 +366,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 '${_lastSyncStats!['docs'] ?? 0} docs, ${_lastSyncStats!['reminders'] ?? 0} rappels, ${_lastSyncStats!['contacts'] ?? 0} contacts',
                                 style: const TextStyle(fontSize: 16),
                               ),
-                              backgroundColor: Colors.green[100],
+                              backgroundColor:
+                                  Theme.of(
+                                    context,
+                                  ).colorScheme.primaryContainer,
                             )
                             : null,
                   ),
@@ -404,9 +416,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     children: [
                       if (_backendUrl.isNotEmpty && !_isTestingConnection)
                         IconButton(
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.check_circle,
-                            color: Colors.green,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                           onPressed: _testBackendConnection,
                           tooltip: 'Tester la connexion',
@@ -843,6 +855,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         _isTestingConnection = false;
       });
 
+      final scheme = Theme.of(context).colorScheme;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -850,7 +863,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ? 'Connexion réussie au backend.'
                 : 'Impossible de se connecter au backend. Vérifiez l\'URL et que le backend est démarré.',
           ),
-          backgroundColor: isConnected ? Colors.green : Colors.red,
+          backgroundColor: isConnected ? scheme.primary : scheme.error,
           duration: const Duration(seconds: 3),
         ),
       );
@@ -860,68 +873,73 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _showMedicalDisclaimer() {
     showDialog(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Row(
-              children: [
-                Icon(Icons.medical_services, color: Colors.red),
-                SizedBox(width: 8),
-                Text('Avertissement Médical'),
-              ],
-            ),
-            content: const SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'IMPORTANT : Arkalia CIA n\'est PAS un dispositif médical ou un outil de diagnostic.',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: Colors.red,
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    'L\'application :',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    '• Ne fournit PAS de conseils médicaux, de diagnostics ou de traitements',
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    '• Ne remplace PAS les conseils de professionnels de santé',
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    '• Est un outil d\'organisation pour gérer vos documents et rappels',
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    'Toujours consulter un professionnel de santé qualifié pour toute décision médicale.',
-                    style: TextStyle(
-                      fontStyle: FontStyle.italic,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    'Nous ne sommes pas responsables des décisions médicales prises sur la base d\'informations stockées dans l\'application.',
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
-                ],
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('J\'ai compris'),
-              ),
+      builder: (context) {
+        final scheme = Theme.of(context).colorScheme;
+        return AlertDialog(
+          title: Row(
+            children: [
+              Icon(Icons.medical_services, color: scheme.error),
+              const SizedBox(width: 8),
+              const Text('Avertissement Médical'),
             ],
           ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'IMPORTANT : Arkalia CIA n\'est PAS un dispositif médical ou un outil de diagnostic.',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: scheme.error,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'L\'application :',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  '• Ne fournit PAS de conseils médicaux, de diagnostics ou de traitements',
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  '• Ne remplace PAS les conseils de professionnels de santé',
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  '• Est un outil d\'organisation pour gérer vos documents et rappels',
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Toujours consulter un professionnel de santé qualifié pour toute décision médicale.',
+                  style: TextStyle(
+                    fontStyle: FontStyle.italic,
+                    color: scheme.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Nous ne sommes pas responsables des décisions médicales prises sur la base d\'informations stockées dans l\'application.',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: scheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('J\'ai compris'),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -1038,51 +1056,56 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _showPrivacyInfo() {
     showDialog(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Row(
-              children: [
-                Icon(Icons.privacy_tip, color: Colors.blue),
-                SizedBox(width: 8),
-                Text('Politique de Confidentialité'),
-              ],
-            ),
-            content: const SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Arkalia CIA respecte votre vie privée :',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 16),
-                  Text('• Aucune collecte de données'),
-                  Text('   Toutes vos données restent sur votre appareil'),
-                  SizedBox(height: 8),
-                  Text('• Aucune transmission'),
-                  Text('   Vos données ne quittent jamais votre téléphone'),
-                  SizedBox(height: 8),
-                  Text('• Chiffrement AES-256'),
-                  Text('   Tous vos documents sont chiffrés localement'),
-                  SizedBox(height: 8),
-                  Text('• Stockage 100% local'),
-                  Text('   Aucun cloud, aucun serveur externe'),
-                  SizedBox(height: 16),
-                  Text(
-                    'Vous avez le contrôle total sur vos données. Vous pouvez les exporter ou les supprimer à tout moment.',
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
-                ],
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('OK'),
-              ),
+      builder: (context) {
+        final scheme = Theme.of(context).colorScheme;
+        return AlertDialog(
+          title: Row(
+            children: [
+              Icon(Icons.privacy_tip, color: scheme.primary),
+              const SizedBox(width: 8),
+              const Text('Politique de Confidentialité'),
             ],
           ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Arkalia CIA respecte votre vie privée :',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
+                const Text('• Aucune collecte de données'),
+                const Text('   Toutes vos données restent sur votre appareil'),
+                const SizedBox(height: 8),
+                const Text('• Aucune transmission'),
+                const Text('   Vos données ne quittent jamais votre téléphone'),
+                const SizedBox(height: 8),
+                const Text('• Chiffrement AES-256'),
+                const Text('   Tous vos documents sont chiffrés localement'),
+                const SizedBox(height: 8),
+                const Text('• Stockage 100% local'),
+                const Text('   Aucun cloud, aucun serveur externe'),
+                const SizedBox(height: 16),
+                Text(
+                  'Vous avez le contrôle total sur vos données. Vous pouvez les exporter ou les supprimer à tout moment.',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: scheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
