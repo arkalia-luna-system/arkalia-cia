@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import '../models/hydration_tracking.dart';
 import '../services/hydration_service.dart';
+import '../utils/error_helper.dart';
 
 /// Écran de gestion des rappels d'hydratation avec design moderne et fonctionnalités intelligentes
 class HydrationRemindersScreen extends StatefulWidget {
@@ -88,7 +89,8 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
         setState(() {
           _isLoading = false;
         });
-        _showError('Erreur lors du chargement: $e');
+        ErrorHelper.logError('HydrationRemindersScreen', e);
+        _showError(ErrorHelper.getUserFriendlyMessage(e));
       }
     }
   }
@@ -158,7 +160,8 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
         );
       }
     } catch (e) {
-      _showError('Erreur: $e');
+      ErrorHelper.logError('HydrationRemindersScreen', e);
+      _showError(ErrorHelper.getUserFriendlyMessage(e));
     }
   }
 
@@ -252,7 +255,8 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
             );
           }
         } catch (e) {
-          _showError('Erreur: $e');
+          ErrorHelper.logError('HydrationRemindersScreen', e);
+          _showError(ErrorHelper.getUserFriendlyMessage(e));
         }
       }
     }

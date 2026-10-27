@@ -36,7 +36,7 @@
 **Tests**: 509+ passed ✅ (71.98% coverage Python, tests Flutter profil multi-appareil)  
 **Optimisations**: Audit approfondi terminé - Logger conditionnel, 0 log production, code optimisé  
 **Lint**: 0 erreur Flutter, 0 erreur Python ✅  
-**Accessibilité**: Améliorée ✅ (tous textes ≥14px pour seniors, uniformisation complète UI - 12 décembre 2025)  
+**Accessibilité**: Objectif seniors (textes ≥14sp, boutons larges) — renforcée progressivement ; vérifier les écrans critiques plutôt qu'une promesse « 100 % »  
 **Nouvelles fonctionnalités** (12 décembre 2025): ✅ Profil multi-appareil implémenté (synchronisation E2E)  
 **CI/CD**: ✅ Refactorisé en 3 phases séparées (27 novembre 2025) - Configuration flutter.source, Nettoyage macOS, Build APK  
 **Dernières améliorations** (28 décembre 2025):
@@ -50,15 +50,15 @@
 - ✅ **Tests profil multi-appareil** : 22 tests Flutter passent (modèles et services)
 - ✅ **Accessibilité améliorée** : Tailles de police uniformisées à 14px minimum dans UserProfileScreen
 - ✅ **Statut projet** : 18/20 problèmes résolus (90%), tous les problèmes critiques résolus
-- ✅ **Uniformisation visuelle complète** : Tailles texte (≥14px), espacements, boutons (48px min), icônes, marges Cards
-- ✅ **Accessibilité seniors renforcée** : Tous les textes ≥14px, titres ≥18px, boutons 48px minimum
+- ✅ **Uniformisation visuelle** : Objectif tailles texte ≥14sp, boutons 48px min, espacements cohérents
+- ✅ **Accessibilité seniors** : Renforcement progressif (titres lisibles, boutons larges) — pas une garantie exhaustive
 - ✅ **Cohérence UI** : Espacements uniformisés, couleurs thème Material Design, alignements corrigés
 
 **Améliorations précédentes** (27 novembre 2025): 
 - ✅ Phase 1-4 terminées (Codes couleur, calendrier, extraction enrichie, médicaments, hydratation, pathologies, IA améliorée)
 - ✅ Corrections bugs audit (13/13 corrigés)
-- ✅ Amélioration accessibilité (textes 10-12px → 14px minimum)
-- ✅ ErrorHelper intégré partout (messages utilisateur clairs)
+- ✅ Amélioration accessibilité (nombreux textes 10-12px → ≥14sp)
+- ✅ ErrorHelper généralisé sur les écrans utilisateur (messages clairs ; couverture à maintenir)
 - ✅ Feedback visuel amélioré (boutons, indicateurs)
 - ✅ Script fix_ram_overheat.sh (gestion RAM/surchauffe)
 - ✅ **Audit complet et corrections** : Note améliorée 7.5/10 → 8.5/10

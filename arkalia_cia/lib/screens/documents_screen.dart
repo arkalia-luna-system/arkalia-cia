@@ -20,6 +20,7 @@ import '../utils/app_logger.dart';
 import '../utils/input_sanitizer.dart';
 import '../widgets/exam_type_badge.dart';
 import '../services/web_file_helper.dart';
+import '../utils/error_helper.dart';
 
 class DocumentsScreen extends StatefulWidget {
   const DocumentsScreen({super.key});
@@ -395,7 +396,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
 
       // Afficher l'erreur seulement si le widget est monté
       if (mounted) {
-        _showError('Erreur lors du chargement des documents: $e');
+        ErrorHelper.logError('DocumentsScreen', e);
+        _showError(ErrorHelper.getUserFriendlyMessage(e));
       }
     }
   }
@@ -542,7 +544,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       setState(() {
         isUploading = false;
       });
-      _showError('Erreur sélection fichier: $e');
+      ErrorHelper.logError('DocumentsScreen', e);
+      _showError(ErrorHelper.getUserFriendlyMessage(e));
     }
   }
 
@@ -616,7 +619,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         }
       } catch (e) {
         if (mounted) {
-          _showError('Erreur lors de la suppression: $e');
+          ErrorHelper.logError('DocumentsScreen', e);
+          _showError(ErrorHelper.getUserFriendlyMessage(e));
         }
       }
     }
@@ -782,7 +786,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           }
         } catch (e) {
           if (mounted) {
-            _showError('Erreur lors de l\'ouverture: $e');
+            ErrorHelper.logError('DocumentsScreen', e);
+            _showError(ErrorHelper.getUserFriendlyMessage(e));
           }
         }
         return;
@@ -858,13 +863,15 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           }
         } catch (e) {
           if (mounted) {
-            _showError('Erreur lors de l\'ouverture: $e');
+            ErrorHelper.logError('DocumentsScreen', e);
+            _showError(ErrorHelper.getUserFriendlyMessage(e));
           }
         }
       }
     } catch (e) {
       if (mounted) {
-        _showError('Erreur lors de la prévisualisation: $e');
+        ErrorHelper.logError('DocumentsScreen', e);
+        _showError(ErrorHelper.getUserFriendlyMessage(e));
       }
     }
   }
@@ -962,13 +969,15 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
             } catch (e2) {
               revokeBlobUrl(blobUrl);
               if (mounted) {
-                _showError('Erreur lors du partage: $e2');
+                ErrorHelper.logError('DocumentsScreen', e);
+                _showError(ErrorHelper.getUserFriendlyMessage(e));
               }
             }
           }
         } catch (e) {
           if (mounted) {
-            _showError('Erreur lors du partage: $e');
+            ErrorHelper.logError('DocumentsScreen', e);
+            _showError(ErrorHelper.getUserFriendlyMessage(e));
           }
         }
         return;
@@ -997,7 +1006,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       );
     } catch (e) {
       if (mounted) {
-        _showError('Erreur lors du partage: $e');
+        ErrorHelper.logError('DocumentsScreen', e);
+        _showError(ErrorHelper.getUserFriendlyMessage(e));
       }
     }
   }

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import '../../utils/validation_helper.dart';
-import '../../utils/input_sanitizer.dart';
-import '../../services/contacts_service.dart';
+import '../utils/validation_helper.dart';
+import '../utils/input_sanitizer.dart';
+import '../utils/error_helper.dart';
+import '../services/contacts_service.dart';
 import 'package:flutter_contacts/flutter_contacts.dart' as contacts_api;
 
 /// Dialog pour ajouter/éditer un contact d'urgence
@@ -126,9 +127,10 @@ class _EmergencyContactDialogState extends State<EmergencyContactDialog> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Erreur lors de l\'import: $e')));
+        ErrorHelper.logError('EmergencyContactDialog._importFromContacts', e);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(ErrorHelper.getUserFriendlyMessage(e))),
+        );
       }
     }
   }
@@ -214,7 +216,7 @@ class _EmergencyContactDialogState extends State<EmergencyContactDialog> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Couleur', style: TextStyle(fontSize: 12)),
+                      const Text('Couleur', style: TextStyle(fontSize: 14)),
                       const SizedBox(height: 8),
                       GestureDetector(
                         onTap: () => _showColorPicker(),

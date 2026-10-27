@@ -6,6 +6,7 @@ import '../services/health_portal_favorites_service.dart';
 import '../utils/validation_helper.dart';
 import '../config/health_portals_config.dart';
 import 'medical_report_screen.dart';
+import '../utils/error_helper.dart';
 
 class HealthScreen extends StatefulWidget {
   const HealthScreen({super.key});
@@ -214,10 +215,12 @@ class _HealthScreenState extends State<HealthScreen> {
         _showSuccess('Portail ajouté avec succès !');
         _loadPortals();
       } else {
-        _showError('Erreur création: ${response['error']}');
+        ErrorHelper.logError('HealthScreen.create', response['error']);
+        _showError(ErrorHelper.getUserFriendlyMessage(response['error']));
       }
     } catch (e) {
-      _showError('Erreur: $e');
+      ErrorHelper.logError('HealthScreen', e);
+      _showError(ErrorHelper.getUserFriendlyMessage(e));
     }
   }
 
@@ -230,7 +233,8 @@ class _HealthScreenState extends State<HealthScreen> {
         _showError('Impossible d\'ouvrir l\'URL');
       }
     } catch (e) {
-      _showError('Erreur ouverture: $e');
+      ErrorHelper.logError('HealthScreen._openPortal', e);
+      _showError(ErrorHelper.getUserFriendlyMessage(e));
     }
   }
 

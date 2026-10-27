@@ -10,6 +10,7 @@ import '../services/local_storage_service.dart';
 import '../services/api_service.dart';
 import '../services/aria_service.dart';
 import '../services/backend_config_service.dart';
+import '../utils/error_helper.dart';
 
 /// Écran de synchronisation CIA ↔ ARIA
 class SyncScreen extends StatefulWidget {
@@ -321,11 +322,12 @@ class _SyncScreenState extends State<SyncScreen> {
     } catch (e) {
       if (!mounted) return;
 
+      ErrorHelper.logError('SyncScreen._sync', e);
       setState(() {
         _isSyncing = false;
-        _syncStatus = 'Erreur: $e';
+        _syncStatus = ErrorHelper.getUserFriendlyMessage(e);
       });
-      _showError('Erreur lors de la synchronisation: $e');
+      _showError(ErrorHelper.getUserFriendlyMessage(e));
     }
   }
 
@@ -615,7 +617,8 @@ class _SyncScreenState extends State<SyncScreen> {
       setState(() {
         _syncStatus = 'Erreur lors de l\'export';
       });
-      _showError('Erreur lors de l\'export: $e');
+      ErrorHelper.logError('SyncScreen._export', e);
+      _showError(ErrorHelper.getUserFriendlyMessage(e));
     }
   }
 
@@ -724,7 +727,8 @@ class _SyncScreenState extends State<SyncScreen> {
       setState(() {
         _syncStatus = 'Erreur lors de l\'import';
       });
-      _showError('Erreur lors de l\'import: $e');
+      ErrorHelper.logError('SyncScreen._import', e);
+      _showError(ErrorHelper.getUserFriendlyMessage(e));
     }
   }
 

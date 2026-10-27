@@ -8,6 +8,7 @@ import '../../services/local_storage_service.dart';
 import '../../utils/app_logger.dart';
 import '../home_page.dart';
 import 'import_type.dart';
+import '../../utils/error_helper.dart';
 
 class ImportProgressScreen extends StatefulWidget {
   final ImportType importType;
@@ -49,8 +50,9 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
         await _skipImport();
       }
     } catch (e) {
+      ErrorHelper.logError('ImportProgressScreen._startImport', e);
       setState(() {
-        _currentStep = 'Erreur: $e';
+        _currentStep = ErrorHelper.getUserFriendlyMessage(e);
       });
     }
   }

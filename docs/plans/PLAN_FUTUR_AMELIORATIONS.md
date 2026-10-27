@@ -13,8 +13,8 @@
 **Améliorer l'application pour atteindre 10/10 en qualité, accessibilité, performance et expérience utilisateur, avec ZÉRO erreur de lint.**
 
 ### Objectifs spécifiques :
-- ✅ **Accessibilité seniors** : 100% (tous textes ≥14px, boutons ≥48px)
-- ✅ **Gestion d'erreurs** : 100% (ErrorHelper partout, messages clairs)
+- ⚠️ **Accessibilité seniors** : objectif textes ≥14sp / boutons ≥48px (à vérifier, pas « 100 % » figé)
+- ⚠️ **Gestion d'erreurs** : ErrorHelper sur les écrans utilisateur (à maintenir, pas « partout » figé)
 - ✅ **Performance** : Optimale (lazy loading, cache intelligent)
 - ✅ **Qualité code** : 0 erreur lint, 0 warning critique
 - ✅ **UX** : Guidance complète, feedback visuel partout
@@ -34,8 +34,8 @@
 1. **Corriger toutes les tailles de texte <14px** (4h)
    - [x] `welcome_auth_screen.dart` : Lignes 109, 428 (12px, 13px → 14px) ✅
    - [x] `settings_screen.dart` : Ligne 880 (12px → 14px minimum) ✅
-   - [x] `bbia_integration_screen.dart` : 15px → 14px ✅
-   - [x] Vérifier tous les fichiers avec `grep -r "fontSize.*[0-9]"` et corriger ✅
+   - [x] Ancien écran BBIA (retiré) : hors périmètre actif
+   - [x] Vérifier les fichiers avec `grep -r "fontSize.*[0-9]"` et corriger ✅
    - [x] Créer script de vérification automatique ✅
 
 2. **Intégrer AccessibilityService partout** (6h)
@@ -50,9 +50,9 @@
    - [ ] Tester sur device réel
 
 **Livrables** :
-- ✅ Tous les textes ≥14px
+- ⚠️ Objectif textes ≥14sp (à re-vérifier après évolutions UI)
 - ✅ AccessibilityService intégré dans 80% des écrans
-- ✅ Tous les boutons ≥48px
+- ⚠️ Objectif boutons ≥48px (audit tactile partiel)
 
 **Tests** :
 - [ ] Tests d'accessibilité avec lecteur d'écran
@@ -77,7 +77,7 @@
    - [x] Ajouter actions suggérées pour chaque type d'erreur ✅
 
 **Livrables** :
-- ✅ ErrorHelper utilisé dans 100% des écrans
+- ⚠️ ErrorHelper généralisé sur les écrans utilisateur (à maintenir)
 - ✅ Messages d'erreur compréhensibles pour utilisateurs
 - ✅ Logs techniques séparés des messages utilisateur
 

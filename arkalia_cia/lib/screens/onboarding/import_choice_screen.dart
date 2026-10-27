@@ -335,7 +335,7 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
           final error = uploadResult['error'] ?? 'Erreur inconnue';
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('❌ Erreur: $error'),
+              content: Text(ErrorHelper.getUserFriendlyMessage(error)),
               backgroundColor: Colors.red,
               duration: const Duration(seconds: 4),
             ),
@@ -349,7 +349,7 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
         final userMessage = ErrorHelper.getUserFriendlyMessage(e);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erreur import: $userMessage'),
+            content: Text(userMessage),
             backgroundColor: Colors.red,
           ),
         );

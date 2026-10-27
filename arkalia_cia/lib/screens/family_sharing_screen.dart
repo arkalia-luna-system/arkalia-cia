@@ -4,6 +4,7 @@ import '../services/local_storage_service.dart';
 import '../utils/app_logger.dart';
 import '../utils/input_sanitizer.dart';
 import 'manage_family_members_screen.dart';
+import '../utils/error_helper.dart';
 
 class FamilySharingScreen extends StatefulWidget {
   const FamilySharingScreen({super.key});
@@ -50,9 +51,10 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
     } catch (e) {
       setState(() => _isLoading = false);
       if (mounted) {
+        ErrorHelper.logError('FamilySharingScreen._loadData', e);
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Erreur: $e')));
+        ).showSnackBar(SnackBar(content: Text(ErrorHelper.getUserFriendlyMessage(e))));
       }
     }
   }

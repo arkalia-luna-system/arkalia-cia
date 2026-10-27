@@ -113,7 +113,7 @@ class ApiService {
       }
     } catch (e) {
       AppLogger.error('Erreur upload document', e);
-      return {'success': false, 'error': 'Erreur: $e'};
+      return {'success': false, 'error': ErrorHelper.getUserFriendlyMessage(e)};
     }
   }
 

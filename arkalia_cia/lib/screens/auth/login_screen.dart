@@ -5,6 +5,7 @@ import '../../services/onboarding_service.dart';
 import 'register_screen.dart';
 import '../home_page.dart';
 import '../onboarding/welcome_screen.dart';
+import '../../utils/error_helper.dart';
 
 /// Écran de connexion pour l'authentification API
 class LoginScreen extends StatefulWidget {
@@ -83,8 +84,9 @@ class _LoginScreenState extends State<LoginScreen> {
         });
       }
     } catch (e) {
+      ErrorHelper.logError('LoginScreen._login', e);
       setState(() {
-        _errorMessage = 'Erreur: $e';
+        _errorMessage = ErrorHelper.getUserFriendlyMessage(e);
         _isLoading = false;
       });
     }

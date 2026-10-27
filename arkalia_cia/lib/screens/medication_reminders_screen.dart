@@ -3,6 +3,7 @@ import '../models/medication.dart';
 import '../services/medication_service.dart';
 import '../utils/input_sanitizer.dart';
 import '../widgets/medication_reminder_widget.dart';
+import '../utils/error_helper.dart';
 
 // MedicationTaken est défini dans medication.dart
 
@@ -80,7 +81,8 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
         setState(() {
           _isLoading = false;
         });
-        _showError('Erreur lors du chargement: $e');
+        ErrorHelper.logError('MedicationRemindersScreen', e);
+        _showError(ErrorHelper.getUserFriendlyMessage(e));
       }
     }
   }
@@ -364,7 +366,8 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
           );
         }
       } catch (e) {
-        _showError('Erreur lors de l\'enregistrement: $e');
+        ErrorHelper.logError('MedicationRemindersScreen._save', e);
+        _showError(ErrorHelper.getUserFriendlyMessage(e));
       }
     }
   }
@@ -379,7 +382,8 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
         );
       }
     } catch (e) {
-      _showError('Erreur: $e');
+      ErrorHelper.logError('MedicationRemindersScreen', e);
+      _showError(ErrorHelper.getUserFriendlyMessage(e));
     }
   }
 

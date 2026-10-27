@@ -6,6 +6,7 @@ import '../services/medication_service.dart';
 import '../services/local_storage_service.dart';
 import '../models/doctor.dart'; // Contient aussi Consultation
 import '../utils/input_sanitizer.dart';
+import '../utils/error_helper.dart';
 
 /// Écran calendrier avec affichage des rappels médicaments et hydratation
 class CalendarScreen extends StatefulWidget {
@@ -225,7 +226,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
         setState(() {
           _isLoading = false;
         });
-        _showError('Erreur lors du chargement: $e');
+        ErrorHelper.logError('CalendarScreen', e);
+        _showError(ErrorHelper.getUserFriendlyMessage(e));
       }
     }
   }

@@ -4,6 +4,7 @@ import '../models/doctor.dart';
 import '../models/doctor.dart' as models;
 import 'add_edit_doctor_screen.dart';
 import 'medical_report_screen.dart';
+import '../utils/error_helper.dart';
 
 class DoctorDetailScreen extends StatefulWidget {
   final int doctorId;
@@ -45,9 +46,10 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
     } catch (e) {
       setState(() => _isLoading = false);
       if (mounted) {
+        ErrorHelper.logError('DoctorDetailScreen._loadDoctorData', e);
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Erreur: $e')));
+        ).showSnackBar(SnackBar(content: Text(ErrorHelper.getUserFriendlyMessage(e))));
       }
     }
   }

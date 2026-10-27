@@ -21,19 +21,18 @@
 ### 1. Accessibilité Seniors ✅
 
 **Corrections appliquées** :
-- ✅ Tous les textes <14px corrigés → 14px minimum
+- ⚠️ Objectif textes ≥14sp (corrections historiques welcome_auth / settings ; à re-vérifier)
   - `welcome_auth_screen.dart` : 12px → 14px, 13px → 14px
   - `settings_screen.dart` : 12px → 14px
-  - `bbia_integration_screen.dart` : 15px → 14px
+  - Ancien `bbia_integration_screen.dart` : retiré du périmètre actif
 - ✅ Widget `AccessibleText` créé : Utilise `AccessibilityService` automatiquement
-- ✅ Tous les boutons critiques ≥48px : `emergency_screen.dart` avec `minimumSize`
+- ✅ Boutons critiques ≥48px : `emergency_screen.dart` avec `minimumSize`
 - ✅ Scripts de vérification créés : 4 scripts automatiques
 
 **Fichiers créés/modifiés** :
 - `arkalia_cia/lib/widgets/accessible_text.dart` (NOUVEAU)
 - `arkalia_cia/lib/screens/auth/welcome_auth_screen.dart`
 - `arkalia_cia/lib/screens/settings_screen.dart`
-- `arkalia_cia/lib/screens/bbia_integration_screen.dart`
 - `arkalia_cia/lib/screens/emergency_screen.dart`
 - `scripts/check_accessibility.sh` (NOUVEAU)
 - `scripts/check_button_sizes.sh` (NOUVEAU)
@@ -136,7 +135,7 @@
 
 - `arkalia_cia/lib/screens/auth/welcome_auth_screen.dart`
 - `arkalia_cia/lib/screens/settings_screen.dart`
-- `arkalia_cia/lib/screens/bbia_integration_screen.dart`
+- ~~`arkalia_cia/lib/screens/bbia_integration_screen.dart`~~ (retiré)
 - `arkalia_cia/lib/screens/emergency_screen.dart`
 - `arkalia_cia/lib/screens/user_profile_screen.dart`
 - `arkalia_cia/lib/screens/conversational_ai_screen.dart`
