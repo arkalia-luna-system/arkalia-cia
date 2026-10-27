@@ -21,7 +21,7 @@
 
 #### Accessibilité Seniors
 
-- ✅ Tous les textes ≥14px (corrigés dans welcome_auth_screen, settings_screen, bbia_integration_screen)
+- ⚠️ Objectif textes ≥14sp (corrigés notamment welcome_auth_screen, settings_screen ; ancien BBIA hors périmètre)
 - ✅ Widget `AccessibleText` créé (utilise `AccessibilityService` automatiquement)
 - ✅ Tous les boutons critiques ≥48px (emergency_screen avec `minimumSize`)
 - ✅ Scripts de vérification créés (check_accessibility.sh, check_button_sizes.sh)

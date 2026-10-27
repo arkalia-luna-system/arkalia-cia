@@ -7,9 +7,9 @@
 ## ✅ CE QUI EST effectué
 
 ### Phase 1 - Critique ✅
-- ✅ Tous textes ≥14px
+- ⚠️ Objectif textes ≥14sp (à re-vérifier)
 - ✅ Boutons ≥48px (écrans critiques)
-- ✅ ErrorHelper intégré (écrans critiques)
+- ⚠️ ErrorHelper généralisé (écrans utilisateur — à maintenir)
 - ✅ 0 erreur lint Python et Flutter
 - ✅ TODOs documentés
 
