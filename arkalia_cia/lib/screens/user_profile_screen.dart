@@ -233,7 +233,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                       Text(
                                         _profile!.email,
                                         style: TextStyle(
-                                          color: Colors.grey[600],
+                                          color:
+                                              Theme.of(
+                                                context,
+                                              ).colorScheme.onSurfaceVariant,
                                           fontSize: 14,
                                         ),
                                       ),
@@ -249,13 +252,19 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                   Icon(
                                     Icons.sync,
                                     size: 16,
-                                    color: Colors.grey[600],
+                                    color:
+                                        Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
                                     'Dernière synchronisation: ${_formatDate(_profile!.lastSync!)}',
                                     style: TextStyle(
-                                      color: Colors.grey[600],
+                                      color:
+                                          Theme.of(
+                                            context,
+                                          ).colorScheme.onSurfaceVariant,
                                       fontSize: 14,
                                     ),
                                   ),
@@ -293,12 +302,14 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       builder: (context, snapshot) {
         final currentDeviceId = snapshot.data ?? '';
         final isCurrentDevice = device.deviceId == currentDeviceId;
+        final scheme = Theme.of(context).colorScheme;
 
         return Card(
           margin: const EdgeInsets.only(bottom: 8),
           child: ListTile(
             leading: Icon(
               _getPlatformIcon(device.platform),
+              // Statut appareil = couleur données (conservée)
               color: device.isActive ? Colors.green : Colors.grey,
             ),
             title: Text(
@@ -331,7 +342,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             trailing:
                 !isCurrentDevice
                     ? IconButton(
-                      icon: const Icon(Icons.delete_outline, color: Colors.red),
+                      icon: Icon(Icons.delete_outline, color: scheme.error),
                       onPressed: () => _removeDevice(device),
                       tooltip: 'Supprimer',
                     )

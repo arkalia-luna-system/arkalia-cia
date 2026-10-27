@@ -287,6 +287,7 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -296,11 +297,7 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // Icône
-              Icon(
-                Icons.cloud_download,
-                size: 80,
-                color: Theme.of(context).colorScheme.primary,
-              ),
+              Icon(Icons.cloud_download, size: 80, color: scheme.primary),
 
               const SizedBox(height: 32),
 
@@ -310,7 +307,7 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onSurface,
+                  color: scheme.onSurface,
                 ),
               ),
 
@@ -319,10 +316,7 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
               // Étape actuelle
               Text(
                 _currentStep,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
+                style: TextStyle(fontSize: 16, color: scheme.onSurfaceVariant),
                 textAlign: TextAlign.center,
               ),
 
@@ -332,7 +326,8 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
               LinearProgressIndicator(
                 value: _progress,
                 minHeight: 8,
-                backgroundColor: Colors.grey[300],
+                backgroundColor: scheme.surfaceContainerHighest,
+                color: scheme.primary,
               ),
 
               const SizedBox(height: 16),
@@ -343,7 +338,7 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: scheme.primary,
                 ),
               ),
 
@@ -354,26 +349,22 @@ class _ImportProgressScreenState extends State<ImportProgressScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.green[50]?.withValues(alpha: 0.3),
+                    color: scheme.primaryContainer.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: Colors.green.withValues(alpha: 0.3),
+                      color: scheme.primary.withValues(alpha: 0.35),
                     ),
                   ),
                   child: Column(
                     children: [
-                      Icon(
-                        Icons.check_circle,
-                        color: Colors.green[700],
-                        size: 48,
-                      ),
+                      Icon(Icons.check_circle, color: scheme.primary, size: 48),
                       const SizedBox(height: 16),
                       Text(
                         'Historique créé avec succès !',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.green[900],
+                          color: scheme.onPrimaryContainer,
                         ),
                       ),
                       const SizedBox(height: 8),

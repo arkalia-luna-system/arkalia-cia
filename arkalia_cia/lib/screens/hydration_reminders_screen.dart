@@ -189,7 +189,10 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                 const SizedBox(height: 16),
                 Text(
                   'Équivalent: ${(int.tryParse(goalController.text) ?? 2000) / 250} verres',
-                  style: const TextStyle(fontSize: 14, color: Colors.grey),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),
@@ -351,7 +354,8 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                         value: stats['compliance_rate'] / 100,
                         minHeight: 8,
                         borderRadius: BorderRadius.circular(4),
-                        backgroundColor: Colors.grey.withValues(alpha: 0.2),
+                        backgroundColor:
+                            dialogTheme.colorScheme.surfaceContainerHighest,
                         valueColor: AlwaysStoppedAnimation<Color>(
                           dialogTheme.colorScheme.primary,
                         ),
@@ -1216,14 +1220,14 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
               children: [
                 Icon(
                   icon,
-                  color: Colors.white,
+                  color: theme.colorScheme.onPrimary,
                   size: 24,
                 ), // Taille icône augmentée
                 const SizedBox(width: 12), // Espacement augmenté
                 Text(
                   label,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: theme.colorScheme.onPrimary,
                     fontWeight: FontWeight.bold,
                     fontSize:
                         16, // Taille texte minimale 16px pour accessibilité seniors

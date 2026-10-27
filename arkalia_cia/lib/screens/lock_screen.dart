@@ -154,13 +154,15 @@ class _LockScreenState extends State<LockScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final primaryDark = Color.lerp(scheme.primary, scheme.scrim, 0.35)!;
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.blue[600]!, Colors.blue[800]!],
+            colors: [scheme.primary, primaryDark],
           ),
         ),
         child: SafeArea(
@@ -174,17 +176,17 @@ class _LockScreenState extends State<LockScreen> {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.1),
+                      color: scheme.onPrimary.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.2),
+                          color: scheme.scrim.withValues(alpha: 0.2),
                           blurRadius: 20,
                           spreadRadius: 2,
                           offset: const Offset(0, 4),
                         ),
                         BoxShadow(
-                          color: Colors.white.withValues(alpha: 0.1),
+                          color: scheme.onPrimary.withValues(alpha: 0.1),
                           blurRadius: 10,
                           spreadRadius: -2,
                           offset: const Offset(0, -2),
@@ -201,22 +203,25 @@ class _LockScreenState extends State<LockScreen> {
                   const SizedBox(height: 32),
 
                   // Titre
-                  const Text(
+                  Text(
                     'Arkalia CIA',
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: scheme.onPrimary,
                     ),
                   ),
                   const SizedBox(height: 16),
 
                   // Message
-                  const Text(
+                  Text(
                     kIsWeb
                         ? 'Authentification requise\n(Code PIN)'
                         : 'Authentification désactivée',
-                    style: TextStyle(fontSize: 18, color: Colors.white70),
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: scheme.onPrimary.withValues(alpha: 0.7),
+                    ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 48),
@@ -227,12 +232,12 @@ class _LockScreenState extends State<LockScreen> {
                       padding: const EdgeInsets.all(16),
                       margin: const EdgeInsets.only(bottom: 24),
                       decoration: BoxDecoration(
-                        color: Colors.red[300],
+                        color: scheme.error,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         _errorMessage,
-                        style: const TextStyle(color: Colors.white),
+                        style: TextStyle(color: scheme.onError),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -243,13 +248,13 @@ class _LockScreenState extends State<LockScreen> {
                       onPressed: _isAuthenticating ? null : _authenticate,
                       icon:
                           _isAuthenticating
-                              ? const SizedBox(
+                              ? SizedBox(
                                 width: 20,
                                 height: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
                                   valueColor: AlwaysStoppedAnimation<Color>(
-                                    Colors.white,
+                                    scheme.primary,
                                   ),
                                 ),
                               )
@@ -261,8 +266,8 @@ class _LockScreenState extends State<LockScreen> {
                         style: const TextStyle(fontSize: 18),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.blue[800],
+                        backgroundColor: scheme.onPrimary,
+                        foregroundColor: scheme.primary,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 32,
                           vertical: 16,

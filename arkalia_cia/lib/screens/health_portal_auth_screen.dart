@@ -110,6 +110,7 @@ class _HealthPortalAuthScreenState extends State<HealthPortalAuthScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -121,11 +122,7 @@ class _HealthPortalAuthScreenState extends State<HealthPortalAuthScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.health_and_safety,
-              size: 80,
-              color: Theme.of(context).colorScheme.primary,
-            ),
+            Icon(Icons.health_and_safety, size: 80, color: scheme.primary),
             const SizedBox(height: 32),
             Text(
               'Connexion à ${HealthPortalAuthService.getPortalName(widget.portal)}',
@@ -146,10 +143,13 @@ class _HealthPortalAuthScreenState extends State<HealthPortalAuthScreen> {
                 padding: const EdgeInsets.all(16),
                 margin: const EdgeInsets.only(bottom: 24),
                 decoration: BoxDecoration(
-                  color: Colors.red[100],
+                  color: scheme.errorContainer,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Text(_error!, style: const TextStyle(color: Colors.red)),
+                child: Text(
+                  _error!,
+                  style: TextStyle(color: scheme.onErrorContainer),
+                ),
               ),
             SizedBox(
               width: double.infinity,

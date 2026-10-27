@@ -191,57 +191,64 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                   _isLoading
                       ? const Center(child: CircularProgressIndicator())
                       : _filteredDoctors.isEmpty
-                      ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: Colors.grey.withValues(alpha: 0.1),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.people_outline,
-                                size: 64,
-                                color: Colors.grey.shade400,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Aucun médecin trouvé',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            ElevatedButton.icon(
-                              onPressed: () async {
-                                final result = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (context) =>
-                                            const AddEditDoctorScreen(),
+                      ? Builder(
+                        builder: (context) {
+                          final scheme = Theme.of(context).colorScheme;
+                          return Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: scheme.onSurface.withValues(
+                                      alpha: 0.08,
+                                    ),
+                                    shape: BoxShape.circle,
                                   ),
-                                );
-                                if (result == true) {
-                                  _loadDoctors();
-                                }
-                              },
-                              icon: const Icon(Icons.add),
-                              label: const Text('Ajouter un médecin'),
-                              style: ElevatedButton.styleFrom(
-                                minimumSize: const Size(200, 48),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 24,
-                                  vertical: 12,
+                                  child: Icon(
+                                    Icons.people_outline,
+                                    size: 64,
+                                    color: scheme.onSurfaceVariant,
+                                  ),
                                 ),
-                              ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'Aucun médecin trouvé',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: scheme.onSurfaceVariant,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                ElevatedButton.icon(
+                                  onPressed: () async {
+                                    final result = await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (context) =>
+                                                const AddEditDoctorScreen(),
+                                      ),
+                                    );
+                                    if (result == true) {
+                                      _loadDoctors();
+                                    }
+                                  },
+                                  icon: const Icon(Icons.add),
+                                  label: const Text('Ajouter un médecin'),
+                                  style: ElevatedButton.styleFrom(
+                                    minimumSize: const Size(200, 48),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 24,
+                                      vertical: 12,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          );
+                        },
                       )
                       : ListView.builder(
                         itemCount:
@@ -290,8 +297,9 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                                   doctor.firstName.isNotEmpty
                                       ? doctor.firstName[0].toUpperCase()
                                       : '?',
-                                  style: const TextStyle(
-                                    color: Colors.white,
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary,
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -319,7 +327,10 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                                       ),
                                       shape: BoxShape.circle,
                                       border: Border.all(
-                                        color: Colors.white,
+                                        color:
+                                            Theme.of(
+                                              context,
+                                            ).colorScheme.surface,
                                         width: 2,
                                       ),
                                     ),
@@ -399,11 +410,12 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
       }
     }
 
+    final scheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.grey[100],
-        border: Border(top: BorderSide(color: Colors.grey[300]!)),
+        color: scheme.surfaceContainerHighest,
+        border: Border(top: BorderSide(color: scheme.outlineVariant)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -437,7 +449,7 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                                 ? entry.key.withValues(alpha: 0.3)
                                 : Colors.transparent,
                         border: Border.all(
-                          color: isSelected ? entry.key : Colors.grey,
+                          color: isSelected ? entry.key : scheme.outline,
                           width: isSelected ? 2 : 1,
                         ),
                         borderRadius: BorderRadius.circular(12),

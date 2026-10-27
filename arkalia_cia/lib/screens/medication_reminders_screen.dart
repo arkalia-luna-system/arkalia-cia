@@ -310,8 +310,12 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
                       onPressed: () {
                         if (nameController.text.isEmpty) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Le nom du médicament est requis'),
+                            SnackBar(
+                              content: const Text(
+                                'Le nom du médicament est requis',
+                              ),
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.error,
                             ),
                           );
                           return;
@@ -363,6 +367,7 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
               content: Text(
                 medication == null ? 'Médicament ajouté' : 'Médicament modifié',
               ),
+              backgroundColor: Theme.of(context).colorScheme.primary,
             ),
           );
         }
@@ -379,7 +384,10 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
       _loadMedications();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Médicament marqué comme pris')),
+          SnackBar(
+            content: const Text('Médicament marqué comme pris'),
+            backgroundColor: Theme.of(context).colorScheme.primary,
+          ),
         );
       }
     } catch (e) {
@@ -519,9 +527,10 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
                                     vertical: 8,
                                   ),
                                   child: ExpansionTile(
-                                    leading: const Icon(
+                                    leading: Icon(
                                       Icons.medication,
-                                      color: Colors.blue,
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
                                     ),
                                     title: Text(medication.name),
                                     subtitle: Text(
@@ -597,11 +606,16 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
                                                               context,
                                                               true,
                                                             ),
-                                                        style:
-                                                            ElevatedButton.styleFrom(
-                                                              backgroundColor:
-                                                                  Colors.red,
-                                                            ),
+                                                        style: ElevatedButton.styleFrom(
+                                                          backgroundColor:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .error,
+                                                          foregroundColor:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .onError,
+                                                        ),
                                                         child: const Text(
                                                           'Supprimer',
                                                         ),

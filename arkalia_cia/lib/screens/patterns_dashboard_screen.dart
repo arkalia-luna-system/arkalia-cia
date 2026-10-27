@@ -10,6 +10,45 @@ import '../services/pathology_service.dart';
 import '../services/medication_service.dart';
 import '../utils/error_helper.dart';
 
+/// Vue typée des patterns (UI) — sans réécriture du cache / API Map.
+class _PatternsView {
+  const _PatternsView({
+    required this.recurringPatterns,
+    required this.trends,
+    required this.seasonality,
+    this.predictions,
+  });
+
+  final List<dynamic> recurringPatterns;
+  final Map<String, dynamic> trends;
+  final Map<String, dynamic> seasonality;
+  final Map<String, dynamic>? predictions;
+
+  factory _PatternsView.fromMap(Map<String, dynamic> map) {
+    return _PatternsView(
+      recurringPatterns:
+          map['recurring_patterns'] as List<dynamic>? ?? const [],
+      trends: Map<String, dynamic>.from(
+        map['trends'] as Map? ?? const <String, dynamic>{},
+      ),
+      seasonality: Map<String, dynamic>.from(
+        map['seasonality'] as Map? ?? const <String, dynamic>{},
+      ),
+      predictions:
+          map['predictions'] is Map
+              ? Map<String, dynamic>.from(map['predictions'] as Map)
+              : null,
+    );
+  }
+
+  Map<String, dynamic> toMap() => {
+    'recurring_patterns': recurringPatterns,
+    'trends': trends,
+    'seasonality': seasonality,
+    if (predictions != null) 'predictions': predictions,
+  };
+}
+
 class PatternsDashboardScreen extends StatefulWidget {
   const PatternsDashboardScreen({super.key});
 
@@ -19,7 +58,7 @@ class PatternsDashboardScreen extends StatefulWidget {
 }
 
 class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
-  Map<String, dynamic>? _patterns;
+  _PatternsView? _patterns;
   bool _isLoading = false;
   String? _error;
 
@@ -41,7 +80,9 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
       final cachedPatterns = await OfflineCacheService.getCachedData(cacheKey);
       if (cachedPatterns != null) {
         setState(() {
-          _patterns = cachedPatterns as Map<String, dynamic>;
+          _patterns = _PatternsView.fromMap(
+            cachedPatterns as Map<String, dynamic>,
+          );
           _isLoading = false;
         });
         return;
@@ -146,7 +187,7 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
         final painCount = data.where((d) => d['type'] == 'douleur').length;
 
         setState(() {
-          _patterns = {
+          _patterns = _PatternsView.fromMap({
             'summary': {
               'total_documents': docCount,
               'total_pathologies': pathoCount,
@@ -156,7 +197,10 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
             'offline_mode': true,
             'message':
                 'Mode offline activé. Configurez le backend pour une analyse avancée.',
-          };
+            'recurring_patterns': const [],
+            'trends': const <String, dynamic>{},
+            'seasonality': const <String, dynamic>{},
+          });
           _isLoading = false;
         });
         return;
@@ -181,8 +225,9 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
       });
 
       final patterns = response as Map<String, dynamic>;
+      final view = _PatternsView.fromMap(patterns);
       setState(() {
-        _patterns = patterns;
+        _patterns = view;
         _isLoading = false;
       });
       // Mettre en cache les résultats (durée: 6 heures)
@@ -245,8 +290,8 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
       buffer.writeln();
 
       // Patterns récurrents
-      final recurring = _patterns!['recurring_patterns'] as List?;
-      if (recurring != null && recurring.isNotEmpty) {
+      final recurring = _patterns!.recurringPatterns;
+      if (recurring.isNotEmpty) {
         buffer.writeln('PATTERNS RÉCURRENTS:');
         for (var pattern in recurring) {
           buffer.writeln(
@@ -257,8 +302,8 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
       }
 
       // Tendances
-      final trends = _patterns!['trends'] as Map?;
-      if (trends != null && trends.isNotEmpty) {
+      final trends = _patterns!.trends;
+      if (trends.isNotEmpty) {
         buffer.writeln('TENDANCES:');
         buffer.writeln('• Direction: ${trends['direction'] ?? 'stable'}');
         buffer.writeln(
@@ -268,8 +313,8 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
       }
 
       // Saisonnalité
-      final seasonality = _patterns!['seasonality'] as Map?;
-      if (seasonality != null && seasonality.isNotEmpty) {
+      final seasonality = _patterns!.seasonality;
+      if (seasonality.isNotEmpty) {
         buffer.writeln('SAISONNALITÉ:');
         buffer.writeln('• Période: ${seasonality['period'] ?? '?'} jours');
         buffer.writeln(
@@ -279,7 +324,7 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
       }
 
       // Prédictions
-      final predictions = _patterns!['predictions'] as Map?;
+      final predictions = _patterns!.predictions;
       if (predictions != null && predictions.isNotEmpty) {
         buffer.writeln('PRÉDICTIONS:');
         buffer.writeln(
@@ -505,18 +550,16 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
                     children: [
                       _buildSection(
                         'Patterns Récurrents',
-                        _patterns!['recurring_patterns'] ?? [],
+                        _patterns!.recurringPatterns,
                       ),
                       const SizedBox(height: 24),
-                      _buildTrendsSection(_patterns!['trends'] ?? {}),
+                      _buildTrendsSection(_patterns!.trends),
                       const SizedBox(height: 24),
-                      _buildSeasonalitySection(_patterns!['seasonality'] ?? {}),
-                      if (_patterns!['predictions'] != null &&
-                          (_patterns!['predictions'] as Map).isNotEmpty) ...[
+                      _buildSeasonalitySection(_patterns!.seasonality),
+                      if (_patterns!.predictions != null &&
+                          _patterns!.predictions!.isNotEmpty) ...[
                         const SizedBox(height: 24),
-                        _buildPredictionsSection(
-                          _patterns!['predictions'] ?? {},
-                        ),
+                        _buildPredictionsSection(_patterns!.predictions!),
                       ],
                     ],
                   ),
