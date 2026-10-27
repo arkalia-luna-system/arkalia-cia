@@ -1251,103 +1251,9 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                   isLoading
                       ? const Center(child: CircularProgressIndicator())
                       : documents.isEmpty
-                      ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: Colors.green.shade500.withValues(
-                                  alpha: 0.1,
-                                ),
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(
-                                Icons.folder_open,
-                                size: 64,
-                                color: Colors.green,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            const Text(
-                              'Aucun document médical enregistré',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.grey,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 24),
-                              child: Text(
-                                'Appuie sur le bouton ci‑dessous pour ajouter ton premier document médical (par exemple une ordonnance ou un résultat de prise de sang).',
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 14,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            const SizedBox(height: 24),
-                            ElevatedButton.icon(
-                              onPressed: _uploadDocument,
-                              icon: const Icon(Icons.upload),
-                              label: const Text('Ajouter un document médical'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green,
-                                foregroundColor: Colors.white,
-                                minimumSize: const Size(
-                                  220,
-                                  48,
-                                ), // Minimum 48px pour accessibilité seniors
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 24,
-                                  vertical: 12,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
+                      ? _DocumentsEmptyState(onAdd: _uploadDocument)
                       : filteredDocuments.isEmpty
-                      ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade500.withValues(
-                                  alpha: 0.1,
-                                ),
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(
-                                Icons.search_off,
-                                size: 64,
-                                color: Colors.grey,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            const Text(
-                              'Aucun document trouvé',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.grey,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            const Text(
-                              'Essayez de modifier vos critères de recherche',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
+                      ? const _DocumentsFilterEmptyState()
                       : ListView.builder(
                         itemCount:
                             filteredDocuments.length + (_hasMoreItems ? 1 : 0),
@@ -1797,5 +1703,111 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     if (mounted) {
       _loadDocuments();
     }
+  }
+}
+
+/// État vide de la bibliothèque documents (vouvoiement, couleurs thème).
+class _DocumentsEmptyState extends StatelessWidget {
+  const _DocumentsEmptyState({required this.onAdd});
+
+  final VoidCallback onAdd;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final onVariant = scheme.onSurfaceVariant;
+
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: scheme.primaryContainer.withValues(alpha: 0.5),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.folder_open,
+              size: 64,
+              color: scheme.primary,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Aucun document médical enregistré',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: scheme.onSurface,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Text(
+              'Appuyez sur le bouton ci-dessous pour ajouter votre premier document médical (ordonnance, résultat d’analyse, etc.).',
+              style: TextStyle(color: onVariant, fontSize: 14),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton.icon(
+            onPressed: onAdd,
+            icon: const Icon(Icons.upload),
+            label: const Text('Ajouter un document médical'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: scheme.primary,
+              foregroundColor: scheme.onPrimary,
+              minimumSize: const Size(220, 48),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Aucun résultat pour les filtres / recherche actifs.
+class _DocumentsFilterEmptyState extends StatelessWidget {
+  const _DocumentsFilterEmptyState();
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final onVariant = scheme.onSurfaceVariant;
+
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: scheme.surfaceContainerHighest.withValues(alpha: 0.6),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.search_off, size: 64, color: onVariant),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Aucun document trouvé',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: scheme.onSurface,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Modifiez vos critères de recherche ou de filtre.',
+            style: TextStyle(fontSize: 14, color: onVariant),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
   }
 }

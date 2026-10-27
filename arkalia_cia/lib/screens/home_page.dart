@@ -219,7 +219,7 @@ class _HomePageState extends State<HomePage> {
                           controller: _searchController,
                           decoration: InputDecoration(
                             hintText:
-                                'Rechercher dans documents, rappels, contacts...',
+                                'Rechercher documents, rappels, contacts…',
                             prefixIcon: const Icon(Icons.search),
                             suffixIcon:
                                 _searchController.text.isNotEmpty
@@ -288,18 +288,16 @@ class _HomePageState extends State<HomePage> {
                   Semantics(
                     label: 'Sous-titre: Votre santé au quotidien',
                     child: Text(
-                      'Votre santé au quotidien',
+                      'Votre santé, au quotidien',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
-                        color: Theme.of(context).colorScheme.onSurface,
-                        fontStyle: FontStyle.italic,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                       textAlign: TextAlign.center,
                     ),
                   ),
                   const SizedBox(height: 16),
-                  // Widgets informatifs (afficher même pendant le chargement avec un indicateur)
                   if (_isLoadingStats)
                     const Padding(
                       padding: EdgeInsets.all(16.0),
@@ -308,159 +306,188 @@ class _HomePageState extends State<HomePage> {
                   else
                     _buildStatsWidgets(),
                   const SizedBox(height: 24),
-
-                  // Grille de modules principaux avec accessibilité (toujours visible)
-                  Semantics(
-                    label: 'Modules de l\'application',
-                    hint:
-                        'Sélectionnez un module pour accéder à ses fonctionnalités',
-                    child: GridView.count(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      // Ratio légèrement plus bas pour éviter overflow ~4px
-                      // (icône 48 + titres ≥14sp + padding) sur cellules carrées.
-                      childAspectRatio: 0.92,
-                      children: [
-                        // Bouton 1: Import/voir doc
-                        _buildActionButton(
-                          context,
-                          icon: MdiIcons.fileDocumentOutline,
-                          title: 'Documents',
-                          subtitle: 'Import/voir docs',
-                          color: Colors.green,
-                          onTap: () => _showDocuments(context),
-                        ),
-
-                        // Bouton 2: Portails santé
-                        _buildActionButton(
-                          context,
-                          icon: MdiIcons.medicalBag,
-                          title: 'Santé',
-                          subtitle: 'Portails santé',
-                          color: Colors.red,
-                          onTap: () => _showHealth(context),
-                        ),
-
-                        // Bouton 2b: Pathologies
-                        _buildActionButton(
-                          context,
-                          icon: MdiIcons.medicalBag,
-                          title: 'Pathologies',
-                          subtitle: 'Suivi pathologies',
-                          color: Colors.purple,
-                          onTap: () => _showPathologies(context),
-                        ),
-
-                        // Bouton 3: Rappels simples
-                        _buildActionButton(
-                          context,
-                          icon: MdiIcons.bellOutline,
-                          title: 'Rappels',
-                          subtitle: 'Rappels simples',
-                          color: Colors.orange,
-                          onTap: () => _showReminders(context),
-                        ),
-
-                        // Bouton 4: Urgence ICE
-                        _buildActionButton(
-                          context,
-                          icon: MdiIcons.phoneAlert,
-                          title: 'Urgence',
-                          subtitle: 'ICE - Contacts',
-                          color: Colors.purple,
-                          onTap: () => _showEmergency(context),
-                        ),
-
-                        // Bouton 5: ARIA - Laboratoire Santé
-                        _buildActionButton(
-                          context,
-                          icon: MdiIcons.heartPulse,
-                          title: 'ARIA',
-                          subtitle: 'Laboratoire Santé',
-                          color: Colors.red,
-                          onTap: () => _showARIA(context),
-                        ),
-
-                        // Bouton 6: CIA Sync
-                        _buildActionButton(
-                          context,
-                          icon: MdiIcons.syncIcon,
-                          title: 'Sync',
-                          subtitle: 'CIA ↔ ARIA',
-                          color: Colors.orange,
-                          onTap: () => _showSync(context),
-                        ),
-
-                        // Bouton 7: Médecins
-                        _buildActionButton(
-                          context,
-                          icon: MdiIcons.doctor,
-                          title: 'Médecins',
-                          subtitle: 'Historique médecins',
-                          color: Colors.teal,
-                          onTap: () => _showDoctors(context),
-                        ),
-
-                        // Bouton Calendrier
-                        _buildActionButton(
-                          context,
-                          icon: MdiIcons.calendar,
-                          title: 'Calendrier',
-                          subtitle: 'RDV et rappels',
-                          color: Colors.blue,
-                          onTap: () => _showCalendar(context),
-                        ),
-
-                        // Bouton 8: Partage Familial
-                        _buildActionButton(
-                          context,
-                          icon: MdiIcons.accountGroup,
-                          title: 'Partage',
-                          subtitle: 'Partage familial',
-                          color: Colors.purple,
-                          onTap: () => _showFamilySharing(context),
-                        ),
-
-                        // Bouton 9: Assistant IA
-                        _buildActionButton(
-                          context,
-                          icon: MdiIcons.robot,
-                          title: 'Assistant IA',
-                          subtitle: 'Posez vos questions',
-                          color: Colors.teal,
-                          onTap: () => _showConversationalAI(context),
-                        ),
-
-                        // Bouton 10: Patterns IA
-                        _buildActionButton(
-                          context,
-                          icon: MdiIcons.chartLine,
-                          title: 'Patterns',
-                          subtitle: 'Analyse patterns',
-                          color: Colors.indigo,
-                          onTap: () => _showPatterns(context),
-                        ),
-
-                        // Bouton 11: Hydratation
-                        _buildActionButton(
-                          context,
-                          icon: MdiIcons.water,
-                          title: 'Hydratation',
-                          subtitle: 'Rappels hydratation',
-                          color: Colors.cyan,
-                          onTap: () => _showHydration(context),
-                        ),
-                      ],
-                    ),
-                  ),
+                  _buildPrimaryModules(context),
+                  const SizedBox(height: 8),
+                  _buildMoreModules(context),
                 ],
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  /// Six actions quotidiennes prioritaires.
+  Widget _buildPrimaryModules(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Semantics(
+      label: 'Modules principaux',
+      hint: 'Accès rapide aux fonctions essentielles',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Accès rapide',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: scheme.onSurface,
+            ),
+          ),
+          const SizedBox(height: 12),
+          GridView.count(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisCount: 2,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: 0.92,
+            children: [
+              _buildActionButton(
+                context,
+                icon: MdiIcons.fileDocumentOutline,
+                title: 'Documents',
+                subtitle: 'Importer et consulter',
+                color: scheme.primary,
+                onTap: () => _showDocuments(context),
+              ),
+              _buildActionButton(
+                context,
+                icon: MdiIcons.medicalBag,
+                title: 'Santé',
+                subtitle: 'Portails médicaux',
+                color: scheme.tertiary,
+                onTap: () => _showHealth(context),
+              ),
+              _buildActionButton(
+                context,
+                icon: MdiIcons.bellOutline,
+                title: 'Rappels',
+                subtitle: 'Médicaments et RDV',
+                color: scheme.secondary,
+                onTap: () => _showReminders(context),
+              ),
+              _buildActionButton(
+                context,
+                icon: MdiIcons.phoneAlert,
+                title: 'Urgence',
+                subtitle: 'Contacts ICE',
+                color: scheme.error,
+                onTap: () => _showEmergency(context),
+              ),
+              _buildActionButton(
+                context,
+                icon: MdiIcons.calendar,
+                title: 'Calendrier',
+                subtitle: 'Agenda santé',
+                color: scheme.primary,
+                onTap: () => _showCalendar(context),
+              ),
+              _buildActionButton(
+                context,
+                icon: MdiIcons.heartPulse,
+                title: 'ARIA',
+                subtitle: 'Douleur et patterns',
+                color: scheme.tertiary,
+                onTap: () => _showARIA(context),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Modules secondaires — tous restent accessibles.
+  Widget _buildMoreModules(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Theme(
+      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      child: ExpansionTile(
+        initiallyExpanded: false,
+        tilePadding: EdgeInsets.zero,
+        childrenPadding: const EdgeInsets.only(bottom: 8),
+        title: Text(
+          'Plus',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: scheme.onSurface,
+          ),
+        ),
+        subtitle: Text(
+          'Médecins, pathologies, sync et outils',
+          style: TextStyle(fontSize: 14, color: scheme.onSurfaceVariant),
+        ),
+        children: [
+          GridView.count(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisCount: 2,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: 0.92,
+            children: [
+              _buildActionButton(
+                context,
+                icon: MdiIcons.doctor,
+                title: 'Médecins',
+                subtitle: 'Carnet de contacts',
+                color: scheme.secondary,
+                onTap: () => _showDoctors(context),
+              ),
+              _buildActionButton(
+                context,
+                icon: MdiIcons.medicalBag,
+                title: 'Pathologies',
+                subtitle: 'Suivi personnalisé',
+                color: scheme.tertiary,
+                onTap: () => _showPathologies(context),
+              ),
+              _buildActionButton(
+                context,
+                icon: MdiIcons.syncIcon,
+                title: 'Sync',
+                subtitle: 'CIA et ARIA',
+                color: scheme.primary,
+                onTap: () => _showSync(context),
+              ),
+              _buildActionButton(
+                context,
+                icon: MdiIcons.accountGroup,
+                title: 'Partage',
+                subtitle: 'Partage familial',
+                color: scheme.secondary,
+                onTap: () => _showFamilySharing(context),
+              ),
+              _buildActionButton(
+                context,
+                icon: MdiIcons.robot,
+                title: 'Assistant',
+                subtitle: 'Questions santé',
+                color: scheme.tertiary,
+                onTap: () => _showConversationalAI(context),
+              ),
+              _buildActionButton(
+                context,
+                icon: MdiIcons.chartLine,
+                title: 'Patterns',
+                subtitle: 'Analyses',
+                color: scheme.primary,
+                onTap: () => _showPatterns(context),
+              ),
+              _buildActionButton(
+                context,
+                icon: MdiIcons.water,
+                title: 'Hydratation',
+                subtitle: 'Objectifs quotidiens',
+                color: scheme.secondary,
+                onTap: () => _showHydration(context),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -473,22 +500,17 @@ class _HomePageState extends State<HomePage> {
     required Color color,
     required VoidCallback onTap,
   }) {
-    // Adapter les couleurs pour le mode sombre (moins saturées)
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final adaptedColor = isDark ? _getDarkModeColor(color) : color;
-    final subtitleColor =
-        isDark
-            ? Theme.of(context).colorScheme.onSurfaceVariant
-            : Colors.grey[600];
+    final scheme = Theme.of(context).colorScheme;
 
     return Semantics(
       label: '$title - $subtitle',
       button: true,
       child: Tooltip(
-        message: '$title: $subtitle', // Tooltip pour guidance utilisateur
+        message: '$title : $subtitle',
         preferBelow: false,
         child: Card(
-          elevation: 4,
+          elevation: 2,
+          color: scheme.surfaceContainerLow,
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(8),
@@ -497,7 +519,7 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(icon, size: 48, color: adaptedColor),
+                  Icon(icon, size: 48, color: color),
                   const SizedBox(height: 8),
                   Flexible(
                     child: Text(
@@ -505,7 +527,7 @@ class _HomePageState extends State<HomePage> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSurface,
+                        color: scheme.onSurface,
                       ),
                       textAlign: TextAlign.center,
                       maxLines: 1,
@@ -519,7 +541,7 @@ class _HomePageState extends State<HomePage> {
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        color: subtitleColor,
+                        color: scheme.onSurfaceVariant,
                       ),
                       textAlign: TextAlign.center,
                       maxLines: 2,
@@ -533,21 +555,6 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
-  }
-
-  /// Adapte les couleurs pour le mode sombre (moins saturées et plus douces)
-  Color _getDarkModeColor(Color originalColor) {
-    // Réduire la saturation et augmenter légèrement la luminosité
-    // pour des couleurs plus douces en mode sombre
-    final hsl = HSLColor.fromColor(originalColor);
-    return hsl
-        .withSaturation(
-          (hsl.saturation * 0.7).clamp(0.0, 1.0),
-        ) // Réduire saturation de 30%
-        .withLightness(
-          (hsl.lightness * 1.2).clamp(0.0, 0.9),
-        ) // Augmenter luminosité de 20%
-        .toColor();
   }
 
   void _showDocuments(BuildContext context) {
@@ -668,21 +675,23 @@ class _HomePageState extends State<HomePage> {
         (_searchResults['reminders']?.length ?? 0) +
         (_searchResults['contacts']?.length ?? 0);
 
+    final scheme = Theme.of(context).colorScheme;
+
     if (totalResults == 0) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.search_off, size: 64, color: Colors.grey),
+            Icon(Icons.search_off, size: 64, color: scheme.onSurfaceVariant),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'Aucun résultat trouvé',
-              style: TextStyle(color: Colors.grey, fontSize: 18),
+              style: TextStyle(color: scheme.onSurface, fontSize: 18),
             ),
             const SizedBox(height: 8),
             Text(
-              'Essayez de modifier votre recherche',
-              style: TextStyle(color: Colors.grey[600], fontSize: 14),
+              'Modifiez votre recherche et réessayez.',
+              style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 14),
             ),
           ],
         ),
@@ -695,7 +704,7 @@ class _HomePageState extends State<HomePage> {
           _buildSearchSection(
             'Documents',
             Icons.description,
-            Colors.green,
+            scheme.primary,
             _searchResults['documents']!,
           ),
         ],
@@ -703,7 +712,7 @@ class _HomePageState extends State<HomePage> {
           _buildSearchSection(
             'Rappels',
             Icons.notifications,
-            Colors.orange,
+            scheme.secondary,
             _searchResults['reminders']!,
           ),
         ],
@@ -711,7 +720,7 @@ class _HomePageState extends State<HomePage> {
           _buildSearchSection(
             'Contacts',
             Icons.contacts,
-            Colors.red,
+            scheme.error,
             _searchResults['contacts']!,
           ),
         ],
@@ -779,9 +788,9 @@ class _HomePageState extends State<HomePage> {
                           style: const TextStyle(fontSize: 14),
                         ),
                       ),
-                      trailing: const Icon(
+                      trailing: Icon(
                         Icons.chevron_right,
-                        color: Colors.grey,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         size: 24,
                       ),
                       onTap: () {
@@ -801,8 +810,11 @@ class _HomePageState extends State<HomePage> {
               Padding(
                 padding: const EdgeInsets.all(8),
                 child: Text(
-                  '... et ${items.length - 5} autre(s)',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 16),
+                  '… et ${items.length - 5} autre(s)',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    fontSize: 16,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -813,7 +825,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildStatsWidgets() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scheme = Theme.of(context).colorScheme;
 
     return Row(
       children: [
@@ -826,26 +838,19 @@ class _HomePageState extends State<HomePage> {
               borderRadius: BorderRadius.circular(12),
               child: Card(
                 elevation: 2,
-                color:
-                    isDark
-                        ? Theme.of(context).colorScheme.surfaceContainerHigh
-                        : Colors.green[50],
+                color: scheme.primaryContainer.withValues(alpha: 0.45),
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Column(
                     children: [
-                      Icon(
-                        Icons.folder,
-                        color: isDark ? Colors.green[300] : Colors.green[700],
-                        size: 32,
-                      ),
+                      Icon(Icons.folder, color: scheme.primary, size: 32),
                       const SizedBox(height: 8),
                       Text(
                         '$_documentCount',
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.green[300] : Colors.green[700],
+                          color: scheme.primary,
                         ),
                       ),
                       Text(
@@ -853,7 +858,7 @@ class _HomePageState extends State<HomePage> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
-                          color: Theme.of(context).colorScheme.onSurface,
+                          color: scheme.onSurface,
                         ),
                       ),
                     ],
@@ -878,17 +883,14 @@ class _HomePageState extends State<HomePage> {
               borderRadius: BorderRadius.circular(12),
               child: Card(
                 elevation: 2,
-                color:
-                    isDark
-                        ? Theme.of(context).colorScheme.surfaceContainerHigh
-                        : Colors.orange[50],
+                color: scheme.secondaryContainer.withValues(alpha: 0.45),
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Column(
                     children: [
                       Icon(
                         Icons.notifications,
-                        color: isDark ? Colors.orange[300] : Colors.orange[700],
+                        color: scheme.secondary,
                         size: 32,
                       ),
                       const SizedBox(height: 8),
@@ -897,8 +899,7 @@ class _HomePageState extends State<HomePage> {
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color:
-                              isDark ? Colors.orange[300] : Colors.orange[700],
+                          color: scheme.secondary,
                         ),
                       ),
                       Text(
@@ -906,7 +907,7 @@ class _HomePageState extends State<HomePage> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
-                          color: Theme.of(context).colorScheme.onSurface,
+                          color: scheme.onSurface,
                         ),
                       ),
                     ],
