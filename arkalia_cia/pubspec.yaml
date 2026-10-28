@@ -38,7 +38,7 @@ dependencies:
   # Partage
   share_plus: ^12.0.2 # 13.x exige Dart ≥3.10 ; CI Flutter 3.29 = Dart 3.7
   # Ouverture de fichiers
-  open_filex: ^4.4.0
+  open_filex: ">=4.4.0 <6.0.0"
 
   # NOUVEAUX PLUGINS POUR PHASE 1 - STOCKAGE LOCAL
   shared_preferences: 2.5.3
