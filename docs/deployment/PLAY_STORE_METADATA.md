@@ -1,6 +1,6 @@
 # Métadonnées Google Play Store — statut
 
-**Dernière mise à jour** : 27 octobre 2026
+**Dernière mise à jour** : 4 novembre 2026
 
 ## Statut
 
@@ -15,6 +15,12 @@ Voir **[DEPLOYMENT.md](./DEPLOYMENT.md)** :
 - déploiement PWA / GitHub Pages
 - builds locaux Android / sideload
 - note explicite sur l'abandon Play Store
+
+## Workflow CI
+
+Le fichier `.github/workflows/deploy-play-store.yml` est **OBSOLÈTE / dormant** :
+triggers `push`/`tags` retirés, job court-circuité (`if: false`).
+Ne pas le réactiver sans décision Athalia. Pas de correction code pour les messages Play Console (« unreviewed / 0 testers / production inactive »).
 
 ## Contenu historique
 

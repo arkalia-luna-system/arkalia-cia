@@ -143,21 +143,14 @@
 - ✅ **Commentaires améliorés** : Clarté améliorée pour maintenance future
 - ✅ **Note audit améliorée** : 7.5/10 → 8.5/10 après corrections
 
-### 🎉 Publication Google Play Store
+### Google Play Store — historique puis abandon
 
-#### Configuration et Publication
-- ✅ Keystore Android généré et configuré (27 novembre 2025)
-- ✅ Signature release fonctionnelle (certificat Arkalia Luna System, valide jusqu'en 2053)
-- ✅ App Bundle signé en release (47.9MB → 10.6MB optimisé)
-- ✅ Version 1.3.1 uploadée sur Google Play Console (27 novembre 2025)
-- ✅ Version publiée en tests internes (27 novembre 2025)
-- ✅ Testeurs ajoutés (4 utilisateurs)
-- ✅ Lien de test créé : https://play.google.com/apps/internaltest/4701447837031810861
+> **Statut actuel** : Play Store **non utilisé** (dépôt rejeté le 9 décembre 2025 — restrictions apps santé). Déploiement réel = **PWA**. Voir `docs/deployment/DEPLOYMENT.md` et `PLAY_STORE_METADATA.md`. Les messages Console (« unreviewed / 0 testers / production inactive ») **ne se corrigent pas en code**.
 
-#### Scripts et Configuration
-- ✅ Scripts de nettoyage macOS améliorés pour build Android
-- ✅ Configuration Gradle optimisée pour signature automatique
-- ✅ Script `build-android.sh` amélioré avec surveillance fichiers macOS
+#### Historique (nov. 2025, obsolète)
+- Keystore / signature release configurés (archive locale — ne pas republier)
+- Upload / tests internes un temps sur Play Console — **piste abandonnée**
+- Scripts Android / Gradle locaux conservés pour sideload / builds manuels uniquement
 
 ---
 

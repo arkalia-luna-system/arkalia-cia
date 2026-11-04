@@ -1,15 +1,23 @@
 ---
-# Workflow de déploiement automatique vers Google Play Store
-# Déploie automatiquement sur la branche main vers les tests internes
+# OBSOLÈTE / DORMANT — Google Play Store non utilisé
+# Dépôt rejeté le 9 décembre 2025 (restrictions apps santé).
+# Déploiement réel = PWA / GitHub Pages — voir docs/deployment/DEPLOYMENT.md
+# et docs/deployment/PLAY_STORE_METADATA.md.
+# Ne pas réactiver les triggers push sans décision Athalia explicite.
+# Conservé comme archive technique (build AAB / secrets) uniquement.
 
-name: Deploy to Play Store (Internal Testing)
+name: Deploy to Play Store (OBSOLÈTE — dormant)
 
 on:
-  push:
-    branches: [main]
-    tags:
-      - "v*"
-  workflow_dispatch: # Permet de déclencher manuellement
+  # Push/tags DÉSACTIVÉS — Play dormant. workflow_dispatch gardé pour archive,
+  # mais le job est court-circuité (if: false).
+  workflow_dispatch:
+    inputs:
+      acknowledge_obsolete:
+        description: "OBSOLÈTE — Play abandonné ; déploiement = PWA. Ne pas utiliser."
+        required: true
+        type: boolean
+        default: false
 
 env:
   FLUTTER_VERSION: "3.35.3"
@@ -19,7 +27,9 @@ env:
 
 jobs:
   deploy:
-    name: Build and Deploy to Play Store
+    name: Build and Deploy to Play Store (OBSOLÈTE)
+    # Court-circuit explicite — Play Store abandonné / PWA active
+    if: false
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
