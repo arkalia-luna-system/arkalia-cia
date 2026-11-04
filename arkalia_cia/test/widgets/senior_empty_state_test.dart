@@ -86,4 +86,55 @@ void main() {
     );
     expect(message.style?.fontSize, greaterThanOrEqualTo(14));
   });
+
+  testWidgets('SeniorEmptyState pathologie — historique vide ≥14sp', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: SeniorEmptyState(
+            icon: Icons.timeline_outlined,
+            title: 'Aucune entrée enregistrée',
+            message:
+                'Ajoutez un suivi pour voir l\'historique de cette pathologie.',
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Aucune entrée enregistrée'), findsOneWidget);
+    expect(find.textContaining('Ajoutez un suivi'), findsOneWidget);
+    expect(find.byIcon(Icons.timeline_outlined), findsOneWidget);
+
+    final message = tester.widget<Text>(
+      find.textContaining('Ajoutez un suivi'),
+    );
+    expect(message.style?.fontSize, greaterThanOrEqualTo(14));
+  });
+
+  testWidgets('SeniorEmptyState consultations médecin — vide ≥14sp', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: SeniorEmptyState(
+            icon: Icons.event_busy_outlined,
+            title: 'Aucune consultation enregistrée',
+            message: 'Les consultations liées à ce médecin apparaîtront ici.',
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Aucune consultation enregistrée'), findsOneWidget);
+    expect(find.textContaining('consultations liées'), findsOneWidget);
+    expect(find.byIcon(Icons.event_busy_outlined), findsOneWidget);
+
+    final message = tester.widget<Text>(
+      find.textContaining('consultations liées'),
+    );
+    expect(message.style?.fontSize, greaterThanOrEqualTo(14));
+  });
 }

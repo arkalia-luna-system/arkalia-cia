@@ -221,7 +221,7 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
                   icon: Icons.timeline_outlined,
                   title: 'Aucune entrée enregistrée',
                   message:
-                      'Ajoutez un suivi pour voir l’historique de cette pathologie.',
+                      'Ajoutez un suivi pour voir l\'historique de cette pathologie.',
                 ),
               )
             else
