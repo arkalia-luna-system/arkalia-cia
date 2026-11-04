@@ -108,7 +108,7 @@ class _ARIAScreenState extends State<ARIAScreen> {
                     icon: MdiIcons.heartPulse,
                     title: 'Saisie Rapide',
                     subtitle: '3 questions',
-                    color: Colors.red,
+                    color: scheme.error,
                     onTap: () => _launchARIA('quick-entry'),
                   ),
 
@@ -117,7 +117,7 @@ class _ARIAScreenState extends State<ARIAScreen> {
                     icon: MdiIcons.chartLine,
                     title: 'Historique',
                     subtitle: 'Voir les données',
-                    color: Colors.blue,
+                    color: scheme.primary,
                     onTap: () => _launchARIA('history'),
                   ),
 
@@ -126,7 +126,7 @@ class _ARIAScreenState extends State<ARIAScreen> {
                     icon: MdiIcons.brain,
                     title: 'Patterns',
                     subtitle: 'Analyse IA',
-                    color: Colors.purple,
+                    color: scheme.tertiary,
                     onTap: () => _launchARIA('patterns'),
                   ),
 
@@ -135,7 +135,7 @@ class _ARIAScreenState extends State<ARIAScreen> {
                     icon: MdiIcons.download,
                     title: 'Export Psy',
                     subtitle: 'Pour psychologue',
-                    color: Colors.green,
+                    color: scheme.secondary,
                     onTap: () => _launchARIA('export'),
                   ),
                 ],
@@ -151,8 +151,16 @@ class _ARIAScreenState extends State<ARIAScreen> {
   }
 
   Widget _buildHeader() {
+    final scheme = Theme.of(context).colorScheme;
+    // Statut connexion : sémantique thème (primary = OK, error = KO), pas Colors.* fixes.
+    final statusColor = _isARIAConnected ? scheme.primary : scheme.error;
+    final statusContainer =
+        _isARIAConnected ? scheme.primaryContainer : scheme.errorContainer;
+    final onStatusContainer =
+        _isARIAConnected ? scheme.onPrimaryContainer : scheme.onErrorContainer;
+
     return Card(
-      color: _isARIAConnected ? Colors.green[50] : Colors.red[50],
+      color: statusContainer,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -163,7 +171,7 @@ class _ARIAScreenState extends State<ARIAScreen> {
                   _isARIAConnected
                       ? MdiIcons.checkCircle
                       : MdiIcons.alertCircle,
-                  color: _isARIAConnected ? Colors.green : Colors.red,
+                  color: statusColor,
                   size: 32,
                 ),
                 const SizedBox(width: 12),
@@ -176,10 +184,7 @@ class _ARIAScreenState extends State<ARIAScreen> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color:
-                              _isARIAConnected
-                                  ? Colors.green[700]
-                                  : Colors.red[700],
+                          color: onStatusContainer,
                         ),
                       ),
                       Text(
@@ -188,10 +193,7 @@ class _ARIAScreenState extends State<ARIAScreen> {
                             : 'Vérifiez que le serveur ARIA est démarré\n(Configuration disponible dans les paramètres)',
                         style: TextStyle(
                           fontSize: 14,
-                          color:
-                              _isARIAConnected
-                                  ? Colors.green[600]
-                                  : Colors.red[600],
+                          color: onStatusContainer,
                         ),
                       ),
                       if (_ariaIP != null) ...[
@@ -200,10 +202,7 @@ class _ARIAScreenState extends State<ARIAScreen> {
                           'Serveur: $_ariaIP:$_ariaPort',
                           style: TextStyle(
                             fontSize: 14,
-                            color:
-                                _isARIAConnected
-                                    ? Colors.green[600]
-                                    : Colors.red[600],
+                            color: onStatusContainer,
                           ),
                         ),
                       ],

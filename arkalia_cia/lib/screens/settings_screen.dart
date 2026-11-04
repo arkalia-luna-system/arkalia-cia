@@ -9,7 +9,7 @@ import '../services/health_portal_auth_service.dart'
 import '../services/offline_cache_service.dart';
 import '../services/accessibility_service.dart';
 import '../services/google_auth_service.dart';
-import '../utils/app_logger.dart';
+import '../utils/error_helper.dart';
 import 'auth/login_screen.dart';
 import 'auth/welcome_auth_screen.dart';
 import 'stats_screen.dart';
@@ -263,8 +263,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               await GoogleAuthService.signOut();
                             }
                           } catch (e) {
-                            // Ignorer les erreurs de déconnexion Google (non UI)
-                            AppLogger.debug('Déconnexion Google ignorée: $e');
+                            // Déconnexion Google non bloquante : log + SnackBar si possible.
+                            ErrorHelper.logError(
+                              'SettingsScreen.googleSignOut',
+                              e,
+                            );
+                            if (mounted) {
+                              final scheme = Theme.of(context).colorScheme;
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Déconnexion Google incomplète. '
+                                    '${ErrorHelper.getUserFriendlyMessage(e)}',
+                                  ),
+                                  backgroundColor: scheme.error,
+                                  duration: const Duration(seconds: 3),
+                                ),
+                              );
+                            }
                           }
 
                           // Déconnexion backend si nécessaire

@@ -439,94 +439,114 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
                   physics: const AlwaysScrollableScrollPhysics(),
                   child: SizedBox(
                     height: MediaQuery.of(context).size.height * 0.8,
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(32.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.error_outline,
-                              size: 64,
-                              color: Colors.red,
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              _error!,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                            const SizedBox(height: 24),
-                            // Suggestions selon le type d'erreur
-                            if (_error!.toLowerCase().contains(
-                                  'données insuffisantes',
-                                ) ||
-                                _error!.toLowerCase().contains('aucune donnée'))
-                              Card(
-                                color: Colors.blue[50],
-                                child: const Padding(
-                                  padding: EdgeInsets.all(16.0),
-                                  child: Column(
-                                    children: [
-                                      Icon(
-                                        Icons.info_outline,
-                                        color: Colors.blue,
-                                      ),
-                                      SizedBox(height: 8),
-                                      Text(
-                                        'Conseil:',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      SizedBox(height: 4),
-                                      Text(
-                                        'Ajoutez au moins 3 documents, pathologies ou médicaments pour voir des patterns.',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(fontSize: 14),
-                                      ),
-                                    ],
+                    child: Builder(
+                      builder: (context) {
+                        final scheme = Theme.of(context).colorScheme;
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(32.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.error_outline,
+                                  size: 64,
+                                  color: scheme.error,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  _error!,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: scheme.onSurface,
                                   ),
                                 ),
-                              ),
-                            if (_error!.toLowerCase().contains('backend') ||
-                                _error!.toLowerCase().contains('connexion'))
-                              Card(
-                                color: Colors.orange[50],
-                                child: const Padding(
-                                  padding: EdgeInsets.all(16.0),
-                                  child: Column(
-                                    children: [
-                                      Icon(
-                                        Icons.wifi_off,
-                                        color: Colors.orange,
+                                const SizedBox(height: 24),
+                                // Suggestions selon le type d'erreur
+                                if (_error!.toLowerCase().contains(
+                                      'données insuffisantes',
+                                    ) ||
+                                    _error!.toLowerCase().contains(
+                                      'aucune donnée',
+                                    ))
+                                  Card(
+                                    color: scheme.primaryContainer,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Column(
+                                        children: [
+                                          Icon(
+                                            Icons.info_outline,
+                                            color: scheme.primary,
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            'Conseil:',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14,
+                                              color: scheme.onPrimaryContainer,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            'Ajoutez au moins 3 documents, pathologies ou médicaments pour voir des patterns.',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: scheme.onPrimaryContainer,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      SizedBox(height: 8),
-                                      Text(
-                                        'Vérifiez:',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      SizedBox(height: 4),
-                                      Text(
-                                        '1. Le backend est démarré\n2. L\'URL est correcte dans les paramètres\n3. Votre connexion réseau',
-                                        textAlign: TextAlign.left,
-                                        style: TextStyle(fontSize: 14),
-                                      ),
-                                    ],
+                                    ),
                                   ),
+                                if (_error!.toLowerCase().contains('backend') ||
+                                    _error!.toLowerCase().contains('connexion'))
+                                  Card(
+                                    color: scheme.tertiaryContainer,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Column(
+                                        children: [
+                                          Icon(
+                                            Icons.wifi_off,
+                                            color: scheme.tertiary,
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            'Vérifiez:',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14,
+                                              color: scheme.onTertiaryContainer,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            '1. Le backend est démarré\n2. L\'URL est correcte dans les paramètres\n3. Votre connexion réseau',
+                                            textAlign: TextAlign.left,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: scheme.onTertiaryContainer,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                const SizedBox(height: 16),
+                                ElevatedButton.icon(
+                                  onPressed: _loadPatterns,
+                                  icon: const Icon(Icons.refresh),
+                                  label: const Text('Réessayer'),
                                 ),
-                              ),
-                            const SizedBox(height: 16),
-                            ElevatedButton.icon(
-                              onPressed: _loadPatterns,
-                              icon: const Icon(Icons.refresh),
-                              label: const Text('Réessayer'),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ),
@@ -589,7 +609,13 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
             ),
             const SizedBox(height: 16),
             if (items.isEmpty)
-              const Text('Aucun pattern récurrent détecté')
+              Text(
+                'Aucun pattern récurrent détecté',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              )
             else
               ...items.map((item) => _buildPatternItem(item)),
           ],
@@ -633,7 +659,13 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
             ),
             const SizedBox(height: 16),
             if (trends.isEmpty)
-              const Text('Aucune tendance détectée')
+              Text(
+                'Aucune tendance détectée',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              )
             else
               Column(
                 children: [
@@ -682,7 +714,13 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
             ),
             const SizedBox(height: 16),
             if (seasonality.isEmpty)
-              const Text('Aucune saisonnalité détectée')
+              Text(
+                'Aucune saisonnalité détectée',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              )
             else
               Column(
                 children: [
@@ -748,7 +786,13 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
               const SizedBox(height: 16),
             ],
             if (predictionsList.isEmpty)
-              const Text('Aucune prédiction disponible')
+              Text(
+                'Aucune prédiction disponible',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              )
             else
               ...predictionsList
                   .take(5)
@@ -805,12 +849,13 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
                   : '→',
               style: const TextStyle(fontSize: 16),
             ),
+            // Sens tendance : primary ≈ hausse, error ≈ baisse (sémantique thème).
             backgroundColor:
                 direction == 'increasing'
-                    ? Colors.green.withValues(alpha: 0.2)
+                    ? Theme.of(context).colorScheme.primaryContainer
                     : direction == 'decreasing'
-                    ? Colors.red.withValues(alpha: 0.2)
-                    : Colors.grey.withValues(alpha: 0.2),
+                    ? Theme.of(context).colorScheme.errorContainer
+                    : Theme.of(context).colorScheme.surfaceContainerHighest,
           ),
         ],
       ),

@@ -21,12 +21,22 @@ class _CalendarEvent {
   });
 
   final String type;
+
+  /// Couleur sémantique métier (légende) — hors colorScheme volontairement :
+  /// bleu=médicament, cyan=hydratation, orange=rappel, spécialité=consultation.
+  /// Stables pour mémorisation seniors ; la légende UI doit rester alignée.
   final Color color;
   final String? title;
   final String? description;
   final Doctor? doctor;
   final Consultation? consultation;
 }
+
+/// Couleurs légende / pastilles — sémantique métier (voir [_CalendarEvent.color]).
+const Color _kCalMedication = Colors.blue;
+const Color _kCalHydration = Colors.cyan;
+const Color _kCalReminder = Colors.orange;
+const Color _kCalConsultationLegend = Colors.red;
 
 /// Écran calendrier avec affichage des rappels médicaments et hydratation
 class CalendarScreen extends StatefulWidget {
@@ -116,7 +126,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     type: 'medication',
                     title: medication.name,
                     description: '$dosage · $hh:$mm',
-                    color: Colors.blue,
+                    color: _kCalMedication,
                   ),
                 );
           }
@@ -141,7 +151,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   type: 'hydration',
                   title: 'Hydratation',
                   description: 'N\'oubliez pas de boire de l\'eau !',
-                  color: Colors.cyan,
+                  color: _kCalHydration,
                 ),
               );
         }
@@ -174,7 +184,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       type: 'reminder',
                       title: reminder['title'] as String? ?? 'Rappel',
                       description: reminder['description'] as String? ?? '',
-                      color: Colors.orange,
+                      color: _kCalReminder,
                     ),
                   );
             }
@@ -220,8 +230,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         description: reminder['description'] as String? ?? '',
                         color:
                             isMedication
-                                ? Colors.blue
-                                : (isHydration ? Colors.cyan : Colors.orange),
+                                ? _kCalMedication
+                                : (isHydration
+                                    ? _kCalHydration
+                                    : _kCalReminder),
                       ),
                     );
               }
@@ -368,7 +380,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             ),
           ),
 
-          // Légende simple pour aider à comprendre les couleurs/icônes
+          // Légende : couleurs sémantiques métier (alignées pastilles), hors colorScheme.
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
@@ -380,13 +392,17 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 ),
                 Row(
                   children: [
-                    Icon(Icons.medical_services, size: 18, color: Colors.red),
+                    Icon(
+                      Icons.medical_services,
+                      size: 18,
+                      color: _kCalConsultationLegend,
+                    ),
                     SizedBox(width: 4),
                     Text('Consultation  ', style: TextStyle(fontSize: 14)),
-                    Icon(Icons.medication, size: 18, color: Colors.blue),
+                    Icon(Icons.medication, size: 18, color: _kCalMedication),
                     SizedBox(width: 4),
                     Text('Médicament  ', style: TextStyle(fontSize: 14)),
-                    Icon(Icons.water_drop, size: 18, color: Colors.cyan),
+                    Icon(Icons.water_drop, size: 18, color: _kCalHydration),
                     SizedBox(width: 4),
                     Text('Hydratation', style: TextStyle(fontSize: 14)),
                   ],

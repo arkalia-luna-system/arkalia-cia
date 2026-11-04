@@ -48,7 +48,10 @@ class ExamTypeBadge extends StatelessWidget {
     }
   }
 
-  /// Obtient la couleur selon le type d'examen
+  /// Couleur sémantique métier par type d'examen.
+  ///
+  /// Volontairement hors `colorScheme` : code couleur stable et mémorisable
+  /// pour les seniors (ex. IRM=violet, analyse=rouge). Ce n'est pas du chrome UI.
   Color _getColor(String type) {
     switch (type.toLowerCase()) {
       case 'radio':

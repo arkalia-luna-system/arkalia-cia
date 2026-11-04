@@ -131,11 +131,12 @@ class _StatsScreenState extends State<StatsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Statistiques'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        backgroundColor: scheme.primary,
+        foregroundColor: scheme.onPrimary,
       ),
       body:
           _isLoading
@@ -151,7 +152,7 @@ class _StatsScreenState extends State<StatsScreen> {
                       _buildStatCard(
                         'Documents',
                         Icons.description,
-                        Colors.green,
+                        scheme.primary,
                         [
                           _StatItem(
                             'Total',
@@ -174,7 +175,7 @@ class _StatsScreenState extends State<StatsScreen> {
                       _buildStatCard(
                         'Rappels',
                         Icons.notifications,
-                        Colors.orange,
+                        scheme.tertiary,
                         [
                           _StatItem(
                             'Total',
@@ -195,10 +196,11 @@ class _StatsScreenState extends State<StatsScreen> {
                         ],
                       ),
                       const SizedBox(height: 16),
+                      // error = accent urgence (contacts) — sémantique métier conservée via colorScheme.
                       _buildStatCard(
                         'Contacts d\'urgence',
                         Icons.emergency,
-                        Colors.red,
+                        scheme.error,
                         [
                           _StatItem(
                             'Total',

@@ -4,6 +4,7 @@ import '../services/doctor_service.dart';
 import '../models/doctor.dart';
 import '../utils/error_helper.dart';
 import '../utils/input_sanitizer.dart';
+import '../widgets/senior_empty_state.dart';
 import 'documents_screen.dart';
 import 'doctor_detail_screen.dart';
 
@@ -357,50 +358,19 @@ class _AdvancedSearchScreenState extends State<AdvancedSearchScreen> {
                 _isSearching
                     ? const Center(child: CircularProgressIndicator())
                     : _results.isEmpty
-                    ? Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(32.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: scheme.onSurface.withValues(alpha: 0.08),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.search_off,
-                                size: 64,
-                                color: scheme.onSurfaceVariant,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Aucun résultat trouvé',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: scheme.onSurface,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Essayez de :',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: scheme.onSurfaceVariant,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            _buildSearchTip(
-                              'Utiliser des mots-clés différents',
-                            ),
-                            _buildSearchTip('Vérifier l\'orthographe'),
-                            _buildSearchTip('Réduire le nombre de filtres'),
-                            _buildSearchTip('Utiliser la recherche sémantique'),
-                          ],
-                        ),
+                    ? SeniorEmptyState(
+                      icon: Icons.search_off,
+                      title: 'Aucun résultat trouvé',
+                      message: 'Essayez de :',
+                      // Tips UX conservés (cohérence SeniorEmptyState + aide seniors).
+                      action: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _buildSearchTip('Utiliser des mots-clés différents'),
+                          _buildSearchTip('Vérifier l\'orthographe'),
+                          _buildSearchTip('Réduire le nombre de filtres'),
+                          _buildSearchTip('Utiliser la recherche sémantique'),
+                        ],
                       ),
                     )
                     : RefreshIndicator(
