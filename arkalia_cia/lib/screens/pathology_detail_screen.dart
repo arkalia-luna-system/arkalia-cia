@@ -6,6 +6,7 @@ import '../models/pathology_tracking.dart';
 import '../utils/input_sanitizer.dart';
 import 'pathology_tracking_screen.dart';
 import '../utils/error_helper.dart';
+import '../widgets/senior_empty_state.dart';
 
 class PathologyDetailScreen extends StatefulWidget {
   final int pathologyId;
@@ -214,15 +215,13 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
             // Historique des entrées
             _buildSectionTitle('Historique des entrées'),
             if (_trackingEntries.isEmpty)
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Center(
-                  child: Text(
-                    'Aucune entrée enregistrée',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                  ),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: SeniorEmptyState(
+                  icon: Icons.timeline_outlined,
+                  title: 'Aucune entrée enregistrée',
+                  message:
+                      'Ajoutez un suivi pour voir l’historique de cette pathologie.',
                 ),
               )
             else

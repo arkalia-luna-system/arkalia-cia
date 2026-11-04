@@ -360,7 +360,7 @@ class _InitialScreenState extends State<_InitialScreen> {
                 '⏳ Attendez que la compilation se termine\n'
                 'Les erreurs disparaîtront automatiquement',
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 14,
                   color: isDark ? Colors.grey[500] : Colors.grey[500],
                   fontStyle: FontStyle.italic,
                 ),

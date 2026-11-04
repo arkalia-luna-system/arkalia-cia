@@ -5,6 +5,7 @@ import '../models/doctor.dart' as models;
 import 'add_edit_doctor_screen.dart';
 import 'medical_report_screen.dart';
 import '../utils/error_helper.dart';
+import '../widgets/senior_empty_state.dart';
 
 class DoctorDetailScreen extends StatefulWidget {
   final int doctorId;
@@ -125,15 +126,13 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
               ),
             ),
             if (_consultations.isEmpty)
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Center(
-                  child: Text(
-                    'Aucune consultation enregistrée',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                  ),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: SeniorEmptyState(
+                  icon: Icons.event_busy_outlined,
+                  title: 'Aucune consultation enregistrée',
+                  message:
+                      'Les consultations liées à ce médecin apparaîtront ici.',
                 ),
               )
             else

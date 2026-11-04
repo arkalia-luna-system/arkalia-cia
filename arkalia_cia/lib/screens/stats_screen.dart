@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/local_storage_service.dart';
 import '../services/calendar_service.dart';
+import '../utils/error_helper.dart';
 
 /// Écran de statistiques de l'application
 class StatsScreen extends StatefulWidget {
@@ -116,10 +117,14 @@ class _StatsScreenState extends State<StatsScreen> {
         });
       }
     } catch (e) {
+      ErrorHelper.logError('StatsScreen._loadStats', e);
       if (mounted) {
         setState(() {
           _isLoading = false;
         });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(ErrorHelper.getUserFriendlyMessage(e))),
+        );
       }
     }
   }
