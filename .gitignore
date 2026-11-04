@@ -141,7 +141,9 @@ arkalia_cia/android/local.properties
 .spyproject
 .tox/
 .venv
-.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
 .webassets-cache
 .wifi_adb_ip
 /site

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/doctor_service.dart';
 import '../models/doctor.dart';
+import '../widgets/senior_empty_state.dart';
 import 'doctor_detail_screen.dart';
 import 'add_edit_doctor_screen.dart';
 import '../utils/error_helper.dart';
@@ -123,19 +124,24 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
       appBar: AppBar(
         title: const Text('Médecins'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () async {
-              final result = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const AddEditDoctorScreen(),
-                ),
-              );
-              if (result == true) {
-                _loadDoctors();
-              }
-            },
+          Semantics(
+            button: true,
+            label: 'Ajouter un médecin',
+            child: IconButton(
+              icon: const Icon(Icons.add),
+              tooltip: 'Ajouter un médecin',
+              onPressed: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AddEditDoctorScreen(),
+                  ),
+                );
+                if (result == true) {
+                  _loadDoctors();
+                }
+              },
+            ),
           ),
         ],
       ),
@@ -191,64 +197,38 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
                   _isLoading
                       ? const Center(child: CircularProgressIndicator())
                       : _filteredDoctors.isEmpty
-                      ? Builder(
-                        builder: (context) {
-                          final scheme = Theme.of(context).colorScheme;
-                          return Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(16),
-                                  decoration: BoxDecoration(
-                                    color: scheme.onSurface.withValues(
-                                      alpha: 0.08,
-                                    ),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    Icons.people_outline,
-                                    size: 64,
-                                    color: scheme.onSurfaceVariant,
-                                  ),
+                      ? SeniorEmptyState(
+                        icon: Icons.people_outline,
+                        title: 'Aucun médecin trouvé',
+                        message:
+                            'Ajoutez un médecin pour retrouver rapidement ses coordonnées.',
+                        action: Semantics(
+                          button: true,
+                          label: 'Ajouter un médecin',
+                          child: ElevatedButton.icon(
+                            onPressed: () async {
+                              final result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => const AddEditDoctorScreen(),
                                 ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  'Aucun médecin trouvé',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    color: scheme.onSurfaceVariant,
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-                                ElevatedButton.icon(
-                                  onPressed: () async {
-                                    final result = await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder:
-                                            (context) =>
-                                                const AddEditDoctorScreen(),
-                                      ),
-                                    );
-                                    if (result == true) {
-                                      _loadDoctors();
-                                    }
-                                  },
-                                  icon: const Icon(Icons.add),
-                                  label: const Text('Ajouter un médecin'),
-                                  style: ElevatedButton.styleFrom(
-                                    minimumSize: const Size(200, 48),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 24,
-                                      vertical: 12,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                              );
+                              if (result == true) {
+                                _loadDoctors();
+                              }
+                            },
+                            icon: const Icon(Icons.add),
+                            label: const Text('Ajouter un médecin'),
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: const Size(200, 48),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 12,
+                              ),
                             ),
-                          );
-                        },
+                          ),
+                        ),
                       )
                       : ListView.builder(
                         itemCount:

@@ -81,6 +81,7 @@ class EmergencyContactCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     final name = contact['name'] as String? ?? 'Contact sans nom';
     final displayName = contact['display_name'] as String? ?? name;
     final phone = contact['phone'] as String? ?? '';
@@ -88,7 +89,8 @@ class EmergencyContactCard extends StatelessWidget {
     final isPrimary = contact['is_primary'] as bool? ?? false;
     final emoji = contact['emoji'] as String? ?? '👤';
     final colorValue = contact['color'] as int?;
-    final color = colorValue != null ? Color(colorValue) : Colors.red;
+    // Couleur contact = donnée utilisateur (conservée)
+    final color = colorValue != null ? Color(colorValue) : scheme.error;
 
     return Card(
       elevation: isPrimary ? 8 : 2,
@@ -140,7 +142,7 @@ class EmergencyContactCard extends StatelessWidget {
                           name,
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.grey.shade600,
+                            color: scheme.onSurfaceVariant,
                           ),
                         ),
                       ],
@@ -168,11 +170,11 @@ class EmergencyContactCard extends StatelessWidget {
                             contentPadding: EdgeInsets.zero,
                           ),
                         ),
-                        const PopupMenuItem(
+                        PopupMenuItem(
                           value: 'delete',
                           child: ListTile(
-                            leading: Icon(Icons.delete, color: Colors.red),
-                            title: Text('Supprimer'),
+                            leading: Icon(Icons.delete, color: scheme.error),
+                            title: const Text('Supprimer'),
                             contentPadding: EdgeInsets.zero,
                           ),
                         ),
@@ -184,13 +186,13 @@ class EmergencyContactCard extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 relationship,
-                style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+                style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 14),
               ),
             ],
             const SizedBox(height: 12),
             Row(
               children: [
-                Icon(Icons.phone, color: Colors.green.shade600, size: 20),
+                Icon(Icons.phone, color: scheme.secondary, size: 20),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -208,42 +210,58 @@ class EmergencyContactCard extends StatelessWidget {
               spacing: 8,
               runSpacing: 8,
               children: [
-                ElevatedButton.icon(
-                  onPressed: _makePhoneCall,
-                  icon: const Icon(Icons.call, size: 18),
-                  label: const Text('Appeler'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size(100, 40),
+                Semantics(
+                  button: true,
+                  label: 'Appeler $displayName',
+                  child: ElevatedButton.icon(
+                    onPressed: _makePhoneCall,
+                    icon: const Icon(Icons.call, size: 18),
+                    label: const Text('Appeler'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: scheme.secondary,
+                      foregroundColor: scheme.onSecondary,
+                      minimumSize: const Size(100, 40),
+                    ),
                   ),
                 ),
-                ElevatedButton.icon(
-                  onPressed: _sendSMS,
-                  icon: const Icon(Icons.sms, size: 18),
-                  label: const Text('SMS'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size(100, 40),
+                Semantics(
+                  button: true,
+                  label: 'Envoyer un SMS à $displayName',
+                  child: ElevatedButton.icon(
+                    onPressed: _sendSMS,
+                    icon: const Icon(Icons.sms, size: 18),
+                    label: const Text('SMS'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: scheme.primary,
+                      foregroundColor: scheme.onPrimary,
+                      minimumSize: const Size(100, 40),
+                    ),
                   ),
                 ),
-                ElevatedButton.icon(
-                  onPressed: _openWhatsApp,
-                  icon: const Icon(Icons.chat, size: 18),
-                  label: const Text('WhatsApp'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green.shade700,
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size(100, 40),
+                Semantics(
+                  button: true,
+                  label: 'Ouvrir WhatsApp pour $displayName',
+                  child: ElevatedButton.icon(
+                    onPressed: _openWhatsApp,
+                    icon: const Icon(Icons.chat, size: 18),
+                    label: const Text('WhatsApp'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: scheme.tertiary,
+                      foregroundColor: scheme.onTertiary,
+                      minimumSize: const Size(100, 40),
+                    ),
                   ),
                 ),
-                OutlinedButton.icon(
-                  onPressed: () => _copyToClipboard(context),
-                  icon: const Icon(Icons.copy, size: 18),
-                  label: const Text('Copier'),
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: const Size(100, 40),
+                Semantics(
+                  button: true,
+                  label: 'Copier le numéro de $displayName',
+                  child: OutlinedButton.icon(
+                    onPressed: () => _copyToClipboard(context),
+                    icon: const Icon(Icons.copy, size: 18),
+                    label: const Text('Copier'),
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size(100, 40),
+                    ),
                   ),
                 ),
               ],

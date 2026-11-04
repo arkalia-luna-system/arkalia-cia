@@ -261,9 +261,9 @@ class _StatsScreenState extends State<StatsScreen> {
                     children: [
                       Text(
                         item.label,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 15,
-                          color: Colors.grey,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                       Text(

@@ -188,7 +188,7 @@ class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> {
                 color:
                     _formKey.currentState?.validate() == true
                         ? Theme.of(context).colorScheme.primary
-                        : Colors.grey,
+                        : Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               onPressed:
                   _formKey.currentState?.validate() == true

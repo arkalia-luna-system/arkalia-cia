@@ -236,7 +236,13 @@ class _PathologyTrackingScreenState extends State<PathologyTrackingScreen> {
                   onPressed: _isSaving ? null : _saveTracking,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _pathology!.color,
-                    foregroundColor: Colors.white,
+                    foregroundColor:
+                        ThemeData.estimateBrightnessForColor(
+                                  _pathology!.color,
+                                ) ==
+                                Brightness.dark
+                            ? Colors.white
+                            : Colors.black,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                   child:

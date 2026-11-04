@@ -53,4 +53,37 @@ void main() {
     final message = tester.widget<Text>(find.textContaining('Appuyez sur +'));
     expect(message.style?.fontSize, greaterThanOrEqualTo(14));
   });
+
+  testWidgets('SeniorEmptyState médecins — copy ≥14sp vouvoyée', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SeniorEmptyState(
+            icon: Icons.people_outline,
+            title: 'Aucun médecin trouvé',
+            message:
+                'Ajoutez un médecin pour retrouver rapidement ses coordonnées.',
+            action: ElevatedButton.icon(
+              onPressed: () {},
+              icon: const Icon(Icons.add),
+              label: const Text('Ajouter un médecin'),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Aucun médecin trouvé'), findsOneWidget);
+    expect(find.textContaining('Ajoutez un médecin'), findsOneWidget);
+    expect(find.textContaining('Ajoute un médecin'), findsNothing);
+    expect(find.text('Ajouter un médecin'), findsOneWidget);
+    expect(find.byIcon(Icons.people_outline), findsOneWidget);
+
+    final message = tester.widget<Text>(
+      find.textContaining('Ajoutez un médecin pour retrouver'),
+    );
+    expect(message.style?.fontSize, greaterThanOrEqualTo(14));
+  });
 }

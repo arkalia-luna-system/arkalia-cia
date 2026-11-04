@@ -295,7 +295,7 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
         style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.bold,
-          color: _pathology?.color ?? Colors.purple,
+          color: _pathology?.color ?? Theme.of(context).colorScheme.secondary,
         ),
       ),
     );
@@ -352,7 +352,13 @@ class _PathologyDetailScreenState extends State<PathologyDetailScreen> {
             color: color ?? _pathology?.color,
           ),
         ),
-        Text(label, style: const TextStyle(fontSize: 14, color: Colors.grey)),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 14,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
       ],
     );
   }

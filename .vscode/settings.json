@@ -1,0 +1,101 @@
+{
+    // ============================================
+    // Gradle projet uniquement (évite alerte 5.1.1 × Java 17)
+    // Cause : vscode-gradle / Java import scannent des wrappers
+    // anciens dans ~/.pub-cache (ex. device_calendar 5.1.1),
+    // PAS le wrapper Arkalia CIA (gradle-8.12).
+    // Après changement : "Java: Clean Java Language Server Workspace"
+    // puis recharger la fenêtre.
+    // ============================================
+    "java.import.gradle.enabled": true,
+    "gradle.nestedProjects": false,
+    "java.import.gradle.wrapper.enabled": true,
+    "java.import.gradle.version": "8.12",
+    "java.import.gradle.java.home": "/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home",
+    "java.jdt.ls.java.home": "/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home",
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-17",
+            "path": "/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home",
+            "default": true
+        }
+    ],
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.import.exclusions": [
+        "**/node_modules/**",
+        "**/.metadata/**",
+        "**/archetype-resources/**",
+        "**/META-INF/maven/**",
+        "**/.dart_tool/**",
+        "**/build/**",
+        "**/venv/**",
+        "**/.venv/**",
+        "**/.pub-cache/**",
+        "**/Pub/Cache/**",
+        "**/hosted/pub.dev/**",
+        "**/example/android/**",
+        "/Users/athalia/.pub-cache/**",
+        "/Users/athalia/Library/Caches/pub/**"
+    ],
+    "java.project.resourceFilters": [
+        "node_modules",
+        ".git",
+        ".pub-cache",
+        "Pub",
+        "build",
+        ".dart_tool"
+    ],
+    "files.watcherExclude": {
+        "**/__pycache__/**": true,
+        "**/build/**": true,
+        "**/dist/**": true,
+        "**/.venv/**": true,
+        "**/arkalia_cia_venv/**": true,
+        "**/node_modules/**": true,
+        "**/.git/**": true,
+        "**/arkalia_cia/build/**": true,
+        "**/arkalia_cia/.dart_tool/**": true,
+        "**/.pub-cache/**": true,
+        "/Users/athalia/.pub-cache/**": true
+    },
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/*.pyc": true,
+        "**/build": true,
+        "**/dist": true,
+        "**/.venv": true,
+        "**/arkalia_cia_venv": true,
+        "**/.dart_tool": true
+    },
+    "search.exclude": {
+        "**/__pycache__": true,
+        "**/build": true,
+        "**/dist": true,
+        "**/.venv": true,
+        "**/node_modules": true,
+        "**/.pub-cache": true,
+        "/Users/athalia/.pub-cache": true
+    },
+
+    // ============================================
+    // OPTIMISATIONS CPU - Réduction charge au démarrage
+    // ============================================
+    "python.analysis.typeCheckingMode": "off",
+    "python.analysis.banditEnabled": false,
+    "python.analysis.autoImportCompletions": false,
+    "python.analysis.diagnosticMode": "openFilesOnly",
+    "python.analysis.indexing": false,
+    "python.analysis.packageIndexDepths": [],
+    "python.analysis.diagnosticSeverityOverrides": {
+        "reportMissingImports": "none",
+        "reportMissingTypeStubs": "none",
+        "reportUnusedImport": "none",
+        "reportUnusedClass": "none",
+        "reportUnusedFunction": "none",
+        "reportUnusedVariable": "none"
+    },
+    "extensions.autoCheckUpdates": false,
+    "extensions.autoUpdate": false,
+    "workbench.enableExperiments": false,
+    "workbench.settings.enableNaturalLanguageSearch": false
+}

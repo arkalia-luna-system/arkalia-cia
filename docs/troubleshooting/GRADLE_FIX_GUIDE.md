@@ -275,3 +275,21 @@ Script `init.gradle` v3.0 avec **4 niveaux de protection** :
 
 **Dernière mise à jour** : 19 novembre 2025  
 **Version** : 3.0 - Ultra-robuste
+
+---
+
+## Alerte IDE « Gradle 5.1.1 × Java 17 »
+
+**Cause** : l’extension Java / `vscode-gradle` importe d’anciens wrappers présents dans `~/.pub-cache` (ex. `device_calendar` → Gradle **5.1.1**), pas le wrapper du projet Arkalia CIA (`arkalia_cia/android` → Gradle **8.12**).
+
+**Ne pas** :
+- Modifier `arkalia_cia/android/gradle.properties` pour « corriger » l’alerte (souvent dirty IDE)
+- Downgrader le JDK 17 ni upgrader Gradle projet à l’aveugle
+
+**Correction** : `.vscode/settings.json` (versionné) avec notamment :
+- `gradle.nestedProjects: false`
+- `java.import.gradle.version: "8.12"`
+- `java.import.exclusions` incluant `**/.pub-cache/**`, `**/Pub/Cache/**`, `**/hosted/pub.dev/**`, `**/example/android/**` et le chemin absolu `~/.pub-cache`
+
+Après édition : commande **Java: Clean Java Language Server Workspace**, puis recharger la fenêtre.
+

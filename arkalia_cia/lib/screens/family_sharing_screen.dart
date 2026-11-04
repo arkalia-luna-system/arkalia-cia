@@ -466,9 +466,10 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
                           },
                           secondary:
                               isShared
-                                  ? const Icon(
+                                  ? Icon(
                                     Icons.check_circle,
-                                    color: Colors.green,
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
                                   )
                                   : null,
                         );
@@ -575,7 +576,10 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
                     ),
                     trailing:
                         sharedDoc.isEncrypted
-                            ? const Icon(Icons.lock, color: Colors.green)
+                            ? Icon(
+                              Icons.lock,
+                              color: Theme.of(context).colorScheme.secondary,
+                            )
                             : null,
                   ),
                 );
