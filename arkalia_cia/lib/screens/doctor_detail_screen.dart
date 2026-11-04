@@ -57,9 +57,14 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     if (_isLoading || _doctor == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Médecin')),
+        appBar: AppBar(
+          title: const Text('Médecin'),
+          backgroundColor: scheme.primary,
+          foregroundColor: scheme.onPrimary,
+        ),
         body: const Center(child: CircularProgressIndicator()),
       );
     }
@@ -67,6 +72,8 @@ class _DoctorDetailScreenState extends State<DoctorDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_doctor!.fullName),
+        backgroundColor: scheme.primary,
+        foregroundColor: scheme.onPrimary,
         actions: [
           IconButton(
             icon: const Icon(Icons.description),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/family_sharing_service.dart';
+import '../utils/error_helper.dart';
 import '../utils/input_sanitizer.dart';
 import '../widgets/senior_empty_state.dart';
 
@@ -32,6 +33,12 @@ class _ManageFamilyMembersScreenState extends State<ManageFamilyMembersScreen> {
       });
     } catch (e) {
       setState(() => _isLoading = false);
+      if (mounted) {
+        ErrorHelper.logError('ManageFamilyMembersScreen._loadMembers', e);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(ErrorHelper.getUserFriendlyMessage(e))),
+        );
+      }
     }
   }
 
@@ -55,8 +62,13 @@ class _ManageFamilyMembersScreenState extends State<ManageFamilyMembersScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: AppBar(title: const Text('Gérer membres famille')),
+      appBar: AppBar(
+        title: const Text('Gérer membres famille'),
+        backgroundColor: scheme.primary,
+        foregroundColor: scheme.onPrimary,
+      ),
       body:
           _isLoading
               ? const Center(child: CircularProgressIndicator())

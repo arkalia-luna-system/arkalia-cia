@@ -379,7 +379,11 @@ class _ImportChoiceScreenState extends State<ImportChoiceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Import de vos données')),
+      appBar: AppBar(
+        title: const Text('Import de vos données'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),

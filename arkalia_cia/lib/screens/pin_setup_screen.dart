@@ -67,7 +67,11 @@ class _PinSetupScreenState extends State<PinSetupScreen> {
     final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Configuration du code PIN')),
+      appBar: AppBar(
+        title: const Text('Configuration du code PIN'),
+        backgroundColor: scheme.primary,
+        foregroundColor: scheme.onPrimary,
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),

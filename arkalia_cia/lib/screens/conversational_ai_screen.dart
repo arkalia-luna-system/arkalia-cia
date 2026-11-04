@@ -164,6 +164,8 @@ class _ConversationalAIScreenState extends State<ConversationalAIScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Assistant IA Santé'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         actions: [
           IconButton(
             icon: Icon(_showHistory ? Icons.chat : Icons.history, size: 24),

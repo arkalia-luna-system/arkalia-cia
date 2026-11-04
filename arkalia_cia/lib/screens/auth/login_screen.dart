@@ -98,6 +98,8 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(
         title: const Text('Connexion'),
         automaticallyImplyLeading: false,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
       ),
       body: SafeArea(
         child: SingleChildScrollView(

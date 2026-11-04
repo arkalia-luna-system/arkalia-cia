@@ -171,6 +171,8 @@ class _AddEditDoctorScreenState extends State<AddEditDoctorScreen> {
         title: Text(
           widget.doctor == null ? 'Ajouter un médecin' : 'Modifier médecin',
         ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         actions: [
           if (_isSaving)
             const Padding(

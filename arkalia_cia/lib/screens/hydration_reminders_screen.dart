@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import '../models/hydration_tracking.dart';
 import '../services/hydration_service.dart';
 import '../utils/error_helper.dart';
+import '../widgets/senior_empty_state.dart';
 
 /// Écran de gestion des rappels d'hydratation avec design moderne et fonctionnalités intelligentes
 class HydrationRemindersScreen extends StatefulWidget {
@@ -553,6 +554,8 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: theme.colorScheme.primary,
+        foregroundColor: theme.colorScheme.onPrimary,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, size: 24),
           onPressed: () => Navigator.pop(context),
@@ -910,30 +913,11 @@ class _HydrationRemindersScreenState extends State<HydrationRemindersScreen>
                       ),
                       const SizedBox(height: 16),
                       _todayEntries.isEmpty
-                          ? Container(
-                            padding: const EdgeInsets.all(32.0),
-                            decoration: BoxDecoration(
-                              color: theme.colorScheme.surfaceContainerHighest,
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Column(
-                              children: [
-                                Icon(
-                                  Icons.water_drop_outlined,
-                                  size: 64,
-                                  color: theme.colorScheme.onSurfaceVariant
-                                      .withValues(alpha: 0.5),
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  'Aucune consommation enregistrée aujourd\'hui',
-                                  style: theme.textTheme.bodyLarge?.copyWith(
-                                    color: theme.colorScheme.onSurfaceVariant,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
+                          ? const SeniorEmptyState(
+                            icon: Icons.water_drop_outlined,
+                            title: 'Aucune consommation aujourd\'hui',
+                            message:
+                                'Enregistrez un verre d\'eau pour suivre votre hydratation.',
                           )
                           : ListView.builder(
                             shrinkWrap: true,

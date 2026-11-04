@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../../services/auth_api_service.dart';
 import '../../services/backend_config_service.dart';
 import '../../services/onboarding_service.dart';
-import '../../utils/app_logger.dart';
+import '../../utils/error_helper.dart';
 import 'login_screen.dart';
 import '../onboarding/welcome_screen.dart';
 import '../home_page.dart';
@@ -165,47 +165,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
         });
       }
     } catch (e) {
-      // SIMPLIFIÉ : Messages d'erreur plus précis et actionnables
-      final errorString = e.toString().toLowerCase();
-      String errorMsg;
-
-      if (errorString.contains('timeout') ||
-          errorString.contains('timed out')) {
-        errorMsg =
-            'Le serveur met trop de temps à répondre.\n\n'
-            'Vérifiez votre connexion internet et réessayez.';
-      } else if (errorString.contains('connection refused') ||
-          errorString.contains('failed host lookup') ||
-          errorString.contains('network')) {
-        errorMsg =
-            'Problème de connexion réseau.\n\n'
-            'Vérifiez votre connexion internet et que le backend est accessible.';
-      } else if (errorString.contains('backend non configuré') ||
-          errorString.contains('url')) {
-        errorMsg =
-            'Backend non configuré.\n\n'
-            'Veuillez configurer l\'URL du backend dans les paramètres de l\'application.';
-      } else {
-        // Afficher l'erreur réelle pour débogage
-        errorMsg =
-            'Erreur lors de l\'inscription.\n\n'
-            'Détails: $e';
-      }
-
+      ErrorHelper.logError('RegisterScreen._register', e);
       setState(() {
-        _errorMessage = errorMsg;
+        _errorMessage = ErrorHelper.getUserFriendlyMessage(e);
         _isLoading = false;
       });
-
-      // Log pour débogage
-      AppLogger.error('Erreur inscription', e);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: AppBar(title: const Text('Créer un compte')),
+      appBar: AppBar(
+        title: const Text('Créer un compte'),
+        backgroundColor: scheme.primary,
+        foregroundColor: scheme.onPrimary,
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),

@@ -21,6 +21,7 @@ import 'stats_screen.dart';
 import '../services/local_storage_service.dart';
 import '../services/calendar_service.dart';
 import '../services/search_service.dart';
+import '../utils/error_helper.dart';
 import '../utils/input_sanitizer.dart';
 import '../utils/page_transitions.dart';
 
@@ -143,9 +144,11 @@ class _HomePageState extends State<HomePage> {
           }
         } catch (e) {
           // Ignorer les erreurs de calendrier, on garde les rappels locaux
+          ErrorHelper.logError('HomePage._loadStats.calendar', e);
         }
       }
     } catch (e) {
+      ErrorHelper.logError('HomePage._loadStats', e);
       if (mounted) {
         setState(() {
           _isLoadingStats = false;

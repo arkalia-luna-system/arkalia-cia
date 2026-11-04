@@ -9,6 +9,7 @@ import '../services/auth_api_service.dart';
 import '../services/pathology_service.dart';
 import '../services/medication_service.dart';
 import '../utils/error_helper.dart';
+import '../widgets/senior_empty_state.dart';
 
 /// Vue typée des patterns (UI) — sans réécriture du cache / API Map.
 class _PatternsView {
@@ -412,6 +413,8 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Analyse Patterns'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         actions: [
           if (_patterns != null)
             IconButton(
@@ -535,8 +538,11 @@ class _PatternsDashboardScreenState extends State<PatternsDashboardScreen> {
                   physics: const AlwaysScrollableScrollPhysics(),
                   child: SizedBox(
                     height: MediaQuery.of(context).size.height * 0.8,
-                    child: const Center(
-                      child: Text('Aucune donnée disponible'),
+                    child: const SeniorEmptyState(
+                      icon: Icons.analytics_outlined,
+                      title: 'Aucune donnée disponible',
+                      message:
+                          'Tirez pour actualiser ou vérifiez la connexion au backend.',
                     ),
                   ),
                 ),

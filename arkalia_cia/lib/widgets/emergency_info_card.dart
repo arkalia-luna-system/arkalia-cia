@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'senior_empty_state.dart';
 
 /// Widget pour afficher les informations médicales d'urgence
 class EmergencyInfoCard extends StatelessWidget {
@@ -13,6 +14,7 @@ class EmergencyInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     final isEmpty =
         emergencyInfo.isEmpty ||
         emergencyInfo.values.every(
@@ -21,33 +23,16 @@ class EmergencyInfoCard extends StatelessWidget {
 
     if (isEmpty) {
       return Card(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              Icon(
-                Icons.medical_information_outlined,
-                size: 48,
-                color: Colors.red.shade600,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Aucune information médicale',
-                style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Ajoutez vos informations médicales importantes\npour les urgences',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey.shade500, fontSize: 16),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton.icon(
-                onPressed: onEdit,
-                icon: const Icon(Icons.add),
-                label: const Text('Ajouter des informations'),
-              ),
-            ],
+        child: SeniorEmptyState(
+          icon: Icons.medical_information_outlined,
+          title: 'Aucune information médicale',
+          message:
+              'Ajoutez vos informations médicales importantes pour les urgences',
+          useErrorAccent: true,
+          action: ElevatedButton.icon(
+            onPressed: onEdit,
+            icon: const Icon(Icons.add),
+            label: const Text('Ajouter des informations'),
           ),
         ),
       );
@@ -61,16 +46,16 @@ class EmergencyInfoCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(
-                  Icons.medical_information,
-                  color: Colors.red.shade600,
-                  size: 24,
-                ),
+                Icon(Icons.medical_information, color: scheme.error, size: 24),
                 const SizedBox(width: 8),
-                const Expanded(
+                Expanded(
                   child: Text(
                     'Informations médicales',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: scheme.onSurface,
+                    ),
                   ),
                 ),
                 IconButton(
@@ -82,14 +67,14 @@ class EmergencyInfoCard extends StatelessWidget {
             ),
             const Divider(),
             const SizedBox(height: 8),
-            ..._buildInfoItems(),
+            ..._buildInfoItems(scheme),
           ],
         ),
       ),
     );
   }
 
-  List<Widget> _buildInfoItems() {
+  List<Widget> _buildInfoItems(ColorScheme scheme) {
     final items = <Widget>[];
 
     final infoMap = {
@@ -107,7 +92,7 @@ class EmergencyInfoCard extends StatelessWidget {
       final value = emergencyInfo[key] as String?;
 
       if (value != null && value.trim().isNotEmpty) {
-        items.add(_buildInfoItem(label, value, icon));
+        items.add(_buildInfoItem(label, value, icon, scheme));
         items.add(const SizedBox(height: 12));
       }
     }
@@ -117,8 +102,9 @@ class EmergencyInfoCard extends StatelessWidget {
         Text(
           'Aucune information disponible',
           style: TextStyle(
-            color: Colors.grey.shade600,
+            color: scheme.onSurfaceVariant,
             fontStyle: FontStyle.italic,
+            fontSize: 14,
           ),
         ),
       ];
@@ -132,11 +118,16 @@ class EmergencyInfoCard extends StatelessWidget {
     return items;
   }
 
-  Widget _buildInfoItem(String label, String value, IconData icon) {
+  Widget _buildInfoItem(
+    String label,
+    String value,
+    IconData icon,
+    ColorScheme scheme,
+  ) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 20, color: Colors.red.shade400),
+        Icon(icon, size: 20, color: scheme.error),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
@@ -144,13 +135,17 @@ class EmergencyInfoCard extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 14,
+                  color: scheme.onSurface,
                 ),
               ),
               const SizedBox(height: 2),
-              Text(value, style: const TextStyle(fontSize: 16)),
+              Text(
+                value,
+                style: TextStyle(fontSize: 16, color: scheme.onSurface),
+              ),
             ],
           ),
         ),

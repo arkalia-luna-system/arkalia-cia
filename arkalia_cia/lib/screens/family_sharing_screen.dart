@@ -332,6 +332,8 @@ class _FamilySharingScreenState extends State<FamilySharingScreen>
     return Scaffold(
       appBar: AppBar(
         title: const Text('Partage Familial'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         actions: [
           IconButton(
             icon: const Icon(Icons.people),

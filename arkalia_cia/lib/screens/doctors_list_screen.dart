@@ -123,6 +123,8 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Médecins'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         actions: [
           Semantics(
             button: true,
